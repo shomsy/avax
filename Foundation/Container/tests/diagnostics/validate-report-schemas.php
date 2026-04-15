@@ -18,7 +18,9 @@ final class DiagnosticsSchemaDependency
 
 final class DiagnosticsSchemaConsumer
 {
-    public function __construct(public DiagnosticsSchemaDependency $dependency) {}
+    public DiagnosticsSchemaDependency $dependency;
+
+    public function __construct(DiagnosticsSchemaDependency $dependency) { $this->dependency = $dependency; }
 }
 
 /**

@@ -11,9 +11,14 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
  */
 final readonly class ContextFlagAuditLegalHoldPolicy implements AuditLegalHoldPolicyInterface
 {
+    private string $contextKey;
+
     public function __construct(
-        private string $contextKey = 'legal_hold'
-    ) {}
+        string $contextKey = 'legal_hold'
+    )
+    {
+        $this->contextKey = $contextKey;
+    }
 
     public function preserveSensitiveContext(AuditEvent $event) : bool
     {

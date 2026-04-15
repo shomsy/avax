@@ -28,7 +28,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class EndsWith
 {
-    public function __construct(private array $suffixes) {}
+    private array $suffixes;
+
+    public function __construct(array $suffixes) { $this->suffixes = $suffixes; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

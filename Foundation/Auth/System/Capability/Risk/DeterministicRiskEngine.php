@@ -14,11 +14,20 @@ use SensitiveParameter;
  */
 final readonly class DeterministicRiskEngine
 {
+    private Clock                                        $clock;
+    private RiskSignalStoreInterface                     $signals;
+    private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments;
+
     public function __construct(
-        private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments,
-        private RiskSignalStoreInterface $signals,
-        private Clock $clock
-    ) {}
+        KnownAuthenticationEnvironmentStoreInterface $knownEnvironments,
+        RiskSignalStoreInterface                     $signals,
+        Clock                                        $clock
+    )
+    {
+        $this->knownEnvironments = $knownEnvironments;
+        $this->signals           = $signals;
+        $this->clock             = $clock;
+    }
 
     public function assessSuccessfulAuthentication(
         User                              $user,
@@ -30,14 +39,14 @@ final readonly class DeterministicRiskEngine
 
         if (! $this->knownEnvironments->hasSeen(userId: $userId, ipAddress: $ipAddress, userAgent: $userAgent)) {
             $this->signals->record(signal: new RiskSignal(
-                userId     : $userId,
-                name       : 'new_environment',
-                occurredAt : $this->clock->now(),
-                context    : [
-                    'ip_address' => $ipAddress,
-                    'user_agent' => $userAgent,
-                ]
-            ));
+                                               userId    : $userId,
+                                               name      : 'new_environment',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'ip_address' => $ipAddress,
+                                                               'user_agent' => $userAgent,
+                                                           ]
+                                           ));
             $this->knownEnvironments->remember(userId: $userId, ipAddress: $ipAddress, userAgent: $userAgent);
 
             if ($user->hasRole(role: UserRole::ADMIN)) {
@@ -53,13 +62,13 @@ final readonly class DeterministicRiskEngine
     public function recordRefreshReuse(int $userId, string|null $clientId) : RiskDecision
     {
         $this->signals->record(signal: new RiskSignal(
-            userId     : $userId,
-            name       : 'refresh_reuse_detected',
-            occurredAt : $this->clock->now(),
-            context    : [
-                'client_id' => $clientId,
-            ]
-        ));
+                                           userId    : $userId,
+                                           name      : 'refresh_reuse_detected',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id' => $clientId,
+                                                       ]
+                                       ));
 
         return new RiskDecision(action: RiskAction::REVOKE_SESSIONS, reasons: ['refresh_reuse_detected']);
     }

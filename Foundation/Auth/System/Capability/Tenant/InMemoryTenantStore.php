@@ -38,6 +38,11 @@ final class InMemoryTenantStore implements TenantStoreInterface
         $this->members[$this->memberKey(tenantId: $member->tenantId, userId: $member->userId)] = $member;
     }
 
+    private function memberKey(string $tenantId, int $userId) : string
+    {
+        return $tenantId . ':' . $userId;
+    }
+
     public function findMember(string $tenantId, int $userId) : TenantMember|null
     {
         return $this->members[$this->memberKey(tenantId: $tenantId, userId: $userId)] ?? null;
@@ -46,9 +51,9 @@ final class InMemoryTenantStore implements TenantStoreInterface
     public function allMembers(string $tenantId) : array
     {
         return array_values(array_filter(
-            $this->members,
-            static fn (TenantMember $member) : bool => $member->tenantId === $tenantId
-        ));
+                                $this->members,
+                                static fn (TenantMember $member) : bool => $member->tenantId === $tenantId
+                            ));
     }
 
     public function removeMember(string $tenantId, int $userId) : void
@@ -92,20 +97,15 @@ final class InMemoryTenantStore implements TenantStoreInterface
         }
 
         $this->invites[$inviteId] = new TenantInvite(
-            inviteId         : $invite->inviteId,
-            tenantId         : $invite->tenantId,
-            email            : $invite->email,
-            role             : $invite->role,
-            tokenHash        : $invite->tokenHash,
-            invitedBy        : $invite->invitedBy,
-            createdAt        : $invite->createdAt,
-            acceptedAt       : $acceptedAt,
-            acceptedByUserId : $acceptedByUserId
+            inviteId        : $invite->inviteId,
+            tenantId        : $invite->tenantId,
+            email           : $invite->email,
+            role            : $invite->role,
+            tokenHash       : $invite->tokenHash,
+            invitedBy       : $invite->invitedBy,
+            createdAt       : $invite->createdAt,
+            acceptedAt      : $acceptedAt,
+            acceptedByUserId: $acceptedByUserId
         );
-    }
-
-    private function memberKey(string $tenantId, int $userId) : string
-    {
-        return $tenantId . ':' . $userId;
     }
 }

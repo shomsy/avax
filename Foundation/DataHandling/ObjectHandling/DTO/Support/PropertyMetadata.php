@@ -9,12 +9,21 @@ use ReflectionProperty;
 
 final readonly class PropertyMetadata
 {
+    public array              $attributes;
+    public ReflectionProperty $property;
+    public string             $name;
+
     public function __construct(
-        public string             $name,
-        public ReflectionProperty $property,
+        string             $name,
+        ReflectionProperty $property,
         /** @var array<ReflectionAttribute> */
-        public array              $attributes,
-    ) {}
+        array              $attributes,
+    )
+    {
+        $this->name       = $name;
+        $this->property   = $property;
+        $this->attributes = $attributes;
+    }
 
     /**
      * Checks whether the property has an explicit type.

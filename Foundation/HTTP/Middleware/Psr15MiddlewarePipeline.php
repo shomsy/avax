@@ -17,14 +17,21 @@ use Psr\Http\Message\ResponseInterface;
  */
 final readonly class Psr15MiddlewarePipeline implements RequestHandlerInterface
 {
+    private RequestHandlerInterface $finalHandler;
+    private array                   $middleware;
+
     /**
      * @param MiddlewareInterface[]   $middleware   Stack of middleware (immutable)
      * @param RequestHandlerInterface $finalHandler Handler called after all middleware
      */
     public function __construct(
-        private array                   $middleware,
-        private RequestHandlerInterface $finalHandler
-    ) {}
+        array                   $middleware,
+        RequestHandlerInterface $finalHandler
+    )
+    {
+        $this->middleware   = $middleware;
+        $this->finalHandler = $finalHandler;
+    }
 
     /**
      * Create an empty pipeline with a final handler.
@@ -68,10 +75,17 @@ final readonly class Psr15MiddlewarePipeline implements RequestHandlerInterface
  */
 final readonly class MiddlewareHandler implements RequestHandlerInterface
 {
+    private RequestHandlerInterface $next;
+    private MiddlewareInterface     $middleware;
+
     public function __construct(
-        private MiddlewareInterface     $middleware,
-        private RequestHandlerInterface $next
-    ) {}
+        MiddlewareInterface     $middleware,
+        RequestHandlerInterface $next
+    )
+    {
+        $this->middleware = $middleware;
+        $this->next       = $next;
+    }
 
     public function handle(RequestInterface $request) : ResponseInterface
     {

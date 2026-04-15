@@ -10,10 +10,17 @@ use Throwable;
 
 final readonly class MakeServiceCommand
 {
+    private LoggerInterface  $logger;
+    private ServiceGenerator $serviceGenerator;
+
     public function __construct(
-        private ServiceGenerator $serviceGenerator,
-        private LoggerInterface  $logger
-    ) {}
+        ServiceGenerator $serviceGenerator,
+        LoggerInterface  $logger
+    )
+    {
+        $this->serviceGenerator = $serviceGenerator;
+        $this->logger           = $logger;
+    }
 
     public function execute(array $arguments) : void
     {

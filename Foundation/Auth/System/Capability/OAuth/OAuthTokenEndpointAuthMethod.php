@@ -6,7 +6,7 @@ namespace Avax\Auth\System\Capability\OAuth;
 
 enum OAuthTokenEndpointAuthMethod: string
 {
-    case NONE = 'none';
+    case NONE                = 'none';
     case CLIENT_SECRET_BASIC = 'client_secret_basic';
-    case CLIENT_SECRET_POST = 'client_secret_post';
+    case CLIENT_SECRET_POST  = 'client_secret_post';
 }

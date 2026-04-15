@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-// Middleware for handling Cross-Site Request Forgery (CSRF) protection.
+// Middleware for handling Cross-Site ServerRequest Forgery (CSRF) protection.
 // This middleware intercepts HTTP requests and ensures that a valid CSRF token is present.
 // It is designed to prevent malicious activities such as CSRF attacks by verifying that the
 // CSRF token submitted with the request matches the token stored in the user's session.

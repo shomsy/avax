@@ -24,15 +24,33 @@ use SensitiveParameter;
  */
 final readonly class StartMfaEnrollment
 {
+    private int                   $expiresAfterSeconds;
+    private string                $issuer;
+    private Clock                 $clock;
+    private AuditLogInterface     $auditLog;
+    private TotpInterface         $totp;
+    private MfaStoreInterface     $mfaStore;
+    private CurrentAuthentication $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private string                                      $issuer = 'Avax Auth',
-        private int                                         $expiresAfterSeconds = 900
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        MfaStoreInterface                           $mfaStore,
+        TotpInterface                               $totp,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock,
+        string|null                                 $issuer = null,
+        int                                         $expiresAfterSeconds = 900
+    )
+    {
+        $issuer                      ??= 'Avax Auth';
+        $this->currentAuthentication = $currentAuthentication;
+        $this->mfaStore              = $mfaStore;
+        $this->totp                  = $totp;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->issuer                = $issuer;
+        $this->expiresAfterSeconds   = $expiresAfterSeconds;
+    }
 
     /**
      * @throws Unauthenticated
@@ -65,13 +83,13 @@ final readonly class StartMfaEnrollment
         );
         $this->mfaStore->startEnrollment(record: $record);
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.enrollment.started',
-                                    occurredAt: $startedAt,
-                                    context   : [
-                                                    'user_id' => $user->id,
-                                                    'method'  => $record->method->value,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.enrollment.started',
+                                           occurredAt: $startedAt,
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                           'method'  => $record->method->value,
+                                                       ]
+                                       ));
 
         return new MfaEnrollment(
             method      : $record->method,

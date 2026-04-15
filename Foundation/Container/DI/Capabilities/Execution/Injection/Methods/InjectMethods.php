@@ -17,11 +17,15 @@ use Closure;
 final class InjectMethods
 {
     /** @var array<string, Closure(object, array): mixed> */
-    private array $invokers = [];
+    private array                $invokers = [];
+    private ResolveCallArguments $arguments;
 
     public function __construct(
-        private ResolveCallArguments $arguments
-    ) {}
+        ResolveCallArguments $arguments
+    )
+    {
+        $this->arguments = $arguments;
+    }
 
     /**
      * @param array<string, mixed> $overrides

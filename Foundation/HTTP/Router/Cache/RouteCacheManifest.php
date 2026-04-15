@@ -11,13 +11,24 @@ use SensitiveParameter;
 
 final readonly class RouteCacheManifest
 {
+    private string $checksum;
+    private int    $generatedAt;
+    private string $hash;
+    private array  $files;
+
     /** @param array<string, int> $files */
     private function __construct(
-        private array                        $files,
-        #[SensitiveParameter] private string $hash,
-        private int                          $generatedAt,
-        private string                       $checksum
-    ) {}
+        array                        $files,
+        #[SensitiveParameter] string $hash,
+        int                          $generatedAt,
+        string                       $checksum
+    )
+    {
+        $this->files       = $files;
+        $this->hash        = $hash;
+        $this->generatedAt = $generatedAt;
+        $this->checksum    = $checksum;
+    }
 
     public static function buildFromDirectory(string $baseDir) : self
     {

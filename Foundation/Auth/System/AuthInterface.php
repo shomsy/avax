@@ -8,21 +8,22 @@ use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
-use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
-use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
+use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
+use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
-use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Tenant\Tenant;
 use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
+use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
@@ -30,13 +31,12 @@ use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
 use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Flow\Login\AuthenticationResult;
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flow\Login\AuthenticationResult;
+use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
 use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
@@ -45,25 +45,25 @@ use Avax\Auth\System\Flow\Mfa\MfaRecoveryChallenge;
 use Avax\Auth\System\Flow\Mfa\Recover\BeginMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
-use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentialsData;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
-use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
-use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
-use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
-use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
 use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
 use Avax\Auth\System\Flow\Oidc\JarmResponse\JarmResponse;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
@@ -75,16 +75,16 @@ use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
-use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkResponse;
+use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Session\ActiveSession;
@@ -132,15 +132,15 @@ interface AuthInterface
     public function access() : AccessInterface;
 
     public function explainAccessDenied(
-        string $resource,
+        string      $resource,
         string|null $requiredPermission = null,
         string|null $tenant = null,
         string|null $resourceTenant = null
     ) : AuthIssueExplanation;
 
     public function explainStepUpRequired(
-        string $action,
-        bool $phishingResistantRequired = false,
+        string   $action,
+        bool     $phishingResistantRequired = false,
         int|null $freshAfterSeconds = null
     ) : AuthIssueExplanation;
 

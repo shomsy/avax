@@ -11,16 +11,27 @@ namespace Avax\Database\Query;
  */
 final readonly class PaginationOptions
 {
+    public int|null $total;
+    public int      $perPage;
+    public int      $page;
+
     /**
      * @param int      $page    The current logical 1-based page index.
      * @param int      $perPage The technical volume of records to be retrieved per resulting page.
      * @param int|null $total   The optional total record count discovered for calculating pagination metadata.
      */
     public function __construct(
-        public int      $page = 1,
-        public int      $perPage = 15,
-        public int|null $total = null
-    ) {}
+        int|null $page = null,
+        int|null $perPage = null,
+        int|null $total = null
+    )
+    {
+        $page          ??= 1;
+        $perPage       ??= 15;
+        $this->page    = $page;
+        $this->perPage = $perPage;
+        $this->total   = $total;
+    }
 
     /**
      * Calculate the SQL OFFSET for the current page.

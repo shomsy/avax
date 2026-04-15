@@ -13,11 +13,20 @@ use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
  */
 final readonly class SessionContext implements SessionContextInterface
 {
+    private HttpContextInterface       $httpContext;
+    private SessionIdProviderInterface $idProvider;
+    private StoreInterface             $store;
+
     public function __construct(
-        private StoreInterface             $store,
-        private SessionIdProviderInterface $idProvider,
-        private HttpContextInterface       $httpContext
-    ) {}
+        StoreInterface             $store,
+        SessionIdProviderInterface $idProvider,
+        HttpContextInterface       $httpContext
+    )
+    {
+        $this->store       = $store;
+        $this->idProvider  = $idProvider;
+        $this->httpContext = $httpContext;
+    }
 
     public function sessionId() : string
     {

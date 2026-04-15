@@ -14,10 +14,17 @@ final class HintPipelineStepB {}
 
 final class HintRuntimeInputConsumer
 {
+    public string              $token;
+    public HintIdentityService $identity;
+
     public function __construct(
-        public HintIdentityService             $identity,
-        #[\SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token
-    ) {}
+        HintIdentityService                                          $identity,
+        #[\SensitiveParameter] #[RuntimeInput(name: 'token')] string $token
+    )
+    {
+        $this->identity = $identity;
+        $this->token    = $token;
+    }
 }
 
 final class HintConditionalService {}

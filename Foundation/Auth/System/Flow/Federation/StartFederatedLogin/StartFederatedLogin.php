@@ -15,12 +15,23 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class StartFederatedLogin
 {
+    private Clock                              $clock;
+    private AuditLogInterface                  $auditLog;
+    private FederationRuntimeInterface         $runtime;
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private FederationRuntimeInterface $runtime,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        FederationConnectionStoreInterface $connectionStore,
+        FederationRuntimeInterface         $runtime,
+        AuditLogInterface                  $auditLog,
+        Clock                              $clock
+    )
+    {
+        $this->connectionStore = $connectionStore;
+        $this->runtime         = $runtime;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+    }
 
     /**
      * @throws FederationFailed
@@ -43,13 +54,13 @@ final readonly class StartFederatedLogin
 
         $started = $this->runtime->startLogin(connection: $connection, redirectUri: $data->redirectUri, state: $data->state);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.federation.login.started',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'connection_id' => $connection->connectionId,
-                'tenant' => $connection->tenantSlug,
-            ]
-        ));
+                                           name      : 'auth.federation.login.started',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'connection_id' => $connection->connectionId,
+                                                           'tenant'        => $connection->tenantSlug,
+                                                       ]
+                                       ));
 
         return $started;
     }

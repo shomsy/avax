@@ -13,6 +13,9 @@ use Throwable;
  */
 final readonly class ConnectionFailed extends Event
 {
+    public Throwable $exception;
+    public string    $connectionName;
+
     /**
      * @param string    $connectionName The technical identifier of the database gateway that failed to respond.
      * @param Throwable $exception      The native driver exception or technical error captured during the attempt.
@@ -20,11 +23,13 @@ final readonly class ConnectionFailed extends Event
      *                                  specific execution scope.
      */
     public function __construct(
-        public string    $connectionName,
-        public Throwable $exception,
-        string           $correlationId
+        string    $connectionName,
+        Throwable $exception,
+        string    $correlationId
     )
     {
+        $this->connectionName = $connectionName;
+        $this->exception      = $exception;
         parent::__construct(correlationId: $correlationId);
     }
 }

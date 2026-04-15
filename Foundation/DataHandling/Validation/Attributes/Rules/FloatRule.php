@@ -20,11 +20,12 @@ class FloatRule
      * Validation error message template.
      */
     private const string ERROR_MESSAGE = 'The "%s" field must be a valid float.';
+    private readonly string|null $message;
 
     /**
      * Constructor for the FloatRule attribute.
      */
-    public function __construct(private readonly string|null $message = null) {}
+    public function __construct(string|null $message = null) { $this->message = $message; }
 
     /**
      * Validates that the provided value is a float or numeric.

@@ -32,15 +32,18 @@ Use snapshots in this shape:
 
 - `snapshot_at`: 2026-04-15 02:03 CEST
 - `release_scope`: AUTH-031 practical OIDC completeness closure across public/confidential request-object verification,
-  OIDC dynamic client registration HTTP lifecycle, tenant-admin verifier-key propagation, and canonical status/evidence refresh
+  OIDC dynamic client registration HTTP lifecycle, tenant-admin verifier-key propagation, and canonical status/evidence
+  refresh
 - `decision`: hold
-- `rollback_path`: revert AUTH-031 changeset and restore the prior OIDC surface, OAuth client DTOs, tenant-admin HTTP surface,
+- `rollback_path`: revert AUTH-031 changeset and restore the prior OIDC surface, OAuth client DTOs, tenant-admin HTTP
+  surface,
   and canonical docs/evidence files
 - `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
 - `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
 - `notes`: Full PHPUnit, integration suite, PHPStan, strict PHPStan, source-truth, and system-shape all pass locally.
   Mutation tooling also executes end-to-end, but release remains on hold because mutation-quality posture is still open
-  (`MSI 59%`, `394` escaped mutants, `63` timeouts) and manual observability/self-healing gates still require human closure.
+  (`MSI 59%`, `394` escaped mutants, `63` timeouts) and manual observability/self-healing gates still require human
+  closure.
 
 - `snapshot_at`: 2026-04-09 15:31 CEST
 - `release_scope`: AUTH-012 auth-kernel refactor across public API, ingress runtime, token/session strategy unification,

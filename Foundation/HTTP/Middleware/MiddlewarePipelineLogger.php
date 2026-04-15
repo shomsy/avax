@@ -12,9 +12,14 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class MiddlewarePipelineLogger
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private LoggerInterface $logger
-    ) {}
+        LoggerInterface $logger
+    )
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Logs the start of middleware execution.

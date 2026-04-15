@@ -16,12 +16,23 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class ApplyTenantSecurityChange
 {
+    private Clock                                     $clock;
+    private AuditLogInterface                         $auditLog;
+    private TenantSecurityChangeRequestStoreInterface $changeRequestStore;
+    private TenantSecurityConfigurationStoreInterface $configurationStore;
+
     public function __construct(
-        private TenantSecurityConfigurationStoreInterface $configurationStore,
-        private TenantSecurityChangeRequestStoreInterface $changeRequestStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        TenantSecurityConfigurationStoreInterface $configurationStore,
+        TenantSecurityChangeRequestStoreInterface $changeRequestStore,
+        AuditLogInterface                         $auditLog,
+        Clock                                     $clock
+    )
+    {
+        $this->configurationStore = $configurationStore;
+        $this->changeRequestStore = $changeRequestStore;
+        $this->auditLog           = $auditLog;
+        $this->clock              = $clock;
+    }
 
     /**
      * @throws TenantSecurityFailed
@@ -40,30 +51,30 @@ final readonly class ApplyTenantSecurityChange
 
         $this->configurationStore->save(configuration: $changeRequest->after);
         $applied = new TenantSecurityChangeRequest(
-            changeId     : $changeRequest->changeId,
-            tenantSlug   : $changeRequest->tenantSlug,
-            requestedBy  : $changeRequest->requestedBy,
-            reason       : $changeRequest->reason,
-            before       : $changeRequest->before,
-            after        : $changeRequest->after,
-            diff         : $changeRequest->diff,
-            status       : TenantSecurityChangeRequestStatus::APPLIED,
-            requestedAt  : $changeRequest->requestedAt,
-            approvedBy   : $changeRequest->approvedBy,
-            approvedAt   : $changeRequest->approvedAt,
-            appliedAt    : $this->clock->now(),
-            rolledBackAt : $changeRequest->rolledBackAt
+            changeId    : $changeRequest->changeId,
+            tenantSlug  : $changeRequest->tenantSlug,
+            requestedBy : $changeRequest->requestedBy,
+            reason      : $changeRequest->reason,
+            before      : $changeRequest->before,
+            after       : $changeRequest->after,
+            diff        : $changeRequest->diff,
+            status      : TenantSecurityChangeRequestStatus::APPLIED,
+            requestedAt : $changeRequest->requestedAt,
+            approvedBy  : $changeRequest->approvedBy,
+            approvedAt  : $changeRequest->approvedAt,
+            appliedAt   : $this->clock->now(),
+            rolledBackAt: $changeRequest->rolledBackAt
         );
         $this->changeRequestStore->save(changeRequest: $applied);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.tenant_security.change.applied',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'change_id' => $applied->changeId,
-                'tenant' => $applied->tenantSlug,
-                'rollout_version' => $applied->after->rolloutVersion,
-            ]
-        ));
+                                           name      : 'auth.tenant_security.change.applied',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'change_id'       => $applied->changeId,
+                                                           'tenant'          => $applied->tenantSlug,
+                                                           'rollout_version' => $applied->after->rolloutVersion,
+                                                       ]
+                                       ));
 
         return $applied->after;
     }

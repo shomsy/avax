@@ -16,7 +16,9 @@ final class CompiledCacheDependency
 
 final class CompiledCacheTarget
 {
-    public function __construct(public CompiledCacheDependency $dependency) {}
+    public CompiledCacheDependency $dependency;
+
+    public function __construct(CompiledCacheDependency $dependency) { $this->dependency = $dependency; }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compiled-' . uniqid();

@@ -14,11 +14,20 @@ use Throwable;
  */
 final readonly class MigrateRollbackCommand
 {
+    private MigrationLoader     $loader;
+    private MigrationRunner     $runner;
+    private MigrationRepository $repository;
+
     public function __construct(
-        private MigrationRepository $repository,
-        private MigrationRunner     $runner,
-        private MigrationLoader     $loader
-    ) {}
+        MigrationRepository $repository,
+        MigrationRunner     $runner,
+        MigrationLoader     $loader
+    )
+    {
+        $this->repository = $repository;
+        $this->runner     = $runner;
+        $this->loader     = $loader;
+    }
 
     /**
      * @throws Throwable

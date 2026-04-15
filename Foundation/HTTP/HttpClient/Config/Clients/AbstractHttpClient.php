@@ -18,12 +18,14 @@ use Throwable;
  */
 abstract class AbstractHttpClient
 {
+    protected LoggerInterface $logger;
+
     /**
      * Constructor to initialize the logger.
      *
      * @param LoggerInterface $logger Injected logger instance for error and info logging.
      */
-    public function __construct(protected LoggerInterface $logger) {}
+    public function __construct(LoggerInterface $logger) { $this->logger = $logger; }
 
     /**
      * Sends a synchronous HTTP request.
@@ -66,7 +68,7 @@ abstract class AbstractHttpClient
     protected function formatResponse(ResponseInterface $response, string $endpoint) : array
     {
         $this->logger->info(
-            message: sprintf('Request to %s succeeded', $endpoint),
+            message: sprintf('ServerRequest to %s succeeded', $endpoint),
             context: [
                          'status' => $response->getStatusCode(),
                      ],
@@ -124,7 +126,7 @@ abstract class AbstractHttpClient
     public function handleFailure(string $endpoint, mixed $reason) : array
     {
         $errorMessage = $reason instanceof Throwable ? $reason->getMessage() : 'Unknown error';
-        $this->logger->error(message: sprintf('Request to %s failed', $endpoint), context: ['error' => $errorMessage]);
+        $this->logger->error(message: sprintf('ServerRequest to %s failed', $endpoint), context: ['error' => $errorMessage]);
 
         return [
             'endpoint' => $endpoint,

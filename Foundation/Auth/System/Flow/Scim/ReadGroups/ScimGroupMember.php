@@ -4,12 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\ReadGroups;
 
+use SensitiveParameter;
+
 final readonly class ScimGroupMember
 {
+    public string $email;
+    public string $username;
+    public int    $userId;
+    public string $externalId;
+
     public function __construct(
-        public string $externalId,
-        public int $userId,
-        public string $username,
-        public string $email
-    ) {}
+        string                       $externalId,
+        int                          $userId,
+        string                       $username,
+        #[SensitiveParameter] string $email
+    )
+    {
+        $this->externalId = $externalId;
+        $this->userId     = $userId;
+        $this->username   = $username;
+        $this->email      = $email;
+    }
 }

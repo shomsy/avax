@@ -23,15 +23,33 @@ use SensitiveParameter;
  */
 final readonly class StartMfaChallenge
 {
+    private int                        $maxAttempts;
+    private int                        $expiresAfterSeconds;
+    private Clock                      $clock;
+    private AuditLogInterface          $auditLog;
+    private MfaChallengeStoreInterface $challengeStore;
+    private MfaStoreInterface          $mfaStore;
+    private CurrentAuthentication      $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private MfaChallengeStoreInterface                  $challengeStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private int                                         $expiresAfterSeconds = 300,
-        private int                                         $maxAttempts = 5
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        MfaStoreInterface                           $mfaStore,
+        MfaChallengeStoreInterface                  $challengeStore,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock,
+        int|null                                    $expiresAfterSeconds = null,
+        int                                         $maxAttempts = 5
+    )
+    {
+        $expiresAfterSeconds         ??= 300;
+        $this->currentAuthentication = $currentAuthentication;
+        $this->mfaStore              = $mfaStore;
+        $this->challengeStore        = $challengeStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->expiresAfterSeconds   = $expiresAfterSeconds;
+        $this->maxAttempts           = $maxAttempts;
+    }
 
     /**
      * @throws Unauthenticated
@@ -83,16 +101,16 @@ final readonly class StartMfaChallenge
 
         $this->challengeStore->issue(record: $record);
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.challenge.requested',
-                                    occurredAt: $now,
-                                    context   : [
-                                                    'user_id'      => $userId->value,
-                                                    'challenge_id' => $record->challengeId,
-                                                    'purpose'      => $purpose->value,
-                                                    'ip_address'   => $ipAddress,
-                                                    'user_agent'   => $userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.challenge.requested',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id'      => $userId->value,
+                                                           'challenge_id' => $record->challengeId,
+                                                           'purpose'      => $purpose->value,
+                                                           'ip_address'   => $ipAddress,
+                                                           'user_agent'   => $userAgent,
+                                                       ]
+                                       ));
 
         return $record->toBoundary();
     }

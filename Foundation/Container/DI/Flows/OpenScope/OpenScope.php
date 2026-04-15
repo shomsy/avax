@@ -12,9 +12,14 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
  */
 final readonly class OpenScope
 {
+    private ServiceResolver $resolver;
+
     public function __construct(
-        private ServiceResolver $resolver
-    ) {}
+        ServiceResolver $resolver
+    )
+    {
+        $this->resolver = $resolver;
+    }
 
     /**
      * Opens one new scope frame.

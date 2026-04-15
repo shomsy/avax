@@ -27,7 +27,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class RequiredWith
 {
-    public function __construct(private array $fields) {}
+    private array $fields;
+
+    public function __construct(array $fields) { $this->fields = $fields; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

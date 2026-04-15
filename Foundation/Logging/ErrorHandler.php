@@ -28,13 +28,14 @@ final readonly class ErrorHandler
     private const string RENDER_FORMAT_IGNITION = 'ignition';
 
     private const string RENDER_FORMAT_JSON = 'json';
+    private LoggerInterface $logger;
 
     /**
      * Constructor with property promotion for dependency injection.
      *
      * @param LoggerInterface $logger Logger for error logging.
      */
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(LoggerInterface $logger) { $this->logger = $logger; }
 
     /**
      * Initializes global error handling for application.

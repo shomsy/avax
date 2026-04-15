@@ -24,7 +24,9 @@ use DateTime;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class After
 {
-    public function __construct(private string $date) {}
+    private string $date;
+
+    public function __construct(string $date) { $this->date = $date; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

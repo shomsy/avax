@@ -21,9 +21,14 @@ use SensitiveParameter;
  */
 final readonly class SessionLifecycleMiddleware implements MiddlewareInterface
 {
+    private SessionInterface $session;
+
     public function __construct(
-        #[SensitiveParameter] private SessionInterface $session
-    ) {}
+        #[SensitiveParameter] SessionInterface $session
+    )
+    {
+        $this->session = $session;
+    }
 
     public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {

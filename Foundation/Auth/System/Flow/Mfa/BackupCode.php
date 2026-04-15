@@ -9,9 +9,14 @@ namespace Avax\Auth\System\Flow\Mfa;
  */
 final readonly class BackupCode
 {
+    private string $value;
+
     public function __construct(
-        private string $value
-    ) {}
+        string $value
+    )
+    {
+        $this->value = $value;
+    }
 
     public function value() : string
     {

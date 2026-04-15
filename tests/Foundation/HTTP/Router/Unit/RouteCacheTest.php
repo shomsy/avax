@@ -52,7 +52,9 @@ final class RouteCacheTest extends TestCase
         $router->registerRoute(method: 'GET', path: '/closure', action: static fn () => 'x');
 
         $runtime = new class($router) implements RouterRuntimeInterface {
-            public function __construct(private HttpRequestRouter $router) {}
+            private HttpRequestRouter $router;
+
+            public function __construct(HttpRequestRouter $router) { $this->router = $router; }
 
             public function resolve(Request $request) : ResponseInterface
             {

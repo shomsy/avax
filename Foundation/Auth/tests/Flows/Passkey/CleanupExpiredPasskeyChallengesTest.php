@@ -18,25 +18,25 @@ final class CleanupExpiredPasskeyChallengesTest extends TestCase
     {
         $store = new InMemoryPasskeyChallengeStore();
         $store->issue(record: new PasskeyChallengeRecord(
-            challengeId: 'expired',
-            challenge  : 'expired-challenge',
-            purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new DateTimeImmutable(datetime: '-1 minute')
-        ));
+                                  challengeId: 'expired',
+                                  challenge  : 'expired-challenge',
+                                  purpose    : PasskeyChallengePurpose::AUTHENTICATION,
+                                  expiresAt  : new DateTimeImmutable(datetime: '-1 minute')
+                              ));
         $store->issue(record: new PasskeyChallengeRecord(
-            challengeId: 'used',
-            challenge  : 'used-challenge',
-            purpose    : PasskeyChallengePurpose::REGISTRATION,
-            expiresAt  : new DateTimeImmutable(datetime: '+10 minutes'),
-            userId     : 1,
-            usedAt     : new DateTimeImmutable()
-        ));
+                                  challengeId: 'used',
+                                  challenge  : 'used-challenge',
+                                  purpose    : PasskeyChallengePurpose::REGISTRATION,
+                                  expiresAt  : new DateTimeImmutable(datetime: '+10 minutes'),
+                                  userId     : 1,
+                                  usedAt     : new DateTimeImmutable()
+                              ));
         $store->issue(record: new PasskeyChallengeRecord(
-            challengeId: 'active',
-            challenge  : 'active-challenge',
-            purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new DateTimeImmutable(datetime: '+10 minutes')
-        ));
+                                  challengeId: 'active',
+                                  challenge  : 'active-challenge',
+                                  purpose    : PasskeyChallengePurpose::AUTHENTICATION,
+                                  expiresAt  : new DateTimeImmutable(datetime: '+10 minutes')
+                              ));
 
         $removed = (new CleanupExpiredPasskeyChallenges(challengeStore: $store, clock: new Clock()))->execute();
 

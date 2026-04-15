@@ -10,7 +10,9 @@ final class SchemaCompatibilityDependency {}
 
 final class SchemaCompatibilityService
 {
-    public function __construct(public SchemaCompatibilityDependency $dependency) {}
+    public SchemaCompatibilityDependency $dependency;
+
+    public function __construct(SchemaCompatibilityDependency $dependency) { $this->dependency = $dependency; }
 }
 
 $cacheDir     = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();

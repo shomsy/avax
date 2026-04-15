@@ -9,6 +9,8 @@ namespace Avax\Container\DI\Capabilities\Resolution;
  */
 final readonly class ResolvePlan
 {
+    public array $parameters;
+
     /**
      * @param list<array{
      *     name: string,
@@ -21,8 +23,11 @@ final readonly class ResolvePlan
      * }> $parameters
      */
     public function __construct(
-        public array $parameters = []
-    ) {}
+        array $parameters = []
+    )
+    {
+        $this->parameters = $parameters;
+    }
 
     public static function __set_state(array $state) : self
     {

@@ -27,5 +27,5 @@ class Request extends BaseFacade
     /**
      * The service key used to resolve the Filesystem service from the container.
      */
-    protected static string $accessor = 'Request';
+    protected static string $accessor = 'ServerRequest';
 }

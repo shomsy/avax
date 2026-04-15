@@ -8,12 +8,21 @@ use SensitiveParameter;
 
 final readonly class ScimBulkRequest
 {
+    public array  $operations;
+    public string $directoryToken;
+    public string $directoryId;
+
     /**
      * @param list<ScimBulkOperation> $operations
      */
     public function __construct(
-        public string $directoryId,
-        #[SensitiveParameter] public string $directoryToken,
-        public array $operations
-    ) {}
+        string                       $directoryId,
+        #[SensitiveParameter] string $directoryToken,
+        array                        $operations
+    )
+    {
+        $this->directoryId    = $directoryId;
+        $this->directoryToken = $directoryToken;
+        $this->operations     = $operations;
+    }
 }

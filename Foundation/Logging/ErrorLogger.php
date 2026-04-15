@@ -26,12 +26,14 @@ use Throwable;
  */
 final readonly class ErrorLogger implements LoggerInterface
 {
+    private LogWriterInterface $logWriter;
+
     /**
      * 🚀 Initializes the logger with a LogWriterInterface instance.
      *
      * @param LogWriterInterface $logWriter The log writer responsible for persisting log messages.
      */
-    public function __construct(private LogWriterInterface $logWriter) {}
+    public function __construct(LogWriterInterface $logWriter) { $this->logWriter = $logWriter; }
 
     // ✅ All standard PSR-3 log levels, mapped to the central logging function
 

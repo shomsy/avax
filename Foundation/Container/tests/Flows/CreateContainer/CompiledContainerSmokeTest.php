@@ -21,17 +21,23 @@ final class CompiledGreeter implements CompiledGreeterContract
 
 final class CompiledNeedsGreeter
 {
-    public function __construct(public CompiledGreeterContract $greeter) {}
+    public CompiledGreeterContract $greeter;
+
+    public function __construct(CompiledGreeterContract $greeter) { $this->greeter = $greeter; }
 }
 
 final class CompiledConfiguredMessage
 {
-    public function __construct(public string $name) {}
+    public string $name;
+
+    public function __construct(string $name) { $this->name = $name; }
 }
 
 final class CompiledNeedsObjectArgument
 {
-    public function __construct(public stdClass $payload) {}
+    public stdClass $payload;
+
+    public function __construct(stdClass $payload) { $this->payload = $payload; }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-runtime-' . uniqid();

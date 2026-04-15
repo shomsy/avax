@@ -14,7 +14,7 @@ final class MultiKeyHmacTokenCodecTest extends TestCase
     {
         $oldKey = new HmacTokenCodec(secret: 'secret-old', keyId: '2026-03-primary');
         $newKey = new HmacTokenCodec(secret: 'secret-new', keyId: '2026-04-primary');
-        $codec = new MultiKeyHmacTokenCodec(
+        $codec  = new MultiKeyHmacTokenCodec(
             primaryCodec      : $newKey,
             verificationCodecs: [$oldKey]
         );

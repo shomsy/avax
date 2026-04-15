@@ -13,20 +13,39 @@ use Stringable;
  */
 abstract class BaseUri implements Stringable
 {
+    protected string|null $password = null;
+    protected string      $user     = '';
+    protected string      $fragment = '';
+    protected string      $query    = '';
+    protected int|null    $port     = null;
+    protected string      $path     = '/';
+    protected string      $host     = '';
+    protected string      $scheme   = '';
+
     /**
      * BaseUri constructor.
      * Initializes the URI components.
      */
     public function __construct(
-        protected string                            $scheme = '',
-        protected string                            $host = '',
-        protected string                            $path = '/',
-        protected int|null                          $port = null,
-        protected string                            $query = '',
-        protected string                            $fragment = '',
-        protected string                            $user = '',
-        #[SensitiveParameter] protected string|null $password = null
-    ) {}
+        string                            $scheme = '',
+        string                            $host = '',
+        string                            $path = '/',
+        int|null                          $port = null,
+        string                            $query = '',
+        string                            $fragment = '',
+        string                            $user = '',
+        #[SensitiveParameter] string|null $password = null
+    )
+    {
+        $this->scheme   = $scheme;
+        $this->host     = $host;
+        $this->path     = $path;
+        $this->port     = $port;
+        $this->query    = $query;
+        $this->fragment = $fragment;
+        $this->user     = $user;
+        $this->password = $password;
+    }
 
     /**
      * Converts the URI to a string.

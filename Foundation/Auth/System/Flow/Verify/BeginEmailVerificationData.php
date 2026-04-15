@@ -11,9 +11,18 @@ use SensitiveParameter;
  */
 final readonly class BeginEmailVerificationData
 {
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    public string      $email;
+
     public function __construct(
-        #[SensitiveParameter] public string      $email,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
-    ) {}
+        #[SensitiveParameter] string      $email,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $this->email     = $email;
+        $this->ipAddress = $ipAddress;
+        $this->userAgent = $userAgent;
+    }
 }

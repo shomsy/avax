@@ -23,7 +23,7 @@ enum HttpReasonPhrase: string
 
     case NOT_MODIFIED = 'Not Modified';
 
-    case BAD_REQUEST = 'Bad Request';
+    case BAD_REQUEST = 'Bad ServerRequest';
 
     case UNAUTHORIZED = 'Unauthorized';
 

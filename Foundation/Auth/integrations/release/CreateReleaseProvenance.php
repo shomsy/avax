@@ -8,18 +8,19 @@ final readonly class CreateReleaseProvenance
 {
     /**
      * @param list<string> $validationCommands
+     *
      * @return array<string, mixed>
      */
     public function execute(string $repositoryRoot, array $validationCommands = []) : array
     {
         return [
-            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'repository_root' => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'git_commit' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
-            'git_branch' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --abbrev-ref HEAD'),
-            'git_dirty' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'status --short') !== '',
-            'generated_at' => gmdate(DATE_ATOM),
-            'php_version' => PHP_VERSION,
+            'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
+            'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
+            'git_commit'          => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
+            'git_branch'          => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --abbrev-ref HEAD'),
+            'git_dirty'           => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'status --short') !== '',
+            'generated_at'        => gmdate(DATE_ATOM),
+            'php_version'         => PHP_VERSION,
             'validation_commands' => array_values($validationCommands),
         ];
     }
@@ -52,7 +53,7 @@ final readonly class CreateReleaseProvenance
             escapeshellarg($repositoryRoot),
             $arguments
         );
-        $output = shell_exec($command);
+        $output  = shell_exec($command);
 
         return trim((string) $output);
     }

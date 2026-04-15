@@ -21,7 +21,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Size
 {
-    public function __construct(private int $size) {}
+    private int $size;
+
+    public function __construct(int $size) { $this->size = $size; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

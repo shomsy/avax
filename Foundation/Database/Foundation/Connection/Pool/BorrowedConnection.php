@@ -17,7 +17,9 @@ use PDO;
 final class BorrowedConnection implements DatabaseConnection
 {
     /** @var bool A flag to make sure we don't try to return the connection twice. */
-    private bool $released = false;
+    private bool                             $released = false;
+    private readonly ConnectionPoolInterface $pool;
+    private readonly DatabaseConnection      $connection;
 
     /**
      * @param DatabaseConnection      $connection The actual, physical connection to the database.
@@ -25,9 +27,13 @@ final class BorrowedConnection implements DatabaseConnection
      *                                            the shelf.
      */
     public function __construct(
-        private readonly DatabaseConnection      $connection,
-        private readonly ConnectionPoolInterface $pool
-    ) {}
+        DatabaseConnection      $connection,
+        ConnectionPoolInterface $pool
+    )
+    {
+        $this->connection = $connection;
+        $this->pool       = $pool;
+    }
 
     /**
      * Get the underlying PDO tool to run your queries.

@@ -10,15 +10,22 @@ use Psr\Http\Message\UriInterface;
 /**
  * Default HTTP context implementation.
  *
- * Prefers Request-derived data and falls back to globals provider only when
+ * Prefers ServerRequest-derived data and falls back to globals provider only when
  * a request is not available.
  */
 final readonly class HttpContext implements HttpContextInterface
 {
+    private GlobalsProviderInterface    $globals;
+    private ServerRequestInterface|null $request;
+
     public function __construct(
-        private ServerRequestInterface|null $request,
-        private GlobalsProviderInterface    $globals
-    ) {}
+        ServerRequestInterface|null $request,
+        GlobalsProviderInterface    $globals
+    )
+    {
+        $this->request = $request;
+        $this->globals = $globals;
+    }
 
     public function request() : ServerRequestInterface|null
     {

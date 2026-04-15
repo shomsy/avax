@@ -15,13 +15,26 @@ use SensitiveParameter;
 
 final readonly class RevokeToken
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private JwtIdentityInterface         $jwtIdentity;
+    private RefreshTokenStoreInterface   $refreshTokenStore;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface                     $clientRegistry,
-        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                $auditLog,
-        private Clock                                            $clock
-    ) {}
+        OAuthClientRegistryInterface                     $clientRegistry,
+        #[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore,
+        #[SensitiveParameter] JwtIdentityInterface       $jwtIdentity,
+        AuditLogInterface                                $auditLog,
+        Clock                                            $clock
+    )
+    {
+        $this->clientRegistry    = $clientRegistry;
+        $this->refreshTokenStore = $refreshTokenStore;
+        $this->jwtIdentity       = $jwtIdentity;
+        $this->auditLog          = $auditLog;
+        $this->clock             = $clock;
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
@@ -62,15 +75,15 @@ final readonly class RevokeToken
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.token.revoked',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $data->clientId,
-                'token_type_hint' => $data->tokenTypeHint,
-                'revoked' => $revoked ? 1 : 0,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.oauth.token.revoked',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'       => $data->clientId,
+                                                           'token_type_hint' => $data->tokenTypeHint,
+                                                           'revoked'         => $revoked ? 1 : 0,
+                                                           'ip_address'      => $data->ipAddress,
+                                                           'user_agent'      => $data->userAgent,
+                                                       ]
+                                       ));
     }
 }

@@ -19,15 +19,32 @@ use SensitiveParameter;
 
 final readonly class ExchangeRefreshToken
 {
+    private DeterministicRiskEngine|null $riskEngine;
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private JwtIdentityInterface         $jwtIdentity;
+    private UserSourceInterface          $userSource;
+    private RefreshTokenStoreInterface   $refreshTokenStore;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface                     $clientRegistry,
-        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        private UserSourceInterface                              $userSource,
-        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                $auditLog,
-        private Clock                                            $clock,
-        private DeterministicRiskEngine|null                     $riskEngine = null
-    ) {}
+        OAuthClientRegistryInterface                     $clientRegistry,
+        #[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore,
+        UserSourceInterface                              $userSource,
+        #[SensitiveParameter] JwtIdentityInterface       $jwtIdentity,
+        AuditLogInterface                                $auditLog,
+        Clock                                            $clock,
+        DeterministicRiskEngine|null                     $riskEngine = null
+    )
+    {
+        $this->clientRegistry    = $clientRegistry;
+        $this->refreshTokenStore = $refreshTokenStore;
+        $this->userSource        = $userSource;
+        $this->jwtIdentity       = $jwtIdentity;
+        $this->auditLog          = $auditLog;
+        $this->clock             = $clock;
+        $this->riskEngine        = $riskEngine;
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
@@ -76,14 +93,14 @@ final readonly class ExchangeRefreshToken
             $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
             $riskDecision = $this->riskEngine?->recordRefreshReuse(userId: $record->userId->value, clientId: $record->clientId);
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.oauth.refresh.review.opened',
-                occurredAt: $now,
-                context   : [
-                    'user_id' => $record->userId->value,
-                    'client_id' => $record->clientId,
-                    'risk_action' => $riskDecision?->action->value,
-                ]
-            ));
+                                               name      : 'auth.oauth.refresh.review.opened',
+                                               occurredAt: $now,
+                                               context   : [
+                                                               'user_id'     => $record->userId->value,
+                                                               'client_id'   => $record->clientId,
+                                                               'risk_action' => $riskDecision?->action->value,
+                                                           ]
+                                           ));
             $this->recordFailure(data: $data, reason: 'reuse_detected', suspicious: true);
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
@@ -96,57 +113,57 @@ final readonly class ExchangeRefreshToken
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        $accessToken = $this->jwtIdentity->issue(
-            user         : $user,
-            mfaVerifiedAt: $record->mfaVerifiedAt,
-            phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $record->senderConstraint,
+        $accessToken  = $this->jwtIdentity->issue(
+            user                : $user,
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            phishingResistant   : $record->phishingResistant,
+            clientId            : $client->clientId,
+            scopes              : $record->scopes,
+            senderConstraint    : $record->senderConstraint,
             refreshTokenFamilyId: $record->familyId
         );
         $refreshToken = $this->refreshTokenStore->issue(
-            userId       : $record->userId,
-            expiresAt    : $now->modify(modifier: '+30 days'),
-            familyId     : $record->familyId,
-            mfaVerifiedAt: $record->mfaVerifiedAt,
+            userId           : $record->userId,
+            expiresAt        : $now->modify(modifier: '+30 days'),
+            familyId         : $record->familyId,
+            mfaVerifiedAt    : $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $record->senderConstraint
+            clientId         : $client->clientId,
+            scopes           : $record->scopes,
+            senderConstraint : $record->senderConstraint
         );
 
         $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $refreshToken->tokenId);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.refresh.exchanged',
-            occurredAt: $now,
-            context   : [
-                'client_id' => $client->clientId,
-                'user_id' => $user->getId()->value,
-                'family_id' => $refreshToken->familyId,
-                'scope' => implode(' ', $record->scopes),
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.oauth.refresh.exchanged',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'client_id'  => $client->clientId,
+                                                           'user_id'    => $user->getId()->value,
+                                                           'family_id'  => $refreshToken->familyId,
+                                                           'scope'      => implode(' ', $record->scopes),
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return new OAuthTokenGrant(
-            accessToken          : $accessToken->token,
-            accessTokenExpiresAt : $accessToken->expiresAt,
-            refreshToken         : $refreshToken->token,
-            idToken              : null,
-            clientId             : $client->clientId,
-            userId               : $user->getId()->value,
-            scopes               : $record->scopes,
-            tokenType            : $record->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint     : $record->senderConstraint
+            accessToken         : $accessToken->token,
+            accessTokenExpiresAt: $accessToken->expiresAt,
+            refreshToken        : $refreshToken->token,
+            idToken             : null,
+            clientId            : $client->clientId,
+            userId              : $user->getId()->value,
+            scopes              : $record->scopes,
+            tokenType           : $record->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint    : $record->senderConstraint
         );
     }
 
     private function recordFailure(
         ExchangeRefreshTokenData $data,
-        string $reason,
-        bool $suspicious = false
+        string                   $reason,
+        bool                     $suspicious = false
     ) : void
     {
         $name = $suspicious
@@ -154,14 +171,14 @@ final readonly class ExchangeRefreshToken
             : 'auth.oauth.refresh.failed';
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : $name,
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $data->clientId,
-                'reason' => $reason,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : $name,
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'  => $data->clientId,
+                                                           'reason'     => $reason,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
     }
 }

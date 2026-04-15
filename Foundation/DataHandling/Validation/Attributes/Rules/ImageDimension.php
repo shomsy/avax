@@ -24,15 +24,32 @@ use Exception;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class ImageDimension
 {
+    private float|null $ratio;
+    private int|null   $max_height;
+    private int|null   $max_width;
+    private int|null   $min_height;
+    private int|null   $min_width;
+    private int|null   $height;
+    private int|null   $width;
+
     public function __construct(
-        private int|null   $width = null,
-        private int|null   $height = null,
-        private int|null   $min_width = null,
-        private int|null   $min_height = null,
-        private int|null   $max_width = null,
-        private int|null   $max_height = null,
-        private float|null $ratio = null,
-    ) {}
+        int|null   $width = null,
+        int|null   $height = null,
+        int|null   $min_width = null,
+        int|null   $min_height = null,
+        int|null   $max_width = null,
+        int|null   $max_height = null,
+        float|null $ratio = null,
+    )
+    {
+        $this->width      = $width;
+        $this->height     = $height;
+        $this->min_width  = $min_width;
+        $this->min_height = $min_height;
+        $this->max_width  = $max_width;
+        $this->max_height = $max_height;
+        $this->ratio      = $ratio;
+    }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

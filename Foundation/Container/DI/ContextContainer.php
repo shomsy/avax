@@ -33,14 +33,23 @@ use InvalidArgumentException;
  */
 readonly class ContextContainer implements ContainerInterface
 {
+    private array           $context;
+    private ServiceResolver $resolver;
+    private Container       $base;
+
     /**
      * @param array<string, mixed> $context
      */
     public function __construct(
-        private Container       $base,
-        private ServiceResolver $resolver,
-        private array           $context
-    ) {}
+        Container       $base,
+        ServiceResolver $resolver,
+        array           $context
+    )
+    {
+        $this->base     = $base;
+        $this->resolver = $resolver;
+        $this->context  = $context;
+    }
 
     public function has(string $id) : bool
     {

@@ -12,15 +12,21 @@ use Avax\Container\DI\Capabilities\Runtime\ServicePool;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    private DisposeInstances $disposer;
+    private DisposeInstances       $disposer;
+    private ResolutionMetrics|null $metrics;
+    private ServicePool            $pool;
+    private ScopeStore             $store;
 
     public function __construct(
-        private ScopeStore             $store,
-        private ServicePool            $pool,
-        DisposeInstances|null          $disposer = null,
-        private ResolutionMetrics|null $metrics = null
+        ScopeStore             $store,
+        ServicePool            $pool,
+        DisposeInstances|null  $disposer = null,
+        ResolutionMetrics|null $metrics = null
     )
     {
+        $this->store    = $store;
+        $this->pool     = $pool;
+        $this->metrics  = $metrics;
         $this->disposer = $disposer ?? new DisposeInstances;
     }
 

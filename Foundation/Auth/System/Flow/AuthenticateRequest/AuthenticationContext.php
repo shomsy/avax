@@ -13,20 +13,43 @@ use SensitiveParameter;
  */
 final readonly class AuthenticationContext
 {
+    private bool                   $phishingResistant;
+    private DateTimeImmutable|null $mfaVerifiedAt;
+    private string|null            $refreshTokenFamilyId;
+    private string|null            $refreshTokenId;
+    private DateTimeImmutable|null $accessTokenExpiresAt;
+    private string|null            $accessTokenId;
+    private string|null            $sessionId;
+    private string|null            $reason;
+    private AuthenticatedUser|null $user;
+    private AuthenticationMode     $mode;
+    private bool                   $authenticated;
+
     public function __construct(
-        private bool                                         $authenticated,
-        private AuthenticationMode                           $mode,
-        private AuthenticatedUser|null                       $user = null,
-        private string|null                                  $reason = null,
-        #[SensitiveParameter] private string|null            $sessionId = null,
-        #[SensitiveParameter] private string|null            $accessTokenId = null,
-        #[SensitiveParameter] private DateTimeImmutable|null $accessTokenExpiresAt = null,
-        #[SensitiveParameter] private string|null            $refreshTokenId = null,
-        #[SensitiveParameter] private string|null            $refreshTokenFamilyId = null,
-        private DateTimeImmutable|null                       $mfaVerifiedAt = null,
-        private bool                                         $phishingResistant = false
+        bool                                         $authenticated,
+        AuthenticationMode                           $mode,
+        AuthenticatedUser|null                       $user = null,
+        string|null                                  $reason = null,
+        #[SensitiveParameter] string|null            $sessionId = null,
+        #[SensitiveParameter] string|null            $accessTokenId = null,
+        #[SensitiveParameter] DateTimeImmutable|null $accessTokenExpiresAt = null,
+        #[SensitiveParameter] string|null            $refreshTokenId = null,
+        #[SensitiveParameter] string|null            $refreshTokenFamilyId = null,
+        DateTimeImmutable|null                       $mfaVerifiedAt = null,
+        bool                                         $phishingResistant = false
     )
     {
+        $this->authenticated        = $authenticated;
+        $this->mode                 = $mode;
+        $this->user                 = $user;
+        $this->reason               = $reason;
+        $this->sessionId            = $sessionId;
+        $this->accessTokenId        = $accessTokenId;
+        $this->accessTokenExpiresAt = $accessTokenExpiresAt;
+        $this->refreshTokenId       = $refreshTokenId;
+        $this->refreshTokenFamilyId = $refreshTokenFamilyId;
+        $this->mfaVerifiedAt        = $mfaVerifiedAt;
+        $this->phishingResistant    = $phishingResistant;
         if ($this->authenticated && $this->user === null) {
             throw new InvalidArgumentException(message: 'Authenticated context requires a user.');
         }

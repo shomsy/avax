@@ -8,6 +8,8 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Scim\ScimAccountState;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
@@ -16,14 +18,11 @@ use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
-use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
-use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use PHPUnit\Framework\TestCase;
 
 final class ScimFlowTest extends TestCase
@@ -33,41 +32,41 @@ final class ScimFlowTest extends TestCase
         $auth = $this->buildAuth();
 
         $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
-            tenantSlug  : 'acme',
-            name        : 'Acme Workforce',
-            groupRoleMap: [
-                'admins' => ['admin'],
-                'users' => ['user'],
-            ]
-        ));
+                                                            tenantSlug  : 'acme',
+                                                            name        : 'Acme Workforce',
+                                                            groupRoleMap: [
+                                                                              'admins' => ['admin'],
+                                                                              'users'  => ['user'],
+                                                                          ]
+                                                        ));
 
         $provisioned = $auth->provisionScimUser(data: new ProvisionScimUserData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'ext-1',
-            email          : 'worker@acme.test',
-            username       : 'worker',
-            groups         : ['admins'],
-            state          : ScimAccountState::ACTIVE
-        ));
-        $idempotent = $auth->provisionScimUser(data: new ProvisionScimUserData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'ext-1',
-            email          : 'worker@acme.test',
-            username       : 'worker',
-            groups         : ['admins'],
-            state          : ScimAccountState::ACTIVE
-        ));
-        $synced = $auth->syncScimGroups(data: new SyncScimGroupsData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'ext-1',
-            groups         : ['users'],
-            state          : ScimAccountState::SUSPENDED
-        ));
-        $users = $auth->readScimUsers(directoryId: $directory->directory->directoryId);
-        $groups = $auth->readScimGroups(directoryId: $directory->directory->directoryId);
+                                                          directoryId   : $directory->directory->directoryId,
+                                                          directoryToken: $directory->plainTextToken,
+                                                          externalId    : 'ext-1',
+                                                          email         : 'worker@acme.test',
+                                                          username      : 'worker',
+                                                          groups        : ['admins'],
+                                                          state         : ScimAccountState::ACTIVE
+                                                      ));
+        $idempotent  = $auth->provisionScimUser(data: new ProvisionScimUserData(
+                                                          directoryId   : $directory->directory->directoryId,
+                                                          directoryToken: $directory->plainTextToken,
+                                                          externalId    : 'ext-1',
+                                                          email         : 'worker@acme.test',
+                                                          username      : 'worker',
+                                                          groups        : ['admins'],
+                                                          state         : ScimAccountState::ACTIVE
+                                                      ));
+        $synced      = $auth->syncScimGroups(data: new SyncScimGroupsData(
+                                                       directoryId   : $directory->directory->directoryId,
+                                                       directoryToken: $directory->plainTextToken,
+                                                       externalId    : 'ext-1',
+                                                       groups        : ['users'],
+                                                       state         : ScimAccountState::SUSPENDED
+                                                   ));
+        $users       = $auth->readScimUsers(directoryId: $directory->directory->directoryId);
+        $groups      = $auth->readScimGroups(directoryId: $directory->directory->directoryId);
 
         $this->assertTrue(condition: $provisioned->created);
         $this->assertFalse(condition: $provisioned->idempotent);
@@ -84,69 +83,92 @@ final class ScimFlowTest extends TestCase
 
         try {
             $auth->provisionScimUser(data: new ProvisionScimUserData(
-                directoryId    : $directory->directory->directoryId,
-                directoryToken : $directory->plainTextToken,
-                externalId     : 'ext-2',
-                email          : 'old-token@acme.test',
-                username       : 'old-token',
-                groups         : ['users']
-            ));
+                                               directoryId   : $directory->directory->directoryId,
+                                               directoryToken: $directory->plainTextToken,
+                                               externalId    : 'ext-2',
+                                               email         : 'old-token@acme.test',
+                                               username      : 'old-token',
+                                               groups        : ['users']
+                                           ));
             $this->fail(message: 'Expected old SCIM token to fail after rotation.');
         } catch (ScimFailed $exception) {
             $this->assertSame(expected: 'Invalid SCIM directory token.', actual: $exception->getMessage());
         }
 
         $auth->deleteScimUser(data: new DeleteScimUserData(
-            directoryId    : $rotated->directory->directoryId,
-            directoryToken : $rotated->plainTextToken,
-            externalId     : 'ext-1'
-        ));
+                                        directoryId   : $rotated->directory->directoryId,
+                                        directoryToken: $rotated->plainTextToken,
+                                        externalId    : 'ext-1'
+                                    ));
 
         $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
     }
 
+    private function buildAuth(AttemptThrottle|null $scimThrottle = null) : Auth
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+
+        $builder = Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'scim-auth-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens);
+
+        if ($scimThrottle !== null) {
+            $builder = $builder->withScimThrottle(scimThrottle: $scimThrottle);
+        }
+
+        return $builder->ready();
+    }
+
     public function testScimBulkCanCreateReplaceAndDeleteUsers() : void
     {
-        $auth = $this->buildAuth();
+        $auth      = $this->buildAuth();
         $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
-            tenantSlug: 'bulk',
-            name      : 'Bulk Directory'
-        ));
+                                                            tenantSlug: 'bulk',
+                                                            name      : 'Bulk Directory'
+                                                        ));
 
         $response = $auth->runScimBulk(data: new ScimBulkRequest(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            operations     : [
-                new ScimBulkOperation(
-                    method: 'POST',
-                    path  : '/Users',
-                    body  : [
-                        'externalId' => 'bulk-1',
-                        'userName' => 'bulk-user',
-                        'emails' => [['value' => 'bulk@example.com', 'primary' => true]],
-                        'groups' => [['value' => 'users']],
-                        'active' => true,
-                    ],
-                    bulkId: 'create-1'
-                ),
-                new ScimBulkOperation(
-                    method: 'PUT',
-                    path  : '/Users/bulk-1',
-                    body  : [
-                        'userName' => 'bulk-user',
-                        'emails' => [['value' => 'bulk@example.com', 'primary' => true]],
-                        'groups' => [['value' => 'admins']],
-                        'active' => false,
-                    ],
-                    bulkId: 'replace-1'
-                ),
-                new ScimBulkOperation(
-                    method: 'DELETE',
-                    path  : '/Users/bulk-1',
-                    bulkId: 'delete-1'
-                ),
-            ]
-        ));
+                                                 directoryId   : $directory->directory->directoryId,
+                                                 directoryToken: $directory->plainTextToken,
+                                                 operations    : [
+                                                                     new ScimBulkOperation(
+                                                                         method: 'POST',
+                                                                         path  : '/Users',
+                                                                         body  : [
+                                                                                     'externalId' => 'bulk-1',
+                                                                                     'userName'   => 'bulk-user',
+                                                                                     'emails'     => [['value' => 'bulk@example.com', 'primary' => true]],
+                                                                                     'groups'     => [['value' => 'users']],
+                                                                                     'active'     => true,
+                                                                                 ],
+                                                                         bulkId: 'create-1'
+                                                                     ),
+                                                                     new ScimBulkOperation(
+                                                                         method: 'PUT',
+                                                                         path  : '/Users/bulk-1',
+                                                                         body  : [
+                                                                                     'userName' => 'bulk-user',
+                                                                                     'emails'   => [['value' => 'bulk@example.com', 'primary' => true]],
+                                                                                     'groups'   => [['value' => 'admins']],
+                                                                                     'active'   => false,
+                                                                                 ],
+                                                                         bulkId: 'replace-1'
+                                                                     ),
+                                                                     new ScimBulkOperation(
+                                                                         method: 'DELETE',
+                                                                         path  : '/Users/bulk-1',
+                                                                         bulkId: 'delete-1'
+                                                                     ),
+                                                                 ]
+                                             ));
 
         $this->assertCount(expectedCount: 3, haystack: $response->operations);
         $this->assertSame(expected: 201, actual: $response->operations[0]->status);
@@ -157,16 +179,16 @@ final class ScimFlowTest extends TestCase
 
     public function testScimDirectoryOutageBlocksMutationsUntilRecovered() : void
     {
-        $auth = $this->buildAuth();
+        $auth      = $this->buildAuth();
         $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
-            tenantSlug: 'outage',
-            name      : 'Outage Directory'
-        ));
+                                                            tenantSlug: 'outage',
+                                                            name      : 'Outage Directory'
+                                                        ));
 
         $marked = $auth->markScimDirectoryOutage(data: new MarkScimDirectoryOutageData(
-            directoryId: $directory->directory->directoryId,
-            reason     : 'maintenance'
-        ));
+                                                           directoryId: $directory->directory->directoryId,
+                                                           reason     : 'maintenance'
+                                                       ));
 
         $this->assertSame(expected: 'unavailable', actual: $marked->health->value);
         $this->assertSame(expected: 'maintenance', actual: $marked->outageReason);
@@ -175,76 +197,52 @@ final class ScimFlowTest extends TestCase
         $this->expectExceptionMessage('SCIM directory is temporarily unavailable.');
 
         $auth->provisionScimUser(data: new ProvisionScimUserData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'outage-1',
-            email          : 'outage@example.test',
-            username       : 'outage',
-            groups         : [],
-            state          : ScimAccountState::ACTIVE
-        ));
+                                           directoryId   : $directory->directory->directoryId,
+                                           directoryToken: $directory->plainTextToken,
+                                           externalId    : 'outage-1',
+                                           email         : 'outage@example.test',
+                                           username      : 'outage',
+                                           groups        : [],
+                                           state         : ScimAccountState::ACTIVE
+                                       ));
     }
 
     public function testScimDirectoryThrottleBlocksRepeatedMutations() : void
     {
-        $auth = $this->buildAuth(
+        $auth      = $this->buildAuth(
             scimThrottle: new AttemptThrottle(
-                store       : new InMemoryAttemptThrottleStore(),
-                clock       : new Clock(),
-                maxAttempts : 1,
-                decaySeconds: 3600
-            )
+                              store       : new InMemoryAttemptThrottleStore(),
+                              clock       : new Clock(),
+                              maxAttempts : 1,
+                              decaySeconds: 3600
+                          )
         );
         $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
-            tenantSlug: 'throttle',
-            name      : 'Throttle Directory'
-        ));
+                                                            tenantSlug: 'throttle',
+                                                            name      : 'Throttle Directory'
+                                                        ));
 
         $auth->provisionScimUser(data: new ProvisionScimUserData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'throttle-1',
-            email          : 'throttle@example.test',
-            username       : 'throttle',
-            groups         : [],
-            state          : ScimAccountState::ACTIVE
-        ));
+                                           directoryId   : $directory->directory->directoryId,
+                                           directoryToken: $directory->plainTextToken,
+                                           externalId    : 'throttle-1',
+                                           email         : 'throttle@example.test',
+                                           username      : 'throttle',
+                                           groups        : [],
+                                           state         : ScimAccountState::ACTIVE
+                                       ));
 
         $this->expectException(ScimFailed::class);
         $this->expectExceptionMessage('SCIM directory operation throttled for provision.');
 
         $auth->provisionScimUser(data: new ProvisionScimUserData(
-            directoryId    : $directory->directory->directoryId,
-            directoryToken : $directory->plainTextToken,
-            externalId     : 'throttle-2',
-            email          : 'throttle-2@example.test',
-            username       : 'throttle-2',
-            groups         : [],
-            state          : ScimAccountState::ACTIVE
-        ));
-    }
-
-    private function buildAuth(AttemptThrottle|null $scimThrottle = null) : Auth
-    {
-        $userSource = new InMemoryUserSource();
-        $refreshTokens = new InMemoryRefreshTokenStore();
-
-        $builder = Auth::configuration()
-            ->forUser(userSource: $userSource)
-            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'scim-auth-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
-            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
-            ;
-
-        if ($scimThrottle !== null) {
-            $builder = $builder->withScimThrottle(scimThrottle: $scimThrottle);
-        }
-
-        return $builder->ready();
+                                           directoryId   : $directory->directory->directoryId,
+                                           directoryToken: $directory->plainTextToken,
+                                           externalId    : 'throttle-2',
+                                           email         : 'throttle-2@example.test',
+                                           username      : 'throttle-2',
+                                           groups        : [],
+                                           state         : ScimAccountState::ACTIVE
+                                       ));
     }
 }

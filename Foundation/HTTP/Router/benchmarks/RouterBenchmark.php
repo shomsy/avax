@@ -75,11 +75,11 @@ class RouterBenchmark
                 path       : "/api/v1/resources/{$i}/subresources/{subId}/actions/{action}",
                 action     : "ResourceController@handle",
                 middleware : ['api', 'auth', 'rate_limit', 'cache'],
+                name       : "api.resource.{$i}.action",
                 constraints: [
                                  'subId'  => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
                                  'action' => 'create|update|delete'
-                             ],
-                name       : "api.resource.{$i}.action"
+                             ]
             );
 
             $this->router->add(route: $route);
@@ -239,8 +239,8 @@ class RouterBenchmark
                     method: 'GET',
                     path  : $path,
                     action: 'DomainController@handle',
-                    domain: $domain,
-                    name  : "{$domain}.{$path}"
+                    name  : "{$domain}.{$path}",
+                    domain: $domain
                 );
                 $this->router->add(route: $route);
             }
@@ -297,8 +297,8 @@ class RouterBenchmark
                 path       : "/cache/test/{$i}",
                 action     : ['CacheController', 'handle'],
                 middleware : ['auth', 'cache'],
-                constraints: ['id' => '[0-9]+'],
-                name       : "cache.test.{$i}"
+                name       : "cache.test.{$i}",
+                constraints: ['id' => '[0-9]+']
             );
         }
 

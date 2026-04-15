@@ -11,12 +11,17 @@ namespace Avax\Database\Query\ValueObjects;
  */
 final readonly class BindingBag
 {
+    private array $values;
+
     /**
      * @param array<array-key, mixed> $values The internal storage for raw, sanitized query parameters.
      */
     public function __construct(
-        private array $values = []
-    ) {}
+        array $values = []
+    )
+    {
+        $this->values = $values;
+    }
 
     /**
      * Create a new bag with an additional parameter value.

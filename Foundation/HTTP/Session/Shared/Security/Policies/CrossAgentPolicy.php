@@ -18,15 +18,18 @@ use Avax\HTTP\Session\Shared\Security\NativeServerContext;
  */
 final class CrossAgentPolicy implements PolicyInterface
 {
+    private ServerContext|null $serverContext = null;
+
     /**
      * CrossAgentPolicy Constructor.
      *
      * @param ServerContext|null $serverContext Server context (default: native).
      */
     public function __construct(
-        private ServerContext|null $serverContext = null
+        ServerContext|null $serverContext = null
     )
     {
+        $this->serverContext = $serverContext;
         $this->serverContext ??= new NativeServerContext;
     }
 

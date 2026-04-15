@@ -23,14 +23,29 @@ use SensitiveParameter;
  */
 final readonly class RegenerateBackupCodes
 {
+    private Clock                 $clock;
+    private AuditLogInterface     $auditLog;
+    private GenerateBackupCodes   $generateBackupCodes;
+    private MfaStoreInterface     $mfaStore;
+    private RequireFreshMfa       $requireFreshMfa;
+    private CurrentAuthentication $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                             $requireFreshMfa,
-        private MfaStoreInterface                           $mfaStore,
-        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        RequireFreshMfa                             $requireFreshMfa,
+        MfaStoreInterface                           $mfaStore,
+        #[SensitiveParameter] GenerateBackupCodes   $generateBackupCodes,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->requireFreshMfa       = $requireFreshMfa;
+        $this->mfaStore              = $mfaStore;
+        $this->generateBackupCodes   = $generateBackupCodes;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+    }
 
     /**
      * @throws Unauthenticated
@@ -56,20 +71,20 @@ final readonly class RegenerateBackupCodes
 
         $generated = $this->generateBackupCodes->execute();
         $this->mfaStore->saveMethod(record: new MfaMethodRecord(
-                                        userId              : $method->userId,
-                                        method              : $method->method,
-                                        secret              : $method->secret,
-                                        enabledAt           : $method->enabledAt,
-                                        backupCodes         : $generated->records,
-                                        lastAcceptedTimeStep: $method->lastAcceptedTimeStep
-                                    ));
+                                                userId              : $method->userId,
+                                                method              : $method->method,
+                                                secret              : $method->secret,
+                                                enabledAt           : $method->enabledAt,
+                                                backupCodes         : $generated->records,
+                                                lastAcceptedTimeStep: $method->lastAcceptedTimeStep
+                                            ));
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.backup_codes.regenerated',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id' => $user->id,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.backup_codes.regenerated',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                       ]
+                                       ));
 
         return $generated->backupCodeSet;
     }

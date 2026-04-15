@@ -1,276 +1,238 @@
 <?php
 
-/** @noinspection GlobalVariableUsageInspection */
-
 declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\HTTP\Request\Traits\InputManagementTrait;
-use Avax\HTTP\Request\Traits\JwtTrait;
-use Avax\HTTP\Request\Traits\SessionManagementTrait;
-use Avax\HTTP\Response\Classes\Stream;
-use Avax\HTTP\Session\NullSession;
-use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\PublicEntryPointRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use RuntimeException;
-use SensitiveParameter;
-use Throwable;
+
+// TODO: rename ServerRequest class to ServerRequest
 
 /**
- * Class Request
+ * Legacy Bridge: This class maintains the old namespace but delegates
+ * everything to the new ServerRequest architecture.
  *
- * This class extends `AbsoluteServerRequest` to handle HTTP requests and add custom functionality like session
- * management, input handling, and JWT integration.
- * It supports instantiation using global PHP variables, making it
- * suitable for working with web applications in a standardized way.
- *
- * - The class uses Laravel-style session access to simplify working with session.
- * - Provides utility for creating custom URIs from global variables ($_SERVER).
- * - Includes functionalities that can be extended via multiple reusable traits (InputManagementTrait, JwtTrait, etc.).
- *
- * The class enforces strict typing to align with modern PHP practices.
+ * @deprecated Use Avax\HTTP\ServerRequest\ServerRequest\IncomingRequest\PublicEntryPointRequest instead.
  */
-class Request extends AbsoluteServerRequest implements ServerRequestInterface
+class Request implements ServerRequestInterface
 {
-    use InputManagementTrait;
-    use JwtTrait;
-    use SessionManagementTrait;
 
-    /**
-     * The session instance for the request, defaults to a NullSession if no session is provided.
-     */
-    protected SessionInterface $session;
 
-    /**
-     * Stores the files uploaded with the request.
-     */
-    protected ParameterBag $files;
-
-    /**
-     * Holds parsed JSON parameters for this request.
-     */
-    private ParameterBag $json;
-
-    /**
-     * Constructor to initialize the request with various parameters.
-     *
-     * @param SessionInterface|string|null $session       The session instance or its string equivalent, defaults to
-     *                                                    NullSession.
-     * @param array                        $serverParams  The server parameters, typically from $_SERVER.
-     * @param UriInterface|string|null     $uri           The request URI, provided as a UriInterface or string.
-     * @param Stream|string|null           $body          The body of the request as a stream or string.
-     * @param array                        $queryParams   An array of query parameters, typically from $_GET.
-     * @param array                        $parsedBody    Parsed request body, typically from POST data.
-     * @param array                        $cookies       An array of cookies, typically from $_COOKIE.
-     * @param array                        $uploadedFiles An array of uploaded files, typically from $_FILES.
-     *
-     * @return void
-     */
-    public function __construct(
-        #[SensitiveParameter] SessionInterface|string|null $session = null,
-        array                                              $serverParams = [],
-        UriInterface|string|null                           $uri = null,
-        Stream|string|null                                 $body = null,
-        array                                              $queryParams = [],
-        array                                              $parsedBody = [],
-        array                                              $cookies = [],
-        array                                              $uploadedFiles = []
-    )
+    private function __construct(private readonly ServerRequest $serverRequest)
     {
-        parent::__construct(
-            server       : $serverParams,
-            uri          : $uri,
-            body         : $body,
-            queryParams  : $queryParams,
-            parsedBody   : $parsedBody,
-            cookies      : $cookies,
-            uploadedFiles: $uploadedFiles
-        );
-
-        // Default to NullSession to avoid null-checks for session management.
-        $this->session = $session ?? new NullSession;
-
-        // Wrap uploaded files into a ParameterBag for easier management and access.
-        $this->files = new ParameterBag(parameters: $uploadedFiles);
-
-        // Initialize an empty JSON ParameterBag for parsing and handling JSON bodies.
-        $this->json = new ParameterBag(parameters: $this->parseJsonBody());
     }
 
-    /**
-     * Creates a Request instance from global PHP variables.
-     *
-     * This is especially useful for HTTP server handling where $_SERVER, $_GET, $_POST, $_COOKIE, etc.,
-     * need to be converted into a request object.
-     *
-     * @throws RuntimeException If creation fails due to unexpected global data.
-     */
-    public static function createFromGlobals() : self
+    public static function capture(): self
     {
-        try {
-            // Build the URI from the global variables ($_SERVER in this case).
-            $uri     = self::buildUriFromGlobals();
-            $session = null;
-            try {
-                if (function_exists('app')) {
-                    $container = app();
-                    if (
-                        is_object($container)
-                        && method_exists($container, 'has')
-                        && $container->has(id: SessionInterface::class)
-                    ) {
-                        $session = $container->get(id: SessionInterface::class);
-                        if (! $session instanceof SessionInterface) {
-                            $session = null;
-                        }
-                    }
-                }
-            } catch (Throwable $e) {
-                $session = null;
-            }
-            $session ??= new NullSession;
-
-            return new self(
-                session      : $session, // Use container session or fallback.
-                serverParams : $_SERVER,
-                uri          : $uri,
-                body         : new Stream(stream: fopen(filename: 'php://input', mode: 'rb')),
-                queryParams  : $_GET,
-                parsedBody   : $_POST,
-                cookies      : $_COOKIE,
-                uploadedFiles: $_FILES
-            );
-        } catch (Throwable $throwable) {
-            // Catch unexpected exceptions during construction and wrap them in a runtime exception.
-            throw new RuntimeException(
-                message : 'Failed to create Request from globals.',
-                code    : 0,
-                previous: $throwable
-            );
-        }
+        return new self(serverRequest: PublicEntryPointRequest::fromIncomingHttp());
     }
 
-    /**
-     * Builds a URI from the global server data ($_SERVER).
-     *
-     * The resulting URI includes the scheme (HTTP/HTTPS), host, port (if non-standard), and path along
-     * with the query string. The method ensures compatibility across different server configurations.
-     *
-     * @return UriInterface The constructed URI object.
-     */
-    protected static function buildUriFromGlobals() : UriInterface
+    /** PSR-7 Implementation via Delegation **/
+
+    public function getProtocolVersion(): string
     {
-        // Determine the request scheme. Default to HTTP unless HTTPS is explicitly enabled in the server environment.
-        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-
-        // Resolve the host using HTTP_HOST, SERVER_NAME, or a localhost fallback.
-        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-
-        // Non-standard ports are appended to the base URI.
-        $port = $_SERVER['SERVER_PORT'] ?? null;
-
-        $baseUri = sprintf('%s://%s', $scheme, $host);
-        if ($port && $port !== 80 && $port !== 443) {
-            $baseUri .= ':' . $port;
-        }
-
-        // Parse the request URI path and query components.
-        $path  = parse_url(url: $_SERVER['REQUEST_URI'] ?? '/', component: PHP_URL_PATH) ?? '/';
-        $query = $_SERVER['QUERY_STRING'] ?? '';
-
-        // Construct and return a usable URI object.
-        return UriBuilder::fromBaseUri(baseUri: $baseUri)
-            ->withPath(path: $path)
-            ->withQuery(query: $query);
+        return $this->serverRequest->getProtocolVersion();
     }
 
-    /**
-     * Returns the request URI path.
-     *
-     * Example: If the full URI is "https://example.com/path?query=1", this method will return "/path".
-     */
-    public function path() : string
+    public function withProtocolVersion($version): static
     {
-        return $this->getUri()->getPath();
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withProtocolVersion(version: $version);
+
+        return $clone;
     }
 
-    /**
-     * Provides Laravel-style access to session.
-     *
-     * This allows you to retrieve session data, or the session object itself when no key is provided.
-     *
-     * @param string|null $key     The key to retrieve from the session.
-     * @param mixed       $default Default value if the key does not exist in the session.
-     *
-     * @return mixed The value associated with the key, or the session object itself if no key is provided.
-     */
-    public function session(string|null $key = null, mixed $default = null) : mixed
+    public function getHeaders(): array
     {
-        $this->ensureSession(); // Ensure session instance is valid.
-
-        // Return entire session instance if no key is provided, otherwise fetch the requested key.
-        return $key === null
-            ? $this->session
-            : $this->session->get(key: $key, default: $default);
+        return $this->serverRequest->getHeaders();
     }
 
-    /**
-     * Ensures that a valid SessionInterface instance is available.
-     *
-     * This is mainly used as a fallback to lazily resolve the session from the dependency container
-     * in case it hasn't been explicitly set during initialization.
-     */
-    protected function ensureSession() : void
+    public function hasHeader($name): bool
     {
-        if (! isset($this->session) || $this->session instanceof NullSession) {
-            $this->session = app(abstract: SessionInterface::class);
-        }
+        return $this->serverRequest->hasHeader(name: $name);
     }
 
-    /**
-     * Sets a new session instance explicitly.
-     *
-     * @param SessionInterface $session The session instance to set.
-     */
-    public function setSession(#[SensitiveParameter] SessionInterface $session) : void
+    public function getHeader($name): array
     {
-        $this->session = $session;
+        return $this->serverRequest->getHeader(name: $name);
     }
 
-    /**
-     * Checks if a given key exists in the session.
-     */
-    public function hasSession(string $key) : bool
+    public function getHeaderLine($name): string
     {
-        return $this->session->has(key: $key);
+        return $this->serverRequest->getHeaderLine(name: $name);
     }
 
-    /**
-     * Writes a value to the session.
-     */
-    public function putSession(string $key, mixed $value) : void
+    public function withHeader($name, $value): static
     {
-        $this->session->set(key: $key, value: $value);
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withHeader(name: $name, value: $value);
+
+        return $clone;
     }
 
-    /**
-     * Removes a key from the session.
-     */
-    public function forgetSession(string $key) : void
+    public function withAddedHeader($name, $value): static
     {
-        $this->session->remove(key: $key);
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withAddedHeader(name: $name, value: $value);
+
+        return $clone;
     }
 
-    /**
-     * Retrieves the user information, either from the session or from another source if not available.
-     *
-     * @return mixed The user data retrieved.
-     */
-    public function user() : mixed
+    public function withoutHeader($name): static
     {
-        return $this->session->get(key: 'user'); // TODO: if not in session, then from JWT !!!
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withoutHeader(name: $name);
+
+        return $clone;
+    }
+
+    public function getBody(): StreamInterface
+    {
+        return $this->serverRequest->getBody();
+    }
+
+    public function withBody(StreamInterface $body): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withBody(body: $body);
+
+        return $clone;
+    }
+
+    public function getRequestTarget(): string
+    {
+        return $this->serverRequest->getRequestTarget();
+    }
+
+    public function withRequestTarget($requestTarget): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withRequestTarget(requestTarget: $requestTarget);
+
+        return $clone;
+    }
+
+    public function getMethod(): string
+    {
+        return $this->serverRequest->getMethod();
+    }
+
+    public function withMethod($method): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withMethod(method: $method);
+
+        return $clone;
+    }
+
+    public function getUri(): UriInterface
+    {
+        return $this->serverRequest->getUri();
+    }
+
+    public function withUri(UriInterface $uri, $preserveHost = false): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withUri(uri: $uri, preserveHost: $preserveHost);
+
+        return $clone;
+    }
+
+    public function getServerParams(): array
+    {
+        return $this->serverRequest->getServerParams();
+    }
+
+    public function getCookieParams(): array
+    {
+        return $this->serverRequest->getCookieParams();
+    }
+
+    public function withCookieParams(array $cookies): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withCookieParams(cookies: $cookies);
+
+        return $clone;
+    }
+
+    public function getQueryParams(): array
+    {
+        return $this->serverRequest->getQueryParams();
+    }
+
+    public function withQueryParams(array $query): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withQueryParams(query: $query);
+
+        return $clone;
+    }
+
+    public function getUploadedFiles(): array
+    {
+        return $this->serverRequest->getUploadedFiles();
+    }
+
+    public function withUploadedFiles(array $uploadedFiles): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withUploadedFiles(uploadedFiles: $uploadedFiles);
+
+        return $clone;
+    }
+
+    public function getParsedBody(): array|object|null
+    {
+        return $this->serverRequest->getParsedBody();
+    }
+
+    public function withParsedBody($data): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withParsedBody(data: $data);
+
+        return $clone;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->serverRequest->getAttributes();
+    }
+
+    public function getAttribute($name, $default = null): mixed
+    {
+        return $this->serverRequest->getAttribute(name: $name, default: $default);
+    }
+
+    public function withAttribute($name, $value): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withAttribute(name: $name, value: $value);
+
+        return $clone;
+    }
+
+    public function withoutAttribute($name): static
+    {
+        $clone = clone $this;
+        $clone->serverRequest = $this->serverRequest->withoutAttribute(name: $name);
+
+        return $clone;
+    }
+
+    /** Legacy Helpers (Map to DSL) **/
+    public function input(string $key, mixed $default = null): mixed
+    {
+        return $this->serverRequest->inputs()->get(key: $key, default: $default);
+    }
+
+    public function all(): array
+    {
+        return $this->serverRequest->inputs()->all();
     }
 }

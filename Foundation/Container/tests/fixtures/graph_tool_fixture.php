@@ -12,7 +12,9 @@ final class GraphToolIdentitySecret {}
 
 final class GraphToolLoginEntry
 {
-    public function __construct(public GraphToolIdentityService $identity) {}
+    public GraphToolIdentityService $identity;
+
+    public function __construct(GraphToolIdentityService $identity) { $this->identity = $identity; }
 }
 
 final class GraphToolStructureTarget {}
@@ -52,12 +54,12 @@ $container->singleton(abstract: GraphToolStepTwo::class, concrete: GraphToolStep
     ->group(group: 'graph.steps', order: 10);
 
 $container->compileContainer(serviceIds: [
-                                 GraphToolStructureTarget::class,
-                                 GraphToolLoginEntry::class,
-                                 GraphToolIdentityService::class,
-                                 GraphToolStepOne::class,
-                                 GraphToolStepTwo::class,
-                             ]);
+                                             GraphToolStructureTarget::class,
+                                             GraphToolLoginEntry::class,
+                                             GraphToolIdentityService::class,
+                                             GraphToolStepOne::class,
+                                             GraphToolStepTwo::class,
+                                         ]);
 $container->singleton(abstract: GraphToolStructureTarget::class, concrete: GraphToolStructureTarget::class)
     ->asFoundation(ownerSlice: 'foundation.graph')
     ->asPublic();

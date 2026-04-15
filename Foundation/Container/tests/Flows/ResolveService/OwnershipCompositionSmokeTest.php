@@ -34,17 +34,23 @@ final class ScopedOwnershipState {}
 
 final class BillingFlowUsesGateway
 {
-    public function __construct(public OwnershipGateway $gateway) {}
+    public OwnershipGateway $gateway;
+
+    public function __construct(OwnershipGateway $gateway) { $this->gateway = $gateway; }
 }
 
 final class BillingFlowUsesInternalAudit
 {
-    public function __construct(public InternalAuditTrail $audit) {}
+    public InternalAuditTrail $audit;
+
+    public function __construct(InternalAuditTrail $audit) { $this->audit = $audit; }
 }
 
 final class SharedOwnershipFacade
 {
-    public function __construct(public ScopedOwnershipState $state) {}
+    public ScopedOwnershipState $state;
+
+    public function __construct(ScopedOwnershipState $state) { $this->state = $state; }
 }
 
 final class DevOnlyOwnershipProbe {}
@@ -125,10 +131,10 @@ assertSame(
 assertTrue(condition: isset($fullGraph['slices']['capability.payments']), message: 'Full graph reports should include slice manifests.');
 assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), message: 'Full graph reports should include duplicate concept reports.');
 assertTrue(condition: in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, message: 'Live flow services should not be reported as dead.');
-assertSame(                     expected: [], actual: array_values(array_filter(
-                                $validGatewayIssues,
-                                static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
-                            )), message : 'Imported shared capability dependencies should validate cleanly.');
+assertSame(expected: [], actual: array_values(array_filter(
+                                                  $validGatewayIssues,
+                                                  static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
+                                              )), message: 'Imported shared capability dependencies should validate cleanly.');
 
 $invalidAuditText = implode("\n", $invalidAuditIssues);
 assertTrue(

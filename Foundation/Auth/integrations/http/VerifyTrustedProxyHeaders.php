@@ -4,18 +4,31 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
+use SensitiveParameter;
+
 final readonly class VerifyTrustedProxyHeaders
 {
+    private array $proxyOnlyClientCertificateHeaders;
+    private array $forwardedHeaders;
+    private array $trustedProxies;
+
     /**
      * @param list<string> $trustedProxies
      * @param list<string> $forwardedHeaders
      * @param list<string> $proxyOnlyClientCertificateHeaders
      */
     public function __construct(
-        private array $trustedProxies = [],
-        private array $forwardedHeaders = ['X-Forwarded-For', 'X-Forwarded-Proto', 'X-Forwarded-Host'],
-        private array $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256']
-    ) {}
+        array|null                       $trustedProxies = null,
+        #[SensitiveParameter] array|null $forwardedHeaders = null,
+        #[SensitiveParameter] array      $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256']
+    )
+    {
+        $trustedProxies                          ??= [];
+        $forwardedHeaders                        ??= ['X-Forwarded-For', 'X-Forwarded-Proto', 'X-Forwarded-Host'];
+        $this->trustedProxies                    = $trustedProxies;
+        $this->forwardedHeaders                  = $forwardedHeaders;
+        $this->proxyOnlyClientCertificateHeaders = $proxyOnlyClientCertificateHeaders;
+    }
 
     /**
      * @throws TrustedProxyViolation
@@ -45,18 +58,17 @@ final readonly class VerifyTrustedProxyHeaders
         }
     }
 
-    private function matchesForwardedHeader(string $header) : bool
+    /**
+     * @param array<string, mixed> $server
+     */
+    private function readServerValue(array $server, string $name) : string|null
     {
-        foreach ($this->forwardedHeaders as $candidate) {
-            if (strcasecmp($header, $candidate) === 0) {
-                return true;
-            }
-        }
+        $value = $server[$name] ?? null;
 
-        return false;
+        return is_scalar($value) ? (string) $value : null;
     }
 
-    private function matchesProxyOnlyCertificateHeader(string $header) : bool
+    private function matchesProxyOnlyCertificateHeader(#[SensitiveParameter] string $header) : bool
     {
         foreach ($this->proxyOnlyClientCertificateHeaders as $candidate) {
             if (strcasecmp($header, $candidate) === 0) {
@@ -67,13 +79,14 @@ final readonly class VerifyTrustedProxyHeaders
         return str_starts_with(strtolower($header), 'x-tls-client-');
     }
 
-    /**
-     * @param array<string, mixed> $server
-     */
-    private function readServerValue(array $server, string $name) : string|null
+    private function matchesForwardedHeader(#[SensitiveParameter] string $header) : bool
     {
-        $value = $server[$name] ?? null;
+        foreach ($this->forwardedHeaders as $candidate) {
+            if (strcasecmp($header, $candidate) === 0) {
+                return true;
+            }
+        }
 
-        return is_scalar($value) ? (string) $value : null;
+        return false;
     }
 }

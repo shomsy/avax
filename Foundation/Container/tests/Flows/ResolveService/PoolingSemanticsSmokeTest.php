@@ -26,9 +26,11 @@ final class PoolingSequence
 final class PoolingService implements PoolingContract
 {
     public bool $decorated = false;
+    private int $id        = 0;
 
-    public function __construct(private int $id = 0)
+    public function __construct(int $id = 0)
     {
+        $this->id = $id;
         $this->id = ++PoolingSequence::$ids;
     }
 
@@ -66,7 +68,9 @@ final class DeferredPoolingService implements DeferredPoolingContract
 
 final class DeferredPoolingProvider implements DeferredProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {

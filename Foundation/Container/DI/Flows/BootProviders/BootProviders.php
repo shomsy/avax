@@ -19,9 +19,14 @@ use Throwable;
  */
 final readonly class BootProviders
 {
+    private ContainerInterface $container;
+
     public function __construct(
-        private ContainerInterface $container
-    ) {}
+        ContainerInterface $container
+    )
+    {
+        $this->container = $container;
+    }
 
     /**
      * @param array<int, string|ServiceProviderInterface> $providers

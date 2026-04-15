@@ -14,6 +14,25 @@ use JsonSerializable;
 final readonly class RuntimeReport implements JsonSerializable
 {
     public const int SCHEMA_VERSION = 4;
+    public CompileReport|null $compiled;
+    public array              $hotPath;
+    public array              $scopes;
+    public array              $timeline;
+    public array              $metrics;
+    public int                $scopedServiceCount;
+    public int                $sharedServiceCount;
+    public array              $deferredProviders;
+    public array              $aliases;
+    public array              $lazyServices;
+    public bool               $timelineEnabled;
+    public string             $diagnosticsMode;
+    public string             $sliceBoundaryMode;
+    public string             $asyncTarget;
+    public string             $executionMode;
+    public bool               $warmedUp;
+    public bool               $compiledAttached;
+    public int                $compiledRevision;
+    public int                $registrationRevision;
 
     /**
      * @param list<string>                                                                 $lazyServices
@@ -32,26 +51,47 @@ final readonly class RuntimeReport implements JsonSerializable
      * }                                                                                   $scopes
      */
     public function __construct(
-        public int                $registrationRevision,
-        public int                $compiledRevision,
-        public bool               $compiledAttached,
-        public bool               $warmedUp,
-        public string             $executionMode,
-        public string             $asyncTarget,
-        public string             $sliceBoundaryMode,
-        public string             $diagnosticsMode,
-        public bool               $timelineEnabled,
-        public array              $lazyServices,
-        public array              $aliases,
-        public array              $deferredProviders,
-        public int                $sharedServiceCount,
-        public int                $scopedServiceCount,
-        public array              $metrics,
-        public array              $timeline,
-        public array              $scopes,
-        public array              $hotPath,
-        public CompileReport|null $compiled = null
-    ) {}
+        int                $registrationRevision,
+        int                $compiledRevision,
+        bool               $compiledAttached,
+        bool               $warmedUp,
+        string             $executionMode,
+        string             $asyncTarget,
+        string             $sliceBoundaryMode,
+        string             $diagnosticsMode,
+        bool               $timelineEnabled,
+        array              $lazyServices,
+        array              $aliases,
+        array              $deferredProviders,
+        int                $sharedServiceCount,
+        int                $scopedServiceCount,
+        array              $metrics,
+        array              $timeline,
+        array              $scopes,
+        array              $hotPath,
+        CompileReport|null $compiled = null
+    )
+    {
+        $this->registrationRevision = $registrationRevision;
+        $this->compiledRevision     = $compiledRevision;
+        $this->compiledAttached     = $compiledAttached;
+        $this->warmedUp             = $warmedUp;
+        $this->executionMode        = $executionMode;
+        $this->asyncTarget          = $asyncTarget;
+        $this->sliceBoundaryMode    = $sliceBoundaryMode;
+        $this->diagnosticsMode      = $diagnosticsMode;
+        $this->timelineEnabled      = $timelineEnabled;
+        $this->lazyServices         = $lazyServices;
+        $this->aliases              = $aliases;
+        $this->deferredProviders    = $deferredProviders;
+        $this->sharedServiceCount   = $sharedServiceCount;
+        $this->scopedServiceCount   = $scopedServiceCount;
+        $this->metrics              = $metrics;
+        $this->timeline             = $timeline;
+        $this->scopes               = $scopes;
+        $this->hotPath              = $hotPath;
+        $this->compiled             = $compiled;
+    }
 
     public function jsonSerialize() : array
     {

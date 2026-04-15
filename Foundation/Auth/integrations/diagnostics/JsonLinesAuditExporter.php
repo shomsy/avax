@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Diagnostics;
 
-use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
 use JsonException;
 use RuntimeException;
@@ -14,13 +13,22 @@ use RuntimeException;
  */
 final class JsonLinesAuditExporter implements AuditExporterInterface
 {
-    private string|null $previousHash = null;
+    private string|null                  $previousHash = null;
+    private readonly bool                $tamperEvident;
+    private readonly NormalizeAuditEvent $normalizeAuditEvent;
+    private readonly string              $path;
 
     public function __construct(
-        private readonly string $path,
-        private readonly NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent(),
-        private readonly bool $tamperEvident = true
-    ) {}
+        string                   $path,
+        NormalizeAuditEvent|null $normalizeAuditEvent = null,
+        bool                     $tamperEvident = true
+    )
+    {
+        $normalizeAuditEvent       ??= new NormalizeAuditEvent();
+        $this->path                = $path;
+        $this->normalizeAuditEvent = $normalizeAuditEvent;
+        $this->tamperEvident       = $tamperEvident;
+    }
 
     public function export(array $events) : void
     {
@@ -31,8 +39,8 @@ final class JsonLinesAuditExporter implements AuditExporterInterface
 
             if ($this->tamperEvident) {
                 $payload['previous_hash'] = $this->previousHash;
-                $payload['record_hash'] = $this->hashPayload(payload: $payload);
-                $this->previousHash = $payload['record_hash'];
+                $payload['record_hash']   = $this->hashPayload(payload: $payload);
+                $this->previousHash       = $payload['record_hash'];
             }
 
             $lines[] = $this->encode(payload: $payload);

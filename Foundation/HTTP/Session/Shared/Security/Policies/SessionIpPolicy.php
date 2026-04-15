@@ -20,14 +20,19 @@ use Avax\HTTP\Session\Shared\Exceptions\PolicyViolationException;
  */
 final readonly class SessionIpPolicy implements PolicyInterface
 {
+    private bool $strictMode;
+
     /**
      * SessionIpPolicy Constructor.
      *
      * @param bool $strictMode If true, require exact IP match. If false, allow /24 subnet.
      */
     public function __construct(
-        private bool $strictMode = false
-    ) {}
+        bool $strictMode = false
+    )
+    {
+        $this->strictMode = $strictMode;
+    }
 
     /**
      * {@inheritdoc}

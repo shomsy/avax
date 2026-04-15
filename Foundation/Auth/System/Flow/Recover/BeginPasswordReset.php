@@ -17,14 +17,30 @@ use SensitiveParameter;
  */
 final readonly class BeginPasswordReset
 {
+    private AttemptThrottle|null        $attemptThrottle;
+    private int                         $expiresAfterSeconds;
+    private Clock                       $clock;
+    private AuditLogInterface           $auditLog;
+    private PasswordResetStoreInterface $passwordResetStore;
+    private UserSourceInterface         $userSource;
+
     public function __construct(
-        private UserSourceInterface                               $userSource,
-        #[SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
-        private AuditLogInterface                                 $auditLog,
-        private Clock                                             $clock,
-        private int                                               $expiresAfterSeconds = 3600,
-        private AttemptThrottle|null                              $attemptThrottle = null
-    ) {}
+        UserSourceInterface                               $userSource,
+        #[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore,
+        AuditLogInterface                                 $auditLog,
+        Clock                                             $clock,
+        int|null                                          $expiresAfterSeconds = null,
+        AttemptThrottle|null                              $attemptThrottle = null
+    )
+    {
+        $expiresAfterSeconds       ??= 3600;
+        $this->userSource          = $userSource;
+        $this->passwordResetStore  = $passwordResetStore;
+        $this->auditLog            = $auditLog;
+        $this->clock               = $clock;
+        $this->expiresAfterSeconds = $expiresAfterSeconds;
+        $this->attemptThrottle     = $attemptThrottle;
+    }
 
     /**
      * @throws \DateMalformedStringException
@@ -37,15 +53,15 @@ final readonly class BeginPasswordReset
             $this->attemptThrottle?->check(key: $throttleKey);
         } catch (AttemptThrottleExceeded $exception) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.password_reset.throttled',
-                occurredAt: $this->clock->now(),
-                context   : [
-                    'email'       => strtolower($data->email),
-                    'ip_address'  => $data->ipAddress,
-                    'user_agent'  => $data->userAgent,
-                    'retry_after' => $exception->retryAfter(),
-                ]
-            ));
+                                               name      : 'auth.password_reset.throttled',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'email'       => strtolower($data->email),
+                                                               'ip_address'  => $data->ipAddress,
+                                                               'user_agent'  => $data->userAgent,
+                                                               'retry_after' => $exception->retryAfter(),
+                                                           ]
+                                           ));
 
             return PasswordResetChallenge::hidden();
         }
@@ -55,15 +71,15 @@ final readonly class BeginPasswordReset
 
         if ($user === null || ! $user->isActive()) {
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.password_reset.requested',
-                                        occurredAt: $this->clock->now(),
-                                        context   : [
-                                                        'email'      => strtolower($data->email),
-                                                        'dispatched' => false,
-                                                        'ip_address' => $data->ipAddress,
-                                                        'user_agent' => $data->userAgent,
-                                                    ]
-                                    ));
+                                               name      : 'auth.password_reset.requested',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'email'      => strtolower($data->email),
+                                                               'dispatched' => false,
+                                                               'ip_address' => $data->ipAddress,
+                                                               'user_agent' => $data->userAgent,
+                                                           ]
+                                           ));
 
             return PasswordResetChallenge::hidden();
         }
@@ -74,15 +90,15 @@ final readonly class BeginPasswordReset
         );
 
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.password_reset.requested',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'    => $user->getId()->value,
-                                                    'dispatched' => true,
-                                                    'ip_address' => $data->ipAddress,
-                                                    'user_agent' => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.password_reset.requested',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $user->getId()->value,
+                                                           'dispatched' => true,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return $challenge;
     }

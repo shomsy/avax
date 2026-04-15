@@ -11,14 +11,21 @@ namespace Avax\Database\Query;
  */
 final readonly class TableIdentifier
 {
+    public string|null $alias;
+    public string      $name;
+
     /**
      * @param string      $name  The technical identifier (physical name) of the database table.
      * @param string|null $alias The optional domain-specific label (alias) assigned to the table source.
      */
     public function __construct(
-        public string      $name,
-        public string|null $alias = null
-    ) {}
+        string      $name,
+        string|null $alias = null
+    )
+    {
+        $this->name  = $name;
+        $this->alias = $alias;
+    }
 
     /**
      * Convert to SQL-like string format.

@@ -11,7 +11,12 @@ use SensitiveParameter;
  */
 final readonly class ConfirmMfaEnrollmentData
 {
+    public string $code;
+
     public function __construct(
-        #[SensitiveParameter] public string $code
-    ) {}
+        #[SensitiveParameter] string $code
+    )
+    {
+        $this->code = $code;
+    }
 }

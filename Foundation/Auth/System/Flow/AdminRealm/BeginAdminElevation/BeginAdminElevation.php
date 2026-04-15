@@ -20,14 +20,29 @@ use SensitiveParameter;
 
 final readonly class BeginAdminElevation
 {
+    private bool                         $phishingResistantRequired;
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private AdminElevationStoreInterface $elevationStore;
+    private RequireFreshMfa              $requireFreshMfa;
+    private CurrentAuthentication        $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                             $requireFreshMfa,
-        private AdminElevationStoreInterface                $elevationStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private bool                                        $phishingResistantRequired = false
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        RequireFreshMfa                             $requireFreshMfa,
+        AdminElevationStoreInterface                $elevationStore,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock,
+        bool                                        $phishingResistantRequired = false
+    )
+    {
+        $this->currentAuthentication     = $currentAuthentication;
+        $this->requireFreshMfa           = $requireFreshMfa;
+        $this->elevationStore            = $elevationStore;
+        $this->auditLog                  = $auditLog;
+        $this->clock                     = $clock;
+        $this->phishingResistantRequired = $phishingResistantRequired;
+    }
 
     /**
      * @throws AdminElevationFailed
@@ -61,23 +76,23 @@ final readonly class BeginAdminElevation
 
         $expiresAt = $this->clock->now()->modify(modifier: '+15 minutes');
         $this->elevationStore->start(record: new AdminElevationRecord(
-            userId    : $user->id,
-            bindingId : $bindingId,
-            expiresAt : $expiresAt
-        ));
+                                                 userId   : $user->id,
+                                                 bindingId: $bindingId,
+                                                 expiresAt: $expiresAt
+                                             ));
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.admin.elevation.started',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'user_id' => $user->id,
-                'binding_id' => $bindingId,
-            ]
-        ));
+                                           name      : 'auth.admin.elevation.started',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $user->id,
+                                                           'binding_id' => $bindingId,
+                                                       ]
+                                       ));
 
         return new AdminElevation(
-            bindingId : $bindingId,
-            expiresAt : $expiresAt
+            bindingId: $bindingId,
+            expiresAt: $expiresAt
         );
     }
 

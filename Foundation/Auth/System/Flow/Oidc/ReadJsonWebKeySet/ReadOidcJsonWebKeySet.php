@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 
 final readonly class ReadOidcJsonWebKeySet
 {
+    private OidcProviderInterface $oidcProvider;
+
     public function __construct(
-        private OidcProviderInterface $oidcProvider
-    ) {}
+        OidcProviderInterface $oidcProvider
+    )
+    {
+        $this->oidcProvider = $oidcProvider;
+    }
 
     public function execute() : OidcJsonWebKeySet
     {

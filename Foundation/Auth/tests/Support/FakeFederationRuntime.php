@@ -19,8 +19,8 @@ final class FakeFederationRuntime implements FederationRuntimeInterface, Federat
 
     public function startLogin(
         FederationConnection $connection,
-        string $redirectUri,
-        string|null $state = null
+        string               $redirectUri,
+        string|null          $state = null
     ) : StartedFederatedLogin
     {
         return new StartedFederatedLogin(
@@ -31,7 +31,7 @@ final class FakeFederationRuntime implements FederationRuntimeInterface, Federat
 
     public function completeLogin(
         FederationConnection $connection,
-        array $payload
+        array                $payload
     ) : FederatedIdentity
     {
         return new FederatedIdentity(

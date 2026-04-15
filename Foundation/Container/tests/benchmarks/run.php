@@ -80,7 +80,9 @@ final class BenchDeferredProviderService implements BenchDeferredProviderContrac
 
 final class BenchDeferredProvider implements DeferredProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -107,38 +109,61 @@ final class BenchDeferredProvider implements DeferredProviderInterface
 
 final class BenchDeep5
 {
-    public function __construct(public BenchDeep4 $next) {}
+    public BenchDeep4 $next;
+
+    public function __construct(BenchDeep4 $next) { $this->next = $next; }
 }
 
 final class BenchDeep4
 {
-    public function __construct(public BenchDeep3 $next) {}
+    public BenchDeep3 $next;
+
+    public function __construct(BenchDeep3 $next) { $this->next = $next; }
 }
 
 final class BenchDeep3
 {
-    public function __construct(public BenchDeep2 $next) {}
+    public BenchDeep2 $next;
+
+    public function __construct(BenchDeep2 $next) { $this->next = $next; }
 }
 
 final class BenchDeep2
 {
-    public function __construct(public BenchDeep1 $next) {}
+    public BenchDeep1 $next;
+
+    public function __construct(BenchDeep1 $next) { $this->next = $next; }
 }
 
 final class BenchDeep1
 {
-    public function __construct(public BenchSharedService $shared) {}
+    public BenchSharedService $shared;
+
+    public function __construct(BenchSharedService $shared) { $this->shared = $shared; }
 }
 
 final class BenchWideRoot
 {
+    public BenchWide5 $five;
+    public BenchWide4 $four;
+    public BenchWide3 $three;
+    public BenchWide2 $two;
+    public BenchWide1 $one;
+
     public function __construct(
-        public BenchWide1 $one,
-        public BenchWide2 $two,
-        public BenchWide3 $three,
-        public BenchWide4 $four,
-        public BenchWide5 $five
-    ) {}
+        BenchWide1 $one,
+        BenchWide2 $two,
+        BenchWide3 $three,
+        BenchWide4 $four,
+        BenchWide5 $five
+    )
+    {
+        $this->one   = $one;
+        $this->two   = $two;
+        $this->three = $three;
+        $this->four  = $four;
+        $this->five  = $five;
+    }
 }
 
 final class BenchWide1 {}
@@ -451,14 +476,14 @@ function benchmarkScenarios() : array
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchDeep5::class);
                 $container->compileContainer(serviceIds: [
-                                                 BenchSharedService::class,
-                                                 BenchDeep1::class,
-                                                 BenchDeep2::class,
-                                                 BenchDeep3::class,
-                                                 BenchDeep4::class,
-                                                 BenchDeep5::class,
-                                                 BenchWideRoot::class,
-                                             ]);
+                                                             BenchSharedService::class,
+                                                             BenchDeep1::class,
+                                                             BenchDeep2::class,
+                                                             BenchDeep3::class,
+                                                             BenchDeep4::class,
+                                                             BenchDeep5::class,
+                                                             BenchWideRoot::class,
+                                                         ]);
             },
         ],
         [
@@ -585,17 +610,17 @@ if ($jsonOutput || is_string($outputPath)) {
     $payload = json_encode([
                                'meta' => [
                                    'php' => PHP_VERSION,
-                                                                                                                                                                                                                    'sapi' => PHP_SAPI,
-                                                                                                                                                                                                                                                     'timestamp' => gmdate('c'),
-                                                                                                                                                                                                                                                                                                           'dockerImage' => BENCHMARK_DOCKER_IMAGE,
-                                                                                                                                                                                                                                                                                                                                                                             'phpSettings' => benchmarkPhpSettings(),
-                                                                                                                                                                                                                                                                                                                                                                                                     'suiteVersion' => BENCHMARK_SUITE_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'buildMarker' => (string) (getenv('BENCHMARK_BUILD_MARKER') ?: ''),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 'guard' => $guard,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'scenarioCount' => count($results),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 'scenarios' => array_keys($results),
+                                                                                                                                                                                                                                                        'sapi' => PHP_SAPI,
+                                                                                                                                                                                                                                                                                                     'timestamp' => gmdate('c'),
+                                                                                                                                                                                                                                                                                                                                                                    'dockerImage' => BENCHMARK_DOCKER_IMAGE,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                     'phpSettings' => benchmarkPhpSettings(),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'suiteVersion' => BENCHMARK_SUITE_VERSION,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'buildMarker' => (string) (getenv('BENCHMARK_BUILD_MARKER') ?: ''),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'guard' => $guard,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'scenarioCount' => count($results),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'scenarios' => array_keys($results),
                                ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         'results' => $results,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               'results' => $results,
                            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 
     if (is_string($outputPath) && $outputPath !== '') {

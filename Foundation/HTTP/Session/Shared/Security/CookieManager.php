@@ -21,6 +21,12 @@ use InvalidArgumentException;
 final readonly class CookieManager
 {
     private Closure|null $cookieSource;
+    private int          $lifetime;
+    private string       $domain;
+    private string       $path;
+    private string       $sameSite;
+    private bool         $httpOnly;
+    private bool         $secure;
 
     /**
      * CookieManager Constructor.
@@ -33,15 +39,27 @@ final readonly class CookieManager
      * @param int    $lifetime Cookie lifetime in seconds (default: 0 = session).
      */
     public function __construct(
-        private bool   $secure = true,
-        private bool   $httpOnly = true,
-        private string $sameSite = 'Lax',
-        private string $path = '/',
-        private string $domain = '',
-        private int    $lifetime = 0,
-        callable|null  $cookieSource = null
+        bool|null     $secure = null,
+        bool|null     $httpOnly = null,
+        string|null   $sameSite = null,
+        string|null   $path = null,
+        string|null   $domain = null,
+        int|null      $lifetime = null,
+        callable|null $cookieSource = null
     )
     {
+        $secure         ??= true;
+        $httpOnly       ??= true;
+        $sameSite       ??= 'Lax';
+        $path           ??= '/';
+        $domain         ??= '';
+        $lifetime       ??= 0;
+        $this->secure   = $secure;
+        $this->httpOnly = $httpOnly;
+        $this->sameSite = $sameSite;
+        $this->path     = $path;
+        $this->domain   = $domain;
+        $this->lifetime = $lifetime;
         // Validate SameSite
         if (! in_array(needle: $sameSite, haystack: ['Lax', 'Strict', 'None'], strict: true)) {
             throw new InvalidArgumentException(

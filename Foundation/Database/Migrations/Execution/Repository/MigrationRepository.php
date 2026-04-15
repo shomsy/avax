@@ -14,11 +14,15 @@ use Throwable;
  */
 final class MigrationRepository
 {
-    private string $table = 'migrations';
+    private string                $table = 'migrations';
+    private readonly QueryBuilder $builder;
 
     public function __construct(
-        private readonly QueryBuilder $builder
-    ) {}
+        QueryBuilder $builder
+    )
+    {
+        $this->builder = $builder;
+    }
 
     /**
      * @throws Throwable

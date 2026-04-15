@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flow\Federation;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\FederationProvider;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
@@ -34,34 +34,34 @@ final class FederationFlowTest extends TestCase
         $auth          = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'federation-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'federation-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->withAuditLog(auditLog: $auditLog)
             ->withFederationRuntime(federationRuntime: $runtime)
             ->ready();
 
         $connection = $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-            tenantSlug  : 'acme',
-            name        : 'Acme OIDC',
-            provider    : FederationProvider::OIDC,
-            domain      : 'acme.test',
-            groupRoleMap: ['admins' => ['admin']],
-            metadataUrl : 'https://idp.example.test/.well-known/openid-configuration',
-            ssoOnly     : true,
-            breakGlassAllowed: true
-        ));
+                                                                    tenantSlug       : 'acme',
+                                                                    name             : 'Acme OIDC',
+                                                                    provider         : FederationProvider::OIDC,
+                                                                    domain           : 'acme.test',
+                                                                    ssoOnly          : true,
+                                                                    groupRoleMap     : ['admins' => ['admin']],
+                                                                    metadataUrl      : 'https://idp.example.test/.well-known/openid-configuration',
+                                                                    breakGlassAllowed: true
+                                                                ));
 
         $this->assertNull(actual: $auth->discoverFederationConnection(email: 'user@acme.test'));
 
         $verified = $auth->verifyFederationDomain(data: new VerifyFederationDomainData(
-            connectionId      : $connection->connectionId,
-            verificationToken : $connection->domainVerificationToken ?? ''
-        ));
+                                                            connectionId     : $connection->connectionId,
+                                                            verificationToken: $connection->domainVerificationToken ?? ''
+                                                        ));
         $this->assertTrue(condition: $verified->isDomainVerified());
         $this->assertSame(expected: $connection->connectionId, actual: $auth->discoverFederationConnection(email: 'user@acme.test')?->connectionId);
 
@@ -86,10 +86,10 @@ final class FederationFlowTest extends TestCase
 
         try {
             $auth->startFederatedLogin(data: new StartFederatedLoginData(
-                connectionId: $connection->connectionId,
-                redirectUri : 'https://app.example.test/callback',
-                state       : 'state-break-glass'
-            ));
+                                                 connectionId: $connection->connectionId,
+                                                 redirectUri : 'https://app.example.test/callback',
+                                                 state       : 'state-break-glass'
+                                             ));
             $this->fail(message: 'Expected unavailable federation connection to block SSO start.');
         } catch (FederationFailed $exception) {
             $this->assertSame(expected: 'Federation connection is unavailable.', actual: $exception->getMessage());
@@ -99,23 +99,23 @@ final class FederationFlowTest extends TestCase
         $auth->checkFederationConnectionHealth(connectionId: $connection->connectionId);
 
         $started = $auth->startFederatedLogin(data: new StartFederatedLoginData(
-            connectionId: $connection->connectionId,
-            redirectUri : 'https://app.example.test/callback',
-            state       : 'state-1'
-        ));
+                                                        connectionId: $connection->connectionId,
+                                                        redirectUri : 'https://app.example.test/callback',
+                                                        state       : 'state-1'
+                                                    ));
         $this->assertStringContainsString(needle: $connection->connectionId, haystack: $started->redirectUrl);
 
         $result = $auth->completeFederatedLogin(data: new CompleteFederatedLoginData(
-            connectionId: $connection->connectionId,
-            payload     : [
-                'subject' => 'external-123',
-                'email' => 'admin@acme.test',
-                'display_name' => 'Acme Admin',
-                'groups' => ['admins'],
-            ],
-            ipAddress   : '127.0.0.1',
-            userAgent   : 'PHPUnit'
-        ));
+                                                          connectionId: $connection->connectionId,
+                                                          payload     : [
+                                                                            'subject'      => 'external-123',
+                                                                            'email'        => 'admin@acme.test',
+                                                                            'display_name' => 'Acme Admin',
+                                                                            'groups'       => ['admins'],
+                                                                        ],
+                                                          ipAddress   : '127.0.0.1',
+                                                          userAgent   : 'PHPUnit'
+                                                      ));
 
         $this->assertTrue(condition: $result->isAuthenticated());
         $this->assertSame(expected: 'admin@acme.test', actual: $result->user()?->email);
@@ -124,26 +124,26 @@ final class FederationFlowTest extends TestCase
 
     public function testFederationConnectionPolicyRejectsTenantCrossingAndInvalidMappings() : void
     {
-        $auth = $this->buildAuth();
+        $auth       = $this->buildAuth();
         $connection = $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-            tenantSlug  : 'acme',
-            name        : 'Acme OIDC',
-            provider    : FederationProvider::OIDC,
-            domain      : 'acme.test',
-            groupRoleMap: ['admins' => ['admin']],
-            metadataUrl : 'https://idp.example.test/.well-known/openid-configuration'
-        ));
+                                                                    tenantSlug  : 'acme',
+                                                                    name        : 'Acme OIDC',
+                                                                    provider    : FederationProvider::OIDC,
+                                                                    domain      : 'acme.test',
+                                                                    groupRoleMap: ['admins' => ['admin']],
+                                                                    metadataUrl : 'https://idp.example.test/.well-known/openid-configuration'
+                                                                ));
 
         $this->assertNotNull(actual: $connection->domainVerificationToken);
 
         try {
             $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-                tenantSlug  : 'other-tenant',
-                name        : 'Cross Tenant',
-                provider    : FederationProvider::OIDC,
-                domain      : 'acme.test',
-                groupRoleMap: ['admins' => ['admin']]
-            ));
+                                                          tenantSlug  : 'other-tenant',
+                                                          name        : 'Cross Tenant',
+                                                          provider    : FederationProvider::OIDC,
+                                                          domain      : 'acme.test',
+                                                          groupRoleMap: ['admins' => ['admin']]
+                                                      ));
             $this->fail(message: 'Expected duplicate domain registration to fail.');
         } catch (FederationFailed $exception) {
             $this->assertSame(expected: 'Federation domain is already registered for another tenant.', actual: $exception->getMessage());
@@ -151,12 +151,12 @@ final class FederationFlowTest extends TestCase
 
         try {
             $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-                tenantSlug  : 'invalid-map',
-                name        : 'Invalid Map',
-                provider    : FederationProvider::OIDC,
-                domain      : 'invalid.test',
-                groupRoleMap: ['admins' => ['super-admin']]
-            ));
+                                                          tenantSlug  : 'invalid-map',
+                                                          name        : 'Invalid Map',
+                                                          provider    : FederationProvider::OIDC,
+                                                          domain      : 'invalid.test',
+                                                          groupRoleMap: ['admins' => ['super-admin']]
+                                                      ));
             $this->fail(message: 'Expected invalid role mapping to fail.');
         } catch (FederationFailed $exception) {
             $this->assertSame(expected: 'Federation group-to-role mapping is invalid.', actual: $exception->getMessage());
@@ -171,12 +171,12 @@ final class FederationFlowTest extends TestCase
         return Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'federation-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'federation-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->withAuditLog(auditLog: new InMemoryAuditLog())
             ->withFederationRuntime(federationRuntime: new FakeFederationRuntime())

@@ -15,9 +15,14 @@ use Throwable;
  */
 final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
 {
+    private string $routesPath;
+
     public function __construct(
-        private string $routesPath
-    ) {}
+        string $routesPath
+    )
+    {
+        $this->routesPath = $routesPath;
+    }
 
     /**
      * Load routes from disk files into the collection.

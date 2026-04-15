@@ -14,14 +14,21 @@ use Avax\Database\Registry\ModuleRegistry;
  */
 final readonly class Kernel
 {
+    private ModuleRegistry $registry;
+    private Container      $container;
+
     /**
      * @param Container      $container The "Toolbox" where we store all our services.
      * @param ModuleRegistry $registry  The "Librarian" who keeps track of which modules are active.
      */
     public function __construct(
-        private Container      $container,
-        private ModuleRegistry $registry
-    ) {}
+        Container      $container,
+        ModuleRegistry $registry
+    )
+    {
+        $this->container = $container;
+        $this->registry  = $registry;
+    }
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel

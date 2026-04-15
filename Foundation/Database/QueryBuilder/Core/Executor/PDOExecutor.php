@@ -20,11 +20,20 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
+    private string             $connectionName;
+    private EventBus|null      $eventBus;
+    private DatabaseConnection $connection;
+
     public function __construct(
-        private DatabaseConnection $connection,
-        private EventBus|null      $eventBus = null,
-        private string             $connectionName = 'default'
-    ) {}
+        DatabaseConnection $connection,
+        EventBus|null      $eventBus = null,
+        string             $connectionName = 'default'
+    )
+    {
+        $this->connection     = $connection;
+        $this->eventBus       = $eventBus;
+        $this->connectionName = $connectionName;
+    }
 
     /**
      * Execute a "Read" query (SELECT) and get the rows back.

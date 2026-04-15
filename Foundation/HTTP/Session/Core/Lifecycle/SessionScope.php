@@ -30,7 +30,9 @@ final class SessionScope
 {
     private int|null $ttl = null;
 
-    private bool $secure = false;
+    private bool                   $secure = false;
+    private readonly SessionEngine $engine;
+    private readonly string        $namespace;
 
     /**
      * SessionScope Constructor.
@@ -39,9 +41,13 @@ final class SessionScope
      * @param SessionEngine $engine    The session engine.
      */
     public function __construct(
-        private readonly string        $namespace,
-        private readonly SessionEngine $engine
-    ) {}
+        string        $namespace,
+        SessionEngine $engine
+    )
+    {
+        $this->namespace = $namespace;
+        $this->engine    = $engine;
+    }
 
     /**
      * Enable auto-encryption for all operations in this consumer context.

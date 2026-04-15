@@ -30,7 +30,7 @@ final class LifecycleOrchestratorTest extends TestCase
             passwordHash: 'hash',
             roles       : [UserRole::USER]
         ));
-        $store = new InMemoryLifecycleStore();
+        $store        = new InMemoryLifecycleStore();
         $orchestrator = new LifecycleOrchestrator(
             userSource: $userSource,
             store     : $store,
@@ -39,27 +39,27 @@ final class LifecycleOrchestratorTest extends TestCase
         );
 
         $suspended = $orchestrator->suspend(
-            userId : new UserId(value: 42),
-            source : LifecycleSource::ADMIN,
-            reason : 'manual_suspend'
+            userId: new UserId(value: 42),
+            source: LifecycleSource::ADMIN,
+            reason: 'manual_suspend'
         );
 
         $this->assertSame(expected: LifecycleState::SUSPENDED, actual: $suspended->state);
         $this->assertFalse(condition: $userSource->findById(id: new UserId(value: 42))?->isActive() ?? true);
 
         $reactivated = $orchestrator->activate(
-            userId : new UserId(value: 42),
-            source : LifecycleSource::ADMIN,
-            reason : 'manual_reactivate'
+            userId: new UserId(value: 42),
+            source: LifecycleSource::ADMIN,
+            reason: 'manual_reactivate'
         );
 
         $this->assertSame(expected: LifecycleState::ACTIVE, actual: $reactivated->state);
         $this->assertTrue(condition: $userSource->findById(id: new UserId(value: 42))?->isActive() ?? false);
 
         $deprovisioned = $orchestrator->deprovision(
-            userId : new UserId(value: 42),
-            source : LifecycleSource::SCIM,
-            reason : 'directory_deleted'
+            userId: new UserId(value: 42),
+            source: LifecycleSource::SCIM,
+            reason: 'directory_deleted'
         );
 
         $this->assertSame(expected: LifecycleState::DEPROVISIONED, actual: $deprovisioned->state);
@@ -85,18 +85,18 @@ final class LifecycleOrchestratorTest extends TestCase
         );
 
         $orchestrator->deprovision(
-            userId : new UserId(value: 43),
-            source : LifecycleSource::ADMIN,
-            reason : 'hard_close'
+            userId: new UserId(value: 43),
+            source: LifecycleSource::ADMIN,
+            reason: 'hard_close'
         );
 
         $this->expectException(LifecycleFailed::class);
         $this->expectExceptionMessage('Lifecycle transition from [deprovisioned] to [active] is not allowed.');
 
         $orchestrator->activate(
-            userId : new UserId(value: 43),
-            source : LifecycleSource::ADMIN,
-            reason : 'reopen'
+            userId: new UserId(value: 43),
+            source: LifecycleSource::ADMIN,
+            reason: 'reopen'
         );
     }
 }

@@ -23,18 +23,41 @@ use SensitiveParameter;
 
 final readonly class CompletePasskeyAuthentication
 {
+    private string                          $rpId;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private CurrentAuthentication           $currentAuthentication;
+    private ProjectAuthenticatedUser        $projectAuthenticatedUser;
+    private IdentityInterface               $identity;
+    private UserSourceInterface             $userSource;
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private PasskeyChallengeStoreInterface  $challengeStore;
+    private PasskeyRuntimeInterface         $runtime;
+
     public function __construct(
-        private PasskeyRuntimeInterface                               $runtime,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private UserSourceInterface                                   $userSource,
-        private IdentityInterface                                     $identity,
-        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
-    ) {}
+        PasskeyRuntimeInterface                               $runtime,
+        PasskeyChallengeStoreInterface                        $challengeStore,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
+        UserSourceInterface                                   $userSource,
+        IdentityInterface                                     $identity,
+        ProjectAuthenticatedUser                              $projectAuthenticatedUser,
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        string                                                $rpId
+    )
+    {
+        $this->runtime                  = $runtime;
+        $this->challengeStore           = $challengeStore;
+        $this->credentialStore          = $credentialStore;
+        $this->userSource               = $userSource;
+        $this->identity                 = $identity;
+        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
+        $this->currentAuthentication    = $currentAuthentication;
+        $this->auditLog                 = $auditLog;
+        $this->clock                    = $clock;
+        $this->rpId                     = $rpId;
+    }
 
     /**
      * @throws PasskeyOperationFailed
@@ -101,15 +124,15 @@ final readonly class CompletePasskeyAuthentication
         $this->credentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
         $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.passkey.authentication.succeeded',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'user_id' => $user->getId()->value,
-                'credential_id' => $credential->credentialId,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.passkey.authentication.succeeded',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'       => $user->getId()->value,
+                                                           'credential_id' => $credential->credentialId,
+                                                           'ip_address'    => $data->ipAddress,
+                                                           'user_agent'    => $data->userAgent,
+                                                       ]
+                                       ));
 
         return AuthenticationResult::success(
             context     : $context,

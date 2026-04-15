@@ -33,36 +33,6 @@ final class PasswordHasher
         $this->options = $options ?? $this->defaultOptions(algo: $this->algo);
     }
 
-    public function hash(#[SensitiveParameter] string $password) : string
-    {
-        return password_hash(password: $password, algo: $this->algo, options: $this->options);
-    }
-
-    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash) : bool
-    {
-        return password_verify(password: $password, hash: $hash);
-    }
-
-    /**
-     * Generates a dummy hash for timing attack mitigation.
-     */
-    public function dummyHash() : string
-    {
-        // Use a fixed cost dummy hash that looks real.
-        // This hash is for the password 'password' with cost 12.
-        return '$2y$12$nO.MMTy.SQpyLSIsZpXOnuSnt.SQpyLSIsZpXOnuSnt.SQpyLSi';
-    }
-
-    public function needsRehash(#[SensitiveParameter] string $hash) : bool
-    {
-        return password_needs_rehash(hash: $hash, algo: $this->algo, options: $this->options);
-    }
-
-    private function defaultAlgorithm() : string
-    {
-        return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
-    }
-
     /**
      * @param array<string, int|string|bool>|null $options
      */
@@ -90,6 +60,11 @@ final class PasswordHasher
         return null;
     }
 
+    private function defaultAlgorithm() : string
+    {
+        return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
+    }
+
     /**
      * @return array<string, int|string|bool>
      */
@@ -104,5 +79,30 @@ final class PasswordHasher
         }
 
         return ['cost' => 12];
+    }
+
+    public function hash(#[SensitiveParameter] string $password) : string
+    {
+        return password_hash(password: $password, algo: $this->algo, options: $this->options);
+    }
+
+    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash) : bool
+    {
+        return password_verify(password: $password, hash: $hash);
+    }
+
+    /**
+     * Generates a dummy hash for timing attack mitigation.
+     */
+    public function dummyHash() : string
+    {
+        // Use a fixed cost dummy hash that looks real.
+        // This hash is for the password 'password' with cost 12.
+        return '$2y$12$nO.MMTy.SQpyLSIsZpXOnuSnt.SQpyLSIsZpXOnuSnt.SQpyLSi';
+    }
+
+    public function needsRehash(#[SensitiveParameter] string $hash) : bool
+    {
+        return password_needs_rehash(hash: $hash, algo: $this->algo, options: $this->options);
     }
 }

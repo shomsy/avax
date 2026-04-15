@@ -19,8 +19,9 @@ use RuntimeException;
 final class FallbackManager
 {
     private Closure|array|string|null $handler = null;
+    private ControllerDispatcher      $dispatcher;
 
-    public function __construct(private ControllerDispatcher $dispatcher) {}
+    public function __construct(ControllerDispatcher $dispatcher) { $this->dispatcher = $dispatcher; }
 
     public function set(callable|array|string $handler) : void
     {

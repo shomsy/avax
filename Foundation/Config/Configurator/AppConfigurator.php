@@ -22,7 +22,8 @@ abstract class AppConfigurator implements ConfiguratorInterface
     private static WeakMap $weakMap;
 
     // Holds the loaded configuration data as a Collection instance
-    protected Collection $configuration;
+    protected Collection            $configuration;
+    protected ConfigLoaderInterface $configLoader;
 
     /**
      * Constructor to initialize the configurator with a config loader.
@@ -30,9 +31,10 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * @param ConfigLoaderInterface $configLoader An instance responsible for loading config files.
      */
     public function __construct(
-        protected ConfigLoaderInterface $configLoader,
+        ConfigLoaderInterface $configLoader,
     )
     {
+        $this->configLoader = $configLoader;
         // Initialize WeakMap if not already set
         self::$weakMap ??= new WeakMap;
         // Load configuration, either from cache or fresh data

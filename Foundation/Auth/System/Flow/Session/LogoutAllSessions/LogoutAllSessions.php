@@ -21,14 +21,29 @@ use SensitiveParameter;
  */
 final readonly class LogoutAllSessions
 {
+    private RefreshTokenStoreInterface|null $refreshTokenStore;
+    private SessionRegistryInterface|null   $sessionRegistry;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private CurrentAuthentication           $currentAuthentication;
+    private IdentityInterface               $identity;
+
     public function __construct(
-        private IdentityInterface                                     $identity,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
-    ) {}
+        IdentityInterface                                     $identity,
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null
+    )
+    {
+        $this->identity              = $identity;
+        $this->currentAuthentication = $currentAuthentication;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->sessionRegistry       = $sessionRegistry;
+        $this->refreshTokenStore     = $refreshTokenStore;
+    }
 
     /**
      * @throws Unauthenticated
@@ -55,12 +70,12 @@ final readonly class LogoutAllSessions
         $this->currentAuthentication->clear();
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.sessions.revoked',
-            occurredAt: $now,
-            context   : [
-                'user_id' => $user->id,
-                'reason'  => 'logout_all',
-            ]
-        ));
+                                           name      : 'auth.sessions.revoked',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                           'reason'  => 'logout_all',
+                                                       ]
+                                       ));
     }
 }

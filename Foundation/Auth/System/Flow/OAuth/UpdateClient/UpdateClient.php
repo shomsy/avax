@@ -15,11 +15,20 @@ use RuntimeException;
 
 final readonly class UpdateClient
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        OAuthClientRegistryInterface $clientRegistry,
+        AuditLogInterface            $auditLog,
+        Clock                        $clock
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     public function execute(UpdateClientData $data) : OAuthClient
     {
@@ -30,55 +39,55 @@ final readonly class UpdateClient
         }
 
         $tokenEndpointAuthMethod = (new OAuthTokenEndpointAuthMethodPolicy())->resolve(
-            type: $data->type,
-            requested: $data->tokenEndpointAuthMethod,
-            current: $existing->tokenEndpointAuthMethod,
+            type            : $data->type,
+            requested       : $data->tokenEndpointAuthMethod,
+            current         : $existing->tokenEndpointAuthMethod,
             workloadIdentity: $data->workloadIdentity
         );
-        $approvalRequired = $data->approvalRequired;
-        $approvalStatus = $approvalRequired
+        $approvalRequired        = $data->approvalRequired;
+        $approvalStatus          = $approvalRequired
             ? OAuthClientApprovalStatus::PENDING_APPROVAL
             : $existing->approvalStatus;
-        $approvedAt = $approvalRequired ? null : $existing->approvedAt;
-        $approvedBy = $approvalRequired ? null : $existing->approvedBy;
+        $approvedAt              = $approvalRequired ? null : $existing->approvedAt;
+        $approvedBy              = $approvalRequired ? null : $existing->approvedBy;
 
         $updated = new OAuthClient(
-            clientId                  : $existing->clientId,
-            name                      : trim($data->name),
-            type                      : $data->type,
-            redirectUris              : array_values($data->redirectUris),
-            allowedScopes             : array_values($data->allowedScopes),
-            tenantSlug                : $data->tenantSlug,
-            allowedAudiences          : array_values($data->allowedAudiences),
-            allowedGrantTypes         : array_values($data->allowedGrantTypes),
-            audienceScopeBoundaries   : $data->audienceScopeBoundaries,
-            tokenEndpointAuthMethod   : $tokenEndpointAuthMethod,
-            requiredSenderConstraint  : $data->requiredSenderConstraint,
-            workloadIdentity          : $data->workloadIdentity,
-            phishingResistantRequired : $data->phishingResistantRequired,
-            requestObjectSignatureRequired: $data->requestObjectSignatureRequired,
-            frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
-            backChannelLogoutSupported : $data->backChannelLogoutSupported,
-            approvalStatus            : $approvalStatus,
-            approvedAt                : $approvedAt,
-            approvedBy                : $approvedBy,
-            active                    : $existing->active,
-            secretHash                : $existing->secretHash,
+            clientId                       : $existing->clientId,
+            name                           : trim($data->name),
+            type                           : $data->type,
+            redirectUris                   : array_values($data->redirectUris),
+            allowedScopes                  : array_values($data->allowedScopes),
+            tenantSlug                     : $data->tenantSlug,
+            allowedAudiences               : array_values($data->allowedAudiences),
+            allowedGrantTypes              : array_values($data->allowedGrantTypes),
+            audienceScopeBoundaries        : $data->audienceScopeBoundaries,
+            tokenEndpointAuthMethod        : $tokenEndpointAuthMethod,
+            requiredSenderConstraint       : $data->requiredSenderConstraint,
+            workloadIdentity               : $data->workloadIdentity,
+            phishingResistantRequired      : $data->phishingResistantRequired,
+            requestObjectSignatureRequired : $data->requestObjectSignatureRequired,
+            frontChannelLogoutSupported    : $data->frontChannelLogoutSupported,
+            backChannelLogoutSupported     : $data->backChannelLogoutSupported,
+            approvalStatus                 : $approvalStatus,
+            approvedAt                     : $approvedAt,
+            approvedBy                     : $approvedBy,
+            active                         : $existing->active,
+            secretHash                     : $existing->secretHash,
             requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem
         );
         $this->clientRegistry->replace(client: $updated);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.client.updated',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $updated->clientId,
-                'tenant_slug' => $updated->tenantSlug,
-                'type' => $updated->type->value,
-                'active' => $updated->active ? 1 : 0,
-                'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
-                'approval_status' => $updated->approvalStatus->value,
-            ]
-        ));
+                                           name      : 'auth.oauth.client.updated',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'                         => $updated->clientId,
+                                                           'tenant_slug'                       => $updated->tenantSlug,
+                                                           'type'                              => $updated->type->value,
+                                                           'active'                            => $updated->active ? 1 : 0,
+                                                           'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
+                                                           'approval_status'                   => $updated->approvalStatus->value,
+                                                       ]
+                                       ));
 
         return $updated;
     }

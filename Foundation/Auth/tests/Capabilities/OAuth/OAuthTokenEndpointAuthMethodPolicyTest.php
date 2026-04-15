@@ -24,9 +24,9 @@ final class OAuthTokenEndpointAuthMethodPolicyTest extends TestCase
     {
         $policy = new OAuthTokenEndpointAuthMethodPolicy();
 
-        $default = $policy->resolve(type: OAuthClientType::CONFIDENTIAL);
+        $default   = $policy->resolve(type: OAuthClientType::CONFIDENTIAL);
         $preserved = $policy->resolve(
-            type: OAuthClientType::CONFIDENTIAL,
+            type   : OAuthClientType::CONFIDENTIAL,
             current: OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
         );
 
@@ -39,7 +39,7 @@ final class OAuthTokenEndpointAuthMethodPolicyTest extends TestCase
         $policy = new OAuthTokenEndpointAuthMethodPolicy();
 
         $resolved = $policy->resolve(
-            type: OAuthClientType::CONFIDENTIAL,
+            type   : OAuthClientType::CONFIDENTIAL,
             current: OAuthTokenEndpointAuthMethod::NONE
         );
 
@@ -53,7 +53,7 @@ final class OAuthTokenEndpointAuthMethodPolicyTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $policy->resolve(
-            type: OAuthClientType::PUBLIC,
+            type     : OAuthClientType::PUBLIC,
             requested: OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
         );
     }

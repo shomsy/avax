@@ -12,10 +12,13 @@ use Stringable;
  */
 final readonly class UserEmail implements Stringable
 {
+    public string $value;
+
     public function __construct(
-        public string $value
+        string $value
     )
     {
+        $this->value = $value;
         if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException(message: "Invalid email format: {$value}");
         }

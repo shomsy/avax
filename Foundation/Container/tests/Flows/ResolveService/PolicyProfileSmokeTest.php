@@ -24,8 +24,8 @@ $relaxed->bind(abstract: ConditionalInternalService::class, concrete: Conditiona
 $strict = makeTestContainer(config: CreateContainerConfig::create(
     settings      : ['app_env' => 'prod'],
     policyProfile : CreateContainerConfig::POLICY_PROFILE_RELAXED,
-    policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
-    policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_CLOSED
+    policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_CLOSED,
+    policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT]
 ));
 $strict->bind(abstract: StrictSharedFlowService::class, concrete: StrictSharedFlowService::class)
     ->asFlow(ownerSlice: 'flow.strict')

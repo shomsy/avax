@@ -15,7 +15,9 @@ use ReflectionMethod;
 
 final readonly class AttributeRouteRegistrar
 {
-    public function __construct(private HttpRequestRouter $router) {}
+    private HttpRequestRouter $router;
+
+    public function __construct(HttpRequestRouter $router) { $this->router = $router; }
 
     /**
      * @param object|string $controller

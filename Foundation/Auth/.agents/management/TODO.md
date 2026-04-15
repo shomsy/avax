@@ -21,9 +21,18 @@ Canonical active implementation queue.
 - `status`: done
 - `estimate`: 5h
 - `actual`: 2h 10m
-- `outcome`: Close the remaining package-owned OIDC completeness gap with asymmetric/public-client request-object verification, thin dynamic client registration HTTP lifecycle, and truthful canonical status updates
-- `acceptance`: public and confidential clients can register verifier key material through package-owned flows and HTTP surfaces; RSA-signed request objects pass only with matching key + claims; OIDC registration supports create/update/disable and discovery publication; canonical docs stop claiming dynamic registration and public-client JAR verification are external; targeted PHPUnit slices pass
-- `links`: System/Flow/Oidc/PushAuthorizationRequest/, System/Capability/OAuth/OAuthClient.php, integrations/http/Oidc/ServeOidcHttpSurface.php, integrations/http/TenantSecurity/ServeTenantSecurityHttpSurface.php, tests/Flows/Oidc/PushAuthorizationRequestTest.php, tests/Flows/OAuth/RegisterClientTest.php, tests/Flows/OAuth/UpdateClientTest.php, tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php, tests/Integrations/Http/TenantSecurity/ServeTenantSecurityHttpSurfaceTest.php, docs/STATUS.md, docs/oidc-conformance-matrix.md, REFAKTOR.md
+- `outcome`: Close the remaining package-owned OIDC completeness gap with asymmetric/public-client request-object
+  verification, thin dynamic client registration HTTP lifecycle, and truthful canonical status updates
+- `acceptance`: public and confidential clients can register verifier key material through package-owned flows and HTTP
+  surfaces; RSA-signed request objects pass only with matching key + claims; OIDC registration supports
+  create/update/disable and discovery publication; canonical docs stop claiming dynamic registration and public-client
+  JAR verification are external; targeted PHPUnit slices pass
+- `links`: System/Flow/Oidc/PushAuthorizationRequest/, System/Capability/OAuth/OAuthClient.php,
+  integrations/http/Oidc/ServeOidcHttpSurface.php, integrations/http/TenantSecurity/ServeTenantSecurityHttpSurface.php,
+  tests/Flows/Oidc/PushAuthorizationRequestTest.php, tests/Flows/OAuth/RegisterClientTest.php,
+  tests/Flows/OAuth/UpdateClientTest.php, tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php,
+  tests/Integrations/Http/TenantSecurity/ServeTenantSecurityHttpSurfaceTest.php, docs/STATUS.md,
+  docs/oidc-conformance-matrix.md, REFAKTOR.md
 
 - `id`: AUTH-030
 - `created_at`: 2026-04-15 00:35 CEST
@@ -32,9 +41,17 @@ Canonical active implementation queue.
 - `status`: done
 - `estimate`: 4h
 - `actual`: 2h 20m
-- `outcome`: Close the remaining iteration-local source-truth, system-shape, release-gate, deployment-boundary, and explainability drift by adding package-owned verification checks, integration suite separation, and truthful canonical documentation
-- `acceptance`: `integrations/release/CheckSystemShape.php` and `tooling/check-system-shape.php` fail on junk-drawer architecture drift; `CheckSourceTruth` verifies capability evidence paths; `phpunit.xml.dist` exposes a clean `Integration` suite; `composer release:gate` runs system-shape, analysis, tests, source-truth, migration, and release evidence; STATUS/REFAKTOR/docs reflect executable deployment-trust and explainability runtime posture; PHPUnit, PHPStan, strict PHPStan, `test:integration`, `source-truth`, `system-shape`, and `release:gate` pass
-- `links`: integrations/release/CheckSystemShape.php, integrations/release/CheckSourceTruth.php, tooling/check-system-shape.php, composer.json, phpunit.xml.dist, docs/STATUS.md, docs/deployment-trust-boundary.md, docs/support-explainability.md, REFAKTOR.md
+- `outcome`: Close the remaining iteration-local source-truth, system-shape, release-gate, deployment-boundary, and
+  explainability drift by adding package-owned verification checks, integration suite separation, and truthful canonical
+  documentation
+- `acceptance`: `integrations/release/CheckSystemShape.php` and `tooling/check-system-shape.php` fail on junk-drawer
+  architecture drift; `CheckSourceTruth` verifies capability evidence paths; `phpunit.xml.dist` exposes a clean
+  `Integration` suite; `composer release:gate` runs system-shape, analysis, tests, source-truth, migration, and release
+  evidence; STATUS/REFAKTOR/docs reflect executable deployment-trust and explainability runtime posture; PHPUnit,
+  PHPStan, strict PHPStan, `test:integration`, `source-truth`, `system-shape`, and `release:gate` pass
+- `links`: integrations/release/CheckSystemShape.php, integrations/release/CheckSourceTruth.php,
+  tooling/check-system-shape.php, composer.json, phpunit.xml.dist, docs/STATUS.md, docs/deployment-trust-boundary.md,
+  docs/support-explainability.md, REFAKTOR.md
 
 - `id`: AUTH-029
 - `created_at`: 2026-04-14 21:30 CEST
@@ -43,7 +60,8 @@ Canonical active implementation queue.
 - `status`: done
 - `estimate`: 6h
 - `actual`: 2h 20m
-- `outcome`: Rewrite release and source-truth tooling into package-owned integrations, archive historical merged-state noise,
+- `outcome`: Rewrite release and source-truth tooling into package-owned integrations, archive historical merged-state
+  noise,
   document the migration and deployment boundary canonically, and realign package status with executable evidence
 - `acceptance`: `integrations/release/` ships conformance, evidence-bundle, migration-check, and source-truth checks;
   `tooling/*.php` are thin entrypoints without undeclared dependencies; `docs/STATUS.md`, `docs/product-boundary.md`,
@@ -59,9 +77,11 @@ Canonical active implementation queue.
 - `status`: done
 - `estimate`: 8h
 - `actual`: 3h 50m
-- `outcome`: Replace failed generated integration slices with package-owned lifecycle, tenant product, tenant-owned OAuth
+- `outcome`: Replace failed generated integration slices with package-owned lifecycle, tenant product, tenant-owned
+  OAuth
   client management, and SCIM groups/bulk features wired through the canonical kernel and adapter surfaces
-- `acceptance`: `Capability/Lifecycle/` exists and is used by provisioning, federation, and SCIM flows; `Capability/Tenant/`
+- `acceptance`: `Capability/Lifecycle/` exists and is used by provisioning, federation, and SCIM flows;
+  `Capability/Tenant/`
   and `Flow/Tenant/` ship create/invite/accept/read/suspend/remove/transfer behavior; tenant-admin HTTP routes expose
   tenant membership and tenant-owned OAuth client management; SCIM publishes `/Groups` and `/Bulk` over real kernel
   flows; PHPUnit and PHPStan lanes pass
@@ -94,7 +114,8 @@ Canonical active implementation queue.
 - `actual`: 2h 05m
 - `outcome`: Close the remaining kernel-local identity-platform gaps with OIDC provider behavior, SCIM runtime,
   tenant-security control-plane workflow, rollover-aware OIDC signing overlap, and truthful repo documentation/status
-- `acceptance`: `Capability/Oidc/`, `Capability/Scim/`, and `Capability/TenantSecurity/` ship validated runtime behavior;
+- `acceptance`: `Capability/Oidc/`, `Capability/Scim/`, and `Capability/TenantSecurity/` ship validated runtime
+  behavior;
   `Auth` exposes OIDC, SCIM, workload, and tenant-security public flows; OIDC JWKS overlap is supported through
   `RotatingOidcProvider`; README/docs/REFAKTOR reflect delivered kernel scope and remaining external surfaces; PHPUnit,
   PHPStan, and strict PHPStan lanes pass
@@ -155,7 +176,8 @@ Canonical active implementation queue.
 - `links`: docs/browser-session-deployment.md, docs/audit-export-operations.md, docs/federation-operations.md,
   docs/sso-cutover-runbook.md, docs/workload-identity.md, docs/oidc-provider-boundary.md,
   docs/scim-runtime-boundary.md, docs/tenant-control-plane.md, System/Flow/Federation/,
-  integrations/http/VerifyOAuthSenderConstraint.php, integrations/diagnostics/, System/Flow/Token/MultiKeyHmacTokenCodec.php
+  integrations/http/VerifyOAuthSenderConstraint.php, integrations/diagnostics/,
+  System/Flow/Token/MultiKeyHmacTokenCodec.php
 
 - `id`: AUTH-022
 - `created_at`: 2026-04-12 22:39 CEST
@@ -181,9 +203,13 @@ Canonical active implementation queue.
 - `status`: done
 - `estimate`: 2h
 - `actual`: 2h 03m
-- `outcome`: Normalize phishing-resistant naming, unblock `ChangeEmail` as a first-class flow, and close the new regression gaps around admin elevation and email change
-- `acceptance`: `Capability/Access/RequirePhishingResistantAuthentication/` exists with clean naming; `BeginEmailChange` resolves accounts by `UserId`; admin elevation uses phishing-resistant terminology; new `ChangeEmail` and guard tests exist; PHPUnit and PHPStan lanes pass
-- `links`: System/Capability/Access/RequirePhishingResistantAuthentication/, System/Flow/ChangeEmail/, System/Flow/AdminRealm/, tests/Flows/ChangeEmail/, tests/Capabilities/Access/RequirePhishingResistantAuthentication/
+- `outcome`: Normalize phishing-resistant naming, unblock `ChangeEmail` as a first-class flow, and close the new
+  regression gaps around admin elevation and email change
+- `acceptance`: `Capability/Access/RequirePhishingResistantAuthentication/` exists with clean naming; `BeginEmailChange`
+  resolves accounts by `UserId`; admin elevation uses phishing-resistant terminology; new `ChangeEmail` and guard tests
+  exist; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/Access/RequirePhishingResistantAuthentication/, System/Flow/ChangeEmail/,
+  System/Flow/AdminRealm/, tests/Flows/ChangeEmail/, tests/Capabilities/Access/RequirePhishingResistantAuthentication/
 
 - `id`: AUTH-020
 - `created_at`: 2026-04-12 18:35 CEST

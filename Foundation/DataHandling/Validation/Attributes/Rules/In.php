@@ -13,10 +13,12 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class In
 {
+    private array $values;
+
     /**
      * @param array<int|string> $values List of accepted values for the field.
      */
-    public function __construct(private array $values) {}
+    public function __construct(array $values) { $this->values = $values; }
 
     /**
      * Validates whether a given value is in the allowed set.

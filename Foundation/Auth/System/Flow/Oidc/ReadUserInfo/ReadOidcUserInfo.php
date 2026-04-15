@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Oidc\ReadUserInfo;
 
-use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use RuntimeException;
 use SensitiveParameter;
 
 final readonly class ReadOidcUserInfo
 {
+    private OidcProviderInterface|null $oidcProvider;
+    private JwtIdentityInterface       $jwtIdentity;
+
     public function __construct(
-        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private OidcProviderInterface|null $oidcProvider = null
-    ) {}
+        #[\SensitiveParameter] JwtIdentityInterface $jwtIdentity,
+        OidcProviderInterface|null                  $oidcProvider = null
+    )
+    {
+        $this->jwtIdentity  = $jwtIdentity;
+        $this->oidcProvider = $oidcProvider;
+    }
 
     public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
     {
@@ -25,7 +32,7 @@ final readonly class ReadOidcUserInfo
         }
 
         $claims = [
-            'sub' => $this->subjectIdentifier(user: $resolved->user, clientId: $resolved->clientId),
+            'sub'                => $this->subjectIdentifier(user: $resolved->user, clientId: $resolved->clientId),
             'preferred_username' => $resolved->user->getUsername(),
         ];
 

@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
-use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
-use Avax\Auth\System\Capability\Explainability\AuthIssueExplainer;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplainer;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
-use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
-use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
+use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
+use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
-use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Tenant\Tenant;
@@ -26,15 +25,15 @@ use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
-use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
-use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
-use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
 use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
 use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
 use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
@@ -44,9 +43,9 @@ use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
-use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
 use Avax\Auth\System\Flow\Federation\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
 use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
@@ -79,10 +78,11 @@ use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
-use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
-use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistration;
 use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\DisableClient\DisableClient;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentials;
@@ -98,22 +98,21 @@ use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\ReadWorkloadIdentities;
 use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
-use Avax\Auth\System\Flow\OAuth\RotateClientSecret\RotateClientSecret;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
-use Avax\Auth\System\Flow\OAuth\DisableClient\DisableClient;
+use Avax\Auth\System\Flow\OAuth\RotateClientSecret\RotateClientSecret;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClient;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
-use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
-use Avax\Auth\System\Flow\Oidc\Logout\Logout as OidcLogout;
-use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
-use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
 use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponse;
 use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
 use Avax\Auth\System\Flow\Oidc\JarmResponse\JarmResponse;
+use Avax\Auth\System\Flow\Oidc\Logout\Logout as OidcLogout;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
 use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\ReadOidcUserInfo;
@@ -157,18 +156,15 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
 use Avax\Auth\System\Flow\Scim\ReadGroups\ReadScimGroups;
-use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
-use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutage;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
-use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
+use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
-use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
@@ -213,106 +209,305 @@ use SensitiveParameter;
  */
 final readonly class Auth implements AuthInterface
 {
+    private ConfirmMfaRecovery                      $confirmMfaRecovery;
+    private StartMfaRecovery                        $startMfaRecovery;
+    private DisableMfa                              $disableMfa;
+    private RegenerateBackupCodes                   $regenerateBackupCodes;
+    private VerifyMfaChallenge                      $verifyMfaChallenge;
+    private StartMfaChallenge                       $startMfaChallenge;
+    private CancelMfaEnrollment                     $cancelMfaEnrollment;
+    private ConfirmMfaEnrollment                    $confirmMfaEnrollment;
+    private StartMfaEnrollment                      $startMfaEnrollment;
+    private VerifyEmail                             $verifyEmail;
+    private BeginEmailVerification                  $beginEmailVerification;
+    private ResetPassword                           $resetPassword;
+    private BeginPasswordReset                      $beginPasswordReset;
+    private ReadRiskSignals                         $readRiskSignals;
+    private AssessCurrentRisk                       $assessCurrentRisk;
+    private RollbackTenantSecurityChange            $rollbackTenantSecurityChange;
+    private ApplyTenantSecurityChange               $applyTenantSecurityChange;
+    private ApproveTenantSecurityChange             $approveTenantSecurityChange;
+    private BeginTenantSecurityChange               $beginTenantSecurityChange;
+    private ReadTenantSecurityChangeRequests        $readTenantSecurityChangeRequests;
+    private ReadTenantSecurityChangeRequest         $readTenantSecurityChangeRequest;
+    private ReadTenantSecurityConfiguration         $readTenantSecurityConfiguration;
+    private TransferTenantOwnership|null            $transferTenantOwnership;
+    private SuspendTenantMember|null                $suspendTenantMember;
+    private RemoveTenantMember|null                 $removeTenantMember;
+    private ReadTenantMembers|null                  $readTenantMembers;
+    private AcceptTenantInvite|null                 $acceptTenantInvite;
+    private InviteTenantMember|null                 $inviteTenantMember;
+    private ReadTenants|null                        $readTenants;
+    private CreateTenant|null                       $createTenant;
+    private RunScimBulk|null                        $runScimBulk;
+    private SyncScimGroups|null                     $syncScimGroups;
+    private ReadScimGroups|null                     $readScimGroups;
+    private ReadScimUsers|null                      $readScimUsers;
+    private DeleteScimUser|null                     $deleteScimUser;
+    private ProvisionScimUser|null                  $provisionScimUser;
+    private RecoverScimDirectoryOutage|null         $recoverScimDirectoryOutage;
+    private MarkScimDirectoryOutage|null            $markScimDirectoryOutage;
+    private RotateScimToken|null                    $rotateScimToken;
+    private ReadScimDirectories|null                $readScimDirectories;
+    private RegisterScimDirectory|null              $registerScimDirectory;
+    private CompleteFederatedLogin|null             $completeFederatedLogin;
+    private StartFederatedLogin|null                $startFederatedLogin;
+    private DiscoverFederationConnection|null       $discoverFederationConnection;
+    private EvaluateFederationBreakGlassBypass|null $evaluateFederationBreakGlassBypass;
+    private CheckFederationConnectionHealth|null    $checkFederationConnectionHealth;
+    private SyncFederationMetadata|null             $syncFederationMetadata;
+    private VerifyFederationDomain|null             $verifyFederationDomain;
+    private ReadFederationConnections|null          $readFederationConnections;
+    private RegisterFederationConnection|null       $registerFederationConnection;
+    private RevokePasskeyFlow|null                  $revokePasskey;
+    private RenamePasskey|null                      $renamePasskey;
+    private ListPasskeys|null                       $readPasskeys;
+    private CompletePasskeyAuthentication|null      $completePasskeyAuthentication;
+    private BeginPasskeyAuthentication|null         $beginPasskeyAuthentication;
+    private CompletePasskeyRegistration|null        $completePasskeyRegistration;
+    private BeginPasskeyRegistration|null           $beginPasskeyRegistration;
+    private DeprovisionUser|null                    $deprovisionUser;
+    private ReactivateUser|null                     $reactivateUser;
+    private SuspendUser|null                        $suspendUser;
+    private RequireAdminElevation                   $requireAdminElevation;
+    private EndAdminElevation                       $endAdminElevation;
+    private BeginAdminElevation                     $beginAdminElevation;
+    private IntrospectToken|null                    $introspectOAuthToken;
+    private RevokeToken|null                        $revokeOAuthToken;
+    private ExchangeRefreshToken|null               $exchangeOAuthRefreshToken;
+    private ExchangeClientCredentials|null          $exchangeOAuthClientCredentials;
+    private ExchangeAuthorizationCode|null          $exchangeOAuthCode;
+    private AuthorizeCode|null                      $authorizeOAuthCode;
+    private BuildJarmResponse|null                  $buildOidcJarmResponse;
+    private OidcLogout|null                         $oidcLogout;
+    private PushAuthorizationRequest|null           $pushOidcAuthorizationRequest;
+    private ReadOidcUserInfo|null                   $readOidcUserInfo;
+    private ReadOidcJsonWebKeySet|null              $readOidcJsonWebKeySet;
+    private ReadOidcProviderMetadata|null           $readOidcProviderMetadata;
+    private ReadWorkloadIdentities|null             $readWorkloadIdentities;
+    private ReadClients|null                        $readOAuthClients;
+    private RotateClientSecret|null                 $rotateOAuthClientSecret;
+    private DisableClient|null                      $disableOAuthClient;
+    private UpdateClient|null                       $updateOAuthClient;
+    private ApproveClientRegistration|null          $approveOAuthClientRegistration;
+    private RegisterClient|null                     $registerOAuthClient;
+    private RefreshAuthentication                   $refreshAuthentication;
+    private Register                                $register;
+    private ConfirmEmailChange|null                 $confirmEmailChange;
+    private BeginEmailChange|null                   $beginEmailChange;
+    private ChangePassword                          $changePassword;
+    private AuthIssueExplainer                      $authIssueExplainer;
+    private AccessInterface                         $access;
+    private CurrentAuthentication                   $currentAuthentication;
+    private RevokeSession                           $revokeSession;
+    private ReadActiveSessions                      $readActiveSessions;
+    private ReadCurrentUser                         $readCurrentUser;
+    private CheckAuthentication                     $checkAuthentication;
+    private LogoutAllSessions                       $logoutAllSessions;
+    private Logout                                  $logout;
+    private AuthenticateRequest                     $authenticateRequest;
+    private Login                                   $login;
+
     public function __construct(
-        private Login                                                    $login,
-        private AuthenticateRequest                                      $authenticateRequest,
-        private Logout                                                   $logout,
-        #[SensitiveParameter] private LogoutAllSessions                  $logoutAllSessions,
-        #[SensitiveParameter] private CheckAuthentication                $checkAuthentication,
-        private ReadCurrentUser                                          $readCurrentUser,
-        #[SensitiveParameter] private ReadActiveSessions                 $readActiveSessions,
-        #[SensitiveParameter] private RevokeSession                      $revokeSession,
-        #[SensitiveParameter] private CurrentAuthentication              $currentAuthentication,
-        #[SensitiveParameter] private AccessInterface                    $access,
-        private AuthIssueExplainer                                       $authIssueExplainer,
-        #[SensitiveParameter] private ChangePassword                     $changePassword,
-        #[SensitiveParameter] private BeginEmailChange|null              $beginEmailChange,
-        #[SensitiveParameter] private ConfirmEmailChange|null            $confirmEmailChange,
-        private Register                                                 $register,
-        #[SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
-        private RegisterClient|null                                      $registerOAuthClient,
-        private ApproveClientRegistration|null                           $approveOAuthClientRegistration,
-        private UpdateClient|null                                        $updateOAuthClient,
-        private DisableClient|null                                       $disableOAuthClient,
-        private RotateClientSecret|null                                  $rotateOAuthClientSecret,
-        private ReadClients|null                                         $readOAuthClients,
-        private ReadWorkloadIdentities|null                              $readWorkloadIdentities,
-        private ReadOidcProviderMetadata|null                            $readOidcProviderMetadata,
-        private ReadOidcJsonWebKeySet|null                               $readOidcJsonWebKeySet,
-        private ReadOidcUserInfo|null                                    $readOidcUserInfo,
-        private PushAuthorizationRequest|null                            $pushOidcAuthorizationRequest,
-        private OidcLogout|null                                          $oidcLogout,
-        private BuildJarmResponse|null                                   $buildOidcJarmResponse,
-        #[SensitiveParameter] private AuthorizeCode|null                 $authorizeOAuthCode,
-        #[SensitiveParameter] private ExchangeAuthorizationCode|null     $exchangeOAuthCode,
-        #[SensitiveParameter] private ExchangeClientCredentials|null     $exchangeOAuthClientCredentials,
-        #[SensitiveParameter] private ExchangeRefreshToken|null          $exchangeOAuthRefreshToken,
-        #[SensitiveParameter] private RevokeToken|null                   $revokeOAuthToken,
-        #[SensitiveParameter] private IntrospectToken|null               $introspectOAuthToken,
-        private BeginAdminElevation                                      $beginAdminElevation,
-        private EndAdminElevation                                        $endAdminElevation,
-        private RequireAdminElevation                                    $requireAdminElevation,
-        private SuspendUser|null                                         $suspendUser,
-        private ReactivateUser|null                                      $reactivateUser,
-        private DeprovisionUser|null                                     $deprovisionUser,
-        private BeginPasskeyRegistration|null                            $beginPasskeyRegistration,
-        private CompletePasskeyRegistration|null                         $completePasskeyRegistration,
-        #[SensitiveParameter] private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
-        #[SensitiveParameter] private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
-        private ListPasskeys|null                                        $readPasskeys,
-        private RenamePasskey|null                                       $renamePasskey,
-        private RevokePasskeyFlow|null                                   $revokePasskey,
-        private RegisterFederationConnection|null                        $registerFederationConnection,
-        private ReadFederationConnections|null                           $readFederationConnections,
-        private VerifyFederationDomain|null                              $verifyFederationDomain,
-        private SyncFederationMetadata|null                              $syncFederationMetadata,
-        private CheckFederationConnectionHealth|null                     $checkFederationConnectionHealth,
-        private EvaluateFederationBreakGlassBypass|null                  $evaluateFederationBreakGlassBypass,
-        private DiscoverFederationConnection|null                        $discoverFederationConnection,
-        private StartFederatedLogin|null                                 $startFederatedLogin,
-        private CompleteFederatedLogin|null                              $completeFederatedLogin,
-        private RegisterScimDirectory|null                               $registerScimDirectory,
-        private ReadScimDirectories|null                                 $readScimDirectories,
-        #[SensitiveParameter] private RotateScimToken|null               $rotateScimToken,
-        private MarkScimDirectoryOutage|null                             $markScimDirectoryOutage,
-        private RecoverScimDirectoryOutage|null                          $recoverScimDirectoryOutage,
-        private ProvisionScimUser|null                                   $provisionScimUser,
-        private DeleteScimUser|null                                      $deleteScimUser,
-        private ReadScimUsers|null                                       $readScimUsers,
-        private ReadScimGroups|null                                      $readScimGroups,
-        private SyncScimGroups|null                                      $syncScimGroups,
-        private RunScimBulk|null                                         $runScimBulk,
-        private CreateTenant|null                                        $createTenant,
-        private ReadTenants|null                                         $readTenants,
-        private InviteTenantMember|null                                  $inviteTenantMember,
-        private AcceptTenantInvite|null                                  $acceptTenantInvite,
-        private ReadTenantMembers|null                                   $readTenantMembers,
-        private RemoveTenantMember|null                                  $removeTenantMember,
-        private SuspendTenantMember|null                                 $suspendTenantMember,
-        private TransferTenantOwnership|null                             $transferTenantOwnership,
-        #[SensitiveParameter] private ReadTenantSecurityConfiguration    $readTenantSecurityConfiguration,
-        #[SensitiveParameter] private ReadTenantSecurityChangeRequest    $readTenantSecurityChangeRequest,
-        #[SensitiveParameter] private ReadTenantSecurityChangeRequests   $readTenantSecurityChangeRequests,
-        #[SensitiveParameter] private BeginTenantSecurityChange          $beginTenantSecurityChange,
-        #[SensitiveParameter] private ApproveTenantSecurityChange        $approveTenantSecurityChange,
-        #[SensitiveParameter] private ApplyTenantSecurityChange          $applyTenantSecurityChange,
-        #[SensitiveParameter] private RollbackTenantSecurityChange       $rollbackTenantSecurityChange,
-        private AssessCurrentRisk                                        $assessCurrentRisk,
-        private ReadRiskSignals                                          $readRiskSignals,
-        #[SensitiveParameter] private BeginPasswordReset                 $beginPasswordReset,
-        #[SensitiveParameter] private ResetPassword                      $resetPassword,
-        #[SensitiveParameter] private BeginEmailVerification             $beginEmailVerification,
-        #[SensitiveParameter] private VerifyEmail                        $verifyEmail,
-        private StartMfaEnrollment                                       $startMfaEnrollment,
-        private ConfirmMfaEnrollment                                     $confirmMfaEnrollment,
-        private CancelMfaEnrollment                                      $cancelMfaEnrollment,
-        private StartMfaChallenge                                        $startMfaChallenge,
-        private VerifyMfaChallenge                                       $verifyMfaChallenge,
-        #[SensitiveParameter] private RegenerateBackupCodes              $regenerateBackupCodes,
-        private DisableMfa                                               $disableMfa,
-        private StartMfaRecovery                                         $startMfaRecovery,
-        private ConfirmMfaRecovery                                       $confirmMfaRecovery
-    ) {}
+        Login                                                    $login,
+        AuthenticateRequest                                      $authenticateRequest,
+        Logout                                                   $logout,
+        #[SensitiveParameter] LogoutAllSessions                  $logoutAllSessions,
+        #[SensitiveParameter] CheckAuthentication                $checkAuthentication,
+        ReadCurrentUser                                          $readCurrentUser,
+        #[SensitiveParameter] ReadActiveSessions                 $readActiveSessions,
+        #[SensitiveParameter] RevokeSession                      $revokeSession,
+        #[SensitiveParameter] CurrentAuthentication              $currentAuthentication,
+        #[SensitiveParameter] AccessInterface                    $access,
+        #[\SensitiveParameter] AuthIssueExplainer                $authIssueExplainer,
+        #[SensitiveParameter] ChangePassword                     $changePassword,
+        #[SensitiveParameter] BeginEmailChange|null              $beginEmailChange,
+        #[SensitiveParameter] ConfirmEmailChange|null            $confirmEmailChange,
+        Register                                                 $register,
+        #[SensitiveParameter] RefreshAuthentication              $refreshAuthentication,
+        RegisterClient|null                                      $registerOAuthClient,
+        ApproveClientRegistration|null                           $approveOAuthClientRegistration,
+        UpdateClient|null                                        $updateOAuthClient,
+        DisableClient|null                                       $disableOAuthClient,
+        #[\SensitiveParameter] RotateClientSecret|null           $rotateOAuthClientSecret,
+        ReadClients|null                                         $readOAuthClients,
+        ReadWorkloadIdentities|null                              $readWorkloadIdentities,
+        ReadOidcProviderMetadata|null                            $readOidcProviderMetadata,
+        ReadOidcJsonWebKeySet|null                               $readOidcJsonWebKeySet,
+        ReadOidcUserInfo|null                                    $readOidcUserInfo,
+        PushAuthorizationRequest|null                            $pushOidcAuthorizationRequest,
+        OidcLogout|null                                          $oidcLogout,
+        BuildJarmResponse|null                                   $buildOidcJarmResponse,
+        #[SensitiveParameter] AuthorizeCode|null                 $authorizeOAuthCode,
+        #[SensitiveParameter] ExchangeAuthorizationCode|null     $exchangeOAuthCode,
+        #[SensitiveParameter] ExchangeClientCredentials|null     $exchangeOAuthClientCredentials,
+        #[SensitiveParameter] ExchangeRefreshToken|null          $exchangeOAuthRefreshToken,
+        #[SensitiveParameter] RevokeToken|null                   $revokeOAuthToken,
+        #[SensitiveParameter] IntrospectToken|null               $introspectOAuthToken,
+        BeginAdminElevation                                      $beginAdminElevation,
+        EndAdminElevation                                        $endAdminElevation,
+        RequireAdminElevation                                    $requireAdminElevation,
+        SuspendUser|null                                         $suspendUser,
+        ReactivateUser|null                                      $reactivateUser,
+        DeprovisionUser|null                                     $deprovisionUser,
+        BeginPasskeyRegistration|null                            $beginPasskeyRegistration,
+        CompletePasskeyRegistration|null                         $completePasskeyRegistration,
+        #[SensitiveParameter] BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
+        #[SensitiveParameter] CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        ListPasskeys|null                                        $readPasskeys,
+        RenamePasskey|null                                       $renamePasskey,
+        RevokePasskeyFlow|null                                   $revokePasskey,
+        RegisterFederationConnection|null                        $registerFederationConnection,
+        ReadFederationConnections|null                           $readFederationConnections,
+        VerifyFederationDomain|null                              $verifyFederationDomain,
+        SyncFederationMetadata|null                              $syncFederationMetadata,
+        CheckFederationConnectionHealth|null                     $checkFederationConnectionHealth,
+        EvaluateFederationBreakGlassBypass|null                  $evaluateFederationBreakGlassBypass,
+        DiscoverFederationConnection|null                        $discoverFederationConnection,
+        StartFederatedLogin|null                                 $startFederatedLogin,
+        CompleteFederatedLogin|null                              $completeFederatedLogin,
+        RegisterScimDirectory|null                               $registerScimDirectory,
+        ReadScimDirectories|null                                 $readScimDirectories,
+        #[SensitiveParameter] RotateScimToken|null               $rotateScimToken,
+        MarkScimDirectoryOutage|null                             $markScimDirectoryOutage,
+        RecoverScimDirectoryOutage|null                          $recoverScimDirectoryOutage,
+        ProvisionScimUser|null                                   $provisionScimUser,
+        DeleteScimUser|null                                      $deleteScimUser,
+        ReadScimUsers|null                                       $readScimUsers,
+        ReadScimGroups|null                                      $readScimGroups,
+        SyncScimGroups|null                                      $syncScimGroups,
+        RunScimBulk|null                                         $runScimBulk,
+        CreateTenant|null                                        $createTenant,
+        ReadTenants|null                                         $readTenants,
+        InviteTenantMember|null                                  $inviteTenantMember,
+        AcceptTenantInvite|null                                  $acceptTenantInvite,
+        ReadTenantMembers|null                                   $readTenantMembers,
+        RemoveTenantMember|null                                  $removeTenantMember,
+        SuspendTenantMember|null                                 $suspendTenantMember,
+        TransferTenantOwnership|null                             $transferTenantOwnership,
+        #[SensitiveParameter] ReadTenantSecurityConfiguration    $readTenantSecurityConfiguration,
+        #[SensitiveParameter] ReadTenantSecurityChangeRequest    $readTenantSecurityChangeRequest,
+        #[SensitiveParameter] ReadTenantSecurityChangeRequests   $readTenantSecurityChangeRequests,
+        #[SensitiveParameter] BeginTenantSecurityChange          $beginTenantSecurityChange,
+        #[SensitiveParameter] ApproveTenantSecurityChange        $approveTenantSecurityChange,
+        #[SensitiveParameter] ApplyTenantSecurityChange          $applyTenantSecurityChange,
+        #[SensitiveParameter] RollbackTenantSecurityChange       $rollbackTenantSecurityChange,
+        AssessCurrentRisk                                        $assessCurrentRisk,
+        ReadRiskSignals                                          $readRiskSignals,
+        #[SensitiveParameter] BeginPasswordReset                 $beginPasswordReset,
+        #[SensitiveParameter] ResetPassword                      $resetPassword,
+        #[SensitiveParameter] BeginEmailVerification             $beginEmailVerification,
+        #[SensitiveParameter] VerifyEmail                        $verifyEmail,
+        StartMfaEnrollment                                       $startMfaEnrollment,
+        ConfirmMfaEnrollment                                     $confirmMfaEnrollment,
+        CancelMfaEnrollment                                      $cancelMfaEnrollment,
+        StartMfaChallenge                                        $startMfaChallenge,
+        VerifyMfaChallenge                                       $verifyMfaChallenge,
+        #[SensitiveParameter] RegenerateBackupCodes              $regenerateBackupCodes,
+        DisableMfa                                               $disableMfa,
+        StartMfaRecovery                                         $startMfaRecovery,
+        ConfirmMfaRecovery                                       $confirmMfaRecovery
+    )
+    {
+        $this->login                              = $login;
+        $this->authenticateRequest                = $authenticateRequest;
+        $this->logout                             = $logout;
+        $this->logoutAllSessions                  = $logoutAllSessions;
+        $this->checkAuthentication                = $checkAuthentication;
+        $this->readCurrentUser                    = $readCurrentUser;
+        $this->readActiveSessions                 = $readActiveSessions;
+        $this->revokeSession                      = $revokeSession;
+        $this->currentAuthentication              = $currentAuthentication;
+        $this->access                             = $access;
+        $this->authIssueExplainer                 = $authIssueExplainer;
+        $this->changePassword                     = $changePassword;
+        $this->beginEmailChange                   = $beginEmailChange;
+        $this->confirmEmailChange                 = $confirmEmailChange;
+        $this->register                           = $register;
+        $this->refreshAuthentication              = $refreshAuthentication;
+        $this->registerOAuthClient                = $registerOAuthClient;
+        $this->approveOAuthClientRegistration     = $approveOAuthClientRegistration;
+        $this->updateOAuthClient                  = $updateOAuthClient;
+        $this->disableOAuthClient                 = $disableOAuthClient;
+        $this->rotateOAuthClientSecret            = $rotateOAuthClientSecret;
+        $this->readOAuthClients                   = $readOAuthClients;
+        $this->readWorkloadIdentities             = $readWorkloadIdentities;
+        $this->readOidcProviderMetadata           = $readOidcProviderMetadata;
+        $this->readOidcJsonWebKeySet              = $readOidcJsonWebKeySet;
+        $this->readOidcUserInfo                   = $readOidcUserInfo;
+        $this->pushOidcAuthorizationRequest       = $pushOidcAuthorizationRequest;
+        $this->oidcLogout                         = $oidcLogout;
+        $this->buildOidcJarmResponse              = $buildOidcJarmResponse;
+        $this->authorizeOAuthCode                 = $authorizeOAuthCode;
+        $this->exchangeOAuthCode                  = $exchangeOAuthCode;
+        $this->exchangeOAuthClientCredentials     = $exchangeOAuthClientCredentials;
+        $this->exchangeOAuthRefreshToken          = $exchangeOAuthRefreshToken;
+        $this->revokeOAuthToken                   = $revokeOAuthToken;
+        $this->introspectOAuthToken               = $introspectOAuthToken;
+        $this->beginAdminElevation                = $beginAdminElevation;
+        $this->endAdminElevation                  = $endAdminElevation;
+        $this->requireAdminElevation              = $requireAdminElevation;
+        $this->suspendUser                        = $suspendUser;
+        $this->reactivateUser                     = $reactivateUser;
+        $this->deprovisionUser                    = $deprovisionUser;
+        $this->beginPasskeyRegistration           = $beginPasskeyRegistration;
+        $this->completePasskeyRegistration        = $completePasskeyRegistration;
+        $this->beginPasskeyAuthentication         = $beginPasskeyAuthentication;
+        $this->completePasskeyAuthentication      = $completePasskeyAuthentication;
+        $this->readPasskeys                       = $readPasskeys;
+        $this->renamePasskey                      = $renamePasskey;
+        $this->revokePasskey                      = $revokePasskey;
+        $this->registerFederationConnection       = $registerFederationConnection;
+        $this->readFederationConnections          = $readFederationConnections;
+        $this->verifyFederationDomain             = $verifyFederationDomain;
+        $this->syncFederationMetadata             = $syncFederationMetadata;
+        $this->checkFederationConnectionHealth    = $checkFederationConnectionHealth;
+        $this->evaluateFederationBreakGlassBypass = $evaluateFederationBreakGlassBypass;
+        $this->discoverFederationConnection       = $discoverFederationConnection;
+        $this->startFederatedLogin                = $startFederatedLogin;
+        $this->completeFederatedLogin             = $completeFederatedLogin;
+        $this->registerScimDirectory              = $registerScimDirectory;
+        $this->readScimDirectories                = $readScimDirectories;
+        $this->rotateScimToken                    = $rotateScimToken;
+        $this->markScimDirectoryOutage            = $markScimDirectoryOutage;
+        $this->recoverScimDirectoryOutage         = $recoverScimDirectoryOutage;
+        $this->provisionScimUser                  = $provisionScimUser;
+        $this->deleteScimUser                     = $deleteScimUser;
+        $this->readScimUsers                      = $readScimUsers;
+        $this->readScimGroups                     = $readScimGroups;
+        $this->syncScimGroups                     = $syncScimGroups;
+        $this->runScimBulk                        = $runScimBulk;
+        $this->createTenant                       = $createTenant;
+        $this->readTenants                        = $readTenants;
+        $this->inviteTenantMember                 = $inviteTenantMember;
+        $this->acceptTenantInvite                 = $acceptTenantInvite;
+        $this->readTenantMembers                  = $readTenantMembers;
+        $this->removeTenantMember                 = $removeTenantMember;
+        $this->suspendTenantMember                = $suspendTenantMember;
+        $this->transferTenantOwnership            = $transferTenantOwnership;
+        $this->readTenantSecurityConfiguration    = $readTenantSecurityConfiguration;
+        $this->readTenantSecurityChangeRequest    = $readTenantSecurityChangeRequest;
+        $this->readTenantSecurityChangeRequests   = $readTenantSecurityChangeRequests;
+        $this->beginTenantSecurityChange          = $beginTenantSecurityChange;
+        $this->approveTenantSecurityChange        = $approveTenantSecurityChange;
+        $this->applyTenantSecurityChange          = $applyTenantSecurityChange;
+        $this->rollbackTenantSecurityChange       = $rollbackTenantSecurityChange;
+        $this->assessCurrentRisk                  = $assessCurrentRisk;
+        $this->readRiskSignals                    = $readRiskSignals;
+        $this->beginPasswordReset                 = $beginPasswordReset;
+        $this->resetPassword                      = $resetPassword;
+        $this->beginEmailVerification             = $beginEmailVerification;
+        $this->verifyEmail                        = $verifyEmail;
+        $this->startMfaEnrollment                 = $startMfaEnrollment;
+        $this->confirmMfaEnrollment               = $confirmMfaEnrollment;
+        $this->cancelMfaEnrollment                = $cancelMfaEnrollment;
+        $this->startMfaChallenge                  = $startMfaChallenge;
+        $this->verifyMfaChallenge                 = $verifyMfaChallenge;
+        $this->regenerateBackupCodes              = $regenerateBackupCodes;
+        $this->disableMfa                         = $disableMfa;
+        $this->startMfaRecovery                   = $startMfaRecovery;
+        $this->confirmMfaRecovery                 = $confirmMfaRecovery;
+    }
 
     /**
      * Start the fluent configuration builder.
@@ -385,40 +580,42 @@ final readonly class Auth implements AuthInterface
     }
 
     public function explainAccessDenied(
-        string $resource,
+        string      $resource,
         string|null $requiredPermission = null,
         string|null $tenant = null,
         string|null $resourceTenant = null
-    ) : AuthIssueExplanation {
+    ) : AuthIssueExplanation
+    {
         return $this->authIssueExplainer->explainAccessDenied(
-            resource: $resource,
+            resource          : $resource,
             requiredPermission: $requiredPermission,
-            tenant: $tenant,
-            resourceTenant: $resourceTenant
+            tenant            : $tenant,
+            resourceTenant    : $resourceTenant
         );
     }
 
     public function explainStepUpRequired(
-        string $action,
-        bool $phishingResistantRequired = false,
+        string   $action,
+        bool     $phishingResistantRequired = false,
         int|null $freshAfterSeconds = null
-    ) : AuthIssueExplanation {
+    ) : AuthIssueExplanation
+    {
         return $this->authIssueExplainer->explainStepUpRequired(
-            action: $action,
+            action                   : $action,
             phishingResistantRequired: $phishingResistantRequired,
-            freshAfterSeconds: $freshAfterSeconds
+            freshAfterSeconds        : $freshAfterSeconds
         );
     }
 
     public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSenderConstraintFailure(
-            reason: $reason,
+            reason            : $reason,
             requiredConstraint: $requiredConstraint
         );
     }
 
-    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[\SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
@@ -442,9 +639,19 @@ final readonly class Auth implements AuthInterface
         return $this->beginEmailChangeOrFail()->execute(data: $data);
     }
 
+    private function beginEmailChangeOrFail() : BeginEmailChange
+    {
+        return $this->beginEmailChange ?? throw new RuntimeException(message: 'Email change flow is not configured.');
+    }
+
     public function confirmEmailChange(ConfirmEmailChangeData $data) : bool
     {
         return $this->confirmEmailChangeOrFail()->execute(data: $data);
+    }
+
+    private function confirmEmailChangeOrFail() : ConfirmEmailChange
+    {
+        return $this->confirmEmailChange ?? throw new RuntimeException(message: 'Email change flow is not configured.');
     }
 
     /**
@@ -468,9 +675,19 @@ final readonly class Auth implements AuthInterface
         return $this->registerOAuthClientOrFail()->execute(data: $data);
     }
 
+    private function registerOAuthClientOrFail() : RegisterClient
+    {
+        return $this->registerOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
     public function approveOAuthClientRegistration(ApproveClientRegistrationData $data) : OAuthClient
     {
         return $this->approveOAuthClientRegistrationOrFail()->execute(data: $data);
+    }
+
+    private function approveOAuthClientRegistrationOrFail() : ApproveClientRegistration
+    {
+        return $this->approveOAuthClientRegistration ?? throw new RuntimeException(message: 'OAuth client approval is not configured.');
     }
 
     public function updateOAuthClient(UpdateClientData $data) : OAuthClient
@@ -478,9 +695,19 @@ final readonly class Auth implements AuthInterface
         return $this->updateOAuthClientOrFail()->execute(data: $data);
     }
 
+    private function updateOAuthClientOrFail() : UpdateClient
+    {
+        return $this->updateOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
     public function disableOAuthClient(string $clientId) : OAuthClient
     {
         return $this->disableOAuthClientOrFail()->execute(clientId: $clientId);
+    }
+
+    private function disableOAuthClientOrFail() : DisableClient
+    {
+        return $this->disableOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
     }
 
     public function rotateOAuthClientSecret(string $clientId) : RegisteredOAuthClient
@@ -488,9 +715,19 @@ final readonly class Auth implements AuthInterface
         return $this->rotateOAuthClientSecretOrFail()->execute(clientId: $clientId);
     }
 
+    private function rotateOAuthClientSecretOrFail() : RotateClientSecret
+    {
+        return $this->rotateOAuthClientSecret ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
     public function readOAuthClients() : array
     {
         return $this->readOAuthClientsOrFail()->execute();
+    }
+
+    private function readOAuthClientsOrFail() : ReadClients
+    {
+        return $this->readOAuthClients ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
     }
 
     /**
@@ -501,9 +738,19 @@ final readonly class Auth implements AuthInterface
         return $this->readWorkloadIdentitiesOrFail()->execute();
     }
 
+    private function readWorkloadIdentitiesOrFail() : ReadWorkloadIdentities
+    {
+        return $this->readWorkloadIdentities ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
     public function readOidcProviderMetadata() : OidcProviderMetadata
     {
         return $this->readOidcProviderMetadataOrFail()->execute();
+    }
+
+    private function readOidcProviderMetadataOrFail() : ReadOidcProviderMetadata
+    {
+        return $this->readOidcProviderMetadata ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
     }
 
     public function readOidcJsonWebKeySet() : OidcJsonWebKeySet
@@ -511,9 +758,19 @@ final readonly class Auth implements AuthInterface
         return $this->readOidcJsonWebKeySetOrFail()->execute();
     }
 
+    private function readOidcJsonWebKeySetOrFail() : ReadOidcJsonWebKeySet
+    {
+        return $this->readOidcJsonWebKeySet ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
+    }
+
     public function readOidcUserInfo(#[SensitiveParameter] string $accessToken) : OidcUserInfo
     {
         return $this->readOidcUserInfoOrFail()->execute(accessToken: $accessToken);
+    }
+
+    private function readOidcUserInfoOrFail() : ReadOidcUserInfo
+    {
+        return $this->readOidcUserInfo ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
     }
 
     public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
@@ -521,9 +778,19 @@ final readonly class Auth implements AuthInterface
         return $this->pushOidcAuthorizationRequestOrFail()->execute(data: $data);
     }
 
+    private function pushOidcAuthorizationRequestOrFail() : PushAuthorizationRequest
+    {
+        return $this->pushOidcAuthorizationRequest ?? throw new RuntimeException(message: 'OIDC PAR support is not configured.');
+    }
+
     public function oidcLogout(OidcLogoutData $data) : OidcLogoutResult
     {
         return $this->oidcLogoutOrFail()->execute(data: $data);
+    }
+
+    private function oidcLogoutOrFail() : OidcLogout
+    {
+        return $this->oidcLogout ?? throw new RuntimeException(message: 'OIDC logout support is not configured.');
     }
 
     public function buildOidcJarmResponse(BuildJarmResponseData $data) : JarmResponse
@@ -531,9 +798,19 @@ final readonly class Auth implements AuthInterface
         return $this->buildOidcJarmResponseOrFail()->execute(data: $data);
     }
 
+    private function buildOidcJarmResponseOrFail() : BuildJarmResponse
+    {
+        return $this->buildOidcJarmResponse ?? throw new RuntimeException(message: 'OIDC JARM support is not configured.');
+    }
+
     public function registerScimDirectory(RegisterScimDirectoryData $data) : RegisteredScimDirectory
     {
         return $this->registerScimDirectoryOrFail()->execute(data: $data);
+    }
+
+    private function registerScimDirectoryOrFail() : RegisterScimDirectory
+    {
+        return $this->registerScimDirectory ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function readScimDirectories(string|null $tenantSlug = null) : array
@@ -541,9 +818,19 @@ final readonly class Auth implements AuthInterface
         return $this->readScimDirectoriesOrFail()->execute(tenantSlug: $tenantSlug);
     }
 
+    private function readScimDirectoriesOrFail() : ReadScimDirectories
+    {
+        return $this->readScimDirectories ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     public function rotateScimToken(string $directoryId) : RotatedScimToken
     {
         return $this->rotateScimTokenOrFail()->execute(directoryId: $directoryId);
+    }
+
+    private function rotateScimTokenOrFail() : RotateScimToken
+    {
+        return $this->rotateScimToken ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function markScimDirectoryOutage(MarkScimDirectoryOutageData $data) : ScimDirectory
@@ -551,9 +838,19 @@ final readonly class Auth implements AuthInterface
         return $this->markScimDirectoryOutageOrFail()->execute(data: $data);
     }
 
+    private function markScimDirectoryOutageOrFail() : MarkScimDirectoryOutage
+    {
+        return $this->markScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $data) : ScimDirectory
     {
         return $this->recoverScimDirectoryOutageOrFail()->execute(data: $data);
+    }
+
+    private function recoverScimDirectoryOutageOrFail() : RecoverScimDirectoryOutage
+    {
+        return $this->recoverScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function provisionScimUser(ProvisionScimUserData $data) : ScimProvisioningResult
@@ -561,9 +858,19 @@ final readonly class Auth implements AuthInterface
         return $this->provisionScimUserOrFail()->execute(data: $data);
     }
 
+    private function provisionScimUserOrFail() : ProvisionScimUser
+    {
+        return $this->provisionScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     public function deleteScimUser(DeleteScimUserData $data) : void
     {
         $this->deleteScimUserOrFail()->execute(data: $data);
+    }
+
+    private function deleteScimUserOrFail() : DeleteScimUser
+    {
+        return $this->deleteScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function readScimUsers(string $directoryId) : array
@@ -571,9 +878,19 @@ final readonly class Auth implements AuthInterface
         return $this->readScimUsersOrFail()->execute(directoryId: $directoryId);
     }
 
+    private function readScimUsersOrFail() : ReadScimUsers
+    {
+        return $this->readScimUsers ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     public function readScimGroups(string $directoryId) : array
     {
         return $this->readScimGroupsOrFail()->execute(directoryId: $directoryId);
+    }
+
+    private function readScimGroupsOrFail() : ReadScimGroups
+    {
+        return $this->readScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult
@@ -581,9 +898,19 @@ final readonly class Auth implements AuthInterface
         return $this->syncScimGroupsOrFail()->execute(data: $data);
     }
 
+    private function syncScimGroupsOrFail() : SyncScimGroups
+    {
+        return $this->syncScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     public function runScimBulk(ScimBulkRequest $data) : ScimBulkResponse
     {
         return $this->runScimBulkOrFail()->execute(request: $data);
+    }
+
+    private function runScimBulkOrFail() : RunScimBulk
+    {
+        return $this->runScimBulk ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     public function createTenant(CreateTenantData $data) : Tenant
@@ -591,9 +918,19 @@ final readonly class Auth implements AuthInterface
         return $this->createTenantOrFail()->execute(data: $data);
     }
 
+    private function createTenantOrFail() : CreateTenant
+    {
+        return $this->createTenant ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
     public function readTenants() : array
     {
         return $this->readTenantsOrFail()->execute();
+    }
+
+    private function readTenantsOrFail() : ReadTenants
+    {
+        return $this->readTenants ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
     }
 
     public function inviteTenantMember(InviteTenantMemberData $data) : IssuedTenantInvite
@@ -601,9 +938,19 @@ final readonly class Auth implements AuthInterface
         return $this->inviteTenantMemberOrFail()->execute(data: $data);
     }
 
+    private function inviteTenantMemberOrFail() : InviteTenantMember
+    {
+        return $this->inviteTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
     public function acceptTenantInvite(AcceptTenantInviteData $data) : TenantMember
     {
         return $this->acceptTenantInviteOrFail()->execute(data: $data);
+    }
+
+    private function acceptTenantInviteOrFail() : AcceptTenantInvite
+    {
+        return $this->acceptTenantInvite ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
     }
 
     public function readTenantMembers(string $tenantSlug) : array
@@ -611,9 +958,19 @@ final readonly class Auth implements AuthInterface
         return $this->readTenantMembersOrFail()->execute(tenantSlug: $tenantSlug);
     }
 
+    private function readTenantMembersOrFail() : ReadTenantMembers
+    {
+        return $this->readTenantMembers ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
     public function removeTenantMember(RemoveTenantMemberData $data) : void
     {
         $this->removeTenantMemberOrFail()->execute(data: $data);
+    }
+
+    private function removeTenantMemberOrFail() : RemoveTenantMember
+    {
+        return $this->removeTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
     }
 
     public function suspendTenantMember(SuspendTenantMemberData $data) : TenantMember
@@ -621,9 +978,19 @@ final readonly class Auth implements AuthInterface
         return $this->suspendTenantMemberOrFail()->execute(data: $data);
     }
 
+    private function suspendTenantMemberOrFail() : SuspendTenantMember
+    {
+        return $this->suspendTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
     public function transferTenantOwnership(TransferTenantOwnershipData $data) : Tenant
     {
         return $this->transferTenantOwnershipOrFail()->execute(data: $data);
+    }
+
+    private function transferTenantOwnershipOrFail() : TransferTenantOwnership
+    {
+        return $this->transferTenantOwnership ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
     }
 
     public function readTenantSecurityConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null
@@ -666,9 +1033,19 @@ final readonly class Auth implements AuthInterface
         return $this->authorizeOAuthCodeOrFail()->execute(data: $data);
     }
 
+    private function authorizeOAuthCodeOrFail() : AuthorizeCode
+    {
+        return $this->authorizeOAuthCode ?? throw new RuntimeException(message: 'OAuth authorization code flow is not configured.');
+    }
+
     public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
     {
         return $this->exchangeOAuthCodeOrFail()->execute(data: $data);
+    }
+
+    private function exchangeOAuthCodeOrFail() : ExchangeAuthorizationCode
+    {
+        return $this->exchangeOAuthCode ?? throw new RuntimeException(message: 'OAuth token exchange is not configured.');
     }
 
     public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $data) : OAuthTokenGrant
@@ -676,9 +1053,19 @@ final readonly class Auth implements AuthInterface
         return $this->exchangeOAuthClientCredentialsOrFail()->execute(data: $data);
     }
 
+    private function exchangeOAuthClientCredentialsOrFail() : ExchangeClientCredentials
+    {
+        return $this->exchangeOAuthClientCredentials ?? throw new RuntimeException(message: 'OAuth client credentials flow is not configured.');
+    }
+
     public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant
     {
         return $this->exchangeOAuthRefreshTokenOrFail()->execute(data: $data);
+    }
+
+    private function exchangeOAuthRefreshTokenOrFail() : ExchangeRefreshToken
+    {
+        return $this->exchangeOAuthRefreshToken ?? throw new RuntimeException(message: 'OAuth refresh flow is not configured.');
     }
 
     public function revokeOAuthToken(RevokeTokenData $data) : void
@@ -686,9 +1073,19 @@ final readonly class Auth implements AuthInterface
         $this->revokeOAuthTokenOrFail()->execute(data: $data);
     }
 
+    private function revokeOAuthTokenOrFail() : RevokeToken
+    {
+        return $this->revokeOAuthToken ?? throw new RuntimeException(message: 'OAuth revoke flow is not configured.');
+    }
+
     public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection
     {
         return $this->introspectOAuthTokenOrFail()->execute(data: $data);
+    }
+
+    private function introspectOAuthTokenOrFail() : IntrospectToken
+    {
+        return $this->introspectOAuthToken ?? throw new RuntimeException(message: 'OAuth introspection is not configured.');
     }
 
     public function beginAdminElevation() : AdminElevation
@@ -711,9 +1108,19 @@ final readonly class Auth implements AuthInterface
         $this->suspendUserOrFail()->execute(userId: $userId);
     }
 
+    private function suspendUserOrFail() : SuspendUser
+    {
+        return $this->suspendUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
+    }
+
     public function reactivateUser(int $userId) : void
     {
         $this->reactivateUserOrFail()->execute(userId: $userId);
+    }
+
+    private function reactivateUserOrFail() : ReactivateUser
+    {
+        return $this->reactivateUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
     }
 
     public function deprovisionUser(int $userId) : void
@@ -721,9 +1128,19 @@ final readonly class Auth implements AuthInterface
         $this->deprovisionUserOrFail()->execute(userId: $userId);
     }
 
+    private function deprovisionUserOrFail() : DeprovisionUser
+    {
+        return $this->deprovisionUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
+    }
+
     public function beginPasskeyRegistration() : PasskeyRegistration
     {
         return $this->beginPasskeyRegistrationOrFail()->execute();
+    }
+
+    private function beginPasskeyRegistrationOrFail() : BeginPasskeyRegistration
+    {
+        return $this->beginPasskeyRegistration ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
     }
 
     public function completePasskeyRegistration(CompletePasskeyRegistrationData $data) : PasskeyCredential
@@ -731,9 +1148,19 @@ final readonly class Auth implements AuthInterface
         return $this->completePasskeyRegistrationOrFail()->execute(data: $data);
     }
 
+    private function completePasskeyRegistrationOrFail() : CompletePasskeyRegistration
+    {
+        return $this->completePasskeyRegistration ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
+    }
+
     public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {
         return $this->beginPasskeyAuthenticationOrFail()->execute(data: $data);
+    }
+
+    private function beginPasskeyAuthenticationOrFail() : BeginPasskeyAuthentication
+    {
+        return $this->beginPasskeyAuthentication ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
     }
 
     public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data) : AuthenticationResult
@@ -741,9 +1168,19 @@ final readonly class Auth implements AuthInterface
         return $this->completePasskeyAuthenticationOrFail()->execute(data: $data);
     }
 
+    private function completePasskeyAuthenticationOrFail() : CompletePasskeyAuthentication
+    {
+        return $this->completePasskeyAuthentication ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
+    }
+
     public function readPasskeys() : array
     {
         return $this->readPasskeysOrFail()->execute();
+    }
+
+    private function readPasskeysOrFail() : ListPasskeys
+    {
+        return $this->readPasskeys ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
     }
 
     public function renamePasskey(RenamePasskeyData $data) : PasskeyCredential
@@ -751,9 +1188,19 @@ final readonly class Auth implements AuthInterface
         return $this->renamePasskeyOrFail()->execute(data: $data);
     }
 
+    private function renamePasskeyOrFail() : RenamePasskey
+    {
+        return $this->renamePasskey ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
+    }
+
     public function revokePasskey(#[SensitiveParameter] string $credentialId) : void
     {
         $this->revokePasskeyOrFail()->execute(credentialId: $credentialId);
+    }
+
+    private function revokePasskeyOrFail() : RevokePasskeyFlow
+    {
+        return $this->revokePasskey ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
     }
 
     public function registerFederationConnection(RegisterFederationConnectionData $data) : FederationConnection
@@ -761,9 +1208,19 @@ final readonly class Auth implements AuthInterface
         return $this->registerFederationConnectionOrFail()->execute(data: $data);
     }
 
+    private function registerFederationConnectionOrFail() : RegisterFederationConnection
+    {
+        return $this->registerFederationConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+    }
+
     public function readFederationConnections() : array
     {
         return $this->readFederationConnectionsOrFail()->execute();
+    }
+
+    private function readFederationConnectionsOrFail() : ReadFederationConnections
+    {
+        return $this->readFederationConnections ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
     }
 
     public function verifyFederationDomain(VerifyFederationDomainData $data) : FederationConnection
@@ -771,9 +1228,19 @@ final readonly class Auth implements AuthInterface
         return $this->verifyFederationDomainOrFail()->execute(data: $data);
     }
 
+    private function verifyFederationDomainOrFail() : VerifyFederationDomain
+    {
+        return $this->verifyFederationDomain ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+    }
+
     public function syncFederationMetadata(string $connectionId) : FederationConnection
     {
         return $this->syncFederationMetadataOrFail()->execute(connectionId: $connectionId);
+    }
+
+    private function syncFederationMetadataOrFail() : SyncFederationMetadata
+    {
+        return $this->syncFederationMetadata ?? throw new RuntimeException(message: 'Federation metadata runtime is not configured.');
     }
 
     public function checkFederationConnectionHealth(string $connectionId) : FederationConnectionHealth
@@ -781,9 +1248,19 @@ final readonly class Auth implements AuthInterface
         return $this->checkFederationConnectionHealthOrFail()->execute(connectionId: $connectionId);
     }
 
+    private function checkFederationConnectionHealthOrFail() : CheckFederationConnectionHealth
+    {
+        return $this->checkFederationConnectionHealth ?? throw new RuntimeException(message: 'Federation health checks are not configured.');
+    }
+
     public function evaluateFederationBreakGlassBypass(string $connectionId) : bool
     {
         return $this->evaluateFederationBreakGlassBypassOrFail()->execute(connectionId: $connectionId);
+    }
+
+    private function evaluateFederationBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
+    {
+        return $this->evaluateFederationBreakGlassBypass ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
     }
 
     public function discoverFederationConnection(#[SensitiveParameter] string $email) : FederationConnection|null
@@ -791,14 +1268,29 @@ final readonly class Auth implements AuthInterface
         return $this->discoverFederationConnectionOrFail()->execute(email: $email);
     }
 
+    private function discoverFederationConnectionOrFail() : DiscoverFederationConnection
+    {
+        return $this->discoverFederationConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+    }
+
     public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin
     {
         return $this->startFederatedLoginOrFail()->execute(data: $data);
     }
 
+    private function startFederatedLoginOrFail() : StartFederatedLogin
+    {
+        return $this->startFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+    }
+
     public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
     {
         return $this->completeFederatedLoginOrFail()->execute(data: $data);
+    }
+
+    private function completeFederatedLoginOrFail() : CompleteFederatedLogin
+    {
+        return $this->completeFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
     }
 
     public function assessCurrentRisk(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
@@ -892,300 +1384,5 @@ final readonly class Auth implements AuthInterface
     public function confirmMfaRecovery(ConfirmMfaRecoveryData $data) : void
     {
         $this->confirmMfaRecovery->execute(data: $data);
-    }
-
-    private function registerOAuthClientOrFail() : RegisterClient
-    {
-        return $this->registerOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function approveOAuthClientRegistrationOrFail() : ApproveClientRegistration
-    {
-        return $this->approveOAuthClientRegistration ?? throw new RuntimeException(message: 'OAuth client approval is not configured.');
-    }
-
-    private function updateOAuthClientOrFail() : UpdateClient
-    {
-        return $this->updateOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function disableOAuthClientOrFail() : DisableClient
-    {
-        return $this->disableOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function rotateOAuthClientSecretOrFail() : RotateClientSecret
-    {
-        return $this->rotateOAuthClientSecret ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function readOAuthClientsOrFail() : ReadClients
-    {
-        return $this->readOAuthClients ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function readWorkloadIdentitiesOrFail() : ReadWorkloadIdentities
-    {
-        return $this->readWorkloadIdentities ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
-    }
-
-    private function readOidcProviderMetadataOrFail() : ReadOidcProviderMetadata
-    {
-        return $this->readOidcProviderMetadata ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
-    }
-
-    private function readOidcJsonWebKeySetOrFail() : ReadOidcJsonWebKeySet
-    {
-        return $this->readOidcJsonWebKeySet ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
-    }
-
-    private function readOidcUserInfoOrFail() : ReadOidcUserInfo
-    {
-        return $this->readOidcUserInfo ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
-    }
-
-    private function pushOidcAuthorizationRequestOrFail() : PushAuthorizationRequest
-    {
-        return $this->pushOidcAuthorizationRequest ?? throw new RuntimeException(message: 'OIDC PAR support is not configured.');
-    }
-
-    private function oidcLogoutOrFail() : OidcLogout
-    {
-        return $this->oidcLogout ?? throw new RuntimeException(message: 'OIDC logout support is not configured.');
-    }
-
-    private function buildOidcJarmResponseOrFail() : BuildJarmResponse
-    {
-        return $this->buildOidcJarmResponse ?? throw new RuntimeException(message: 'OIDC JARM support is not configured.');
-    }
-
-    private function registerScimDirectoryOrFail() : RegisterScimDirectory
-    {
-        return $this->registerScimDirectory ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function createTenantOrFail() : CreateTenant
-    {
-        return $this->createTenant ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function readTenantsOrFail() : ReadTenants
-    {
-        return $this->readTenants ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function inviteTenantMemberOrFail() : InviteTenantMember
-    {
-        return $this->inviteTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function acceptTenantInviteOrFail() : AcceptTenantInvite
-    {
-        return $this->acceptTenantInvite ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function readTenantMembersOrFail() : ReadTenantMembers
-    {
-        return $this->readTenantMembers ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function removeTenantMemberOrFail() : RemoveTenantMember
-    {
-        return $this->removeTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function suspendTenantMemberOrFail() : SuspendTenantMember
-    {
-        return $this->suspendTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function transferTenantOwnershipOrFail() : TransferTenantOwnership
-    {
-        return $this->transferTenantOwnership ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
-    }
-
-    private function rotateScimTokenOrFail() : RotateScimToken
-    {
-        return $this->rotateScimToken ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function markScimDirectoryOutageOrFail() : MarkScimDirectoryOutage
-    {
-        return $this->markScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function recoverScimDirectoryOutageOrFail() : RecoverScimDirectoryOutage
-    {
-        return $this->recoverScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function readScimDirectoriesOrFail() : ReadScimDirectories
-    {
-        return $this->readScimDirectories ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function provisionScimUserOrFail() : ProvisionScimUser
-    {
-        return $this->provisionScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function deleteScimUserOrFail() : DeleteScimUser
-    {
-        return $this->deleteScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function readScimUsersOrFail() : ReadScimUsers
-    {
-        return $this->readScimUsers ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function readScimGroupsOrFail() : ReadScimGroups
-    {
-        return $this->readScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function syncScimGroupsOrFail() : SyncScimGroups
-    {
-        return $this->syncScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function runScimBulkOrFail() : RunScimBulk
-    {
-        return $this->runScimBulk ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
-    }
-
-    private function authorizeOAuthCodeOrFail() : AuthorizeCode
-    {
-        return $this->authorizeOAuthCode ?? throw new RuntimeException(message: 'OAuth authorization code flow is not configured.');
-    }
-
-    private function exchangeOAuthCodeOrFail() : ExchangeAuthorizationCode
-    {
-        return $this->exchangeOAuthCode ?? throw new RuntimeException(message: 'OAuth token exchange is not configured.');
-    }
-
-    private function exchangeOAuthClientCredentialsOrFail() : ExchangeClientCredentials
-    {
-        return $this->exchangeOAuthClientCredentials ?? throw new RuntimeException(message: 'OAuth client credentials flow is not configured.');
-    }
-
-    private function exchangeOAuthRefreshTokenOrFail() : ExchangeRefreshToken
-    {
-        return $this->exchangeOAuthRefreshToken ?? throw new RuntimeException(message: 'OAuth refresh flow is not configured.');
-    }
-
-    private function revokeOAuthTokenOrFail() : RevokeToken
-    {
-        return $this->revokeOAuthToken ?? throw new RuntimeException(message: 'OAuth revoke flow is not configured.');
-    }
-
-    private function introspectOAuthTokenOrFail() : IntrospectToken
-    {
-        return $this->introspectOAuthToken ?? throw new RuntimeException(message: 'OAuth introspection is not configured.');
-    }
-
-    private function suspendUserOrFail() : SuspendUser
-    {
-        return $this->suspendUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
-    }
-
-    private function beginEmailChangeOrFail() : BeginEmailChange
-    {
-        return $this->beginEmailChange ?? throw new RuntimeException(message: 'Email change flow is not configured.');
-    }
-
-    private function confirmEmailChangeOrFail() : ConfirmEmailChange
-    {
-        return $this->confirmEmailChange ?? throw new RuntimeException(message: 'Email change flow is not configured.');
-    }
-
-    private function reactivateUserOrFail() : ReactivateUser
-    {
-        return $this->reactivateUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
-    }
-
-    private function deprovisionUserOrFail() : DeprovisionUser
-    {
-        return $this->deprovisionUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
-    }
-
-    private function beginPasskeyRegistrationOrFail() : BeginPasskeyRegistration
-    {
-        return $this->beginPasskeyRegistration ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function completePasskeyRegistrationOrFail() : CompletePasskeyRegistration
-    {
-        return $this->completePasskeyRegistration ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function beginPasskeyAuthenticationOrFail() : BeginPasskeyAuthentication
-    {
-        return $this->beginPasskeyAuthentication ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function completePasskeyAuthenticationOrFail() : CompletePasskeyAuthentication
-    {
-        return $this->completePasskeyAuthentication ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function readPasskeysOrFail() : ListPasskeys
-    {
-        return $this->readPasskeys ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function renamePasskeyOrFail() : RenamePasskey
-    {
-        return $this->renamePasskey ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function revokePasskeyOrFail() : RevokePasskeyFlow
-    {
-        return $this->revokePasskey ?? throw new RuntimeException(message: 'Passkey runtime is not configured.');
-    }
-
-    private function registerFederationConnectionOrFail() : RegisterFederationConnection
-    {
-        return $this->registerFederationConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function readFederationConnectionsOrFail() : ReadFederationConnections
-    {
-        return $this->readFederationConnections ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function verifyFederationDomainOrFail() : VerifyFederationDomain
-    {
-        return $this->verifyFederationDomain ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function syncFederationMetadataOrFail() : SyncFederationMetadata
-    {
-        return $this->syncFederationMetadata ?? throw new RuntimeException(message: 'Federation metadata runtime is not configured.');
-    }
-
-    private function checkFederationConnectionHealthOrFail() : CheckFederationConnectionHealth
-    {
-        return $this->checkFederationConnectionHealth ?? throw new RuntimeException(message: 'Federation health checks are not configured.');
-    }
-
-    private function evaluateFederationBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
-    {
-        return $this->evaluateFederationBreakGlassBypass ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function discoverFederationConnectionOrFail() : DiscoverFederationConnection
-    {
-        return $this->discoverFederationConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function startFederatedLoginOrFail() : StartFederatedLogin
-    {
-        return $this->startFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
-    }
-
-    private function completeFederatedLoginOrFail() : CompleteFederatedLogin
-    {
-        return $this->completeFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
     }
 }

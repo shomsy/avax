@@ -6,22 +6,22 @@ This document captures the current auth-kernel threat model and the controls own
 
 ## Threat Matrix
 
-| Threat | Package Control | Current Status |
-| --- | --- | --- |
-| credential stuffing | login rate limiting, safe failures, audit events | implemented |
-| brute force | login rate limiting, MFA attempt throttling | implemented |
-| session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
-| stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
-| stolen refresh token | rotation, reuse detection, family revocation, optional sender-constrained binding checks | implemented |
-| bearer token replay | DPoP proof verification, mTLS binding verification, binding mismatch audit, and sender-constrained token policy | implemented |
-| passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
-| MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
-| recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
-| admin account takeover | explicit phishing-resistant admin policy, admin elevation, fresh-MFA step-up, passkey support, audit trail | implemented |
-| email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
-| refresh token reuse | family revocation, risk review signal, and audit | implemented |
-| insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
-| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, SCIM directory scoping, tenant membership boundary, tenant-owned OAuth clients, and tenant security change validation with rollback exist; exhaustive crossing matrix is still incomplete | partial |
+| Threat                    | Package Control                                                                                                                                                                                                                                                               | Current Status |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| credential stuffing       | login rate limiting, safe failures, audit events                                                                                                                                                                                                                              | implemented    |
+| brute force               | login rate limiting, MFA attempt throttling                                                                                                                                                                                                                                   | implemented    |
+| session hijack            | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation                                                                                                                                                                           | implemented    |
+| stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients                                                                                                                                                                                               | implemented    |
+| stolen refresh token      | rotation, reuse detection, family revocation, optional sender-constrained binding checks                                                                                                                                                                                      | implemented    |
+| bearer token replay       | DPoP proof verification, mTLS binding verification, binding mismatch audit, and sender-constrained token policy                                                                                                                                                               | implemented    |
+| passkey replay            | single-use passkey challenge lifecycle and revoked-credential checks                                                                                                                                                                                                          | implemented    |
+| MFA bypass                | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks                                                                                                                                                                                            | implemented    |
+| recovery takeover         | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing                                                                                                                                                                                   | implemented    |
+| admin account takeover    | explicit phishing-resistant admin policy, admin elevation, fresh-MFA step-up, passkey support, audit trail                                                                                                                                                                    | implemented    |
+| email change takeover     | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit                                                                                                                                                                                  | implemented    |
+| refresh token reuse       | family revocation, risk review signal, and audit                                                                                                                                                                                                                              | implemented    |
+| insider misuse            | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned                                                                                                                                                  | partial        |
+| tenant isolation bug      | unique-domain federation policy, verified-domain discovery, health-gated SSO start, SCIM directory scoping, tenant membership boundary, tenant-owned OAuth clients, and tenant security change validation with rollback exist; exhaustive crossing matrix is still incomplete | partial        |
 
 ## Incident Classes
 
@@ -88,9 +88,9 @@ This document captures the current auth-kernel threat model and the controls own
 
 ## Severity Matrix
 
-| Severity | Definition |
-| --- | --- |
-| critical | cross-user compromise, tenant boundary break, privileged compromise |
-| high | one-user takeover or reusable token/session compromise |
-| medium | throttled attack signal, weak audit gap, or single-flow bypass attempt |
-| low | observability gap without immediate auth bypass |
+| Severity | Definition                                                             |
+|----------|------------------------------------------------------------------------|
+| critical | cross-user compromise, tenant boundary break, privileged compromise    |
+| high     | one-user takeover or reusable token/session compromise                 |
+| medium   | throttled attack signal, weak audit gap, or single-flow bypass attempt |
+| low      | observability gap without immediate auth bypass                        |

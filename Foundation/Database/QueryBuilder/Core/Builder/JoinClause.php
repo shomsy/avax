@@ -26,12 +26,13 @@ use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
 final class JoinClause
 {
     /** @var array<int, array{first: string, operator: string, second: string, boolean: string}> Collection of captured join conditions. */
-    private array $conditions = [];
+    private array                     $conditions = [];
+    private readonly GrammarInterface $grammar;
 
     /**
      * @param GrammarInterface $grammar The authorized technical SQL grammar used for secure identifier projection.
      */
-    public function __construct(private readonly GrammarInterface $grammar) {}
+    public function __construct(GrammarInterface $grammar) { $this->grammar = $grammar; }
 
     /**
      * Coordinate the addition of an 'OR ON' logical condition to the join clause.

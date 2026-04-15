@@ -21,10 +21,17 @@ use SensitiveParameter;
  */
 readonly class CsrfVerificationMiddleware implements MiddlewareInterface
 {
+    private string          $tokenAttribute;
+    private ResponseFactory $responseFactory;
+
     public function __construct(
-        private ResponseFactory              $responseFactory,
-        #[SensitiveParameter] private string $tokenAttribute = '_csrf_token'
-    ) {}
+        ResponseFactory              $responseFactory,
+        #[SensitiveParameter] string $tokenAttribute = '_csrf_token'
+    )
+    {
+        $this->responseFactory = $responseFactory;
+        $this->tokenAttribute  = $tokenAttribute;
+    }
 
     /**
      * PSR-15 process method: verify CSRF token before proceeding.

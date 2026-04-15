@@ -8,9 +8,18 @@ use SensitiveParameter;
 
 final readonly class ConfirmEmailChangeData
 {
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    public string      $token;
+
     public function __construct(
-        #[SensitiveParameter] public string      $token,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
-    ) {}
+        #[SensitiveParameter] string      $token,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $this->token     = $token;
+        $this->ipAddress = $ipAddress;
+        $this->userAgent = $userAgent;
+    }
 }

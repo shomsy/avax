@@ -16,10 +16,11 @@ final class ResolveSessionAllowance
      */
     public function execute(
         array                             $cookies,
-        bool                              $allowSession = true,
+        bool|null                         $allowSession = null,
         #[SensitiveParameter] string|null $sessionCookieName = null
     ) : bool
     {
+        $allowSession ??= true;
         if (! $allowSession) {
             return false;
         }

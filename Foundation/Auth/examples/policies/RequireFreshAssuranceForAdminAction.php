@@ -16,8 +16,8 @@ final readonly class RequireFreshAssuranceForAdminAction
     public function execute() : AccessPolicy
     {
         return AccessPolicy::forIdentityPolicy(
-            identityPolicy     : IdentityPolicyCatalog::admin(),
-            requiredPermission : new UserPermission(value: 'billing.refund.approve')
+            identityPolicy    : IdentityPolicyCatalog::admin(),
+            requiredPermission: new UserPermission(value: 'billing.refund.approve')
         );
     }
 }

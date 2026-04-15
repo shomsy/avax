@@ -11,10 +11,21 @@ use SensitiveParameter;
  */
 final readonly class VerifyMfaChallengeData
 {
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    public string      $code;
+    public string      $challengeId;
+
     public function __construct(
-        public string                            $challengeId,
-        #[SensitiveParameter] public string      $code,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
-    ) {}
+        string                            $challengeId,
+        #[SensitiveParameter] string      $code,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $this->challengeId = $challengeId;
+        $this->code        = $code;
+        $this->ipAddress   = $ipAddress;
+        $this->userAgent   = $userAgent;
+    }
 }

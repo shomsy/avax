@@ -11,9 +11,18 @@ use DateTimeImmutable;
  */
 final readonly class MfaVerificationAttempt
 {
+    public string            $reason;
+    public bool              $accepted;
+    public DateTimeImmutable $occurredAt;
+
     public function __construct(
-        public DateTimeImmutable $occurredAt,
-        public bool              $accepted,
-        public string            $reason
-    ) {}
+        DateTimeImmutable $occurredAt,
+        bool              $accepted,
+        string            $reason
+    )
+    {
+        $this->occurredAt = $occurredAt;
+        $this->accepted   = $accepted;
+        $this->reason     = $reason;
+    }
 }

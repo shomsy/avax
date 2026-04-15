@@ -11,9 +11,14 @@ use RuntimeException;
  */
 final class NativeSessionStore implements SessionStoreInterface
 {
+    private SessionCookieSettings $cookieSettings;
+
     public function __construct(
-        private SessionCookieSettings $cookieSettings = new SessionCookieSettings()
-    ) {}
+        SessionCookieSettings $cookieSettings = new SessionCookieSettings()
+    )
+    {
+        $this->cookieSettings = $cookieSettings;
+    }
 
     public function regenerate() : string
     {
@@ -42,12 +47,12 @@ final class NativeSessionStore implements SessionStoreInterface
         }
 
         session_set_cookie_params([
-            'secure'   => $this->cookieSettings->secure,
-            'httponly' => $this->cookieSettings->httpOnly,
-            'samesite' => $this->cookieSettings->sameSite,
-            'path'     => $this->cookieSettings->path,
-            'domain'   => $this->cookieSettings->domain,
-        ]);
+                                      'secure'   => $this->cookieSettings->secure,
+                                      'httponly' => $this->cookieSettings->httpOnly,
+                                      'samesite' => $this->cookieSettings->sameSite,
+                                      'path'     => $this->cookieSettings->path,
+                                      'domain'   => $this->cookieSettings->domain,
+                                  ]);
 
         session_start();
     }
@@ -89,7 +94,7 @@ final class NativeSessionStore implements SessionStoreInterface
         $useCookies = filter_var(ini_get('session.use_cookies'), FILTER_VALIDATE_BOOL);
 
         if ($useCookies) {
-            $params = session_get_cookie_params();
+            $params      = session_get_cookie_params();
             $sessionName = session_name();
 
             if ($sessionName === false) {
@@ -116,8 +121,8 @@ final class NativeSessionStore implements SessionStoreInterface
     {
         return match (strtolower($sameSite)) {
             'strict' => 'Strict',
-            'none' => 'None',
-            default => 'Lax',
+            'none'   => 'None',
+            default  => 'Lax',
         };
     }
 }

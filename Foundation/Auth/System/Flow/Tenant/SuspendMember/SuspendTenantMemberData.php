@@ -6,8 +6,15 @@ namespace Avax\Auth\System\Flow\Tenant\SuspendMember;
 
 final readonly class SuspendTenantMemberData
 {
+    public int    $userId;
+    public string $tenantSlug;
+
     public function __construct(
-        public string $tenantSlug,
-        public int $userId
-    ) {}
+        string $tenantSlug,
+        int    $userId
+    )
+    {
+        $this->tenantSlug = $tenantSlug;
+        $this->userId     = $userId;
+    }
 }

@@ -15,11 +15,20 @@ use SensitiveParameter;
  */
 final readonly class RequireFreshMfa
 {
+    private int                   $maxAgeSeconds;
+    private Clock                 $clock;
+    private CurrentAuthentication $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private Clock                                       $clock,
-        private int                                         $maxAgeSeconds = 300
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        Clock                                       $clock,
+        int                                         $maxAgeSeconds = 300
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->clock                 = $clock;
+        $this->maxAgeSeconds         = $maxAgeSeconds;
+    }
 
     /**
      * @throws Unauthenticated
@@ -27,8 +36,8 @@ final readonly class RequireFreshMfa
      */
     public function execute(int|null $maxAgeSeconds = null) : void
     {
-        $context = $this->currentAuthentication->read();
-        $user    = $context->user();
+        $context       = $this->currentAuthentication->read();
+        $user          = $context->user();
         $maxAgeSeconds ??= $this->maxAgeSeconds;
 
         if ($user === null) {

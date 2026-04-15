@@ -54,27 +54,70 @@ final readonly class CreateContainerConfig
     public const string DIAGNOSTICS_MODE_DETAILED = 'detailed';
 
     public const string DIAGNOSTICS_MODE_CI = 'ci';
+    public string $asyncTarget;
+    public string $sliceBoundaryMode;
+    public array  $policyProfiles;
+    public string $policyFailMode;
+    public string $policyProfile;
+    public string $pruneMode;
+    public string $executionMode;
+    public string $diagnosticsMode;
+    public string $compileMode;
+    public bool   $strict;
+    public array  $settings;
+    public bool   $debug;
+    public string $cacheVersion;
+    public string $cacheDir;
 
     /**
      * @param array<string, mixed> $settings
      */
     public function __construct(
-        public string $cacheDir = '',
-        public string $cacheVersion = 'container-v1',
-        public bool   $debug = false,
-        public array  $settings = [],
-        public bool   $strict = false,
-        public string $compileMode = self::COMPILE_MODE_PRODUCTION,
-        public string $diagnosticsMode = self::DIAGNOSTICS_MODE_MINIMAL,
-        public string $executionMode = self::EXECUTION_MODE_COMPILED,
-        public string $pruneMode = self::PRUNE_MODE_NONE,
-        public string $policyProfile = self::POLICY_PROFILE_BALANCED,
-        public string $policyFailMode = self::POLICY_FAIL_MODE_CLOSED,
+        string|null $cacheDir = null,
+        string|null $cacheVersion = null,
+        bool|null   $debug = null,
+        array|null  $settings = null,
+        bool|null   $strict = null,
+        string|null $compileMode = null,
+        string|null $diagnosticsMode = null,
+        string|null $executionMode = null,
+        string|null $pruneMode = null,
+        string|null $policyProfile = null,
+        string|null $policyFailMode = null,
         /** @var array<string, string> */
-        public array  $policyProfiles = [],
-        public string $sliceBoundaryMode = self::SLICE_BOUNDARY_MODE_STRICT,
-        public string $asyncTarget = self::ASYNC_TARGET_FPM
-    ) {}
+        array|null  $policyProfiles = null,
+        string|null $sliceBoundaryMode = null,
+        string      $asyncTarget = self::ASYNC_TARGET_FPM
+    )
+    {
+        $cacheDir                ??= '';
+        $cacheVersion            ??= 'container-v1';
+        $debug                   ??= false;
+        $settings                ??= [];
+        $strict                  ??= false;
+        $compileMode             ??= self::COMPILE_MODE_PRODUCTION;
+        $diagnosticsMode         ??= self::DIAGNOSTICS_MODE_MINIMAL;
+        $executionMode           ??= self::EXECUTION_MODE_COMPILED;
+        $pruneMode               ??= self::PRUNE_MODE_NONE;
+        $policyProfile           ??= self::POLICY_PROFILE_BALANCED;
+        $policyFailMode          ??= self::POLICY_FAIL_MODE_CLOSED;
+        $policyProfiles          ??= [];
+        $sliceBoundaryMode       ??= self::SLICE_BOUNDARY_MODE_STRICT;
+        $this->cacheDir          = $cacheDir;
+        $this->cacheVersion      = $cacheVersion;
+        $this->debug             = $debug;
+        $this->settings          = $settings;
+        $this->strict            = $strict;
+        $this->compileMode       = $compileMode;
+        $this->diagnosticsMode   = $diagnosticsMode;
+        $this->executionMode     = $executionMode;
+        $this->pruneMode         = $pruneMode;
+        $this->policyProfile     = $policyProfile;
+        $this->policyFailMode    = $policyFailMode;
+        $this->policyProfiles    = $policyProfiles;
+        $this->sliceBoundaryMode = $sliceBoundaryMode;
+        $this->asyncTarget       = $asyncTarget;
+    }
 
     /**
      * @param array<string, mixed> $settings

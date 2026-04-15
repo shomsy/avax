@@ -28,20 +28,47 @@ use SensitiveParameter;
  */
 final readonly class VerifyMfaChallenge
 {
+    private DeterministicRiskEngine|null $riskEngine;
+    private LimitMfaAttempts|null        $attemptLimit;
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private CurrentAuthentication        $currentAuthentication;
+    private ProjectAuthenticatedUser     $projectAuthenticatedUser;
+    private IdentityInterface            $identity;
+    private UserSourceInterface          $userSource;
+    private VerifyBackupCode             $verifyBackupCode;
+    private TotpInterface                $totp;
+    private MfaStoreInterface            $mfaStore;
+    private MfaChallengeStoreInterface   $challengeStore;
+
     public function __construct(
-        private MfaChallengeStoreInterface                  $challengeStore,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        #[SensitiveParameter] private VerifyBackupCode      $verifyBackupCode,
-        private UserSourceInterface                         $userSource,
-        private IdentityInterface                           $identity,
-        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private LimitMfaAttempts|null                       $attemptLimit = null,
-        private DeterministicRiskEngine|null                $riskEngine = null
-    ) {}
+        MfaChallengeStoreInterface                  $challengeStore,
+        MfaStoreInterface                           $mfaStore,
+        TotpInterface                               $totp,
+        #[SensitiveParameter] VerifyBackupCode      $verifyBackupCode,
+        UserSourceInterface                         $userSource,
+        IdentityInterface                           $identity,
+        ProjectAuthenticatedUser                    $projectAuthenticatedUser,
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock,
+        LimitMfaAttempts|null                       $attemptLimit = null,
+        DeterministicRiskEngine|null                $riskEngine = null
+    )
+    {
+        $this->challengeStore           = $challengeStore;
+        $this->mfaStore                 = $mfaStore;
+        $this->totp                     = $totp;
+        $this->verifyBackupCode         = $verifyBackupCode;
+        $this->userSource               = $userSource;
+        $this->identity                 = $identity;
+        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
+        $this->currentAuthentication    = $currentAuthentication;
+        $this->auditLog                 = $auditLog;
+        $this->clock                    = $clock;
+        $this->attemptLimit             = $attemptLimit;
+        $this->riskEngine               = $riskEngine;
+    }
 
     /**
      * @throws MfaChallengeFailed
@@ -67,10 +94,10 @@ final readonly class VerifyMfaChallenge
             $this->challengeStore->forget(challengeId: $record->challengeId);
             $this->recordFailure(
                 challengeId: $record->challengeId,
-                userId     : $record->userId->value,
                 reason     : 'expired',
                 ipAddress  : $data->ipAddress,
-                userAgent  : $data->userAgent
+                userAgent  : $data->userAgent,
+                userId     : $record->userId->value
             );
 
             throw MfaChallengeFailed::expired();
@@ -79,10 +106,10 @@ final readonly class VerifyMfaChallenge
         if ($record->isLocked()) {
             $this->recordFailure(
                 challengeId: $record->challengeId,
-                userId     : $record->userId->value,
                 reason     : 'locked',
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
+                userId     : $record->userId->value,
                 suspicious : true
             );
 
@@ -96,10 +123,10 @@ final readonly class VerifyMfaChallenge
         } catch (MfaAttemptLimitReached $exception) {
             $this->recordFailure(
                 challengeId: $record->challengeId,
-                userId     : $record->userId->value,
                 reason     : 'throttled',
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
+                userId     : $record->userId->value,
                 suspicious : true
             );
 
@@ -113,10 +140,10 @@ final readonly class VerifyMfaChallenge
             $this->challengeStore->forget(challengeId: $record->challengeId);
             $this->recordFailure(
                 challengeId: $record->challengeId,
-                userId     : $record->userId->value,
                 reason     : 'not_enabled',
                 ipAddress  : $data->ipAddress,
-                userAgent  : $data->userAgent
+                userAgent  : $data->userAgent,
+                userId     : $record->userId->value
             );
 
             throw MfaChallengeFailed::notEnabled();
@@ -142,17 +169,17 @@ final readonly class VerifyMfaChallenge
         if ($acceptedMethod === null) {
             $this->attemptLimit?->recordFailed(key: $attemptLimitKey);
             $updatedRecord = $record->recordAttempt(attempt: new MfaVerificationAttempt(
-                                                        occurredAt: $now,
-                                                        accepted  : false,
-                                                        reason    : $verification->reason
-                                                    ));
+                                                                 occurredAt: $now,
+                                                                 accepted  : false,
+                                                                 reason    : $verification->reason
+                                                             ));
             $this->challengeStore->save(record: $updatedRecord);
             $this->recordFailure(
                 challengeId: $record->challengeId,
-                userId     : $record->userId->value,
                 reason     : $verification->reason,
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
+                userId     : $record->userId->value,
                 suspicious : $updatedRecord->isLocked()
             );
 
@@ -161,7 +188,7 @@ final readonly class VerifyMfaChallenge
 
         $this->challengeStore->forget(challengeId: $record->challengeId);
         $this->attemptLimit?->reset(key: $attemptLimitKey);
-        $issued  = $this->identity->issue(user: $user, mfaVerifiedAt: $now);
+        $issued = $this->identity->issue(user: $user, mfaVerifiedAt: $now);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
             userAgent: $data->userAgent
@@ -179,23 +206,23 @@ final readonly class VerifyMfaChallenge
 
         $this->currentAuthentication->store(context: $context);
         $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
-            user      : $user,
-            ipAddress : $data->ipAddress,
-            userAgent : $data->userAgent
+            user     : $user,
+            ipAddress: $data->ipAddress,
+            userAgent: $data->userAgent
         );
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.challenge.passed',
-                                    occurredAt: $now,
-                                    context   : [
-                                                    'user_id'      => $user->getId()->value,
-                                                    'challenge_id' => $record->challengeId,
-                                                    'purpose'      => $record->purpose->value,
-                                                    'method'       => $acceptedMethod->value,
-                                                    'risk_action'  => $riskDecision?->action->value,
-                                                    'ip_address'   => $data->ipAddress,
-                                                    'user_agent'   => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.challenge.passed',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id'      => $user->getId()->value,
+                                                           'challenge_id' => $record->challengeId,
+                                                           'purpose'      => $record->purpose->value,
+                                                           'method'       => $acceptedMethod->value,
+                                                           'risk_action'  => $riskDecision?->action->value,
+                                                           'ip_address'   => $data->ipAddress,
+                                                           'user_agent'   => $data->userAgent,
+                                                       ]
+                                       ));
 
         return AuthenticationResult::success(
             context     : $context,
@@ -214,31 +241,31 @@ final readonly class VerifyMfaChallenge
     ) : void
     {
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.challenge.failed',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'      => $userId,
-                                                    'challenge_id' => $challengeId,
-                                                    'reason'       => $reason,
-                                                    'ip_address'   => $ipAddress,
-                                                    'user_agent'   => $userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.challenge.failed',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'      => $userId,
+                                                           'challenge_id' => $challengeId,
+                                                           'reason'       => $reason,
+                                                           'ip_address'   => $ipAddress,
+                                                           'user_agent'   => $userAgent,
+                                                       ]
+                                       ));
 
         if (! $suspicious) {
             return;
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.suspicious_failures',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'      => $userId,
-                                                    'challenge_id' => $challengeId,
-                                                    'reason'       => $reason,
-                                                    'ip_address'   => $ipAddress,
-                                                    'user_agent'   => $userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.suspicious_failures',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'      => $userId,
+                                                           'challenge_id' => $challengeId,
+                                                           'reason'       => $reason,
+                                                           'ip_address'   => $ipAddress,
+                                                           'user_agent'   => $userAgent,
+                                                       ]
+                                       ));
     }
 }

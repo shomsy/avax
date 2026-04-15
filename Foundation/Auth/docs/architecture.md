@@ -129,11 +129,13 @@ integrations/
   protocol work stays behind runtime interfaces.
 - `Capability/OAuth/SenderConstraint/` owns DPoP and mTLS binding metadata for sender-constrained token posture.
 - `Capability/Scim/` owns directory and provisioned-identity truth, while the HTTP adapter lives in
-  `integrations/http/Scim/`; external directory UIs and broader workforce-control-plane productization still remain separate.
+  `integrations/http/Scim/`; external directory UIs and broader workforce-control-plane productization still remain
+  separate.
 - `Capability/TenantSecurity/` owns tenant-scoped security configuration and approval lifecycle, while the thin admin
   API adapter lives in `integrations/http/TenantSecurity/` and the richer admin UI plus tenancy-management product
   surfaces remain application-owned.
-- Maintenance work stays local to the owning slice through `CleanupExpired*` flows and `Flow/Diagnostics/ExportAuditEvents/`.
+- Maintenance work stays local to the owning slice through `CleanupExpired*` flows and
+  `Flow/Diagnostics/ExportAuditEvents/`.
 - MFA freshness now survives ingress boundaries through package-owned session/JWT claims (`mfaVerifiedAt`).
 - Exception mapping stays at public or ingress boundaries; deep flow code returns domain-safe failures.
 

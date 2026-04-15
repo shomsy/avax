@@ -25,7 +25,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class NotIn
 {
-    public function __construct(private array $values) {}
+    private array $values;
+
+    public function __construct(array $values) { $this->values = $values; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

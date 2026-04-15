@@ -30,17 +30,28 @@ final readonly class CsrfTokenManager
      * The maximum number of tokens allowed per session.
      */
     private const int MAX_TOKENS_PER_SESSION = 5;
+    private int             $maxTokensPerSession;
+    private int             $tokenExpirationMinutes;
+    private LoggerInterface $logger;
+    private Session         $session;
 
     /**
      * @param Session         $session The session management implementation.
      * @param LoggerInterface $logger  Responsible for logging important events.
      */
     public function __construct(
-        #[SensitiveParameter] private Session $session,
-        private LoggerInterface               $logger,
-        private int                           $tokenExpirationMinutes = self::TOKEN_EXPIRATION_MINUTES,
-        private int                           $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION
-    ) {}
+        #[SensitiveParameter] Session $session,
+        LoggerInterface               $logger,
+        int|null                      $tokenExpirationMinutes = null,
+        int                           $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION
+    )
+    {
+        $tokenExpirationMinutes       ??= self::TOKEN_EXPIRATION_MINUTES;
+        $this->session                = $session;
+        $this->logger                 = $logger;
+        $this->tokenExpirationMinutes = $tokenExpirationMinutes;
+        $this->maxTokensPerSession    = $maxTokensPerSession;
+    }
 
     /**
      * Retrieves or generates a CSRF token tied to the session.
@@ -51,7 +62,7 @@ final readonly class CsrfTokenManager
      */
     public function getToken() : string
     {
-        $tokens = $this->pruneExcessTokens(tokens: $this->pruneExpiredTokens(tokens: $this->getTokens()));
+        $tokens      = $this->pruneExcessTokens(tokens: $this->pruneExpiredTokens(tokens: $this->getTokens()));
         $activeToken = $this->readMostRecentToken(tokens: $tokens);
 
         if ($activeToken !== null) {
@@ -70,6 +81,38 @@ final readonly class CsrfTokenManager
         );
 
         return $newToken;
+    }
+
+    /**
+     * @param array<string, int> $tokens
+     *
+     * @return array<string, int>
+     */
+    private function pruneExcessTokens(#[SensitiveParameter] array $tokens) : array
+    {
+        if (count($tokens) <= $this->maxTokensPerSession) {
+            return $tokens;
+        }
+
+        asort($tokens);
+        $trimmed = array_slice($tokens, -$this->maxTokensPerSession, null, true);
+
+        $this->logger->warning(
+            message: 'Trimmed excess CSRF tokens for the session.',
+            context: ['token_count' => count($tokens), 'max_tokens' => $this->maxTokensPerSession]
+        );
+
+        return $trimmed;
+    }
+
+    private function pruneExpiredTokens(#[SensitiveParameter] array $tokens) : array
+    {
+        $currentTime = time();
+
+        return array_filter(
+            $tokens,
+            fn ($timestamp) => is_int($timestamp) && $currentTime - $timestamp <= $this->tokenExpirationMinutes * 60
+        );
     }
 
     private function getTokens() : array
@@ -93,37 +136,6 @@ final readonly class CsrfTokenManager
     private function storeTokens(#[SensitiveParameter] array $tokens) : void
     {
         $this->session->put(key: self::SESSION_KEY, value: $tokens);
-    }
-
-    private function pruneExpiredTokens(#[SensitiveParameter] array $tokens) : array
-    {
-        $currentTime = time();
-
-        return array_filter(
-            $tokens,
-            fn ($timestamp) => is_int($timestamp) && $currentTime - $timestamp <= $this->tokenExpirationMinutes * 60
-        );
-    }
-
-    /**
-     * @param array<string, int> $tokens
-     * @return array<string, int>
-     */
-    private function pruneExcessTokens(#[SensitiveParameter] array $tokens) : array
-    {
-        if (count($tokens) <= $this->maxTokensPerSession) {
-            return $tokens;
-        }
-
-        asort($tokens);
-        $trimmed = array_slice($tokens, -$this->maxTokensPerSession, null, true);
-
-        $this->logger->warning(
-            message: 'Trimmed excess CSRF tokens for the session.',
-            context: ['token_count' => count($tokens), 'max_tokens' => $this->maxTokensPerSession]
-        );
-
-        return $trimmed;
     }
 
     /**

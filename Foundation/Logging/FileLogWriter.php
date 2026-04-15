@@ -25,6 +25,7 @@ final class FileLogWriter implements LogWriterInterface
      * @var string
      */
     private const string FALLBACK_PATH = '/tmp/fallback-log.log';
+    private string $filePath;
 
     /**
      * Constructor to initialize an instance with a specified file path
@@ -34,8 +35,9 @@ final class FileLogWriter implements LogWriterInterface
      *
      * @return void
      */
-    public function __construct(private string $filePath)
+    public function __construct(string $filePath)
     {
+        $this->filePath = $filePath;
         $this->initializeLogFile();
     }
 

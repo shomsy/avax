@@ -10,9 +10,9 @@ use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryHealth;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
-use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
@@ -21,15 +21,32 @@ use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
+    private AttemptThrottle|null                  $attemptThrottle;
+    private LifecycleOrchestrator|null            $lifecycle;
+    private Clock                                 $clock;
+    private AuditLogInterface                     $auditLog;
+    private ScimProvisionedIdentityStoreInterface $identityStore;
+    private ScimDirectoryStoreInterface           $directoryStore;
+    private ProvisionableUserSourceInterface      $userSource;
+
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
-        private ScimDirectoryStoreInterface $directoryStore,
-        private ScimProvisionedIdentityStoreInterface $identityStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private LifecycleOrchestrator|null $lifecycle = null,
-        private AttemptThrottle|null $attemptThrottle = null
-    ) {}
+        ProvisionableUserSourceInterface      $userSource,
+        ScimDirectoryStoreInterface           $directoryStore,
+        ScimProvisionedIdentityStoreInterface $identityStore,
+        AuditLogInterface                     $auditLog,
+        Clock                                 $clock,
+        LifecycleOrchestrator|null            $lifecycle = null,
+        AttemptThrottle|null                  $attemptThrottle = null
+    )
+    {
+        $this->userSource      = $userSource;
+        $this->directoryStore  = $directoryStore;
+        $this->identityStore   = $identityStore;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+        $this->lifecycle       = $lifecycle;
+        $this->attemptThrottle = $attemptThrottle;
+    }
 
     /**
      * @throws ScimFailed
@@ -53,22 +70,22 @@ final readonly class DeleteScimUser
         }
         $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.scim.user.deleted',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
-                'external_id' => $data->externalId,
-                'user_id' => $identity->userId->value,
-            ]
-        ));
+                                           name      : 'auth.scim.user.deleted',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id' => $directory->directoryId,
+                                                           'tenant'       => $directory->tenantSlug,
+                                                           'external_id'  => $data->externalId,
+                                                           'user_id'      => $identity->userId->value,
+                                                       ]
+                                       ));
     }
 
     /**
      * @throws ScimFailed
      */
     private function authenticateDirectory(
-        string $directoryId,
+        string                       $directoryId,
         #[SensitiveParameter] string $directoryToken
     ) : ScimDirectory
     {

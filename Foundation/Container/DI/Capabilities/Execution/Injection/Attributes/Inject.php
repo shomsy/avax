@@ -12,7 +12,12 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD | Attribute::TARGET_PARAMETER)]
 final class Inject
 {
+    public string|null $abstract = null;
+
     public function __construct(
-        public string|null $abstract = null
-    ) {}
+        string|null $abstract = null
+    )
+    {
+        $this->abstract = $abstract;
+    }
 }

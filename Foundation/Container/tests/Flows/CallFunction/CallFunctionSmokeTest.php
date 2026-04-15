@@ -19,7 +19,9 @@ final class CallGreeter implements CallGreeterContract
 
 final class CallAction
 {
-    public function __construct(private CallGreeterContract $greeter) {}
+    private CallGreeterContract $greeter;
+
+    public function __construct(CallGreeterContract $greeter) { $this->greeter = $greeter; }
 
     public static function staticHello() : string
     {

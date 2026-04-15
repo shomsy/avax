@@ -14,18 +14,41 @@ use SensitiveParameter;
  */
 final readonly class ResolvedToken
 {
+    public string|null                $familyId;
+    public OAuthSenderConstraint|null $senderConstraint;
+    public array                      $scopes;
+    public string|null                $clientId;
+    public bool                       $phishingResistant;
+    public DateTimeImmutable|null     $mfaVerifiedAt;
+    public DateTimeImmutable          $expiresAt;
+    public string                     $tokenId;
+    public User                       $user;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        public User                         $user,
-        #[SensitiveParameter] public string $tokenId,
-        public DateTimeImmutable            $expiresAt,
-        public DateTimeImmutable|null       $mfaVerifiedAt = null,
-        public bool                         $phishingResistant = false,
-        public string|null                  $clientId = null,
-        public array                        $scopes = [],
-        public OAuthSenderConstraint|null   $senderConstraint = null,
-        public string|null                  $familyId = null
-    ) {}
+        User                         $user,
+        #[SensitiveParameter] string $tokenId,
+        DateTimeImmutable            $expiresAt,
+        DateTimeImmutable|null       $mfaVerifiedAt = null,
+        bool|null                    $phishingResistant = null,
+        string|null                  $clientId = null,
+        array|null                   $scopes = null,
+        OAuthSenderConstraint|null   $senderConstraint = null,
+        string|null                  $familyId = null
+    )
+    {
+        $phishingResistant       ??= false;
+        $scopes                  ??= [];
+        $this->user              = $user;
+        $this->tokenId           = $tokenId;
+        $this->expiresAt         = $expiresAt;
+        $this->mfaVerifiedAt     = $mfaVerifiedAt;
+        $this->phishingResistant = $phishingResistant;
+        $this->clientId          = $clientId;
+        $this->scopes            = $scopes;
+        $this->senderConstraint  = $senderConstraint;
+        $this->familyId          = $familyId;
+    }
 }

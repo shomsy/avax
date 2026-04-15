@@ -22,14 +22,6 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         return $this->credentials[$credentialId] ?? null;
     }
 
-    public function forUser(int $userId) : array
-    {
-        return array_values(array_filter(
-            $this->credentials,
-            static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
-        ));
-    }
-
     public function touch(#[SensitiveParameter] string $credentialId, DateTimeImmutable $usedAt) : void
     {
         $credential = $this->credentials[$credentialId] ?? null;
@@ -93,5 +85,13 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         }
 
         return false;
+    }
+
+    public function forUser(int $userId) : array
+    {
+        return array_values(array_filter(
+                                $this->credentials,
+                                static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
+                            ));
     }
 }

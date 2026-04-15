@@ -76,7 +76,7 @@ class RouterContractTest extends TestCase
             authorization: null
         );
 
-        // When: Request matches with parameter
+        // When: ServerRequest matches with parameter
         $request = $this->createMock(Request::class);
         $request->expects(invocationRule: $this->once())
             ->method(constraint: 'withAttribute')

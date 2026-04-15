@@ -13,7 +13,9 @@ use Avax\Container\DI\ContainerInterface;
 
 final class OrderingProviderAlpha implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -27,7 +29,9 @@ final class OrderingProviderAlpha implements ServiceProviderInterface
 
 final class OrderingProviderBeta implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -41,7 +45,9 @@ final class OrderingProviderBeta implements ServiceProviderInterface
 
 final class OrderingProviderGamma implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -61,24 +67,32 @@ final class OrderingTaggedC {}
 
 final class OrderingDecoratedService
 {
-    public function __construct(public string $value = 'base') {}
+    public string $value = 'base';
+
+    public function __construct(string $value = 'base') { $this->value = $value; }
 }
 
 final class OrderingFirstDecorator
 {
-    public function __construct(public OrderingDecoratedService $inner) {}
+    public OrderingDecoratedService $inner;
+
+    public function __construct(OrderingDecoratedService $inner) { $this->inner = $inner; }
 }
 
 final class OrderingSecondDecorator
 {
-    public function __construct(public OrderingFirstDecorator $inner) {}
+    public OrderingFirstDecorator $inner;
+
+    public function __construct(OrderingFirstDecorator $inner) { $this->inner = $inner; }
 }
 
 final class OrderingArtifactDependency {}
 
 final class OrderingArtifactService
 {
-    public function __construct(public OrderingArtifactDependency $dependency) {}
+    public OrderingArtifactDependency $dependency;
+
+    public function __construct(OrderingArtifactDependency $dependency) { $this->dependency = $dependency; }
 }
 
 /**
@@ -96,10 +110,10 @@ function normalizedArtifactMetadata(Container $container) : array
 }
 
 $providerPlan = ProviderBootPlan::build(instances: [
-                                            OrderingProviderGamma::class => new OrderingProviderGamma(app: makeTestContainer()),
-                                            OrderingProviderAlpha::class => new OrderingProviderAlpha(app: makeTestContainer()),
-                                            OrderingProviderBeta::class  => new OrderingProviderBeta(app: makeTestContainer()),
-                                        ]);
+                                                       OrderingProviderGamma::class => new OrderingProviderGamma(app: makeTestContainer()),
+                                                       OrderingProviderAlpha::class => new OrderingProviderAlpha(app: makeTestContainer()),
+                                                       OrderingProviderBeta::class  => new OrderingProviderBeta(app: makeTestContainer()),
+                                                   ]);
 
 assertSame(
     expected: [OrderingProviderAlpha::class, OrderingProviderBeta::class, OrderingProviderGamma::class],

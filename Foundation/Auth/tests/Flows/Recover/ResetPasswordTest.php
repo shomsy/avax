@@ -37,11 +37,11 @@ final class ResetPasswordTest extends TestCase
      */
     public function testResetPasswordRevokesSessionsAndChallenges() : void
     {
-        $clock             = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $passwordHasher    = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
-        $userSource        = new InMemoryUserSource();
+        $clock              = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
+        $passwordHasher     = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+        $userSource         = new InMemoryUserSource();
         $passwordResetStore = new InMemoryPasswordResetStore();
-        $user              = User::create(
+        $user               = User::create(
             id          : new UserId(value: 1),
             email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
@@ -52,21 +52,21 @@ final class ResetPasswordTest extends TestCase
 
         $sessionRegistry = new InMemorySessionRegistry();
         $sessionRegistry->track(record: new SessionRecord(
-            sessionId        : 'session-1',
-            userId           : new UserId(value: 1),
-            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
-            lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
-            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
-        ));
+                                            sessionId        : 'session-1',
+                                            userId           : new UserId(value: 1),
+                                            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
+                                            lastSeenAt       : $clock->now(),
+                                            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+                                            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
+                                        ));
         $challengeStore = new InMemoryMfaChallengeStore();
         $challengeStore->issue(record: new MfaChallengeRecord(
-            challengeId: 'challenge-1',
-            userId     : new UserId(value: 1),
-            purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : $clock->now(),
-            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
-        ));
+                                           challengeId: 'challenge-1',
+                                           userId     : new UserId(value: 1),
+                                           purpose    : MfaChallengePurpose::LOGIN,
+                                           createdAt  : $clock->now(),
+                                           expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
+                                       ));
 
         $refreshTokens = Mockery::mock(RefreshTokenStoreInterface::class);
         $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(expected: UserId::class));
@@ -83,9 +83,9 @@ final class ResetPasswordTest extends TestCase
         );
 
         $result = $flow->execute(data: new ResetPasswordData(
-            token      : $challenge->token ?? '',
-            newPassword: 'new-password'
-        ));
+                                           token      : $challenge->token ?? '',
+                                           newPassword: 'new-password'
+                                       ));
 
         $this->assertTrue(condition: $result);
         $this->assertSame(expected: 'password_reset', actual: $sessionRegistry->find(sessionId: 'session-1')?->revokeReason);

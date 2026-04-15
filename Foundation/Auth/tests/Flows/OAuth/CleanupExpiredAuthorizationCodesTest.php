@@ -26,7 +26,7 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
             codeChallenge      : 'challenge',
             codeChallengeMethod: PkceMethod::S256
         );
-        $used = $store->issue(
+        $used    = $store->issue(
             userId             : new UserId(value: 1),
             clientId           : 'client-used',
             redirectUri        : 'https://example.test/callback',
@@ -35,7 +35,7 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
             codeChallenge      : 'challenge',
             codeChallengeMethod: PkceMethod::S256
         );
-        $active = $store->issue(
+        $active  = $store->issue(
             userId             : new UserId(value: 1),
             clientId           : 'client-active',
             redirectUri        : 'https://example.test/callback',

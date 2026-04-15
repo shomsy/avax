@@ -15,18 +15,18 @@ final readonly class CheckSourceTruth
      */
     public function execute(string $repositoryRoot) : array
     {
-        $issues = [];
-        $checked = [];
+        $issues            = [];
+        $checked           = [];
         $requiredDocuments = [
-            'status' => 'docs/STATUS.md',
-            'product_boundary' => 'docs/product-boundary.md',
+            'status'            => 'docs/STATUS.md',
+            'product_boundary'  => 'docs/product-boundary.md',
             'capability_matrix' => 'docs/capability-matrix.md',
-            'migration_guide' => 'docs/upgrade-migration-guide.md',
+            'migration_guide'   => 'docs/upgrade-migration-guide.md',
         ];
 
         foreach ($requiredDocuments as $name => $relativePath) {
-            $fullPath = $repositoryRoot . '/' . $relativePath;
-            $exists = is_file($fullPath);
+            $fullPath       = $repositoryRoot . '/' . $relativePath;
+            $exists         = is_file($fullPath);
             $checked[$name] = $exists;
 
             if (! $exists) {
@@ -34,11 +34,11 @@ final readonly class CheckSourceTruth
             }
         }
 
-        $status = $this->read($repositoryRoot . '/docs/STATUS.md');
-        $riskRegister = $this->read($repositoryRoot . '/.agents/management/evidence/RISK_REGISTER.md');
-        $authMerged = $this->read($repositoryRoot . '/Auth.txt');
-        $capabilityMatrix = $this->read($repositoryRoot . '/docs/capability-matrix.md');
-        $currentState = $this->read($repositoryRoot . '/docs/current-state.md');
+        $status           = $this->read(path: $repositoryRoot . '/docs/STATUS.md');
+        $riskRegister     = $this->read(path: $repositoryRoot . '/.agents/management/evidence/RISK_REGISTER.md');
+        $authMerged       = $this->read(path: $repositoryRoot . '/Auth.txt');
+        $capabilityMatrix = $this->read(path: $repositoryRoot . '/docs/capability-matrix.md');
+        $currentState     = $this->read(path: $repositoryRoot . '/docs/current-state.md');
 
         if ($status !== '' && ! str_contains($status, 'This document is authoritative.')) {
             $issues[] = 'STATUS.md does not assert authoritative ownership.';
@@ -73,9 +73,20 @@ final readonly class CheckSourceTruth
 
         return [
             'approved' => $issues === [],
-            'issues' => $issues,
-            'checked' => $checked,
+            'issues'   => $issues,
+            'checked'  => $checked,
         ];
+    }
+
+    private function read(string $path) : string
+    {
+        if (! is_file($path)) {
+            return '';
+        }
+
+        $contents = file_get_contents($path);
+
+        return is_string($contents) ? $contents : '';
     }
 
     /**
@@ -88,7 +99,7 @@ final readonly class CheckSourceTruth
         }
 
         $issues = [];
-        $lines = preg_split("/\r\n|\r|\n/", $capabilityMatrix);
+        $lines  = preg_split("/\r\n|\r|\n/", $capabilityMatrix);
 
         if ($lines === false) {
             return ['Capability matrix could not be parsed.'];
@@ -158,16 +169,5 @@ final readonly class CheckSourceTruth
         }
 
         return false;
-    }
-
-    private function read(string $path) : string
-    {
-        if (! is_file($path)) {
-            return '';
-        }
-
-        $contents = file_get_contents($path);
-
-        return is_string($contents) ? $contents : '';
     }
 }

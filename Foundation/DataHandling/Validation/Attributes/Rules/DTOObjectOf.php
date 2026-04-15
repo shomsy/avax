@@ -10,7 +10,9 @@ use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class DTOObjectOf
 {
-    public function __construct(public string $class) {}
+    public string $class;
+
+    public function __construct(string $class) { $this->class = $class; }
 
     public function apply(array|object|null $value) : AbstractDTO|null
     {

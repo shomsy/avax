@@ -29,7 +29,9 @@ final class CompileReportDeferredService
 
 final class CompileReportService implements CompileReportContract
 {
-    public function __construct(private CompileReportDependency $dependency) {}
+    private CompileReportDependency $dependency;
+
+    public function __construct(CompileReportDependency $dependency) { $this->dependency = $dependency; }
 
     public function dependency() : CompileReportDependency
     {

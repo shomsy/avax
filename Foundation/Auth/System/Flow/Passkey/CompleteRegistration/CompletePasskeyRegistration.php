@@ -17,15 +17,32 @@ use SensitiveParameter;
 
 final readonly class CompletePasskeyRegistration
 {
+    private string                          $rpId;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private PasskeyChallengeStoreInterface  $challengeStore;
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private PasskeyRuntimeInterface         $runtime;
+    private CurrentAuthentication           $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
+        PasskeyChallengeStoreInterface                        $challengeStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        string                                                $rpId
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->runtime               = $runtime;
+        $this->credentialStore       = $credentialStore;
+        $this->challengeStore        = $challengeStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->rpId                  = $rpId;
+    }
 
     /**
      * @throws PasskeyOperationFailed
@@ -54,9 +71,9 @@ final readonly class CompletePasskeyRegistration
         }
 
         $resolved = $this->runtime->completeRegistration(
-            rpId      : $this->rpId,
-            challenge : $challenge->challenge,
-            response  : $data->response
+            rpId     : $this->rpId,
+            challenge: $challenge->challenge,
+            response : $data->response
         );
 
         $credential = new PasskeyCredential(
@@ -69,15 +86,15 @@ final readonly class CompletePasskeyRegistration
         $this->credentialStore->save(credential: $credential);
         $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.passkey.registered',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'user_id' => $user->id,
-                'credential_id' => $credential->credentialId,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.passkey.registered',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'       => $user->id,
+                                                           'credential_id' => $credential->credentialId,
+                                                           'ip_address'    => $data->ipAddress,
+                                                           'user_agent'    => $data->userAgent,
+                                                       ]
+                                       ));
 
         return $credential;
     }

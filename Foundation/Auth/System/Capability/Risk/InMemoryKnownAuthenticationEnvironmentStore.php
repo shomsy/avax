@@ -16,13 +16,13 @@ final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenti
         return isset($this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)]);
     }
 
-    public function remember(int $userId, #[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : void
-    {
-        $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
-    }
-
     private function key(#[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : string
     {
         return strtolower(trim($ipAddress ?? 'unknown')) . '|' . strtolower(trim($userAgent ?? 'unknown'));
+    }
+
+    public function remember(int $userId, #[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : void
+    {
+        $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
     }
 }

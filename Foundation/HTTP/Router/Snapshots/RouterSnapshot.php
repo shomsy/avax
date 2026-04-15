@@ -19,14 +19,29 @@ use RuntimeException;
  */
 final readonly class RouterSnapshot
 {
+    public string $checksum;
+    public string $version;
+    public string $environment;
+    public string $createdAt;
+    public array  $metadata;
+    public array  $routes;
+
     public function __construct(
-        public array  $routes,
-        public array  $metadata,
-        public string $createdAt,
-        public string $environment,
-        public string $version,
-        public string $checksum,
-    ) {}
+        array  $routes,
+        array  $metadata,
+        string $createdAt,
+        string $environment,
+        string $version,
+        string $checksum,
+    )
+    {
+        $this->routes      = $routes;
+        $this->metadata    = $metadata;
+        $this->createdAt   = $createdAt;
+        $this->environment = $environment;
+        $this->version     = $version;
+        $this->checksum    = $checksum;
+    }
 
     /**
      * Creates a snapshot from the current router state.

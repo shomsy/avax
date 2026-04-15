@@ -25,14 +25,29 @@ use SensitiveParameter;
  */
 final readonly class ConfirmMfaEnrollment
 {
+    private Clock                 $clock;
+    private AuditLogInterface     $auditLog;
+    private GenerateBackupCodes   $generateBackupCodes;
+    private TotpInterface         $totp;
+    private MfaStoreInterface     $mfaStore;
+    private CurrentAuthentication $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        MfaStoreInterface                           $mfaStore,
+        TotpInterface                               $totp,
+        #[SensitiveParameter] GenerateBackupCodes   $generateBackupCodes,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->mfaStore              = $mfaStore;
+        $this->totp                  = $totp;
+        $this->generateBackupCodes   = $generateBackupCodes;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+    }
 
     /**
      * @throws Unauthenticated
@@ -64,42 +79,42 @@ final readonly class ConfirmMfaEnrollment
 
         if (! $verification->accepted || $verification->timeStep === null) {
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.mfa.enrollment.failed',
-                                        occurredAt: $now,
-                                        context   : [
-                                                        'user_id' => $user->id,
-                                                        'reason'  => $verification->reason,
-                                                    ]
-                                    ));
+                                               name      : 'auth.mfa.enrollment.failed',
+                                               occurredAt: $now,
+                                               context   : [
+                                                               'user_id' => $user->id,
+                                                               'reason'  => $verification->reason,
+                                                           ]
+                                           ));
 
             throw MfaEnrollmentFailed::invalidCode();
         }
 
         $generated = $this->generateBackupCodes->execute();
         $this->mfaStore->saveMethod(record: new MfaMethodRecord(
-                                        userId              : $userId,
-                                        method              : $record->method,
-                                        secret              : $record->secret,
-                                        enabledAt           : $now,
-                                        backupCodes         : $generated->records,
-                                        lastAcceptedTimeStep: $verification->timeStep
-                                    ));
+                                                userId              : $userId,
+                                                method              : $record->method,
+                                                secret              : $record->secret,
+                                                enabledAt           : $now,
+                                                backupCodes         : $generated->records,
+                                                lastAcceptedTimeStep: $verification->timeStep
+                                            ));
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.enrollment.completed',
-                                    occurredAt: $now,
-                                    context   : [
-                                                    'user_id' => $user->id,
-                                                    'method'  => $record->method->value,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.enrollment.completed',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                           'method'  => $record->method->value,
+                                                       ]
+                                       ));
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.enabled',
-                                    occurredAt: $now,
-                                    context   : [
-                                                    'user_id' => $user->id,
-                                                    'method'  => $record->method->value,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.enabled',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                           'method'  => $record->method->value,
+                                                       ]
+                                       ));
         $context = $this->currentAuthentication->read();
         $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
             user                : new AuthenticatedUser(

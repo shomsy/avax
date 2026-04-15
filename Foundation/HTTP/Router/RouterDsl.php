@@ -31,14 +31,29 @@ use ReflectionException;
  */
 final readonly class RouterDsl implements RouterInterface
 {
+    private RouteRegistry        $registry;
+    private RouteGroupStack      $groupStack;
+    private FallbackManager      $fallbackManager;
+    private ControllerDispatcher $controllerDispatcher;
+    private HttpRequestRouter    $router;
+    private RouterRegistrar      $registrar;
+
     public function __construct(
-        private RouterRegistrar      $registrar,
-        private HttpRequestRouter    $router,
-        private ControllerDispatcher $controllerDispatcher,
-        private FallbackManager      $fallbackManager,
-        private RouteGroupStack      $groupStack,
-        private RouteRegistry        $registry,
-    ) {}
+        RouterRegistrar      $registrar,
+        HttpRequestRouter    $router,
+        ControllerDispatcher $controllerDispatcher,
+        FallbackManager      $fallbackManager,
+        RouteGroupStack      $groupStack,
+        RouteRegistry        $registry,
+    )
+    {
+        $this->registrar            = $registrar;
+        $this->router               = $router;
+        $this->controllerDispatcher = $controllerDispatcher;
+        $this->fallbackManager      = $fallbackManager;
+        $this->groupStack           = $groupStack;
+        $this->registry             = $registry;
+    }
 
     public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {

@@ -26,33 +26,33 @@ final class TenantSecurityFlowTest extends TestCase
 {
     public function testTenantSecurityChangeApprovalApplyAndRollback() : void
     {
-        $auth = $this->buildAuth();
+        $auth       = $this->buildAuth();
         $connection = $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-            tenantSlug  : 'acme',
-            name        : 'Acme OIDC',
-            provider    : FederationProvider::OIDC,
-            domain      : 'acme.test',
-            groupRoleMap: ['admins' => ['admin']]
-        ));
-        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
-            tenantSlug  : 'acme',
-            name        : 'Acme Workforce',
-            groupRoleMap: ['admins' => ['admin']]
-        ));
+                                                                    tenantSlug  : 'acme',
+                                                                    name        : 'Acme OIDC',
+                                                                    provider    : FederationProvider::OIDC,
+                                                                    domain      : 'acme.test',
+                                                                    groupRoleMap: ['admins' => ['admin']]
+                                                                ));
+        $directory  = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
+                                                             tenantSlug  : 'acme',
+                                                             name        : 'Acme Workforce',
+                                                             groupRoleMap: ['admins' => ['admin']]
+                                                         ));
 
         $change = $auth->beginTenantSecurityChange(data: new BeginTenantSecurityChangeData(
-            tenantSlug  : 'acme',
-            requestedBy : 'security-admin',
-            reason      : 'Turn on tenant SSO posture',
-            after       : new TenantSecurityConfiguration(
-                tenantSlug             : 'acme',
-                federationConnectionId : $connection->connectionId,
-                scimDirectoryId        : $directory->directory->directoryId,
-                verifiedDomains        : ['acme.test'],
-                groupRoleMap           : ['admins' => ['admin']],
-                policyProfile          : 'tenant_admin'
-            )
-        ));
+                                                             tenantSlug : 'acme',
+                                                             requestedBy: 'security-admin',
+                                                             reason     : 'Turn on tenant SSO posture',
+                                                             after      : new TenantSecurityConfiguration(
+                                                                              tenantSlug            : 'acme',
+                                                                              federationConnectionId: $connection->connectionId,
+                                                                              scimDirectoryId       : $directory->directory->directoryId,
+                                                                              verifiedDomains       : ['acme.test'],
+                                                                              groupRoleMap          : ['admins' => ['admin']],
+                                                                              policyProfile         : 'tenant_admin'
+                                                                          )
+                                                         ));
 
         $this->assertSame(expected: TenantSecurityChangeRequestStatus::PENDING_APPROVAL, actual: $change->status);
         $this->assertArrayHasKey(key: 'federation_connection_id', array: $change->diff);
@@ -60,13 +60,32 @@ final class TenantSecurityFlowTest extends TestCase
         $approved = $auth->approveTenantSecurityChange(changeId: $change->changeId, approvedBy: 'approver');
         $this->assertSame(expected: TenantSecurityChangeRequestStatus::APPROVED, actual: $approved->status);
 
-        $applied = $auth->applyTenantSecurityChange(changeId: $change->changeId);
-        $stored = $auth->readTenantSecurityConfiguration(tenantSlug: 'acme');
+        $applied    = $auth->applyTenantSecurityChange(changeId: $change->changeId);
+        $stored     = $auth->readTenantSecurityConfiguration(tenantSlug: 'acme');
         $rolledBack = $auth->rollbackTenantSecurityChange(changeId: $change->changeId);
 
         $this->assertSame(expected: $connection->connectionId, actual: $applied->federationConnectionId);
         $this->assertSame(expected: $applied->federationConnectionId, actual: $stored?->federationConnectionId);
         $this->assertNull(actual: $rolledBack->federationConnectionId);
+    }
+
+    private function buildAuth() : Auth
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+
+        return Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'tenant-auth-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withFederationRuntime(federationRuntime: new FakeFederationRuntime())
+            ->ready();
     }
 
     public function testTenantSecurityRejectsUnknownReferencedResources() : void
@@ -77,59 +96,40 @@ final class TenantSecurityFlowTest extends TestCase
         $this->expectExceptionMessage('Tenant security references an unknown federation connection.');
 
         $auth->beginTenantSecurityChange(data: new BeginTenantSecurityChangeData(
-            tenantSlug  : 'acme',
-            requestedBy : 'security-admin',
-            reason      : 'Invalid reference',
-            after       : new TenantSecurityConfiguration(
-                tenantSlug             : 'acme',
-                federationConnectionId : 'missing-fed'
-            )
-        ));
+                                                   tenantSlug : 'acme',
+                                                   requestedBy: 'security-admin',
+                                                   reason     : 'Invalid reference',
+                                                   after      : new TenantSecurityConfiguration(
+                                                                    tenantSlug            : 'acme',
+                                                                    federationConnectionId: 'missing-fed'
+                                                                )
+                                               ));
     }
 
     public function testTenantSecurityApplyRequiresApproval() : void
     {
-        $auth = $this->buildAuth();
+        $auth       = $this->buildAuth();
         $connection = $auth->registerFederationConnection(data: new RegisterFederationConnectionData(
-            tenantSlug  : 'acme',
-            name        : 'Acme OIDC',
-            provider    : FederationProvider::OIDC,
-            domain      : 'acme.test',
-            groupRoleMap: ['admins' => ['admin']]
-        ));
+                                                                    tenantSlug  : 'acme',
+                                                                    name        : 'Acme OIDC',
+                                                                    provider    : FederationProvider::OIDC,
+                                                                    domain      : 'acme.test',
+                                                                    groupRoleMap: ['admins' => ['admin']]
+                                                                ));
 
         $change = $auth->beginTenantSecurityChange(data: new BeginTenantSecurityChangeData(
-            tenantSlug  : 'acme',
-            requestedBy : 'security-admin',
-            reason      : 'Attempt unapproved apply',
-            after       : new TenantSecurityConfiguration(
-                tenantSlug             : 'acme',
-                federationConnectionId : $connection->connectionId
-            )
-        ));
+                                                             tenantSlug : 'acme',
+                                                             requestedBy: 'security-admin',
+                                                             reason     : 'Attempt unapproved apply',
+                                                             after      : new TenantSecurityConfiguration(
+                                                                              tenantSlug            : 'acme',
+                                                                              federationConnectionId: $connection->connectionId
+                                                                          )
+                                                         ));
 
         $this->expectException(TenantSecurityFailed::class);
         $this->expectExceptionMessage('Tenant security approval is required before apply.');
 
         $auth->applyTenantSecurityChange(changeId: $change->changeId);
-    }
-
-    private function buildAuth() : Auth
-    {
-        $userSource = new InMemoryUserSource();
-        $refreshTokens = new InMemoryRefreshTokenStore();
-
-        return Auth::configuration()
-            ->forUser(userSource: $userSource)
-            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'tenant-auth-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
-            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
-            ->withFederationRuntime(federationRuntime: new FakeFederationRuntime())
-            ->ready();
     }
 }

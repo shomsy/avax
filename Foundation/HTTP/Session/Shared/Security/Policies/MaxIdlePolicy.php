@@ -14,14 +14,19 @@ use RuntimeException;
  */
 final readonly class MaxIdlePolicy implements PolicyInterface
 {
+    private int $maxIdleSeconds;
+
     /**
      * MaxIdlePolicy Constructor.
      *
      * @param int $maxIdleSeconds Maximum idle time in seconds (default: 30 minutes).
      */
     public function __construct(
-        private int $maxIdleSeconds = 1800
-    ) {}
+        int $maxIdleSeconds = 1800
+    )
+    {
+        $this->maxIdleSeconds = $maxIdleSeconds;
+    }
 
     /**
      * Enforce max idle policy.

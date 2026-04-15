@@ -8,9 +8,18 @@ use SensitiveParameter;
 
 final readonly class DeleteScimUserData
 {
+    public string $externalId;
+    public string $directoryToken;
+    public string $directoryId;
+
     public function __construct(
-        public string $directoryId,
-        #[SensitiveParameter] public string $directoryToken,
-        public string $externalId
-    ) {}
+        string                       $directoryId,
+        #[SensitiveParameter] string $directoryToken,
+        string                       $externalId
+    )
+    {
+        $this->directoryId    = $directoryId;
+        $this->directoryToken = $directoryToken;
+        $this->externalId     = $externalId;
+    }
 }

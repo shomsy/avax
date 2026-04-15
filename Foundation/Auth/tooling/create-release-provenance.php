@@ -6,8 +6,8 @@ use Avax\Auth\Integrations\Release\CreateReleaseProvenance;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$root = dirname(__DIR__);
-$generator = new CreateReleaseProvenance();
+$root           = dirname(__DIR__);
+$generator      = new CreateReleaseProvenance();
 $buildDirectory = $root . '/build';
 
 if (! is_dir($buildDirectory)) {
@@ -22,6 +22,6 @@ $provenance = $generator->execute(repositoryRoot: $root, validationCommands: [
 file_put_contents($buildDirectory . '/release-provenance.json', json_encode($provenance, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 echo json_encode(
-    $provenance,
-    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-) . PHP_EOL;
+        $provenance,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+    ) . PHP_EOL;

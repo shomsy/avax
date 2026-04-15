@@ -9,14 +9,27 @@ use SensitiveParameter;
 
 final readonly class SyncScimGroupsData
 {
+    public ScimAccountState $state;
+    public array            $groups;
+    public string           $externalId;
+    public string           $directoryToken;
+    public string           $directoryId;
+
     /**
      * @param list<string> $groups
      */
     public function __construct(
-        public string $directoryId,
-        #[SensitiveParameter] public string $directoryToken,
-        public string $externalId,
-        public array $groups,
-        public ScimAccountState $state = ScimAccountState::ACTIVE
-    ) {}
+        string                       $directoryId,
+        #[SensitiveParameter] string $directoryToken,
+        string                       $externalId,
+        array                        $groups,
+        ScimAccountState             $state = ScimAccountState::ACTIVE
+    )
+    {
+        $this->directoryId    = $directoryId;
+        $this->directoryToken = $directoryToken;
+        $this->externalId     = $externalId;
+        $this->groups         = $groups;
+        $this->state          = $state;
+    }
 }

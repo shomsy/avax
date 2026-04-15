@@ -17,14 +17,18 @@ use Throwable;
 final class Transaction implements TransactionManagerInterface
 {
     /** @var int How many bubbles deep are we currently? (0 = no transaction active). */
-    private int $transactions = 0;
+    private int                         $transactions = 0;
+    private readonly DatabaseConnection $connection;
 
     /**
      * @param DatabaseConnection $connection The physical persistence gateway to use.
      */
     private function __construct(
-        private readonly DatabaseConnection $connection
-    ) {}
+        DatabaseConnection $connection
+    )
+    {
+        $this->connection = $connection;
+    }
 
     /**
      * Initialize a transaction manager on a specific connection.

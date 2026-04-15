@@ -6,12 +6,21 @@ namespace Avax\Auth\System\Flow\Scim\RegisterDirectory;
 
 final readonly class RegisterScimDirectoryData
 {
+    public array  $groupRoleMap;
+    public string $name;
+    public string $tenantSlug;
+
     /**
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string $tenantSlug,
-        public string $name,
-        public array $groupRoleMap = []
-    ) {}
+        string $tenantSlug,
+        string $name,
+        array  $groupRoleMap = []
+    )
+    {
+        $this->tenantSlug   = $tenantSlug;
+        $this->name         = $name;
+        $this->groupRoleMap = $groupRoleMap;
+    }
 }

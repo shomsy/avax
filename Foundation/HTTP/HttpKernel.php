@@ -32,6 +32,11 @@ use Throwable;
  */
 final readonly class HttpKernel implements Kernel
 {
+    private ResponseFactory      $responseFactory;
+    private array                $globalMiddleware;
+    private ControllerDispatcher $dispatcher;
+    private RouterInterface      $router;
+
     /**
      * @param RouterInterface       $router           The router for route resolution
      * @param ControllerDispatcher  $dispatcher       The controller dispatcher
@@ -39,11 +44,17 @@ final readonly class HttpKernel implements Kernel
      * @param ResponseFactory       $responseFactory  For error responses
      */
     public function __construct(
-        private RouterInterface      $router,
-        private ControllerDispatcher $dispatcher,
-        private array                $globalMiddleware,
-        private ResponseFactory      $responseFactory
-    ) {}
+        RouterInterface      $router,
+        ControllerDispatcher $dispatcher,
+        array                $globalMiddleware,
+        ResponseFactory      $responseFactory
+    )
+    {
+        $this->router           = $router;
+        $this->dispatcher       = $dispatcher;
+        $this->globalMiddleware = $globalMiddleware;
+        $this->responseFactory  = $responseFactory;
+    }
 
     /**
      * Process HTTP request through the complete pipeline.
@@ -109,10 +120,17 @@ final readonly class HttpKernel implements Kernel
  */
 final readonly class ControllerRequestHandler implements RequestHandlerInterface
 {
+    private ControllerDispatcher $dispatcher;
+    private RouterInterface      $router;
+
     public function __construct(
-        private RouterInterface      $router,
-        private ControllerDispatcher $dispatcher
-    ) {}
+        RouterInterface      $router,
+        ControllerDispatcher $dispatcher
+    )
+    {
+        $this->router     = $router;
+        $this->dispatcher = $dispatcher;
+    }
 
     public function handle(RequestInterface $request) : ResponseInterface
     {
@@ -136,7 +154,9 @@ final readonly class ControllerRequestHandler implements RequestHandlerInterface
  */
 final readonly class RouteMiddlewareHandler implements MiddlewareInterface
 {
-    public function __construct(private RouterInterface $router) {}
+    private RouterInterface $router;
+
+    public function __construct(RouterInterface $router) { $this->router = $router; }
 
     public function process(
         RequestInterface        $request,

@@ -12,9 +12,18 @@ use SensitiveParameter;
  */
 final readonly class IssuedToken
 {
+    public DateTimeImmutable $expiresAt;
+    public string            $tokenId;
+    public string            $token;
+
     public function __construct(
-        #[SensitiveParameter] public string $token,
-        #[SensitiveParameter] public string $tokenId,
-        public DateTimeImmutable            $expiresAt
-    ) {}
+        #[SensitiveParameter] string $token,
+        #[SensitiveParameter] string $tokenId,
+        DateTimeImmutable            $expiresAt
+    )
+    {
+        $this->token     = $token;
+        $this->tokenId   = $tokenId;
+        $this->expiresAt = $expiresAt;
+    }
 }

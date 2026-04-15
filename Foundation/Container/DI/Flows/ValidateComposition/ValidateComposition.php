@@ -11,9 +11,14 @@ use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
  */
 final readonly class ValidateComposition
 {
+    private ServiceResolver $resolver;
+
     public function __construct(
-        private ServiceResolver $resolver
-    ) {}
+        ServiceResolver $resolver
+    )
+    {
+        $this->resolver = $resolver;
+    }
 
     /**
      * @param list<string>         $serviceIds

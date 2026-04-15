@@ -50,7 +50,8 @@ Tracks active and accepted risks.
 - `impact`: The package now ships a practical OIDC lane, workload `client_credentials`, SCIM runtime core, and tenant
   control-plane core. The real remaining risk is scope inflation: teams could still mistake the shipped identity kernel
   for a full hosted identity platform.
-- `mitigation`: `docs/STATUS.md`, `docs/product-boundary.md`, `docs/capability-matrix.md`, `docs/choose-vs-external-idp.md`,
+- `mitigation`: `docs/STATUS.md`, `docs/product-boundary.md`, `docs/capability-matrix.md`,
+  `docs/choose-vs-external-idp.md`,
   and `docs/upgrade-migration-guide.md` define the shipped kernel scope, non-goals, and migration posture explicitly.
 - `owner`: boundary docs
 - `status`: accepted

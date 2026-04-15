@@ -9,13 +9,20 @@ namespace Avax\Text;
  */
 final readonly class MatchResult
 {
+    public array $matches;
+    public bool  $matched;
+
     /**
      * @param array<int|string, string> $matches
      */
     public function __construct(
-        public bool  $matched,
-        public array $matches
-    ) {}
+        bool  $matched,
+        array $matches
+    )
+    {
+        $this->matched = $matched;
+        $this->matches = $matches;
+    }
 
     /**
      * Get named group value or null if not found.

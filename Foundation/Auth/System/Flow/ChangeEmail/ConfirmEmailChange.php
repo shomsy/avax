@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\ChangeEmail;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -12,24 +13,46 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
-use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class ConfirmEmailChange
 {
+    private RefreshTokenStoreInterface|null      $refreshTokenStore;
+    private MfaChallengeStoreInterface|null      $mfaChallengeStore;
+    private SessionRegistryInterface|null        $sessionRegistry;
+    private IdentityInterface                    $identity;
+    private CurrentAuthentication                $currentAuthentication;
+    private Clock                                $clock;
+    private AuditLogInterface                    $auditLog;
+    private EmailVerificationStateStoreInterface $emailVerificationState;
+    private EmailChangeStoreInterface            $emailChangeStore;
+    private ProvisionableUserSourceInterface     $userSource;
+
     public function __construct(
-        private ProvisionableUserSourceInterface                           $userSource,
-        #[SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
-        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                                          $auditLog,
-        private Clock                                                      $clock,
-        #[SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
-        private IdentityInterface                                          $identity,
-        #[SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
-    ) {}
+        ProvisionableUserSourceInterface                           $userSource,
+        #[SensitiveParameter] EmailChangeStoreInterface            $emailChangeStore,
+        #[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState,
+        AuditLogInterface                                          $auditLog,
+        Clock                                                      $clock,
+        #[SensitiveParameter] CurrentAuthentication                $currentAuthentication,
+        IdentityInterface                                          $identity,
+        #[SensitiveParameter] SessionRegistryInterface|null        $sessionRegistry = null,
+        MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null      $refreshTokenStore = null
+    )
+    {
+        $this->userSource             = $userSource;
+        $this->emailChangeStore       = $emailChangeStore;
+        $this->emailVerificationState = $emailVerificationState;
+        $this->auditLog               = $auditLog;
+        $this->clock                  = $clock;
+        $this->currentAuthentication  = $currentAuthentication;
+        $this->identity               = $identity;
+        $this->sessionRegistry        = $sessionRegistry;
+        $this->mfaChallengeStore      = $mfaChallengeStore;
+        $this->refreshTokenStore      = $refreshTokenStore;
+    }
 
     /**
      * @throws EmailChangeFailed
@@ -37,18 +60,18 @@ final readonly class ConfirmEmailChange
     public function execute(ConfirmEmailChangeData $data) : bool
     {
         $context = $this->currentAuthentication->read();
-        $record = $this->emailChangeStore->consume(token: $data->token, now: $this->clock->now());
+        $record  = $this->emailChangeStore->consume(token: $data->token, now: $this->clock->now());
 
         if ($record === null) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.email_change.failed',
-                occurredAt: $this->clock->now(),
-                context   : [
-                    'reason'     => 'invalid_token',
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
-                ]
-            ));
+                                               name      : 'auth.email_change.failed',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'reason'     => 'invalid_token',
+                                                               'ip_address' => $data->ipAddress,
+                                                               'user_agent' => $data->userAgent,
+                                                           ]
+                                           ));
 
             throw EmailChangeFailed::invalidToken();
         }
@@ -73,15 +96,15 @@ final readonly class ConfirmEmailChange
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.email_change.completed',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'user_id'    => $record->userId->value,
-                'new_email'  => $record->newEmail,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.email_change.completed',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $record->userId->value,
+                                                           'new_email'  => $record->newEmail,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return true;
     }

@@ -30,19 +30,23 @@ final class ConnectionPool implements ConnectionPoolInterface
     private PoolState $state;
 
     /** @var ExecutionScope|null The "Luggage Tag" (Trace ID) for this pool's actions. */
-    private ExecutionScope|null $scope = null;
+    private ExecutionScope|null    $scope = null;
+    private readonly EventBus|null $eventBus;
+    private readonly array         $config;
 
     /**
      * @param array<string, mixed> $config   The instructions for the garage (e.g., "Max 10 cars").
      * @param EventBus|null        $eventBus The "Notification System" for reporting when a car is taken or returned.
      */
     public function __construct(
-        private readonly array         $config,
-        private readonly EventBus|null $eventBus = null
+        array         $config,
+        EventBus|null $eventBus = null
     )
     {
-        $this->pool  = new SplQueue;
-        $this->state = new PoolState(
+        $this->config   = $config;
+        $this->eventBus = $eventBus;
+        $this->pool     = new SplQueue;
+        $this->state    = new PoolState(
             maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10)
         );
     }

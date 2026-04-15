@@ -9,10 +9,17 @@ require_once __DIR__ . '/BenchmarkPeerAdapter.php';
  */
 final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapter
 {
+    private string $path;
+    private string $peerName;
+
     public function __construct(
-        private string $peerName,
-        private string $path
-    ) {}
+        string $peerName,
+        string $path
+    )
+    {
+        $this->peerName = $peerName;
+        $this->path     = $path;
+    }
 
     public function name() : string
     {

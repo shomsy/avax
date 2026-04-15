@@ -8,9 +8,18 @@ use SensitiveParameter;
 
 final readonly class BuildJarmResponseData
 {
+    public string|null $state;
+    public string      $code;
+    public string      $clientId;
+
     public function __construct(
-        public string $clientId,
-        #[SensitiveParameter] public string $code,
-        public string|null $state = null
-    ) {}
+        string                       $clientId,
+        #[SensitiveParameter] string $code,
+        string|null                  $state = null
+    )
+    {
+        $this->clientId = $clientId;
+        $this->code     = $code;
+        $this->state    = $state;
+    }
 }

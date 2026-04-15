@@ -10,6 +10,7 @@ final readonly class RunConformanceHarness
 {
     /**
      * @param list<array{name:string, description:string, command:list<string>}>|null $checks
+     *
      * @return array{
      *     timestamp:string,
      *     version:string,
@@ -27,22 +28,22 @@ final readonly class RunConformanceHarness
     public function execute(string $repositoryRoot, array|null $checks = null) : array
     {
         $resolvedChecks = $checks ?? $this->defaultChecks(repositoryRoot: $repositoryRoot);
-        $results = [
+        $results        = [
             'timestamp' => gmdate(DATE_ATOM),
-            'version' => '1.0.0',
-            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'overall' => 'PASSED',
-            'summary' => [
+            'version'   => '1.0.0',
+            'package'   => $this->detectPackageName(repositoryRoot: $repositoryRoot),
+            'overall'   => 'PASSED',
+            'summary'   => [
                 'passed' => 0,
                 'failed' => 0,
-                'total' => count($resolvedChecks),
+                'total'  => count($resolvedChecks),
             ],
-            'checks' => [],
+            'checks'    => [],
         ];
 
         foreach ($resolvedChecks as $check) {
             $execution = $this->runCommand(
-                command: $check['command'],
+                command         : $check['command'],
                 workingDirectory: $repositoryRoot
             );
 
@@ -50,9 +51,9 @@ final readonly class RunConformanceHarness
 
             $results['checks'][$check['name']] = [
                 'description' => $check['description'],
-                'status' => $status,
-                'exit_code' => $execution['exit_code'],
-                'command' => implode(' ', $check['command']),
+                'status'      => $status,
+                'exit_code'   => $execution['exit_code'],
+                'command'     => implode(' ', $check['command']),
             ];
 
             if ($status === 'PASSED') {
@@ -77,44 +78,44 @@ final readonly class RunConformanceHarness
 
         return [
             [
-                'name' => 'phpstan',
+                'name'        => 'phpstan',
                 'description' => 'Static analysis',
-                'command' => [$php, $bin . '/phpstan', 'analyse', '--memory-limit=1G'],
+                'command'     => [$php, $bin . '/phpstan', 'analyse', '--memory-limit=1G'],
             ],
             [
-                'name' => 'phpstan-strict',
+                'name'        => 'phpstan-strict',
                 'description' => 'Strict static analysis',
-                'command' => [$php, $bin . '/phpstan', 'analyse', '--memory-limit=1G', '-c', 'phpstan.strict.neon'],
+                'command'     => [$php, $bin . '/phpstan', 'analyse', '--memory-limit=1G', '-c', 'phpstan.strict.neon'],
             ],
             [
-                'name' => 'phpunit',
+                'name'        => 'phpunit',
                 'description' => 'Test suite',
-                'command' => [$php, $bin . '/phpunit'],
+                'command'     => [$php, $bin . '/phpunit'],
             ],
             [
-                'name' => 'rector',
+                'name'        => 'rector',
                 'description' => 'Code style compliance',
-                'command' => [$php, $bin . '/rector', 'process', '--dry-run'],
+                'command'     => [$php, $bin . '/rector', 'process', '--dry-run'],
             ],
             [
-                'name' => 'secret-scan',
+                'name'        => 'secret-scan',
                 'description' => 'Secret scanning',
-                'command' => [$php, 'tooling/scan-committed-secrets.php'],
+                'command'     => [$php, 'tooling/scan-committed-secrets.php'],
             ],
             [
-                'name' => 'migration-check',
+                'name'        => 'migration-check',
                 'description' => 'Compatibility migration boundary',
-                'command' => [$php, 'tooling/check-migration-path.php', '--json'],
+                'command'     => [$php, 'tooling/check-migration-path.php', '--json'],
             ],
             [
-                'name' => 'source-truth',
+                'name'        => 'source-truth',
                 'description' => 'Canonical status consistency',
-                'command' => [$php, 'tooling/check-source-truth.php', '--json'],
+                'command'     => [$php, 'tooling/check-source-truth.php', '--json'],
             ],
             [
-                'name' => 'system-shape',
+                'name'        => 'system-shape',
                 'description' => 'Canonical screaming architecture shape',
-                'command' => [$php, 'tooling/check-system-shape.php', '--json'],
+                'command'     => [$php, 'tooling/check-system-shape.php', '--json'],
             ],
         ];
     }
@@ -127,7 +128,7 @@ final readonly class RunConformanceHarness
             return 'unknown';
         }
 
-        $json = file_get_contents($composerJsonPath);
+        $json    = file_get_contents($composerJsonPath);
         $decoded = is_string($json) ? json_decode($json, true) : null;
 
         return is_array($decoded) && is_string($decoded['name'] ?? null)
@@ -137,6 +138,7 @@ final readonly class RunConformanceHarness
 
     /**
      * @param list<string> $command
+     *
      * @return array{exit_code:int, stdout:string, stderr:string}
      */
     private function runCommand(array $command, string $workingDirectory) : array
@@ -163,8 +165,8 @@ final readonly class RunConformanceHarness
 
         return [
             'exit_code' => $exitCode,
-            'stdout' => $stdout === false ? '' : $stdout,
-            'stderr' => $stderr === false ? '' : $stderr,
+            'stdout'    => $stdout === false ? '' : $stdout,
+            'stderr'    => $stderr === false ? '' : $stderr,
         ];
     }
 }

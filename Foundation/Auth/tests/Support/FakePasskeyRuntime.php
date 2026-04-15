@@ -23,18 +23,18 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
     ) : array
     {
         return [
-            'rp_id' => $rpId,
-            'rp_name' => $rpName,
-            'user_id' => $userId,
+            'rp_id'     => $rpId,
+            'rp_name'   => $rpName,
+            'user_id'   => $userId,
             'challenge' => $challenge,
-            'exclude' => $excludeCredentialIds,
+            'exclude'   => $excludeCredentialIds,
         ];
     }
 
     public function completeRegistration(
         string $rpId,
         string $challenge,
-        array $response
+        array  $response
     ) : ResolvedPasskeyCredential
     {
         return new ResolvedPasskeyCredential(
@@ -44,22 +44,22 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
     }
 
     public function beginAuthentication(
-        string $rpId,
-        string $challenge,
+        string                      $rpId,
+        string                      $challenge,
         #[SensitiveParameter] array $allowCredentialIds
     ) : array
     {
         return [
-            'rp_id' => $rpId,
+            'rp_id'     => $rpId,
             'challenge' => $challenge,
-            'allow' => $allowCredentialIds,
+            'allow'     => $allowCredentialIds,
         ];
     }
 
     public function completeAuthentication(
-        string $rpId,
-        string $challenge,
-        array $response,
+        string                      $rpId,
+        string                      $challenge,
+        array                       $response,
         #[SensitiveParameter] array $knownCredentials
     ) : VerifiedPasskeyAuthentication
     {

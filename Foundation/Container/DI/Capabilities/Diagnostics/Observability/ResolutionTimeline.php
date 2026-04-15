@@ -12,12 +12,19 @@ use Avax\Container\DI\Foundation\Time\Clock;
 final class ResolutionTimeline
 {
     /** @var list<array{time: float, action: string, serviceId: string, outcome: string}> */
-    private array $entries = [];
+    private array          $entries = [];
+    private readonly bool  $enabled;
+    private readonly Clock $clock;
 
     public function __construct(
-        private readonly Clock $clock = new Clock,
-        private readonly bool  $enabled = true
-    ) {}
+        Clock|null $clock = null,
+        bool       $enabled = true
+    )
+    {
+        $clock         ??= new Clock;
+        $this->clock   = $clock;
+        $this->enabled = $enabled;
+    }
 
     /**
      * Records one timeline event when diagnostics are enabled.

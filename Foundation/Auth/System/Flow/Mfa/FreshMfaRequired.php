@@ -11,11 +11,14 @@ use RuntimeException;
  */
 final class FreshMfaRequired extends RuntimeException
 {
+    private readonly int $maxAgeSeconds;
+
     public function __construct(
-        private readonly int $maxAgeSeconds,
-        string               $message = 'Fresh MFA verification is required.'
+        int    $maxAgeSeconds,
+        string $message = 'Fresh MFA verification is required.'
     )
     {
+        $this->maxAgeSeconds = $maxAgeSeconds;
         parent::__construct(message: $message, code: 403);
     }
 

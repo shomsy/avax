@@ -22,17 +22,17 @@ final class RequireCsrfProtectionTest extends TestCase
         $middleware = new RequireCsrfProtection();
 
         $this->assertTrue(condition: $middleware->execute(
-            method  : 'POST',
-            server  : [
-                'HTTP_ORIGIN' => 'https://app.example.test',
-                'HTTP_HOST' => 'app.example.test',
-            ],
-            headers : [
-                'X-CSRF-TOKEN' => 'csrf-1',
-            ],
-            cookies : [
-                'csrf_token' => 'csrf-1',
-            ]
+            method : 'POST',
+            server : [
+                         'HTTP_ORIGIN' => 'https://app.example.test',
+                         'HTTP_HOST'   => 'app.example.test',
+                     ],
+            headers: [
+                         'X-CSRF-TOKEN' => 'csrf-1',
+                     ],
+            cookies: [
+                         'csrf_token' => 'csrf-1',
+                     ]
         ));
     }
 
@@ -41,17 +41,17 @@ final class RequireCsrfProtectionTest extends TestCase
         $middleware = new RequireCsrfProtection();
 
         $this->assertFalse(condition: $middleware->execute(
-            method  : 'POST',
-            server  : [
-                'HTTP_ORIGIN' => 'https://evil.example.test',
-                'HTTP_HOST' => 'app.example.test',
-            ],
-            headers : [
-                'X-CSRF-TOKEN' => 'csrf-1',
-            ],
-            cookies : [
-                'csrf_token' => 'csrf-1',
-            ]
+            method : 'POST',
+            server : [
+                         'HTTP_ORIGIN' => 'https://evil.example.test',
+                         'HTTP_HOST'   => 'app.example.test',
+                     ],
+            headers: [
+                         'X-CSRF-TOKEN' => 'csrf-1',
+                     ],
+            cookies: [
+                         'csrf_token' => 'csrf-1',
+                     ]
         ));
     }
 }

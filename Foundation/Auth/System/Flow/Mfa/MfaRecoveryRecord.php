@@ -13,11 +13,20 @@ use SensitiveParameter;
  */
 final readonly class MfaRecoveryRecord
 {
+    public DateTimeImmutable $expiresAt;
+    public UserId            $userId;
+    public string            $tokenHash;
+
     public function __construct(
-        #[SensitiveParameter] public string $tokenHash,
-        public UserId                       $userId,
-        public DateTimeImmutable            $expiresAt
-    ) {}
+        #[SensitiveParameter] string $tokenHash,
+        UserId                       $userId,
+        DateTimeImmutable            $expiresAt
+    )
+    {
+        $this->tokenHash = $tokenHash;
+        $this->userId    = $userId;
+        $this->expiresAt = $expiresAt;
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
     {

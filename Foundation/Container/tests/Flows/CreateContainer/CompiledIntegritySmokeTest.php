@@ -19,7 +19,9 @@ final class IntegrityDependency
 
 final class IntegrityTarget
 {
-    public function __construct(public IntegrityDependency $dependency) {}
+    public IntegrityDependency $dependency;
+
+    public function __construct(IntegrityDependency $dependency) { $this->dependency = $dependency; }
 }
 
 $productionCache       = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();

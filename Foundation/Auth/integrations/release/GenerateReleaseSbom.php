@@ -20,15 +20,15 @@ final readonly class GenerateReleaseSbom
     public function execute(string $composerJsonPath, string|null $composerLockPath = null) : array
     {
         $composerJson = $this->readJsonFile(path: $composerJsonPath);
-        $lockPath = $composerLockPath ?? dirname($composerJsonPath) . '/composer.lock';
-        $components = [];
+        $lockPath     = $composerLockPath ?? dirname($composerJsonPath) . '/composer.lock';
+        $components   = [];
 
         foreach ($this->readLockPackages(composerLockPath: $lockPath) as $package) {
             $components[] = [
-                'type' => 'library',
-                'name' => (string) ($package['name'] ?? 'unknown'),
+                'type'    => 'library',
+                'name'    => (string) ($package['name'] ?? 'unknown'),
                 'version' => (string) ($package['version'] ?? 'unknown'),
-                'purl' => 'pkg:composer/' . rawurlencode((string) ($package['name'] ?? 'unknown')) . '@' . rawurlencode((string) ($package['version'] ?? 'unknown')),
+                'purl'    => 'pkg:composer/' . rawurlencode((string) ($package['name'] ?? 'unknown')) . '@' . rawurlencode((string) ($package['version'] ?? 'unknown')),
             ];
         }
 
@@ -41,42 +41,17 @@ final readonly class GenerateReleaseSbom
         );
 
         return [
-            'bomFormat' => 'CycloneDX',
+            'bomFormat'   => 'CycloneDX',
             'specVersion' => '1.5',
-            'metadata' => [
+            'metadata'    => [
                 'component' => [
-                    'type' => 'library',
-                    'name' => is_string($composerJson['name'] ?? null) ? $composerJson['name'] : 'unknown',
+                    'type'    => 'library',
+                    'name'    => is_string($composerJson['name'] ?? null) ? $composerJson['name'] : 'unknown',
                     'version' => is_string($composerJson['version'] ?? null) ? $composerJson['version'] : 'dev-main',
                 ],
             ],
-            'components' => $components,
+            'components'  => $components,
         ];
-    }
-
-    /**
-     * @return list<array<string, mixed>>
-     */
-    private function readLockPackages(string $composerLockPath) : array
-    {
-        if (! is_file($composerLockPath)) {
-            return [];
-        }
-
-        $lock = $this->readJsonFile(path: $composerLockPath);
-        $packages = [];
-
-        foreach (['packages', 'packages-dev'] as $section) {
-            foreach ($lock[$section] ?? [] as $package) {
-                if (! is_array($package)) {
-                    continue;
-                }
-
-                $packages[] = $package;
-            }
-        }
-
-        return $packages;
     }
 
     /**
@@ -101,5 +76,30 @@ final readonly class GenerateReleaseSbom
         }
 
         return $decoded;
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function readLockPackages(string $composerLockPath) : array
+    {
+        if (! is_file($composerLockPath)) {
+            return [];
+        }
+
+        $lock     = $this->readJsonFile(path: $composerLockPath);
+        $packages = [];
+
+        foreach (['packages', 'packages-dev'] as $section) {
+            foreach ($lock[$section] ?? [] as $package) {
+                if (! is_array($package)) {
+                    continue;
+                }
+
+                $packages[] = $package;
+            }
+        }
+
+        return $packages;
     }
 }

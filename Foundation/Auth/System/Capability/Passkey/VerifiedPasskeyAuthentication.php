@@ -8,8 +8,15 @@ use SensitiveParameter;
 
 final readonly class VerifiedPasskeyAuthentication
 {
+    public string $credentialId;
+    public int    $userId;
+
     public function __construct(
-        public int                          $userId,
-        #[SensitiveParameter] public string $credentialId
-    ) {}
+        int                          $userId,
+        #[SensitiveParameter] string $credentialId
+    )
+    {
+        $this->userId       = $userId;
+        $this->credentialId = $credentialId;
+    }
 }

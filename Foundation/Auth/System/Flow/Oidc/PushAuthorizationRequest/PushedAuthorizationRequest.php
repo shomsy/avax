@@ -10,18 +10,40 @@ use SensitiveParameter;
 
 final readonly class PushedAuthorizationRequest
 {
+    public PkceMethod|null   $codeChallengeMethod;
+    public string|null       $codeChallenge;
+    public string|null       $nonce;
+    public string|null       $state;
+    public array             $scopes;
+    public string            $redirectUri;
+    public string            $clientId;
+    public DateTimeImmutable $expiresAt;
+    public string            $requestUri;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] public string $requestUri,
-        public DateTimeImmutable $expiresAt,
-        public string $clientId,
-        public string $redirectUri,
-        public array $scopes = [],
-        public string|null $state = null,
-        public string|null $nonce = null,
-        #[SensitiveParameter] public string|null $codeChallenge = null,
-        #[SensitiveParameter] public PkceMethod|null $codeChallengeMethod = null
-    ) {}
+        #[SensitiveParameter] string          $requestUri,
+        DateTimeImmutable                     $expiresAt,
+        string                                $clientId,
+        string                                $redirectUri,
+        array|null                            $scopes = null,
+        string|null                           $state = null,
+        string|null                           $nonce = null,
+        #[SensitiveParameter] string|null     $codeChallenge = null,
+        #[SensitiveParameter] PkceMethod|null $codeChallengeMethod = null
+    )
+    {
+        $scopes                    ??= [];
+        $this->requestUri          = $requestUri;
+        $this->expiresAt           = $expiresAt;
+        $this->clientId            = $clientId;
+        $this->redirectUri         = $redirectUri;
+        $this->scopes              = $scopes;
+        $this->state               = $state;
+        $this->nonce               = $nonce;
+        $this->codeChallenge       = $codeChallenge;
+        $this->codeChallengeMethod = $codeChallengeMethod;
+    }
 }

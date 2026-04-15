@@ -14,7 +14,9 @@ final class GeneratedFixtureDependency
 
 final class GeneratedFixtureEntry
 {
-    public function __construct(public GeneratedFixtureDependency $dependency) {}
+    public GeneratedFixtureDependency $dependency;
+
+    public function __construct(GeneratedFixtureDependency $dependency) { $this->dependency = $dependency; }
 }
 
 return static function () {

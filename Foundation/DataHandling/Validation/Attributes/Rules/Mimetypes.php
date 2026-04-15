@@ -22,7 +22,9 @@ use finfo;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Mimetypes
 {
-    public function __construct(private array $mimetypes) {}
+    private array $mimetypes;
+
+    public function __construct(array $mimetypes) { $this->mimetypes = $mimetypes; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

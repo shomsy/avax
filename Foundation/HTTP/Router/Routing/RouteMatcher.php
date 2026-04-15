@@ -19,9 +19,14 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class RouteMatcher implements RouteMatcherInterface
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private LoggerInterface $logger
-    ) {}
+        LoggerInterface $logger
+    )
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Checks if a single route matches the given request.

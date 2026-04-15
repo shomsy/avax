@@ -29,7 +29,9 @@ final class FakeTestingClock implements TestingClockContract
 
 final class LoginFlowEntry
 {
-    public function __construct(public TestingClockContract $clock) {}
+    public TestingClockContract $clock;
+
+    public function __construct(TestingClockContract $clock) { $this->clock = $clock; }
 }
 
 $composition = TestComposition::create();

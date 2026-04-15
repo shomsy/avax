@@ -11,10 +11,18 @@ use SensitiveParameter;
  */
 final readonly class RequireCsrfProtection
 {
+    private string $headerName;
+    private string $cookieName;
+
     public function __construct(
-        private string                       $cookieName = 'csrf_token',
-        #[SensitiveParameter] private string $headerName = 'x-csrf-token'
-    ) {}
+        string|null                  $cookieName = null,
+        #[SensitiveParameter] string $headerName = 'x-csrf-token'
+    )
+    {
+        $cookieName       ??= 'csrf_token';
+        $this->cookieName = $cookieName;
+        $this->headerName = $headerName;
+    }
 
     /**
      * @param array<string, mixed> $server
@@ -22,19 +30,21 @@ final readonly class RequireCsrfProtection
      * @param array<string, mixed> $cookies
      */
     public function execute(
-        string                      $method,
-        array                       $server = [],
-        #[SensitiveParameter] array $headers = [],
-        array                       $cookies = []
+        string                           $method,
+        array|null                       $server = null,
+        #[SensitiveParameter] array|null $headers = null,
+        array                            $cookies = []
     ) : bool
     {
+        $server  ??= [];
+        $headers ??= [];
         if ($this->isSafeMethod(method: $method)) {
             return true;
         }
 
-        $origin = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
+        $origin  = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
         $referer = $this->readValue(values: $server, key: 'HTTP_REFERER');
-        $host = $this->readValue(values: $server, key: 'HTTP_HOST');
+        $host    = $this->readValue(values: $server, key: 'HTTP_HOST');
 
         if (! $this->sameOrigin(originLikeValue: $origin, host: $host) && ! $this->sameOrigin(originLikeValue: $referer, host: $host)) {
             return false;

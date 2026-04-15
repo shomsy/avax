@@ -48,14 +48,18 @@ use PDO;
 final class PooledConnectionAuthority implements ConnectionPoolInterface, DatabaseConnection
 {
     /** @var DatabaseConnection|null The actual tool we've grabbed from the library (null if we haven't needed it yet). */
-    private DatabaseConnection|null $borrowed = null;
+    private DatabaseConnection|null          $borrowed = null;
+    private readonly ConnectionPoolInterface $pool;
 
     /**
      * @param ConnectionPoolInterface $pool The "Library" we borrow from.
      */
     public function __construct(
-        private readonly ConnectionPoolInterface $pool
-    ) {}
+        ConnectionPoolInterface $pool
+    )
+    {
+        $this->pool = $pool;
+    }
 
     /**
      * Get the active PDO tool. If we haven't borrowed one yet, we grab it now.

@@ -6,8 +6,8 @@ use Avax\Auth\Integrations\Release\CheckMigrationPath;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$root = dirname(__DIR__);
-$json = in_array('--json', $argv, true) || in_array('-j', $argv, true);
+$root   = dirname(__DIR__);
+$json   = in_array('--json', $argv, true) || in_array('-j', $argv, true);
 $result = (new CheckMigrationPath())->execute(repositoryRoot: $root);
 
 if ($json) {

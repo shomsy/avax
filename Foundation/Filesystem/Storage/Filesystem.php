@@ -18,12 +18,14 @@ use Psr\Container\NotFoundExceptionInterface;
  */
 readonly class Filesystem
 {
+    private FileStorageInterface $fileStorage;
+
     /**
      * Filesystem constructor. Initializes the class with a specific file storage implementation.
      *
      * @param FileStorageInterface $fileStorage The file storage implementation to use.
      */
-    public function __construct(private FileStorageInterface $fileStorage) {}
+    public function __construct(FileStorageInterface $fileStorage) { $this->fileStorage = $fileStorage; }
 
     /**
      * Retrieves the disk storage instance based on the given disk name.

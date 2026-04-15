@@ -15,13 +15,26 @@ use SensitiveParameter;
  */
 final readonly class BeginEmailVerification
 {
+    private int                             $expiresAfterSeconds;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private EmailVerificationStoreInterface $emailVerificationStore;
+    private UserSourceInterface             $userSource;
+
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private EmailVerificationStoreInterface $emailVerificationStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private int                                                   $expiresAfterSeconds = 86400
-    ) {}
+        UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        int                                                   $expiresAfterSeconds = 86400
+    )
+    {
+        $this->userSource             = $userSource;
+        $this->emailVerificationStore = $emailVerificationStore;
+        $this->auditLog               = $auditLog;
+        $this->clock                  = $clock;
+        $this->expiresAfterSeconds    = $expiresAfterSeconds;
+    }
 
     /**
      * @throws \DateMalformedStringException
@@ -40,14 +53,14 @@ final readonly class BeginEmailVerification
         );
 
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.email_verification.requested',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'    => $user->getId()->value,
-                                                    'ip_address' => $data->ipAddress,
-                                                    'user_agent' => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.email_verification.requested',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $user->getId()->value,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return $challenge;
     }

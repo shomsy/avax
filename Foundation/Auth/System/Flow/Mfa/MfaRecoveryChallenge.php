@@ -12,11 +12,20 @@ use SensitiveParameter;
  */
 final readonly class MfaRecoveryChallenge
 {
+    public DateTimeImmutable|null $expiresAt;
+    public string|null            $token;
+    public bool                   $dispatched;
+
     public function __construct(
-        public bool                              $dispatched,
-        #[SensitiveParameter] public string|null $token = null,
-        public DateTimeImmutable|null            $expiresAt = null
-    ) {}
+        bool                              $dispatched,
+        #[SensitiveParameter] string|null $token = null,
+        DateTimeImmutable|null            $expiresAt = null
+    )
+    {
+        $this->dispatched = $dispatched;
+        $this->token      = $token;
+        $this->expiresAt  = $expiresAt;
+    }
 
     public static function hidden() : self
     {

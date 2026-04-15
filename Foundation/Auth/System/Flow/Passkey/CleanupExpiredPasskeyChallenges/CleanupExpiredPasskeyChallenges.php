@@ -9,10 +9,17 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredPasskeyChallenges
 {
+    private Clock                                       $clock;
+    private PruneExpiredPasskeyChallengesInterface|null $challengeStore;
+
     public function __construct(
-        private PruneExpiredPasskeyChallengesInterface|null $challengeStore,
-        private Clock $clock
-    ) {}
+        PruneExpiredPasskeyChallengesInterface|null $challengeStore,
+        Clock                                       $clock
+    )
+    {
+        $this->challengeStore = $challengeStore;
+        $this->clock          = $clock;
+    }
 
     public function execute() : int
     {

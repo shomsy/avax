@@ -68,28 +68,54 @@ final class ServiceResolver
     private array $lazyServices = [];
 
     /** @var array{environment: string, flags: list<string>, tenant: string, region: string, mode: string}|null */
-    private array|null $compositionState = null;
+    private array|null                      $compositionState = null;
+    private readonly string                 $asyncTarget;
+    private readonly string                 $sliceBoundaryMode;
+    private readonly string                 $environment;
+    private readonly string                 $diagnosticsMode;
+    private readonly FunctionCaller         $caller;
+    private readonly InjectMethods          $injectMethods;
+    private readonly InjectProperties       $injectProperties;
+    private readonly CreateServiceBlueprint $blueprints;
+    private readonly BuildService           $builder;
+    private readonly ManageScopes           $scopes;
+    private readonly ServiceRegistry        $registrations;
 
     public function __construct(
-        private readonly ServiceRegistry        $registrations,
-        private readonly ManageScopes           $scopes,
-        private readonly BuildService           $builder,
-        private readonly CreateServiceBlueprint $blueprints,
-        private readonly InjectProperties       $injectProperties,
-        private readonly InjectMethods          $injectMethods,
-        private readonly FunctionCaller         $caller,
-        ResolutionMetrics|null                  $metrics = null,
-        ResolutionTimeline|null                 $timeline = null,
-        ResolutionPolicy|null                   $policy = null,
-        CompiledRuntime|null                    $compiledRuntime = null,
-        DeferredProviderRegistry|null           $deferredProviders = null,
-        private readonly string                 $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
-        private readonly string                 $environment = '',
-        private readonly string                 $sliceBoundaryMode = CreateContainerConfig::SLICE_BOUNDARY_MODE_STRICT,
-        private readonly string                 $asyncTarget = CreateContainerConfig::ASYNC_TARGET_FPM,
-        GovernComposition|null                  $governor = null
+        ServiceRegistry               $registrations,
+        ManageScopes                  $scopes,
+        BuildService                  $builder,
+        CreateServiceBlueprint        $blueprints,
+        InjectProperties              $injectProperties,
+        InjectMethods                 $injectMethods,
+        FunctionCaller                $caller,
+        ResolutionMetrics|null        $metrics = null,
+        ResolutionTimeline|null       $timeline = null,
+        ResolutionPolicy|null         $policy = null,
+        CompiledRuntime|null          $compiledRuntime = null,
+        DeferredProviderRegistry|null $deferredProviders = null,
+        string|null                   $diagnosticsMode = null,
+        string|null                   $environment = null,
+        string|null                   $sliceBoundaryMode = null,
+        string|null                   $asyncTarget = null,
+        GovernComposition|null        $governor = null
     )
     {
+        $diagnosticsMode         ??= CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL;
+        $environment             ??= '';
+        $sliceBoundaryMode       ??= CreateContainerConfig::SLICE_BOUNDARY_MODE_STRICT;
+        $asyncTarget             ??= CreateContainerConfig::ASYNC_TARGET_FPM;
+        $this->registrations     = $registrations;
+        $this->scopes            = $scopes;
+        $this->builder           = $builder;
+        $this->blueprints        = $blueprints;
+        $this->injectProperties  = $injectProperties;
+        $this->injectMethods     = $injectMethods;
+        $this->caller            = $caller;
+        $this->diagnosticsMode   = $diagnosticsMode;
+        $this->environment       = $environment;
+        $this->sliceBoundaryMode = $sliceBoundaryMode;
+        $this->asyncTarget       = $asyncTarget;
         $this->telemetry         = new ResolutionTelemetry(
             metrics : $metrics ?? new ResolutionMetrics,
             timeline: $timeline ?? new ResolutionTimeline

@@ -14,12 +14,23 @@ use SensitiveParameter;
 
 final readonly class IntrospectToken
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private JwtIdentityInterface         $jwtIdentity;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface               $clientRegistry,
-        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface                          $auditLog,
-        private Clock                                      $clock
-    ) {}
+        OAuthClientRegistryInterface               $clientRegistry,
+        #[SensitiveParameter] JwtIdentityInterface $jwtIdentity,
+        AuditLogInterface                          $auditLog,
+        Clock                                      $clock
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+        $this->jwtIdentity    = $jwtIdentity;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
@@ -36,14 +47,14 @@ final readonly class IntrospectToken
 
         if ($resolved !== null && $resolved->clientId === $data->clientId) {
             $result = new TokenIntrospection(
-                active       : true,
-                clientId     : $resolved->clientId,
-                userId       : $resolved->user->getId()->value,
-                scopes       : $resolved->scopes,
-                expiresAt    : $resolved->expiresAt,
-                mfaVerifiedAt: $resolved->mfaVerifiedAt,
+                active           : true,
+                clientId         : $resolved->clientId,
+                userId           : $resolved->user->getId()->value,
+                scopes           : $resolved->scopes,
+                expiresAt        : $resolved->expiresAt,
+                mfaVerifiedAt    : $resolved->mfaVerifiedAt,
                 phishingResistant: $resolved->phishingResistant,
-                senderConstraint: $resolved->senderConstraint
+                senderConstraint : $resolved->senderConstraint
             );
         } else {
             $workload = $this->jwtIdentity->resolveWorkloadToken(
@@ -56,27 +67,27 @@ final readonly class IntrospectToken
                 $result = TokenIntrospection::inactive();
             } else {
                 $result = new TokenIntrospection(
-                    active           : true,
-                    clientId         : $workload->clientId,
-                    scopes           : $workload->scopes,
-                    expiresAt        : $workload->expiresAt,
-                    senderConstraint : $workload->senderConstraint,
-                    subject          : $workload->subject,
-                    audience         : $workload->audience,
-                    issuer           : $workload->issuer,
-                    workloadIdentity : true
+                    active          : true,
+                    clientId        : $workload->clientId,
+                    scopes          : $workload->scopes,
+                    expiresAt       : $workload->expiresAt,
+                    senderConstraint: $workload->senderConstraint,
+                    subject         : $workload->subject,
+                    audience        : $workload->audience,
+                    issuer          : $workload->issuer,
+                    workloadIdentity: true
                 );
             }
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.token.introspected',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $data->clientId,
-                'active' => $result->active ? 1 : 0,
-            ]
-        ));
+                                           name      : 'auth.oauth.token.introspected',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id' => $data->clientId,
+                                                           'active'    => $result->active ? 1 : 0,
+                                                       ]
+                                       ));
 
         return $result;
     }

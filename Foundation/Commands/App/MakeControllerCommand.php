@@ -10,10 +10,17 @@ use Throwable;
 
 final readonly class MakeControllerCommand
 {
+    private LoggerInterface     $logger;
+    private ControllerGenerator $controllerGenerator;
+
     public function __construct(
-        private ControllerGenerator $controllerGenerator,
-        private LoggerInterface     $logger
-    ) {}
+        ControllerGenerator $controllerGenerator,
+        LoggerInterface     $logger
+    )
+    {
+        $this->controllerGenerator = $controllerGenerator;
+        $this->logger              = $logger;
+    }
 
     public function execute(array $arguments) : void
     {

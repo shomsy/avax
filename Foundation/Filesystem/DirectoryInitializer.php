@@ -18,6 +18,8 @@ readonly class DirectoryInitializer
 
     // Delay between retry attempts in microseconds
     private const int RETRY_DELAY = 100000;
+    private FileServiceInterface $fileService;
+    private string               $directoryPath;
 
     /**
      * DirectoryInitializer constructor.
@@ -31,10 +33,12 @@ readonly class DirectoryInitializer
      * @throws \Exception
      */
     public function __construct(
-        private string               $directoryPath,
-        private FileServiceInterface $fileService
+        string               $directoryPath,
+        FileServiceInterface $fileService
     )
     {
+        $this->directoryPath = $directoryPath;
+        $this->fileService   = $fileService;
         $this->initializeDirectory();
     }
 

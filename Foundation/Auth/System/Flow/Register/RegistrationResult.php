@@ -11,10 +11,17 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
  */
 final readonly class RegistrationResult
 {
+    private bool              $emailVerificationRequired;
+    private AuthenticatedUser $user;
+
     public function __construct(
-        private AuthenticatedUser $user,
-        private bool              $emailVerificationRequired = false
-    ) {}
+        AuthenticatedUser $user,
+        bool              $emailVerificationRequired = false
+    )
+    {
+        $this->user                      = $user;
+        $this->emailVerificationRequired = $emailVerificationRequired;
+    }
 
     public function user() : AuthenticatedUser
     {

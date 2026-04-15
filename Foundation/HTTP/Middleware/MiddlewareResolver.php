@@ -15,12 +15,14 @@ use Avax\HTTP\Router\Exceptions\UnresolvableMiddlewareException;
  */
 final readonly class MiddlewareResolver
 {
+    private MiddlewareGroupResolver $groupResolver;
+
     /**
      * Constructor to initialize the resolver with its dependencies.
      *
      * @param MiddlewareGroupResolver $groupResolver The dependency capable of resolving middleware groups.
      */
-    public function __construct(private MiddlewareGroupResolver $groupResolver) {}
+    public function __construct(MiddlewareGroupResolver $groupResolver) { $this->groupResolver = $groupResolver; }
 
     /**
      * Resolves a list of middleware definitions. Entries in the array can be either:

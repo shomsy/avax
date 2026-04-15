@@ -6,10 +6,15 @@ namespace Avax\Auth\System\Flow\Scim\Bulk;
 
 final readonly class ScimBulkResponse
 {
+    public array $operations;
+
     /**
      * @param list<ScimBulkOperationResult> $operations
      */
     public function __construct(
-        public array $operations
-    ) {}
+        array $operations
+    )
+    {
+        $this->operations = $operations;
+    }
 }

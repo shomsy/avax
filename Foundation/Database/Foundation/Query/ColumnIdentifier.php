@@ -11,14 +11,21 @@ namespace Avax\Database\Query;
  */
 final readonly class ColumnIdentifier
 {
+    public string|null $alias;
+    public string      $name;
+
     /**
      * @param string      $name  The technical identifier of the database column.
      * @param string|null $alias The optional domain-specific label (alias) for the projection.
      */
     public function __construct(
-        public string      $name,
-        public string|null $alias = null
-    ) {}
+        string      $name,
+        string|null $alias = null
+    )
+    {
+        $this->name  = $name;
+        $this->alias = $alias;
+    }
 
     /**
      * Convert to SQL-like string format.

@@ -68,7 +68,7 @@ class DocsSync
     private function buildMermaidDiagram() : string
     {
         $diagram = "graph TB\n";
-        $diagram .= "    A[HTTP Request] --> B{Router.resolve}\n";
+        $diagram .= "    A[HTTP ServerRequest] --> B{Router.resolve}\n";
         $diagram .= "    B --> C{RouterKernel.handle}\n";
         $diagram .= "    C --> D{HttpRequestRouter.match}\n";
         $diagram .= "    D --> E[RouteDefinition]\n";

@@ -16,11 +16,20 @@ use DateTimeImmutable;
  */
 final readonly class VerifyOAuthSenderConstraint
 {
+    private AuditLogInterface          $auditLog;
+    private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint;
+    private VerifyDpopProof            $verifyDpopProof;
+
     public function __construct(
-        private VerifyDpopProof $verifyDpopProof,
-        private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint,
-        private AuditLogInterface $auditLog = new NullAuditLog()
-    ) {}
+        VerifyDpopProof            $verifyDpopProof,
+        VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint,
+        AuditLogInterface          $auditLog = new NullAuditLog()
+    )
+    {
+        $this->verifyDpopProof            = $verifyDpopProof;
+        $this->verifyMtlsSenderConstraint = $verifyMtlsSenderConstraint;
+        $this->auditLog                   = $auditLog;
+    }
 
     /**
      * @throws DpopProofFailed
@@ -28,8 +37,8 @@ final readonly class VerifyOAuthSenderConstraint
      * @throws SenderConstraintVerificationFailed
      */
     public function execute(
-        HttpOAuthProofInput $input,
-        OAuthSenderConstraint|null $expectedSenderConstraint = null,
+        HttpOAuthProofInput            $input,
+        OAuthSenderConstraint|null     $expectedSenderConstraint = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null
     ) : OAuthSenderConstraint|null
     {
@@ -42,28 +51,28 @@ final readonly class VerifyOAuthSenderConstraint
         $binding = match ($requiredType) {
             OAuthSenderConstraintType::DPOP => $this->verifyDpopProof->execute(input: $input),
             OAuthSenderConstraintType::MTLS => $this->verifyMtlsSenderConstraint->execute(input: new HttpOAuthProofInput(
-                method                : $input->method,
-                uri                   : $input->uri,
-                headers               : $input->headers,
-                server                : $input->server,
-                accessToken           : $input->accessToken,
-                expectedTokenThumbprint: $expectedSenderConstraint?->thumbprint
-            )),
+                                                                                                     method                 : $input->method,
+                                                                                                     uri                    : $input->uri,
+                                                                                                     headers                : $input->headers,
+                                                                                                     server                 : $input->server,
+                                                                                                     accessToken            : $input->accessToken,
+                                                                                                     expectedTokenThumbprint: $expectedSenderConstraint?->thumbprint
+                                                                                                 )),
         };
 
         if ($expectedSenderConstraint !== null && ! $expectedSenderConstraint->equals(other: $binding)) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.oauth.sender_constraint.mismatch',
-                occurredAt: new DateTimeImmutable(),
-                context   : [
-                    'expected_type' => $expectedSenderConstraint->type->value,
-                    'expected_thumbprint' => $expectedSenderConstraint->thumbprint,
-                    'actual_type' => $binding->type->value,
-                    'actual_thumbprint' => $binding->thumbprint,
-                    'method' => strtoupper($input->method),
-                    'uri' => $input->uri,
-                ]
-            ));
+                                               name      : 'auth.oauth.sender_constraint.mismatch',
+                                               occurredAt: new DateTimeImmutable(),
+                                               context   : [
+                                                               'expected_type'       => $expectedSenderConstraint->type->value,
+                                                               'expected_thumbprint' => $expectedSenderConstraint->thumbprint,
+                                                               'actual_type'         => $binding->type->value,
+                                                               'actual_thumbprint'   => $binding->thumbprint,
+                                                               'method'              => strtoupper($input->method),
+                                                               'uri'                 => $input->uri,
+                                                           ]
+                                           ));
 
             throw SenderConstraintVerificationFailed::mismatch();
         }

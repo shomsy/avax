@@ -18,20 +18,25 @@ use SensitiveParameter;
  */
 final readonly class Identity implements IdentityInterface
 {
+    private JwtIdentityInterface|null     $jwtIdentity;
+    private SessionIdentityInterface|null $sessionIdentity;
+
     public function __construct(
-        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] JwtIdentityInterface|null     $jwtIdentity = null
     )
     {
+        $this->sessionIdentity = $sessionIdentity;
+        $this->jwtIdentity     = $jwtIdentity;
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
             throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
         }
     }
 
     public function issue(
-        User $user,
+        User                   $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false
+        bool                   $phishingResistant = false
     ) : IssuedAuthentication
     {
         if (! $user->isActive()) {
@@ -39,28 +44,28 @@ final readonly class Identity implements IdentityInterface
         }
 
         $refreshToken = $this->jwtIdentity?->issueRefreshToken(
-            user               : $user,
-            mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
+            user             : $user,
+            mfaVerifiedAt    : $mfaVerifiedAt,
+            phishingResistant: $phishingResistant
         );
         $sessionId    = $this->sessionIdentity?->issue(
-            userId       : $user->getId()->value,
-            mfaVerifiedAt: $mfaVerifiedAt,
+            userId           : $user->getId()->value,
+            mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant
         );
         $accessToken  = $this->jwtIdentity?->issue(
-            user               : $user,
-            mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant,
+            user                : $user,
+            mfaVerifiedAt       : $mfaVerifiedAt,
+            phishingResistant   : $phishingResistant,
             refreshTokenFamilyId: $refreshToken?->familyId
         );
 
         return new IssuedAuthentication(
-            mode         : $this->resolveMode(),
-            sessionId    : $sessionId,
-            accessToken  : $accessToken,
-            refreshToken : $refreshToken,
-            mfaVerifiedAt: $mfaVerifiedAt,
+            mode             : $this->resolveMode(),
+            sessionId        : $sessionId,
+            accessToken      : $accessToken,
+            refreshToken     : $refreshToken,
+            mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant
         );
     }

@@ -6,10 +6,15 @@ namespace Avax\Auth\System\Flow\Oidc\ReadUserInfo;
 
 final readonly class OidcUserInfo
 {
+    public array $claims;
+
     /**
      * @param array<string, bool|int|string> $claims
      */
     public function __construct(
-        public array $claims
-    ) {}
+        array $claims
+    )
+    {
+        $this->claims = $claims;
+    }
 }

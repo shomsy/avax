@@ -16,10 +16,17 @@ use Throwable;
  */
 readonly class CacheManager implements CacheInterface
 {
+    private LoggerInterface       $logger;
+    private CacheBackendInterface $cacheBackend;
+
     public function __construct(
-        private CacheBackendInterface $cacheBackend,
-        private LoggerInterface       $logger
-    ) {}
+        CacheBackendInterface $cacheBackend,
+        LoggerInterface       $logger
+    )
+    {
+        $this->cacheBackend = $cacheBackend;
+        $this->logger       = $logger;
+    }
 
     public function get(string $key, mixed $default = null) : mixed
     {

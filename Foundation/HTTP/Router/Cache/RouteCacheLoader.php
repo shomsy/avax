@@ -18,12 +18,23 @@ use RuntimeException;
 
 final readonly class RouteCacheLoader
 {
+    private LoggerInterface        $logger;
+    private FilesystemInterface    $filesystem;
+    private RouterRuntimeInterface $router;
+    private RouterRegistrar        $registrar;
+
     public function __construct(
-        private RouterRegistrar        $registrar,
-        private RouterRuntimeInterface $router,
-        private FilesystemInterface    $filesystem,
-        private LoggerInterface        $logger = new NullLogger,
-    ) {}
+        RouterRegistrar        $registrar,
+        RouterRuntimeInterface $router,
+        FilesystemInterface    $filesystem,
+        LoggerInterface        $logger = new NullLogger,
+    )
+    {
+        $this->registrar  = $registrar;
+        $this->router     = $router;
+        $this->filesystem = $filesystem;
+        $this->logger     = $logger;
+    }
 
     /**
      * Loads route definitions from JSON cache and registers them into the router.

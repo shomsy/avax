@@ -21,12 +21,12 @@ final class SubjectIdentifierTest extends TestCase
     {
         $identifier = new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE);
 
-        $first = $identifier->generate(
+        $first     = $identifier->generate(
             localSubject    : 'user-123',
             sectorIdentifier: 'https://rp.example.test',
             pairwiseSalt    : 'salt-1'
         );
-        $second = $identifier->generate(
+        $second    = $identifier->generate(
             localSubject    : 'user-123',
             sectorIdentifier: 'https://rp.example.test',
             pairwiseSalt    : 'salt-1'
@@ -46,7 +46,7 @@ final class SubjectIdentifierTest extends TestCase
     {
         $identifier = new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE);
 
-        $this->assertTrue(condition: $identifier->isValidSectorIdentifier('https://rp.example.test'));
-        $this->assertFalse(condition: $identifier->isValidSectorIdentifier('not-a-sector'));
+        $this->assertTrue(condition: $identifier->isValidSectorIdentifier(sectorIdentifier: 'https://rp.example.test'));
+        $this->assertFalse(condition: $identifier->isValidSectorIdentifier(sectorIdentifier: 'not-a-sector'));
     }
 }

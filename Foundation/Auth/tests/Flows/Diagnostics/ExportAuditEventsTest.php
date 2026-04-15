@@ -19,23 +19,24 @@ final class ExportAuditEventsTest extends TestCase
         $log = new InMemoryAuditLog();
         $log->record(event: new AuditEvent(name: 'auth.login.succeeded', occurredAt: new DateTimeImmutable()));
         $log->record(event: new AuditEvent(name: 'auth.logout.completed', occurredAt: new DateTimeImmutable()));
-        $capture = new stdClass();
+        $capture         = new stdClass();
         $capture->events = [];
 
         $count = (new ExportAuditEvents(
             auditLog: $log,
-            exporter: new class($capture) implements AuditExporterInterface
-            {
-                /**
-                 * @param list<AuditEvent> $events
-                 */
-                public function __construct(private stdClass $capture) {}
+            exporter: new class($capture) implements AuditExporterInterface {
+                          private stdClass $capture;
 
-                public function export(array $events) : void
-                {
-                    $this->capture->events = $events;
-                }
-            }
+                          /**
+                           * @param list<AuditEvent> $events
+                           */
+                          public function __construct(stdClass $capture) { $this->capture = $capture; }
+
+                          public function export(array $events) : void
+                          {
+                              $this->capture->events = $events;
+                          }
+                      }
         ))->execute();
 
         $this->assertSame(expected: 2, actual: $count);

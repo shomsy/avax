@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\UserSource;
 
 use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Capability\User\UserRole;
+use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\Login\Credentials;
 use SensitiveParameter;
 
@@ -79,8 +77,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash) : void
     {
         $this->replace(
-            id      : $id,
-            mutate  : static fn (User $user) : User => User::create(
+            id    : $id,
+            mutate: static fn (User $user) : User => User::create(
                 id          : $user->id,
                 email       : $user->email,
                 username    : $user->username,
@@ -88,87 +86,6 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 roles       : $user->roles,
                 permissions : $user->permissions,
                 isActive    : $user->isActive
-            )
-        );
-    }
-
-    public function updateEmail(UserId $id, #[SensitiveParameter] string $email) : void
-    {
-        $this->replace(
-            id      : $id,
-            mutate  : static fn (User $user) : User => User::create(
-                id          : $user->id,
-                email       : new UserEmail(value: $email),
-                username    : $user->username,
-                passwordHash: $user->passwordHash,
-                roles       : $user->roles,
-                permissions : $user->permissions,
-                isActive    : $user->isActive
-            )
-        );
-    }
-
-    public function replaceRoles(UserId $id, array $roles) : void
-    {
-        $this->replace(
-            id      : $id,
-            mutate  : static fn (User $user) : User => User::create(
-                id          : $user->id,
-                email       : $user->email,
-                username    : $user->username,
-                passwordHash: $user->passwordHash,
-                roles       : array_values($roles),
-                permissions : $user->permissions,
-                isActive    : $user->isActive
-            )
-        );
-    }
-
-    public function replacePermissions(UserId $id, array $permissions) : void
-    {
-        $this->replace(
-            id      : $id,
-            mutate  : static fn (User $user) : User => User::create(
-                id          : $user->id,
-                email       : $user->email,
-                username    : $user->username,
-                passwordHash: $user->passwordHash,
-                roles       : $user->roles,
-                permissions : array_values($permissions),
-                isActive    : $user->isActive
-            )
-        );
-    }
-
-    public function deactivate(UserId $id) : void
-    {
-        $this->setActive(id: $id, isActive: false);
-    }
-
-    public function activate(UserId $id) : void
-    {
-        $this->setActive(id: $id, isActive: true);
-    }
-
-    public function create(User $user) : User
-    {
-        $this->users[$user->getId()->value] = $user;
-
-        return $user;
-    }
-
-    private function setActive(UserId $id, bool $isActive) : void
-    {
-        $this->replace(
-            id      : $id,
-            mutate  : static fn (User $user) : User => User::create(
-                id          : $user->id,
-                email       : $user->email,
-                username    : $user->username,
-                passwordHash: $user->passwordHash,
-                roles       : $user->roles,
-                permissions : $user->permissions,
-                isActive    : $isActive
             )
         );
     }
@@ -185,5 +102,86 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         }
 
         $this->users[$id->value] = $mutate($user);
+    }
+
+    public function create(User $user) : User
+    {
+        $this->users[$user->getId()->value] = $user;
+
+        return $user;
+    }
+
+    public function updateEmail(UserId $id, #[SensitiveParameter] string $email) : void
+    {
+        $this->replace(
+            id    : $id,
+            mutate: static fn (User $user) : User => User::create(
+                id          : $user->id,
+                email       : new UserEmail(value: $email),
+                username    : $user->username,
+                passwordHash: $user->passwordHash,
+                roles       : $user->roles,
+                permissions : $user->permissions,
+                isActive    : $user->isActive
+            )
+        );
+    }
+
+    public function replaceRoles(UserId $id, array $roles) : void
+    {
+        $this->replace(
+            id    : $id,
+            mutate: static fn (User $user) : User => User::create(
+                id          : $user->id,
+                email       : $user->email,
+                username    : $user->username,
+                passwordHash: $user->passwordHash,
+                roles       : array_values($roles),
+                permissions : $user->permissions,
+                isActive    : $user->isActive
+            )
+        );
+    }
+
+    public function replacePermissions(UserId $id, array $permissions) : void
+    {
+        $this->replace(
+            id    : $id,
+            mutate: static fn (User $user) : User => User::create(
+                id          : $user->id,
+                email       : $user->email,
+                username    : $user->username,
+                passwordHash: $user->passwordHash,
+                roles       : $user->roles,
+                permissions : array_values($permissions),
+                isActive    : $user->isActive
+            )
+        );
+    }
+
+    public function deactivate(UserId $id) : void
+    {
+        $this->setActive(id: $id, isActive: false);
+    }
+
+    private function setActive(UserId $id, bool $isActive) : void
+    {
+        $this->replace(
+            id    : $id,
+            mutate: static fn (User $user) : User => User::create(
+                id          : $user->id,
+                email       : $user->email,
+                username    : $user->username,
+                passwordHash: $user->passwordHash,
+                roles       : $user->roles,
+                permissions : $user->permissions,
+                isActive    : $isActive
+            )
+        );
+    }
+
+    public function activate(UserId $id) : void
+    {
+        $this->setActive(id: $id, isActive: true);
     }
 }

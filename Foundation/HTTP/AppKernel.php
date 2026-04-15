@@ -104,7 +104,7 @@ final readonly class AppKernel implements Kernel
             $middleware[] = $this->createSessionMiddleware();
         }
 
-        // 3. Request processing (logging, CORS)
+        // 3. ServerRequest processing (logging, CORS)
         if (MiddlewareRegistry::has(identifier: 'log')) {
             $middleware[] = $this->createRequestLogger();
         }

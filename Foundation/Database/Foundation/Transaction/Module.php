@@ -42,10 +42,12 @@ use Avax\Database\Transaction\Contracts\TransactionManagerInterface;
  */
 final readonly class Module implements LifecycleInterface
 {
+    private Container $container;
+
     /**
      * @param Container $container The "Toolbox" where we store the transaction recipes.
      */
-    public function __construct(private Container $container) {}
+    public function __construct(Container $container) { $this->container = $container; }
 
     /**
      * Provide the "ID Card" (Metadata) for this feature.

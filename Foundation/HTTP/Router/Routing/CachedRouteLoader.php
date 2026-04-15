@@ -19,11 +19,20 @@ use Throwable;
  */
 final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
 {
+    private RouteCacheManifest  $manifest;
+    private FilesystemInterface $filesystem;
+    private string              $cachePath;
+
     public function __construct(
-        private string              $cachePath,
-        private FilesystemInterface $filesystem,
-        private RouteCacheManifest  $manifest
-    ) {}
+        string              $cachePath,
+        FilesystemInterface $filesystem,
+        RouteCacheManifest  $manifest
+    )
+    {
+        $this->cachePath  = $cachePath;
+        $this->filesystem = $filesystem;
+        $this->manifest   = $manifest;
+    }
 
     /**
      * Load routes from cache into the collection.

@@ -32,6 +32,9 @@ use Throwable;
  */
 final readonly class RecoveryManager
 {
+    private Audit|null $audit;
+    private Recovery   $recovery;
+
     /**
      * RecoveryManager Constructor.
      *
@@ -39,9 +42,13 @@ final readonly class RecoveryManager
      * @param Audit|null $audit    Optional audit logger for recovery events.
      */
     public function __construct(
-        private Recovery   $recovery,
-        private Audit|null $audit = null
-    ) {}
+        Recovery   $recovery,
+        Audit|null $audit = null
+    )
+    {
+        $this->recovery = $recovery;
+        $this->audit    = $audit;
+    }
 
     // ----------------------------------------------------------------
     // 🔹 Snapshot Operations

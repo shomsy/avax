@@ -39,9 +39,9 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordSuccess() : void
     {
-        $passwordHasher = $this->passwordHasher();
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
-        $context = AuthenticationContext::authenticated(
+        $context               = AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::TOKEN
         );
@@ -81,13 +81,29 @@ class ChangePasswordTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, bool $isActive = true) : User
+    {
+        return User::create(
+            id          : new UserId(value: $userId),
+            email       : new UserEmail(value: "user{$userId}@example.com"),
+            username    : "user{$userId}",
+            passwordHash: $passwordHasher->hash(password: $password),
+            isActive    : $isActive
+        );
+    }
+
     /**
      * @throws RateLimitException
      * @throws Unauthenticated
      */
     public function testChangePasswordFailureIncorrectCurrentPassword() : void
     {
-        $passwordHasher = $this->passwordHasher();
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
@@ -145,7 +161,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordRequiresFreshMfaWhenUserHasMfaEnabled() : void
     {
-        $passwordHasher = $this->passwordHasher();
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
@@ -181,21 +197,5 @@ class ChangePasswordTest extends TestCase
     protected function tearDown() : void
     {
         Mockery::close();
-    }
-
-    private function passwordHasher() : PasswordHasher
-    {
-        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
-    }
-
-    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, bool $isActive = true) : User
-    {
-        return User::create(
-            id          : new UserId(value: $userId),
-            email       : new UserEmail(value: "user{$userId}@example.com"),
-            username    : "user{$userId}",
-            passwordHash: $passwordHasher->hash(password: $password),
-            isActive    : $isActive
-        );
     }
 }

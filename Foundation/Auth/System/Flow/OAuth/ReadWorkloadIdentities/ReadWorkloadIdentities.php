@@ -8,9 +8,14 @@ use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 
 final readonly class ReadWorkloadIdentities
 {
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry
-    ) {}
+        OAuthClientRegistryInterface $clientRegistry
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+    }
 
     /**
      * @return list<WorkloadIdentityProfile>
@@ -25,13 +30,13 @@ final readonly class ReadWorkloadIdentities
             }
 
             $profiles[] = new WorkloadIdentityProfile(
-                clientId                   : $client->clientId,
-                name                       : $client->name,
-                allowedScopes              : $client->allowedScopes,
-                allowedAudiences           : $client->allowedAudiences,
-                audienceScopeBoundaries    : $client->audienceScopeBoundaries,
-                requiredSenderConstraint   : $client->requiredSenderConstraint,
-                phishingResistantRequired  : $client->phishingResistantRequired
+                clientId                 : $client->clientId,
+                name                     : $client->name,
+                allowedScopes            : $client->allowedScopes,
+                allowedAudiences         : $client->allowedAudiences,
+                audienceScopeBoundaries  : $client->audienceScopeBoundaries,
+                requiredSenderConstraint : $client->requiredSenderConstraint,
+                phishingResistantRequired: $client->phishingResistantRequired
             );
         }
 

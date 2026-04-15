@@ -17,18 +17,36 @@ use DateTimeImmutable;
  */
 final readonly class MfaChallengeRecord
 {
+    public array               $attempts;
+    public int                 $maxAttempts;
+    public DateTimeImmutable   $expiresAt;
+    public DateTimeImmutable   $createdAt;
+    public MfaChallengePurpose $purpose;
+    public UserId              $userId;
+    public string              $challengeId;
+
     /**
      * @param list<MfaVerificationAttempt> $attempts
      */
     public function __construct(
-        public string              $challengeId,
-        public UserId              $userId,
-        public MfaChallengePurpose $purpose,
-        public DateTimeImmutable   $createdAt,
-        public DateTimeImmutable   $expiresAt,
-        public int                 $maxAttempts = 5,
-        public array               $attempts = []
-    ) {}
+        string              $challengeId,
+        UserId              $userId,
+        MfaChallengePurpose $purpose,
+        DateTimeImmutable   $createdAt,
+        DateTimeImmutable   $expiresAt,
+        int|null            $maxAttempts = null,
+        array               $attempts = []
+    )
+    {
+        $maxAttempts       ??= 5;
+        $this->challengeId = $challengeId;
+        $this->userId      = $userId;
+        $this->purpose     = $purpose;
+        $this->createdAt   = $createdAt;
+        $this->expiresAt   = $expiresAt;
+        $this->maxAttempts = $maxAttempts;
+        $this->attempts    = $attempts;
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
     {

@@ -85,10 +85,10 @@ $inactive->singleton(abstract: ConditionalGateway::class, concrete: ActiveCondit
 assertTrue(condition: ! $inactive->has(id: ConditionalGateway::class), message: 'Inactive conditional registrations should not report as resolvable.');
 assertTrue(
     condition: in_array(
-        'region [us] is not in [eu]',
-        $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
-        true
-    ),
+                   'region [us] is not in [eu]',
+                   $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
+                   true
+               ),
     message  : 'Service descriptions should explain why a conditional registration is inactive.'
 );
 

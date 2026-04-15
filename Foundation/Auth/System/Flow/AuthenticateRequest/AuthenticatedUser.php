@@ -14,27 +14,48 @@ use SensitiveParameter;
  */
 final readonly class AuthenticatedUser
 {
+    public bool   $mfaEnabled;
+    public bool   $emailVerified;
+    public array  $permissions;
+    public array  $roles;
+    public string $username;
+    public string $email;
+    public int    $id;
+
     /**
      * @param list<string> $roles
      * @param list<string> $permissions
      */
     public function __construct(
-        public int                          $id,
-        #[SensitiveParameter] public string $email,
-        public string                       $username,
-        public array                        $roles = [],
-        public array                        $permissions = [],
-        public bool                         $emailVerified = false,
-        public bool                         $mfaEnabled = false
-    ) {}
+        int                          $id,
+        #[SensitiveParameter] string $email,
+        string                       $username,
+        array|null                   $roles = null,
+        array|null                   $permissions = null,
+        bool|null                    $emailVerified = null,
+        bool                         $mfaEnabled = false
+    )
+    {
+        $roles               ??= [];
+        $permissions         ??= [];
+        $emailVerified       ??= false;
+        $this->id            = $id;
+        $this->email         = $email;
+        $this->username      = $username;
+        $this->roles         = $roles;
+        $this->permissions   = $permissions;
+        $this->emailVerified = $emailVerified;
+        $this->mfaEnabled    = $mfaEnabled;
+    }
 
     public static function fromUser(
-        User $user,
-        bool $emailVerified = false,
-        bool $mfaEnabled = false
+        User      $user,
+        bool|null $emailVerified = null,
+        bool      $mfaEnabled = false
     ) : self
     {
-        $roles = array_map(
+        $emailVerified ??= false;
+        $roles         = array_map(
             static fn (UserRole $role) : string => $role->value,
             $user->getRoles()
         );

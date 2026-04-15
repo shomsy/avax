@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$root = dirname(__DIR__);
-$quiet = in_array('--quiet', $argv, true) || in_array('-q', $argv, true);
-$verbose = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
-$json = in_array('--json', $argv, true) || in_array('-j', $argv, true);
+$root           = dirname(__DIR__);
+$quiet          = in_array('--quiet', $argv, true) || in_array('-q', $argv, true);
+$verbose        = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
+$json           = in_array('--json', $argv, true) || in_array('-j', $argv, true);
 $buildDirectory = $root . '/build';
 
 if (! is_dir($buildDirectory)) {
     mkdir($buildDirectory, 0777, true);
 }
 
-$php = PHP_BINARY;
-$binDir = $root . '/vendor/bin';
+$php         = PHP_BINARY;
+$binDir      = $root . '/vendor/bin';
 $definitions = [
-    1 => [
-        'name' => 'Trust',
+    1  => [
+        'name'     => 'Trust',
         'question' => 'Does the change fail closed when mandatory config, dependency, policy input, or evidence is missing?',
         'commands' => [
             [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=raw'],
@@ -26,24 +26,24 @@ $definitions = [
         ],
         'category' => 'static-analysis',
     ],
-    2 => [
-        'name' => 'Operator Clarity',
+    2  => [
+        'name'     => 'Operator Clarity',
         'question' => 'Can another human or agent understand the failure, recovery path, and artifact location without tribal knowledge?',
         'commands' => [
             [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=table'],
         ],
         'category' => 'clarity',
     ],
-    3 => [
-        'name' => 'Rollback Posture',
+    3  => [
+        'name'     => 'Rollback Posture',
         'question' => 'Is there an explicit path to reverse or contain the change when it mutates state, runtime policy, or public behavior?',
         'commands' => [
             [$php, 'tooling/create-rollback-evidence.php'],
         ],
         'category' => 'rollback',
     ],
-    4 => [
-        'name' => 'Contract Stability',
+    4  => [
+        'name'     => 'Contract Stability',
         'question' => 'Are public interfaces stable, or is the migration path documented and validated?',
         'commands' => [
             [$php, 'tooling/check-migration-path.php', '--json'],
@@ -51,39 +51,39 @@ $definitions = [
         ],
         'category' => 'bc',
     ],
-    5 => [
-        'name' => 'State Ownership',
+    5  => [
+        'name'     => 'State Ownership',
         'question' => 'Is durable truth stored in an owned boundary instead of accidental local memory, cache drift, or UI residue?',
         'commands' => [
             [$php, $binDir . '/phpunit', '--testsuite=integration', '--testdox'],
         ],
         'category' => 'testing',
     ],
-    6 => [
-        'name' => 'Async Containment',
+    6  => [
+        'name'     => 'Async Containment',
         'question' => 'If async or background work exists, are acknowledgement, retry, timeout, and quarantine rules explicit and observable?',
         'commands' => [
             [$php, $binDir . '/phpunit', '--testsuite=integration', '--testdox'],
         ],
         'category' => 'testing',
     ],
-    7 => [
-        'name' => 'Deterministic Automation',
+    7  => [
+        'name'     => 'Deterministic Automation',
         'question' => 'Can CI, deployment, or operational tooling consume the result without manual interpretation or fuzzy parsing?',
         'commands' => [
             [$php, 'tooling/run-conformance-harness.php'],
         ],
         'category' => 'ci',
     ],
-    8 => [
-        'name' => 'Observability Logic',
+    8  => [
+        'name'     => 'Observability Logic',
         'question' => 'Do logs, traces, metrics, events, and exit codes make the behavior diagnosable through the real execution path?',
         'commands' => [],
         'category' => 'observability',
-        'manual' => true,
+        'manual'   => true,
     ],
-    9 => [
-        'name' => 'Runtime Hardening',
+    9  => [
+        'name'     => 'Runtime Hardening',
         'question' => 'Does the change preserve least privilege, secret hygiene, and runtime boundary policy?',
         'commands' => [
             [$php, 'tooling/scan-committed-secrets.php'],
@@ -91,7 +91,7 @@ $definitions = [
         'category' => 'security',
     ],
     10 => [
-        'name' => 'Performance Posture',
+        'name'     => 'Performance Posture',
         'question' => 'Are new latency, scale, or throughput claims measured and recorded instead of asserted?',
         'commands' => [
             [$php, 'tooling/run-with-coverage-driver', 'vendor/bin/infection', '--configuration=infection.json.dist', '--skip-initial-tests'],
@@ -100,7 +100,7 @@ $definitions = [
         'optional' => true,
     ],
     11 => [
-        'name' => 'Source Truth',
+        'name'     => 'Source Truth',
         'question' => 'Do README, help text, and governance docs still describe the shipped system accurately?',
         'commands' => [
             [$php, 'tooling/check-source-truth.php', '--json'],
@@ -109,7 +109,7 @@ $definitions = [
         'category' => 'docs',
     ],
     12 => [
-        'name' => 'Evidence Integrity',
+        'name'     => 'Evidence Integrity',
         'question' => 'Is validation proof present, machine-readable, and tied to this change and its claimed scope?',
         'commands' => [
             [$php, 'tooling/generate-sbom.php'],
@@ -118,41 +118,41 @@ $definitions = [
         'category' => 'release',
     ],
     13 => [
-        'name' => 'Self-Healing Loop',
+        'name'     => 'Self-Healing Loop',
         'question' => 'Were findings either fixed, revalidated, or turned into explicit tracked backlog items with evidence before closure?',
         'commands' => [],
         'category' => 'process',
-        'manual' => true,
+        'manual'   => true,
     ],
 ];
 
 $results = [
     'timestamp' => gmdate(DATE_ATOM),
-    'version' => '2.0.0',
-    'summary' => [
-        'total' => count($definitions),
+    'version'   => '2.0.0',
+    'summary'   => [
+        'total'  => count($definitions),
         'passed' => 0,
         'failed' => 0,
         'manual' => 0,
     ],
-    'gates' => [],
+    'gates'     => [],
 ];
 
 $hasFailure = false;
 
 foreach ($definitions as $gateId => $gate) {
     $gateResult = [
-        'id' => $gateId,
-        'name' => $gate['name'],
+        'id'       => $gateId,
+        'name'     => $gate['name'],
         'question' => $gate['question'],
         'category' => $gate['category'],
-        'status' => 'pending',
+        'status'   => 'pending',
         'commands' => [],
     ];
 
     if ($gate['manual'] ?? false) {
         $gateResult['status'] = 'manual';
-        $gateResult['note'] = 'Requires manual review';
+        $gateResult['note']   = 'Requires manual review';
         $results['summary']['manual']++;
         $results['gates'][] = $gateResult;
         continue;
@@ -162,17 +162,17 @@ foreach ($definitions as $gateId => $gate) {
 
     foreach ($gate['commands'] as $command) {
         $execution = runCommand(command: $command, workingDirectory: $root);
-        $optional = $gate['optional'] ?? false;
-        $passed = $execution['exit_code'] === 0 || $optional;
+        $optional  = $gate['optional'] ?? false;
+        $passed    = $execution['exit_code'] === 0 || $optional;
 
         if (! $passed) {
             $gatePassed = false;
         }
 
         $commandResult = [
-            'command' => implode(' ', $command),
+            'command'   => implode(' ', $command),
             'exit_code' => $execution['exit_code'],
-            'passed' => $passed,
+            'passed'    => $passed,
         ];
 
         if ($verbose && ! $quiet) {
@@ -196,7 +196,7 @@ foreach ($definitions as $gateId => $gate) {
 }
 
 $results['summary']['pass_rate'] = round(($results['summary']['passed'] / count($definitions)) * 100, 1) . '%';
-$results['overall'] = $hasFailure ? 'FAILED' : 'PASSED';
+$results['overall']              = $hasFailure ? 'FAILED' : 'PASSED';
 
 file_put_contents(
     $buildDirectory . '/quality-gates-report.json',
@@ -224,7 +224,7 @@ if (! $quiet) {
             'passed' => '[PASS]',
             'failed' => '[FAIL]',
             'manual' => '[MANUAL]',
-            default => '[PENDING]',
+            default  => '[PENDING]',
         };
 
         echo sprintf("%s Gate %d: %s\n", $icon, $gate['id'], $gate['name']);
@@ -243,6 +243,7 @@ exit($hasFailure ? 1 : 0);
 
 /**
  * @param list<string> $command
+ *
  * @return array{exit_code:int, stdout:string, stderr:string}
  */
 function runCommand(array $command, string $workingDirectory) : array
@@ -258,8 +259,8 @@ function runCommand(array $command, string $workingDirectory) : array
     if (! is_resource($process)) {
         return [
             'exit_code' => 1,
-            'stdout' => '',
-            'stderr' => 'Could not start command.',
+            'stdout'    => '',
+            'stderr'    => 'Could not start command.',
         ];
     }
 
@@ -273,7 +274,7 @@ function runCommand(array $command, string $workingDirectory) : array
 
     return [
         'exit_code' => is_int($exitCode) ? $exitCode : 1,
-        'stdout' => is_string($stdout) ? $stdout : '',
-        'stderr' => is_string($stderr) ? $stderr : '',
+        'stdout'    => is_string($stdout) ? $stdout : '',
+        'stderr'    => is_string($stderr) ? $stderr : '',
     ];
 }

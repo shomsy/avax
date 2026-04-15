@@ -8,12 +8,12 @@ use RuntimeException;
 
 final class TrustedProxyViolation extends RuntimeException
 {
-    public static function untrustedForwardedHeader(string $header) : self
+    public static function untrustedForwardedHeader(#[\SensitiveParameter] string $header) : self
     {
         return new self(message: "Untrusted forwarded header detected: {$header}");
     }
 
-    public static function untrustedClientCertificateMetadata(string $header) : self
+    public static function untrustedClientCertificateMetadata(#[\SensitiveParameter] string $header) : self
     {
         return new self(message: "Untrusted client-certificate metadata detected: {$header}");
     }

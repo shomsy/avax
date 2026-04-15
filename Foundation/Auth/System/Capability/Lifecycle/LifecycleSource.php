@@ -6,7 +6,7 @@ namespace Avax\Auth\System\Capability\Lifecycle;
 
 enum LifecycleSource: string
 {
-    case ADMIN = 'admin';
+    case ADMIN      = 'admin';
     case FEDERATION = 'federation';
-    case SCIM = 'scim';
+    case SCIM       = 'scim';
 }

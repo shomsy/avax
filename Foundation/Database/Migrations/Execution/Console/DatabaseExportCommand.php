@@ -12,9 +12,14 @@ use Throwable;
  */
 final readonly class DatabaseExportCommand
 {
+    private DatabaseExporter $exporter;
+
     public function __construct(
-        private DatabaseExporter $exporter
-    ) {}
+        DatabaseExporter $exporter
+    )
+    {
+        $this->exporter = $exporter;
+    }
 
     public function handle(string $path, string|null $table = null) : int
     {

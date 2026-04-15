@@ -6,8 +6,15 @@ namespace Avax\Auth\System\Flow\Tenant\TransferOwnership;
 
 final readonly class TransferTenantOwnershipData
 {
+    public int    $newOwnerUserId;
+    public string $tenantSlug;
+
     public function __construct(
-        public string $tenantSlug,
-        public int $newOwnerUserId
-    ) {}
+        string $tenantSlug,
+        int    $newOwnerUserId
+    )
+    {
+        $this->tenantSlug     = $tenantSlug;
+        $this->newOwnerUserId = $newOwnerUserId;
+    }
 }

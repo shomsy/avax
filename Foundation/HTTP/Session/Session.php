@@ -50,6 +50,11 @@ use Throwable;
  */
 final readonly class Session
 {
+    private EventsManager   $events;
+    private AuditManager    $audit;
+    private RecoveryManager $recovery;
+    private CoreManager     $core;
+
     /**
      * Session Constructor.
      *
@@ -59,11 +64,17 @@ final readonly class Session
      * @param EventsManager   $events   Event dispatching manager.
      */
     public function __construct(
-        private CoreManager     $core,
-        private RecoveryManager $recovery,
-        private AuditManager    $audit,
-        private EventsManager   $events
-    ) {}
+        CoreManager     $core,
+        RecoveryManager $recovery,
+        AuditManager    $audit,
+        EventsManager   $events
+    )
+    {
+        $this->core     = $core;
+        $this->recovery = $recovery;
+        $this->audit    = $audit;
+        $this->events   = $events;
+    }
 
     // ----------------------------------------------------------------
     // 🧱 Core Data API

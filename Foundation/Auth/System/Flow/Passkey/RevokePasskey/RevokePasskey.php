@@ -16,13 +16,26 @@ use SensitiveParameter;
 
 final readonly class RevokePasskey
 {
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private RequireFreshMfa                 $requireFreshMfa;
+    private CurrentAuthentication           $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                       $requireFreshMfa,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        RequireFreshMfa                                       $requireFreshMfa,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->requireFreshMfa       = $requireFreshMfa;
+        $this->credentialStore       = $credentialStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+    }
 
     /**
      * @throws PasskeyOperationFailed
@@ -45,9 +58,9 @@ final readonly class RevokePasskey
         $this->requireFreshMfa->execute();
         $this->credentialStore->revoke(credentialId: $credentialId, revokedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.passkey.revoked',
-            occurredAt: $this->clock->now(),
-            context   : ['user_id' => $user->id, 'credential_id' => $credentialId]
-        ));
+                                           name      : 'auth.passkey.revoked',
+                                           occurredAt: $this->clock->now(),
+                                           context   : ['user_id' => $user->id, 'credential_id' => $credentialId]
+                                       ));
     }
 }

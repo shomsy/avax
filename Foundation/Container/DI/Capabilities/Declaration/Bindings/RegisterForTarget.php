@@ -11,12 +11,18 @@ use LogicException;
  */
 final class RegisterForTarget
 {
-    private string $needs = '';
+    private string                   $needs = '';
+    private readonly string          $consumer;
+    private readonly ServiceRegistry $registry;
 
     public function __construct(
-        private readonly ServiceRegistry $registry,
-        private readonly string          $consumer
-    ) {}
+        ServiceRegistry $registry,
+        string          $consumer
+    )
+    {
+        $this->registry = $registry;
+        $this->consumer = $consumer;
+    }
 
     public function needs(string $abstract) : self
     {

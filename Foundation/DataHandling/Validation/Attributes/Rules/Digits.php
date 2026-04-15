@@ -24,7 +24,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Digits
 {
-    public function __construct(private int $digits) {}
+    private int $digits;
+
+    public function __construct(int $digits) { $this->digits = $digits; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

@@ -29,30 +29,78 @@ final class CompileContainer
 
     private ServiceCompiler $services;
 
-    private ArtifactMetadata|null $lastMetadata = null;
+    private ArtifactMetadata|null           $lastMetadata = null;
+    private readonly ResolutionMetrics|null $metrics;
+    private readonly bool                   $validateBeforeCompile;
+    private readonly bool                   $failClosedOnCorruption;
+    private readonly bool                   $validateOnLoad;
+    private readonly string                 $pruneMode;
+    private readonly string                 $executionMode;
+    private readonly string                 $benchmarkBuildMarker;
+    private readonly string                 $settingsFingerprint;
+    private readonly bool                   $strict;
+    private readonly string                 $compileMode;
+    private readonly string                 $environment;
+    private readonly string                 $diagnosticsMode;
+    private readonly string                 $configHash;
+    private readonly string                 $cacheVersion;
+    private readonly string                 $cacheDir;
+    private readonly CreateServiceBlueprint $blueprints;
+    private readonly ServiceRegistry        $registrations;
 
     public function __construct(
-        private readonly ServiceRegistry              $registrations,
-        private readonly CreateServiceBlueprint       $blueprints,
-        private readonly string                       $cacheDir = '',
-        private readonly string                       $cacheVersion = 'container-v1',
-        #[SensitiveParameter] private readonly string $configHash = '',
-        private readonly string                       $diagnosticsMode = 'minimal',
-        private readonly string                       $environment = '',
-        private readonly string                       $compileMode = 'production',
-        private readonly bool                         $strict = false,
-        private readonly string                       $settingsFingerprint = '',
-        private readonly string                       $benchmarkBuildMarker = '',
-        private readonly string                       $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
-        private readonly string                       $pruneMode = CreateContainerConfig::PRUNE_MODE_NONE,
-        private readonly bool                         $validateOnLoad = false,
-        private readonly bool                         $failClosedOnCorruption = true,
-        private readonly bool                   $validateBeforeCompile = false,
-        private readonly ResolutionMetrics|null $metrics = null,
-        ServiceCompiler|null                    $services = null
+        ServiceRegistry                   $registrations,
+        CreateServiceBlueprint            $blueprints,
+        string|null                       $cacheDir = null,
+        string|null                       $cacheVersion = null,
+        #[SensitiveParameter] string|null $configHash = null,
+        string|null                       $diagnosticsMode = null,
+        string|null                       $environment = null,
+        string|null                       $compileMode = null,
+        bool|null                         $strict = null,
+        string|null                       $settingsFingerprint = null,
+        string|null                       $benchmarkBuildMarker = null,
+        string|null                       $executionMode = null,
+        string|null                       $pruneMode = null,
+        bool|null                         $validateOnLoad = null,
+        bool|null                         $failClosedOnCorruption = null,
+        bool|null                         $validateBeforeCompile = null,
+        ResolutionMetrics|null            $metrics = null,
+        ServiceCompiler|null              $services = null
     )
     {
-        $this->services = $services ?? new ServiceCompiler(
+        $cacheDir                     ??= '';
+        $cacheVersion                 ??= 'container-v1';
+        $configHash                   ??= '';
+        $diagnosticsMode              ??= 'minimal';
+        $environment                  ??= '';
+        $compileMode                  ??= 'production';
+        $strict                       ??= false;
+        $settingsFingerprint          ??= '';
+        $benchmarkBuildMarker         ??= '';
+        $executionMode                ??= CreateContainerConfig::EXECUTION_MODE_COMPILED;
+        $pruneMode                    ??= CreateContainerConfig::PRUNE_MODE_NONE;
+        $validateOnLoad               ??= false;
+        $failClosedOnCorruption       ??= true;
+        $validateBeforeCompile        ??= false;
+        $this->registrations          = $registrations;
+        $this->blueprints             = $blueprints;
+        $this->cacheDir               = $cacheDir;
+        $this->cacheVersion           = $cacheVersion;
+        $this->configHash             = $configHash;
+        $this->diagnosticsMode        = $diagnosticsMode;
+        $this->environment            = $environment;
+        $this->compileMode            = $compileMode;
+        $this->strict                 = $strict;
+        $this->settingsFingerprint    = $settingsFingerprint;
+        $this->benchmarkBuildMarker   = $benchmarkBuildMarker;
+        $this->executionMode          = $executionMode;
+        $this->pruneMode              = $pruneMode;
+        $this->validateOnLoad         = $validateOnLoad;
+        $this->failClosedOnCorruption = $failClosedOnCorruption;
+        $this->validateBeforeCompile  = $validateBeforeCompile;
+        $this->metrics                = $metrics;
+        $this->services               = $services ?? new ServiceCompiler(
             registrations: $this->registrations,
             blueprints   : $this->blueprints
         );

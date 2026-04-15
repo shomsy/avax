@@ -14,22 +14,50 @@ use SensitiveParameter;
  */
 final readonly class RefreshTokenRecord
 {
+    public OAuthSenderConstraint|null $senderConstraint;
+    public array                      $scopes;
+    public string|null                $clientId;
+    public bool                       $phishingResistant;
+    public DateTimeImmutable|null     $mfaVerifiedAt;
+    public bool                       $revoked;
+    public string|null                $replacementTokenId;
+    public DateTimeImmutable          $expiresAt;
+    public UserId                     $userId;
+    public string                     $familyId;
+    public string                     $tokenId;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] public string      $tokenId,
-        public string                            $familyId,
-        public UserId                            $userId,
-        public DateTimeImmutable                 $expiresAt,
-        #[SensitiveParameter] public string|null $replacementTokenId = null,
-        public bool                              $revoked = false,
-        public DateTimeImmutable|null            $mfaVerifiedAt = null,
-        public bool                              $phishingResistant = false,
-        public string|null                       $clientId = null,
-        public array                             $scopes = [],
-        public OAuthSenderConstraint|null        $senderConstraint = null
-    ) {}
+        #[SensitiveParameter] string      $tokenId,
+        string                            $familyId,
+        UserId                            $userId,
+        DateTimeImmutable                 $expiresAt,
+        #[SensitiveParameter] string|null $replacementTokenId = null,
+        bool|null                         $revoked = null,
+        DateTimeImmutable|null            $mfaVerifiedAt = null,
+        bool|null                         $phishingResistant = null,
+        string|null                       $clientId = null,
+        array|null                        $scopes = null,
+        OAuthSenderConstraint|null        $senderConstraint = null
+    )
+    {
+        $revoked                  ??= false;
+        $phishingResistant        ??= false;
+        $scopes                   ??= [];
+        $this->tokenId            = $tokenId;
+        $this->familyId           = $familyId;
+        $this->userId             = $userId;
+        $this->expiresAt          = $expiresAt;
+        $this->replacementTokenId = $replacementTokenId;
+        $this->revoked            = $revoked;
+        $this->mfaVerifiedAt      = $mfaVerifiedAt;
+        $this->phishingResistant  = $phishingResistant;
+        $this->clientId           = $clientId;
+        $this->scopes             = $scopes;
+        $this->senderConstraint   = $senderConstraint;
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
     {

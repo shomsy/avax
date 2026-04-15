@@ -30,7 +30,14 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class AcceptedIf
 {
-    public function __construct(private string $conditionField, private mixed $conditionValue) {}
+    private mixed  $conditionValue;
+    private string $conditionField;
+
+    public function __construct(string $conditionField, mixed $conditionValue)
+    {
+        $this->conditionField = $conditionField;
+        $this->conditionValue = $conditionValue;
+    }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

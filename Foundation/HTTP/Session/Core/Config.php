@@ -22,6 +22,10 @@ namespace Avax\HTTP\Session\Core;
  */
 final readonly class Config
 {
+    public string|null $encryptionKey;
+    public bool        $secure;
+    public int|null    $ttl;
+
     /**
      * Config Constructor.
      *
@@ -30,10 +34,16 @@ final readonly class Config
      * @param string|null $encryptionKey Encryption key for secure values.
      */
     public function __construct(
-        public int|null    $ttl = null,
-        public bool        $secure = false,
-        public string|null $encryptionKey = null
-    ) {}
+        int|null    $ttl = null,
+        bool|null   $secure = null,
+        string|null $encryptionKey = null
+    )
+    {
+        $secure              ??= false;
+        $this->ttl           = $ttl;
+        $this->secure        = $secure;
+        $this->encryptionKey = $encryptionKey;
+    }
 
     /**
      * Create default configuration.

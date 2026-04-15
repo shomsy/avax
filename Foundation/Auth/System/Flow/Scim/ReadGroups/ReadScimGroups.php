@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Scim\ReadGroups;
 
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
-use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 
 final readonly class ReadScimGroups
 {
+    private ReadScimUsers $readScimUsers;
+
     public function __construct(
-        private ReadScimUsers $readScimUsers
-    ) {}
+        ReadScimUsers $readScimUsers
+    )
+    {
+        $this->readScimUsers = $readScimUsers;
+    }
 
     /**
      * @return list<ScimGroupProjection>
@@ -23,10 +27,10 @@ final readonly class ReadScimGroups
         foreach ($this->readScimUsers->execute(directoryId: $directoryId) as $user) {
             foreach ($user->groups as $group) {
                 $groups[$group]['members'][] = new ScimGroupMember(
-                    externalId : $user->externalId,
-                    userId     : $user->userId,
-                    username   : $user->username,
-                    email      : $user->email
+                    externalId: $user->externalId,
+                    userId    : $user->userId,
+                    username  : $user->username,
+                    email     : $user->email
                 );
             }
         }
@@ -41,10 +45,10 @@ final readonly class ReadScimGroups
                 static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp($left->externalId, $right->externalId)
             );
             $projections[] = new ScimGroupProjection(
-                directoryId : $directoryId,
-                groupId     : $groupId,
-                displayName : $groupId,
-                members     : $members
+                directoryId: $directoryId,
+                groupId    : $groupId,
+                displayName: $groupId,
+                members    : $members
             );
         }
 

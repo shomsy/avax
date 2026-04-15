@@ -19,13 +19,15 @@ use ReflectionUnionType;
  */
 final readonly class CreateServiceBlueprint
 {
-    private BlueprintCache $cache;
+    private BlueprintCache           $cache;
+    private ResolveDependencies|null $dependencies;
 
     public function __construct(
-        BlueprintCache|null              $cache = null,
-        private ResolveDependencies|null $dependencies = null
+        BlueprintCache|null      $cache = null,
+        ResolveDependencies|null $dependencies = null
     )
     {
+        $this->dependencies = $dependencies;
         $this->cache        = $cache ?? new BlueprintCache;
         $this->dependencies ??= new ResolveDependencies;
     }
@@ -72,29 +74,29 @@ final readonly class CreateServiceBlueprint
                                    ));
 
         return $this->cache->put(blueprint: new ServiceBlueprint(
-                                     class               : $class,
-                                     instantiable        : $reflection->isInstantiable(),
-                                     constructor         : $reflection->getConstructor() !== null
-                                                               ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
-                                                               : null,
-                                     injectableProperties: array_map(
-                                                               fn (ReflectionProperty $property) => [
-                                                                   'name'      => $property->getName(),
-                                                                   'serviceId' => $this->serviceIdFor(property: $property),
-                                                                   'readonly'  => $property->isReadOnly(),
-                                                               ],
-                                                               $properties
-                                                           ),
-                                     injectableMethods   : array_map(
-                                                               fn (ReflectionMethod $method) => [
-                                                                   'name' => $method->getName(),
-                                                                   'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
-                                                               ],
-                                                               $methods
-                                                           ),
-                                     shared              : $reflection->getAttributes(name: Singleton::class) !== [],
-                                     fingerprint         : $fingerprint
-                                 ));
+                                                class               : $class,
+                                                instantiable        : $reflection->isInstantiable(),
+                                                constructor         : $reflection->getConstructor() !== null
+                                                                          ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
+                                                                          : null,
+                                                injectableProperties: array_map(
+                                                                          fn (ReflectionProperty $property) => [
+                                                                              'name'      => $property->getName(),
+                                                                              'serviceId' => $this->serviceIdFor(property: $property),
+                                                                              'readonly'  => $property->isReadOnly(),
+                                                                          ],
+                                                                          $properties
+                                                                      ),
+                                                injectableMethods   : array_map(
+                                                                          fn (ReflectionMethod $method) => [
+                                                                              'name' => $method->getName(),
+                                                                              'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
+                                                                          ],
+                                                                          $methods
+                                                                      ),
+                                                shared              : $reflection->getAttributes(name: Singleton::class) !== [],
+                                                fingerprint         : $fingerprint
+                                            ));
     }
 
     /**

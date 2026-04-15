@@ -6,13 +6,24 @@ namespace Avax\Auth\System\Flow\Scim\ReadGroups;
 
 final readonly class ScimGroupProjection
 {
+    public array  $members;
+    public string $displayName;
+    public string $groupId;
+    public string $directoryId;
+
     /**
      * @param list<ScimGroupMember> $members
      */
     public function __construct(
-        public string $directoryId,
-        public string $groupId,
-        public string $displayName,
-        public array $members
-    ) {}
+        string $directoryId,
+        string $groupId,
+        string $displayName,
+        array  $members
+    )
+    {
+        $this->directoryId = $directoryId;
+        $this->groupId     = $groupId;
+        $this->displayName = $displayName;
+        $this->members     = $members;
+    }
 }

@@ -12,10 +12,10 @@ final class AuthIssueExplainerTest extends TestCase
     public function testExplainerProvidesStructuredAccessDeniedExplanation() : void
     {
         $explanation = (new AuthIssueExplainer())->explainAccessDenied(
-            resource: 'tenant_security_change',
+            resource          : 'tenant_security_change',
             requiredPermission: 'tenant.security.approve',
-            tenant: 'acme',
-            resourceTenant: 'acme'
+            tenant            : 'acme',
+            resourceTenant    : 'acme'
         );
 
         $this->assertSame(expected: 'access_denied', actual: $explanation->code);

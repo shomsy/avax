@@ -29,7 +29,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Same
 {
-    public function __construct(private string $field) {}
+    private string $field;
+
+    public function __construct(string $field) { $this->field = $field; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

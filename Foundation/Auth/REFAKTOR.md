@@ -1,36 +1,53 @@
 Da — i **kod** i **ta granica** zajedno daju najrealniju sliku.
 
-Iz onoga što se stvarno vidi u kodu, više nisi samo na “lepom auth planu”. Imaš **konkretne runtime komade** za ozbiljan security posture: HTTP sender-constraint verifikaciju sa DPoP/mTLS i testovima, CSRF/session hardening, workload `client_credentials` lane, audit/legal-hold rad, i adapter-ready persistence/jobs primere. To više nije samo dokumentacija, nego stvarni izvedeni security surface.
+Iz onoga što se stvarno vidi u kodu, više nisi samo na “lepom auth planu”. Imaš **konkretne runtime komade** za ozbiljan
+security posture: HTTP sender-constraint verifikaciju sa DPoP/mTLS i testovima, CSRF/session hardening, workload
+`client_credentials` lane, audit/legal-hold rad, i adapter-ready persistence/jobs primere. To više nije samo
+dokumentacija, nego stvarni izvedeni security surface.
 
 ## Status Summary (Updated: 2026-04-15)
 
 Legenda:
+
 - `[x]` done
 - `[~]` partial / boundary-only / integrated, ali ne potpuno zatvoreno
 - `[ ]` not implemented
 
 ### Done
 
-- [x] Auth kernel hardening: password hashing, MFA, recovery, session hardening, audit, admin hardening, authorization separation, key lifecycle, release hardening i regresioni testovi.
-- [x] Tenant i control-plane jezgro: tenant lifecycle, membership, invites, ownership transfer, tenant-owned OAuth client management, federation/SCIM/security-policy površine.
+- [x] Auth kernel hardening: password hashing, MFA, recovery, session hardening, audit, admin hardening, authorization
+  separation, key lifecycle, release hardening i regresioni testovi.
+- [x] Tenant i control-plane jezgro: tenant lifecycle, membership, invites, ownership transfer, tenant-owned OAuth
+  client management, federation/SCIM/security-policy površine.
 - [x] SCIM runtime core: `/Users`, `/Groups`, schema discovery, idempotency, drift remediation i bulk lane.
-- [x] OAuth / sender-constrained runtime core: PKCE, refresh rotation, reuse detection, DPoP/mTLS-aware binding, client registry i tenant ownership.
-- [x] Lifecycle orchestration i HTTP hardening: lifecycle capability, CSRF/session utilities, operativni docs i evidence.
-- [x] **Quality gates automation**: 11/13 gates automated via `composer quality-gates`, uz package-owned source-truth i migration proveru
+- [x] OAuth / sender-constrained runtime core: PKCE, refresh rotation, reuse detection, DPoP/mTLS-aware binding, client
+  registry i tenant ownership.
+- [x] Lifecycle orchestration i HTTP hardening: lifecycle capability, CSRF/session utilities, operativni docs i
+  evidence.
+- [x] **Quality gates automation**: 11/13 gates automated via `composer quality-gates`, uz package-owned source-truth i
+  migration proveru
 - [x] **Glossary**: Auth i Security glossary sa 90+ termina u `.rules/glossary/AUTH.md`, `SECURITY.md`
 - [x] **Session revocation**: SQL + Redis backend
-- [x] **Deployment trust boundary**: Proxy contract, smoke testovi, i operator checklist u `docs/deployment-trust-boundary.md`
+- [x] **Deployment trust boundary**: Proxy contract, smoke testovi, i operator checklist u
+  `docs/deployment-trust-boundary.md`
 - [x] **Capability matrix**: Ažuriran sa 30+ capabilities, evidence linkovima, i status legendom
 
 ### Partial
 
-- [x] Source-of-truth cleanup: `docs/STATUS.md` je canonical state, `Auth.txt` je sveden na non-canonical merged artifact, a istorijski snapshot-i su prebačeni u `docs/archive/`
-- [x] OIDC provider completeness: package-owned discovery, JWKS, logout, PAR, JARM, dynamic client registration HTTP surface, request-object claim validation, i confidential/public client-signed JAR verification sada imaju izvršivu evidenciju; standards certification i remote `jwks_uri` fetch ostaju van paketa
-- [x] Deployment trust boundary: Proxy contract, trusted-header guard, unsafe-mode diagnostics, i executable smoke testovi postoje; edge certificate-chain execution ostaje eksplicitna deployment boundary odluka, ne paket rupa
+- [x] Source-of-truth cleanup: `docs/STATUS.md` je canonical state, `Auth.txt` je sveden na non-canonical merged
+  artifact, a istorijski snapshot-i su prebačeni u `docs/archive/`
+- [x] OIDC provider completeness: package-owned discovery, JWKS, logout, PAR, JARM, dynamic client registration HTTP
+  surface, request-object claim validation, i confidential/public client-signed JAR verification sada imaju izvršivu
+  evidenciju; standards certification i remote `jwks_uri` fetch ostaju van paketa
+- [x] Deployment trust boundary: Proxy contract, trusted-header guard, unsafe-mode diagnostics, i executable smoke
+  testovi postoje; edge certificate-chain execution ostaje eksplicitna deployment boundary odluka, ne paket rupa
 - [x] Compatibility migration: major-boundary migration je dokumentovan, proverljiv i pokriven product-boundary testom
-- [x] Support explainability: canonical docs i package-owned runtime “why” surface postoje kroz `AuthIssueExplainer` i `Auth` facade explain metode
-- [~] External certification posture: conformance harness, certification profile, provenance, SBOM i evidence bundle postoje, ali external certification program ostaje van package scope
-- [~] Mutation-quality posture: tooling radi lokalno, ali MSI/timeouts i dalje zahtevaju dodatno hardening zatvaranje pre release-quality tvrdnje
+- [x] Support explainability: canonical docs i package-owned runtime “why” surface postoje kroz `AuthIssueExplainer` i
+  `Auth` facade explain metode
+- [~] External certification posture: conformance harness, certification profile, provenance, SBOM i evidence bundle
+  postoje, ali external certification program ostaje van package scope
+- [~] Mutation-quality posture: tooling radi lokalno, ali MSI/timeouts i dalje zahtevaju dodatno hardening zatvaranje
+  pre release-quality tvrdnje
 
 ### Not Implemented
 
@@ -66,10 +83,12 @@ Tu si već stvarno jak. Imaš konkretan dokaz za:
 * regression testove za neke od najbitnijih security rupa.
 
 **2. Identity-capable kernel — takođe da**
-Više nisi samo “login + MFA + refresh tokens”. Paket već ima federation / provisioning / risk / admin-realm pravac i workload lane, što ga gura preko običnog auth modula. To je već ozbiljan identity core.
+Više nisi samo “login + MFA + refresh tokens”. Paket već ima federation / provisioning / risk / admin-realm pravac i
+workload lane, što ga gura preko običnog auth modula. To je već ozbiljan identity core.
 
 **3. Full identity product — još ne bih rekao**
-Tu je granica. Prihvaćeni risk i boundary tekst i dalje govore da paket **nije** pun identity proizvod, nego kernel koji pokriva mnogo identity stvari. Konkretno, i dalje se kao otvorena granica navode:
+Tu je granica. Prihvaćeni risk i boundary tekst i dalje govore da paket **nije** pun identity proizvod, nego kernel koji
+pokriva mnogo identity stvari. Konkretno, i dalje se kao otvorena granica navode:
 
 * nema pun **OIDC provider behavior**
 * nema pun **SCIM runtime**
@@ -84,7 +103,9 @@ Najbitniji insight je ovaj:
 To je zapravo zdravo stanje. Znači da si jak, ali još nisi počeo da lažeš sebe scope-om.
 
 Jedina stvar na koju bih te upozorio je mala **nekonzistentnost između code-evidence i risk/blurb evidencije**.
-Na primer, noviji taskovi tvrde da je `client_credentials` lane završen, workload identity runtime postoji, i dosta operational gaps je zatvoreno; ali accepted risk još uvek govori kao da `client-credentials`, SCIM runtime i full control-plane nisu deo isporučenog proizvoda. To meni deluje kao:
+Na primer, noviji taskovi tvrde da je `client_credentials` lane završen, workload identity runtime postoji, i dosta
+operational gaps je zatvoreno; ali accepted risk još uvek govori kao da `client-credentials`, SCIM runtime i full
+control-plane nisu deo isporučenog proizvoda. To meni deluje kao:
 
 * ili je **risk register malo zastareo**
 * ili je namerno zadržana konzervativna boundary poruka da se ne overclaim-uje scope.
@@ -114,7 +135,11 @@ Ako hoćeš baš brutalno precizno, razlika između ta dva je sada uglavnom u ov
 
 Plan i MUST HAVE ToDo:
 
-According to a document from April 13, 2026: evo **jednog objedinjenog TODO-a** za sve što sam zapazio da treba **ispraviti, implementirati ili unaprediti** da iz “vrlo jakog auth/identity kernela” pređeš u **čist, dosledan, full identity platform proizvod**. Napomena: ovde sam bio strog prema **najnovijem `Auth.txt` i code-evidence referencama koje on pominje**, ali ne mogu pošteno da tvrdim da sam video tela svih PHP klasa — vidim status, boundary, verifikacije i reference na konkretne fajlove/adapters, plus deo starijih review nalaza koji su ostali pomešani u istom fajlu.
+According to a document from April 13, 2026: evo **jednog objedinjenog TODO-a** za sve što sam zapazio da treba *
+*ispraviti, implementirati ili unaprediti** da iz “vrlo jakog auth/identity kernela” pređeš u **čist, dosledan, full
+identity platform proizvod**. Napomena: ovde sam bio strog prema **najnovijem `Auth.txt` i code-evidence referencama
+koje on pominje**, ali ne mogu pošteno da tvrdim da sam video tela svih PHP klasa — vidim status, boundary, verifikacije
+i reference na konkretne fajlove/adapters, plus deo starijih review nalaza koji su ostali pomešani u istom fajlu.
 
 # Jedan veliki TODO
 
@@ -122,7 +147,9 @@ According to a document from April 13, 2026: evo **jednog objedinjenog TODO-a** 
 
 ### 1) Očisti i razdvoji **trenutno stanje** od **istorijskih review snapshot-a**
 
-Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review ostatke tipa `Implement AuthMiddleware`, `Fix UserInterface`, pregled stare `Actions/ / Adapters/ / Contracts/` strukture. To zamućuje stvarno stanje i pravi lažan osećaj da su otvoreni problemi možda i dalje aktivni, iako mogu biti istorijski artefakti.
+Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review ostatke tipa `Implement AuthMiddleware`,
+`Fix UserInterface`, pregled stare `Actions/ / Adapters/ / Contracts/` strukture. To zamućuje stvarno stanje i pravi
+lažan osećaj da su otvoreni problemi možda i dalje aktivni, iako mogu biti istorijski artefakti.
 
 **TODO**
 
@@ -140,7 +167,8 @@ Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review
 
 **Done kada**
 
-* [x] neko ko otvori samo jedan status dokument može tačno da vidi šta je shipped, šta nije, i šta je namerno van scope-a
+* [x] neko ko otvori samo jedan status dokument može tačno da vidi šta je shipped, šta nije, i šta je namerno van
+  scope-a
 * [x] nema starih review TODO stavki u current-state dokumentima
 
 ---
@@ -149,7 +177,10 @@ Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review
 
 ### 2) Reši kontradikciju: **šta kernel stvarno već poseduje, a šta još nije product**
 
-Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWKS, authorization code + `openid`, PKCE, nonce, ID token issuance, userinfo i rollover; u isto vreme active risk i dalje kaže da “package still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model”. To je najveći semantic drift koji sam video.
+Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWKS, authorization code + `openid`, PKCE,
+nonce, ID token issuance, userinfo i rollover; u isto vreme active risk i dalje kaže da “package still does not ship
+OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model”. To je najveći semantic
+drift koji sam video.
 
 **TODO**
 
@@ -185,7 +216,9 @@ Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWK
 
 ### 3) Reši **global session revocation** kao package-owned priču
 
-Ovaj risk je praktično zatvoren u package scope-u: multi-session/global revocation ima dokazivu konzistentnost na podržanim registry backend-ima kroz package-owned SQL i Redis adaptere, fail-fast enterprise mode, i backend conformance testove.
+Ovaj risk je praktično zatvoren u package scope-u: multi-session/global revocation ima dokazivu konzistentnost na
+podržanim registry backend-ima kroz package-owned SQL i Redis adaptere, fail-fast enterprise mode, i backend conformance
+testove.
 
 **TODO**
 
@@ -228,7 +261,9 @@ Ovaj risk je praktično zatvoren u package scope-u: multi-session/global revocat
 
 ### 4) Učvrsti **sender-constrained** deployment priču
 
-Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplicitno kaže da certificate-chain trust i reverse-proxy correctness ostaju deployment-owned. To je realno, ali za full platform treba da bude mnogo više od “docs kažu”.
+Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplicitno kaže da certificate-chain trust i
+reverse-proxy correctness ostaju deployment-owned. To je realno, ali za full platform treba da bude mnogo više od “docs
+kažu”.
 
 **TODO**
 
@@ -271,7 +306,8 @@ validation ostaju van paketa.
 **TODO**
 
 * [x] `System/Flow/Oidc/RegisterClient/`
-  published through the thin `integrations/http/Oidc/ServeOidcHttpSurface.php` over the canonical OAuth registration flow
+  published through the thin `integrations/http/Oidc/ServeOidcHttpSurface.php` over the canonical OAuth registration
+  flow
 * [x] `System/Flow/Oidc/UpdateClient/`
   published through the thin OIDC registration HTTP surface over `System/Flow/OAuth/UpdateClient/`
 * [x] `System/Flow/Oidc/DisableClient/`
@@ -314,11 +350,13 @@ potpuno zatvoreni.
 
 **Done kada**
 
-* [x] platform zatvara lokalne i kernel-correlated RP sesije; spoljašnji retry/orchestration ostaje zaseban product layer
+* [x] platform zatvara lokalne i kernel-correlated RP sesije; spoljašnji retry/orchestration ostaje zaseban product
+  layer
 
 ### 7) Dodaj **pairwise subject identifiers**
 
-Osnovni pairwise subject identifier lane je implementiran; migration rules i rollout posture su još delimično policy/docs posao.
+Osnovni pairwise subject identifier lane je implementiran; migration rules i rollout posture su još delimično
+policy/docs posao.
 
 **TODO**
 
@@ -363,7 +401,8 @@ Capability tabela eksplicitno kaže `external certification` nije podržan.
 
 ### 10) Završi **full tenant/control-plane model**
 
-Latest risk i dalje kaže da full tenant/control-plane model nije deo paketa. To je centralna razlika između identity kernela i identity platforme.
+Latest risk i dalje kaže da full tenant/control-plane model nije deo paketa. To je centralna razlika između identity
+kernela i identity platforme.
 
 **TODO**
 
@@ -407,7 +446,8 @@ Latest risk i dalje kaže da full tenant/control-plane model nije deo paketa. To
 
 ### 11) SCIM product completeness
 
-Ako želiš full platform, SCIM ne sme ostati “možda runtime, možda ne”. Latest risk još ga tretira kao deo onoga što nije stvarno shipped kao platform feature.
+Ako želiš full platform, SCIM ne sme ostati “možda runtime, možda ne”. Latest risk još ga tretira kao deo onoga što nije
+stvarno shipped kao platform feature.
 
 **TODO**
 
@@ -428,7 +468,9 @@ Ako želiš full platform, SCIM ne sme ostati “možda runtime, možda ne”. L
 
 ### 12) Workload / client-credentials truth
 
-Latest accepted risk još uvek navodi `client-credentials` kao nešto što paket “still does not ship”, dok noviji razgovori i neki boundary opisi impliciraju workload lane. To moraš zatvoriti kao source-of-truth problem ili product gap.
+Latest accepted risk još uvek navodi `client-credentials` kao nešto što paket “still does not ship”, dok noviji
+razgovori i neki boundary opisi impliciraju workload lane. To moraš zatvoriti kao source-of-truth problem ili product
+gap.
 
 **TODO**
 
@@ -445,7 +487,8 @@ Latest accepted risk još uvek navodi `client-credentials` kao nešto što paket
 
 ### 13) Trusted device / remembered device
 
-Trenutno je eksplicitno “ne isporučujemo trusted-device support”. To je pošteno, ali za full identity platform to je ili feature ili eksplicitno dugoročno odbijena odluka sa jakim razlogom.
+Trenutno je eksplicitno “ne isporučujemo trusted-device support”. To je pošteno, ali za full identity platform to je ili
+feature ili eksplicitno dugoročno odbijena odluka sa jakim razlogom.
 
 **TODO**
 
@@ -460,7 +503,8 @@ Trenutno je eksplicitno “ne isporučujemo trusted-device support”. To je po�
 
 ### 14) Compatibility break za AvaxContainer namespace
 
-Ovo je accepted risk. Za platform product to nije strašno, ali mora biti zatvoreno ili kao intentional vNext break, ili kao migration shim.
+Ovo je accepted risk. Za platform product to nije strašno, ali mora biti zatvoreno ili kao intentional vNext break, ili
+kao migration shim.
 
 **TODO**
 
@@ -475,7 +519,9 @@ Ovo je accepted risk. Za platform product to nije strašno, ali mora biti zatvor
 
 ### 15) Dovrši feature-sliced shape i ukloni stare slojevite tragove
 
-Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-sliced, ali realna struktura je bila slojevita (`Actions/`, `Adapters/`, `Contracts/`). To možda više nije potpuno aktuelno, ali dok god taj trag postoji u current evidence, to je arhitektonski dug koji moraš zatvoriti do kraja.
+Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-sliced, ali realna struktura je bila
+slojevita (`Actions/`, `Adapters/`, `Contracts/`). To možda više nije potpuno aktuelno, ali dok god taj trag postoji u
+current evidence, to je arhitektonski dug koji moraš zatvoriti do kraja.
 
 **TODO**
 
@@ -497,7 +543,8 @@ Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-slic
 
 ### 16) Legacy auth review stavke: ili ih završi, ili ih arhiviraj kao obsolete
 
-`Implement AuthMiddleware`, `Fix UserInterface`, `improve JWT adapter decoupling` i slične stavke ne smeju ostati u limbu. Ili su još uvek realne, ili su istorija.
+`Implement AuthMiddleware`, `Fix UserInterface`, `improve JWT adapter decoupling` i slične stavke ne smeju ostati u
+limbu. Ili su još uvek realne, ili su istorija.
 
 **TODO**
 
@@ -516,7 +563,9 @@ Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-slic
 
 ### 17) Zatvori environment/testing neizvesnost
 
-Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI nije mogao da pokrene PHPUnit/Infection bez `dom`, `xml`, `xmlwriter`, `mbstring`. Ne znam da li je to još aktivno, ali to je previše važno da ostane neprovereno.
+Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI nije mogao da pokrene PHPUnit/Infection
+bez `dom`, `xml`, `xmlwriter`, `mbstring`. Ne znam da li je to još aktivno, ali to je previše važno da ostane
+neprovereno.
 
 **TODO**
 
@@ -591,6 +640,7 @@ Ako hoćeš najpametniji redosled rada, idi ovako:
 4. deployment trust boundary hardening
 
 **Zatim:**
+
 5. dynamic client registration
 6. OIDC logout
 7. tenant/control-plane
@@ -598,6 +648,7 @@ Ako hoćeš najpametniji redosled rada, idi ovako:
 9. workload/client-credentials truth
 
 **Posle toga:**
+
 10. trusted-device final decision
 11. compatibility break cleanup
 12. architecture cleanup
@@ -617,10 +668,10 @@ Naprotiv — glavni problem više nije osnovna bezbednost, nego:
 * **jedan stvarno otvoren session revocation gap**
 * **par accepted odluka koje moraš ili da proizvodizuješ ili da trajno odbaciš**
 
-To je dobar problem za imati. Znači da si izašao iz faze “da li auth uopšte valja” i ušao u fazu “da li je ovo zaista gotov identity proizvod”.
+To je dobar problem za imati. Znači da si izašao iz faze “da li auth uopšte valja” i ušao u fazu “da li je ovo zaista
+gotov identity proizvod”.
 
 ENTERPRISE GRADE STANDARDS:
-
 
   ````md
 
@@ -787,269 +838,270 @@ ENTERPRISE GRADE STANDARDS:
     package metadata
   ````
 
-  The repo root does **not** have to scream domain behavior.
+The repo root does **not** have to scream domain behavior.
 
-  Its job is to separate:
+Its job is to separate:
 
-  * production structure
-  * tests
-  * documentation
-  * examples
-  * tooling
-  * metadata
-  * operational files
+* production structure
+* tests
+* documentation
+* examples
+* tooling
+* metadata
+* operational files
 
-  ### 5.2 System Root
+### 5.2 System Root
 
-  The **system root** is the canonical root of the actual system structure.
+The **system root** is the canonical root of the actual system structure.
 
-  Depending on the context, ecosystem, product model, or repository shape, the system root may be:
+Depending on the context, ecosystem, product model, or repository shape, the system root may be:
 
-  * `src/`
-  * `product/`
-  * `system/`
-  * `app/`
-  * `engine/`
-  * another clearly justified root
+* `src/`
+* `product/`
+* `system/`
+* `app/`
+* `engine/`
+* another clearly justified root
 
-  The name is less important than the role.
+The name is less important than the role.
 
-  What matters is that the system root is the place where the real architectural law starts to apply.
+What matters is that the system root is the place where the real architectural law starts to apply.
 
-  Inside the system root, the structure must scream.
+Inside the system root, the structure must scream.
 
-  That is where the architecture must express:
+That is where the architecture must express:
 
-  * flow
-  * capabilities
-  * ownership
-  * exact responsibilities
+* flow
+* capabilities
+* ownership
+* exact responsibilities
 
-  In other words:
+In other words:
 
-  * **repo root says how the repository is organized**
-  * **system root says how the system is organized**
+* **repo root says how the repository is organized**
+* **system root says how the system is organized**
 
-  ### 5.3 Rule of Preference
+### 5.3 Rule of Preference
 
-  A project may use `src/` as the system root, but it is not required.
+A project may use `src/` as the system root, but it is not required.
 
-  If another name better expresses the real product boundary, system boundary, or domain shape, that name is preferred.
+If another name better expresses the real product boundary, system boundary, or domain shape, that name is preferred.
 
-  The standard cares about:
+The standard cares about:
 
-  * structural meaning
-  * ownership
-  * clarity
-  * predictability
+* structural meaning
+* ownership
+* clarity
+* predictability
 
-  It does **not** care about loyalty to a particular folder name.
-
-  ---
-
-  ## 6. When a Separate System Root Is Allowed
-
-  A dedicated system root is allowed when it has a real job.
-
-  It is justified when it:
-
-  * separates production structure from tests, docs, examples, and tooling
-  * improves package or publish discipline
-  * clarifies build or distribution boundaries
-  * matches a strong ecosystem convention
-  * reduces root-level noise
-  * makes the repository easier to navigate honestly
-
-  A separate system root is **not** justified when it only adds a generic hallway.
-
-  A folder like `src/`, `product/`, or `system/` must never exist just to make the tree look cleaner.
-  It must make the structure **meaningfully** clearer.
+It does **not** care about loyalty to a particular folder name.
 
   ---
 
-  ## 7. System Root Taxonomy
+## 6. When a Separate System Root Is Allowed
 
-  Inside the system root, only the following root slice categories are allowed by default:
+A dedicated system root is allowed when it has a real job.
 
-  1. Flow slices
-  2. Capability slices
-  3. Configuration slices
-  4. Foundation slices
-  5. A small number of stable public surface units when needed
+It is justified when it:
 
-  If a root-level slice cannot honestly fit one of these categories, it should not exist there.
+* separates production structure from tests, docs, examples, and tooling
+* improves package or publish discipline
+* clarifies build or distribution boundaries
+* matches a strong ecosystem convention
+* reduces root-level noise
+* makes the repository easier to navigate honestly
 
-  ---
+A separate system root is **not** justified when it only adds a generic hallway.
 
-  ## 8. Flow Slices
-
-  ### 8.1 Definition
-
-  Flow slices describe end-to-end system behavior.
-
-  They answer:
-
-  **What does the system do?**
-
-  Examples:
-
-  * Login
-  * Register
-  * Checkout
-  * CreateInvoice
-  * ProcessRefund
-  * ChangePassword
-  * ReadCurrentUser
-  * PublishArticle
-  * SyncCatalog
-
-  ### 8.2 Role
-
-  Flow slices are the primary narrative of the system.
-
-  They should express:
-
-  * business movement
-  * user-facing behavior
-  * use-case completion
-  * action-oriented domain intent
-
-  ### 8.3 Owner Rule
-
-  Every flow slice must have one obvious root owner unit.
-
-  That unit may be:
-
-  * a pipeline
-  * a facade
-  * an orchestrator
-  * a root command handler
-  * a root action entry
-  * another clearly justified owning entry point
-
-  If the flow is sequential, the root owner should gather the sequence.
-
-  If the flow is not sequential, the root owner should still make ownership of the slice obvious.
-
-  ### 8.4 Locality Rule
-
-  A flow-local concern must stay in its flow until there is strong proof it belongs elsewhere.
-
-  Examples:
-
-  * login rate limiting belongs in login until proven broader
-  * registration validation belongs in registration
-  * refund-specific calculations belong in refund
-  * order-specific reconciliation belongs in order processing
-
-  Do not globalize a concern too early.
+A folder like `src/`, `product/`, or `system/` must never exist just to make the tree look cleaner.
+It must make the structure **meaningfully** clearer.
 
   ---
 
-  ## 9. Capability Slices
+## 7. System Root Taxonomy
 
-  ### 9.1 Definition
+Inside the system root, only the following root slice categories are allowed by default:
 
-  Capability slices describe shared abilities, boundaries, mechanisms, or reusable domain-level enablers that support multiple flows.
+1. Flow slices
+2. Capability slices
+3. Configuration slices
+4. Foundation slices
+5. A small number of stable public surface units when needed
 
-  They answer:
-
-  **What does the system use to make flows work?**
-
-  Examples:
-
-  * Access
-  * Identity
-  * Payments
-  * Notifications
-  * Search
-  * UserSource
-  * PasswordHashing
-  * Messaging
-  * Storage
-  * Routing
-
-  ### 9.2 Role
-
-  Capability slices are not generic buckets.
-  They are shared system abilities with honest cross-flow ownership.
-
-  They may contain:
-
-  * cross-flow policies
-  * shared domain mechanisms
-  * stable boundaries
-  * reusable domain infrastructure
-  * system-wide operational abilities
-
-  ### 9.3 Shared Last Rule
-
-  A capability slice exists only when the concern is truly shared.
-
-  Something may become a capability only when:
-
-  * it genuinely belongs to more than one flow
-  * keeping it local would become dishonest
-  * duplication is structural, not incidental
-  * extraction improves clarity, not speculative reuse
-
-  Shared is not the default.
-  Shared is the last responsible option.
-
-  ### 9.4 Anti-Junk Rule
-
-  A capability slice must never become a junk drawer.
-
-  If a folder is merely collecting technical leftovers, it is not a capability.
-  It is a failure of ownership.
+If a root-level slice cannot honestly fit one of these categories, it should not exist there.
 
   ---
 
-  ## 10. Configuration Slices
+## 8. Flow Slices
 
-  ### 10.1 Definition
+### 8.1 Definition
 
-  Configuration slices describe assembly, composition, setup, bootstrapping, or wiring.
+Flow slices describe end-to-end system behavior.
 
-  They answer:
+They answer:
 
-  **How is the system assembled?**
+**What does the system do?**
 
-  Examples:
+Examples:
 
-  * Configuration
-  * Composition
-  * Bootstrap
-  * Wiring
+* Login
+* Register
+* Checkout
+* CreateInvoice
+* ProcessRefund
+* ChangePassword
+* ReadCurrentUser
+* PublishArticle
+* SyncCatalog
 
-  ### 10.2 Role
+### 8.2 Role
 
-  Configuration slices may contain:
+Flow slices are the primary narrative of the system.
 
-  * assembly entry points
-  * wiring rules
-  * dependency construction
-  * runtime composition
-  * bootstrapping policies
-  * composition boundaries
+They should express:
 
-  They must not absorb business behavior that belongs to flows or capabilities.
+* business movement
+* user-facing behavior
+* use-case completion
+* action-oriented domain intent
 
-  Configuration exists to assemble the system, not to become the system.
+### 8.3 Owner Rule
+
+Every flow slice must have one obvious root owner unit.
+
+That unit may be:
+
+* a pipeline
+* a facade
+* an orchestrator
+* a root command handler
+* a root action entry
+* another clearly justified owning entry point
+
+If the flow is sequential, the root owner should gather the sequence.
+
+If the flow is not sequential, the root owner should still make ownership of the slice obvious.
+
+### 8.4 Locality Rule
+
+A flow-local concern must stay in its flow until there is strong proof it belongs elsewhere.
+
+Examples:
+
+* login rate limiting belongs in login until proven broader
+* registration validation belongs in registration
+* refund-specific calculations belong in refund
+* order-specific reconciliation belongs in order processing
+
+Do not globalize a concern too early.
 
   ---
 
-  ## 11. Foundation Slices
+## 9. Capability Slices
 
-  ### 11.1 Definition
+### 9.1 Definition
 
-  Foundation slices contain small, neutral, boring, low-noise primitives that do not deserve their own capability slice.
+Capability slices describe shared abilities, boundaries, mechanisms, or reusable domain-level enablers that support
+multiple flows.
 
-  They answer:
+They answer:
 
-  **What stable primitives does the system stand on?**
+**What does the system use to make flows work?**
 
-  Examples:
+Examples:
+
+* Access
+* Identity
+* Payments
+* Notifications
+* Search
+* UserSource
+* PasswordHashing
+* Messaging
+* Storage
+* Routing
+
+### 9.2 Role
+
+Capability slices are not generic buckets.
+They are shared system abilities with honest cross-flow ownership.
+
+They may contain:
+
+* cross-flow policies
+* shared domain mechanisms
+* stable boundaries
+* reusable domain infrastructure
+* system-wide operational abilities
+
+### 9.3 Shared Last Rule
+
+A capability slice exists only when the concern is truly shared.
+
+Something may become a capability only when:
+
+* it genuinely belongs to more than one flow
+* keeping it local would become dishonest
+* duplication is structural, not incidental
+* extraction improves clarity, not speculative reuse
+
+Shared is not the default.
+Shared is the last responsible option.
+
+### 9.4 Anti-Junk Rule
+
+A capability slice must never become a junk drawer.
+
+If a folder is merely collecting technical leftovers, it is not a capability.
+It is a failure of ownership.
+
+  ---
+
+## 10. Configuration Slices
+
+### 10.1 Definition
+
+Configuration slices describe assembly, composition, setup, bootstrapping, or wiring.
+
+They answer:
+
+**How is the system assembled?**
+
+Examples:
+
+* Configuration
+* Composition
+* Bootstrap
+* Wiring
+
+### 10.2 Role
+
+Configuration slices may contain:
+
+* assembly entry points
+* wiring rules
+* dependency construction
+* runtime composition
+* bootstrapping policies
+* composition boundaries
+
+They must not absorb business behavior that belongs to flows or capabilities.
+
+Configuration exists to assemble the system, not to become the system.
+
+  ---
+
+## 11. Foundation Slices
+
+### 11.1 Definition
+
+Foundation slices contain small, neutral, boring, low-noise primitives that do not deserve their own capability slice.
+
+They answer:
+
+**What stable primitives does the system stand on?**
+
+Examples:
 
   ```text
   Foundation/
@@ -1059,452 +1111,454 @@ ENTERPRISE GRADE STANDARDS:
       IdGenerator
   ```
 
-  ### 11.2 Role
+### 11.2 Role
 
-  Foundation is for:
+Foundation is for:
 
-  * tiny primitives
-  * stable neutral building blocks
-  * narrow low-level helpers with clear ownership
-  * cross-system technical atoms that are too small for a capability slice
+* tiny primitives
+* stable neutral building blocks
+* narrow low-level helpers with clear ownership
+* cross-system technical atoms that are too small for a capability slice
 
-  ### 11.3 Strict Rule
+### 11.3 Strict Rule
 
-  Foundation must never become a disguised helper bucket.
+Foundation must never become a disguised helper bucket.
 
-  It is **not** for:
+It is **not** for:
 
-  * random utilities
-  * generic helpers
-  * domain logic
-  * cross-cutting dumping grounds
-  * loosely related functions
-  * speculative reuse
+* random utilities
+* generic helpers
+* domain logic
+* cross-cutting dumping grounds
+* loosely related functions
+* speculative reuse
 
-  If something has real domain meaning, real policy meaning, or real cross-flow significance, it likely belongs in a capability or flow, not in Foundation.
-
-  ---
-
-  ## 12. Public Surface Units
-
-  The system root may contain a **small number of stable public surface units** if the project or package requires them.
-
-  Examples:
-
-  * package root entry
-  * public API entry
-  * facade entry
-  * main exported interface
-  * root public contract
-  * index entry
-
-  These units are allowed only when they represent intentional public surface.
-
-  They must remain:
-
-  * small
-  * stable
-  * explicit
-  * easy to understand
-  * separate from internal machinery
-
-  They must never become dumping grounds for unrelated logic.
+If something has real domain meaning, real policy meaning, or real cross-flow significance, it likely belongs in a
+capability or flow, not in Foundation.
 
   ---
 
-  ## 13. Ownership Standard
+## 12. Public Surface Units
 
-  Everything must have an owner.
+The system root may contain a **small number of stable public surface units** if the project or package requires them.
 
-  Ownership must be visible from:
+Examples:
 
-  * location
-  * naming
-  * slice placement
-  * relationship to neighboring units
+* package root entry
+* public API entry
+* facade entry
+* main exported interface
+* root public contract
+* index entry
 
-  If a reader cannot tell who owns a responsibility, the architecture is unfinished.
+These units are allowed only when they represent intentional public surface.
 
-  ### 13.1 Ownership Questions
+They must remain:
 
-  Every folder and unit must answer:
+* small
+* stable
+* explicit
+* easy to understand
+* separate from internal machinery
 
-  1. Who owns this?
-  2. Why is it here?
-  3. Why is it not owned more honestly elsewhere?
-  4. What broader slice does it belong to?
-  5. What responsibility would break if this moved?
-
-  If the answer is weak, the placement is weak.
-
-  ---
-
-  ## 14. Hierarchy Rules
-
-  Subfolders are allowed only when they improve clarity.
-
-  A deeper structure is justified only when it:
-
-  * reflects a real subflow
-  * reflects a real sub-capability
-  * reduces noise
-  * improves scanning
-  * protects ownership
-  * avoids oversized flat structures
-
-  A deeper structure is not justified when it:
-
-  * hides weak naming
-  * creates cosmetic nesting
-  * introduces hallway folders
-  * duplicates a concept already expressed elsewhere
-  * exists only because the author felt the tree looked nicer
-
-  Every extra level must justify itself.
-
-  If the tree becomes deeper but not clearer, the tree got worse.
+They must never become dumping grounds for unrelated logic.
 
   ---
 
-  ## 15. Locality Before Reuse
+## 13. Ownership Standard
 
-  This standard prefers **local truth before shared abstraction**.
+Everything must have an owner.
 
-  That means:
+Ownership must be visible from:
 
-  * keep things close to their most honest owner
-  * duplicate a small amount before extracting prematurely
-  * extract only when the extracted thing becomes clearer than the duplication
-  * do not centralize because something "might be reused later"
+* location
+* naming
+* slice placement
+* relationship to neighboring units
 
-  Premature shared structure creates fake clarity.
-  Real clarity comes from honest ownership.
+If a reader cannot tell who owns a responsibility, the architecture is unfinished.
 
-  ---
+### 13.1 Ownership Questions
 
-  ## 16. Language-Agnostic and Project-Agnostic Rule
+Every folder and unit must answer:
 
-  This standard must remain valid across:
+1. Who owns this?
+2. Why is it here?
+3. Why is it not owned more honestly elsewhere?
+4. What broader slice does it belong to?
+5. What responsibility would break if this moved?
 
-  * backend services
-  * frontend applications
-  * libraries
-  * packages
-  * SDKs
-  * plugins
-  * CLI tools
-  * monoliths
-  * modular systems
-  * microservices
-  * data pipelines
-  * event-driven systems
-  * workflow engines
-  * product repositories
-  * platform repositories
-
-  The standard must not depend on language-specific doctrine.
-
-  That is why it uses neutral terms such as:
-
-  * unit
-  * slice
-  * entry point
-  * flow
-  * capability
-  * repo root
-  * system root
-
-  Implementation technologies may vary.
-  Architectural meaning must remain stable.
+If the answer is weak, the placement is weak.
 
   ---
 
-  ## 17. Ecosystem Rule
+## 14. Hierarchy Rules
 
-  This standard must be strong, but not blind.
+Subfolders are allowed only when they improve clarity.
 
-  If a language, framework, runtime, or ecosystem has a strong and legitimate convention, it may be respected **only if** it does not damage:
+A deeper structure is justified only when it:
 
-  * ownership
-  * clarity
-  * screaming readability
-  * structural honesty
-  * mental load
+* reflects a real subflow
+* reflects a real sub-capability
+* reduces noise
+* improves scanning
+* protects ownership
+* avoids oversized flat structures
 
-  Conventions are not automatically correct.
-  Custom structure is not automatically superior.
+A deeper structure is not justified when it:
 
-  The rule is:
+* hides weak naming
+* creates cosmetic nesting
+* introduces hallway folders
+* duplicates a concept already expressed elsewhere
+* exists only because the author felt the tree looked nicer
 
-  **prefer the shape that reduces noise and makes ownership clearer.**
+Every extra level must justify itself.
 
-  ---
-
-  ## 18. Design Quality Constraints
-
-  The architecture must support strong engineering discipline.
-
-  This includes:
-
-  * SOLID
-  * DRY
-  * YAGNI
-  * KISS
-  * Composition Over Inheritance
-  * Law of Demeter
-  * Clean Code
-  * strong cohesion
-  * low coupling
-  * narrow interfaces
-  * explicit boundaries
-  * maintainable low-level design
-  * safe extension points
-  * honest modularity
-
-  These are design constraints, not excuses for complexity.
-
-  Good architecture remains simple while satisfying them.
+If the tree becomes deeper but not clearer, the tree got worse.
 
   ---
 
-  ## 19. System Quality Constraints
+## 15. Locality Before Reuse
 
-  The architecture must also be capable of supporting:
+This standard prefers **local truth before shared abstraction**.
 
-  * security by design
-  * clear authentication and authorization boundaries
-  * secure API boundaries
-  * data protection
-  * vulnerability awareness
-  * scalability
-  * flexibility
-  * interoperability
-  * cost efficiency
-  * observability where needed
-  * performance awareness
-  * cache where justified
-  * rate limiting where owned
-  * consistency awareness
-  * latency versus throughput tradeoff awareness
-  * operational clarity
+That means:
 
-  These concerns must live where they are most honestly owned.
+* keep things close to their most honest owner
+* duplicate a small amount before extracting prematurely
+* extract only when the extracted thing becomes clearer than the duplication
+* do not centralize because something "might be reused later"
 
-  Examples:
-
-  * rate limiting belongs near the boundary or flow that owns it
-  * identity rules belong near identity or access capability
-  * composition belongs in configuration
-  * primitives do not belong inside business flows unless they are truly local
-  * business policies do not belong in foundation
+Premature shared structure creates fake clarity.
+Real clarity comes from honest ownership.
 
   ---
 
-  ## 20. Forbidden Structural Patterns
+## 16. Language-Agnostic and Project-Agnostic Rule
 
-  The following structural failures must be avoided:
+This standard must remain valid across:
 
-  * tight coupling
-  * ownership ambiguity
-  * fake abstraction
-  * insufficient abstraction
-  * over-engineering
-  * premature centralization
-  * parallel names for the same concept
-  * duplicated capabilities
-  * hierarchy without value
-  * technical junk drawers
-  * extraction without proof
-  * bucket folders without domain meaning
-  * hallway folders with no semantic value
+* backend services
+* frontend applications
+* libraries
+* packages
+* SDKs
+* plugins
+* CLI tools
+* monoliths
+* modular systems
+* microservices
+* data pipelines
+* event-driven systems
+* workflow engines
+* product repositories
+* platform repositories
 
-  ---
+The standard must not depend on language-specific doctrine.
 
-  ## 21. Forbidden Generic Names
+That is why it uses neutral terms such as:
 
-  The following names are forbidden as default architectural buckets:
+* unit
+* slice
+* entry point
+* flow
+* capability
+* repo root
+* system root
 
-  * Services
-  * Helpers
-  * Utils
-  * Common
-  * Misc
-  * Managers
-  * Stuff
-  * Shared
-  * Base
-  * Core
-  * SharedThings
-  * General
-  * InternalHelpers
-
-  These names are weak because they hide responsibility instead of clarifying it.
-
-  They may exist only if they describe a truly precise and justified architectural concept.
-  In practice, most of the time they should be rejected.
+Implementation technologies may vary.
+Architectural meaning must remain stable.
 
   ---
 
-  ## 22. Naming Standard
+## 17. Ecosystem Rule
 
-  Naming must be:
+This standard must be strong, but not blind.
 
-  * simple
-  * banal
-  * intuitive
-  * predictive
-  * descriptive
-  * child-explainable
+If a language, framework, runtime, or ecosystem has a strong and legitimate convention, it may be respected **only if**
+it does not damage:
 
-  A name must make it obvious, even before opening the code:
+* ownership
+* clarity
+* screaming readability
+* structural honesty
+* mental load
 
-  * what this is
-  * why it exists
-  * when it is used
-  * what it owns
-  * what it does
+Conventions are not automatically correct.
+Custom structure is not automatically superior.
 
-  ### 22.1 Naming Law
+The rule is:
 
-  * **folder says flow or capability**
-  * **unit says responsibility**
-  * **function says exact action**
-
-  ### 22.2 Preferred Style
-
-  Prefer names that speak in the language of:
-
-  * the domain
-  * the system behavior
-  * the user or business flow
-  * the real responsibility
-
-  Good examples:
-
-  * Login
-  * Register
-  * ChangePassword
-  * RequirePermission
-  * ReadCurrentUser
-  * PasswordHashing
-  * Identity
-  * Clock
-  * IdGenerator
-  * CreateInvoice
-  * ProcessRefund
-  * AccessPolicy
-
-  Bad examples:
-
-  * ServiceManager
-  * CommonUtils
-  * SharedService
-  * CoreStuff
-  * DataHelpers
-  * BaseHandler
-  * MiscFunctions
-  * GenericProcessor
-
-  ### 22.3 One Concept, One Name
-
-  A concept must have one name across the system.
-
-  Do not mix different names for the same concept.
-
-  Bad examples:
-
-  * RequireAuthentication and EnforceAuthentication
-  * CurrentUser and ReadCurrentUser
-  * UserLogin and Login
-  * BruteForceProtection and LoginRateLimit when they mean the same thing
-
-  If two names describe the same concept, choose one and delete the other.
+**prefer the shape that reduces noise and makes ownership clearer.**
 
   ---
 
-  ## 23. Flow vs Capability Clarification
+## 18. Design Quality Constraints
 
-  A flow slice is not the same as a capability slice.
+The architecture must support strong engineering discipline.
 
-  A flow says:
+This includes:
 
-  * what happens
-  * what sequence is executed
-  * what action is performed
-  * what business movement occurs
+* SOLID
+* DRY
+* YAGNI
+* KISS
+* Composition Over Inheritance
+* Law of Demeter
+* Clean Code
+* strong cohesion
+* low coupling
+* narrow interfaces
+* explicit boundaries
+* maintainable low-level design
+* safe extension points
+* honest modularity
 
-  A capability says:
+These are design constraints, not excuses for complexity.
 
-  * what the system uses repeatedly
-  * what shared boundary supports multiple flows
-  * what reusable mechanism or ability exists outside one single use case
-
-  Simple rule:
-
-  * **Flows say what the system does**
-  * **Capabilities say what the system uses to make that work**
-  * **Configuration says how the system is assembled**
-  * **Foundation says what tiny neutral primitives support the base**
-
-  ---
-
-  ## 24. Review Rule
-
-  Any proposed folder, extraction, rename, new root slice, or shared abstraction must answer these questions clearly:
-
-  1. What does this folder say?
-  2. What does this unit own?
-  3. Why is this not owned more honestly by a lower level?
-  4. Does this reduce noise or only move it?
-  5. Is this a real capability, or just a technical bucket?
-  6. Is this name obvious without opening the code?
-  7. Does this create parallel naming for the same concept?
-  8. Does this make the reading path clearer?
-  9. Is this local truth or speculative reuse?
-  10. Would a new team member understand this quickly?
-
-  If the answers are weak, the change is weak.
+Good architecture remains simple while satisfying them.
 
   ---
 
-  ## 25. Decision Framework for Placement
+## 19. System Quality Constraints
 
-  When deciding where something belongs, apply this order:
+The architecture must also be capable of supporting:
 
-  ### Step 1
+* security by design
+* clear authentication and authorization boundaries
+* secure API boundaries
+* data protection
+* vulnerability awareness
+* scalability
+* flexibility
+* interoperability
+* cost efficiency
+* observability where needed
+* performance awareness
+* cache where justified
+* rate limiting where owned
+* consistency awareness
+* latency versus throughput tradeoff awareness
+* operational clarity
 
-  Ask whether it belongs to **one flow only**.
+These concerns must live where they are most honestly owned.
 
-  If yes, keep it inside that flow.
+Examples:
 
-  ### Step 2
-
-  Ask whether it is a **real shared ability or boundary** across flows.
-
-  If yes, consider a capability slice.
-
-  ### Step 3
-
-  Ask whether it is only about **assembly or wiring**.
-
-  If yes, place it in configuration.
-
-  ### Step 4
-
-  Ask whether it is only a **tiny neutral primitive**.
-
-  If yes, place it in foundation.
-
-  ### Step 5
-
-  If none of the above feels honest, the structure is still wrong.
-  Re-think the model instead of creating a generic bucket.
+* rate limiting belongs near the boundary or flow that owns it
+* identity rules belong near identity or access capability
+* composition belongs in configuration
+* primitives do not belong inside business flows unless they are truly local
+* business policies do not belong in foundation
 
   ---
 
-  ## 26. Recommended Canonical Shape
+## 20. Forbidden Structural Patterns
 
-  This is a recommended pattern, not a blind template.
+The following structural failures must be avoided:
+
+* tight coupling
+* ownership ambiguity
+* fake abstraction
+* insufficient abstraction
+* over-engineering
+* premature centralization
+* parallel names for the same concept
+* duplicated capabilities
+* hierarchy without value
+* technical junk drawers
+* extraction without proof
+* bucket folders without domain meaning
+* hallway folders with no semantic value
+
+  ---
+
+## 21. Forbidden Generic Names
+
+The following names are forbidden as default architectural buckets:
+
+* Services
+* Helpers
+* Utils
+* Common
+* Misc
+* Managers
+* Stuff
+* Shared
+* Base
+* Core
+* SharedThings
+* General
+* InternalHelpers
+
+These names are weak because they hide responsibility instead of clarifying it.
+
+They may exist only if they describe a truly precise and justified architectural concept.
+In practice, most of the time they should be rejected.
+
+  ---
+
+## 22. Naming Standard
+
+Naming must be:
+
+* simple
+* banal
+* intuitive
+* predictive
+* descriptive
+* child-explainable
+
+A name must make it obvious, even before opening the code:
+
+* what this is
+* why it exists
+* when it is used
+* what it owns
+* what it does
+
+### 22.1 Naming Law
+
+* **folder says flow or capability**
+* **unit says responsibility**
+* **function says exact action**
+
+### 22.2 Preferred Style
+
+Prefer names that speak in the language of:
+
+* the domain
+* the system behavior
+* the user or business flow
+* the real responsibility
+
+Good examples:
+
+* Login
+* Register
+* ChangePassword
+* RequirePermission
+* ReadCurrentUser
+* PasswordHashing
+* Identity
+* Clock
+* IdGenerator
+* CreateInvoice
+* ProcessRefund
+* AccessPolicy
+
+Bad examples:
+
+* ServiceManager
+* CommonUtils
+* SharedService
+* CoreStuff
+* DataHelpers
+* BaseHandler
+* MiscFunctions
+* GenericProcessor
+
+### 22.3 One Concept, One Name
+
+A concept must have one name across the system.
+
+Do not mix different names for the same concept.
+
+Bad examples:
+
+* RequireAuthentication and EnforceAuthentication
+* CurrentUser and ReadCurrentUser
+* UserLogin and Login
+* BruteForceProtection and LoginRateLimit when they mean the same thing
+
+If two names describe the same concept, choose one and delete the other.
+
+  ---
+
+## 23. Flow vs Capability Clarification
+
+A flow slice is not the same as a capability slice.
+
+A flow says:
+
+* what happens
+* what sequence is executed
+* what action is performed
+* what business movement occurs
+
+A capability says:
+
+* what the system uses repeatedly
+* what shared boundary supports multiple flows
+* what reusable mechanism or ability exists outside one single use case
+
+Simple rule:
+
+* **Flows say what the system does**
+* **Capabilities say what the system uses to make that work**
+* **Configuration says how the system is assembled**
+* **Foundation says what tiny neutral primitives support the base**
+
+  ---
+
+## 24. Review Rule
+
+Any proposed folder, extraction, rename, new root slice, or shared abstraction must answer these questions clearly:
+
+1. What does this folder say?
+2. What does this unit own?
+3. Why is this not owned more honestly by a lower level?
+4. Does this reduce noise or only move it?
+5. Is this a real capability, or just a technical bucket?
+6. Is this name obvious without opening the code?
+7. Does this create parallel naming for the same concept?
+8. Does this make the reading path clearer?
+9. Is this local truth or speculative reuse?
+10. Would a new team member understand this quickly?
+
+If the answers are weak, the change is weak.
+
+  ---
+
+## 25. Decision Framework for Placement
+
+When deciding where something belongs, apply this order:
+
+### Step 1
+
+Ask whether it belongs to **one flow only**.
+
+If yes, keep it inside that flow.
+
+### Step 2
+
+Ask whether it is a **real shared ability or boundary** across flows.
+
+If yes, consider a capability slice.
+
+### Step 3
+
+Ask whether it is only about **assembly or wiring**.
+
+If yes, place it in configuration.
+
+### Step 4
+
+Ask whether it is only a **tiny neutral primitive**.
+
+If yes, place it in foundation.
+
+### Step 5
+
+If none of the above feels honest, the structure is still wrong.
+Re-think the model instead of creating a generic bucket.
+
+  ---
+
+## 26. Recommended Canonical Shape
+
+This is a recommended pattern, not a blind template.
 
   ```text
   Project/
@@ -1523,15 +1577,15 @@ ENTERPRISE GRADE STANDARDS:
     AGENTS
   ```
 
-  Where `<system-root>` may be:
+Where `<system-root>` may be:
 
-  * `src/`
-  * `product/`
-  * `System/`
-  * `app/`
-  * another clearly justified root
+* `src/`
+* `product/`
+* `System/`
+* `app/`
+* another clearly justified root
 
-  Example:
+Example:
 
   ```text
   Project/
@@ -1561,44 +1615,44 @@ ENTERPRISE GRADE STANDARDS:
     tooling/
   ```
 
-  This is a strong default, not an unquestionable dogma.
+This is a strong default, not an unquestionable dogma.
 
-  The shape may adapt to context, but the laws of:
+The shape may adapt to context, but the laws of:
 
-  * ownership
-  * clarity
-  * screaming readability
-  * locality
-  * honest abstraction
+* ownership
+* clarity
+* screaming readability
+* locality
+* honest abstraction
 
-  must remain unchanged.
+must remain unchanged.
 
   ---
 
-  ## 27. Final Goal
+## 27. Final Goal
 
-  The final goal of this standard is:
+The final goal of this standard is:
 
-  **highest-quality simplicity**
+**highest-quality simplicity**
 
-  The architecture must be simple enough to:
+The architecture must be simple enough to:
 
-  * read quickly
-  * explain quickly
-  * review honestly
-  * extend safely
-  * refactor with confidence
+* read quickly
+* explain quickly
+* review honestly
+* extend safely
+* refactor with confidence
 
-  And strong enough to:
+And strong enough to:
 
-  * survive growth
-  * survive change
-  * stay modular
-  * stay secure
-  * stay readable
-  * stay maintainable under real pressure
+* survive growth
+* survive change
+* stay modular
+* stay secure
+* stay readable
+* stay maintainable under real pressure
 
-  If a structure looks impressive but reads worse, it failed.
-  If a structure looks simple and remains strong under pressure, it succeeded.
+If a structure looks impressive but reads worse, it failed.
+If a structure looks simple and remains strong under pressure, it succeeded.
 
   ```

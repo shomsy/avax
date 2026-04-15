@@ -15,9 +15,14 @@ use Avax\HTTP\Router\Matching\RouteMatcherInterface;
  */
 final class DomainAwareMatcher implements RouteMatcherInterface
 {
+    private RouteMatcher $baseMatcher;
+
     public function __construct(
-        private RouteMatcher $baseMatcher
-    ) {}
+        RouteMatcher $baseMatcher
+    )
+    {
+        $this->baseMatcher = $baseMatcher;
+    }
 
     /**
      * Finds the first matching route from the given routes array, considering domain constraints.

@@ -39,6 +39,9 @@ namespace Avax\HTTP\Session\Events;
  */
 final readonly class EventsManager
 {
+    private AsyncEventDispatcher|null $asyncDispatcher;
+    private Events                    $events;
+
     /**
      * EventsManager Constructor.
      *
@@ -46,9 +49,13 @@ final readonly class EventsManager
      * @param AsyncEventDispatcher|null $asyncDispatcher Optional async event dispatcher.
      */
     public function __construct(
-        private Events                    $events,
-        private AsyncEventDispatcher|null $asyncDispatcher = null
-    ) {}
+        Events                    $events,
+        AsyncEventDispatcher|null $asyncDispatcher = null
+    )
+    {
+        $this->events          = $events;
+        $this->asyncDispatcher = $asyncDispatcher;
+    }
 
     // ----------------------------------------------------------------
     // 🔹 Event Listener Registration

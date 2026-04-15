@@ -13,12 +13,17 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final readonly class IntegerRule
 {
+    private string|null $message;
+
     /**
      * @param string|null $message Custom error message
      */
     public function __construct(
-        private string|null $message = null
-    ) {}
+        string|null $message = null
+    )
+    {
+        $this->message = $message;
+    }
 
     /**
      * Validates that the provided value is an integer.

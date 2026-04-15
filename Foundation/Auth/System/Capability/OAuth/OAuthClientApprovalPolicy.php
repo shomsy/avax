@@ -12,10 +12,14 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType
 final readonly class OAuthClientApprovalPolicy
 {
     public function requiresApproval(
-        bool $workloadIdentity = false,
-        bool $phishingResistantRequired = false,
+        bool|null                      $workloadIdentity = null,
+        bool|null                      $phishingResistantRequired = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null
-    ) : bool {
+    ) : bool
+    {
+        $workloadIdentity          ??= false;
+        $phishingResistantRequired ??= false;
+
         return $requiredSenderConstraint !== null;
     }
 }

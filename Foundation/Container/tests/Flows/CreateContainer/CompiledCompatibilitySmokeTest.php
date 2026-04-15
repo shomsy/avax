@@ -16,7 +16,9 @@ final class CompatibilityDependency
 
 final class CompatibilityTarget
 {
-    public function __construct(public CompatibilityDependency $dependency) {}
+    public CompatibilityDependency $dependency;
+
+    public function __construct(CompatibilityDependency $dependency) { $this->dependency = $dependency; }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
@@ -25,8 +27,8 @@ $version  = 'compiled-compatibility-smoke';
 $compiled = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
-    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
     settings    : ['app_env' => 'prod'],
+    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
 ));
 $compiled->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
 $compiled->compileContainer(serviceIds: [CompatibilityTarget::class, CompatibilityDependency::class]);
@@ -34,9 +36,9 @@ $compiled->compileContainer(serviceIds: [CompatibilityTarget::class, Compatibili
 $reloaded = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir       : $cacheDir,
     cacheVersion   : $version,
-    compileMode    : CreateContainerConfig::COMPILE_MODE_DEV,
-    settings       : ['app_env' => 'dev'],
     debug          : true,
+    settings       : ['app_env' => 'dev'],
+    compileMode    : CreateContainerConfig::COMPILE_MODE_DEV,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
 ));
 $reloaded->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);

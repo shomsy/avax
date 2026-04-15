@@ -11,10 +11,17 @@ use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
  */
 final readonly class SyslogAuditExporter implements AuditExporterInterface
 {
+    private NormalizeAuditEvent        $normalizeAuditEvent;
+    private SendSyslogMessageInterface $sender;
+
     public function __construct(
-        private SendSyslogMessageInterface $sender,
-        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
-    ) {}
+        SendSyslogMessageInterface $sender,
+        NormalizeAuditEvent        $normalizeAuditEvent = new NormalizeAuditEvent()
+    )
+    {
+        $this->sender              = $sender;
+        $this->normalizeAuditEvent = $normalizeAuditEvent;
+    }
 
     /**
      * @throws \JsonException

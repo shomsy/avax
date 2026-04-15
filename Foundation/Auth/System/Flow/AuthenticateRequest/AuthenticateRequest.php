@@ -19,14 +19,29 @@ use SensitiveParameter;
  */
 final readonly class AuthenticateRequest
 {
+    private JwtIdentityInterface|null     $jwtIdentity;
+    private SessionIdentityInterface|null $sessionIdentity;
+    private AuditLogInterface             $auditLog;
+    private UserSourceInterface           $userSource;
+    private ProjectAuthenticatedUser      $projectAuthenticatedUser;
+    private CurrentAuthentication         $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private ProjectAuthenticatedUser                            $projectAuthenticatedUser,
-        private UserSourceInterface                                 $userSource,
-        private AuditLogInterface                                   $auditLog,
-        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication         $currentAuthentication,
+        ProjectAuthenticatedUser                            $projectAuthenticatedUser,
+        UserSourceInterface                                 $userSource,
+        AuditLogInterface                                   $auditLog,
+        #[SensitiveParameter] SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] JwtIdentityInterface|null     $jwtIdentity = null
+    )
+    {
+        $this->currentAuthentication    = $currentAuthentication;
+        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
+        $this->userSource               = $userSource;
+        $this->auditLog                 = $auditLog;
+        $this->sessionIdentity          = $sessionIdentity;
+        $this->jwtIdentity              = $jwtIdentity;
+    }
 
     public function execute(AuthenticationRequest $request) : AuthenticationContext
     {
@@ -43,13 +58,13 @@ final readonly class AuthenticateRequest
             $context = AuthenticationContext::guest(reason: 'credential_conflict');
 
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.ingress.conflict',
-                                        occurredAt: new DateTimeImmutable(),
-                                        context   : [
-                                                        'ip_address' => $request->ipAddress,
-                                                        'user_agent' => $request->userAgent,
-                                                    ]
-                                    ));
+                                               name      : 'auth.ingress.conflict',
+                                               occurredAt: new DateTimeImmutable(),
+                                               context   : [
+                                                               'ip_address' => $request->ipAddress,
+                                                               'user_agent' => $request->userAgent,
+                                                           ]
+                                           ));
 
             $this->currentAuthentication->store(context: $context);
 
@@ -75,10 +90,10 @@ final readonly class AuthenticateRequest
 
         if ($sessionUser !== null) {
             $context = AuthenticationContext::authenticated(
-                user         : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
-                mode         : AuthenticationMode::SESSION,
-                sessionId    : $sessionId,
-                mfaVerifiedAt: $sessionMfaVerifiedAt,
+                user             : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
+                mode             : AuthenticationMode::SESSION,
+                sessionId        : $sessionId,
+                mfaVerifiedAt    : $sessionMfaVerifiedAt,
                 phishingResistant: $sessionPhishingResistant
             );
 

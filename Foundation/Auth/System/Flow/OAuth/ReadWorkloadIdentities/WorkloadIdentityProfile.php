@@ -8,18 +8,35 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType
 
 final readonly class WorkloadIdentityProfile
 {
+    public bool                           $phishingResistantRequired;
+    public OAuthSenderConstraintType|null $requiredSenderConstraint;
+    public array                          $audienceScopeBoundaries;
+    public array                          $allowedAudiences;
+    public array                          $allowedScopes;
+    public string                         $name;
+    public string                         $clientId;
+
     /**
-     * @param list<string> $allowedScopes
-     * @param list<string> $allowedAudiences
+     * @param list<string>                $allowedScopes
+     * @param list<string>                $allowedAudiences
      * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
-        public string $clientId,
-        public string $name,
-        public array $allowedScopes,
-        public array $allowedAudiences,
-        public array $audienceScopeBoundaries,
-        public OAuthSenderConstraintType|null $requiredSenderConstraint,
-        public bool $phishingResistantRequired
-    ) {}
+        string                         $clientId,
+        string                         $name,
+        array                          $allowedScopes,
+        array                          $allowedAudiences,
+        array                          $audienceScopeBoundaries,
+        OAuthSenderConstraintType|null $requiredSenderConstraint,
+        bool                           $phishingResistantRequired
+    )
+    {
+        $this->clientId                  = $clientId;
+        $this->name                      = $name;
+        $this->allowedScopes             = $allowedScopes;
+        $this->allowedAudiences          = $allowedAudiences;
+        $this->audienceScopeBoundaries   = $audienceScopeBoundaries;
+        $this->requiredSenderConstraint  = $requiredSenderConstraint;
+        $this->phishingResistantRequired = $phishingResistantRequired;
+    }
 }

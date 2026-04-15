@@ -9,6 +9,6 @@ namespace Avax\Auth\System\Capability\Oidc;
  */
 enum SubjectIdentifierStrategy: string
 {
-    case PUBLIC = 'public';
+    case PUBLIC   = 'public';
     case PAIRWISE = 'pairwise';
 }

@@ -28,7 +28,9 @@ $pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
 
 $grammar        = new MySQLGrammar;
 $connection     = new class($pdo) implements DatabaseConnection {
-    public function __construct(private PDO $pdo) {}
+    private PDO $pdo;
+
+    public function __construct(PDO $pdo) { $this->pdo = $pdo; }
 
     public function getConnection() : PDO { return $this->pdo; }
 

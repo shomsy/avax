@@ -24,7 +24,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class NotRegex
 {
-    public function __construct(private string $pattern) {}
+    private string $pattern;
+
+    public function __construct(string $pattern) { $this->pattern = $pattern; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

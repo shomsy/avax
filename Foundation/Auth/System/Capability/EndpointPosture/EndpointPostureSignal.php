@@ -9,14 +9,14 @@ namespace Avax\Auth\System\Capability\EndpointPosture;
  */
 enum EndpointPostureSignal: string
 {
-    case IP_REPUTATION = 'ip_reputation';
-    case GEO_VELOCITY = 'geo_velocity';
-    case IMPOSSIBLE_TRAVEL = 'impossible_travel';
-    case DEVICE_FINGERPRINT = 'device_fingerprint';
+    case IP_REPUTATION       = 'ip_reputation';
+    case GEO_VELOCITY        = 'geo_velocity';
+    case IMPOSSIBLE_TRAVEL   = 'impossible_travel';
+    case DEVICE_FINGERPRINT  = 'device_fingerprint';
     case BROWSER_FINGERPRINT = 'browser_fingerprint';
-    case ASN_REPUTATION = 'asn_reputation';
-    case VPN_DETECTION = 'vpn_detection';
-    case PROXY_DETECTION = 'proxy_detection';
+    case ASN_REPUTATION      = 'asn_reputation';
+    case VPN_DETECTION       = 'vpn_detection';
+    case PROXY_DETECTION     = 'proxy_detection';
 }
 
 /**
@@ -24,10 +24,21 @@ enum EndpointPostureSignal: string
  */
 final readonly class EndpointPostureSignalData
 {
+    public string                $detail;
+    public bool                  $anomalous;
+    public float                 $score;
+    public EndpointPostureSignal $type;
+
     public function __construct(
-        public EndpointPostureSignal $type,
-        public float $score,
-        public bool $anomalous,
-        public string $detail
-    ) {}
+        EndpointPostureSignal $type,
+        float                 $score,
+        bool                  $anomalous,
+        string                $detail
+    )
+    {
+        $this->type      = $type;
+        $this->score     = $score;
+        $this->anomalous = $anomalous;
+        $this->detail    = $detail;
+    }
 }

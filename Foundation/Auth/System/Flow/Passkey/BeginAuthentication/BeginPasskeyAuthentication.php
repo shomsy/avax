@@ -19,15 +19,32 @@ use SensitiveParameter;
 
 final readonly class BeginPasskeyAuthentication
 {
+    private string                          $rpId;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private PasskeyChallengeStoreInterface  $challengeStore;
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private PasskeyRuntimeInterface         $runtime;
+    private UserSourceInterface             $userSource;
+
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        private PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
-    ) {}
+        UserSourceInterface                                   $userSource,
+        PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
+        PasskeyChallengeStoreInterface                        $challengeStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        string                                                $rpId
+    )
+    {
+        $this->userSource      = $userSource;
+        $this->runtime         = $runtime;
+        $this->credentialStore = $credentialStore;
+        $this->challengeStore  = $challengeStore;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+        $this->rpId            = $rpId;
+    }
 
     /**
      * @throws \DateMalformedStringException
@@ -53,24 +70,24 @@ final readonly class BeginPasskeyAuthentication
         }
 
         $this->challengeStore->issue(record: new PasskeyChallengeRecord(
-            challengeId: $challengeId,
-            challenge  : $challenge,
-            purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
-            userId     : $userId
-        ));
+                                                 challengeId: $challengeId,
+                                                 challenge  : $challenge,
+                                                 purpose    : PasskeyChallengePurpose::AUTHENTICATION,
+                                                 expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
+                                                 userId     : $userId
+                                             ));
 
         $options = $this->runtime->beginAuthentication(
-            rpId             : $this->rpId,
-            challenge        : $challenge,
+            rpId              : $this->rpId,
+            challenge         : $challenge,
             allowCredentialIds: $allowIds
         );
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.passkey.authentication.started',
-            occurredAt: $this->clock->now(),
-            context   : ['challenge_id' => $challengeId, 'user_id' => $userId]
-        ));
+                                           name      : 'auth.passkey.authentication.started',
+                                           occurredAt: $this->clock->now(),
+                                           context   : ['challenge_id' => $challengeId, 'user_id' => $userId]
+                                       ));
 
         return new PasskeyAuthenticationChallenge(challengeId: $challengeId, options: $options);
     }

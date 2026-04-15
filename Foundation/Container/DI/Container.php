@@ -37,7 +37,9 @@ use Closure;
  */
 final readonly class Container implements ContainerInterface
 {
-    public function __construct(private ServiceResolver $resolver) {}
+    private ServiceResolver $resolver;
+
+    public function __construct(ServiceResolver $resolver) { $this->resolver = $resolver; }
 
     public function get(string $id) : mixed
     {

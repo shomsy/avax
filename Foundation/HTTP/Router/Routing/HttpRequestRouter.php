@@ -30,7 +30,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
- * INTERNAL: HTTP Request Router Engine
+ * INTERNAL: HTTP ServerRequest Router Engine
  *
  * This is an internal implementation detail. Behavior may change without notice.
  * Do not depend on this class directly - use RouterInterface and Router instead.
@@ -76,17 +76,23 @@ final class HttpRequestRouter
      *
      * @var array<string, bool>
      */
-    private array                $routeKeys     = [];
-    private RouteDefinition|null $fallbackRoute = null;
+    private array                             $routeKeys     = [];
+    private RouteDefinition|null              $fallbackRoute = null;
+    private readonly RouterTrace|null         $trace;
+    private readonly RouteMatcherInterface    $matcher;
+    private readonly RouteConstraintValidator $constraintValidator;
 
     public function __construct(
-        private readonly RouteConstraintValidator $constraintValidator,
-        private readonly RouteMatcherInterface    $matcher,
-        LoggerInterface|null                      $logger = null,
-        private readonly RouterTrace|null         $trace = null
+        RouteConstraintValidator $constraintValidator,
+        RouteMatcherInterface    $matcher,
+        LoggerInterface|null     $logger = null,
+        RouterTrace|null         $trace = null
     )
     {
-        $this->logger = $logger ?? new NullLogger;
+        $this->constraintValidator = $constraintValidator;
+        $this->matcher             = $matcher;
+        $this->trace               = $trace;
+        $this->logger              = $logger ?? new NullLogger;
     }
 
     /**

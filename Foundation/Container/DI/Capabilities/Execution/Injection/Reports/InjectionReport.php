@@ -9,10 +9,23 @@ namespace Avax\Container\DI\Capabilities\Execution\Injection\Reports;
  */
 readonly class InjectionReport
 {
+    public bool   $success;
+    public array  $injectedMethods;
+    public array  $injectedProperties;
+    public object $target;
+
     public function __construct(
-        public object $target,
-        public array  $injectedProperties = [],
-        public array  $injectedMethods = [],
-        public bool   $success = true
-    ) {}
+        object     $target,
+        array|null $injectedProperties = null,
+        array|null $injectedMethods = null,
+        bool       $success = true
+    )
+    {
+        $injectedProperties       ??= [];
+        $injectedMethods          ??= [];
+        $this->target             = $target;
+        $this->injectedProperties = $injectedProperties;
+        $this->injectedMethods    = $injectedMethods;
+        $this->success            = $success;
+    }
 }

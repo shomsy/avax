@@ -17,7 +17,11 @@ use Throwable;
  */
 final class QueryOrchestrator
 {
-    private bool $isPretending = false;
+    private bool                                      $isPretending = false;
+    private ExecutionScope|null                       $scope        = null;
+    private IdentityMap|null                          $identityMap  = null;
+    private readonly TransactionManagerInterface|null $transactionManager;
+    private readonly ExecutorInterface                $executor;
 
     /**
      * @param ExecutorInterface                $executor           Low-level executor.
@@ -28,13 +32,17 @@ final class QueryOrchestrator
      * @throws RandomException
      */
     public function __construct(
-        private readonly ExecutorInterface                $executor,
-        private readonly TransactionManagerInterface|null $transactionManager = null,
-        private IdentityMap|null                          $identityMap = null,
-        private ExecutionScope|null                       $scope = null
+        ExecutorInterface                $executor,
+        TransactionManagerInterface|null $transactionManager = null,
+        IdentityMap|null                 $identityMap = null,
+        ExecutionScope|null              $scope = null
     )
     {
-        $this->scope ??= ExecutionScope::fresh();
+        $this->executor           = $executor;
+        $this->transactionManager = $transactionManager;
+        $this->identityMap        = $identityMap;
+        $this->scope              = $scope;
+        $this->scope              ??= ExecutionScope::fresh();
     }
 
     public function __clone()

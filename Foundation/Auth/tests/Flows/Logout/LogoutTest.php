@@ -25,8 +25,8 @@ class LogoutTest extends TestCase
     {
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
-            user: new AuthenticatedUser(id: 7, email: 'logout@example.com', username: 'logout'),
-            mode: AuthenticationMode::TOKEN,
+            user                : new AuthenticatedUser(id: 7, email: 'logout@example.com', username: 'logout'),
+            mode                : AuthenticationMode::TOKEN,
             refreshTokenFamilyId: 'fid-123'
         ));
         $identity = Mockery::mock(IdentityInterface::class);

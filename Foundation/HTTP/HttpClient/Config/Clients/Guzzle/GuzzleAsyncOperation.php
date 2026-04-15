@@ -17,10 +17,17 @@ use Throwable;
  */
 readonly class GuzzleAsyncOperation implements AsyncOperationInterface
 {
+    private LoggerInterface  $logger;
+    private PromiseInterface $promise;
+
     public function __construct(
-        private PromiseInterface $promise,
-        private LoggerInterface  $logger,
-    ) {}
+        PromiseInterface $promise,
+        LoggerInterface  $logger,
+    )
+    {
+        $this->promise = $promise;
+        $this->logger  = $logger;
+    }
 
     /**
      * Resolves the promise and returns the result.

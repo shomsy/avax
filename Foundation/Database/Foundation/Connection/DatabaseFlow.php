@@ -19,12 +19,13 @@ final class DatabaseFlow
     private string|null $connectionName = null;
 
     /** @var bool If true, we will borrow a connection from a shared collection. */
-    private bool $pooled = false;
+    private bool                       $pooled = false;
+    private readonly ConnectionManager $manager;
 
     /**
      * @param ConnectionManager $manager The "Switchboard Operator" who actually holds the cables.
      */
-    public function __construct(private readonly ConnectionManager $manager) {}
+    public function __construct(ConnectionManager $manager) { $this->manager = $manager; }
 
     /**
      * Specify the target connection name.

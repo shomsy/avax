@@ -14,7 +14,9 @@ final class StoryInternalService implements StoryInternalContract {}
 
 final class StoryFlowEntry
 {
-    public function __construct(public StoryInternalContract $dependency) {}
+    public StoryInternalContract $dependency;
+
+    public function __construct(StoryInternalContract $dependency) { $this->dependency = $dependency; }
 }
 
 final class StoryFlowLocalService {}
@@ -23,12 +25,16 @@ final class RequestOnlyStoryService {}
 
 final class StoryRuntimeInputConsumer
 {
-    public function __construct(#[\SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token) {}
+    public string $token;
+
+    public function __construct(#[\SensitiveParameter] #[RuntimeInput(name: 'token')] string $token) { $this->token = $token; }
 }
 
 final class StoryLocatorDrift
 {
-    public function __construct(public ContainerInterface $container) {}
+    public ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container) { $this->container = $container; }
 }
 
 $topLevelContainer = makeTestContainer();
@@ -55,7 +61,7 @@ $scopedContainer->scoped(abstract: RequestOnlyStoryService::class, concrete: Req
 
 try {
     $scopedContainer->get(id: RequestOnlyStoryService::class);
-    throw new RuntimeException(message: 'Request-scoped services should require an active request scope.');
+    throw new RuntimeException(message: 'ServerRequest-scoped services should require an active request scope.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains($exception->getMessage(), 'requires an active [request] scope'),

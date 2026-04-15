@@ -20,12 +20,14 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final readonly class ValidDTOArray
 {
+    private string $dtoClass;
+
     /**
      * The fully-qualified class name of the Data Transfer Object (DTO) we expect.
      *
      * @param string $dtoClass The DTO class name to validate instantiated items.
      */
-    public function __construct(private string $dtoClass) {}
+    public function __construct(string $dtoClass) { $this->dtoClass = $dtoClass; }
 
     /**
      * Validates the given value to ensure it is an array of valid DTOs.

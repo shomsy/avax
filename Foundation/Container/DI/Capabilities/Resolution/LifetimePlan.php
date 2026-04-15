@@ -20,17 +20,43 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
  */
 final readonly class LifetimePlan
 {
+    public bool   $poolResetBeforeReuse;
+    public int    $poolSize;
+    public bool   $disposable;
+    public bool   $lazy;
+    public bool   $warm;
+    public string $scopeKind;
+    public string $storage;
+    public string $name;
+    public string $serviceId;
+
     public function __construct(
-        public string $serviceId,
-        public string $name,
-        public string $storage,
-        public string $scopeKind = '',
-        public bool   $warm = false,
-        public bool   $lazy = false,
-        public bool   $disposable = false,
-        public int    $poolSize = 8,
-        public bool   $poolResetBeforeReuse = true
-    ) {}
+        string      $serviceId,
+        string      $name,
+        string      $storage,
+        string|null $scopeKind = null,
+        bool|null   $warm = null,
+        bool|null   $lazy = null,
+        bool|null   $disposable = null,
+        int|null    $poolSize = null,
+        bool        $poolResetBeforeReuse = true
+    )
+    {
+        $scopeKind                  ??= '';
+        $warm                       ??= false;
+        $lazy                       ??= false;
+        $disposable                 ??= false;
+        $poolSize                   ??= 8;
+        $this->serviceId            = $serviceId;
+        $this->name                 = $name;
+        $this->storage              = $storage;
+        $this->scopeKind            = $scopeKind;
+        $this->warm                 = $warm;
+        $this->lazy                 = $lazy;
+        $this->disposable           = $disposable;
+        $this->poolSize             = $poolSize;
+        $this->poolResetBeforeReuse = $poolResetBeforeReuse;
+    }
 
     public static function fromRegistration(string $serviceId, ServiceRegistration|null $registration) : self
     {

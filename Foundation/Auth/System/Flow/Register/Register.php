@@ -25,15 +25,33 @@ use SensitiveParameter;
  */
 final readonly class Register
 {
+    private LoginRateLimit|null      $rateLimit;
+    private bool                     $emailVerificationRequired;
+    private AuditLogInterface        $auditLog;
+    private ProjectAuthenticatedUser $projectAuthenticatedUser;
+    private IdGeneratorInterface     $idGenerator;
+    private PasswordHasher           $passwordHasher;
+    private UserSourceInterface      $userSource;
+
     public function __construct(
-        private UserSourceInterface                  $userSource,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private IdGeneratorInterface                 $idGenerator,
-        private ProjectAuthenticatedUser             $projectAuthenticatedUser,
-        private AuditLogInterface                    $auditLog,
-        private bool                                 $emailVerificationRequired = false,
-        private LoginRateLimit|null                  $rateLimit = null
-    ) {}
+        UserSourceInterface                  $userSource,
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        IdGeneratorInterface                 $idGenerator,
+        ProjectAuthenticatedUser             $projectAuthenticatedUser,
+        AuditLogInterface                    $auditLog,
+        bool|null                            $emailVerificationRequired = null,
+        LoginRateLimit|null                  $rateLimit = null
+    )
+    {
+        $emailVerificationRequired       ??= false;
+        $this->userSource                = $userSource;
+        $this->passwordHasher            = $passwordHasher;
+        $this->idGenerator               = $idGenerator;
+        $this->projectAuthenticatedUser  = $projectAuthenticatedUser;
+        $this->auditLog                  = $auditLog;
+        $this->emailVerificationRequired = $emailVerificationRequired;
+        $this->rateLimit                 = $rateLimit;
+    }
 
     /**
      * @throws RegistrationFailed
@@ -68,15 +86,15 @@ final readonly class Register
 
         $this->rateLimit?->reset(identifier: $data->email);
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.register.succeeded',
-                                    occurredAt: new DateTimeImmutable(),
-                                    context   : [
-                                                    'user_id'    => $createdUser->getId()->value,
-                                                    'email'      => strtolower($createdUser->getEmail()->value),
-                                                    'ip_address' => $data->ipAddress,
-                                                    'user_agent' => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.register.succeeded',
+                                           occurredAt: new DateTimeImmutable(),
+                                           context   : [
+                                                           'user_id'    => $createdUser->getId()->value,
+                                                           'email'      => strtolower($createdUser->getEmail()->value),
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return new RegistrationResult(
             user                     : $this->projectAuthenticatedUser->fromUser(user: $createdUser),

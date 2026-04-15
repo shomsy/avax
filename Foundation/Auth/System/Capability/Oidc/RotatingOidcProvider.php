@@ -10,32 +10,39 @@ use SensitiveParameter;
 
 final readonly class RotatingOidcProvider implements OidcProviderInterface
 {
+    private array                 $verificationProviders;
+    private OidcProviderInterface $activeProvider;
+
     /**
      * @param list<OidcProviderInterface> $verificationProviders
      */
     public function __construct(
-        private OidcProviderInterface $activeProvider,
-        private array $verificationProviders = []
-    ) {}
+        OidcProviderInterface $activeProvider,
+        array                 $verificationProviders = []
+    )
+    {
+        $this->activeProvider        = $activeProvider;
+        $this->verificationProviders = $verificationProviders;
+    }
 
     public function issueIdToken(
-        User $user,
-        string $clientId,
-        array $scopes,
-        string|null $nonce = null,
-        DateTimeImmutable|null $authenticatedAt = null,
-        string|null $sessionId = null,
-        bool $phishingResistant = false
+        User                               $user,
+        string                             $clientId,
+        array                              $scopes,
+        string|null                        $nonce = null,
+        DateTimeImmutable|null             $authenticatedAt = null,
+        #[\SensitiveParameter] string|null $sessionId = null,
+        bool                               $phishingResistant = false
     ) : OidcIdToken
     {
         return $this->activeProvider->issueIdToken(
-            user               : $user,
-            clientId           : $clientId,
-            scopes             : $scopes,
-            nonce              : $nonce,
-            authenticatedAt    : $authenticatedAt,
-            sessionId          : $sessionId,
-            phishingResistant  : $phishingResistant
+            user             : $user,
+            clientId         : $clientId,
+            scopes           : $scopes,
+            nonce            : $nonce,
+            authenticatedAt  : $authenticatedAt,
+            sessionId        : $sessionId,
+            phishingResistant: $phishingResistant
         );
     }
 
@@ -60,6 +67,14 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         }
 
         return new OidcJsonWebKeySet(keys: array_values($keys));
+    }
+
+    /**
+     * @return list<OidcProviderInterface>
+     */
+    private function providers() : array
+    {
+        return [$this->activeProvider, ...$this->verificationProviders];
     }
 
     public function subjectIdentifier(User $user, string $clientId) : string
@@ -91,13 +106,5 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         }
 
         return null;
-    }
-
-    /**
-     * @return list<OidcProviderInterface>
-     */
-    private function providers() : array
-    {
-        return [$this->activeProvider, ...$this->verificationProviders];
     }
 }

@@ -17,12 +17,23 @@ use SensitiveParameter;
  */
 final readonly class VerifyBackupCode
 {
+    private Clock             $clock;
+    private AuditLogInterface $auditLog;
+    private PasswordHasher    $passwordHasher;
+    private MfaStoreInterface $mfaStore;
+
     public function __construct(
-        private MfaStoreInterface                     $mfaStore,
-        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
-        private AuditLogInterface                     $auditLog,
-        private Clock                                 $clock
-    ) {}
+        MfaStoreInterface                     $mfaStore,
+        #[\SensitiveParameter] PasswordHasher $passwordHasher,
+        AuditLogInterface                     $auditLog,
+        Clock                                 $clock
+    )
+    {
+        $this->mfaStore       = $mfaStore;
+        $this->passwordHasher = $passwordHasher;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     public function execute(UserId $userId, #[SensitiveParameter] string $code) : bool
     {
@@ -45,13 +56,13 @@ final readonly class VerifyBackupCode
             $codes[$index] = $backupCode->markUsed(moment: $this->clock->now());
             $this->mfaStore->saveMethod(record: $method->withBackupCodes(backupCodes: array_values($codes)));
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.mfa.backup_code.used',
-                                        occurredAt: $this->clock->now(),
-                                        context   : [
-                                                        'user_id'        => $userId->value,
-                                                        'backup_code_id' => $backupCode->backupCodeId,
-                                                    ]
-                                    ));
+                                               name      : 'auth.mfa.backup_code.used',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'user_id'        => $userId->value,
+                                                               'backup_code_id' => $backupCode->backupCodeId,
+                                                           ]
+                                           ));
 
             return true;
         }

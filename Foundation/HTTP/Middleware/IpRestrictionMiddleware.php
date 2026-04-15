@@ -17,7 +17,9 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class IpRestrictionMiddleware implements MiddlewareInterface
 {
-    public function __construct(protected ResponseFactory $responseFactory) {}
+    protected ResponseFactory $responseFactory;
+
+    public function __construct(ResponseFactory $responseFactory) { $this->responseFactory = $responseFactory; }
 
     /**
      * PSR-15 process method: check IP restrictions before proceeding.

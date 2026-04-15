@@ -58,12 +58,16 @@ final class PlainTransientDependency {}
 
 final class SharedCapturesTransientService
 {
-    public function __construct(public PlainTransientDependency $dependency) {}
+    public PlainTransientDependency $dependency;
+
+    public function __construct(PlainTransientDependency $dependency) { $this->dependency = $dependency; }
 }
 
 final class SharedCapturesRequestScopedService
 {
-    public function __construct(public RequestScopedDisposableService $dependency) {}
+    public RequestScopedDisposableService $dependency;
+
+    public function __construct(RequestScopedDisposableService $dependency) { $this->dependency = $dependency; }
 }
 
 final class InvalidDisposableService {}
@@ -91,10 +95,10 @@ $container->bind(abstract: InvalidTransientDisposableService::class, concrete: I
 $container->scoped(abstract: JobScopedService::class, concrete: JobScopedService::class)->job();
 
 $issues = implode("\n", $container->validate(serviceIds: [
-                                                 SharedCapturesTransientService::class,
-                                                 SharedCapturesRequestScopedService::class,
-                                                 InvalidDisposableService::class,
-                                             ]));
+                                                             SharedCapturesTransientService::class,
+                                                             SharedCapturesRequestScopedService::class,
+                                                             InvalidDisposableService::class,
+                                                         ]));
 
 assertTrue(
     condition: str_contains($issues, 'captures transient dependency [' . PlainTransientDependency::class . ']'),
@@ -127,13 +131,13 @@ assertThrows(
  * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
-    message      : 'Request-scoped services should require an active request scope.'
+    message      : 'ServerRequest-scoped services should require an active request scope.'
 );
 
 $container->openScope(kind: ScopeKind::REQUEST, scopeId: 'request-1');
 $requestFirst  = $container->get(id: RequestScopedDisposableService::class);
 $requestSecond = $container->get(id: RequestScopedDisposableService::class);
-assertSame(expected: $requestFirst, actual: $requestSecond, message: 'Request-scoped services should reuse the same instance inside one request scope.');
+assertSame(expected: $requestFirst, actual: $requestSecond, message: 'ServerRequest-scoped services should reuse the same instance inside one request scope.');
 $container->closeScope(kind: ScopeKind::REQUEST);
 
 assertSame(expected: 1, actual: AdvancedLifetimeSequence::$requestDisposals, message: 'Closing a request scope should dispose request-owned disposable services.');

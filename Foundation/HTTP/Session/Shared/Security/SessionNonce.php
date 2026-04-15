@@ -23,6 +23,7 @@ final class SessionNonce
     private const string NONCE_KEY = '_nonce';
 
     private const int    NONCE_LENGTH = 16; // 128 bits
+    private readonly StoreInterface $store;
 
     /**
      * SessionNonce Constructor.
@@ -30,8 +31,11 @@ final class SessionNonce
      * @param StoreInterface $store Session storage.
      */
     public function __construct(
-        private readonly StoreInterface $store
-    ) {}
+        StoreInterface $store
+    )
+    {
+        $this->store = $store;
+    }
 
     /**
      * Generate a new nonce.

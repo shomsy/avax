@@ -13,11 +13,20 @@ use RuntimeException;
 
 final readonly class DisableClient
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        OAuthClientRegistryInterface $clientRegistry,
+        AuditLogInterface            $auditLog,
+        Clock                        $clock
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     public function execute(string $clientId) : OAuthClient
     {
@@ -28,13 +37,13 @@ final readonly class DisableClient
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.client.disabled',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $client->clientId,
-                'tenant_slug' => $client->tenantSlug,
-            ]
-        ));
+                                           name      : 'auth.oauth.client.disabled',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'   => $client->clientId,
+                                                           'tenant_slug' => $client->tenantSlug,
+                                                       ]
+                                       ));
 
         return $client;
     }

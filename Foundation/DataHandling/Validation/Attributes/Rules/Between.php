@@ -29,7 +29,14 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Between
 {
-    public function __construct(private int $min, private int $max) {}
+    private int $max;
+    private int $min;
+
+    public function __construct(int $min, int $max)
+    {
+        $this->min = $min;
+        $this->max = $max;
+    }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

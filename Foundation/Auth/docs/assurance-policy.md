@@ -15,15 +15,15 @@ effect of whichever factor happened to succeed.
 
 ## Policy Matrix
 
-| Actor | Assurance | Allowed Factors | Required Factors | Idle | Absolute | Fresh MFA | Recovery | Extra Rules |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `user` | `standard` | password, TOTP, backup code, passkey, federated SSO | password | 30m | 12h | n/a | password reset | deny by default |
-| `privileged_user` | `high` | password, TOTP, backup code, passkey, federated SSO | password + TOTP | 15m | 8h | 5m | MFA recovery | resource checks required |
-| `admin` | `phishing_resistant` | passkey, federated SSO, password, TOTP, backup code | passkey | 10m | 4h | 3m | admin approval | phishing-resistant, admin elevation, SoD, approval path |
-| `support` | `high` | password, TOTP, passkey, federated SSO | password + TOTP | 10m | 6h | 3m | admin approval | SoD and approval path |
-| `tenant_admin` | `phishing_resistant` | passkey, federated SSO, password, TOTP | passkey | 15m | 6h | 3m | admin approval | phishing-resistant and SoD |
-| `machine_identity` | `high` | DPoP, mTLS | mTLS | 5m | 1h | n/a | none | sender-constrained tokens required |
-| `break_glass` | `emergency` | passkey | passkey | 5m | 30m | 1m | admin approval | phishing-resistant, SoD, approval path |
+| Actor              | Assurance            | Allowed Factors                                     | Required Factors | Idle | Absolute | Fresh MFA | Recovery       | Extra Rules                                             |
+|--------------------|----------------------|-----------------------------------------------------|------------------|------|----------|-----------|----------------|---------------------------------------------------------|
+| `user`             | `standard`           | password, TOTP, backup code, passkey, federated SSO | password         | 30m  | 12h      | n/a       | password reset | deny by default                                         |
+| `privileged_user`  | `high`               | password, TOTP, backup code, passkey, federated SSO | password + TOTP  | 15m  | 8h       | 5m        | MFA recovery   | resource checks required                                |
+| `admin`            | `phishing_resistant` | passkey, federated SSO, password, TOTP, backup code | passkey          | 10m  | 4h       | 3m        | admin approval | phishing-resistant, admin elevation, SoD, approval path |
+| `support`          | `high`               | password, TOTP, passkey, federated SSO              | password + TOTP  | 10m  | 6h       | 3m        | admin approval | SoD and approval path                                   |
+| `tenant_admin`     | `phishing_resistant` | passkey, federated SSO, password, TOTP              | passkey          | 15m  | 6h       | 3m        | admin approval | phishing-resistant and SoD                              |
+| `machine_identity` | `high`               | DPoP, mTLS                                          | mTLS             | 5m   | 1h       | n/a       | none           | sender-constrained tokens required                      |
+| `break_glass`      | `emergency`          | passkey                                             | passkey          | 5m   | 30m      | 1m        | admin approval | phishing-resistant, SoD, approval path                  |
 
 ## Package Surface
 

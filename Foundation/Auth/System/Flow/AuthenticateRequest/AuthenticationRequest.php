@@ -11,12 +11,24 @@ use SensitiveParameter;
  */
 final readonly class AuthenticationRequest
 {
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    public bool        $allowSession;
+    public string|null $bearerToken;
+
     public function __construct(
-        #[SensitiveParameter] public string|null $bearerToken = null,
-        public bool                              $allowSession = true,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
-    ) {}
+        #[SensitiveParameter] string|null $bearerToken = null,
+        bool|null                         $allowSession = null,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $allowSession       ??= true;
+        $this->bearerToken  = $bearerToken;
+        $this->allowSession = $allowSession;
+        $this->ipAddress    = $ipAddress;
+        $this->userAgent    = $userAgent;
+    }
 
     public static function bearer(
         #[SensitiveParameter] string      $bearerToken,

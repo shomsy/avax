@@ -12,13 +12,17 @@ use Psr\Log\LoggerInterface;
 
 final class RetryMiddleware
 {
-    private array $retryStatusCodes = [504, 500, 502, 503, 429];
+    private array                    $retryStatusCodes = [504, 500, 502, 503, 429];
+    private int|null                 $maxRetries       = null;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private int|null                 $maxRetries = null,
+        LoggerInterface $logger,
+        int|null        $maxRetries = null,
     )
     {
+        $this->logger     = $logger;
+        $this->maxRetries = $maxRetries;
         $this->maxRetries ??= 3;
     }
 

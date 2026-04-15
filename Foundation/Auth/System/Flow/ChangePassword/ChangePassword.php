@@ -29,19 +29,44 @@ use SensitiveParameter;
  */
 final readonly class ChangePassword
 {
+    private RequireFreshMfa|null            $requireFreshMfa;
+    private LoginRateLimit|null             $rateLimit;
+    private RefreshTokenStoreInterface|null $refreshTokenStore;
+    private MfaChallengeStoreInterface|null $mfaChallengeStore;
+    private SessionRegistryInterface|null   $sessionRegistry;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private CurrentAuthentication           $currentAuthentication;
+    private IdentityInterface               $identity;
+    private PasswordHasher                  $passwordHasher;
+    private UserSourceInterface             $userSource;
+
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        #[SensitiveParameter] private PasswordHasher                   $passwordHasher,
-        #[SensitiveParameter] private IdentityInterface                $identity,
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private LoginRateLimit|null                                    $rateLimit = null,
-        private RequireFreshMfa|null                                   $requireFreshMfa = null
-    ) {}
+        UserSourceInterface                                    $userSource,
+        #[SensitiveParameter] PasswordHasher                   $passwordHasher,
+        #[SensitiveParameter] IdentityInterface                $identity,
+        #[\SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        AuditLogInterface                                      $auditLog,
+        Clock                                                  $clock,
+        #[\SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
+        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        LoginRateLimit|null                                    $rateLimit = null,
+        RequireFreshMfa|null                                   $requireFreshMfa = null
+    )
+    {
+        $this->userSource            = $userSource;
+        $this->passwordHasher        = $passwordHasher;
+        $this->identity              = $identity;
+        $this->currentAuthentication = $currentAuthentication;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->sessionRegistry       = $sessionRegistry;
+        $this->mfaChallengeStore     = $mfaChallengeStore;
+        $this->refreshTokenStore     = $refreshTokenStore;
+        $this->rateLimit             = $rateLimit;
+        $this->requireFreshMfa       = $requireFreshMfa;
+    }
 
     /**
      * @throws PasswordChangeFailed
@@ -90,11 +115,11 @@ final readonly class ChangePassword
 
         $this->rateLimit?->reset(identifier: (string) $user->getId());
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.password.changed',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id' => $user->getId()->value,
-                                                ]
-                                ));
+                                           name      : 'auth.password.changed',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id' => $user->getId()->value,
+                                                       ]
+                                       ));
     }
 }

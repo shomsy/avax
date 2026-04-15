@@ -11,36 +11,32 @@ namespace Avax\Auth\System\Capability\Oidc;
  */
 final readonly class SubjectIdentifier
 {
+    private SubjectIdentifierStrategy $strategy;
+
     public function __construct(
-        private SubjectIdentifierStrategy $strategy = SubjectIdentifierStrategy::PUBLIC
-    ) {}
+        SubjectIdentifierStrategy $strategy = SubjectIdentifierStrategy::PUBLIC
+    )
+    {
+        $this->strategy = $strategy;
+    }
 
     /**
      * Generates a subject identifier for a user.
      */
     public function generate(
-        string $localSubject,
+        string      $localSubject,
         string|null $sectorIdentifier = null,
         string|null $pairwiseSalt = null
-    ) : string {
+    ) : string
+    {
         return match ($this->strategy) {
-            SubjectIdentifierStrategy::PUBLIC => $this->publicIdentifier($localSubject),
+            SubjectIdentifierStrategy::PUBLIC   => $this->publicIdentifier(localSubject: $localSubject),
             SubjectIdentifierStrategy::PAIRWISE => $this->pairwiseIdentifier(
-                localSubject     : $localSubject,
+                localSubject    : $localSubject,
                 sectorIdentifier: $sectorIdentifier,
                 pairwiseSalt    : $pairwiseSalt ?? $this->defaultSalt()
             ),
         };
-    }
-
-    /**
-     * Validates a sector identifier for pairwise subjects.
-     */
-    public function isValidSectorIdentifier(string $sectorIdentifier) : bool
-    {
-        $parsed = parse_url($sectorIdentifier);
-
-        return isset($parsed['scheme']) && isset($parsed['host']);
     }
 
     private function publicIdentifier(string $localSubject) : string
@@ -49,13 +45,19 @@ final readonly class SubjectIdentifier
     }
 
     private function pairwiseIdentifier(
-        string $localSubject,
+        string      $localSubject,
         string|null $sectorIdentifier,
-        string $pairwiseSalt
-    ) : string {
+        string      $pairwiseSalt
+    ) : string
+    {
         $sector = $sectorIdentifier ?? $this->defaultSector();
 
-        return $this->hashPairwise($localSubject, $sector, $pairwiseSalt);
+        return $this->hashPairwise(localSubject: $localSubject, sector: $sector, salt: $pairwiseSalt);
+    }
+
+    private function defaultSector() : string
+    {
+        return 'default-sector-identifier';
     }
 
     private function hashPairwise(string $localSubject, string $sector, string $salt) : string
@@ -70,8 +72,13 @@ final readonly class SubjectIdentifier
         return 'default-pairwise-salt';
     }
 
-    private function defaultSector() : string
+    /**
+     * Validates a sector identifier for pairwise subjects.
+     */
+    public function isValidSectorIdentifier(string $sectorIdentifier) : bool
     {
-        return 'default-sector-identifier';
+        $parsed = parse_url($sectorIdentifier);
+
+        return isset($parsed['scheme']) && isset($parsed['host']);
     }
 }

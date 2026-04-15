@@ -18,14 +18,33 @@ use Avax\Container\DI\Capabilities\Runtime\ServicePool;
  */
 final readonly class RuntimeAssembly
 {
+    public ServiceResolver  $resolver;
+    public CompileContainer $compiler;
+    public ResolutionPolicy $policy;
+    public FunctionCaller   $caller;
+    public ManageScopes     $scopes;
+    public ServicePool      $servicePool;
+    public ScopeStore       $scopeStore;
+    public ServiceRegistry  $registrations;
+
     public function __construct(
-        public ServiceRegistry  $registrations,
-        public ScopeStore       $scopeStore,
-        public ServicePool      $servicePool,
-        public ManageScopes     $scopes,
-        public FunctionCaller   $caller,
-        public ResolutionPolicy $policy,
-        public CompileContainer $compiler,
-        public ServiceResolver  $resolver
-    ) {}
+        ServiceRegistry  $registrations,
+        ScopeStore       $scopeStore,
+        ServicePool      $servicePool,
+        ManageScopes     $scopes,
+        FunctionCaller   $caller,
+        ResolutionPolicy $policy,
+        CompileContainer $compiler,
+        ServiceResolver  $resolver
+    )
+    {
+        $this->registrations = $registrations;
+        $this->scopeStore    = $scopeStore;
+        $this->servicePool   = $servicePool;
+        $this->scopes        = $scopes;
+        $this->caller        = $caller;
+        $this->policy        = $policy;
+        $this->compiler      = $compiler;
+        $this->resolver      = $resolver;
+    }
 }

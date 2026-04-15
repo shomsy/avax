@@ -25,7 +25,10 @@ final class ConnectionManager
     private array $connections = [];
 
     /** @var array<string, ConnectionPool> A memory bank for "Shared Library" (Pool) setups. */
-    private array $pools = [];
+    private array                  $pools = [];
+    private ExecutionScope|null    $scope = null;
+    private readonly EventBus|null $eventBus;
+    private readonly array         $config;
 
     /**
      * @param array<string, mixed> $config   The master Settings Book containing details for all connections.
@@ -35,12 +38,15 @@ final class ConnectionManager
      * @throws RandomException
      */
     public function __construct(
-        private readonly array         $config,
-        private readonly EventBus|null $eventBus = null,
-        private ExecutionScope|null    $scope = null
+        array               $config,
+        EventBus|null       $eventBus = null,
+        ExecutionScope|null $scope = null
     )
     {
-        $this->scope ??= ExecutionScope::fresh();
+        $this->config   = $config;
+        $this->eventBus = $eventBus;
+        $this->scope    = $scope;
+        $this->scope    ??= ExecutionScope::fresh();
     }
 
     /**

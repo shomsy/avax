@@ -19,19 +19,19 @@ final class CleanupExpiredMfaChallengesTest extends TestCase
     {
         $store = new InMemoryMfaChallengeStore();
         $store->issue(record: new MfaChallengeRecord(
-            challengeId: 'expired',
-            userId     : new UserId(value: 1),
-            purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : new DateTimeImmutable(datetime: '-10 minutes'),
-            expiresAt  : new DateTimeImmutable(datetime: '-5 minutes')
-        ));
+                                  challengeId: 'expired',
+                                  userId     : new UserId(value: 1),
+                                  purpose    : MfaChallengePurpose::LOGIN,
+                                  createdAt  : new DateTimeImmutable(datetime: '-10 minutes'),
+                                  expiresAt  : new DateTimeImmutable(datetime: '-5 minutes')
+                              ));
         $store->issue(record: new MfaChallengeRecord(
-            challengeId: 'active',
-            userId     : new UserId(value: 1),
-            purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : new DateTimeImmutable(),
-            expiresAt  : new DateTimeImmutable(datetime: '+5 minutes')
-        ));
+                                  challengeId: 'active',
+                                  userId     : new UserId(value: 1),
+                                  purpose    : MfaChallengePurpose::LOGIN,
+                                  createdAt  : new DateTimeImmutable(),
+                                  expiresAt  : new DateTimeImmutable(datetime: '+5 minutes')
+                              ));
 
         $removed = (new CleanupExpiredMfaChallenges(challengeStore: $store, clock: new Clock()))->execute();
 

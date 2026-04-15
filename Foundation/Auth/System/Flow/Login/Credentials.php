@@ -13,10 +13,21 @@ use SensitiveParameter;
  */
 final readonly class Credentials
 {
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    public string      $password;
+    public string      $identifier;
+
     public function __construct(
-        public string                            $identifier, // email or username
-        #[SensitiveParameter] public string      $password,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
-    ) {}
+        string                            $identifier, // email or username
+        #[SensitiveParameter] string      $password,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $this->identifier = $identifier;
+        $this->password   = $password;
+        $this->ipAddress  = $ipAddress;
+        $this->userAgent  = $userAgent;
+    }
 }

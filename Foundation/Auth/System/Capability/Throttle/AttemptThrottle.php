@@ -12,13 +12,23 @@ use InvalidArgumentException;
  */
 final readonly class AttemptThrottle
 {
+    private int                           $decaySeconds;
+    private int                           $maxAttempts;
+    private Clock                         $clock;
+    private AttemptThrottleStoreInterface $store;
+
     public function __construct(
-        private AttemptThrottleStoreInterface $store,
-        private Clock                         $clock,
-        private int                           $maxAttempts = 5,
-        private int                           $decaySeconds = 900
+        AttemptThrottleStoreInterface $store,
+        Clock                         $clock,
+        int|null                      $maxAttempts = null,
+        int                           $decaySeconds = 900
     )
     {
+        $maxAttempts        ??= 5;
+        $this->store        = $store;
+        $this->clock        = $clock;
+        $this->maxAttempts  = $maxAttempts;
+        $this->decaySeconds = $decaySeconds;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
         }
@@ -50,13 +60,13 @@ final readonly class AttemptThrottle
         throw new AttemptThrottleExceeded(retryAfter: max(0, $this->decaySeconds - $elapsed));
     }
 
-    public function recordAttempt(string $key) : void
-    {
-        $this->store->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
-    }
-
     public function reset(string $key) : void
     {
         $this->store->reset(key: $key);
+    }
+
+    public function recordAttempt(string $key) : void
+    {
+        $this->store->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
     }
 }

@@ -63,6 +63,11 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
     }
 
+    private function hash(#[SensitiveParameter] string $plainCode) : string
+    {
+        return hash('sha256', $plainCode);
+    }
+
     public function find(#[SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
     {
         $codeId = $this->hashToCodeId[$this->hash(plainCode: $plainCode)] ?? null;
@@ -121,10 +126,5 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
 
         return $removed;
-    }
-
-    private function hash(#[SensitiveParameter] string $plainCode) : string
-    {
-        return hash('sha256', $plainCode);
     }
 }

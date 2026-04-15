@@ -30,8 +30,8 @@ Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider
 
 ## Mapping
 
-| Old import | New import | Owner |
-|---|---|---|
+| Old import                                           | New import                                                 | Owner                        |
+|------------------------------------------------------|------------------------------------------------------------|------------------------------|
 | `Avax\Auth\System\Configuration\AuthServiceProvider` | `Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider` | optional integration surface |
 
 ## Why No BC Shim

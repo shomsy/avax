@@ -17,11 +17,20 @@ use ReflectionFunction;
  */
 final readonly class ServiceCompiler
 {
+    private MethodEmitter          $emitter;
+    private CreateServiceBlueprint $blueprints;
+    private ServiceRegistry        $registrations;
+
     public function __construct(
-        private ServiceRegistry        $registrations,
-        private CreateServiceBlueprint $blueprints,
-        private MethodEmitter          $emitter = new MethodEmitter
-    ) {}
+        ServiceRegistry        $registrations,
+        CreateServiceBlueprint $blueprints,
+        MethodEmitter          $emitter = new MethodEmitter
+    )
+    {
+        $this->registrations = $registrations;
+        $this->blueprints    = $blueprints;
+        $this->emitter       = $emitter;
+    }
 
     /**
      * @param string $serviceId

@@ -9,16 +9,34 @@ use SensitiveParameter;
 
 final readonly class ExchangeClientCredentialsData
 {
+    public OAuthSenderConstraint|null $senderConstraint;
+    public string|null                $userAgent;
+    public string|null                $ipAddress;
+    public string|null                $audience;
+    public array                      $scopes;
+    public string|null                $clientSecret;
+    public string                     $clientId;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        public string                             $clientId,
-        #[SensitiveParameter] public string|null  $clientSecret = null,
-        public array                              $scopes = [],
-        public string|null                        $audience = null,
-        #[\SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                        $userAgent = null,
-        public OAuthSenderConstraint|null         $senderConstraint = null
-    ) {}
+        string                             $clientId,
+        #[SensitiveParameter] string|null  $clientSecret = null,
+        array|null                         $scopes = null,
+        string|null                        $audience = null,
+        #[\SensitiveParameter] string|null $ipAddress = null,
+        string|null                        $userAgent = null,
+        OAuthSenderConstraint|null         $senderConstraint = null
+    )
+    {
+        $scopes                 ??= [];
+        $this->clientId         = $clientId;
+        $this->clientSecret     = $clientSecret;
+        $this->scopes           = $scopes;
+        $this->audience         = $audience;
+        $this->ipAddress        = $ipAddress;
+        $this->userAgent        = $userAgent;
+        $this->senderConstraint = $senderConstraint;
+    }
 }

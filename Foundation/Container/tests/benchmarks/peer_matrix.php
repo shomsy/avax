@@ -224,10 +224,10 @@ if (is_string($outputPath) && $outputPath !== '') {
 if ($failOnRegression && ($payload['parityIssues'] !== [] || $payload['regressions'] !== [])) {
     throw new RuntimeException(
         message: "Peer benchmark matrix failed:\n- "
-        . implode("\n- ", array_merge($payload['parityIssues'], array_map(
-            static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
-            $payload['regressions']
-        )))
+                 . implode("\n- ", array_merge($payload['parityIssues'], array_map(
+                   static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
+                   $payload['regressions']
+               )))
     );
 }
 

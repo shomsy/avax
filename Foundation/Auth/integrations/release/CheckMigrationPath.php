@@ -24,9 +24,9 @@ final readonly class CheckMigrationPath
     public function execute(string $repositoryRoot) : array
     {
         $legacyReferences = $this->findLegacyReferences(repositoryRoot: $repositoryRoot);
-        $migrationGuide = $repositoryRoot . '/docs/upgrade-migration-guide.md';
-        $upgradeTest = $repositoryRoot . '/tests/System/ProductBoundaryTest.php';
-        $notes = [];
+        $migrationGuide   = $repositoryRoot . '/docs/upgrade-migration-guide.md';
+        $upgradeTest      = $repositoryRoot . '/tests/System/ProductBoundaryTest.php';
+        $notes            = [];
 
         if (! is_file($migrationGuide)) {
             $notes[] = 'Migration guide is missing.';
@@ -41,13 +41,13 @@ final readonly class CheckMigrationPath
         }
 
         return [
-            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'clean' => $legacyReferences === [] && is_file($migrationGuide) && is_file($upgradeTest),
-            'current_namespace' => 'Avax\\Auth\\System\\',
-            'migration_documented' => is_file($migrationGuide),
-            'automated_upgrade_test' => is_file($upgradeTest),
+            'package'                     => $this->detectPackageName(repositoryRoot: $repositoryRoot),
+            'clean'                       => $legacyReferences === [] && is_file($migrationGuide) && is_file($upgradeTest),
+            'current_namespace'           => 'Avax\\Auth\\System\\',
+            'migration_documented'        => is_file($migrationGuide),
+            'automated_upgrade_test'      => is_file($upgradeTest),
             'legacy_namespace_references' => $legacyReferences,
-            'notes' => $notes,
+            'notes'                       => $notes,
         ];
     }
 
@@ -56,9 +56,9 @@ final readonly class CheckMigrationPath
      */
     private function findLegacyReferences(string $repositoryRoot) : array
     {
-        $matches = [];
+        $matches  = [];
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator($repositoryRoot, RecursiveDirectoryIterator::SKIP_DOTS)
+            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: RecursiveDirectoryIterator::SKIP_DOTS)
         );
 
         /** @var SplFileInfo $file */
@@ -111,7 +111,7 @@ final readonly class CheckMigrationPath
             return 'unknown';
         }
 
-        $json = file_get_contents($composerJsonPath);
+        $json    = file_get_contents($composerJsonPath);
         $decoded = is_string($json) ? json_decode($json, true) : null;
 
         return is_array($decoded) && is_string($decoded['name'] ?? null)

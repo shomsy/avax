@@ -17,9 +17,14 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_METHOD)]
 class IsValidTableName extends AbstractRule
 {
+    private readonly string $message;
+
     public function __construct(
-        private readonly string $message = 'The :attribute must be a valid table name (alphanumeric, underscore, optional schema dot).'
-    ) {}
+        string $message = 'The :attribute must be a valid table name (alphanumeric, underscore, optional schema dot).'
+    )
+    {
+        $this->message = $message;
+    }
 
     public function validate(mixed $value, array $data, string $property) : void
     {

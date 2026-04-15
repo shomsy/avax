@@ -6,14 +6,28 @@ namespace Avax\Auth\System\Flow\Scim\Bulk;
 
 final readonly class ScimBulkOperationResult
 {
+    public string|null $bulkId;
+    public array       $response;
+    public int         $status;
+    public string      $path;
+    public string      $method;
+
     /**
      * @param array<string, mixed> $response
      */
     public function __construct(
-        public string $method,
-        public string $path,
-        public int $status,
-        public array $response = [],
-        public string|null $bulkId = null
-    ) {}
+        string      $method,
+        string      $path,
+        int         $status,
+        array|null  $response = null,
+        string|null $bulkId = null
+    )
+    {
+        $response       ??= [];
+        $this->method   = $method;
+        $this->path     = $path;
+        $this->status   = $status;
+        $this->response = $response;
+        $this->bulkId   = $bulkId;
+    }
 }

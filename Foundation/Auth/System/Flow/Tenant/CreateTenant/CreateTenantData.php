@@ -6,9 +6,18 @@ namespace Avax\Auth\System\Flow\Tenant\CreateTenant;
 
 final readonly class CreateTenantData
 {
+    public int    $ownerUserId;
+    public string $name;
+    public string $slug;
+
     public function __construct(
-        public string $slug,
-        public string $name,
-        public int $ownerUserId
-    ) {}
+        string $slug,
+        string $name,
+        int    $ownerUserId
+    )
+    {
+        $this->slug        = $slug;
+        $this->name        = $name;
+        $this->ownerUserId = $ownerUserId;
+    }
 }

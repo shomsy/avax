@@ -15,11 +15,20 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class SuspendTenantMember
 {
+    private Clock                $clock;
+    private AuditLogInterface    $auditLog;
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        TenantStoreInterface $tenantStore,
+        AuditLogInterface    $auditLog,
+        Clock                $clock
+    )
+    {
+        $this->tenantStore = $tenantStore;
+        $this->auditLog    = $auditLog;
+        $this->clock       = $clock;
+    }
 
     public function execute(SuspendTenantMemberData $data) : TenantMember
     {
@@ -40,22 +49,22 @@ final readonly class SuspendTenantMember
         }
 
         $suspended = new TenantMember(
-            tenantId : $member->tenantId,
-            userId   : $member->userId,
-            role     : $member->role,
-            state    : TenantMemberState::SUSPENDED,
-            joinedAt : $member->joinedAt
+            tenantId: $member->tenantId,
+            userId  : $member->userId,
+            role    : $member->role,
+            state   : TenantMemberState::SUSPENDED,
+            joinedAt: $member->joinedAt
         );
         $this->tenantStore->saveMember(member: $suspended);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.tenant.member.suspended',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'tenant_id' => $tenant->tenantId,
-                'tenant_slug' => $tenant->slug,
-                'user_id' => $member->userId,
-            ]
-        ));
+                                           name      : 'auth.tenant.member.suspended',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'tenant_id'   => $tenant->tenantId,
+                                                           'tenant_slug' => $tenant->slug,
+                                                           'user_id'     => $member->userId,
+                                                       ]
+                                       ));
 
         return $suspended;
     }

@@ -10,6 +10,8 @@ namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
 final readonly class ParseJsonBody
 {
     /**
+     * @param string $content
+     *
      * @return array|object|null
      */
     public function execute(string $content) : array|object|null

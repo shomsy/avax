@@ -16,10 +16,11 @@ odgovarajući folder unutar Foundation/HTTP/Request).
 
 - **Flow**: `IncomingHttp`
 - **Subflow**: `IncomingRequest`
-- **State Owner**: `Request` (tanji immutable objekt)
+- **State Owner**: `ServerRequest` (puna PSR-7 implementacija)
+- **Legacy Bridge**: `Request` (podržava `input()`, `all()` za compatibility)
 - **Shared State/Capability Owners**:
     - `RequestHeaders` (rukovodi `list<string>` tipovima header-a)
-    - `RequestedInputs` (DSL-only accessor nad inputom)
+    - `RequestedInputs` (DSL-only accessor nad inputom: `bool()`, `int()`, `text()`, `list()`, `float()`)
     - `RequestBody` i `ParsedBody` (striknto razdvojeni stream status vs. interpretacija)
     - `RequestCookies`, `RequestAttributes`, `UploadedFiles`, `RequestSession`.
 - **Action Owners**:

@@ -14,10 +14,10 @@ use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestSession\RequestSession;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestTarget\ReadRequestTarget;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFiles;
-use Avax\HTTP\URI\UriBuilder;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\GuardUploadedFiles;
 use SensitiveParameter;
 
 /**
@@ -38,13 +38,13 @@ final readonly class ServerRequest implements ServerRequestInterface
     private array $serverParams;
     private RequestBody $body;
     private RequestHeaders $headers;
-    private UriBuilder $uri;
+    private UriInterface $uri;
     private string $method;
 
     public function __construct(
         RequestBody $body,
         string|null $method = null,
-        UriBuilder|null $uri = null,
+        UriInterface|null $uri = null,
         #[SensitiveParameter] RequestHeaders|null $headers = null,
         array|null $serverParams = null,
         string|null $requestTarget = null,
@@ -57,7 +57,7 @@ final readonly class ServerRequest implements ServerRequestInterface
         string $protocolVersion = '1.1'
     ) {
         $method ??= 'GET';
-        $uri ??= new UriBuilder(scheme: '');
+        $uri ??= new \Avax\HTTP\URI\UriBuilder(scheme: '');
         $headers ??= new RequestHeaders();
         $serverParams ??= [];
         $cookies ??= new RequestCookies();
@@ -232,6 +232,8 @@ final readonly class ServerRequest implements ServerRequestInterface
 
     public function withUploadedFiles(array $uploadedFiles): self
     {
+        (new GuardUploadedFiles())->execute(files: $uploadedFiles);
+
         return $this->mutate(data: ['uploadedFiles' => $this->uploadedFiles->with(files: $uploadedFiles)]);
     }
 
@@ -274,7 +276,7 @@ final readonly class ServerRequest implements ServerRequestInterface
 
     /** *** Internal Mutation *** */
 
-    public function session(): RequestSession|null
+    public function requestSession(): RequestSession|null
     {
         return $this->session;
     }

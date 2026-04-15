@@ -32,8 +32,20 @@ final readonly class ResolveClientAddress
             return $remoteAddr;
         }
 
-        // Return the first address in the chain (closest to the client)
-        // Note: Production implementations might want to strip trusted proxies from the RIGHT.
-        return $forwarded[0];
+        // Traverse the chain from right to left, stripping trusted proxies.
+        // The first non-trusted IP we encounter is the real client IP.
+        $clientAddress = $remoteAddr;
+        $ips           = array_reverse($forwarded);
+
+        foreach ($ips as $ip) {
+            if ($this->proxyPolicy->isTrusted(ip: $ip)) {
+                $clientAddress = $ip; // Still a trusted proxy, keep moving left
+                continue;
+            }
+
+            return $ip; // Found the real client
+        }
+
+        return $clientAddress;
     }
 }

@@ -16,6 +16,7 @@ final readonly class ParseJsonBody
      */
     public function execute(string $content) : array|object|null
     {
+        $content = trim($content);
         if ($content === '') {
             return null;
         }
@@ -23,7 +24,7 @@ final readonly class ParseJsonBody
         try {
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
-            return is_array($data) || is_object($data) ? $data : null;
+            return (is_array($data) || is_object($data)) ? $data : null;
         } catch (\JsonException) {
             return null;
         }

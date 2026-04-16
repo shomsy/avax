@@ -69,6 +69,7 @@ final readonly class RevokeSession
         if ($context->sessionId() === $sessionId) {
             $this->identity->clear(context: $context);
             $this->currentAuthentication->clear();
+
         }
 
         $this->auditLog->record(event: new AuditEvent(

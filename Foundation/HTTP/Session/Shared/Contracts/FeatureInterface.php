@@ -40,10 +40,7 @@ interface FeatureInterface
      */
     public function getName() : string;
 
-    /**
-     * Check if feature is enabled.
-     *
-     * @return bool True if feature is active.
-     */
-    public function isEnabled() : bool;
+    public bool $enabled {
+        get;
+    }
 }

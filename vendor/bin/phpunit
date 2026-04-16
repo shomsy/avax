@@ -12,12 +12,12 @@
 
 namespace Composer;
 
-$GLOBALS['_composer_bin_dir']                = __DIR__;
-$GLOBALS['_composer_autoload_path']          = __DIR__ . '/..' . '/autoload.php';
-$GLOBALS['__PHPUNIT_ISOLATION_EXCLUDE_LIST'] = $GLOBALS['__PHPUNIT_ISOLATION_BLACKLIST'] = [realpath(__DIR__ . '/..' . '/phpunit/phpunit/phpunit')];
+$GLOBALS['_composer_bin_dir'] = __DIR__;
+$GLOBALS['_composer_autoload_path'] = __DIR__ . '/..'.'/autoload.php';
+$GLOBALS['__PHPUNIT_ISOLATION_EXCLUDE_LIST'] = $GLOBALS['__PHPUNIT_ISOLATION_BLACKLIST'] = array(realpath(__DIR__ . '/..'.'/phpunit/phpunit/phpunit'));
 
 if (PHP_VERSION_ID < 80000) {
-    if (! class_exists('Composer\BinProxyWrapper')) {
+    if (!class_exists('Composer\BinProxyWrapper')) {
         /**
          * @internal
          */
@@ -27,19 +27,19 @@ if (PHP_VERSION_ID < 80000) {
             private $position;
             private $realpath;
 
-            public function stream_open($path, $mode, $options, &$opened_path) : bool
+            public function stream_open($path, $mode, $options, &$opened_path)
             {
                 // get rid of phpvfscomposer:// prefix for __FILE__ & __DIR__ resolution
-                $opened_path    = substr($path, 17);
+                $opened_path = substr($path, 17);
                 $this->realpath = realpath($opened_path) ?: $opened_path;
-                $opened_path    = 'phpvfscomposer://' . $this->realpath;
-                $this->handle   = fopen($this->realpath, $mode);
+                $opened_path = 'phpvfscomposer://'.$this->realpath;
+                $this->handle = fopen($this->realpath, $mode);
                 $this->position = 0;
 
                 return (bool) $this->handle;
             }
 
-            public function stream_read($count) : array|false|string
+            public function stream_read($count)
             {
                 $data = fread($this->handle, $count);
 
@@ -59,21 +59,20 @@ if (PHP_VERSION_ID < 80000) {
                 return $this->handle;
             }
 
-            public function stream_close() : void
+            public function stream_close()
             {
                 fclose($this->handle);
             }
 
-            public function stream_lock($operation) : bool
+            public function stream_lock($operation)
             {
                 return $operation ? flock($this->handle, $operation) : true;
             }
 
-            public function stream_seek($offset, $whence) : bool
+            public function stream_seek($offset, $whence)
             {
                 if (0 === fseek($this->handle, $offset, $whence)) {
                     $this->position = ftell($this->handle);
-
                     return true;
                 }
 
@@ -85,22 +84,22 @@ if (PHP_VERSION_ID < 80000) {
                 return $this->position;
             }
 
-            public function stream_eof() : bool
+            public function stream_eof()
             {
                 return feof($this->handle);
             }
 
-            public function stream_stat() : array
+            public function stream_stat()
             {
-                return [];
+                return array();
             }
 
-            public function stream_set_option($option, $arg1, $arg2) : true
+            public function stream_set_option($option, $arg1, $arg2)
             {
                 return true;
             }
 
-            public function url_stat($path, $flags) : false|array
+            public function url_stat($path, $flags)
             {
                 $path = substr($path, 17);
                 if (file_exists($path)) {
@@ -116,8 +115,8 @@ if (PHP_VERSION_ID < 80000) {
         (function_exists('stream_get_wrappers') && in_array('phpvfscomposer', stream_get_wrappers(), true))
         || (function_exists('stream_wrapper_register') && stream_wrapper_register('phpvfscomposer', 'Composer\BinProxyWrapper'))
     ) {
-        return include("phpvfscomposer://" . __DIR__ . '/..' . '/phpunit/phpunit/phpunit');
+        return include("phpvfscomposer://" . __DIR__ . '/..'.'/phpunit/phpunit/phpunit');
     }
 }
 
-return include __DIR__ . '/..' . '/phpunit/phpunit/phpunit';
+return include __DIR__ . '/..'.'/phpunit/phpunit/phpunit';

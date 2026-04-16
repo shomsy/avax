@@ -15,6 +15,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 /**
@@ -54,7 +55,7 @@ final readonly class RefreshAuthentication
 
     /**
      * @throws RefreshAuthenticationFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute(RefreshAuthenticationRequest $request) : AuthenticationResult
     {

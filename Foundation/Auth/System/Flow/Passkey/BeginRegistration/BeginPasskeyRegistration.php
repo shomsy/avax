@@ -17,6 +17,7 @@ use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Flow\Passkey\PasskeyRegistration;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -57,7 +58,7 @@ final readonly class BeginPasskeyRegistration
 
     /**
      * @throws PasskeyOperationFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      * @throws RandomException
      * @throws Unauthenticated

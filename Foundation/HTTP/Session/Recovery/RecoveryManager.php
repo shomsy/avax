@@ -154,7 +154,7 @@ final readonly class RecoveryManager
      */
     public function isInTransaction() : bool
     {
-        return $this->recovery->isInTransaction();
+        return $this->recovery;
     }
 
     /**

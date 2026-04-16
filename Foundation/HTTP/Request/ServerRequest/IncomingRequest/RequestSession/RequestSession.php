@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestSession;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
 
 /**
  * Capability Owner: Manages the session data attached to a request.
@@ -48,5 +48,19 @@ final readonly class RequestSession
     public function has(string $key) : bool
     {
         return isset($this->data[$key]);
+    }
+
+    public function put(string $key, mixed $value) : self
+    {
+        $newData = $this->data;
+        $newData[$key] = $value;
+        return new self(data: $newData, id: $this->id);
+    }
+
+    public function forget(string $key) : self
+    {
+        $newData = $this->data;
+        unset($newData[$key]);
+        return new self(data: $newData, id: $this->id);
     }
 }

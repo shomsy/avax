@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
 
 /**
  * Public Entry Point: Static factory for creating ServerRequest instances.
@@ -16,6 +16,6 @@ final readonly class PublicEntryPointRequest
      */
     public static function fromIncomingHttp() : ServerRequest
     {
-        return (new CreateRequestFromIncomingHttp())->execute();
+        return CreateRequestFromIncomingHttp::capture();
     }
 }

@@ -60,11 +60,11 @@ class RouterBootstrapConcurrencyTest extends TestCase
      */
     public function is_booted_returns_correct_state() : void
     {
-        $this->assertFalse(condition: $this->bootstrapState->isBooted());
+        $this->assertFalse(condition: $this->bootstrapState);
 
         $this->bootstrapState->ensureNotBooted();
 
-        $this->assertTrue(condition: $this->bootstrapState->isBooted());
+        $this->assertTrue(condition: $this->bootstrapState);
     }
 
     /**
@@ -73,10 +73,10 @@ class RouterBootstrapConcurrencyTest extends TestCase
     public function reset_sets_booted_state_to_false() : void
     {
         $this->bootstrapState->ensureNotBooted();
-        $this->assertTrue(condition: $this->bootstrapState->isBooted());
+        $this->assertTrue(condition: $this->bootstrapState);
 
         $this->bootstrapState->reset();
-        $this->assertFalse(condition: $this->bootstrapState->isBooted());
+        $this->assertFalse(condition: $this->bootstrapState);
     }
 
     /**
@@ -89,18 +89,18 @@ class RouterBootstrapConcurrencyTest extends TestCase
 
         // Bootstrap first instance
         $state1->ensureNotBooted();
-        $this->assertTrue(condition: $state1->isBooted());
-        $this->assertFalse(condition: $state2->isBooted());
+        $this->assertTrue(condition: $state1->booted);
+        $this->assertFalse(condition: $state2->booted);
 
         // Bootstrap second instance
         $state2->ensureNotBooted();
-        $this->assertTrue(condition: $state1->isBooted());
-        $this->assertTrue(condition: $state2->isBooted());
+        $this->assertTrue(condition: $state1->booted);
+        $this->assertTrue(condition: $state2->booted);
 
         // Reset first instance
         $state1->reset();
-        $this->assertFalse(condition: $state1->isBooted());
-        $this->assertTrue(condition: $state2->isBooted());
+        $this->assertFalse(condition: $state1->booted);
+        $this->assertTrue(condition: $state2->booted);
     }
 
     protected function setUp() : void

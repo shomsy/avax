@@ -85,7 +85,7 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
         if ($this->identifierType === 'ip') {
             // Extract IP from PSR-7 ServerRequestInterface
             if ($request instanceof ServerRequestInterface) {
-                $serverParams = $request->getServerParams();
+                $serverParams = $request->serverParams;
 
                 return $serverParams['REMOTE_ADDR'] ??
                     $serverParams['HTTP_X_FORWARDED_FOR'] ??

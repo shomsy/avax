@@ -19,7 +19,14 @@ final class RouteRegistry
      */
     private array $bufferedRoutes = [];
 
-    private mixed $fallback = null;
+    public mixed $fallback = null {
+        get {
+            return $this->fallback;
+        }
+        set {
+            $this->fallback = $value;
+        }
+    }
 
     /**
      * Adds a builder to the buffered list.
@@ -40,22 +47,6 @@ final class RouteRegistry
         $this->bufferedRoutes = [];
 
         return $routes;
-    }
-
-    /**
-     * Gets the current fallback handler.
-     */
-    public function getFallback() : mixed
-    {
-        return $this->fallback;
-    }
-
-    /**
-     * Sets the fallback handler.
-     */
-    public function setFallback(mixed $handler) : void
-    {
-        $this->fallback = $handler;
     }
 
     /**

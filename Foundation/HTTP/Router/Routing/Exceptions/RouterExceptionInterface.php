@@ -23,15 +23,9 @@ interface RouterExceptionInterface extends Throwable
      */
     public function getHttpStatusCode() : int;
 
-    /**
-     * Get additional context information for debugging.
-     *
-     * Returns structured context data that can be used for logging,
-     * monitoring, and error reporting.
-     *
-     * @return array<string, mixed>
-     */
-    public function getContext() : array;
+    public array $context {
+        get;
+    }
 
     /**
      * Check if this exception is retryable.

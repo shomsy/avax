@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Session\NativeSessionStore;
 use Avax\Auth\System\Flow\Session\SessionStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Exception;
 use SensitiveParameter;
@@ -67,7 +68,7 @@ final class SessionIdentity implements SessionIdentityInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function issue(
         int                    $userId,
@@ -99,7 +100,7 @@ final class SessionIdentity implements SessionIdentityInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function captureCurrentSession(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
     {
@@ -167,7 +168,7 @@ final class SessionIdentity implements SessionIdentityInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     private function isSessionActive() : bool
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
 use SensitiveParameter;
 

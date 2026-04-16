@@ -94,7 +94,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $this->kernel->handle(request: $request);
 
         // Then: Returns 429 Too Many Requests
-        $this->assertEquals(expected: 429, actual: $response->getStatusCode());
+        $this->assertEquals(expected: 429, actual: $response->statusCode);
         $this->assertStringContains('error', (string) $response->getBody());
     }
 
@@ -148,7 +148,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: Returns 403 without reaching other middleware
-        $this->assertEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertEquals(expected: 403, actual: $response->statusCode);
 
         // Logger should not be called (short-circuited)
         $this->logger->expects(invocationRule: $this->never())->method(constraint: 'info');
@@ -168,7 +168,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $this->kernel->handle(request: $request);
 
         // Then: Returns 500 error response
-        $this->assertEquals(expected: 500, actual: $response->getStatusCode());
+        $this->assertEquals(expected: 500, actual: $response->statusCode);
         $this->assertStringContains('application/json', $response->getHeaderLine(name: 'Content-Type'));
 
         $body = json_decode((string) $response->getBody(), true);
@@ -197,7 +197,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: ServerRequest proceeds without CSRF validation
-        $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertNotEquals(expected: 403, actual: $response->statusCode);
     }
 
     /**
@@ -225,7 +225,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: Returns 403 Forbidden
-        $this->assertEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertEquals(expected: 403, actual: $response->statusCode);
         $this->assertStringContains('CSRF token verification failed', (string) $response->getBody());
     }
 
@@ -253,7 +253,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: ServerRequest proceeds (doesn't return 403)
-        $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertNotEquals(expected: 403, actual: $response->statusCode);
     }
 
     /**
@@ -281,7 +281,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: ServerRequest proceeds
-        $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertNotEquals(expected: 403, actual: $response->statusCode);
     }
 
     /**
@@ -309,7 +309,7 @@ class HttpKernelIntegrationTest extends TestCase
         $response = $kernel->handle(request: $request);
 
         // Then: ServerRequest proceeds
-        $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
+        $this->assertNotEquals(expected: 403, actual: $response->statusCode);
     }
 
     protected function setUp() : void

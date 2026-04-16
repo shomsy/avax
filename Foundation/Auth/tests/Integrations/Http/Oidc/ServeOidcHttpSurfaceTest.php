@@ -24,6 +24,7 @@ use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class ServeOidcHttpSurfaceTest extends TestCase
 {
@@ -407,7 +408,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
     /**
      * @param array<string, mixed> $claims
      */
-    private function signRs256Jwt(array $claims, #[\SensitiveParameter] string $privateKeyPem) : string
+    private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
         $header    = $this->base64UrlEncode(value: json_encode(['typ' => 'JWT', 'alg' => 'RS256'], JSON_THROW_ON_ERROR));
         $payload   = $this->base64UrlEncode(value: json_encode($claims, JSON_THROW_ON_ERROR));

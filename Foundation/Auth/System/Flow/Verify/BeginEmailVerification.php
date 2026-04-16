@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 /**
@@ -37,7 +38,7 @@ final readonly class BeginEmailVerification
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute(BeginEmailVerificationData $data) : EmailVerificationChallenge
     {

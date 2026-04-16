@@ -73,7 +73,11 @@ final class AsyncEventDispatcher
     private int                  $batchSize = 100;
     private readonly object|null $redis;
     private readonly string|null $queuePath;
-    private string|null          $mode      = null;
+    private string|null          $mode      = null {
+        get {
+            return $this->mode;
+        }
+    }
 
     /**
      * AsyncEventDispatcher Constructor.
@@ -428,16 +432,6 @@ final class AsyncEventDispatcher
         $this->batchSize = $size;
 
         return $this;
-    }
-
-    /**
-     * Get current mode.
-     *
-     * @return string Mode.
-     */
-    public function getMode() : string
-    {
-        return $this->mode;
     }
 
     /**

@@ -78,10 +78,9 @@ trait Psr7UriTrait
 
     public function withQuery(string $query) : UriInterface
     {
-        $clone              = clone $this;
-        $clone->queryParams = new QueryParams(queryString: $this->validateQuery(query: $query));
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "queryParams" => new QueryParams(queryString: $this->validateQuery(query: $query))
+        ]);
     }
 
     public function withFragment(string $fragment) : UriInterface

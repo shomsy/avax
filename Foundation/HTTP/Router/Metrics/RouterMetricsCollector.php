@@ -12,7 +12,11 @@ namespace Avax\HTTP\Router\Metrics;
  */
 final class RouterMetricsCollector
 {
-    private array $metrics = [];
+    private array $metrics = [] {
+        get {
+            return $this->metrics;
+        }
+    }
     private array $alertThresholds;
 
     public function __construct(array $alertConfig = [])
@@ -164,14 +168,6 @@ final class RouterMetricsCollector
     }
 
     // Internal metric collection methods
-
-    /**
-     * Get all current metrics for export.
-     */
-    public function getMetrics() : array
-    {
-        return $this->metrics;
-    }
 
     /**
      * Export metrics in Prometheus format.

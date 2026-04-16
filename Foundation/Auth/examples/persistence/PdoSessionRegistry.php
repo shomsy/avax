@@ -7,6 +7,7 @@ namespace Avax\Auth\Examples\Persistence;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\User\UserId;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PDO;
 use SensitiveParameter;
@@ -37,11 +38,11 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @param array<string, mixed> $row
      *
-     * @throws \DateMalformedStringException
-     * @throws \DateMalformedStringException
-     * @throws \DateMalformedStringException
-     * @throws \DateMalformedStringException
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     private function hydrate(array $row) : SessionRecord
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
 /**
  * Capability Owner: Manages the interpreted/parsed request body.

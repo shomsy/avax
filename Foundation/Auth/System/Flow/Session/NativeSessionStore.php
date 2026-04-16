@@ -23,13 +23,16 @@ final class NativeSessionStore implements SessionStoreInterface
     public function regenerate() : string
     {
         $this->start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return session_id();
+        }
         if (! session_regenerate_id(delete_old_session: true)) {
-            throw new RuntimeException(message: 'Session ID regeneration failed.');
+            return session_id();
         }
 
         $sessionId = session_id();
 
-        if ($sessionId === false || $sessionId === '') {
+        if ($sessionId === false) {
             throw new RuntimeException(message: 'Session ID is unavailable after regeneration.');
         }
 
@@ -46,20 +49,34 @@ final class NativeSessionStore implements SessionStoreInterface
             return;
         }
 
-        session_set_cookie_params([
-                                      'secure'   => $this->cookieSettings->secure,
-                                      'httponly' => $this->cookieSettings->httpOnly,
-                                      'samesite' => $this->cookieSettings->sameSite,
-                                      'path'     => $this->cookieSettings->path,
-                                      'domain'   => $this->cookieSettings->domain,
-                                  ]);
+        if (headers_sent()) {
+            return;
+        }
 
-        session_start();
+        if (! headers_sent()) {
+            session_set_cookie_params([
+                                          'secure'   => $this->cookieSettings->secure,
+                                          'httponly' => $this->cookieSettings->httpOnly,
+                                          'samesite' => $this->cookieSettings->sameSite,
+                                          'path'     => $this->cookieSettings->path,
+                                          'domain'   => $this->cookieSettings->domain,
+                                      ]);
+        }
+
+        if (session_status() === PHP_SESSION_DISABLED) {
+            return;
+        }
+
+        @session_start();
     }
 
     public function id() : string|null
     {
         $this->start();
+
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return null;
+        }
 
         $sessionId = session_id();
 
@@ -93,25 +110,25 @@ final class NativeSessionStore implements SessionStoreInterface
 
         $useCookies = filter_var(ini_get('session.use_cookies'), FILTER_VALIDATE_BOOL);
 
-        if ($useCookies) {
+        if ($useCookies && session_status() === PHP_SESSION_ACTIVE) {
             $params      = session_get_cookie_params();
             $sessionName = session_name();
 
-            if ($sessionName === false) {
-                throw new RuntimeException(message: 'Session name is unavailable.');
+            if ($sessionName !== false) {
+                setcookie($sessionName, '', [
+                    'expires'  => time() - 42000,
+                    'path'     => $params['path'],
+                    'domain'   => $params['domain'],
+                    'secure'   => $params['secure'],
+                    'httponly' => $params['httponly'],
+                    'samesite' => $this->normalizeSameSite(sameSite: $params['samesite']),
+                ]);
             }
-
-            setcookie($sessionName, '', [
-                'expires'  => time() - 42000,
-                'path'     => $params['path'],
-                'domain'   => $params['domain'],
-                'secure'   => $params['secure'],
-                'httponly' => $params['httponly'],
-                'samesite' => $this->normalizeSameSite(sameSite: $params['samesite']),
-            ]);
         }
 
-        session_destroy();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
     }
 
     /**

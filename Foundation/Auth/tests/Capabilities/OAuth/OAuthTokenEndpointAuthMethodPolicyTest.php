@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\OAuth;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethodPolicy;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class OAuthTokenEndpointAuthMethodPolicyTest extends TestCase
@@ -50,7 +51,7 @@ final class OAuthTokenEndpointAuthMethodPolicyTest extends TestCase
     {
         $policy = new OAuthTokenEndpointAuthMethodPolicy();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $policy->resolve(
             type     : OAuthClientType::PUBLIC,

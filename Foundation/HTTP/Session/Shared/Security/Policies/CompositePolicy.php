@@ -42,9 +42,17 @@ final class CompositePolicy implements PolicyInterface
     /**
      * @var array<PolicyInterface> Child policies
      */
-    private array           $policies = [];
+    public array            $policies = [] {
+        get {
+            return $this->policies;
+        }
+    }
     private readonly string $name;
-    private string|null     $mode     = null;
+    private string|null     $mode     = null {
+        get {
+            return $this->mode;
+        }
+    }
 
     /**
      * CompositePolicy Constructor.
@@ -243,26 +251,6 @@ final class CompositePolicy implements PolicyInterface
         }
 
         // All policies failed, which is what we wanted (success)
-    }
-
-    /**
-     * Get child policies.
-     *
-     * @return array<PolicyInterface> Child policies.
-     */
-    public function getPolicies() : array
-    {
-        return $this->policies;
-    }
-
-    /**
-     * Get execution mode.
-     *
-     * @return string Mode (all|any|none).
-     */
-    public function getMode() : string
-    {
-        return $this->mode;
     }
 
     /**

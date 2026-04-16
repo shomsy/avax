@@ -8,6 +8,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate
@@ -33,7 +34,7 @@ class RequestRegressionTest extends TestCase
         return new Request(
             session      : null,
             serverParams : $serverParams,
-            uri          : new UriBuilder('http://localhost'),
+            uri          : new UriBuilder(scheme: 'http://localhost'),
             body         : new Stream(stream: fopen('php://temp', 'r+')),
             queryParams  : [],
             parsedBody   : [],
@@ -61,7 +62,7 @@ class RequestRegressionTest extends TestCase
     public function test_request_target_must_not_blindly_follow_uri_path_mutation() : void
     {
         $request = $this->createBlankOldRequest()->withRequestTarget(requestTarget: '/explicit-target');
-        $newUri  = new UriBuilder('http://example.com/new-path');
+        $newUri  = new UriBuilder(scheme: 'http://example.com/new-path');
 
         $requestWithNewUri = $request->withUri(uri: $newUri);
 
@@ -86,7 +87,7 @@ class RequestRegressionTest extends TestCase
 
     public function test_request_must_not_depend_on_trait_assembly_logic() : void
     {
-        $reflection = new \ReflectionClass(objectOrClass: Request::class);
+        $reflection = new ReflectionClass(objectOrClass: Request::class);
         $traits     = $reflection->getTraitNames();
 
         // The new ServerRequest should not be a junkyard of Traits.

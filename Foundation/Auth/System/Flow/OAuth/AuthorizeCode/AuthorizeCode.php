@@ -19,6 +19,7 @@ use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class AuthorizeCode
@@ -55,7 +56,7 @@ final readonly class AuthorizeCode
 
     /**
      * @throws OAuthAuthorizationFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
     {

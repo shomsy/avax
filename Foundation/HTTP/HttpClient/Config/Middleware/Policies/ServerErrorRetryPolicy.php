@@ -49,7 +49,7 @@ class ServerErrorRetryPolicy implements RetryPolicyInterface
     {
         // If there is an HTTP response, retry if the status code is in the list of allowed codes.
         if ($response instanceof ResponseInterface) {
-            return in_array(needle: $response->getStatusCode(), haystack: $this->retryStatusCodes, strict: true);
+            return in_array(needle: $response->statusCode, haystack: $this->retryStatusCodes, strict: true);
         }
 
         // If no response exists but it is a ConnectException (e.g., timeout), attempt retry.

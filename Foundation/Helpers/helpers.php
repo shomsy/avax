@@ -131,9 +131,7 @@ if (! function_exists(function: 'route')) {
             }
 
             // Clean up any optional params not provided
-            $path = rx_replace(pattern: '\{[^}]+\}', replacement: '', subject: $path);
-
-            return $path;
+            return rx_replace(pattern: '\{[^}]+\}', replacement: '', subject: $path);
         } catch (Throwable $throwable) {
             logger(message: 'Failed to generate route.', context: ['route_name' => $name, 'exception' => $throwable]);
 

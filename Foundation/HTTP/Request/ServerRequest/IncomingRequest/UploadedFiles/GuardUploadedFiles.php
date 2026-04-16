@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 use Psr\Http\Message\UploadedFileInterface;
 use InvalidArgumentException;

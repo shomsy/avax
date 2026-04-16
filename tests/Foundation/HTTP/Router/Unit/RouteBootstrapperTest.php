@@ -47,14 +47,14 @@ final class RouteBootstrapperTest extends TestCase
     {
         $state = new RouterBootstrapState();
 
-        $this->assertFalse(condition: $state->isBooted());
-        $this->assertNull(actual: $state->getSource());
+        $this->assertFalse(condition: $state->booted);
+        $this->assertNull(actual: $state->source);
 
         $state->markSource(source: 'cache');
-        $this->assertEquals(expected: 'cache', actual: $state->getSource());
+        $this->assertEquals(expected: 'cache', actual: $state->source);
 
         $state->ensureNotBooted(); // Should not throw
-        $this->assertTrue(condition: $state->isBooted());
+        $this->assertTrue(condition: $state->booted);
 
         // Second call should throw
         $this->expectException(exception: RuntimeException::class);

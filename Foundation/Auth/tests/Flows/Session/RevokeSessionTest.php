@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 final class RevokeSessionTest extends TestCase
 {
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      * @throws Unauthenticated
      */
     public function testRevokeSessionRevokesOwnedCurrentSessionAndClearsContext() : void

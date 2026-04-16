@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Tenant\InviteMember;
 
 use Avax\Auth\System\Capability\Tenant\TenantMemberRole;
+use SensitiveParameter;
 
 final readonly class InviteTenantMemberData
 {
@@ -14,10 +15,10 @@ final readonly class InviteTenantMemberData
     public string           $tenantSlug;
 
     public function __construct(
-        string                        $tenantSlug,
-        #[\SensitiveParameter] string $email,
-        TenantMemberRole              $role,
-        string                        $invitedBy
+        string                       $tenantSlug,
+        #[SensitiveParameter] string $email,
+        TenantMemberRole             $role,
+        string                       $invitedBy
     )
     {
         $this->tenantSlug = $tenantSlug;

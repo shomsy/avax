@@ -15,6 +15,7 @@ use Avax\Auth\System\Flow\Mfa\MfaChallengeFailed;
 use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -73,7 +74,7 @@ final readonly class StartMfaChallenge
 
     /**
      * @throws MfaChallengeFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     private function issueForUserId(

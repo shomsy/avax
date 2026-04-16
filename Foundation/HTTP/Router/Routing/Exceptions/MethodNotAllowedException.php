@@ -11,7 +11,11 @@ use RuntimeException;
  */
 final class MethodNotAllowedException extends RuntimeException
 {
-    private array $allowedMethods;
+    public array $allowedMethods {
+        get {
+            return $this->allowedMethods;
+        }
+    }
 
     public function __construct(string $method, string $path, array $allowedMethods)
     {
@@ -25,8 +29,4 @@ final class MethodNotAllowedException extends RuntimeException
         return new self(method: $method, path: $path, allowedMethods: $allowedMethods);
     }
 
-    public function getAllowedMethods() : array
-    {
-        return $this->allowedMethods;
-    }
 }

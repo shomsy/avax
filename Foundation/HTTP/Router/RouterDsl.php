@@ -142,7 +142,7 @@ final readonly class RouterDsl implements RouterInterface
         $this->fallbackManager->set(handler: $callable);
 
         // Set in registry for DSL execution (used during route file loading)
-        $this->registry->setFallback(handler: $callable);
+        $this->registry = $callable;
     }
 
     /**
@@ -165,7 +165,7 @@ final readonly class RouterDsl implements RouterInterface
             throw new LogicException(message: 'Cannot call ->name() outside of a route group context.');
         }
 
-        $context->setNamePrefix(prefix: $prefix);
+        $context->namePrefix = $prefix;
 
         return $this;
     }
@@ -204,7 +204,7 @@ final readonly class RouterDsl implements RouterInterface
 
     public function prefix(string $prefix) : self
     {
-        $this->groupStack->current()?->setPrefix(prefix: $prefix);
+        $this->groupStack = $prefix;
 
         return $this;
     }

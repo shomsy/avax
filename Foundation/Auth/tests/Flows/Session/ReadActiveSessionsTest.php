@@ -16,6 +16,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 final class ReadActiveSessionsTest extends TestCase
 {
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      * @throws Unauthenticated
      */
     public function testReadActiveSessionsReturnsCurrentUsersTrackedSessions() : void

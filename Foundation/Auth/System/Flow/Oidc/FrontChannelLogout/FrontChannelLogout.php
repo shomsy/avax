@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Oidc\FrontChannelLogout;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
@@ -14,6 +15,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class FrontChannelLogout
 {
@@ -27,14 +29,14 @@ final readonly class FrontChannelLogout
     private CurrentAuthentication             $currentAuthentication;
 
     public function __construct(
-        #[\SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        IdentityInterface                                      $identity,
-        AuditLogInterface                                      $auditLog,
-        Clock                                                  $clock,
-        #[\SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
-        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        OidcProviderInterface|null                             $oidcProvider = null,
-        OAuthClientRegistryInterface|null                      $clientRegistry = null
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        IdentityInterface                                     $identity,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        OidcProviderInterface|null                            $oidcProvider = null,
+        OAuthClientRegistryInterface|null                     $clientRegistry = null
     )
     {
         $this->currentAuthentication = $currentAuthentication;
@@ -99,7 +101,7 @@ final readonly class FrontChannelLogout
         );
     }
 
-    private function resolveClientFromIdTokenHint(#[\SensitiveParameter] string|null $idTokenHint) : \Avax\Auth\System\Capability\OAuth\OAuthClient|null
+    private function resolveClientFromIdTokenHint(#[SensitiveParameter] string|null $idTokenHint) : OAuthClient|null
     {
         if ($idTokenHint === null || trim($idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
             return null;

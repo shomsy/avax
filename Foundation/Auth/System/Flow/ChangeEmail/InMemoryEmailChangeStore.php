@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\ChangeEmail;
 
 use Avax\Auth\System\Capability\User\UserId;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Random\RandomException;
 use SensitiveParameter;
@@ -34,7 +35,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
     {

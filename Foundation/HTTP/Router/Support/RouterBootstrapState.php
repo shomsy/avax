@@ -14,8 +14,16 @@ use RuntimeException;
  */
 final class RouterBootstrapState
 {
-    private bool        $booted = false;
-    private string|null $source = null;
+    public bool        $booted = false {
+        get {
+            return $this->booted;
+        }
+    }
+    public string|null $source = null {
+        get {
+            return $this->source;
+        }
+    }
 
     /**
      * Ensure the bootstrapper has not already been booted.
@@ -31,14 +39,6 @@ final class RouterBootstrapState
     }
 
     /**
-     * Check if the bootstrapper has been booted.
-     */
-    public function isBooted() : bool
-    {
-        return $this->booted;
-    }
-
-    /**
      * Mark the source of route loading for this bootstrap cycle.
      *
      * @param string $source Either 'cache', 'disk', or 'closure'
@@ -46,14 +46,6 @@ final class RouterBootstrapState
     public function markSource(string $source) : void
     {
         $this->source = $source;
-    }
-
-    /**
-     * Get the source that was used for route loading.
-     */
-    public function getSource() : string|null
-    {
-        return $this->source;
     }
 
     /**

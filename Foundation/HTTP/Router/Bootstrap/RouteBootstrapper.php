@@ -118,7 +118,7 @@ final readonly class RouteBootstrapper
             $routesCount = count($this->httpRequestRouter->allRoutes());
             $this->logger->info(message: 'Route bootstrap completed.', context: [
                 'routes_count' => $routesCount,
-                'source'       => $this->bootstrapState->getSource()
+                'source'       => $this->bootstrapState
             ]);
 
             // Export router snapshot for reproducibility and auditing (v2.1 feature)
@@ -204,7 +204,7 @@ final readonly class RouteBootstrapper
         // Log the successful loading of cached routes.
         $this->logger->info(message: 'Route cache loaded.', context: [
             'cache'  => $cachePath,
-            'source' => $this->bootstrapState->getSource()
+            'source' => $this->bootstrapState
         ]);
     }
 
@@ -330,7 +330,7 @@ final readonly class RouteBootstrapper
     private function registerFallbackRoute(bool $closuresOnly = false) : void
     {
         // Check if a fallback route exists in the registry.
-        $fallback = $this->routeRegistry->getFallback();
+        $fallback = $this->routeRegistry;
 
         if ($fallback !== null && (! $closuresOnly || $fallback instanceof Closure)) {
             $this->httpRequestRouter->fallback(handler: $fallback);

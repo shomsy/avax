@@ -50,7 +50,11 @@ final class Reflector
      *
      * @var object The DTO or object being managed by this reflector.
      */
-    private object $target;
+    private object $target {
+        get {
+            return $this->target;
+        }
+    }
 
     /**
      * Constructs a Reflector instance and initializes it with a target object.
@@ -231,16 +235,6 @@ final class Reflector
             $fieldName,
             $exception->getMessage()
         );
-    }
-
-    /**
-     * Retrieves the target object being operated on by the Reflector.
-     *
-     * @return object The target object.
-     */
-    public function getTarget() : object
-    {
-        return $this->target;
     }
 
     /**

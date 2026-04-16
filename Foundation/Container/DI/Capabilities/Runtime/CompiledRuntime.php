@@ -12,6 +12,8 @@ use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use JsonException;
+use ReflectionException;
 
 /**
  * Owns compiled runtime attachment, refresh, and hot-path decisions.
@@ -61,8 +63,8 @@ final class CompiledRuntime
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \JsonException
+     * @throws ReflectionException
+     * @throws JsonException
      */
     public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {

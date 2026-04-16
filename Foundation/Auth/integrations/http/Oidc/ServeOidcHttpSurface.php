@@ -14,6 +14,7 @@ use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use SensitiveParameter;
@@ -187,7 +188,7 @@ final readonly class ServeOidcHttpSurface
                 ? $existing->type
                 : ($tokenEndpointAuthMethod === OAuthTokenEndpointAuthMethod::NONE ? OAuthClientType::PUBLIC : OAuthClientType::CONFIDENTIAL);
 
-            $updated = $this->auth->updateOAuthClient(data: new \Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData(
+            $updated = $this->auth->updateOAuthClient(data: new UpdateClientData(
                                                                 clientId                       : $clientId,
                                                                 name                           : $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? $existing->name,
                                                                 type                           : $type,

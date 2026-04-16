@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use JsonException;
 
 final readonly class SyncFederationMetadata
 {
@@ -34,7 +35,7 @@ final readonly class SyncFederationMetadata
 
     /**
      * @throws FederationFailed
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function execute(string $connectionId) : FederationConnection
     {

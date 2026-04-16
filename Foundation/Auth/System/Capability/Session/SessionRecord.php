@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Session;
 
 use Avax\Auth\System\Capability\User\UserId;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use SensitiveParameter;
 
@@ -65,7 +66,7 @@ final readonly class SessionRecord
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function withTouch(DateTimeImmutable $lastSeenAt, int $idleTimeoutSeconds) : self
     {

@@ -30,7 +30,7 @@ final readonly class MiddlewarePipelineLogger
     {
         $this->logger->info(
             message: '⚙️ Starting middleware pipeline',
-            context: ['uri' => (string) $request->getUri()]
+            context: ['uri' => (string) $request->uri]
         );
     }
 

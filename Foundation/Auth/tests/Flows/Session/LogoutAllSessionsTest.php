@@ -19,6 +19,7 @@ use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 final class LogoutAllSessionsTest extends TestCase
 {
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      * @throws Unauthenticated
      */
     public function testLogoutAllSessionsRevokesTrackedSessionsAndClearsContext() : void

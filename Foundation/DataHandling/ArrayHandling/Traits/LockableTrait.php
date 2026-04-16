@@ -26,7 +26,11 @@ trait LockableTrait
     /**
      * Indicates whether the current instance is locked and protected from mutation.
      */
-    protected bool $locked = false;
+    protected bool $locked = false {
+        get {
+            return $this->locked;
+        }
+    }
 
     /**
      * Locks the current instance, making all mutating operations forbidden.
@@ -43,18 +47,6 @@ trait LockableTrait
 
         // Return self to support fluent calls
         return $this;
-    }
-
-    /**
-     * Indicates whether this instance has been locked.
-     *
-     * Useful for consumers to check immutability status.
-     *
-     * @return bool True if locked, false otherwise.
-     */
-    public function isLocked() : bool
-    {
-        return $this->locked;
     }
 
     /**

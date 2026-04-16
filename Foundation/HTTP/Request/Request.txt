@@ -1,6 +1,5 @@
 === AGENTS.md ===
 READ from AI Prompts folder. All how-to-* files are the main source of truth for coding standards.
-READ DeepRefactorAndRewritePlan.md for the plan.
 MAKE backup after any changes by executing the backup script ./merge-files.sh . from the root of the component (
 Foundation/HTTP/Request).
 USE backup file (made by merge-file.sh) to restore the component if you refactor, rewrite, or whenever you need to
@@ -877,13 +876,16 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\PublicEntryPointRequest;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\PublicEntryPointRequest;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\HTTP\URI\UriBuilder;
+use NoDiscard;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-
-// TODO: rename ServerRequest class to ServerRequest
 
 /**
  * Legacy Bridge: This class maintains the old namespace but delegates
@@ -893,10 +895,50 @@ use Psr\Http\Message\UriInterface;
  */
 class Request implements ServerRequestInterface
 {
-
-
-    private function __construct(ServerRequest $serverRequest)
+    private function __construct(private readonly ServerRequest $serverRequest)
     {
+    }
+
+    public array $serverParams {
+        get {
+            return $this->serverRequest->serverParams;
+        }
+    }
+
+    public array $queryParams {
+        get {
+            return $this->serverRequest->queryParams;
+        }
+    }
+
+    public null|string $requestTarget {
+        get {
+            return $this->serverRequest->requestTarget;
+        }
+    }
+
+    public string $method {
+        get {
+            return $this->serverRequest->method;
+        }
+    }
+
+    public string $protocolVersion {
+        get {
+            return $this->serverRequest->protocolVersion;
+        }
+    }
+
+    public array $headers {
+        get {
+            return $this->serverRequest->headers;
+        }
+    }
+
+    public UriInterface|null $uri {
+        get {
+            return $this->serverRequest->uri;
+        }
     }
 
     public static function capture(): self
@@ -904,120 +946,223 @@ class Request implements ServerRequestInterface
         return new self(serverRequest: PublicEntryPointRequest::fromIncomingHttp());
     }
 
+    private static function createStream(string $content = ''): StreamInterface
+    {
+        $resource = fopen('php://memory', 'r+');
+        fwrite($resource, $content);
+        rewind($resource);
+
+        return new class($resource) implements StreamInterface {
+            private $resource;
+            private ?int $size = null;
+
+            public bool $seekable {
+                get {
+                    return true;
+                }
+            }
+
+            public bool $writable {
+                get {
+                    return is_writable(stream_get_meta_data($this->resource)['uri']);
+                }
+            }
+
+            public bool $readable {
+                get {
+                    $mode = stream_get_meta_data($this->resource)['mode'];
+                    return str_contains($mode, 'r') || str_contains($mode, '+');
+                }
+            }
+
+            public function __construct($resource) {
+                $this->resource = $resource;
+            }
+
+            public function __toString(): string {
+                return $this->getContents();
+            }
+
+            public function close(): void {
+                if (is_resource($this->resource)) {
+                    fclose($this->resource);
+                }
+            }
+
+            public function detach(): mixed {
+                $resource = $this->resource;
+                $this->resource = null;
+                return $resource;
+            }
+
+            public function getSize(): ?int {
+                if ($this->size !== null) {
+                    return $this->size;
+                }
+                $stats = fstat($this->resource);
+                $this->size = $stats['size'] ?? null;
+                return $this->size;
+            }
+
+            public function tell(): int {
+                return ftell($this->resource);
+            }
+
+            public function eof(): bool {
+                return feof($this->resource);
+            }
+
+            public function seek(int $offset, int $whence = SEEK_SET): void {
+                fseek($this->resource, $offset, $whence);
+            }
+
+            public function rewind(): void {
+                rewind($this->resource);
+            }
+
+            public function write(string $string): int {
+                return fwrite($this->resource, $string);
+            }
+
+            public function read(int $length): string {
+                return fread($this->resource, $length);
+            }
+
+            public function getContents(): string {
+                return stream_get_contents($this->resource);
+            }
+
+            public function getMetadata(?string $key = null): ?array {
+                $metadata = stream_get_meta_data($this->resource);
+                return $key !== null ? ($metadata[$key] ?? null) : $metadata;
+            }
+        };
+    }
+
+    public static function create(
+        array $serverParams = [],
+        array $queryParams = [],
+        array $parsedBody = [],
+        UriInterface|null $uri = null,
+    ): self {
+        $uri ??= new UriBuilder(scheme: 'http', host: 'localhost');
+
+        return new self(
+            serverRequest: new ServerRequest(
+                body: new RequestBody(stream: self::createStream('')),
+                serverParams: $serverParams,
+                queryParams: $queryParams,
+                parsedBody: new ParsedBody(data: $parsedBody),
+                uri: $uri,
+            )
+        );
+    }
+
     /** PSR-7 Implementation via Delegation **/
 
     public function getProtocolVersion(): string
     {
-        return $this->serverRequest->getProtocolVersion();
+        return $this->serverRequest->protocolVersion;
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withProtocolVersion($version): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withProtocolVersion(version: $version);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withProtocolVersion(version: $version));
     }
 
-    public function getHeaders(): array
-    {
-        return $this->serverRequest->getHeaders();
-    }
-
+    #[Override]
     public function hasHeader($name): bool
     {
         return $this->serverRequest->hasHeader(name: $name);
     }
 
+    #[Override]
     public function getHeader($name): array
     {
         return $this->serverRequest->getHeader(name: $name);
     }
 
+    #[Override]
     public function getHeaderLine($name): string
     {
         return $this->serverRequest->getHeaderLine(name: $name);
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withHeader($name, $value): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withHeader(name: $name, value: $value);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withHeader(name: $name, value: $value));
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withAddedHeader($name, $value): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withAddedHeader(name: $name, value: $value);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withAddedHeader(name: $name, value: $value));
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withoutHeader($name): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withoutHeader(name: $name);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withoutHeader(name: $name));
     }
 
+    #[Override]
     public function getBody(): StreamInterface
     {
         return $this->serverRequest->getBody();
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withBody(StreamInterface $body): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withBody(body: $body);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withBody(body: $body));
     }
 
     public function getRequestTarget(): string
     {
-        return $this->serverRequest->getRequestTarget();
+        return $this->serverRequest->requestTarget ?? '/';
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withRequestTarget($requestTarget): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withRequestTarget(requestTarget: $requestTarget);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withRequestTarget(requestTarget: $requestTarget));
     }
 
     public function getMethod(): string
     {
-        return $this->serverRequest->getMethod();
+        return $this->serverRequest->method;
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withMethod($method): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withMethod(method: $method);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withMethod(method: $method));
     }
 
     public function getUri(): UriInterface
     {
-        return $this->serverRequest->getUri();
+        return $this->serverRequest->uri;
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withUri(UriInterface $uri, $preserveHost = false): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withUri(uri: $uri, preserveHost: $preserveHost);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withUri(uri: $uri, preserveHost: $preserveHost));
     }
 
     public function getServerParams(): array
     {
-        return $this->serverRequest->getServerParams();
+        return $this->serverRequest->serverParams;
     }
 
     public function getCookieParams(): array
@@ -1025,25 +1170,23 @@ class Request implements ServerRequestInterface
         return $this->serverRequest->getCookieParams();
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withCookieParams(array $cookies): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withCookieParams(cookies: $cookies);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withCookieParams(cookies: $cookies));
     }
 
     public function getQueryParams(): array
     {
-        return $this->serverRequest->getQueryParams();
+        return $this->serverRequest->queryParams;
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withQueryParams(array $query): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withQueryParams(query: $query);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withQueryParams(query: $query));
     }
 
     public function getUploadedFiles(): array
@@ -1051,12 +1194,11 @@ class Request implements ServerRequestInterface
         return $this->serverRequest->getUploadedFiles();
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withUploadedFiles(array $uploadedFiles): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withUploadedFiles(uploadedFiles: $uploadedFiles);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withUploadedFiles(uploadedFiles: $uploadedFiles));
     }
 
     public function getParsedBody(): array|object|null
@@ -1064,38 +1206,37 @@ class Request implements ServerRequestInterface
         return $this->serverRequest->getParsedBody();
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withParsedBody($data): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withParsedBody(data: $data);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withParsedBody(data: $data));
     }
 
+    #[Override]
     public function getAttributes(): array
     {
         return $this->serverRequest->getAttributes();
     }
 
+    #[Override]
     public function getAttribute($name, $default = null): mixed
     {
         return $this->serverRequest->getAttribute(name: $name, default: $default);
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withAttribute($name, $value): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withAttribute(name: $name, value: $value);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withAttribute(name: $name, value: $value));
     }
 
+    #[Override]
+    #[NoDiscard]
     public function withoutAttribute($name): static
     {
-        $clone = clone $this;
-        $clone->serverRequest = $this->serverRequest->withoutAttribute(name: $name);
-
-        return $clone;
+        return new self(serverRequest: $this->serverRequest->withoutAttribute(name: $name));
     }
 
     /** Legacy Helpers (Map to DSL) **/
@@ -1108,31 +1249,57 @@ class Request implements ServerRequestInterface
     {
         return $this->serverRequest->inputs()->all();
     }
-}
 
-=== ServerRequest/Access/BearerTokenReader.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\IncomingHttp\Access;
-
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
-
-/**
- * Action Owner: Interprets the Authorization header to extract a Bearer token.
- */
-final readonly class BearerTokenReader
-{
-    public function read(#[\SensitiveParameter] RequestHeaders $headers) : string|null
+    public function query(string $key, mixed $default = null): mixed
     {
-        $authorization = $headers->getLine(name: 'Authorization');
+        return $this->serverRequest->inputs()->get(key: $key, default: $default);
+    }
 
-        if (preg_match('/Bearer\s+(?P<token>\S+)/i', $authorization, $matches)) {
-            return $matches['token'];
-        }
+    public function has(string $key): bool
+    {
+        $inputs = $this->serverRequest->inputs();
+        $all = $inputs->all();
+        return array_key_exists($key, $all);
+    }
 
-        return null;
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->input(key: $key, default: $default);
+    }
+
+    public function session(string|null $key = null, mixed $default = null): mixed
+    {
+        return $this->serverRequest->requestSession()?->get(key: $key ?? '', default: $default) ?? $default;
+    }
+
+    public function hasSession(string $key): bool
+    {
+        return $this->serverRequest->requestSession()?->has(key: $key) ?? false;
+    }
+
+    public function putSession(string $key, mixed $value): void
+    {
+        $this->serverRequest->requestSession()?->put(key: $key, value: $value);
+    }
+
+    public function forgetSession(string $key): void
+    {
+        $this->serverRequest->requestSession()?->forget(key: $key);
+    }
+
+    public function path(): string
+    {
+        return $this->serverRequest->uri->getPath();
+    }
+
+    public function route(string $key, mixed $default = null): mixed
+    {
+        return $this->serverRequest->getAttribute(name: $key, default: $default);
+    }
+
+    public function user(): mixed
+    {
+        return $this->serverRequest->getAttribute(name: 'user');
     }
 }
 
@@ -1141,59 +1308,101 @@ final readonly class BearerTokenReader
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestCookies\RequestCookies;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
+use Psr\Http\Message\StreamInterface;
 
 /**
- * Configuration Owner: Orchestrates the creation of a ServerRequest object from the current HTTP environment.
+ * Configuration Owner: Orchestrates the creation of a ServerRequest object.
  */
 final readonly class CreateRequestFromIncomingHttp
 {
-    public function execute() : ServerRequest
+    /**
+     * Entry point using superglobals.
+     */
+    public static function capture() : ServerRequest
     {
-        $server = $_SERVER;
+        return (new self())->execute(
+            server: $_SERVER,
+            query : $_GET,
+            cookie: $_COOKIE,
+            files : $_FILES
+        );
+    }
 
+    /**
+     * Core creation logic decoupled from superglobals.
+     */
+    public function execute(
+        array      $server,
+        array|null $query = null,
+        array|null $cookie = null,
+        array|null $files = null,
+        mixed      $body = null
+    ) : ServerRequest
+    {
         // 1. Resolve URI
-        $uri = $this->createUri(server: $server);
+        $query  ??= [];
+        $cookie ??= [];
+        $files  ??= [];
+        $uri    = $this->createUri(server: $server);
 
         // 2. Pre-process headers
         $headers        = $this->extractHeaders(server: $server);
         $requestHeaders = new RequestHeaders(headers: $headers);
 
         // 3. Resolve body
-        $bodyStream = new Stream(stream: fopen('php://input', 'r'));
-        $body       = new RequestBody(stream: $bodyStream);
+        $bodyOwner = $this->resolveBody(body: $body);
 
         // 4. Parse body if needed
         $contentType    = $requestHeaders->getLine(name: 'Content-Type');
-        $parsedBodyData = (new ParseBodyByContentType())->execute(contentType: $contentType, content: $body->content());
+        $parsedBodyData = (new ParseBodyByContentType())->execute(contentType: $contentType, content: $bodyOwner->content());
         $parsedBody     = new ParsedBody(data: $parsedBodyData);
 
         // 5. Build ServerRequest
         return new ServerRequest(
-            body           : $body,
+            body           : $bodyOwner,
             method         : $server['REQUEST_METHOD'] ?? 'GET',
             uri            : $uri,
             headers        : $requestHeaders,
             serverParams   : $server,
-            cookies        : new RequestCookies(cookies: $_COOKIE),
-            // attach session if available
-            // session: new RequestSession(data: $_SESSION ?? []),
-            queryParams    : $_GET,
-            uploadedFiles  : new UploadedFiles(files: (new NormalizeUploadedFiles())->execute(files: $_FILES)),
+            cookies        : new RequestCookies(cookies: $cookie),
+            queryParams    : $query,
+            uploadedFiles  : new UploadedFiles(files: (new NormalizeUploadedFiles())->execute(files: $files)),
             parsedBody     : $parsedBody,
-            protocolVersion: $server['SERVER_PROTOCOL'] ?? '1.1'
+            protocolVersion: (new NormalizeProtocolVersion())->execute(protocol: $server['SERVER_PROTOCOL'] ?? '1.1')
         );
+    }
+
+    private function resolveBody(mixed $body) : RequestBody
+    {
+        if ($body instanceof RequestBody) {
+            return $body;
+        }
+
+        if ($body instanceof StreamInterface) {
+            return new RequestBody(stream: $body);
+        }
+
+        $streamHandle = fopen('php://input', 'r');
+
+        // Safety check for fopen
+        if ($streamHandle === false) {
+             $streamHandle = fopen('php://temp', 'r+');
+        }
+
+        return new RequestBody(stream: new Stream(stream: $streamHandle));
     }
 
     private function createUri(array $server) : UriBuilder
@@ -1222,12 +1431,670 @@ final readonly class CreateRequestFromIncomingHttp
     }
 }
 
+=== ServerRequest/IncomingRequest/Inputs/DTO/InputValueDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+/**
+ * InputValueDTO - Single input value with type information.
+ *
+ * Wraps a single input value with its key and provides
+ * convenient accessors for different types.
+ */
+class InputValueDTO extends AbstractDTO
+{
+    public function __construct(
+        public readonly string $key,
+        public readonly mixed $value,
+        public readonly string $source = 'auto'
+    ) {}
+
+    public static function fromQuery(string $key, mixed $value): self
+    {
+        return new self(key: $key, value: $value, source: 'query');
+    }
+
+    public static function fromBody(string $key, mixed $value): self
+    {
+        return new self(key: $key, value: $value, source: 'body');
+    }
+
+    public function isNull(): bool
+    {
+        return $this->value === null;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->value === null || $this->value === '' || $this->value === [];
+    }
+
+    public function string(string $default = ''): string
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+        return is_scalar($this->value) ? (string) $this->value : $default;
+    }
+
+    public function int(int $default = 0): int
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+        return filter_var($this->value, FILTER_VALIDATE_INT) !== false
+            ? (int) $this->value
+            : $default;
+    }
+
+    public function float(float $default = 0.0): float
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+        return filter_var($this->value, FILTER_VALIDATE_FLOAT) !== false
+            ? (float) $this->value
+            : $default;
+    }
+
+    public function bool(bool $default = false): bool
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+        return filter_var($this->value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $default;
+    }
+
+    public function array(array $default = []): array
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+        return is_array($this->value) ? $this->value : $default;
+    }
+
+    public function enum(string $enumClass, mixed $default = null): mixed
+    {
+        if ($this->value === null || !enum_exists($enumClass)) {
+            return $default;
+        }
+
+        $enum = $enumClass::tryFrom($this->value);
+        return $enum ?? $default;
+    }
+}
+
+=== ServerRequest/IncomingRequest/Inputs/DTO/InputsDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+/**
+ * InputsDTO - Unified request inputs DTO.
+ *
+ * Combines query parameters and parsed body into a single strongly-typed DTO.
+ * Provides priority-based access (body takes precedence over query).
+ *
+ * Usage:
+ * ```php
+ * // Define a typed DTO
+ * class UserCreateDTO extends AbstractDTO {
+ *     public string $email;
+ *     public string $name;
+ *     public int $age = 18;
+ * }
+ *
+ * // Use with InputsDTO
+ * $inputs = InputsDTO::fromSlices(
+ *     queryParams: ['page' => '1'],
+ *     parsedBody: ['email' => 'test@example.com', 'name' => 'John']
+ * );
+ *
+ * // Get as typed DTO
+ * $user = $inputs->as(UserCreateDTO::class);
+ * ```
+ */
+class InputsDTO extends AbstractDTO
+{
+    /** @var array<string, mixed> */
+    public array $query = [];
+
+    /** @var array<string, mixed> */
+    public array $body = [];
+
+    public static function fromSlices(array $queryParams, array|object|null $parsedBody): self
+    {
+        $body = self::normalizeBody($parsedBody);
+
+        return new self(data: [
+            'query' => $queryParams,
+            'body' => $body,
+        ]);
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(data: $data);
+    }
+
+    private static function normalizeBody(array|object|null $parsedBody): array
+    {
+        if ($parsedBody === null) {
+            return [];
+        }
+
+        if (is_object($parsedBody) && !$parsedBody instanceof self) {
+            return (array) $parsedBody;
+        }
+
+        return is_array($parsedBody) ? $parsedBody : [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return array_merge($this->query, $this->body);
+    }
+
+    /**
+     * Get merged inputs (body takes precedence).
+     *
+     * @return array<string, mixed>
+     */
+    public function merged(): array
+    {
+        return $this->all();
+    }
+
+    /**
+     * Get input value with priority: body > query.
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        if (isset($this->body[$key])) {
+            return $this->body[$key];
+        }
+
+        return $this->query[$key] ?? $default;
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->body[$key]) || isset($this->query[$key]);
+    }
+
+    public function hasInBody(string $key): bool
+    {
+        return isset($this->body[$key]);
+    }
+
+    public function hasInQuery(string $key): bool
+    {
+        return isset($this->query[$key]);
+    }
+
+    /**
+     * Get input value only from body.
+     */
+    public function fromBody(string $key, mixed $default = null): mixed
+    {
+        return $this->body[$key] ?? $default;
+    }
+
+    /**
+     * Get input value only from query.
+     */
+    public function fromQuery(string $key, mixed $default = null): mixed
+    {
+        return $this->query[$key] ?? $default;
+    }
+
+    /**
+     * Map inputs to a typed DTO class.
+     *
+     * @template T of AbstractDTO
+     * @param class-string<T> $dtoClass
+     * @return T
+     */
+    public function as(string $dtoClass): AbstractDTO
+    {
+        return new $dtoClass($this->all());
+    }
+
+    /**
+     * Get only specified keys from merged inputs.
+     *
+     * @param array<string> $keys
+     * @return array<string, mixed>
+     */
+    public function only(array $keys): array
+    {
+        $result = [];
+        $merged = $this->all();
+
+        foreach ($keys as $key) {
+            if (isset($merged[$key])) {
+                $result[$key] = $merged[$key];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all keys except specified from merged inputs.
+     *
+     * @param array<string> $keys
+     * @return array<string, mixed>
+     */
+    public function except(array $keys): array
+    {
+        $result = [];
+        $merged = $this->all();
+
+        foreach ($merged as $key => $value) {
+            if (!in_array($key, $keys, true)) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get input as typed value.
+     */
+    public function string(string $key, string $default = ''): string
+    {
+        $value = $this->get($key);
+        return is_scalar($value) ? (string) $value : $default;
+    }
+
+    public function int(string $key, int $default = 0): int
+    {
+        $value = $this->get($key);
+        return filter_var($value, FILTER_VALIDATE_INT) !== false ? (int) $value : $default;
+    }
+
+    public function float(string $key, float $default = 0.0): float
+    {
+        $value = $this->get($key);
+        return filter_var($value, FILTER_VALIDATE_FLOAT) !== false ? (float) $value : $default;
+    }
+
+    public function bool(string $key, bool $default = false): bool
+    {
+        $value = $this->get($key);
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $default;
+    }
+
+    /**
+     * @param array<string, mixed> $default
+     * @return array<string, mixed>
+     */
+    public function array(string $key, array $default = []): array
+    {
+        $value = $this->get($key);
+        return is_array($value) ? $value : $default;
+    }
+
+    /**
+     * Get input as enum value.
+     *
+     * @template T of \BackedEnum
+     * @param string $key
+     * @param class-string<T> $enumClass
+     * @param T|null $default
+     * @return T|null
+     */
+    public function enum(string $key, string $enumClass, mixed $default = null): ?\BackedEnum
+    {
+        $value = $this->get($key);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        return $enumClass::tryFrom($value) ?? $default;
+    }
+}
+
+=== ServerRequest/IncomingRequest/Inputs/DTO/ParsedBodyDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+/**
+ * ParsedBodyDTO - Strongly typed parsed body DTO.
+ *
+ * Provides automatic type casting and validation for parsed body data.
+ * Supports nested DTOs, arrays of DTOs, and BackedEnums.
+ */
+class ParsedBodyDTO extends AbstractDTO
+{
+    public static function fromArray(array|object|null $data): self
+    {
+        if ($data === null) {
+            return new self(data: []);
+        }
+
+        if (is_object($data) && !$data instanceof self) {
+            $data = (array) $data;
+        }
+
+        return new self(data: is_array($data) ? $data : []);
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->{$key} ?? $default;
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->{$key});
+    }
+
+    public function only(array $keys): array
+    {
+        $result = [];
+        foreach ($keys as $key) {
+            if ($this->has($key)) {
+                $result[$key] = $this->{$key};
+            }
+        }
+        return $result;
+    }
+
+    public function except(array $keys): array
+    {
+        $result = [];
+        foreach (get_object_vars($this) as $key => $value) {
+            if (!in_array($key, $keys, true)) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+}
+
+=== ServerRequest/IncomingRequest/Inputs/DTO/QueryParamsDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use ReflectionException;
+
+/**
+ * QueryParamsDTO - Strongly typed query parameters DTO.
+ *
+ * Provides automatic type casting for query parameters.
+ * Supports nested DTOs, arrays of DTOs, and BackedEnums.
+ */
+class QueryParamsDTO extends AbstractDTO
+{
+    /**
+     * @throws ReflectionException
+     */
+    public static function fromArray(array $params): self
+    {
+        return new self(data: $params);
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->{$key} ?? $default;
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->{$key});
+    }
+
+    public function only(array $keys): array
+    {
+        $result = [];
+        foreach ($keys as $key) {
+            if ($this->has($key)) {
+                $result[$key] = $this->{$key};
+            }
+        }
+        return $result;
+    }
+
+    public function except(array $keys): array
+    {
+        $result = [];
+        foreach (get_object_vars($this) as $key => $value) {
+            if (!in_array($key, $keys, true)) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+}
+
+=== ServerRequest/IncomingRequest/Inputs/Examples/LoginDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataHandling\Validation\Attributes\Rules\Required;
+use Avax\DataHandling\Validation\Attributes\Rules\Email;
+use Avax\DataHandling\Validation\Attributes\Rules\Min;
+
+/**
+ * LoginDTO - Example of validated Login Request DTO.
+ *
+ * Usage:
+ * ```php
+ * $dto = $request->inputs()->as(LoginDTO::class);
+ * ```
+ */
+class LoginDTO extends AbstractDTO
+{
+    #[Required]
+    #[Email]
+    public string $email;
+
+    #[Required]
+    #[Min(1)]
+    public string $password;
+
+    public bool $remember_me = false;
+}
+
+=== ServerRequest/IncomingRequest/Inputs/Examples/UserRegistrationDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataHandling\Validation\Attributes\Rules\Email;
+use Avax\DataHandling\Validation\Attributes\Rules\Required;
+use Avax\DataHandling\Validation\Attributes\Rules\Min;
+use Avax\DataHandling\Validation\Attributes\Rules\Max;
+use Avax\DataHandling\Validation\Attributes\Rules\RegexException;
+
+/**
+ * UserRegistrationDTO - Example of validated Request DTO.
+ *
+ * Demonstrates declarative validation through PHP 8 attributes.
+ * Validation runs automatically during hydration from request inputs.
+ *
+ * Usage:
+ * ```php
+ * $dto = $request->inputs()->as(UserRegistrationDTO::class);
+ * // Automatically validates all fields
+ * ```
+ */
+class UserRegistrationDTO extends AbstractDTO
+{
+    #[Required]
+    #[Min(2)]
+    #[Max(100)]
+    public string $name;
+
+    #[Required]
+    #[Email]
+    public string $email;
+
+    #[Required]
+    #[Min(8)]
+    #[RegexException(
+        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+        message: 'Password must contain uppercase, lowercase and number'
+    )]
+    public string $password;
+
+    #[Min(18)]
+    #[Max(120)]
+    public int $age = 18;
+
+    public ?string $phone = null;
+}
+
+=== ServerRequest/IncomingRequest/Inputs/Examples/UserRegistrationDTOTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
+
+use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples\UserRegistrationDTO;
+use PHPUnit\Framework\TestCase;
+
+final class UserRegistrationDTOTest extends TestCase
+{
+    public function test_valid_data_hydrates_successfully(): void
+    {
+        $dto = new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'SecurePass123',
+            'age' => 25,
+        ]);
+
+        $this->assertSame('John Doe', $dto->name);
+        $this->assertSame('john@example.com', $dto->email);
+        $this->assertSame('SecurePass123', $dto->password);
+        $this->assertSame(25, $dto->age);
+    }
+
+    public function test_validates_email_format(): void
+    {
+        $this->expectException(DTOValidationException::class);
+
+        new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'not-an-email',
+            'password' => 'SecurePass123',
+        ]);
+    }
+
+    public function test_validates_password_min_length(): void
+    {
+        $this->expectException(DTOValidationException::class);
+
+        new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'short', // too short
+        ]);
+    }
+
+    public function test_validates_password_complexity(): void
+    {
+        $this->expectException(DTOValidationException::class);
+
+        new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'alllowercase123', // no uppercase
+        ]);
+    }
+
+    public function test_validates_age_minimum(): void
+    {
+        $this->expectException(DTOValidationException::class);
+
+        new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'SecurePass123',
+            'age' => 15, // below minimum 18
+        ]);
+    }
+
+    public function test_optional_phone_is_nullable(): void
+    {
+        $dto = new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'SecurePass123',
+        ]);
+
+        $this->assertNull($dto->phone);
+    }
+
+    public function test_age_has_default_value(): void
+    {
+        $dto = new UserRegistrationDTO(data: [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'SecurePass123',
+        ]);
+
+        $this->assertSame(18, $dto->age);
+    }
+
+    public function test_collects_all_validation_errors(): void
+    {
+        try {
+            new UserRegistrationDTO(data: [
+                'name' => 'J', // too short
+                'email' => 'invalid',
+                'password' => 'x',
+            ]);
+            $this->fail('Expected DTOValidationException');
+        } catch (DTOValidationException $e) {
+            $this->assertArrayHasKey('name', $e->errors);
+            $this->assertArrayHasKey('email', $e->errors);
+            $this->assertArrayHasKey('password', $e->errors);
+        }
+    }
+}
+
 === ServerRequest/IncomingRequest/ProtocolVersion/NormalizeProtocolVersion.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\ProtocolVersion;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion;
 
 /**
  * Action Owner: Normalizes the HTTP protocol version.
@@ -1257,9 +2124,9 @@ final readonly class NormalizeProtocolVersion
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
 
 /**
  * Public Entry Point: Static factory for creating ServerRequest instances.
@@ -1271,7 +2138,7 @@ final readonly class PublicEntryPointRequest
      */
     public static function fromIncomingHttp() : ServerRequest
     {
-        return (new CreateRequestFromIncomingHttp())->execute();
+        return CreateRequestFromIncomingHttp::capture();
     }
 }
 
@@ -1280,7 +2147,7 @@ final readonly class PublicEntryPointRequest
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestAttributes;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes;
 
 /**
  * Capability Owner: Manages arbitrary request attributes.
@@ -1295,9 +2162,7 @@ final readonly class RequestAttributes
     /**
      * @param array<string, mixed> $attributes
      */
-    public function __construct(
-        array $attributes = []
-    )
+    public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
     }
@@ -1337,21 +2202,19 @@ final readonly class RequestAttributes
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
 /**
  * Capability Owner: Manages the interpreted/parsed request body.
  */
 final readonly class ParsedBody
 {
-    private array|null|object $data;
+    private array|object|null $data;
 
     /**
      * @param array|object|null $data
      */
-    public function __construct(
-        array|object|null $data = null
-    )
+    public function __construct(array|object|null $data = null)
     {
         $this->data = $data;
     }
@@ -1375,7 +2238,7 @@ final readonly class ParsedBody
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
 
 /**
  * Action Owner: Routes body content-type to the appropriate parser.
@@ -1383,9 +2246,12 @@ namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
 final readonly class ParseBodyByContentType
 {
     /**
-     * @return array|object|null
+     * @param string $contentType
+     * @param string $content
+     *
+     * @return array|null
      */
-    public function execute(string $contentType, string $content) : array|object|null
+    public function execute(string $contentType, string $content) : array|null
     {
         $mediaType = strtolower(trim(explode(';', $contentType)[0]));
 
@@ -1404,7 +2270,7 @@ final readonly class ParseBodyByContentType
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
 
 /**
  * Action Owner: Parses URL-encoded form data (application/x-www-form-urlencoded).
@@ -1432,7 +2298,9 @@ final readonly class ParseFormBody
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
+
+use JsonException;
 
 /**
  * Action Owner: Parses JSON request body.
@@ -1440,10 +2308,13 @@ namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
 final readonly class ParseJsonBody
 {
     /**
-     * @return array|object|null
+     * @param string $content
+     *
+     * @return array|null
      */
-    public function execute(string $content) : array|object|null
+    public function execute(string $content) : array|null
     {
+        $content = trim($content);
         if ($content === '') {
             return null;
         }
@@ -1451,8 +2322,8 @@ final readonly class ParseJsonBody
         try {
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
-            return is_array($data) || is_object($data) ? $data : null;
-        } catch (\JsonException) {
+            return (is_array($data) || is_object($data)) ? $data : null;
+        } catch (JsonException) {
             return null;
         }
     }
@@ -1463,36 +2334,37 @@ final readonly class ParseJsonBody
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
-use psr\http\message\StreamInterface;
+use NoDiscard;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Capability Owner: Manages the raw request body stream.
  */
 final readonly class RequestBody
 {
-    private StreamInterface $stream;
 
-    public function __construct(
-        StreamInterface $stream
-    )
-    {
-        $this->stream = $stream;
-    }
+    public function __construct(private StreamInterface $stream) {}
 
     public function stream() : StreamInterface
     {
         return $this->stream;
     }
 
+    #[NoDiscard]
     public function content() : string
     {
-        if ($this->stream->isSeekable()) {
-            $this->stream->rewind();
+        if (! $this->stream) {
+            return $this->stream->getContents();
         }
 
-        return $this->stream->getContents();
+        $originalPosition = $this->stream->tell();
+        $this->stream->rewind();
+        $content = $this->stream->getContents();
+        $this->stream->seek(offset: $originalPosition);
+
+        return $content;
     }
 }
 
@@ -1501,7 +2373,7 @@ final readonly class RequestBody
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestCookies;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies;
 
 /**
  * Capability Owner: Manages HTTP request cookies.
@@ -1555,7 +2427,7 @@ final readonly class RequestCookies
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
 use SensitiveParameter;
 
@@ -1612,7 +2484,7 @@ final readonly class NormalizeHeaders
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
 use SensitiveParameter;
 
@@ -1718,7 +2590,7 @@ final readonly class RequestHeaders
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestSession;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
 
 /**
  * Capability Owner: Manages the session data attached to a request.
@@ -1765,6 +2637,20 @@ final readonly class RequestSession
     {
         return isset($this->data[$key]);
     }
+
+    public function put(string $key, mixed $value) : self
+    {
+        $newData = $this->data;
+        $newData[$key] = $value;
+        return new self(data: $newData, id: $this->id);
+    }
+
+    public function forget(string $key) : self
+    {
+        $newData = $this->data;
+        unset($newData[$key]);
+        return new self(data: $newData, id: $this->id);
+    }
 }
 
 === ServerRequest/IncomingRequest/RequestTarget/ReadRequestTarget.php ===
@@ -1772,7 +2658,7 @@ final readonly class RequestSession
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestTarget;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget;
 
 use Psr\Http\Message\UriInterface;
 
@@ -1822,84 +2708,270 @@ final readonly class ReadRequestTarget
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestedInputs;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
+use BackedEnum;
 
 /**
  * Capability Owner: Provides a DSL-friendly way to access request inputs.
  *
  * Aggregates Query Parameters and Parsed Body data.
+ * Delegates to InputsDTO for strongly-typed operations.
  */
 final readonly class RequestedInputs
 {
-    private array|null|object $parsedBody;
-    private array             $queryParams;
+    public function __construct(
+        private InputsDTO $dto
+    ) {}
 
     /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->dto->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function query(): array
+    {
+        return $this->dto->query;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function body(): array
+    {
+        return $this->dto->body;
+    }
+
+    /**
+     * Map the requested inputs to a DTO class.
+     *
+     * @template T of AbstractDTO
+     * @param class-string<T> $dtoClass The Fully Qualified Class Name of the DTO.
+     * @return T
+     */
+    public function as(string $dtoClass): AbstractDTO
+    {
+        return $this->dto->as($dtoClass);
+    }
+
+    public function bool(string $key, bool $default = false): bool
+    {
+        return $this->dto->bool($key, $default);
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->dto->get($key, $default);
+    }
+
+    public function int(string $key, int $default = 0): int
+    {
+        return $this->dto->int($key, $default);
+    }
+
+    public function float(string $key, float $default = 0.0): float
+    {
+        return $this->dto->float($key, $default);
+    }
+
+    public function text(string $key, string $default = ''): string
+    {
+        return $this->dto->string($key, $default);
+    }
+
+    /**
+     * @param string $key
+     * @param array  $default
+     *
+     * @return array
+     */
+    public function list(string $key, array $default = []): array
+    {
+        return $this->dto->array($key, $default);
+    }
+
+    public function has(string $key): bool
+    {
+        return $this->dto->has($key);
+    }
+
+    public function only(array $keys): array
+    {
+        return $this->dto->only($keys);
+    }
+
+    public function except(array $keys): array
+    {
+        return $this->dto->except($keys);
+    }
+
+    /**
+     * @template T of BackedEnum
+     * @param string $key
+     * @param class-string<T> $enumClass
+     * @param T|null $default
+     * @return T|null
+     */
+    public function enum(string $key, string $enumClass, mixed $default = null): BackedEnum|null
+    {
+        return $this->dto->enum($key, $enumClass, $default);
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/RequestedInputsDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
+use ReflectionException;
+
+/**
+ * State Owner: Data Transfer Object encapsulating raw HTTP payloads.
+ *
+ * This class is now a thin wrapper around InputsDTO for backwards compatibility.
+ *
+ * @deprecated Use InputsDTO directly for new code.
+ */
+final class RequestedInputsDTO extends InputsDTO
+{
+    /**
+     * Create a DTO instance from request input slices.
+     *
      * @param array<string, mixed> $queryParams
      * @param array|object|null    $parsedBody
+     *
+     * @return RequestedInputsDTO
+     * @throws ReflectionException
      */
-    public function __construct(
-        array|null        $queryParams = null,
-        array|object|null $parsedBody = null
-    )
+    public static function fromSlices(array $queryParams, array|object|null $parsedBody): self
     {
-        $queryParams       ??= [];
-        $this->queryParams = $queryParams;
-        $this->parsedBody  = $parsedBody;
+        return new self(data: [
+            'query' => $queryParams,
+            'body' => self::normalizeBody($parsedBody),
+        ]);
+    }
+
+    private static function normalizeBody(array|object|null $parsedBody): array
+    {
+        if ($parsedBody === null) {
+            return [];
+        }
+
+        if (is_object($parsedBody) && !$parsedBody instanceof self) {
+            return (array) $parsedBody;
+        }
+
+        return is_array($parsedBody) ? $parsedBody : [];
     }
 
     /**
+     * @deprecated Use query() instead
      * @return array<string, mixed>
      */
-    public function all() : array
+    public function getQueryParams(): array
     {
-        $body = $this->extractBodyArray();
-
-        // Body takes precedence over query in case of collisions
-        return array_merge($this->queryParams, $body);
+        return $this->query;
     }
 
     /**
+     * @deprecated Use body() instead
      * @return array<string, mixed>
      */
-    private function extractBodyArray() : array
+    public function getParsedBody(): array
     {
-        if (is_array($this->parsedBody)) {
-            return $this->parsedBody;
+        return $this->body;
+    }
+}
+
+=== ServerRequest/IncomingRequest/ServerEnvironment/ServerEnvironment.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+/**
+ * State Owner: Structured Data Transfer Object for Server Parameters ($_SERVER).
+ * Provides a strongly typed, predictable interface over raw superglobal arrays.
+ */
+final class ServerEnvironment extends AbstractDTO
+{
+    public string|null $documentRoot = null;
+    public string|null $remoteAddr = null;
+    public string|null $serverSoftware = null;
+    public string|null $serverProtocol = null;
+    public string|null $serverName = null;
+    public string|null $serverAddr = null;
+    public string|null $serverPort = null;
+    public string|null $requestMethod = null;
+    public string|null $requestUri = null;
+    public string|null $queryString = null;
+    public string|null $https = null;
+
+    // HTTP prefixed values
+    public string|null $httpHost = null;
+    public string|null $httpUserAgent = null;
+    public string|null $httpAccept = null;
+    public string|null $httpAcceptEncoding = null;
+    public string|null $httpAcceptLanguage = null;
+    public string|null $httpConnection = null;
+    public string|null $httpReferer = null;
+
+    // Timestamps
+    public int $requestTime = 0;
+    public float $requestTimeFloat = 0.0;
+
+    /**
+     * Create a DTO instance from raw PSR-7 server parameters.
+     * Maps ALL_CAPS_SNAKE_CASE keys to camelCase properties.
+     *
+     * @param array<string, mixed> $serverParams
+     */
+    public static function fromServerParams(array $serverParams): self
+    {
+        $normalized = [];
+        foreach ($serverParams as $key => $value) {
+            $normalized[camel(value: $key)] = $value;
         }
 
-        if (is_object($this->parsedBody)) {
-            return (array) $this->parsedBody;
-        }
-
-        return [];
+        return new self(data: $normalized);
     }
 
-    public function bool(string $key, bool $default = false) : bool
+    /**
+     * Helper to check if connection is secure.
+     */
+    public function isHttps(): bool
     {
-        $value = $this->get(key: $key);
-        if ($value === null) {
-            return $default;
+        if ($this->https !== null && strtolower($this->https) !== 'off') {
+            return true;
         }
 
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        return false;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    /**
+     * Helper to check if request is from localhost.
+     */
+    public function isLocal(): bool
     {
-        $body = $this->extractBodyArray();
-
-        return $body[$key] ?? $this->queryParams[$key] ?? $default;
-    }
-
-    public function int(string $key, int $default = 0) : int
-    {
-        $value = $this->get(key: $key);
-        if ($value === null || $value === '') {
-            return $default;
-        }
-
-        return (int) $value;
+        return in_array(
+            needle: $this->remoteAddr,
+            haystack: ['127.0.0.1', '::1'],
+            strict: true
+        );
     }
 }
 
@@ -1908,282 +2980,388 @@ final readonly class RequestedInputs
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestAttributes\RequestAttributes;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestCookies\RequestCookies;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestedInputs\RequestedInputs;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestSession\RequestSession;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestTarget\ReadRequestTarget;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Avax\HTTP\URI\UriBuilder;
+use InvalidArgumentException;
+use NoDiscard;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
 
 /**
- * State Owner: Clean, immutable PSR-7 Server ServerRequest.
+ * State owner: clean, immutable PSR-7 server request.
  *
- * It delegates all semantic behavior to capability owners.
+ * It stores request state and delegates semantic behavior
+ * to dedicated capability owners.
  */
-final readonly class ServerRequest implements ServerRequestInterface
+final class ServerRequest implements ServerRequestInterface
 {
-    private string              $protocolVersion;
+    /** @var array<string, mixed> */
+    public array $serverParams {
+        get {
+            return $this->serverParams;
+        }
+    }
+
+    /** @var array<string, mixed> */
+    public array $queryParams {
+        get {
+            return $this->queryParams;
+        }
+    }
+
+    public string|null          $requestTarget {
+        get {
+            return $this->requestTarget;
+        }
+    }
     private RequestSession|null $session;
-    private RequestAttributes   $attributes;
-    private ParsedBody          $parsedBody;
-    private UploadedFiles       $uploadedFiles;
-    private array               $queryParams;
-    private RequestCookies      $cookies;
-    private string|null         $requestTarget;
-    private array               $serverParams;
-    private RequestBody         $body;
-    private RequestHeaders      $headers;
-    private UriBuilder          $uri;
-    private string              $method;
+
+    public string $method {
+        get {
+            return $this->method;
+        }
+    }
+    public string $protocolVersion {
+        get {
+            return $this->protocolVersion;
+        }
+    }
+
+    public array $headers {
+        get {
+            return $this->requestHeaders->all();
+        }
+    }
 
     public function __construct(
-        RequestBody                               $body,
-        string|null                               $method = null,
-        UriBuilder|null                           $uri = null,
-        #[SensitiveParameter] RequestHeaders|null $headers = null,
-        array|null                                $serverParams = null,
-        string|null                               $requestTarget = null,
-        RequestCookies|null                       $cookies = null,
-        array|null                                $queryParams = null,
-        UploadedFiles|null                        $uploadedFiles = null,
-        ParsedBody|null                           $parsedBody = null,
-        RequestAttributes|null                    $attributes = null,
-        #[SensitiveParameter] RequestSession|null $session = null,
-        string                                    $protocolVersion = '1.1'
-    )
-    {
-        $method                ??= 'GET';
-        $uri                   ??= new UriBuilder(scheme: '');
-        $headers               ??= new RequestHeaders();
-        $serverParams          ??= [];
-        $cookies               ??= new RequestCookies();
-        $queryParams           ??= [];
-        $uploadedFiles         ??= new UploadedFiles();
-        $parsedBody            ??= new ParsedBody();
-        $attributes            ??= new RequestAttributes();
-        $this->method          = $method;
-        $this->uri             = $uri;
-        $this->headers         = $headers;
-        $this->body            = $body;
-        $this->serverParams    = $serverParams;
-        $this->requestTarget   = $requestTarget;
-        $this->cookies         = $cookies;
-        $this->queryParams     = $queryParams;
-        $this->uploadedFiles   = $uploadedFiles;
-        $this->parsedBody      = $parsedBody;
-        $this->attributes      = $attributes;
-        $this->session         = $session;
-        $this->protocolVersion = $protocolVersion;
+        private readonly RequestBody $body,
+        string|null                  $method = null,
+        public UriInterface|null     $uri = null {
+            get {
+                return $this->uri;
+            }
+        },
+        #[SensitiveParameter]
+        public RequestHeaders|null $requestHeaders = null,
+        array|null                   $serverParams = null,
+        string|null                  $requestTarget = null,
+        private RequestCookies|null    $cookies = null,
+        array|null                     $queryParams = null,
+        private UploadedFiles|null     $uploadedFiles = null,
+        private ParsedBody|null        $parsedBody = null,
+        private RequestAttributes|null $attributes = null,
+        #[SensitiveParameter]
+        RequestSession|null            $session = null,
+        string                         $protocolVersion = '1.1'
+    ) {
+        $serverParams           ??= [];
+        $method                  = $method ?? ($serverParams['REQUEST_METHOD'] ?? 'GET');
+        $this->uri               ??= new UriBuilder(scheme: '');
+        $this->requestHeaders   ??= new RequestHeaders();
+        $this->cookies          ??= new RequestCookies();
+        $this->uploadedFiles    ??= new UploadedFiles();
+        $this->parsedBody       ??= new ParsedBody();
+        $this->attributes       ??= new RequestAttributes();
+        $this->method           = self::normalizeMethod(method: $method);
+        $this->protocolVersion  = self::normalizeProtocolVersion(version: $protocolVersion);
+        $this->serverParams     = $serverParams;
+        $this->requestTarget    = $requestTarget;
+        $this->queryParams      = $queryParams ?? [];
+        $this->session          = $session;
     }
 
-    /** *** PSR-7 Methods *** */
-
-    public function getProtocolVersion() : string
+    #[NoDiscard]
+    public function withProtocolVersion($version): self
     {
-        return $this->protocolVersion;
-    }
+        $normalized = self::normalizeProtocolVersion(version: $version);
 
-    public function withProtocolVersion($version) : self
-    {
-        $normalized = (new NormalizeProtocolVersion())->execute(protocol: $version);
         if ($normalized === $this->protocolVersion) {
             return $this;
         }
 
-        return $this->mutate(data: ['protocolVersion' => $normalized]);
+        return clone(object: $this, withProperties: [
+            "protocolVersion" => $normalized
+        ]);
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @return array<string, array<int, string>>
      */
-    private function mutate(array $data) : self
+    public function getHeaders(): array { return $this->requestHeaders->all(); }
+
+    public function hasHeader($name): bool
     {
-        return new self(
-            body           : $data['body'] ?? $this->body,
-            method         : $data['method'] ?? $this->method,
-            uri            : $data['uri'] ?? $this->uri,
-            headers        : $data['headers'] ?? $this->headers,
-            serverParams   : $data['serverParams'] ?? $this->serverParams,
-            requestTarget  : array_key_exists('requestTarget', $data) ? $data['requestTarget'] : $this->requestTarget,
-            cookies        : $data['cookies'] ?? $this->cookies,
-            queryParams    : $data['queryParams'] ?? $this->queryParams,
-            uploadedFiles  : $data['uploadedFiles'] ?? $this->uploadedFiles,
-            parsedBody     : $data['parsedBody'] ?? $this->parsedBody,
-            attributes     : $data['attributes'] ?? $this->attributes,
-            session        : array_key_exists('session', $data) ? $data['session'] : $this->session,
-            protocolVersion: $data['protocolVersion'] ?? $this->protocolVersion
+        return $this->requestHeaders->has(name: self::requireString(value: $name, argumentName: 'Header name'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getHeader($name): array
+    {
+        return $this->requestHeaders->get(name: self::requireString(value: $name, argumentName: 'Header name'));
+    }
+
+    public function getHeaderLine($name): string
+    {
+        return $this->requestHeaders->getLine(name: self::requireString(value: $name, argumentName: 'Header name'));
+    }
+
+    #[NoDiscard]
+    public function withHeader($name, $value): self
+    {
+        return clone(object: $this, withProperties: [
+            "requestHeaders" => $this->requestHeaders->put(name: self::requireString(value: $name, argumentName: 'Header name'), value: $value)
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withAddedHeader($name, $value): self
+    {
+        return clone(object: $this, withProperties: [
+            "requestHeaders" => $this->requestHeaders->append(name: self::requireString(value: $name, argumentName: 'Header name'), value: $value)
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withoutHeader($name): self
+    {
+        return clone(object: $this, withProperties: [
+            "requestHeaders" => $this->requestHeaders->drop(name: self::requireString(value: $name, argumentName: 'Header name'))
+        ]);
+    }
+
+    public function getBody(): StreamInterface { return $this->body->stream(); }
+
+    #[NoDiscard]
+    public function withBody(StreamInterface $body): self
+    {
+        return clone(object: $this, withProperties: [
+            "body" => new RequestBody(stream: $body)
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withRequestTarget($requestTarget): self
+    {
+        return clone(object: $this, withProperties: [
+            "requestTarget" => self::requireString(value: $requestTarget, argumentName: 'Request target')
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withMethod($method): self
+    {
+        $normalized = self::normalizeMethod(method: $method);
+
+        if ($normalized === $this->method) {
+            return $this;
+        }
+
+        return clone(object: $this, withProperties: [
+            "method" => $normalized
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withUri(UriInterface $uri, $preserveHost = false): self
+    {
+        $new = clone(object: $this, withProperties: [
+            "uri" => $uri
+        ]);
+
+        $host = $uri->getHost();
+        if ($host === '') {
+            return $new;
+        }
+
+        if ($preserveHost && $this->hasHeader(name: 'Host')) {
+            return $new;
+        }
+
+        $port = $uri->getPort();
+        $hostHeader = $port === null
+            ? $host
+            : sprintf('%s:%d', $host, $port);
+
+        $new->requestHeaders = $new->requestHeaders->put(name: 'Host', value: $hostHeader);
+        return $new;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getCookieParams(): array { return $this->cookies->all(); }
+
+    #[NoDiscard]
+    public function withCookieParams(array $cookies): self
+    {
+        return clone(object: $this, withProperties: [
+            "cookies" => $this->cookies->with(cookies: $cookies)
+        ]);
+    }
+
+    #[NoDiscard]
+    public function withQueryParams(array $query): self
+    {
+        return clone(object: $this, withProperties: [
+            "queryParams" => $query
+        ]);
+    }
+
+    public function getUploadedFiles(): array { return $this->uploadedFiles->all(); }
+
+    #[NoDiscard]
+    public function withUploadedFiles(array $uploadedFiles): self
+    {
+        new GuardUploadedFiles()->execute(files: $uploadedFiles);
+
+        return clone(object: $this, withProperties: [
+            "uploadedFiles" => $this->uploadedFiles->with(files: $uploadedFiles)
+        ]);
+    }
+
+    public function getParsedBody(): array|object|null { return $this->parsedBody->data(); }
+
+    #[NoDiscard]
+    public function withParsedBody($data): self
+    {
+        if ($data !== null && !is_array($data) && !is_object($data)) {
+            throw new InvalidArgumentException(
+                message: 'Parsed body must be null, an array, or an object.'
+            );
+        }
+
+        return clone(object: $this, withProperties: [
+            "parsedBody" => $this->parsedBody->with(data: $data)
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getAttributes(): array { return $this->attributes->all(); }
+
+    public function getAttribute($name, $default = null): mixed
+    {
+        return $this->attributes->get(
+            name: self::requireString(value: $name, argumentName: 'Attribute name'),
+            default: $default,
         );
     }
 
-    public function getHeaders() : array
+    #[NoDiscard]
+    public function withAttribute($name, $value): self
     {
-        return $this->headers->all();
+        return clone(object: $this, withProperties: [
+            "attributes" => $this->attributes->put(
+                name : self::requireString(value: $name, argumentName: 'Attribute name'),
+                value: $value,
+            )
+        ]);
     }
 
-    public function hasHeader($name) : bool
+    #[NoDiscard]
+    public function withoutAttribute($name): self
     {
-        return $this->headers->has(name: $name);
+        return clone(object: $this, withProperties: [
+            "attributes" => $this->attributes->drop(
+                name: self::requireString(value: $name, argumentName: 'Attribute name'),
+            )
+        ]);
     }
 
-    public function getHeader($name) : array
+    public function inputs(): RequestedInputs
     {
-        return $this->headers->get(name: $name);
+        $dto = InputsDTO::fromSlices(
+            queryParams: $this->queryParams,
+            parsedBody: $this->getParsedBody()
+        );
+
+        return new RequestedInputs(dto: $dto);
     }
 
-    public function getHeaderLine($name) : string
+    public function serverEnvironment(): ServerEnvironment
     {
-        return $this->headers->getLine(name: $name);
+        return ServerEnvironment::fromServerParams(serverParams: $this->serverParams);
     }
 
-    public function withAddedHeader($name, $value) : self
+    public function requestSession(): RequestSession|null { return $this->session; }
+
+    private static function normalizeProtocolVersion(mixed $version): string
     {
-        return $this->mutate(data: ['headers' => $this->headers->append(name: $name, value: $value)]);
+        return new NormalizeProtocolVersion()->execute(
+            protocol: self::requireString(value: $version, argumentName: 'Protocol version'),
+        );
     }
 
-    public function withoutHeader($name) : self
+    private static function normalizeMethod(mixed $method): string
     {
-        return $this->mutate(data: ['headers' => $this->headers->drop(name: $name)]);
-    }
+        $method = strtoupper(trim(self::requireString(value: $method, argumentName: 'HTTP method')));
 
-    public function getBody() : StreamInterface
-    {
-        return $this->body->stream();
-    }
-
-    public function withBody(StreamInterface $body) : self
-    {
-        return $this->mutate(data: ['body' => new RequestBody(stream: $body)]);
-    }
-
-    public function getRequestTarget() : string
-    {
-        return (new ReadRequestTarget(explicitTarget: $this->requestTarget, uri: $this->uri))->resolve();
-    }
-
-    public function withRequestTarget($requestTarget) : self
-    {
-        return $this->mutate(data: ['requestTarget' => $requestTarget]);
-    }
-
-    public function getMethod() : string
-    {
-        return $this->method;
-    }
-
-    public function withMethod($method) : self
-    {
-        return $this->mutate(data: ['method' => $method]);
-    }
-
-    public function getUri() : UriInterface
-    {
-        return $this->uri;
-    }
-
-    public function withUri(UriInterface $uri, $preserveHost = false) : self
-    {
-        $newRequest = $this->mutate(data: ['uri' => $uri]);
-
-        if (! $preserveHost || ! $this->headers->has(name: 'Host')) {
-            $newRequest = $newRequest->withHeader(name: 'Host', value: $uri->getHost());
+        if ($method === '') {
+            throw new InvalidArgumentException(message: 'HTTP method cannot be empty.');
         }
 
-        return $newRequest;
+        return $method;
     }
 
-    public function withHeader($name, $value) : self
+    private static function requireString(mixed $value, string $argumentName): string
     {
-        return $this->mutate(data: ['headers' => $this->headers->put(name: $name, value: $value)]);
+        if (!is_string($value)) {
+            throw new InvalidArgumentException(message: sprintf('%s must be a string.', $argumentName));
+        }
+
+        return $value;
     }
+}
 
-    public function getServerParams() : array
+=== ServerRequest/IncomingRequest/UploadedFiles/GuardUploadedFiles.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
+
+use Psr\Http\Message\UploadedFileInterface;
+use InvalidArgumentException;
+
+/**
+ * Action Owner: Recursively validates the uploaded files tree structure.
+ */
+final readonly class GuardUploadedFiles
+{
+    /**
+     * @param array $files The tree of uploaded files.
+     * @throws InvalidArgumentException If the tree contains invalid elements.
+     */
+    public function execute(array $files) : void
     {
-        return $this->serverParams;
-    }
+        foreach ($files as $file) {
+            if (is_array($file)) {
+                $this->execute(files: $file);
+                continue;
+            }
 
-    public function getCookieParams() : array
-    {
-        return $this->cookies->all();
-    }
-
-    public function withCookieParams(array $cookies) : self
-    {
-        return $this->mutate(data: ['cookies' => $this->cookies->with(cookies: $cookies)]);
-    }
-
-    public function getQueryParams() : array
-    {
-        return $this->queryParams;
-    }
-
-    public function withQueryParams(array $query) : self
-    {
-        return $this->mutate(data: ['queryParams' => $query]);
-    }
-
-    public function getUploadedFiles() : array
-    {
-        return $this->uploadedFiles->all();
-    }
-
-    public function withUploadedFiles(array $uploadedFiles) : self
-    {
-        return $this->mutate(data: ['uploadedFiles' => $this->uploadedFiles->with(files: $uploadedFiles)]);
-    }
-
-    public function withParsedBody($data) : self
-    {
-        return $this->mutate(data: ['parsedBody' => $this->parsedBody->with(data: $data)]);
-    }
-
-    public function getAttributes() : array
-    {
-        return $this->attributes->all();
-    }
-
-    public function getAttribute($name, $default = null) : mixed
-    {
-        return $this->attributes->get(name: $name, default: $default);
-    }
-
-    public function withAttribute($name, $value) : self
-    {
-        return $this->mutate(data: ['attributes' => $this->attributes->put(name: $name, value: $value)]);
-    }
-
-    public function withoutAttribute($name) : self
-    {
-        return $this->mutate(data: ['attributes' => $this->attributes->drop(name: $name)]);
-    }
-
-    /** *** Domain Extensions *** */
-
-    public function inputs() : RequestedInputs
-    {
-        return new RequestedInputs(queryParams: $this->queryParams, parsedBody: $this->getParsedBody());
-    }
-
-    public function getParsedBody() : array|object|null
-    {
-        return $this->parsedBody->data();
-    }
-
-    /** *** Internal Mutation *** */
-
-    public function session() : RequestSession|null
-    {
-        return $this->session;
+            if (!$file instanceof UploadedFileInterface) {
+                throw new InvalidArgumentException(message: 'Invalid uploaded file encountered in the tree.');
+            }
+        }
     }
 }
 
@@ -2192,7 +3370,7 @@ final readonly class ServerRequest implements ServerRequestInterface
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 use Avax\HTTP\Response\Classes\Stream;
 use Psr\Http\Message\UploadedFileInterface;
@@ -2272,7 +3450,7 @@ final readonly class NormalizeUploadedFiles
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -2321,6 +3499,10 @@ final class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(message: 'File already moved');
         }
 
+        if ($this->error !== UPLOAD_ERR_OK) {
+            throw new RuntimeException(message: 'Cannot move file with upload error: ' . $this->error);
+        }
+
         if ($targetPath === '') {
             throw new InvalidArgumentException(message: 'Invalid target path');
         }
@@ -2329,19 +3511,19 @@ final class UploadedFile implements UploadedFileInterface
         // For our implementation, we'll cast a note that this is the seam.
         if (PHP_SAPI === 'cli') {
             // In CLI context we just write the stream
-            file_put_contents($targetPath, $this->stream->getContents());
+            if ($this->stream) {
+                $this->stream->rewind();
+            }
+            file_put_contents($targetPath, (string) $this->stream);
         } else {
             // Actual SAPI integration
-            if (! move_uploaded_file($this->stream->getMetadata(key: 'uri'), $targetPath)) {
+            $uri = $this->stream->getMetadata(key: 'uri');
+            if ($uri === null || ! move_uploaded_file($uri, $targetPath)) {
                 throw new RuntimeException(message: 'Failed to move uploaded file');
             }
         }
 
         $this->moved = true;
-
-        // Technically, a readonly class cannot have mutable properties like $moved.
-        // PSR-7 UploadedFileInterface usually implies state.
-        // We'll treat this as a simplified model for the rewrite.
     }
 
     public function getSize() : int|null
@@ -2370,7 +3552,7 @@ final class UploadedFile implements UploadedFileInterface
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 /**
  * Capability Owner: Manages the uploaded files tree.
@@ -2399,6 +3581,8 @@ final readonly class UploadedFiles
 
     /**
      * @param array $files
+     *
+     * @return UploadedFiles
      */
     public function with(array $files) : self
     {
@@ -2413,7 +3597,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\IncomingHttp\Network;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use SensitiveParameter;
 
 /**
  * Action Owner: Parses IP address chains from forwarded headers.
@@ -2423,7 +3608,7 @@ final readonly class ParseForwardedAddresses
     /**
      * @return string[]
      */
-    public function execute(#[\SensitiveParameter] RequestHeaders $headers) : array
+    public function execute(#[SensitiveParameter] RequestHeaders $headers) : array
     {
         $forwarded = $headers->getLine(name: 'X-Forwarded-For');
 
@@ -2431,7 +3616,9 @@ final readonly class ParseForwardedAddresses
             return [];
         }
 
-        return array_map('trim', explode(',', $forwarded));
+        $ips = array_map('trim', explode(',', $forwarded));
+
+        return array_values(array_filter($ips, static fn($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false));
     }
 }
 
@@ -2442,7 +3629,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\IncomingHttp\Network;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use SensitiveParameter;
 
 /**
  * Action Owner: Securely resolves the client IP address.
@@ -2458,7 +3646,7 @@ final readonly class ResolveClientAddress
         $this->proxyPolicy = $proxyPolicy;
     }
 
-    public function execute(string $remoteAddr, #[\SensitiveParameter] RequestHeaders $headers) : string
+    public function execute(string $remoteAddr, #[SensitiveParameter] RequestHeaders $headers) : string
     {
         if (! $this->proxyPolicy->isTrusted(ip: $remoteAddr)) {
             return $remoteAddr;
@@ -2470,9 +3658,21 @@ final readonly class ResolveClientAddress
             return $remoteAddr;
         }
 
-        // Return the first address in the chain (closest to the client)
-        // Note: Production implementations might want to strip trusted proxies from the RIGHT.
-        return $forwarded[0];
+        // Traverse the chain from right to left, stripping trusted proxies.
+        // The first non-trusted IP we encounter is the real client IP.
+        $clientAddress = $remoteAddr;
+        $ips           = array_reverse($forwarded);
+
+        foreach ($ips as $ip) {
+            if ($this->proxyPolicy->isTrusted(ip: $ip)) {
+                $clientAddress = $ip; // Still a trusted proxy, keep moving left
+                continue;
+            }
+
+            return $ip; // Found the real client
+        }
+
+        return $clientAddress;
     }
 }
 
@@ -2502,6 +3702,10 @@ final readonly class TrustedProxyPolicy
 
     public function isTrusted(string $ip) : bool
     {
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return false;
+        }
+
         if ($this->trustedProxies === ['*']) {
             return true;
         }
@@ -2521,14 +3725,19 @@ final readonly class TrustedProxyPolicy
             return true;
         }
 
-        // Simple CIDR check
         if (str_contains($trusted, '/')) {
             [$range, $netmask] = explode('/', $trusted, 2);
-            $rangeInt = ip2long($range);
-            $ipInt    = ip2long($ip);
-            $mask     = ~((1 << (32 - (int) $netmask)) - 1);
 
-            return ($ipInt & $mask) === ($rangeInt & $mask);
+            $rangeLong = ip2long($range);
+            $ipLong    = ip2long($ip);
+
+            if ($rangeLong === false || $ipLong === false) {
+                return false;
+            }
+
+            $mask = ~((1 << (32 - (int) $netmask)) - 1);
+
+            return ($ipLong & $mask) === ($rangeLong & $mask);
         }
 
         return false;
@@ -2550,7 +3759,8 @@ slucaj sa `InputManagementTrait`, itd.). Tako request objuekti završavaju i kao
 Zadržavamo punu PSR-7 kompatibilnost za sve eksterne posmatrače sistema. Ipak, interni "ownership" nad stanjem Request-a
 neće biti na plećima samog modela.
 
-Novi `Request` postaje isključivo **tanka ljuska i facade (state owner)** za PSR-7 operacije.
+Novi `ServerRequest` postaje isključivo **tanka ljuska i facade (state owner)** za PSR-7 operacije.
+Njegov legacy bridge (compatibility layer) je `Request`.
 
 - Za skladištenje i preračunavanje header-a brinuće isključivo `RequestHeaders`.
 - Za tumačenje body-ja sa parserima brinuće `ParseBodyByContentType` prosleđeno ka `ParsedBody`.
@@ -2586,10 +3796,11 @@ odgovarajući folder unutar Foundation/HTTP/Request).
 
 - **Flow**: `IncomingHttp`
 - **Subflow**: `IncomingRequest`
-- **State Owner**: `Request` (tanji immutable objekt)
+- **State Owner**: `ServerRequest` (puna PSR-7 implementacija)
+- **Legacy Bridge**: `Request` (podržava `input()`, `all()` za compatibility)
 - **Shared State/Capability Owners**:
     - `RequestHeaders` (rukovodi `list<string>` tipovima header-a)
-    - `RequestedInputs` (DSL-only accessor nad inputom)
+    - `RequestedInputs` (DSL-only accessor nad inputom: `bool()`, `int()`, `text()`, `list()`, `float()`)
     - `RequestBody` i `ParsedBody` (striknto razdvojeni stream status vs. interpretacija)
     - `RequestCookies`, `RequestAttributes`, `UploadedFiles`, `RequestSession`.
 - **Action Owners**:
@@ -2900,6 +4111,98 @@ EOF
     </testsuites>
 </phpunit>
 
+=== tests/Characterization/BridgeRequestTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Characterization;
+
+use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\URI\UriBuilder;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+
+class BridgeRequestTest extends TestCase
+{
+    private function createServerRequest(string|null $method = null, string $uri = 'http://localhost/') : ServerRequest
+    {
+        $method ??= 'GET';
+
+        return new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            method: $method,
+            uri: UriBuilder::createFromString(uri: $uri)
+        );
+    }
+
+    public function test_bridge_delegates_to_server_request() : void
+    {
+        $serverRequest = $this->createServerRequest(method: 'POST', uri: 'https://example.com/api');
+
+        // Use reflection to set the private property since constructor is private and we want to inject a mock or specific instance
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
+
+        $this->assertEquals(expected: 'POST', actual: $request->getMethod());
+        $this->assertEquals(expected: 'example.com', actual: $request->getUri()->getHost());
+        $this->assertEquals(expected: '/api', actual: $request->getRequestTarget());
+    }
+
+    public function test_with_uri_preserve_host_logic() : void
+    {
+        $serverRequest = $this->createServerRequest(uri: 'http://old.com/');
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
+
+        $newUri = UriBuilder::createFromString(uri: 'http://new.com/');
+
+        // Preserve host = false (should change Host header)
+        $requestWithNewHost = $request->withUri(uri: $newUri, preserveHost: false);
+        $this->assertEquals(expected: ['new.com'], actual: $requestWithNewHost->getHeader(name: 'Host'));
+
+        // Preserve host = true
+        $requestPreserved = $request->withUri(uri: $newUri, preserveHost: true);
+        $this->assertEquals(expected: ['old.com'], actual: $requestPreserved->getHeader(name: 'Host'));
+    }
+
+    public function test_get_request_target_behavior() : void
+    {
+        $serverRequest = $this->createServerRequest(uri: 'http://localhost/path?query=1');
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
+
+        $this->assertEquals(expected: '/path?query=1', actual: $request->getRequestTarget());
+
+        $requestWithTarget = $request->withRequestTarget(requestTarget: '*');
+        $this->assertEquals(expected: '*', actual: $requestWithTarget->getRequestTarget());
+    }
+
+    public function test_header_casing_and_aggregation() : void
+    {
+        $serverRequest = $this->createServerRequest();
+        $serverRequest = $serverRequest->withHeader(name: 'X-Test', value: 'val1');
+        $serverRequest = $serverRequest->withAddedHeader(name: 'x-test', value: 'val2');
+
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
+
+        $this->assertTrue(condition: $request->hasHeader(name: 'X-TEST'));
+        $this->assertEquals(expected: ['val1', 'val2'], actual: $request->getHeader(name: 'x-test'));
+        $this->assertEquals(expected: 'val1, val2', actual: $request->getHeaderLine(name: 'X-Test'));
+
+        $requestWithout = $request->withoutHeader(name: 'x-test');
+        $this->assertFalse(condition: $requestWithout->hasHeader(name: 'X-Test'));
+    }
+}
+
 === tests/Characterization/RequestCharacterizationTest.php ===
 <?php
 
@@ -2931,7 +4234,7 @@ class RequestCharacterizationTest extends TestCase
 {
     public function test_getRequestTarget_returns_path_and_query() : void
     {
-        $uri     = new UriBuilder('http://example.com/api/users?status=active');
+        $uri     = new UriBuilder(scheme: 'http://example.com/api/users?status=active');
         $request = new Request(uri: $uri);
 
         $this->assertSame(expected: '/api/users?status=active', actual: $request->getRequestTarget());
@@ -2957,7 +4260,7 @@ class RequestCharacterizationTest extends TestCase
         return new Request(
             session      : null,
             serverParams : $serverParams,
-            uri          : new UriBuilder('http://localhost'),
+            uri          : new UriBuilder(scheme: 'http://localhost'),
             body         : new Stream(stream: fopen('php://temp', 'r+')),
             queryParams  : [],
             parsedBody   : [],
@@ -2985,7 +4288,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_updates_host_header_when_preserve_host_false() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new UriBuilder('http://new-host.com/api');
+        $newUri  = new UriBuilder(scheme: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
@@ -2995,7 +4298,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_preserves_host_header_when_preserve_host_true() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new UriBuilder('http://new-host.com/api');
+        $newUri  = new UriBuilder(scheme: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 
@@ -3061,6 +4364,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate
@@ -3086,7 +4390,7 @@ class RequestRegressionTest extends TestCase
         return new Request(
             session      : null,
             serverParams : $serverParams,
-            uri          : new UriBuilder('http://localhost'),
+            uri          : new UriBuilder(scheme: 'http://localhost'),
             body         : new Stream(stream: fopen('php://temp', 'r+')),
             queryParams  : [],
             parsedBody   : [],
@@ -3114,7 +4418,7 @@ class RequestRegressionTest extends TestCase
     public function test_request_target_must_not_blindly_follow_uri_path_mutation() : void
     {
         $request = $this->createBlankOldRequest()->withRequestTarget(requestTarget: '/explicit-target');
-        $newUri  = new UriBuilder('http://example.com/new-path');
+        $newUri  = new UriBuilder(scheme: 'http://example.com/new-path');
 
         $requestWithNewUri = $request->withUri(uri: $newUri);
 
@@ -3139,11 +4443,251 @@ class RequestRegressionTest extends TestCase
 
     public function test_request_must_not_depend_on_trait_assembly_logic() : void
     {
-        $reflection = new \ReflectionClass(objectOrClass: Request::class);
+        $reflection = new ReflectionClass(objectOrClass: Request::class);
         $traits     = $reflection->getTraitNames();
 
         // The new ServerRequest should not be a junkyard of Traits.
         $this->assertEmpty(actual: $traits, message: 'ServerRequest object must strictly avoid using traits for core behavior.');
+    }
+}
+
+=== tests/Unit/BodyParsingTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseFormBody;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Response\Classes\Stream;
+
+class BodyParsingTest extends TestCase
+{
+    public function test_parse_json_body_returns_array_for_json_object()
+    {
+        $parser = new ParseJsonBody();
+        $this->assertEquals(expected: ['foo' => 'bar'], actual: $parser->execute(content: '{"foo": "bar"}'));
+    }
+
+    public function test_parse_json_body_returns_array_for_json_array()
+    {
+        $parser = new ParseJsonBody();
+        $this->assertEquals(expected: ['a', 'b'], actual: $parser->execute(content: '["a", "b"]'));
+    }
+
+    public function test_parse_json_body_returns_null_for_empty_content()
+    {
+        $parser = new ParseJsonBody();
+        $this->assertNull(actual: $parser->execute(content: ''));
+        $this->assertNull(actual: $parser->execute(content: '   '));
+    }
+
+    public function test_parse_json_body_returns_null_for_invalid_json()
+    {
+        $parser = new ParseJsonBody();
+        $this->assertNull(actual: $parser->execute(content: 'invalid-json'));
+    }
+
+    public function test_parse_form_body_parses_urlencoded_content()
+    {
+        $parser = new ParseFormBody();
+        $this->assertEquals(expected: ['foo' => 'bar', 'baz' => '1'], actual: $parser->execute(content: 'foo=bar&baz=1'));
+    }
+
+    public function test_content_preserves_position_for_seekable_stream()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, 'sample content');
+        $stream = new Stream(stream: $handle);
+        $stream->seek(offset: 7);
+
+        $body = new RequestBody(stream: $stream);
+        $content = $body->content();
+
+        $this->assertEquals(expected: 'sample content', actual: $content);
+        $this->assertEquals(expected: 7, actual: $stream->tell());
+    }
+
+    public function test_parse_body_by_content_type_routes_json()
+    {
+        $router = new ParseBodyByContentType();
+        $result = $router->execute(contentType: 'application/json', content: '{"foo": "bar"}');
+        $this->assertEquals(expected: ['foo' => 'bar'], actual: $result);
+    }
+}
+
+=== tests/Unit/BridgeRequestImmutabilityTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\URI\UriBuilder;
+use ReflectionClass;
+
+class BridgeRequestImmutabilityTest extends TestCase
+{
+    private function createRequest(): Request
+    {
+        $serverRequest = new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            method: 'GET',
+            uri: UriBuilder::createFromString(uri: 'http://localhost/')
+        );
+
+        // Use reflection to call the private constructor
+        $reflection = new ReflectionClass(objectOrClass: Request::class);
+        $constructor = $reflection->getConstructor();
+        $constructor->setAccessible(accessible: true);
+        $request = $reflection->newInstanceWithoutConstructor();
+        $constructor->invoke($request, $serverRequest);
+
+        return $request;
+    }
+
+    public function test_withHeader_returns_new_bridge_instance()
+    {
+        $request = $this->createRequest();
+        $newRequest = $request->withHeader(name: 'X-Test', value: 'Value');
+
+        $this->assertNotSame(expected: $request, actual: $newRequest);
+        $this->assertEquals(expected: ['Value'], actual: $newRequest->getHeader(name: 'X-Test'));
+    }
+
+    public function test_withMethod_returns_new_bridge_instance()
+    {
+        $request = $this->createRequest();
+        $newRequest = $request->withMethod(method: 'POST');
+
+        $this->assertNotSame(expected: $request, actual: $newRequest);
+        $this->assertEquals(expected: 'POST', actual: $newRequest->getMethod());
+    }
+
+    public function test_withUri_returns_new_bridge_instance()
+    {
+        $request = $this->createRequest();
+        $uri = UriBuilder::createFromString(uri: 'http://example.com/');
+        $newRequest = $request->withUri(uri: $uri);
+
+        $this->assertNotSame(expected: $request, actual: $newRequest);
+        $this->assertEquals(expected: 'example.com', actual: $newRequest->getUri()->getHost());
+    }
+
+    public function test_withParsedBody_returns_new_bridge_instance()
+    {
+        $request = $this->createRequest();
+        $body = ['foo' => 'bar'];
+        $newRequest = $request->withParsedBody(data: $body);
+
+        $this->assertNotSame(expected: $request, actual: $newRequest);
+        $this->assertEquals(expected: $body, actual: $newRequest->getParsedBody());
+    }
+
+    public function test_legacy_bridge_preserves_original_instance_after_with_calls()
+    {
+        $request = $this->createRequest();
+        $request->withHeader(name: 'X-Test', value: 'Value');
+        $request->withMethod(method: 'POST');
+
+        $this->assertEquals(expected: 'GET', actual: $request->getMethod());
+        $this->assertFalse(condition: $request->hasHeader(name: 'X-Test'));
+    }
+}
+
+=== tests/Unit/CreateRequestTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Response\Classes\Stream;
+
+class CreateRequestTest extends TestCase
+{
+    public function test_execute_builds_server_request_from_explicit_inputs()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = [
+            'REQUEST_METHOD' => 'POST',
+            'HTTP_HOST' => 'api.example.com',
+            'REQUEST_URI' => '/v1/users',
+            'SERVER_PROTOCOL' => 'HTTP/1.1'
+        ];
+
+        $request = $creator->execute(server: $server);
+
+        $this->assertEquals(expected: 'POST', actual: $request->method);
+        $this->assertEquals(expected: 'api.example.com', actual: $request->uri->getHost());
+        $this->assertEquals(expected: '/v1/users', actual: $request->uri->getPath());
+        $this->assertEquals(expected: '1.1', actual: $request->protocolVersion);
+    }
+
+    public function test_execute_uses_query_cookie_and_files_arguments()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = ['REQUEST_METHOD' => 'GET', 'HTTP_HOST' => 'localhost'];
+        $query = ['foo' => 'bar'];
+        $cookie = ['session' => 'abc'];
+
+        $request = $creator->execute(server: $server, query: $query, cookie: $cookie);
+
+        $this->assertEquals(expected: $query, actual: $request->queryParams);
+        $this->assertEquals(expected: $cookie, actual: $request->getCookieParams());
+    }
+
+    public function test_execute_uses_explicit_body_when_provided()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = ['REQUEST_METHOD' => 'POST', 'HTTP_HOST' => 'localhost'];
+        $stream = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream->write(string: 'hello world');
+
+        $request = $creator->execute(server: $server, body: $stream);
+
+        $this->assertEquals(expected: 'hello world', actual: (string) $request->getBody());
+    }
+
+    public function test_create_request_normalizes_http_1_1_to_1_1()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = ['REQUEST_METHOD' => 'GET', 'SERVER_PROTOCOL' => 'HTTP/1.1'];
+
+        $request = $creator->execute(server: $server);
+        $this->assertEquals(expected: '1.1', actual: $request->protocolVersion);
+    }
+
+    public function test_create_request_defaults_protocol_version_to_1_1_when_missing()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = ['REQUEST_METHOD' => 'GET'];
+
+        $request = $creator->execute(server: $server);
+        $this->assertEquals(expected: '1.1', actual: $request->protocolVersion);
+    }
+
+    public function test_resolve_body_accepts_request_body_instance()
+    {
+        $creator = new CreateRequestFromIncomingHttp();
+        $server = ['REQUEST_METHOD' => 'POST'];
+        $body = new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+')));
+
+        $request = $creator->execute(server: $server, body: $body);
+        $this->assertSame(expected: $body->stream(), actual: $request->getBody());
     }
 }
 
@@ -3282,7 +4826,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('')
+            uri           : new UriBuilder(scheme: '')
         );
 
         $this->assertSame(expected: '/', actual: $targetOwner->resolve());
@@ -3292,7 +4836,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: '*',
-            uri           : new UriBuilder('http://example.com/api')
+            uri           : new UriBuilder(scheme: 'http://example.com/api')
         );
 
         $this->assertSame(expected: '*', actual: $targetOwner->resolve());
@@ -3302,7 +4846,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('http://example.com/api/users?status=active')
+            uri           : new UriBuilder(scheme: 'http://example.com/api/users?status=active')
         );
 
         $this->assertSame(expected: '/api/users?status=active', actual: $targetOwner->resolve());
@@ -3312,10 +4856,411 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('http://example.com')
+            uri           : new UriBuilder(scheme: 'http://example.com')
         );
 
         $this->assertSame(expected: '/', actual: $targetOwner->resolve());
+    }
+}
+
+=== tests/Unit/NetworkSecurityTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\Network\ResolveClientAddress;
+use Avax\HTTP\Request\IncomingHttp\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+
+class NetworkSecurityTest extends TestCase
+{
+    public function test_resolve_client_address_returns_remote_addr_when_remote_is_not_trusted()
+    {
+        $policy = new TrustedProxyPolicy(trustedProxies: ['192.168.1.1']);
+        $resolver = new ResolveClientAddress(proxyPolicy: $policy);
+
+        $headers = new RequestHeaders(headers: ['X-Forwarded-For' => '10.0.0.1']);
+        $result = $resolver->execute(remoteAddr: '203.0.113.1', headers: $headers);
+
+        $this->assertEquals(expected: '203.0.113.1', actual: $result);
+    }
+
+    public function test_resolve_client_address_returns_first_non_trusted_ip_from_right_to_left_chain()
+    {
+        // 192.168.1.1 is the edge proxy (trusted)
+        // 192.168.1.2 is an internal proxy (also trusted)
+        $policy = new TrustedProxyPolicy(trustedProxies: ['192.168.1.1', '192.168.1.2']);
+        $resolver = new ResolveClientAddress(proxyPolicy: $policy);
+
+        // Chain: Client (10.0.0.1) -> Proxy1 (192.168.1.2) -> Proxy2 (192.168.1.1)
+        $headers = new RequestHeaders(headers: ['X-Forwarded-For' => '10.0.0.1, 192.168.1.2']);
+        $result = $resolver->execute(remoteAddr: '192.168.1.1', headers: $headers);
+
+        $this->assertEquals(expected: '10.0.0.1', actual: $result);
+    }
+
+    public function test_trusted_proxy_policy_accepts_valid_cidr_match()
+    {
+        $policy = new TrustedProxyPolicy(trustedProxies: ['10.0.0.0/24']);
+        $this->assertTrue(condition: $policy->isTrusted(ip: '10.0.0.50'));
+        $this->assertFalse(condition: $policy->isTrusted(ip: '10.0.1.1'));
+    }
+}
+
+=== tests/Unit/PublicEntryPointTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\PublicEntryPointRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+
+class PublicEntryPointTest extends TestCase
+{
+    public function test_public_entry_point_creates_server_request_from_current_http_environment()
+    {
+        // Mocking superglobals isn't easy in PHPUnit, but we can check if it returns a ServerRequest
+        // This will likely fail with a fatal error due to the argument mismatch if not fixed.
+        $request = PublicEntryPointRequest::fromIncomingHttp();
+
+        $this->assertInstanceOf(expected: ServerRequest::class, actual: $request);
+    }
+}
+
+=== tests/Unit/RequestedInputsTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestedInputs\RequestedInputs;
+
+class RequestedInputsTest extends TestCase
+{
+    public function test_get_prefers_body_over_query_for_same_key()
+    {
+        $inputs = new RequestedInputs(
+            queryParams: ['foo' => 'query'],
+            parsedBody: ['foo' => 'body']
+        );
+
+        $this->assertEquals(expected: 'body', actual: $inputs->get(key: 'foo'));
+    }
+
+    public function test_all_prefers_body_over_query_for_same_key()
+    {
+        $inputs = new RequestedInputs(
+            queryParams: ['foo' => 'query', 'bar' => 'baz'],
+            parsedBody: ['foo' => 'body']
+        );
+
+        $all = $inputs->all();
+        $this->assertEquals(expected: 'body', actual: $all['foo']);
+        $this->assertEquals(expected: 'baz', actual: $all['bar']);
+    }
+
+    public function test_bool_accepts_true_false_zero_one_strings()
+    {
+        $inputs = new RequestedInputs(parsedBody: [
+            't' => 'true',
+            'f' => 'false',
+            '1' => '1',
+            '0' => '0',
+            'y' => 'yes',
+            'n' => 'no'
+        ]);
+
+        $this->assertTrue(condition: $inputs->bool(key: 't'));
+        $this->assertFalse(condition: $inputs->bool(key: 'f'));
+        $this->assertTrue(condition: $inputs->bool(key: '1'));
+        $this->assertFalse(condition: $inputs->bool(key: '0'));
+        $this->assertTrue(condition: $inputs->bool(key: 'y'));
+        $this->assertFalse(condition: $inputs->bool(key: 'n'));
+    }
+
+    public function test_bool_returns_default_for_invalid_value()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 'not-a-bool']);
+        $this->assertTrue(condition: $inputs->bool(key: 'foo', default: true));
+        $this->assertFalse(condition: $inputs->bool(key: 'foo', default: false));
+    }
+
+    public function test_int_accepts_valid_integer_string()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => '123']);
+        $this->assertEquals(expected: 123, actual: $inputs->int(key: 'foo'));
+    }
+
+    public function test_int_returns_default_for_invalid_string()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 'abc']);
+        $this->assertEquals(expected: 5, actual: $inputs->int(key: 'foo', default: 5));
+    }
+
+    public function test_float_accepts_valid_float_string()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => '1.23']);
+        $this->assertEquals(expected: 1.23, actual: $inputs->float(key: 'foo'));
+    }
+
+    public function test_float_returns_default_for_invalid_value()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 'abc']);
+        $this->assertEquals(expected: 1.1, actual: $inputs->float(key: 'foo', default: 1.1));
+    }
+
+    public function test_text_casts_scalar_to_string()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 123]);
+        $this->assertEquals(expected: '123', actual: $inputs->text(key: 'foo'));
+    }
+
+    public function test_list_wraps_scalar_into_array()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 'bar']);
+        $this->assertEquals(expected: ['bar'], actual: $inputs->list(key: 'foo'));
+    }
+
+    public function test_list_returns_array_as_is()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => ['a', 'b']]);
+        $this->assertEquals(expected: ['a', 'b'], actual: $inputs->list(key: 'foo'));
+    }
+}
+
+=== tests/Unit/ServerRequestCorrectnessTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\URI\UriBuilder;
+use InvalidArgumentException;
+
+class ServerRequestCorrectnessTest extends TestCase
+{
+    private function createServerRequest(): ServerRequest
+    {
+        return new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            method: 'GET',
+            uri: UriBuilder::createFromString(uri: 'http://localhost/'),
+            headers: new RequestHeaders(headers: ['Host' => 'localhost'])
+        );
+    }
+
+    public function test_with_uploaded_files_rejects_invalid_tree()
+    {
+        $request = $this->createServerRequest();
+
+        $this->expectException(InvalidArgumentException::class);
+        $request->withUploadedFiles(uploadedFiles: ['invalid' => 'not-a-file-object']);
+    }
+
+    public function test_with_uri_sets_host_when_preserve_host_is_false()
+    {
+        $request = $this->createServerRequest();
+        $newUri = UriBuilder::createFromString(uri: 'http://example.com/foo');
+
+        $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
+
+        $this->assertEquals(expected: ['example.com'], actual: $newRequest->getHeader(name: 'Host'));
+    }
+
+    public function test_with_uri_preserves_existing_host_when_requested()
+    {
+        $request = $this->createServerRequest();
+        $newUri = UriBuilder::createFromString(uri: 'http://example.com/foo');
+
+        $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
+
+        $this->assertEquals(expected: ['localhost'], actual: $newRequest->getHeader(name: 'Host'));
+    }
+
+    public function test_with_uri_handles_empty_host_safely()
+    {
+        $request = $this->createServerRequest();
+        $newUri = UriBuilder::createFromString(uri: '/path-only'); // No host
+
+        $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
+
+        // If URI has no host, Host header MUST NOT be updated.
+        $this->assertEquals(expected: ['localhost'], actual: $newRequest->getHeader(name: 'Host'));
+    }
+
+    public function test_request_target_falls_back_to_path_and_query()
+    {
+        $uri = UriBuilder::createFromString(uri: 'http://localhost/foo?bar=baz');
+        $request = new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            uri: $uri
+        );
+
+        $this->assertEquals(expected: '/foo?bar=baz', actual: $request->requestTarget);
+    }
+}
+
+=== tests/Unit/UploadedFileTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFile;
+use Avax\HTTP\Response\Classes\Stream;
+use RuntimeException;
+use InvalidArgumentException;
+
+class UploadedFileTest extends TestCase
+{
+    private function createUploadedFile(int $error = UPLOAD_ERR_OK): UploadedFile
+    {
+        $stream = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream->write(string: 'dummy content');
+        return new UploadedFile(
+            stream: $stream,
+            size: 13,
+            error: $error,
+            clientFilename: 'test.txt',
+            clientMediaType: 'text/plain'
+        );
+    }
+
+    public function test_move_to_moves_file_once()
+    {
+        $file = $this->createUploadedFile();
+        $target = sys_get_temp_dir() . '/test_move_' . uniqid();
+
+        $file->moveTo($target);
+
+        $this->assertTrue(condition: file_exists($target));
+        @unlink($target);
+    }
+
+    public function test_move_to_throws_when_called_twice()
+    {
+        $file = $this->createUploadedFile();
+        $target1 = sys_get_temp_dir() . '/test_move_1_' . uniqid();
+        $target2 = sys_get_temp_dir() . '/test_move_2_' . uniqid();
+
+        $file->moveTo($target1);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('File already moved');
+
+        try {
+            $file->moveTo($target2);
+        } finally {
+            @unlink($target1);
+            @unlink($target2);
+        }
+    }
+
+    public function test_get_stream_throws_after_move()
+    {
+        $file = $this->createUploadedFile();
+        $target = sys_get_temp_dir() . '/test_move_' . uniqid();
+
+        $file->moveTo($target);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('File already moved');
+
+        try {
+            $file->getStream();
+        } finally {
+            @unlink($target);
+        }
+    }
+
+    public function test_move_to_rejects_empty_target_path()
+    {
+        $file = $this->createUploadedFile();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid target path');
+
+        $file->moveTo('');
+    }
+}
+
+=== tests/Unit/UploadedFilesHardeningTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\GuardUploadedFiles;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFile;
+use Avax\HTTP\Response\Classes\Stream;
+use InvalidArgumentException;
+use RuntimeException;
+
+class UploadedFilesHardeningTest extends TestCase
+{
+    public function test_normalize_uploaded_files_accepts_uploaded_file_interface_instances()
+    {
+        $file = new UploadedFile(stream: new Stream(stream: fopen('php://temp', 'r+')), size: 0, error: UPLOAD_ERR_OK);
+        $normalizer = new NormalizeUploadedFiles();
+
+        $result = $normalizer->execute(files: ['avatar' => $file]);
+        $this->assertSame(expected: $file, actual: $result['avatar']);
+    }
+
+    public function test_normalize_uploaded_files_normalizes_flat_php_files_spec()
+    {
+        // Simulation of $_FILES['avatar']
+        $files = [
+            'avatar' => [
+                'tmp_name' => 'php://temp',
+                'size' => 10,
+                'error' => UPLOAD_ERR_OK,
+                'name' => 'me.png',
+                'type' => 'image/png'
+            ]
+        ];
+
+        $normalizer = new NormalizeUploadedFiles();
+        $result = $normalizer->execute(files: $files);
+
+        $this->assertInstanceOf(expected: UploadedFile::class, actual: $result['avatar']);
+        $this->assertEquals(expected: 'me.png', actual: $result['avatar']->getClientFilename());
+    }
+
+    public function test_guard_uploaded_files_rejects_invalid_leaf()
+    {
+        $guard = new GuardUploadedFiles();
+        $this->expectException(InvalidArgumentException::class);
+        $guard->execute(files: ['avatar' => 'not-a-file']);
+    }
+
+    public function test_uploaded_file_rejects_move_when_error_state()
+    {
+        $stream = new Stream(stream: fopen('php://temp', 'r+'));
+        $file = new UploadedFile(stream: $stream, size: 0, error: UPLOAD_ERR_NO_FILE);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot move file with upload error');
+        $file->moveTo(targetPath: '/tmp/foo');
     }
 }
 

@@ -14,7 +14,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('')
+            uri           : new UriBuilder(scheme: '')
         );
 
         $this->assertSame(expected: '/', actual: $targetOwner->resolve());
@@ -24,7 +24,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: '*',
-            uri           : new UriBuilder('http://example.com/api')
+            uri           : new UriBuilder(scheme: 'http://example.com/api')
         );
 
         $this->assertSame(expected: '*', actual: $targetOwner->resolve());
@@ -34,7 +34,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('http://example.com/api/users?status=active')
+            uri           : new UriBuilder(scheme: 'http://example.com/api/users?status=active')
         );
 
         $this->assertSame(expected: '/api/users?status=active', actual: $targetOwner->resolve());
@@ -44,7 +44,7 @@ class ReadRequestTargetTest extends TestCase
     {
         $targetOwner = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : new UriBuilder('http://example.com')
+            uri           : new UriBuilder(scheme: 'http://example.com')
         );
 
         $this->assertSame(expected: '/', actual: $targetOwner->resolve());

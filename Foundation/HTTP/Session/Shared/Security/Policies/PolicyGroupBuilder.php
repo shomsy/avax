@@ -91,7 +91,7 @@ final class PolicyGroupBuilder
 
         // If only one policy in root, return it directly
         if ($this->root->count() === 1) {
-            return $this->root->getPolicies()[0];
+            return $this->root[0];
         }
 
         return $this->root;

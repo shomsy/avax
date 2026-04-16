@@ -179,7 +179,7 @@ final readonly class EventsManager
      */
     public function isEnabled() : bool
     {
-        return $this->events->isEnabled();
+        return $this->events;
     }
 
     /**

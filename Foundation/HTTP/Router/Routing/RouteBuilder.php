@@ -26,7 +26,11 @@ final class RouteBuilder
     public readonly string $method;
 
     /** @var string The route URI path (e.g., /users/{id}) */
-    public string $path;
+    public string $path {
+        get {
+            return $this->path;
+        }
+    }
 
     /** @var string|null Optional name for the route (used for reverse routing) */
     public string|null $name = null;
@@ -409,11 +413,4 @@ final class RouteBuilder
         return $this->method;
     }
 
-    /**
-     * Gets the path for the route.
-     */
-    public function getPath() : string
-    {
-        return $this->path;
-    }
 }

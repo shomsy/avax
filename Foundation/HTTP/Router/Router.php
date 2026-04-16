@@ -95,7 +95,7 @@ final readonly class Router implements RouterRuntimeInterface
             return $this->errorFactory->createMethodNotAllowedResponse(
                 method        : $request->getMethod(),
                 path          : $request->getUri()->getPath(),
-                allowedMethods: $exception->getAllowedMethods()
+                allowedMethods: $exception->allowedMethods
             );
         }
     }

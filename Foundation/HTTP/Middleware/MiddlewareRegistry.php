@@ -135,9 +135,8 @@ final class MiddlewareRegistry
         self::validateMiddlewareClass(className: $className);
 
         $reflection = new ReflectionClass(objectOrClass: $className);
-        $instance   = $reflection->newInstanceArgs(args: $args);
 
-        return $instance;
+        return $reflection->newInstanceArgs(args: $args);
     }
 
     /**

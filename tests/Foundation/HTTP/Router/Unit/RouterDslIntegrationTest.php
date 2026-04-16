@@ -30,7 +30,7 @@ class RouterCoreFunctionalityTest extends TestCase
         $this->assertNotNull(actual: $builder);
         $this->assertInstanceOf(expected: RouteBuilder::class, actual: $builder);
         $this->assertEquals(expected: 'GET', actual: $builder->getMethod());
-        $this->assertEquals(expected: '/test', actual: $builder->getPath());
+        $this->assertEquals(expected: '/test', actual: $builder->path);
     }
 
     /**

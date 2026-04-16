@@ -14,6 +14,7 @@ use Avax\Auth\System\Flow\Mfa\MfaRecoveryChallenge;
 use Avax\Auth\System\Flow\Mfa\MfaRecoveryRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -101,7 +102,7 @@ final readonly class StartMfaRecovery
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     private function issue(int $userId, BeginMfaRecoveryData $data) : MfaRecoveryChallenge

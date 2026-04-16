@@ -70,13 +70,13 @@ abstract class AbstractHttpClient
         $this->logger->info(
             message: sprintf('ServerRequest to %s succeeded', $endpoint),
             context: [
-                         'status' => $response->getStatusCode(),
+                         'status' => $response->statusCode,
                      ],
         );
 
         return [
             'endpoint' => $endpoint,
-            'status'   => $response->getStatusCode(),
+            'status'   => $response->statusCode,
             'data'     => $response->getBody()->getContents(),
         ];
     }
@@ -91,7 +91,7 @@ abstract class AbstractHttpClient
     {
         $this->logger->info(
             message: 'Asynchronous request to ' . $endpoint
-                     . ' completed successfully with status ' . $response->getStatusCode(),
+                     . ' completed successfully with status ' . $response->statusCode,
         );
     }
 

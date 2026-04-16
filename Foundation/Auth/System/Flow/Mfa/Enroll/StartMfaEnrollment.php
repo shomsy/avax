@@ -17,6 +17,7 @@ use Avax\Auth\System\Flow\Mfa\MfaStatus;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 /**
@@ -55,7 +56,7 @@ final readonly class StartMfaEnrollment
     /**
      * @throws Unauthenticated
      * @throws MfaEnrollmentFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute() : MfaEnrollment
     {

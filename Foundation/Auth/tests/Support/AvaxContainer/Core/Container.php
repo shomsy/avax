@@ -6,6 +6,7 @@ namespace Avax\Container\Core;
 
 use Closure;
 use ReflectionClass;
+use ReflectionException;
 use RuntimeException;
 
 /**
@@ -59,7 +60,7 @@ final class Container
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function build(string $class) : object
     {

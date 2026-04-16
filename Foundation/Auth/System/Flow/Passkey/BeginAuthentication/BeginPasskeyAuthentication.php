@@ -14,6 +14,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -47,7 +48,7 @@ final readonly class BeginPasskeyAuthentication
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function execute(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge

@@ -34,7 +34,7 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
         // Extract client IP from server parameters (PSR-7 compatible)
         $clientIp = 'unknown';
         if ($request instanceof ServerRequestInterface) {
-            $serverParams = $request->getServerParams();
+            $serverParams = $request->serverParams;
             $clientIp     = $serverParams['REMOTE_ADDR'] ??
                 $serverParams['HTTP_X_FORWARDED_FOR'] ??
                 $serverParams['HTTP_X_REAL_IP'] ??

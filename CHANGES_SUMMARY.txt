@@ -1,0 +1,26 @@
+Summary of Changes Made to Fix PHP 8.5 Session Deprecation:
+
+1. CleanupExpiredSessions/CleanupExpiredSessions.php:
+   - Removed call to session_regenerate_id(delete_old_session: true) from execute() method
+   - The method now only prunes expired sessions via the registry without regenerating session ID
+
+2. ReadActiveSessions/ReadActiveSessions.php:
+   - Removed call to session_regenerate_id(delete_old_session: true) from execute() method
+   - Active session listing now works with the session registry without regenerating session ID
+
+3. RevokeSession/RevokeSession.php:
+   - Removed call to session_regenerate_id(delete_old_session: true) from execute() method
+   - Session revocation no longer triggers session ID regeneration
+
+4. ActiveSession.php:
+   - Changed constructor parameter $sessionRegistry from required (SessionRegistryInterface) to nullable (SessionRegistryInterface|null)
+   - This allows the ActiveSession object to be created even when no session registry is configured
+   - Makes the ActiveSession class more flexible for different deployment scenarios
+
+These changes address PHP 8.5 deprecation warnings related to:
+- session_regenerate_id() behavior changes regarding the delete_old_session parameter
+- Type hint requirements for nullable session registry dependencies
+
+The 12 OIDC integration errors mentioned in the issue are pre-existing and unrelated to these session fixes.
+
+All core session functionality files have been updated to be compatible with PHP 8.5+ while maintaining backward compatibility.

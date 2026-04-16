@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestCookies\RequestCookies;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Configuration Owner: Orchestrates the creation of a ServerRequest object.
@@ -38,15 +39,18 @@ final readonly class CreateRequestFromIncomingHttp
      * Core creation logic decoupled from superglobals.
      */
     public function execute(
-        array $server,
-        array $query = [],
-        array $cookie = [],
-        array $files = [],
-        mixed $body = null
+        array      $server,
+        array|null $query = null,
+        array|null $cookie = null,
+        array|null $files = null,
+        mixed      $body = null
     ) : ServerRequest
     {
         // 1. Resolve URI
-        $uri = $this->createUri(server: $server);
+        $query  ??= [];
+        $cookie ??= [];
+        $files  ??= [];
+        $uri    = $this->createUri(server: $server);
 
         // 2. Pre-process headers
         $headers        = $this->extractHeaders(server: $server);
@@ -81,7 +85,7 @@ final readonly class CreateRequestFromIncomingHttp
             return $body;
         }
 
-        if ($body instanceof \Psr\Http\Message\StreamInterface) {
+        if ($body instanceof StreamInterface) {
             return new RequestBody(stream: $body);
         }
 

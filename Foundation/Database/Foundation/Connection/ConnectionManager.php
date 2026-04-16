@@ -178,9 +178,8 @@ final class ConnectionManager
      */
     public function withScope(ExecutionScope $scope) : self
     {
-        $clone        = clone $this;
-        $clone->scope = $scope;
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "scope" => $scope
+        ]);
     }
 }

@@ -22,13 +22,25 @@ class Stream implements StreamInterface
     private $stream;
 
     /** @var bool Whether the stream is readable */
-    private bool $readable;
+    private bool $readable {
+        get {
+            return $this->readable;
+        }
+    }
 
     /** @var bool Whether the stream is writable */
-    private bool $writable;
+    private bool $writable {
+        get {
+            return $this->writable;
+        }
+    }
 
     /** @var bool Whether the stream is seekable */
-    private bool $seekable;
+    public bool $seekable {
+        get {
+            return $this->seekable;
+        }
+    }
 
     /** @var int|null Cached size of the stream, if known */
     private int|null $size = null;
@@ -200,7 +212,7 @@ class Stream implements StreamInterface
      */
     public function write(string $string) : int
     {
-        if (! $this->isWritable()) {
+        if (! $this->writable) {
             throw new RuntimeException(message: 'Stream is not writable.');
         }
 
@@ -212,16 +224,6 @@ class Stream implements StreamInterface
         $this->size = null;
 
         return $result;
-    }
-
-    /**
-     * Check if the stream is writable.
-     *
-     * @return bool True if the stream is writable, false otherwise.
-     */
-    public function isWritable() : bool
-    {
-        return $this->writable;
     }
 
     /**
@@ -237,7 +239,7 @@ class Stream implements StreamInterface
     {
         $this->ensureStreamIsOpen();
 
-        if (! $this->isReadable()) {
+        if (! $this->readable) {
             throw new StreamNotReadableException(message: 'Attempted to read from a non-readable stream.');
         }
 
@@ -247,16 +249,6 @@ class Stream implements StreamInterface
         }
 
         return $result;
-    }
-
-    /**
-     * Check if the stream is readable.
-     *
-     * @return bool True if the stream is readable, false otherwise.
-     */
-    public function isReadable() : bool
-    {
-        return $this->readable;
     }
 
     /**
@@ -289,7 +281,7 @@ class Stream implements StreamInterface
         }
 
         try {
-            if ($this->isSeekable()) {
+            if ($this->seekable) {
                 $this->rewind();
             }
 
@@ -301,16 +293,6 @@ class Stream implements StreamInterface
                 previous: $throwable,
             );
         }
-    }
-
-    /**
-     * Check if the stream is seekable.
-     *
-     * @return bool True if the stream is seekable, false otherwise.
-     */
-    public function isSeekable() : bool
-    {
-        return $this->seekable;
     }
 
     /**
@@ -331,7 +313,7 @@ class Stream implements StreamInterface
      */
     public function seek(int $offset, int $whence = SEEK_SET) : void
     {
-        if (! $this->isSeekable()) {
+        if (! $this->seekable) {
             throw new RuntimeException(message: 'Stream is not seekable.');
         }
 
@@ -349,7 +331,7 @@ class Stream implements StreamInterface
      */
     public function getContents() : string
     {
-        if (! $this->isReadable()) {
+        if (! $this->readable) {
             throw new RuntimeException(message: 'Stream is not readable.');
         }
 

@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class ExchangeAuthorizationCode
@@ -57,7 +58,7 @@ final readonly class ExchangeAuthorizationCode
 
     /**
      * @throws OAuthTokenExchangeFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
     {

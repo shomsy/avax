@@ -48,9 +48,9 @@ class TracingMiddleware implements MiddlewareInterface
 
         $this->logger->info(message: 'ServerRequest started', context: [
             'request_id' => $requestId,
-            'method'     => $request->getMethod(),
-            'path'       => $request->getUri()->getPath(),
-            'query'      => $request->getUri()->getQuery(),
+            'method'     => $request->method,
+            'path'       => $request->uri->getPath(),
+            'query'      => $request->uri->getQuery(),
             'headers'    => $this->getSafeHeaders(request: $request),
         ]);
 
@@ -66,8 +66,8 @@ class TracingMiddleware implements MiddlewareInterface
 
             $this->logger->info(message: 'ServerRequest completed', context: [
                 'request_id'          => $requestId,
-                'method'              => $request->getMethod(),
-                'path'                => $request->getUri()->getPath(),
+                'method'              => $request->method,
+                'path'                => $request->uri->getPath(),
                 'status'              => $response->getStatusCode(),
                 'latency_ms'          => round($latency, 2),
                 'response_size_bytes' => strlen((string) $response->getBody()),
@@ -81,8 +81,8 @@ class TracingMiddleware implements MiddlewareInterface
 
             $this->logger->error(message: 'ServerRequest failed', context: [
                 'request_id' => $requestId,
-                'method'     => $request->getMethod(),
-                'path'       => $request->getUri()->getPath(),
+                'method'     => $request->method,
+                'path'       => $request->uri->getPath(),
                 'latency_ms' => round($latency, 2),
                 'error'      => $e->getMessage(),
                 'trace'      => $e->getTraceAsString(),

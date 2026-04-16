@@ -11,6 +11,7 @@ use DateTimeImmutable;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class PdoSessionRegistryTest extends TestCase
 {
@@ -20,20 +21,20 @@ final class PdoSessionRegistryTest extends TestCase
         $statement = $this->createMock(PDOStatement::class);
         $record    = $this->buildRecord();
 
-        $pdo->expects(invocationRule: $this->once())
-            ->method(constraint: 'prepare')
-            ->with($this->callback(callback: static fn (string $query) : bool => str_contains($query, 'INSERT INTO auth_sessions')))
-            ->willReturn(value: $statement);
+        $pdo->expects($this->once())
+            ->method('prepare')
+            ->with($this->callback(static fn (string $query) : bool => str_contains($query, 'INSERT INTO auth_sessions')))
+            ->willReturn($statement);
 
-        $statement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
-            ->with($this->callback(callback: static function (array $params) use ($record) : bool {
+        $statement->expects($this->once())
+            ->method('execute')
+            ->with($this->callback(static function (array $params) use ($record) : bool {
                 return $params['session_id'] === $record->sessionId
                     && $params['user_id'] === $record->userId->value
                     && $params['revoked_at'] === null
                     && $params['revoke_reason'] === null;
             }))
-            ->willReturn(value: true);
+            ->willReturn(true);
 
         $registry = new PdoSessionRegistry(pdo: $pdo);
         $registry->track(record: $record);
@@ -60,27 +61,27 @@ final class PdoSessionRegistryTest extends TestCase
         $listStatement = $this->createMock(PDOStatement::class);
         $registry      = new PdoSessionRegistry(pdo: $pdo);
 
-        $pdo->expects(invocationRule: $this->exactly(2))
-            ->method(constraint: 'prepare')
+        $pdo->expects($this->exactly(2))
+            ->method('prepare')
             ->willReturnOnConsecutiveCalls($findStatement, $listStatement);
 
-        $findStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
+        $findStatement->expects($this->once())
+            ->method('execute')
             ->with(['session_id' => 'session-1'])
-            ->willReturn(value: true);
-        $findStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'fetch')
+            ->willReturn(true);
+        $findStatement->expects($this->once())
+            ->method('fetch')
             ->with(PDO::FETCH_ASSOC)
-            ->willReturn(value: $this->row(sessionId: 'session-1', userId: 77));
+            ->willReturn($this->row(sessionId: 'session-1', userId: 77));
 
-        $listStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
+        $listStatement->expects($this->once())
+            ->method('execute')
             ->with(['user_id' => 77])
-            ->willReturn(value: true);
-        $listStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'fetchAll')
+            ->willReturn(true);
+        $listStatement->expects($this->once())
+            ->method('fetchAll')
             ->with(PDO::FETCH_ASSOC)
-            ->willReturn(value: [
+            ->willReturn([
                                     $this->row(sessionId: 'session-2', userId: 77, lastSeenAt: '2026-04-12T11:30:00+00:00'),
                                     $this->row(sessionId: 'session-1', userId: 77, lastSeenAt: '2026-04-12T12:00:00+00:00'),
                                 ]);
@@ -98,7 +99,7 @@ final class PdoSessionRegistryTest extends TestCase
     /**
      * @return array<string, scalar|null>
      */
-    private function row(#[\SensitiveParameter] string $sessionId, int $userId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
+    private function row(#[SensitiveParameter] string $sessionId, int $userId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
     {
         return [
             'session_id'          => $sessionId,
@@ -122,27 +123,27 @@ final class PdoSessionRegistryTest extends TestCase
         $pruneStatement         = $this->createMock(PDOStatement::class);
         $registry               = new PdoSessionRegistry(pdo: $pdo);
 
-        $pdo->expects(invocationRule: $this->exactly(3))
-            ->method(constraint: 'prepare')
+        $pdo->expects($this->exactly(3))
+            ->method('prepare')
             ->willReturnOnConsecutiveCalls($revokeStatement, $revokeForUserStatement, $pruneStatement);
 
-        $revokeStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
-            ->with($this->callback(callback: static fn (array $params) : bool => $params['session_id'] === 'session-1' && $params['revoke_reason'] === 'logout'))
-            ->willReturn(value: true);
+        $revokeStatement->expects($this->once())
+            ->method('execute')
+            ->with($this->callback(static fn (array $params) : bool => $params['session_id'] === 'session-1' && $params['revoke_reason'] === 'logout'))
+            ->willReturn(true);
 
-        $revokeForUserStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
-            ->with($this->callback(callback: static fn (array $params) : bool => $params['user_id'] === 77 && $params['revoke_reason'] === 'logout_all'))
-            ->willReturn(value: true);
+        $revokeForUserStatement->expects($this->once())
+            ->method('execute')
+            ->with($this->callback(static fn (array $params) : bool => $params['user_id'] === 77 && $params['revoke_reason'] === 'logout_all'))
+            ->willReturn(true);
 
-        $pruneStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'execute')
-            ->with($this->callback(callback: static fn (array $params) : bool => isset($params['now']) && is_string($params['now'])))
-            ->willReturn(value: true);
-        $pruneStatement->expects(invocationRule: $this->once())
-            ->method(constraint: 'rowCount')
-            ->willReturn(value: 2);
+        $pruneStatement->expects($this->once())
+            ->method('execute')
+            ->with($this->callback(static fn (array $params) : bool => isset($params['now']) && is_string($params['now'])))
+            ->willReturn(true);
+        $pruneStatement->expects($this->once())
+            ->method('rowCount')
+            ->willReturn(2);
 
         $registry->revoke(sessionId: 'session-1', revokedAt: new DateTimeImmutable(datetime: '2026-04-12T12:05:00+00:00'), reason: 'logout');
         $registry->revokeForUser(userId: new UserId(value: 77), revokedAt: new DateTimeImmutable(datetime: '2026-04-12T12:06:00+00:00'), reason: 'logout_all');

@@ -19,7 +19,11 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
     /**
      * @var array<string, mixed>
      */
-    private array $context;
+    private array $context {
+        get {
+            return $this->context;
+        }
+    }
 
     public function __construct(
         string         $message,
@@ -44,16 +48,6 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
      * Get the HTTP status code associated with this exception.
      */
     abstract public function getHttpStatusCode() : int;
-
-    /**
-     * Get additional context information for debugging.
-     *
-     * @return array<string, mixed>
-     */
-    public function getContext() : array
-    {
-        return $this->context;
-    }
 
     /**
      * Check if this exception is retryable.

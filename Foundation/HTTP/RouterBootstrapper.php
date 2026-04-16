@@ -32,9 +32,17 @@ final class RouterBootstrapper
 
     private RouteCollection $routeCollection;
 
-    private array $globalMiddleware = [];
+    public array $globalMiddleware = [] {
+        get {
+            return $this->globalMiddleware;
+        }
+    }
 
-    private array $routeMiddleware = [];
+    private array $routeMiddleware = [] {
+        get {
+            return $this->routeMiddleware;
+        }
+    }
 
     private array $middlewareGroups = [];
 
@@ -207,22 +215,6 @@ final class RouterBootstrapper
     public function getRoutes() : array
     {
         return $this->routeCollection->getRoutes();
-    }
-
-    /**
-     * Get global middleware.
-     */
-    public function getGlobalMiddleware() : array
-    {
-        return $this->globalMiddleware;
-    }
-
-    /**
-     * Get route-specific middleware.
-     */
-    public function getRouteMiddleware() : array
-    {
-        return $this->routeMiddleware;
     }
 
     /**

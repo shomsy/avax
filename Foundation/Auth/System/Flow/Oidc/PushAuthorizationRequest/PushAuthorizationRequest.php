@@ -16,6 +16,7 @@ use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use JsonException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class PushAuthorizationRequest
@@ -41,6 +42,10 @@ final readonly class PushAuthorizationRequest
         $this->oidcProvider       = $oidcProvider;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function execute(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
     {
         $now         = $this->clock->now();

@@ -26,6 +26,9 @@ final class Container
             || array_key_exists($id, $this->bindings);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function get(string $id) : mixed
     {
         if (array_key_exists($id, $this->instances)) {
@@ -50,6 +53,9 @@ final class Container
         throw new RuntimeException(message: "Container binding [$id] is missing.");
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function resolve(mixed $implementation) : mixed
     {
         return match (true) {
@@ -67,7 +73,7 @@ final class Container
         $reflection = new ReflectionClass(objectOrClass: $class);
 
         if (! $reflection->isInstantiable()) {
-            throw new RuntimeException(message: "Class [$class] is not instantiable.");
+            throw new RuntimeException(message: "Class [{$class}] is not instantiable.");
         }
 
         $constructor = $reflection->getConstructor();

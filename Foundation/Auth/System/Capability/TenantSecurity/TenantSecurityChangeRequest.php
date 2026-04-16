@@ -14,6 +14,7 @@ final readonly class TenantSecurityChangeRequest
     public string|null                       $approvedBy;
     public DateTimeImmutable                 $requestedAt;
     public TenantSecurityChangeRequestStatus $status;
+    /** @var array<string, string> */
     public array                             $diff;
     public TenantSecurityConfiguration       $after;
     public TenantSecurityConfiguration|null  $before;

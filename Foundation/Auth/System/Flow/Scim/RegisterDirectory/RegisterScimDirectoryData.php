@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Scim\RegisterDirectory;
 
 final readonly class RegisterScimDirectoryData
 {
+    /** @var array<string, list<string>> */
     public array  $groupRoleMap;
     public string $name;
     public string $tenantSlug;

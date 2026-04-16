@@ -8,7 +8,9 @@ use SensitiveParameter;
 
 final readonly class AuthIssueExplanation
 {
+    /** @var array<string, scalar|null> */
     public array  $context;
+    /** @var list<string> */
     public array  $resolution;
     public string $meaning;
     public string $message;

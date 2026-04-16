@@ -15,6 +15,7 @@ use SensitiveParameter;
  */
 final readonly class GeneratedBackupCodes
 {
+    /** @var list<BackupCodeRecord> */
     public array         $records;
     public BackupCodeSet $backupCodeSet;
 

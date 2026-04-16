@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Diagnostics;
+
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplainer;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
+use SensitiveParameter;
+
+final readonly class DiagnosticsFacade
+{
+    public function __construct(private AuthIssueExplainer $authIssueExplainer) {}
+
+    public function explainAccessDenied(
+        string      $resource,
+        string|null $requiredPermission = null,
+        string|null $tenant = null,
+        string|null $resourceTenant = null
+    ) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainAccessDenied(
+            resource          : $resource,
+            requiredPermission: $requiredPermission,
+            tenant            : $tenant,
+            resourceTenant    : $resourceTenant
+        );
+    }
+
+    public function explainStepUpRequired(
+        string   $action,
+        bool     $phishingResistantRequired = false,
+        int|null $freshAfterSeconds = null
+    ) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainStepUpRequired(
+            action                   : $action,
+            phishingResistantRequired: $phishingResistantRequired,
+            freshAfterSeconds        : $freshAfterSeconds
+        );
+    }
+
+    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainSenderConstraintFailure(
+            reason            : $reason,
+            requiredConstraint: $requiredConstraint
+        );
+    }
+
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
+    }
+
+    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainTrustedDeviceDecision(deviceId: $deviceId);
+    }
+}

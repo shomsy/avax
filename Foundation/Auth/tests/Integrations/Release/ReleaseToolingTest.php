@@ -18,6 +18,7 @@ use Avax\Auth\Integrations\Release\RunKeyRolloverDrill;
 use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class ReleaseToolingTest extends TestCase
 {
@@ -37,6 +38,7 @@ final class ReleaseToolingTest extends TestCase
 
         $this->assertSame(expected: 'avax/auth', actual: $provenance['package']);
         $this->assertArrayHasKey(key: 'git_commit', array: $provenance);
+        $this->assertNotSame(expected: '', actual: $provenance['git_commit']);
         $this->assertSame(expected: ['php composer.phar test'], actual: $provenance['validation_commands']);
     }
 
@@ -60,6 +62,9 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: hash_file('sha256', $artifact), actual: $evidence['artifacts'][0]['sha256']);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testSecretScannerFindsCommittedSecretPatterns() : void
     {
         $directory = sys_get_temp_dir() . '/auth-secret-scan-' . bin2hex(random_bytes(4));
@@ -85,6 +90,9 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: [], actual: $review['unstable_packages']);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testDependencyReviewRejectsUnreviewedOrUnapprovedPackages() : void
     {
         $lockPath   = tempnam(sys_get_temp_dir(), 'auth-lock-');
@@ -148,6 +156,9 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 1, actual: $verification);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testKeyLifecycleDrillsRunAgainstKeyRingFiles() : void
     {
         $before         = $this->createKeyRingFile(configuration: [
@@ -225,6 +236,10 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 1, actual: $report['summary']['failed']);
     }
 
+    /**
+     * @throws RandomException
+     * @throws \JsonException
+     */
     public function testEvidenceBundleTracksArtifactPresence() : void
     {
         $root = sys_get_temp_dir() . '/auth-evidence-' . bin2hex(random_bytes(4));
@@ -247,6 +262,10 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: ['sbom'], actual: $bundle['missing_artifacts']);
     }
 
+    /**
+     * @throws RandomException
+     * @throws \JsonException
+     */
     public function testMigrationPathCheckDetectsLegacyReferencesAndMissingGuide() : void
     {
         $root = sys_get_temp_dir() . '/auth-migration-' . bin2hex(random_bytes(4));
@@ -264,6 +283,9 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: ['System/Configuration/Legacy.php'], actual: $result['legacy_namespace_references']);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testSourceTruthCheckRejectsContradictoryState() : void
     {
         $root = sys_get_temp_dir() . '/auth-source-truth-' . bin2hex(random_bytes(4));
@@ -286,6 +308,9 @@ final class ReleaseToolingTest extends TestCase
         $this->assertNotEmpty(actual: $result['issues']);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testSourceTruthCheckRejectsMissingCapabilityEvidencePaths() : void
     {
         $root = sys_get_temp_dir() . '/auth-source-truth-evidence-' . bin2hex(random_bytes(4));
@@ -314,6 +339,43 @@ final class ReleaseToolingTest extends TestCase
         );
     }
 
+    /**
+     * @throws RandomException
+     */
+    public function testSourceTruthCheckIgnoresCapabilityMatrixSeparatorsAndLegendRows() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-source-truth-legend-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/docs', 0777, true);
+        mkdir($root . '/.agents/management/evidence', 0777, true);
+        mkdir($root . '/System/Capability/PasswordHashing', 0777, true);
+        mkdir($root . '/tests/Capabilities/PasswordHashing', 0777, true);
+        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
+        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
+        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
+        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        file_put_contents(
+            $root . '/docs/capability-matrix.md',
+            "# Capability Matrix\n\n"
+            . "| Capability       | Status      | Ownership | Evidence |\n"
+            . "|------------------|-------------|-----------|----------|\n"
+            . "| password hashing | ✅ supported | kernel    | `System/Capability/PasswordHashing/`, `tests/Capabilities/PasswordHashing/` |\n\n"
+            . "## Status Legend\n\n"
+            . "| Symbol      | Meaning |\n"
+            . "|-------------|---------|\n"
+            . "| ✅ supported | Package owns the capability |\n"
+        );
+        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
+        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+    }
+
+    /**
+     * @throws RandomException
+     */
     public function testSystemShapeCheckRejectsUnexpectedAndForbiddenDirectories() : void
     {
         $root = sys_get_temp_dir() . '/auth-shape-' . bin2hex(random_bytes(4));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Passkey;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyChallengeStore;
@@ -40,9 +41,15 @@ use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakePasskeyRuntime;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class PasskeyFlowTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testPasskeyRegistrationAuthenticationAndRevocation() : void
     {
         $clock           = new Clock();
@@ -158,6 +165,10 @@ final class PasskeyFlowTest extends TestCase
         $this->assertTrue(condition: $credentialStore->find(credentialId: 'cred-1')?->isRevoked() ?? false);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testPasskeyAuthenticationChallengeCannotBeReplayed() : void
     {
         $clock           = new Clock();

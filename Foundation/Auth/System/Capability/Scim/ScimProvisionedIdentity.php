@@ -11,6 +11,7 @@ final readonly class ScimProvisionedIdentity
 {
     public DateTimeImmutable $synchronizedAt;
     public ScimAccountState  $state;
+    /** @var list<string> */
     public array             $groups;
     public string            $fingerprint;
     public UserId            $userId;

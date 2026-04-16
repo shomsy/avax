@@ -142,6 +142,9 @@ final class SessionIdentity implements SessionIdentityInterface
         return $this->store->id();
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function resolveUserId() : int|null
     {
         if (! $this->isSessionActive()) {
@@ -267,6 +270,9 @@ final class SessionIdentity implements SessionIdentityInterface
         }
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     private function touch() : void
     {
         $now = $this->clock->now();
@@ -287,6 +293,9 @@ final class SessionIdentity implements SessionIdentityInterface
         $this->sessionRegistry->save(record: $record->withTouch(lastSeenAt: $now, idleTimeoutSeconds: $this->lifetime->idleTimeoutSeconds));
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function resolveMfaVerifiedAt() : DateTimeImmutable|null
     {
         if (! $this->isSessionActive()) {
@@ -306,6 +315,9 @@ final class SessionIdentity implements SessionIdentityInterface
         }
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function resolvePhishingResistant() : bool
     {
         if (! $this->isSessionActive()) {

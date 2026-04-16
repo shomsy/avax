@@ -13,6 +13,7 @@ final readonly class OidcRequestObject
     public bool              $signatureVerified;
     public DateTimeImmutable $expiresAt;
     public DateTimeImmutable $createdAt;
+    /** @var array<string, mixed> */
     public array             $claims;
     public string            $requestUri;
 

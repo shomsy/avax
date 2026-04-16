@@ -26,6 +26,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $this->pdo = $pdo;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $statement = $this->pdo->prepare(query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');
@@ -117,7 +120,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $statement->execute(params: ['user_id' => $userId->value]);
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
-        return array_map(fn (array $row) : SessionRecord => $this->hydrate(row: $row), $rows);
+        return array_map(/**
+         * @throws DateMalformedStringException
+         */ fn (array $row) : SessionRecord => $this->hydrate(row: $row), $rows);
     }
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void

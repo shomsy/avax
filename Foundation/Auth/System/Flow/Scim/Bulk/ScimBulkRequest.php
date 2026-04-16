@@ -8,6 +8,7 @@ use SensitiveParameter;
 
 final readonly class ScimBulkRequest
 {
+    /** @var list<ScimBulkOperation> */
     public array  $operations;
     public string $directoryToken;
     public string $directoryId;

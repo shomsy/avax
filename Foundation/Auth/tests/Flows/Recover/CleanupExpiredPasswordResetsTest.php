@@ -10,9 +10,13 @@ use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class CleanupExpiredPasswordResetsTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testCleanupRemovesExpiredPasswordResets() : void
     {
         $store = new InMemoryPasswordResetStore();

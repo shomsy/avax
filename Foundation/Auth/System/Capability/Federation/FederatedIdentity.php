@@ -9,6 +9,7 @@ use SensitiveParameter;
 final readonly class FederatedIdentity
 {
     public bool   $emailVerified;
+    /** @var list<string> */
     public array  $groups;
     public string $displayName;
     public string $email;

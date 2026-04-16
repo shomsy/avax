@@ -9,6 +9,7 @@ namespace Avax\Auth\System\Capability\Federation;
  */
 final readonly class FederationMetadata
 {
+    /** @var array<string, string> */
     public array  $claims;
     public string $singleSignOnUrl;
     public string $issuer;

@@ -16,7 +16,9 @@ final readonly class AuthenticatedUser
 {
     public bool   $mfaEnabled;
     public bool   $emailVerified;
+    /** @var list<string> */
     public array  $permissions;
+    /** @var list<string> */
     public array  $roles;
     public string $username;
     public string $email;

@@ -10,7 +10,9 @@ use SensitiveParameter;
 final readonly class ScimUserProjection
 {
     public ScimAccountState $state;
+    /** @var list<string> */
     public array            $groups;
+    /** @var list<string> */
     public array            $roles;
     public string           $username;
     public string           $email;

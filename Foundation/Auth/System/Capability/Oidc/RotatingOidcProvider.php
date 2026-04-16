@@ -10,6 +10,7 @@ use SensitiveParameter;
 
 final readonly class RotatingOidcProvider implements OidcProviderInterface
 {
+    /** @var list<OidcProviderInterface> */
     private array                 $verificationProviders;
     private OidcProviderInterface $activeProvider;
 

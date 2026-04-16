@@ -14,6 +14,26 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-032
+- `created_at`: 2026-04-16 11:20 CEST
+- `updated_at`: 2026-04-16 11:20 CEST
+- `completed_at`: 2026-04-16 11:20 CEST
+- `status`: done
+- `estimate`: 6h
+- `actual`: 3h 10m
+- `outcome`: Close the remaining REFAKTOR architecture plan by introducing explicit root-zone owner facades, canonical architecture/ADR/flow/security docs, migration mapping, and characterization coverage for the legacy Auth facade
+- `acceptance`: `System/Capability/Access`, `System/Capability/Identity`,
+  `System/Capability/ExternalIdentity`, `System/Capability/IdentitySync`, `System/Capability/Tenant`, and
+  `System/Capability/Diagnostics` ship real owner units; `Auth` delegates through those zones instead of
+  directly owning the full flow graph; `docs/architecture/`, `docs/decisions/`, `docs/flows/`, and
+  `docs/security/` exist with truthful content; `tests/Characterization/` protects legacy facade behavior; PHPUnit and
+  PHPStan lanes pass
+- `links`: System/Auth.php, System/Capability/Access/AccessFacade.php,
+  System/Capability/Identity/IdentityFacade.php, System/Capability/ExternalIdentity/ExternalIdentityFacade.php,
+  System/Capability/IdentitySync/IdentitySyncFacade.php, System/Capability/Tenant/TenancyFacade.php,
+  System/Capability/Diagnostics/DiagnosticsFacade.php, docs/architecture/,
+  docs/decisions/, docs/flows/, docs/security/, tests/Characterization/, REFAKTOR.md
+
 - `id`: AUTH-031
 - `created_at`: 2026-04-15 10:05 CEST
 - `updated_at`: 2026-04-15 10:05 CEST

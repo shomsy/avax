@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Scim\ReadGroups;
 
 final readonly class ScimGroupProjection
 {
+    /** @var list<ScimGroupMember> */
     public array  $members;
     public string $displayName;
     public string $groupId;

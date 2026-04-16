@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Oidc\ReadUserInfo;
 
 final readonly class OidcUserInfo
 {
+    /** @var array<string, bool|int|string> */
     public array $claims;
 
     /**

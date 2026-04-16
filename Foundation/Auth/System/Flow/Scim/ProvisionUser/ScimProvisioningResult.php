@@ -12,6 +12,7 @@ final readonly class ScimProvisioningResult
     public bool             $idempotent;
     public bool             $updated;
     public bool             $created;
+    /** @var list<string> */
     public array            $roles;
     public ScimAccountState $state;
     public string           $externalId;

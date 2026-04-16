@@ -92,6 +92,9 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testDpopProofMismatchAndKeyRotationAreRejected() : void
     {
         $auditLog         = new InMemoryAuditLog();

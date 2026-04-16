@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\AdminRealm;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Auth\System\Capability\User\UserRole;
 use Avax\Auth\System\Flow\AdminRealm\AdminElevationFailed;
@@ -21,6 +22,10 @@ use PHPUnit\Framework\TestCase;
 
 final class AdminElevationTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     * @throws \DateMalformedStringException
+     */
     public function testAdminElevationLifecycle() : void
     {
         $clock   = new Clock();
@@ -61,6 +66,10 @@ final class AdminElevationTest extends TestCase
         $guard->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws \DateMalformedStringException
+     */
     public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
     {
         $clock   = new Clock();

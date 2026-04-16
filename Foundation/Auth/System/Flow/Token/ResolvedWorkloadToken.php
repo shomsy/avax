@@ -16,6 +16,7 @@ final readonly class ResolvedWorkloadToken
     public OAuthSenderConstraint|null $senderConstraint;
     public string|null                $issuer;
     public string|null                $audience;
+    /** @var list<string> */
     public array                      $scopes;
     public DateTimeImmutable          $expiresAt;
     public string                     $tokenId;

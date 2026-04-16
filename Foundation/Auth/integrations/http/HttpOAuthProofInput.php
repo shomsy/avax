@@ -13,7 +13,9 @@ final readonly class HttpOAuthProofInput
 {
     public string|null $expectedTokenThumbprint;
     public string|null $accessToken;
+    /** @var array<string, mixed> */
     public array       $server;
+    /** @var array<string, mixed> */
     public array       $headers;
     public string      $uri;
     public string      $method;

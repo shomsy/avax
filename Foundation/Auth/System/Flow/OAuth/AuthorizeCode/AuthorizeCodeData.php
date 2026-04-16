@@ -16,6 +16,7 @@ final readonly class AuthorizeCodeData
     public string|null     $requestUri;
     public string|null     $nonce;
     public string|null     $state;
+    /** @var list<string> */
     public array           $scopes;
     public string          $redirectUri;
     public string          $clientId;

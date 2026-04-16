@@ -13,6 +13,7 @@ final readonly class ExchangeClientCredentialsData
     public string|null                $userAgent;
     public string|null                $ipAddress;
     public string|null                $audience;
+    /** @var list<string> */
     public array                      $scopes;
     public string|null                $clientSecret;
     public string                     $clientId;

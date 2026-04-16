@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Passkey;
 
 final readonly class PasskeyAuthenticationChallenge
 {
+    /** @var array<string, mixed> */
     public array  $options;
     public string $challengeId;
 

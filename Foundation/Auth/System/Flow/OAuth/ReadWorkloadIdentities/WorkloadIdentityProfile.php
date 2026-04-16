@@ -10,8 +10,11 @@ final readonly class WorkloadIdentityProfile
 {
     public bool                           $phishingResistantRequired;
     public OAuthSenderConstraintType|null $requiredSenderConstraint;
+    /** @var array<string, list<string>> */
     public array                          $audienceScopeBoundaries;
+    /** @var list<string> */
     public array                          $allowedAudiences;
+    /** @var list<string> */
     public array                          $allowedScopes;
     public string                         $name;
     public string                         $clientId;

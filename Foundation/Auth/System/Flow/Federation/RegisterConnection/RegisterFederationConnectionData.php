@@ -10,6 +10,7 @@ final readonly class RegisterFederationConnectionData
 {
     public bool               $breakGlassAllowed;
     public string|null        $metadataUrl;
+    /** @var array<string, list<string>> */
     public array              $groupRoleMap;
     public bool               $ssoOnly;
     public string             $domain;

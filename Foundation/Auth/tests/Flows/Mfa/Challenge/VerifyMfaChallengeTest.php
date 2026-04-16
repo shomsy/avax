@@ -47,6 +47,9 @@ use RuntimeException;
  */
 final class VerifyMfaChallengeTest extends TestCase
 {
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function testValidTotpCompletesAuthentication() : void
     {
         [$flow, $totp, $clock, $challengeStore, $currentAuthentication] = $this->makeFlow();
@@ -157,6 +160,9 @@ final class VerifyMfaChallengeTest extends TestCase
         );
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function testInvalidTotpFails() : void
     {
         [$flow, , $clock, $challengeStore] = $this->makeFlow();
@@ -189,6 +195,9 @@ final class VerifyMfaChallengeTest extends TestCase
         }
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function testRepeatedFailuresBecomeLocked() : void
     {
         $limitClock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
@@ -213,6 +222,9 @@ final class VerifyMfaChallengeTest extends TestCase
         }
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function testBackupCodeCanCompleteChallengeOnlyOnce() : void
     {
         [$flow, , $clock, $challengeStore, , $plainBackupCode] = $this->makeFlowWithBackupCode();
@@ -255,6 +267,9 @@ final class VerifyMfaChallengeTest extends TestCase
         return [$flow, $totp, $clock, $challengeStore, $currentAuthentication, $generated->backupCodeSet->values()[0]];
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function testTotpCodeCannotBeReplayedWithinSameTimeStep() : void
     {
         [$flow, $totp, $clock, $challengeStore] = $this->makeFlow();

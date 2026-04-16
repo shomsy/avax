@@ -26,11 +26,16 @@ final readonly class OAuthClient
     public bool                           $workloadIdentity;
     public OAuthSenderConstraintType|null $requiredSenderConstraint;
     public OAuthTokenEndpointAuthMethod   $tokenEndpointAuthMethod;
+    /** @var array<string, list<string>> */
     public array                          $audienceScopeBoundaries;
+    /** @var list<OAuthGrantType> */
     public array                          $allowedGrantTypes;
+    /** @var list<string> */
     public array                          $allowedAudiences;
     public string|null                    $tenantSlug;
+    /** @var list<string> */
     public array                          $allowedScopes;
+    /** @var list<string> */
     public array                          $redirectUris;
     public OAuthClientType                $type;
     public string                         $name;

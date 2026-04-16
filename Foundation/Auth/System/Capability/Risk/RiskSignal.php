@@ -11,6 +11,7 @@ use DateTimeImmutable;
  */
 final readonly class RiskSignal
 {
+    /** @var array<string, scalar|null> */
     public array             $context;
     public DateTimeImmutable $occurredAt;
     public string            $name;

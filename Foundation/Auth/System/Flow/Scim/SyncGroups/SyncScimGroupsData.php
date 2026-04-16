@@ -10,6 +10,7 @@ use SensitiveParameter;
 final readonly class SyncScimGroupsData
 {
     public ScimAccountState $state;
+    /** @var list<string> */
     public array            $groups;
     public string           $externalId;
     public string           $directoryToken;

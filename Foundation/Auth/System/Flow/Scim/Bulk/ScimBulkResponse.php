@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Scim\Bulk;
 
 final readonly class ScimBulkResponse
 {
+    /** @var list<ScimBulkOperationResult> */
     public array $operations;
 
     /**

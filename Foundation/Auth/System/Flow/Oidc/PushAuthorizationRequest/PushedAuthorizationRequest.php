@@ -14,6 +14,7 @@ final readonly class PushedAuthorizationRequest
     public string|null       $codeChallenge;
     public string|null       $nonce;
     public string|null       $state;
+    /** @var list<string> */
     public array             $scopes;
     public string            $redirectUri;
     public string            $clientId;

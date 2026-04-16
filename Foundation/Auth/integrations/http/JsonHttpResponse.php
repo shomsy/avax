@@ -11,7 +11,9 @@ use SensitiveParameter;
  */
 final readonly class JsonHttpResponse
 {
+    /** @var array<string, string> */
     public array $headers;
+    /** @var array<string, mixed>|list<mixed> */
     public array $body;
     public int   $statusCode;
 

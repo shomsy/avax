@@ -10,6 +10,7 @@ final readonly class CompleteFederatedLoginData
 {
     public string|null $userAgent;
     public string|null $ipAddress;
+    /** @var array<string, mixed> */
     public array       $payload;
     public string      $connectionId;
 

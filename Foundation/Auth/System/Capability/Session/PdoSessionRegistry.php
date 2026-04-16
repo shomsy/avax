@@ -26,6 +26,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         $this->pdo = $pdo;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $statement = $this->prepare(
@@ -142,7 +145,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
         return array_map(
-            callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+        /**
+         * @throws DateMalformedStringException
+         */ callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
             array   : $rows
         );
     }

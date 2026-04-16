@@ -6,6 +6,7 @@
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Capabilities</directory>
+            <directory>tests/Characterization</directory>
             <directory>tests/Configuration</directory>
             <directory>tests/Flow</directory>
             <directory>tests/Flows</directory>

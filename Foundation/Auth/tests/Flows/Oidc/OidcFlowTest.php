@@ -17,6 +17,7 @@ use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
@@ -26,6 +27,7 @@ use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
 use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
@@ -34,6 +36,10 @@ use PHPUnit\Framework\TestCase;
 
 final class OidcFlowTest extends TestCase
 {
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcDiscoveryJwksIdTokenAndUserInfoFlow() : void
     {
         [$auth, $provider] = $this->buildAuthWithOidc();
@@ -147,6 +153,10 @@ final class OidcFlowTest extends TestCase
         );
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcParAuthorizationRequestAndJarmResponseFlow() : void
     {
         [$auth, $provider] = $this->buildAuthWithOidc();
@@ -196,6 +206,10 @@ final class OidcFlowTest extends TestCase
         $this->assertSame(expected: 'state-par', actual: $claims['state'] ?? null);
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcParAcceptsClientSignedRequestObjects() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -244,6 +258,10 @@ final class OidcFlowTest extends TestCase
         $this->assertNotEmpty(actual: $code->code);
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcLogoutRevokesCurrentSession() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -272,6 +290,10 @@ final class OidcFlowTest extends TestCase
         $this->assertFalse(condition: $auth->current()->isAuthenticated());
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcAuthorizationRejectsUnknownRequestUri() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -305,6 +327,10 @@ final class OidcFlowTest extends TestCase
                                         ));
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testOidcAuthorizationRequiresNonce() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -336,6 +362,10 @@ final class OidcFlowTest extends TestCase
                                         ));
     }
 
+    /**
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testOidcAuthorizationFailsWhenProviderIsMissing() : void
     {
         $userSource    = new InMemoryUserSource();
@@ -380,6 +410,10 @@ final class OidcFlowTest extends TestCase
                                         ));
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testPairwiseOidcProviderIssuesStablePairwiseSubjects() : void
     {
         [$auth, $provider] = $this->buildAuthWithOidc(
@@ -440,6 +474,9 @@ final class OidcFlowTest extends TestCase
         $this->assertSame(expected: $firstClaims['sub'] ?? null, actual: $userInfo->claims['sub'] ?? null);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testRotatingOidcProviderPublishesOverlapKeysAndVerifiesLegacyTokens() : void
     {
         $legacyProvider = $this->createOidcProvider(keyId: 'oidc-key-legacy');

@@ -12,9 +12,13 @@ use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClient;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class UpdateClientTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testUpdateClientPropagatesRequestObjectVerificationKey() : void
     {
         $key = openssl_pkey_new([

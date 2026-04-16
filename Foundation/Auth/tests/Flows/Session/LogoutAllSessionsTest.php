@@ -84,6 +84,9 @@ final class LogoutAllSessionsTest extends TestCase
         $this->assertSame(expected: 'logout_all', actual: $registry->find(sessionId: 'session-1')?->revokeReason);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testLogoutAllSessionsFailsWhenSessionRegistryIsMissing() : void
     {
         $context               = AuthenticationContext::authenticated(

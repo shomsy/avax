@@ -20,6 +20,7 @@ final readonly class AuthorizationCodeRecord
     public string|null            $codeChallenge;
     public string|null            $nonce;
     public DateTimeImmutable      $expiresAt;
+    /** @var list<string> */
     public array                  $scopes;
     public string                 $redirectUri;
     public UserId                 $userId;

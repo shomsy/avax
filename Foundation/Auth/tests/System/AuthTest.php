@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\System;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
@@ -18,9 +19,11 @@ use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
@@ -38,6 +41,10 @@ final class AuthTest extends TestCase
         $this->assertInstanceOf(expected: AuthBuilder::class, actual: Auth::configuration());
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testAuthFacadeRunsCorePublicFlowSurface() : void
     {
         $userSource    = new InMemoryUserSource();
@@ -84,6 +91,11 @@ final class AuthTest extends TestCase
         $this->assertNull(actual: $auth->user());
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
     {
         $userSource      = new InMemoryUserSource();
@@ -124,6 +136,10 @@ final class AuthTest extends TestCase
         $this->assertNull(actual: $auth->user());
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
     {
         $userSource    = new InMemoryUserSource();

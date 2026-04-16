@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Capability\Oidc;
 
 final readonly class OidcJsonWebKeySet
 {
+    /** @var list<OidcJsonWebKey> */
     public array $keys;
 
     /**

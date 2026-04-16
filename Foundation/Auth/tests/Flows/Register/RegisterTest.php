@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Register\RegistrationData;
@@ -65,6 +66,9 @@ class RegisterTest extends TestCase
         $this->assertEquals(expected: 123456, actual: $result->user()->id);
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testRegisterFailureEmailTaken() : void
     {
         $data = new RegistrationData(
@@ -103,6 +107,9 @@ class RegisterTest extends TestCase
         $register->execute(data: $data);
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testRegisterFailureUsernameTaken() : void
     {
         $data = new RegistrationData(

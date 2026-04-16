@@ -14,11 +14,13 @@ use Avax\Auth\System\Capability\OAuth\OAuthClientType;
 use Avax\Auth\System\Capability\Oidc\OpenSslOidcProvider;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
@@ -28,6 +30,10 @@ use SensitiveParameter;
 
 final class ServeOidcHttpSurfaceTest extends TestCase
 {
+    /**
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testOidcHttpSurfaceServesDiscoveryJwksAndUserInfo() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -195,6 +201,10 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'https://auth.example.test/oidc/register', actual: $response->body['registration_endpoint']);
     }
 
+    /**
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testOidcHttpSurfaceAcceptsSignedJarParRequest() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -359,6 +369,9 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         $this->assertFalse(condition: $deleted->body['active']);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testOidcHttpSurfaceRegistersRequestObjectVerificationKeyForSignedPar() : void
     {
         [$auth] = $this->buildAuthWithOidc();

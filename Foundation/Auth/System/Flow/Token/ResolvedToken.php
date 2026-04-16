@@ -16,6 +16,7 @@ final readonly class ResolvedToken
 {
     public string|null                $familyId;
     public OAuthSenderConstraint|null $senderConstraint;
+    /** @var list<string> */
     public array                      $scopes;
     public string|null                $clientId;
     public bool                       $phishingResistant;

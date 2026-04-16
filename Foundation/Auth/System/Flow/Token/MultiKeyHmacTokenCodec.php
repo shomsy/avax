@@ -11,6 +11,7 @@ use SensitiveParameter;
  */
 final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
 {
+    /** @var list<TokenCodecInterface> */
     private array               $verificationCodecs;
     private TokenCodecInterface $primaryCodec;
 

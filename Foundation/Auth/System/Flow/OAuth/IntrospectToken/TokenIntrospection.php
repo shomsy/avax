@@ -17,6 +17,7 @@ final readonly class TokenIntrospection
     public bool                       $phishingResistant;
     public DateTimeImmutable|null     $mfaVerifiedAt;
     public DateTimeImmutable|null     $expiresAt;
+    /** @var list<string> */
     public array                      $scopes;
     public int|null                   $userId;
     public string|null                $clientId;

@@ -8,8 +8,11 @@ use SensitiveParameter;
 
 final readonly class VerifyTrustedProxyHeaders
 {
+    /** @var list<string> */
     private array $proxyOnlyClientCertificateHeaders;
+    /** @var list<string> */
     private array $forwardedHeaders;
+    /** @var list<string> */
     private array $trustedProxies;
 
     /**

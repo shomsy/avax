@@ -19,12 +19,17 @@ use Avax\Auth\System\Foundation\Clock;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 /**
  * Unit test for JWT identity state handling.
  */
 class JwtIdentityTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityIssueResolveAndRevokeCycle() : void
     {
         $user = new User(
@@ -57,6 +62,10 @@ class JwtIdentityTest extends TestCase
         $this->assertNull(actual: $jwt->resolve(token: $issued->token));
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
     {
         $inactiveUser = new User(
@@ -79,6 +88,10 @@ class JwtIdentityTest extends TestCase
         $jwt->issue(user: $inactiveUser);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityRejectsInactiveUserTokens() : void
     {
         $activeUser = new User(
@@ -112,6 +125,9 @@ class JwtIdentityTest extends TestCase
         $this->assertNull(actual: $jwt->resolve(token: $token->token));
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testJwtIdentityIssuesRefreshTokenWhenStoreConfigured() : void
     {
         $user = new User(
@@ -135,6 +151,10 @@ class JwtIdentityTest extends TestCase
         $this->assertSame(expected: $user->getId()->value, actual: $refresh?->userId->value);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityPreservesOAuthClientClaims() : void
     {
         $user = new User(
@@ -165,6 +185,10 @@ class JwtIdentityTest extends TestCase
         $this->assertSame(expected: ['email', 'profile'], actual: $resolved?->scopes);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityPreservesSenderConstraintClaims() : void
     {
         $user = new User(
@@ -200,6 +224,10 @@ class JwtIdentityTest extends TestCase
         $this->assertSame(expected: 'thumb-123', actual: $resolved?->senderConstraint?->thumbprint);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
     {
         $jwt = new JwtIdentity(

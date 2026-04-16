@@ -11,10 +11,15 @@ use SensitiveParameter;
  */
 final readonly class HttpEndpointInput
 {
+    /** @var array<string, mixed> */
     public array  $server;
+    /** @var array<string, mixed> */
     public array  $body;
+    /** @var array<string, mixed> */
     public array  $routeParameters;
+    /** @var array<string, mixed> */
     public array  $query;
+    /** @var array<string, mixed> */
     public array  $headers;
     public string $path;
     public string $method;

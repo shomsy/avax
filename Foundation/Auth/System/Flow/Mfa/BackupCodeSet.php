@@ -15,6 +15,7 @@ use SensitiveParameter;
 final readonly class BackupCodeSet
 {
     public DateTimeImmutable $generatedAt;
+    /** @var list<BackupCode> */
     public array             $codes;
 
     /**

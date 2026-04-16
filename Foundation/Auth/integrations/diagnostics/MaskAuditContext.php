@@ -9,6 +9,7 @@ namespace Avax\Auth\Integrations\Diagnostics;
  */
 final readonly class MaskAuditContext
 {
+    /** @var list<string> */
     private array $sensitiveKeys;
 
     /**

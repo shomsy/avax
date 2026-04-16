@@ -8,7 +8,9 @@ final readonly class TenantSecurityConfiguration
 {
     public int         $rolloutVersion;
     public string      $policyProfile;
+    /** @var array<string, list<string>> */
     public array       $groupRoleMap;
+    /** @var list<string> */
     public array       $verifiedDomains;
     public string|null $scimDirectoryId;
     public string|null $federationConnectionId;

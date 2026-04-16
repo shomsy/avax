@@ -15,6 +15,7 @@ use SensitiveParameter;
 final readonly class IssuedRefreshToken
 {
     public OAuthSenderConstraint|null $senderConstraint;
+    /** @var list<string> */
     public array                      $scopes;
     public string|null                $clientId;
     public bool                       $phishingResistant;

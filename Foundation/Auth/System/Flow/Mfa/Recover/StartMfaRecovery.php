@@ -48,6 +48,10 @@ final readonly class StartMfaRecovery
         $this->attemptThrottle     = $attemptThrottle;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function execute(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
         $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);

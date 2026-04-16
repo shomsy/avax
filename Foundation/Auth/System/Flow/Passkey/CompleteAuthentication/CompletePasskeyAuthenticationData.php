@@ -10,6 +10,7 @@ final readonly class CompletePasskeyAuthenticationData
 {
     public string|null $userAgent;
     public string|null $ipAddress;
+    /** @var array<string, mixed> */
     public array       $response;
     public string      $challengeId;
 

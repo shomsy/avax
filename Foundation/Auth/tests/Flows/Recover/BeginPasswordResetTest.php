@@ -23,6 +23,9 @@ use PHPUnit\Framework\TestCase;
  */
 final class BeginPasswordResetTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testPasswordResetRequestsAreThrottledAfterConfiguredLimit() : void
     {
         $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));

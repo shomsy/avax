@@ -11,9 +11,13 @@ use Avax\Auth\System\Flow\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredA
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class CleanupExpiredAuthorizationCodesTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testCleanupRemovesExpiredAndUsedAuthorizationCodes() : void
     {
         $store   = new InMemoryAuthorizationCodeStore();

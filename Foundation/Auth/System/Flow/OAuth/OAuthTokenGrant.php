@@ -18,6 +18,7 @@ final readonly class OAuthTokenGrant
     public string|null                $subject;
     public OAuthSenderConstraint|null $senderConstraint;
     public string                     $tokenType;
+    /** @var list<string> */
     public array                      $scopes;
     public int|null                   $userId;
     public string                     $clientId;

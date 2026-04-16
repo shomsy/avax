@@ -70,6 +70,9 @@ final class RevokeSessionTest extends TestCase
         $this->assertSame(expected: 'user_revoke', actual: $registry->find(sessionId: 'session-1')?->revokeReason);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRevokeSessionFailsWhenSessionRegistryIsMissing() : void
     {
         $context               = AuthenticationContext::authenticated(

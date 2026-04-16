@@ -1,6 +1,6 @@
 # Complete This — Closure Status
 
-Updated: 2026-04-15
+Updated: 2026-04-16
 
 Legenda:
 
@@ -41,6 +41,16 @@ Legenda:
   Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`
 - [x] External certification program: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle generator.
   Package-owned artifacts present; external certification pipeline stays as product/delivery ownership outside this kernel package.
+
+## P3
+
+- [x] Root ownership model from `REFAKTOR.md` is now closed in package scope.
+  Includes: canonical architecture docs tree, ADR set, migration map, capability-owned root facades, and
+  characterization tests protecting legacy facade behavior during refactor.
+  Evidence: `docs/architecture/`, `docs/decisions/`, `System/Capability/Access/AccessFacade.php`,
+  `System/Capability/Identity/IdentityFacade.php`, `System/Capability/ExternalIdentity/ExternalIdentityFacade.php`,
+  `System/Capability/IdentitySync/IdentitySyncFacade.php`, `System/Capability/Tenant/TenancyFacade.php`,
+  `System/Capability/Diagnostics/DiagnosticsFacade.php`, `tests/Characterization/`
 
 ## Final Package Truth
 

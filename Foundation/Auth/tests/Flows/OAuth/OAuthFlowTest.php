@@ -13,6 +13,7 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
@@ -24,6 +25,7 @@ use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
@@ -32,6 +34,11 @@ use PHPUnit\Framework\TestCase;
 
 final class OAuthFlowTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RegistrationFailed
+     * @throws AuthenticationFailed
+     */
     public function testPublicClientRequiresPkceDuringAuthorization() : void
     {
         $auth = $this->buildAuth();
@@ -83,6 +90,11 @@ final class OAuthFlowTest extends TestCase
             ->ready();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testOAuthAuthorizationCodeRefreshIntrospectionAndRevokeCycle() : void
     {
         $auditLog = new InMemoryAuditLog();
@@ -172,6 +184,11 @@ final class OAuthFlowTest extends TestCase
         $this->assertFalse(condition: $inactive->active);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testPhishingResistantOAuthClientRejectsCompatibilityLoginAsPrimaryPath() : void
     {
         $auth = $this->buildAuth();
@@ -204,6 +221,11 @@ final class OAuthFlowTest extends TestCase
                                         ));
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     */
     public function testOAuthRefreshRequiresMatchingSenderConstraint() : void
     {
         $auth = $this->buildAuth();

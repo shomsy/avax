@@ -17,6 +17,7 @@ use DateTimeImmutable;
  */
 final readonly class MfaChallengeRecord
 {
+    /** @var list<MfaVerificationAttempt> */
     public array               $attempts;
     public int                 $maxAttempts;
     public DateTimeImmutable   $expiresAt;

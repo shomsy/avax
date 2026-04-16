@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Scim\Bulk;
 final readonly class ScimBulkOperation
 {
     public string|null $bulkId;
+    /** @var array<string, mixed> */
     public array       $body;
     public string      $path;
     public string      $method;

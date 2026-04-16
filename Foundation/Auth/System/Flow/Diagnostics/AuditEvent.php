@@ -12,6 +12,7 @@ use DateTimeImmutable;
 final readonly class AuditEvent
 {
     public string|null       $correlationId;
+    /** @var array<string, scalar|null> */
     public array             $context;
     public DateTimeImmutable $occurredAt;
     public string            $name;

@@ -6,6 +6,10 @@ namespace Avax\Auth\Integrations\Release;
 
 final readonly class GenerateRollbackEvidence
 {
+    public function __construct(
+        private ReadGitOutput $readGitOutput = new ReadGitOutput()
+    ) {}
+
     /**
      * @param list<string> $artifacts
      * @param list<string> $validationCommands
@@ -25,7 +29,7 @@ final readonly class GenerateRollbackEvidence
         return [
             'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
             'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'current_commit'      => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
+            'current_commit'      => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', 'HEAD']),
             'rollback_target'     => $resolvedTarget,
             'rollback_ready'      => $resolvedTarget !== null,
             'rollback_command'    => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
@@ -38,21 +42,9 @@ final readonly class GenerateRollbackEvidence
     private function resolveRollbackTarget(string $repositoryRoot, string|null $rollbackTarget) : string|null
     {
         $candidate = $rollbackTarget ?? 'HEAD^';
-        $resolved  = $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --verify ' . escapeshellarg($candidate));
+        $resolved  = $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', '--verify', $candidate]);
 
         return $resolved !== '' ? $resolved : null;
-    }
-
-    private function runGit(string $repositoryRoot, string $arguments) : string
-    {
-        $command = sprintf(
-            'git -C %s %s 2>/dev/null',
-            escapeshellarg($repositoryRoot),
-            $arguments
-        );
-        $output  = shell_exec($command);
-
-        return trim((string) $output);
     }
 
     private function detectPackageName(string $repositoryRoot) : string

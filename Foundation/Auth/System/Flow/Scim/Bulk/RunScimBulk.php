@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use InvalidArgumentException;
+use Random\RandomException;
 
 final readonly class RunScimBulk
 {
@@ -69,6 +70,9 @@ final readonly class RunScimBulk
         };
     }
 
+    /**
+     * @throws RandomException
+     */
     private function createUser(ScimBulkRequest $request, ScimBulkOperation $operation) : ScimBulkOperationResult
     {
         $result = $this->provisionScimUser->execute(data: $this->provisionData(
@@ -184,6 +188,9 @@ final readonly class RunScimBulk
         };
     }
 
+    /**
+     * @throws RandomException
+     */
     private function replaceUser(ScimBulkRequest $request, ScimBulkOperation $operation, string $externalId) : ScimBulkOperationResult
     {
         $result = $this->provisionScimUser->execute(data: $this->provisionData(

@@ -20,7 +20,9 @@ final readonly class IdentityPolicy
     public int|null      $freshMfaMaxAgeSeconds;
     public int           $absoluteTimeoutSeconds;
     public int           $idleTimeoutSeconds;
+    /** @var list<AuthenticationFactor> */
     public array         $requiredFactors;
+    /** @var list<AuthenticationFactor> */
     public array         $allowedFactors;
     public AssuranceTier $assuranceTier;
     public IdentityActor $actor;

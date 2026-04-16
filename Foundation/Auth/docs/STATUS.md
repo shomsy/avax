@@ -51,6 +51,10 @@ This is the canonical state document. All other status documents should referenc
   evidence
 - [x] **Local Certification Posture**: certification profile, evidence bundle, provenance, rollback evidence, SBOM, and
   conformance harness exist as package-owned release rigor
+- [x] **Root Ownership Contract**: `System/Capability/Access`, `System/Capability/Identity`,
+  `System/Capability/ExternalIdentity`, `System/Capability/IdentitySync`, `System/Capability/Tenant`, and
+  `System/Capability/Diagnostics` now act as explicit owner facades above the local `Flow/` lanes, with canonical
+  architecture docs, ADRs, migration map, and characterization tests
 
 ---
 

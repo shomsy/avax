@@ -18,6 +18,7 @@ final readonly class FederationConnection
     public string|null                $metadataHash;
     public string|null                $metadataIssuer;
     public string|null                $metadataUrl;
+    /** @var array<string, list<string>> */
     public array                      $groupRoleMap;
     public bool                       $ssoOnly;
     public string                     $domain;

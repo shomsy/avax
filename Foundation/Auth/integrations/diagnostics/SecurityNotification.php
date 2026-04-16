@@ -10,6 +10,7 @@ namespace Avax\Auth\Integrations\Diagnostics;
 final readonly class SecurityNotification
 {
     public string|null $correlationId;
+    /** @var array<string, mixed> */
     public array       $context;
     public string      $severity;
     public string      $name;

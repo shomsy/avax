@@ -16,6 +16,7 @@ final readonly class ScimDirectory
     public ScimDirectoryHealth    $health;
     public DateTimeImmutable|null $rotatedAt;
     public DateTimeImmutable      $createdAt;
+    /** @var array<string, list<string>> */
     public array                  $groupRoleMap;
     public string                 $tokenHash;
     public string                 $name;

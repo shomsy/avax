@@ -110,17 +110,13 @@ final readonly class CheckSourceTruth
                 continue;
             }
 
-            if (
-                str_contains($line, '| Capability |')
-                || str_contains($line, '|---|')
-                || str_contains($line, '| Symbol |')
-            ) {
-                continue;
-            }
-
             $columns = array_map('trim', explode('|', trim($line, '|')));
 
             if (count($columns) < 4) {
+                continue;
+            }
+
+            if ($this->isCapabilityMatrixHeader(columns: $columns) || $this->isSeparatorRow(columns: $columns)) {
                 continue;
             }
 
@@ -151,6 +147,32 @@ final readonly class CheckSourceTruth
         }
 
         return $issues;
+    }
+
+    /**
+     * @param list<string> $columns
+     */
+    private function isCapabilityMatrixHeader(array $columns) : bool
+    {
+        return isset($columns[0], $columns[1], $columns[2], $columns[3])
+            && $columns[0] === 'Capability'
+            && $columns[1] === 'Status'
+            && $columns[2] === 'Ownership'
+            && $columns[3] === 'Evidence';
+    }
+
+    /**
+     * @param list<string> $columns
+     */
+    private function isSeparatorRow(array $columns) : bool
+    {
+        foreach ($columns as $column) {
+            if ($column === '' || preg_match('/^[-:]+$/', $column) !== 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

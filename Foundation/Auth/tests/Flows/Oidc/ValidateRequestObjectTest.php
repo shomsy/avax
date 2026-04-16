@@ -13,9 +13,13 @@ use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class ValidateRequestObjectTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testValidateRequestObjectNormalizesClaims() : void
     {
         $store = new InMemoryOidcRequestObjectStore();
@@ -45,6 +49,9 @@ final class ValidateRequestObjectTest extends TestCase
         $this->assertSame(expected: 'nonce-1', actual: $validated->nonce);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testValidateRequestObjectRejectsMissingClaims() : void
     {
         $store = new InMemoryOidcRequestObjectStore();
@@ -65,6 +72,10 @@ final class ValidateRequestObjectTest extends TestCase
                                   ));
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     public function testValidateRequestObjectRejectsUnsignedObjectWhenClientRequiresSignature() : void
     {
         $store    = new InMemoryOidcRequestObjectStore();

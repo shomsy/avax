@@ -22,10 +22,16 @@ use Avax\Auth\System\Foundation\Clock;
 use BadMethodCallException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use SensitiveParameter;
 
 final class PushAuthorizationRequestTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     * @throws \JsonException
+     */
     public function testPushAuthorizationRequestAcceptsRsaSignedRequestObjectForPublicClient() : void
     {
         $key = openssl_pkey_new([
@@ -117,6 +123,11 @@ final class PushAuthorizationRequestTest extends TestCase
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     * @throws \JsonException
+     */
     public function testPushAuthorizationRequestRejectsSignedRequestObjectWhenIssuerDoesNotMatchClient() : void
     {
         $key = openssl_pkey_new([

@@ -138,6 +138,9 @@ class LoginTest extends TestCase
         );
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginFailedWithInvalidCredentials() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'wrong_password');
@@ -181,6 +184,9 @@ class LoginTest extends TestCase
         }
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginFailedWithInactiveUser() : void
     {
         $credentials    = new Credentials(identifier: 'user@example.com', password: 'password');

@@ -8,16 +8,24 @@ use SensitiveParameter;
 
 final readonly class OidcProviderMetadata
 {
+    /** @var list<string> */
     public array  $authorizationResponseSigningAlgValuesSupported;
+    /** @var list<string> */
     public array  $requestObjectSigningAlgValuesSupported;
     public bool   $backChannelLogoutSessionSupported;
     public bool   $backChannelLogoutSupported;
     public bool   $frontChannelLogoutSupported;
+    /** @var list<string> */
     public array  $codeChallengeMethodsSupported;
+    /** @var list<string> */
     public array  $idTokenSigningAlgValuesSupported;
+    /** @var list<string> */
     public array  $subjectTypesSupported;
+    /** @var list<string> */
     public array  $grantTypesSupported;
+    /** @var list<string> */
     public array  $responseTypesSupported;
+    /** @var list<string> */
     public array  $scopesSupported;
     public string $jsonWebKeySetUri;
     public string $pushedAuthorizationRequestEndpoint;

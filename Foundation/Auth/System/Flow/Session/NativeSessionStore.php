@@ -11,6 +11,12 @@ use RuntimeException;
  */
 final class NativeSessionStore implements SessionStoreInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
+    private array $cliSession = [];
+    private string $cliSessionId = '';
+    private bool $cliFallbackActive = false;
     private SessionCookieSettings $cookieSettings;
 
     public function __construct(
@@ -23,20 +29,22 @@ final class NativeSessionStore implements SessionStoreInterface
     public function regenerate() : string
     {
         $this->start();
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            return session_id();
+
+        if ($this->cliFallbackActive) {
+            $this->cliSessionId = $this->generateCliSessionId();
+
+            return $this->cliSessionId;
         }
+
+        if (! $this->nativeSessionActive()) {
+            return $this->readNativeSessionId();
+        }
+
         if (! session_regenerate_id(delete_old_session: true)) {
-            return session_id();
+            return $this->readNativeSessionId();
         }
 
-        $sessionId = session_id();
-
-        if ($sessionId === false) {
-            throw new RuntimeException(message: 'Session ID is unavailable after regeneration.');
-        }
-
-        return $sessionId;
+        return $this->readNativeSessionId();
     }
 
     public function start() : void
@@ -49,7 +57,13 @@ final class NativeSessionStore implements SessionStoreInterface
             return;
         }
 
-        if (headers_sent()) {
+        if (! $this->canStartAfterOutput() && headers_sent()) {
+            return;
+        }
+
+        if ($this->canStartAfterOutput() && headers_sent()) {
+            $this->activateCliFallback();
+
             return;
         }
 
@@ -63,16 +77,20 @@ final class NativeSessionStore implements SessionStoreInterface
                                       ]);
         }
 
-        if (session_status() === PHP_SESSION_DISABLED) {
-            return;
-        }
-
         @session_start();
+
+        if (! $this->nativeSessionActive() && $this->canStartAfterOutput()) {
+            $this->activateCliFallback();
+        }
     }
 
     public function id() : string|null
     {
         $this->start();
+
+        if ($this->cliFallbackActive) {
+            return $this->cliSessionId !== '' ? $this->cliSessionId : null;
+        }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
             return null;
@@ -87,18 +105,36 @@ final class NativeSessionStore implements SessionStoreInterface
     {
         $this->start();
 
+        if ($this->cliFallbackActive) {
+            return $this->cliSession[$key] ?? null;
+        }
+
         return $_SESSION[$key] ?? null;
     }
 
     public function put(string $key, mixed $value) : void
     {
         $this->start();
+
+        if ($this->cliFallbackActive) {
+            $this->cliSession[$key] = $value;
+
+            return;
+        }
+
         $_SESSION[$key] = $value;
     }
 
     public function forget(string $key) : void
     {
         $this->start();
+
+        if ($this->cliFallbackActive) {
+            unset($this->cliSession[$key]);
+
+            return;
+        }
+
         unset($_SESSION[$key]);
     }
 
@@ -106,9 +142,16 @@ final class NativeSessionStore implements SessionStoreInterface
     {
         $this->start();
 
+        if ($this->cliFallbackActive) {
+            $this->cliSession = [];
+            $this->cliSessionId = '';
+
+            return;
+        }
+
         $_SESSION = [];
 
-        $useCookies = filter_var(ini_get('session.use_cookies'), FILTER_VALIDATE_BOOL);
+        $useCookies = ini_get('session.use_cookies') !== '0';
 
         if ($useCookies && session_status() === PHP_SESSION_ACTIVE) {
             $params      = session_get_cookie_params();
@@ -141,5 +184,36 @@ final class NativeSessionStore implements SessionStoreInterface
             'none'   => 'None',
             default  => 'Lax',
         };
+    }
+
+    private function canStartAfterOutput() : bool
+    {
+        return in_array(PHP_SAPI, ['cli', 'phpdbg'], true);
+    }
+
+    private function nativeSessionActive() : bool
+    {
+        return session_status() === PHP_SESSION_ACTIVE;
+    }
+
+    private function activateCliFallback() : void
+    {
+        $this->cliFallbackActive = true;
+    }
+
+    private function generateCliSessionId() : string
+    {
+        return 'cli-session-' . str_replace('.', '', uniqid('', true));
+    }
+
+    private function readNativeSessionId() : string
+    {
+        $sessionId = session_id();
+
+        if ($sessionId === false || $sessionId === '') {
+            throw new RuntimeException(message: 'Session ID is unavailable.');
+        }
+
+        return $sessionId;
     }
 }

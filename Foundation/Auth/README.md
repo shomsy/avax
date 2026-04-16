@@ -190,6 +190,13 @@ The package now has two explicit lanes:
 - `System/` is the auth kernel.
 - `integrations/` contains optional adapters.
 
+Canonical architecture documents now live in:
+
+- `docs/architecture/`
+- `docs/decisions/`
+- `docs/flows/`
+- `docs/security/`
+
 Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.

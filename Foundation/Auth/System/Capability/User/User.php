@@ -13,7 +13,9 @@ use Stringable;
 final readonly class User implements UserInterface, Stringable
 {
     public bool      $isActive;
+    /** @var list<UserPermission> */
     public array     $permissions;
+    /** @var list<UserRole> */
     public array     $roles;
     public string    $passwordHash;
     public string    $username;

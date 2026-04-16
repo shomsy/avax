@@ -9,6 +9,7 @@ namespace Avax\Auth\System\Capability\Risk;
  */
 final readonly class RiskDecision
 {
+    /** @var list<string> */
     public array      $reasons;
     public RiskAction $action;
 

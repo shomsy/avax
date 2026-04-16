@@ -10,6 +10,7 @@ use SensitiveParameter;
 final readonly class ProvisionScimUserData
 {
     public ScimAccountState $state;
+    /** @var list<string> */
     public array            $groups;
     public string           $username;
     public string           $email;

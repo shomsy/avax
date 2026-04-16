@@ -9,6 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 final class FileBackedHmacKeyRingCodecTest extends TestCase
 {
+    /**
+     * @throws \JsonException
+     */
     public function testCodecSupportsRolloverWithoutRedeploy() : void
     {
         $path = $this->createKeyRingFile(configuration: [
@@ -59,6 +62,9 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
         return $path;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testCodecSupportsCryptoAgilityAcrossAlgorithms() : void
     {
         $path = $this->createKeyRingFile(configuration: [

@@ -84,6 +84,9 @@ final class ReadActiveSessionsTest extends TestCase
         $this->assertFalse(condition: $sessions[1]->current);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testReadActiveSessionsFailsWhenSessionRegistryIsMissing() : void
     {
         $currentAuthentication = new CurrentAuthentication();

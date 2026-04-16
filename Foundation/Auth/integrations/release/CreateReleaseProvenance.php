@@ -6,6 +6,10 @@ namespace Avax\Auth\Integrations\Release;
 
 final readonly class CreateReleaseProvenance
 {
+    public function __construct(
+        private ReadGitOutput $readGitOutput = new ReadGitOutput()
+    ) {}
+
     /**
      * @param list<string> $validationCommands
      *
@@ -16,9 +20,9 @@ final readonly class CreateReleaseProvenance
         return [
             'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
             'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'git_commit'          => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
-            'git_branch'          => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --abbrev-ref HEAD'),
-            'git_dirty'           => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'status --short') !== '',
+            'git_commit'          => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', 'HEAD']),
+            'git_branch'          => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', '--abbrev-ref', 'HEAD']),
+            'git_dirty'           => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['status', '--short']) !== '',
             'generated_at'        => gmdate(DATE_ATOM),
             'php_version'         => PHP_VERSION,
             'validation_commands' => array_values($validationCommands),
@@ -44,17 +48,5 @@ final readonly class CreateReleaseProvenance
         return is_array($decoded) && is_string($decoded['name'] ?? null)
             ? $decoded['name']
             : 'unknown';
-    }
-
-    private function runGit(string $repositoryRoot, string $arguments) : string
-    {
-        $command = sprintf(
-            'git -C %s %s 2>/dev/null',
-            escapeshellarg($repositoryRoot),
-            $arguments
-        );
-        $output  = shell_exec($command);
-
-        return trim((string) $output);
     }
 }

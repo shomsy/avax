@@ -16,6 +16,7 @@ use SensitiveParameter;
 final readonly class MfaMethodRecord
 {
     public int|null          $lastAcceptedTimeStep;
+    /** @var list<BackupCodeRecord> */
     public array             $backupCodes;
     public DateTimeImmutable $enabledAt;
     public string            $secret;

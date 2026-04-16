@@ -18,6 +18,9 @@ use PHPUnit\Framework\TestCase;
  */
 final class SessionIdentityTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testIssueStoresUserAndReturnsRegeneratedSessionId() : void
     {
         $store    = new ArraySessionStore();
@@ -34,6 +37,9 @@ final class SessionIdentityTest extends TestCase
         $this->assertSame(expected: 'session-1', actual: $identity->currentSessionId());
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testResolveUserIdExpiresIdleSession() : void
     {
         $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));
@@ -54,6 +60,9 @@ final class SessionIdentityTest extends TestCase
         $this->assertSame(expected: 'idle_timeout', actual: $auditLog->events()[0]->context['reason']);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testResolveUserIdExpiresAbsoluteSession() : void
     {
         $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));
@@ -72,6 +81,9 @@ final class SessionIdentityTest extends TestCase
         $this->assertSame(expected: 'absolute_timeout', actual: $auditLog->events()[0]->context['reason']);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testIssueRegeneratesExistingSessionIdToPreventFixation() : void
     {
         $store = new ArraySessionStore();

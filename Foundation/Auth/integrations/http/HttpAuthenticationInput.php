@@ -13,8 +13,11 @@ final readonly class HttpAuthenticationInput
 {
     public string|null $sessionCookieName;
     public bool        $allowSession;
+    /** @var array<string, mixed> */
     public array       $server;
+    /** @var array<string, mixed> */
     public array       $cookies;
+    /** @var array<string, mixed> */
     public array       $headers;
 
     /**

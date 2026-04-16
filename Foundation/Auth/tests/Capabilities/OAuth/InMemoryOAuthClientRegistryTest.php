@@ -12,9 +12,13 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class InMemoryOAuthClientRegistryTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testConfidentialClientRegistrationReturnsOneTimeSecret() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -31,6 +35,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertTrue(condition: $registry->verifySecret(clientId: $registered->client->clientId, plainTextSecret: $registered->plainTextSecret));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testPublicClientDoesNotRequireSecret() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -48,6 +55,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertSame(expected: OAuthTokenEndpointAuthMethod::NONE, actual: $registered->client->tokenEndpointAuthMethod);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testConfidentialClientDefaultsToClientSecretBasicTokenEndpointAuthMethod() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -62,6 +72,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertSame(expected: OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC, actual: $registered->client->tokenEndpointAuthMethod);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testClientRegistrationPersistsGrantTypesAndSenderConstraint() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -89,6 +102,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertTrue(condition: $registered->client->allowsAudience(audience: 'partner-api'));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testWorkloadIdentityRequiresSenderConstraint() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -106,6 +122,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testWorkloadIdentityRequiresAudienceBoundaries() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -124,6 +143,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testPublicClientRejectsNonNoneTokenEndpointAuthMethod() : void
     {
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
@@ -140,6 +162,9 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testClientRegistrationPersistsRequestObjectVerificationKey() : void
     {
         $key = openssl_pkey_new([

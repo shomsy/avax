@@ -30,10 +30,18 @@ namespace Avax\Database\Avax\Connection\Pool;
 final class PoolState
 {
     /** @var int The current number of connections we have "Created" and are still managing. */
-    private int $spawnedCount = 0;
+    public int $spawnedCount = 0 {
+        get {
+            return $this->spawnedCount;
+        }
+    }
 
     /** @var int A persistent counter of every single time someone borrowed a connection. */
-    private int          $totalAcquisitions = 0;
+    public int           $totalAcquisitions = 0 {
+        get {
+            return $this->totalAcquisitions;
+        }
+    }
     private readonly int $maxConnections;
 
     /**
@@ -87,19 +95,4 @@ final class PoolState
         $this->spawnedCount = max(0, $this->spawnedCount - 1);
     }
 
-    /**
-     * Get the current number of living connections.
-     */
-    public function getSpawnedCount() : int
-    {
-        return $this->spawnedCount;
-    }
-
-    /**
-     * Get the total historical number of "Borrows" performed.
-     */
-    public function getTotalAcquisitions() : int
-    {
-        return $this->totalAcquisitions;
-    }
 }

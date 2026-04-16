@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Session;
 
 use Avax\Auth\System\Capability\User\UserId;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PDO;
+use PDOStatement;
 use RuntimeException;
 use SensitiveParameter;
 
@@ -35,11 +37,11 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         return is_array($row) ? $this->hydrate(row: $row) : null;
     }
 
-    private function prepare(string $query) : \PDOStatement
+    private function prepare(string $query) : PDOStatement
     {
         $statement = $this->pdo->prepare(query: $query);
 
-        if (! $statement instanceof \PDOStatement) {
+        if (! $statement instanceof PDOStatement) {
             throw new RuntimeException(message: 'Session registry statement preparation failed.');
         }
 
@@ -49,7 +51,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
     /**
      * @param array<string, mixed> $row
      *
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     private function hydrate(array $row) : SessionRecord
     {

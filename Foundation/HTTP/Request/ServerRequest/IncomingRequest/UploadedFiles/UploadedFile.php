@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -45,6 +45,12 @@ final class UploadedFile implements UploadedFileInterface
         return $this->stream;
     }
 
+    public function moveTo(string $targetPath) : void
+    {
+        if ($this->moved) {
+            throw new RuntimeException(message: 'File already moved');
+        }
+
         if ($this->error !== UPLOAD_ERR_OK) {
             throw new RuntimeException(message: 'Cannot move file with upload error: ' . $this->error);
         }
@@ -57,7 +63,7 @@ final class UploadedFile implements UploadedFileInterface
         // For our implementation, we'll cast a note that this is the seam.
         if (PHP_SAPI === 'cli') {
             // In CLI context we just write the stream
-            if ($this->stream->isSeekable()) {
+            if ($this->stream) {
                 $this->stream->rewind();
             }
             file_put_contents($targetPath, (string) $this->stream);

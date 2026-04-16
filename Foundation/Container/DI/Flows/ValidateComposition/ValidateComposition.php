@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container\DI\Flows\ValidateComposition;
 
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use ReflectionException;
 
 /**
  * Public validation flow for graph and policy checks.
@@ -25,7 +26,7 @@ final readonly class ValidateComposition
      * @param array<string, mixed> $context
      *
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function validate(array|null $serviceIds = null, array $context = []) : array
     {

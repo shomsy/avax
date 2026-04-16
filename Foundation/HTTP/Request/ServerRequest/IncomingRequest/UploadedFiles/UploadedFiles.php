@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 /**
  * Capability Owner: Manages the uploaded files tree.
@@ -31,6 +31,8 @@ final readonly class UploadedFiles
 
     /**
      * @param array $files
+     *
+     * @return UploadedFiles
      */
     public function with(array $files) : self
     {

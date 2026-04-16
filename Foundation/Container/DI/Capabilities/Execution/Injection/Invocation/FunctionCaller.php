@@ -13,6 +13,7 @@ use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
+use Throwable;
 
 /**
  * Calls functions, closures, and methods with container-resolved arguments.
@@ -84,14 +85,14 @@ final class FunctionCaller
 
     /**
      * @throws ReflectionException
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
-     * @throws \Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
+     * @throws Throwable
      */
     private function normalizeTarget(callable|string $target, ResolveRequest|null $request = null) : callable|string|array
     {

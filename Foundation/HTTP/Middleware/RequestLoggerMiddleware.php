@@ -43,7 +43,7 @@ readonly class RequestLoggerMiddleware implements MiddlewareInterface
         // Extract client IP from server parameters (PSR-7 compatible)
         $clientIp = 'unknown';
         if ($request instanceof ServerRequestInterface) {
-            $serverParams = $request->getServerParams();
+            $serverParams = $request->serverParams;
             $clientIp     = $serverParams['REMOTE_ADDR'] ??
                 $serverParams['HTTP_X_FORWARDED_FOR'] ??
                 $serverParams['HTTP_X_REAL_IP'] ??
@@ -52,8 +52,8 @@ readonly class RequestLoggerMiddleware implements MiddlewareInterface
 
         // Log the request details: method, URI, and client IP.
         $this->logger->info(message: 'Incoming request', context: [
-            'method' => $request->getMethod(),
-            'uri'    => (string) $request->getUri(),
+            'method' => $request->method,
+            'uri'    => (string) $request->uri,
             'ip'     => $clientIp,
         ]);
 

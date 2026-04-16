@@ -73,15 +73,15 @@ final readonly class HttpClient implements ClientInterface
     {
         try {
             return $this->performRequest(
-                method : $request->getMethod(),
-                uri    : $request->getUri(),
+                method : $request->method,
+                uri    : $request->uri,
                 options: $options,
             );
         } catch (Throwable $throwable) {
             $this->logger->error(
                 message: 'ServerRequest failed',
                 context: [
-                             'uri'   => (string) $request->getUri(),
+                             'uri'   => (string) $request->uri,
                              'error' => $throwable->getMessage(),
                          ],
             );
@@ -106,7 +106,7 @@ final readonly class HttpClient implements ClientInterface
                 ? $this->guzzleClient->requestAsync(method: $method, uri: $uri, options: $options)
                 : $this->guzzleClient->request(method: $method, uri: $uri, options: $options);
 
-            if ($response->getStatusCode() === 504) {
+            if ($response->statusCode === 504) {
                 throw new RequestException(
                     message : '⏳ 504 Gateway Timeout - Server did not respond in time.',
                     request : new Request(method: $method, uri: $uri),
@@ -188,7 +188,7 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: 'Asynchronous request failed',
                 context: [
-                             'uri'   => (string) $request->getUri(),
+                             'uri'   => (string) $request->uri,
                              'error' => $throwable->getMessage(),
                          ],
             );

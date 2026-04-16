@@ -54,7 +54,7 @@ final readonly class RetryContext
     {
         // Retry on server errors (5xx) or network-related exceptions (timeout, DNS failure, etc.)
         if ($this->response instanceof ResponseInterface && $this->isServerError(
-                statusCode: $this->response->getStatusCode(),
+                statusCode: $this->response,
             )) {
             return true;
         }

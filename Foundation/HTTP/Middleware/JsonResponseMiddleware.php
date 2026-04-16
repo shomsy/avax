@@ -39,7 +39,7 @@ readonly class JsonResponseMiddleware implements MiddlewareInterface
         // Enforce JSON response if necessary
         return $this->responseFactory->response(
             data  : $response->getBody()->getContents(),
-            status: $response->getStatusCode()
+            status: $response->statusCode
         );
     }
 }

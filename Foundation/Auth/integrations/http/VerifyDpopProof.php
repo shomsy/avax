@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Token\TokenCodecInterface;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use SensitiveParameter;
 
@@ -40,7 +41,7 @@ final readonly class VerifyDpopProof
 
     /**
      * @throws DpopProofFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {

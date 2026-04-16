@@ -105,7 +105,7 @@ class AppKernelIntegrationTest extends TestCase
             });
 
         // When: Getting global middleware
-        $globalMiddleware = $this->bootstrapper->getGlobalMiddleware();
+        $globalMiddleware = $this->bootstrapper;
 
         // Then: Group middleware is applied
         $this->assertContains(needle: $csrfMiddleware, haystack: $globalMiddleware);

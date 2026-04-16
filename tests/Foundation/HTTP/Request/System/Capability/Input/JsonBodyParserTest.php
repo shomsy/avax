@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\Input;
 
 use Avax\HTTP\Request\System\Capability\Input\JsonBodyParser;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class JsonBodyParserTest extends TestCase
 {
@@ -27,7 +28,7 @@ final class JsonBodyParserTest extends TestCase
 
     public function test_parse_throws_for_invalid_json() : void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->parser->parse('{invalid json}');
     }

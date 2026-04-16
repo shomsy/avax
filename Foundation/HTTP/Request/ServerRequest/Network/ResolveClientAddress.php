@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\IncomingHttp\Network;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use SensitiveParameter;
 
 /**
  * Action Owner: Securely resolves the client IP address.
@@ -20,7 +21,7 @@ final readonly class ResolveClientAddress
         $this->proxyPolicy = $proxyPolicy;
     }
 
-    public function execute(string $remoteAddr, #[\SensitiveParameter] RequestHeaders $headers) : string
+    public function execute(string $remoteAddr, #[SensitiveParameter] RequestHeaders $headers) : string
     {
         if (! $this->proxyPolicy->isTrusted(ip: $remoteAddr)) {
             return $remoteAddr;

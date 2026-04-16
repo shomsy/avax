@@ -12,9 +12,17 @@ namespace Avax\HTTP\Router\Routing;
  */
 final class RouteGroupContext
 {
-    private string      $prefix        = '';
-    private string      $namePrefix    = '';
-    private string|null $domain        = null;
+    public string $prefix     = '' {
+        set {
+            $this->prefix = $value;
+        }
+    }
+    public string $namePrefix = '' {
+        set {
+            $this->namePrefix = $value;
+        }
+    }
+    private string|null $domain     = null;
     private string|null $authorization = null;
 
     /**
@@ -75,16 +83,6 @@ final class RouteGroupContext
         }
 
         return $builder;
-    }
-
-    public function setPrefix(string $prefix) : void
-    {
-        $this->prefix = $prefix;
-    }
-
-    public function setNamePrefix(string $prefix) : void
-    {
-        $this->namePrefix = $prefix;
     }
 
     public function setDomain(string $domain) : void

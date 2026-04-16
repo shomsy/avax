@@ -8,11 +8,10 @@ use Avax\Container\Core\Container;
 
 abstract class ServiceProvider
 {
-    protected Container $app;
-
-    final public function setApp(Container $app) : void
-    {
-        $this->app = $app;
+    public Container $app {
+        set(Container $value) {
+            $this->app = $value;
+        }
     }
 
     abstract public function register() : void;

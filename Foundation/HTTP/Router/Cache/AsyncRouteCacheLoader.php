@@ -148,9 +148,7 @@ final readonly class AsyncRouteCacheLoader
     {
         // Since we can't eval async, we need to parse the PHP export manually
         // This is a simplified implementation - in practice you'd want more robust parsing
-        $routes = require 'data:text/plain;base64,' . base64_encode($content);
-
-        return $routes;
+        return require 'data:text/plain;base64,' . base64_encode($content);
     }
 
     /**

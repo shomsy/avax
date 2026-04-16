@@ -57,10 +57,9 @@ trait HasSoftDeletes
      */
     public function withTrashed() : self
     {
-        $clone              = clone $this;
-        $clone->withTrashed = true;
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "withTrashed" => true
+        ]);
     }
 
     /**
@@ -88,10 +87,9 @@ trait HasSoftDeletes
      */
     public function onlyTrashed() : self
     {
-        $clone              = clone $this;
-        $clone->onlyTrashed = true;
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "onlyTrashed" => true
+        ]);
     }
 
     /**

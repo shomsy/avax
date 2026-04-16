@@ -37,7 +37,11 @@ final class Events implements FeatureInterface
     /**
      * @var bool Feature enabled state
      */
-    private bool $enabled = true;
+    public bool $enabled = true {
+        get {
+            return $this->enabled;
+        }
+    }
 
     /**
      * Register a one-time event listener.
@@ -130,11 +134,4 @@ final class Events implements FeatureInterface
         return 'events';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled() : bool
-    {
-        return $this->enabled;
-    }
 }

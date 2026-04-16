@@ -32,6 +32,8 @@ use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -40,8 +42,8 @@ use SensitiveParameter;
 final class ChangeEmailTest extends TestCase
 {
     /**
-     * @throws \DateInvalidOperationException
-     * @throws \DateMalformedStringException
+     * @throws DateInvalidOperationException
+     * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
     public function testBeginEmailChangeSuccess() : void
@@ -101,9 +103,9 @@ final class ChangeEmailTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws Unauthenticated
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      */
     public function testBeginEmailChangeFailureInvalidPasswordTakesPrecedenceOverTakenEmail() : void
     {
@@ -148,8 +150,8 @@ final class ChangeEmailTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws \DateInvalidOperationException
+     * @throws DateMalformedStringException
+     * @throws DateInvalidOperationException
      * @throws Unauthenticated
      */
     public function testBeginEmailChangeFailureEmailTaken() : void
@@ -195,7 +197,7 @@ final class ChangeEmailTest extends TestCase
     }
 
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      */
     public function testConfirmEmailChangeSuccess() : void
     {

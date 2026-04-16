@@ -21,6 +21,7 @@ use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ use Random\RandomException;
 final class ResetPasswordTest extends TestCase
 {
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      * @throws RandomException
      */
     public function testResetPasswordRevokesSessionsAndChallenges() : void

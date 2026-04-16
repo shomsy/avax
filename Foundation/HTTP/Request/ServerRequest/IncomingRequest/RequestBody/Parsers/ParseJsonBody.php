@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
+
+use JsonException;
 
 /**
  * Action Owner: Parses JSON request body.
@@ -12,9 +14,9 @@ final readonly class ParseJsonBody
     /**
      * @param string $content
      *
-     * @return array|object|null
+     * @return array|null
      */
-    public function execute(string $content) : array|object|null
+    public function execute(string $content) : array|null
     {
         $content = trim($content);
         if ($content === '') {
@@ -25,7 +27,7 @@ final readonly class ParseJsonBody
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
             return (is_array($data) || is_object($data)) ? $data : null;
-        } catch (\JsonException) {
+        } catch (JsonException) {
             return null;
         }
     }

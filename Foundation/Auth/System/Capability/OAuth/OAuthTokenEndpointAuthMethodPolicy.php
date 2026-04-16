@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use InvalidArgumentException;
+
 /**
  * Normalizes token endpoint authentication method policy for OAuth clients.
  */
@@ -24,7 +26,7 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
         }
 
         if (! $this->isCompatible(type: $type, method: $method, workloadIdentity: $workloadIdentity)) {
-            throw new \InvalidArgumentException(message: match ($type) {
+            throw new InvalidArgumentException(message: match ($type) {
                 OAuthClientType::PUBLIC       => 'Public clients must use token endpoint auth method "none".',
                 OAuthClientType::CONFIDENTIAL => 'Confidential clients require a token endpoint auth method.',
             });

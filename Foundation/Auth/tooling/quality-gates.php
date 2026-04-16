@@ -60,6 +60,23 @@ $definitions = [
         'category' => 'testing',
     ],
     6  => [
+        'name'     => 'Evidence Bundle',
+        'question' => 'Was the evidence bundle generated and linked to the release?',
+        'commands' => [
+            [$php, 'tooling/generate-evidence-bundle.php'],
+        ],
+        'category' => 'evidence',
+    ],
+    7  => [
+        'name'     => 'Release Quality',
+        'question' => 'Was the release quality gate passed with mutation testing and integration tests?',
+        'commands' => [
+            [$php, $binDir . '/phpunit', '--testsuite=mutation', '--no-coverage'],
+            [$php, $binDir . '/infection', '--no-coverage'],
+        ],
+        'category' => 'quality',
+    ],
+    6  => [
         'name'     => 'Async Containment',
         'question' => 'If async or background work exists, are acknowledgement, retry, timeout, and quarantine rules explicit and observable?',
         'commands' => [
@@ -127,7 +144,7 @@ $definitions = [
 ];
 
 $results = [
-    'timestamp' => gmdate(DATE_ATOM),
+    'timestamp' => gmdate(DATE_ATOM, time()),
     'version'   => '2.0.0',
     'summary'   => [
         'total'  => count($definitions),

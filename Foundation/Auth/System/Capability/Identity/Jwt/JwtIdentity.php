@@ -17,6 +17,7 @@ use Avax\Auth\System\Flow\Token\ResolvedWorkloadToken;
 use Avax\Auth\System\Flow\Token\TokenCodecInterface;
 use Avax\Auth\System\Flow\Token\TokenRevocationStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Random\RandomException;
@@ -164,7 +165,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @param list<string> $scopes
      *
      * @throws RandomException
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function issueWorkloadToken(
         string                     $subject,
@@ -311,7 +312,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     /**
      * @param list<string> $scopes
      *
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function issueRefreshToken(
         User                       $user,
@@ -341,7 +342,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @param list<string> $scopes
      *
      * @throws RandomException
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function issue(
         User                               $user,

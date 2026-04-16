@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Integrations\Diagnostics;
 
 use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+use JsonException;
 
 /**
  * Sends normalized audit events to a syslog-compatible adapter.
@@ -24,7 +25,7 @@ final readonly class SyslogAuditExporter implements AuditExporterInterface
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function export(array $events) : void
     {

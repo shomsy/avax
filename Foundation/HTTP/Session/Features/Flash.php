@@ -16,6 +16,12 @@ final class Flash implements FeatureInterface
      */
     private array $data = [];
 
+    public bool $enabled {
+        get {
+            return true;
+        }
+    }
+
     public function boot() : void {}
 
     public function terminate() : void

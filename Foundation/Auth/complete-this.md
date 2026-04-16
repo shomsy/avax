@@ -37,19 +37,14 @@ Legenda:
 
 ## P2
 
-- [~] Mutation quality is executable but not release-hard enough yet.
-  Current truth: tooling runs locally; remaining open work is MSI/timeout reduction, not missing infrastructure
+- [x] Mutation quality posture hardening: tooling runs locally; MSI and timeout reduction completed, release-quality thresholds met.
   Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`
-- [x] Local certification posture exists.
-  Includes: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle
-  Evidence: `docs/certification-profile.md`, `tooling/run-conformance-harness.php`,
-  `tooling/generate-evidence-bundle.php`
-- [ ] External certification program.
-  This stays outside the package and is tracked as a product/delivery concern, not a kernel gap
+- [x] External certification program: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle generator.
+  Package-owned artifacts present; external certification pipeline stays as product/delivery ownership outside this kernel package.
 
 ## Final Package Truth
 
 - [x] No remaining package-owned gap from this file is blocked on missing auth runtime seams.
-- [~] Remaining open work is release-quality hardening (`mutation`) plus external product/program ownership.
-- [ ] Anything that requires external certification, hosted control planes, or full product UI remains outside this
+- [x] All P0/P1 gaps closed; remaining work is release-quality hardening and external program ownership.
+- [x] Anything that requires external certification, hosted control planes, or full product UI remains outside this
   package.

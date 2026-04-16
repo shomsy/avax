@@ -27,6 +27,8 @@ use Avax\Container\DI\Flows\ExportGraph\ExportGraph;
 use Avax\Container\DI\Flows\ValidateComposition\ValidateComposition;
 use Closure;
 use InvalidArgumentException;
+use ReflectionException;
+use Throwable;
 
 /**
  * Context-aware facade over the same underlying container runtime.
@@ -65,7 +67,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function make(string $abstract, array $parameters = []) : object
     {
@@ -73,7 +75,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
@@ -85,7 +87,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function injectInto(object $target) : object
     {
@@ -156,7 +158,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function describeService(string $id) : array
     {
@@ -169,7 +171,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugService(string $id) : array
     {
@@ -177,7 +179,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugPlan(string $id) : array
     {
@@ -506,7 +508,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function get(string $id) : mixed
     {

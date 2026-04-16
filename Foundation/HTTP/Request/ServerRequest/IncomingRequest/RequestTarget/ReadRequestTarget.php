@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestTarget;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget;
 
 use Psr\Http\Message\UriInterface;
 

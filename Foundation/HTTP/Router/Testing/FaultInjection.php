@@ -146,7 +146,7 @@ final class FaultInjection
                     $results[$faultName]['tests'][] = [
                         'request'         => $this->summarizeRequest(request: $request),
                         'result'          => 'passed',
-                        'response_status' => $response->getStatusCode(),
+                        'response_status' => $response->statusCode,
                     ];
                     $results[$faultName]['passed']++;
                 } catch (Throwable $e) {
@@ -175,8 +175,8 @@ final class FaultInjection
     {
         return sprintf(
             '%s %s',
-            $request->getMethod(),
-            $request->getUri()->getPath()
+            $request->method,
+            $request->uri->getPath()
         );
     }
 

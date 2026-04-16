@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
+use NoDiscard;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -19,16 +20,17 @@ final readonly class RequestBody
         return $this->stream;
     }
 
+    #[NoDiscard]
     public function content() : string
     {
-        if (!$this->stream->isSeekable()) {
+        if (! $this->stream) {
             return $this->stream->getContents();
         }
 
         $originalPosition = $this->stream->tell();
         $this->stream->rewind();
         $content = $this->stream->getContents();
-        $this->stream->seek($originalPosition);
+        $this->stream->seek(offset: $originalPosition);
 
         return $content;
     }

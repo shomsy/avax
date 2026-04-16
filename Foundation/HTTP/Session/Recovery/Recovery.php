@@ -34,7 +34,11 @@ final class Recovery
     /**
      * @var bool Transaction state
      */
-    private bool $inTransaction = false;
+    public bool $inTransaction = false {
+        get {
+            return $this->inTransaction;
+        }
+    }
 
     /**
      * @var string|null Current transaction backup name
@@ -243,18 +247,6 @@ final class Recovery
     public function clearAllBackups() : void
     {
         $this->backups = [];
-    }
-
-    /**
-     * Check whether a recovery transaction is currently active.
-     *
-     * This is a convenience helper for callers that want to branch
-     * on state instead of handling RecoveryException from commit()
-     * or rollback().
-     */
-    public function isInTransaction() : bool
-    {
-        return $this->inTransaction;
     }
 
     /**

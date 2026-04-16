@@ -6,7 +6,9 @@ namespace Avax\HTTP\Tests\Foundation\Request;
 
 use Avax\HTTP\Request\AbsoluteServerRequest;
 use Avax\HTTP\URI\UriBuilder;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -17,7 +19,7 @@ final class AbsoluteServerRequestTest extends TestCase
     {
         $request = $this->createRequest();
 
-        $this->assertInstanceOf(expected: \Psr\Http\Message\ServerRequestInterface::class, actual: $request);
+        $this->assertInstanceOf(expected: ServerRequestInterface::class, actual: $request);
     }
 
     private function createRequest(
@@ -167,7 +169,7 @@ final class AbsoluteServerRequestTest extends TestCase
     {
         $request = $this->createRequest();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Uploaded files must implement UploadedFileInterface');
 
         $request->withUploadedFiles(['not-an-uploaded-file']);

@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\OAuth\OAuthClientType;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use SensitiveParameter;
 
 final readonly class UpdateClientData
 {
@@ -38,24 +39,24 @@ final readonly class UpdateClientData
      * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
-        string                                                   $clientId,
-        string                                                   $name,
-        OAuthClientType                                          $type,
-        array                                                    $redirectUris,
-        string|null                                              $tenantSlug = null,
-        array|null                                               $allowedScopes = null,
-        array|null                                               $allowedAudiences = null,
-        array|null                                               $allowedGrantTypes = null,
-        array|null                                               $audienceScopeBoundaries = null,
-        #[\SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType|null                           $requiredSenderConstraint = null,
-        bool|null                                                $workloadIdentity = null,
-        bool|null                                                $phishingResistantRequired = null,
-        bool|null                                                $requestObjectSignatureRequired = null,
-        bool|null                                                $frontChannelLogoutSupported = null,
-        bool|null                                                $backChannelLogoutSupported = null,
-        bool|null                                                $approvalRequired = null,
-        #[\SensitiveParameter] string|null                       $requestObjectVerificationKeyPem = null
+        string                                                  $clientId,
+        string                                                  $name,
+        OAuthClientType                                         $type,
+        array                                                   $redirectUris,
+        string|null                                             $tenantSlug = null,
+        array|null                                              $allowedScopes = null,
+        array|null                                              $allowedAudiences = null,
+        array|null                                              $allowedGrantTypes = null,
+        array|null                                              $audienceScopeBoundaries = null,
+        #[SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
+        OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
+        bool|null                                               $workloadIdentity = null,
+        bool|null                                               $phishingResistantRequired = null,
+        bool|null                                               $requestObjectSignatureRequired = null,
+        bool|null                                               $frontChannelLogoutSupported = null,
+        bool|null                                               $backChannelLogoutSupported = null,
+        bool|null                                               $approvalRequired = null,
+        #[SensitiveParameter] string|null                       $requestObjectVerificationKeyPem = null
     )
     {
         $allowedScopes                         ??= [];

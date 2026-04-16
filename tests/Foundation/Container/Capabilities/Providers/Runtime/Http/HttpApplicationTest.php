@@ -69,7 +69,7 @@ final class HttpApplicationTest extends TestCase
         }
 
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        $this->assertSame(expected: 200, actual: $response?->getStatusCode());
+        $this->assertSame(expected: 200, actual: $response->statusCode);
         $this->assertStringContainsString(needle: 'Avax components router is up.', haystack: $content);
     }
 

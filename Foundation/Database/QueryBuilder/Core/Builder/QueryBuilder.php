@@ -35,7 +35,11 @@ class QueryBuilder
     use Concerns\Macroable;
 
     /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
-    protected QueryState $state;
+    public QueryState $state {
+        get {
+            return $this->state;
+        }
+    }
 
     /** @var bool If true, we don't save changes immediately. We wait and do them all at once later. */
     protected bool                      $isDeferred = false;
@@ -190,10 +194,9 @@ class QueryBuilder
      */
     public function from(string $table) : self
     {
-        $clone        = clone $this;
-        $clone->state = $this->state->withFrom(table: $table);
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withFrom(table: $table)
+        ]);
     }
 
     /**
@@ -211,10 +214,9 @@ class QueryBuilder
             $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
         }
 
-        $clone        = clone $this;
-        $clone->state = $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions));
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions))
+        ]);
     }
 
     /**
@@ -224,10 +226,9 @@ class QueryBuilder
      */
     public function distinct() : self
     {
-        $clone        = clone $this;
-        $clone->state = $this->state->withDistinct(distinct: true);
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withDistinct(distinct: true)
+        ]);
     }
 
     /**
@@ -247,10 +248,9 @@ class QueryBuilder
             throw new InvalidCriteriaException(method: 'offset', reason: 'OFFSET must be a non-negative integer.');
         }
 
-        $clone        = clone $this;
-        $clone->state = $this->state->withOffset(offset: $offset);
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withOffset(offset: $offset)
+        ]);
     }
 
     /**
@@ -268,14 +268,15 @@ class QueryBuilder
      */
     public function deferred(IdentityMap|null $identityMap = null) : self
     {
-        $clone             = clone $this;
-        $clone->isDeferred = true;
+        $clone             = clone(object: $this, withProperties: [
+            "isDeferred" => true
+        ]);
 
         if ($identityMap !== null) {
             $clone->orchestrator = $clone->orchestrator->withIdentityMap(map: $identityMap);
         }
 
-        if ($clone->orchestrator->getIdentityMap() === null) {
+        if ($clone->orchestrator === null) {
             throw new InvalidCriteriaException(
                 method: 'deferred',
                 reason: 'IdentityMap must be available via Orchestrator or provided to use deferred execution.'
@@ -317,10 +318,9 @@ class QueryBuilder
             throw new InvalidCriteriaException(method: 'limit', reason: 'LIMIT must be a non-negative integer.');
         }
 
-        $clone        = clone $this;
-        $clone->state = $this->state->withLimit(limit: $limit);
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withLimit(limit: $limit)
+        ]);
     }
 
     /**
@@ -334,9 +334,9 @@ class QueryBuilder
      */
     public function insert(array $values) : bool
     {
-        $clone        = clone $this;
-        $clone->state = $this->state->withValues(values: $values);
-        $sql          = $clone->grammar->compileInsert(state: $clone->state);
+        $clone        = clone(object: $this, withProperties: [
+
+        ]);
 
         return $clone->orchestrator->execute(
             sql      : $sql,
@@ -448,10 +448,9 @@ class QueryBuilder
      */
     public function select(string ...$columns) : self
     {
-        $clone        = clone $this;
-        $clone->state = $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns);
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "state" => $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns)
+        ]);
     }
 
     /**
@@ -541,14 +540,6 @@ class QueryBuilder
     public function find(mixed $id, string $column = 'id') : mixed
     {
         return $this->where(column: $column, operator: '=', value: $id)->first();
-    }
-
-    /**
-     * Get the internal state of the builder (the AST).
-     */
-    public function getState() : QueryState
-    {
-        return $this->state;
     }
 
     /**

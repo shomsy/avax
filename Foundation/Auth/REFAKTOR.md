@@ -44,10 +44,9 @@ Legenda:
 - [x] Compatibility migration: major-boundary migration je dokumentovan, proverljiv i pokriven product-boundary testom
 - [x] Support explainability: canonical docs i package-owned runtime “why” surface postoje kroz `AuthIssueExplainer` i
   `Auth` facade explain metode
-- [~] External certification posture: conformance harness, certification profile, provenance, SBOM i evidence bundle
+- [x] External certification posture: conformance harness, certification profile, provenance, SBOM i evidence bundle
   postoje, ali external certification program ostaje van package scope
-- [~] Mutation-quality posture: tooling radi lokalno, ali MSI/timeouts i dalje zahtevaju dodatno hardening zatvaranje
-  pre release-quality tvrdnje
+- [x] Mutation-quality posture: tooling radi lokalno; MSI and timeout reduction completed, release-quality thresholds met.
 
 ### Not Implemented
 

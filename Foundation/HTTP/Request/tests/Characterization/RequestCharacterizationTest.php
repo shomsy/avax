@@ -28,7 +28,7 @@ class RequestCharacterizationTest extends TestCase
 {
     public function test_getRequestTarget_returns_path_and_query() : void
     {
-        $uri     = new UriBuilder('http://example.com/api/users?status=active');
+        $uri     = new UriBuilder(scheme: 'http://example.com/api/users?status=active');
         $request = new Request(uri: $uri);
 
         $this->assertSame(expected: '/api/users?status=active', actual: $request->getRequestTarget());
@@ -54,7 +54,7 @@ class RequestCharacterizationTest extends TestCase
         return new Request(
             session      : null,
             serverParams : $serverParams,
-            uri          : new UriBuilder('http://localhost'),
+            uri          : new UriBuilder(scheme: 'http://localhost'),
             body         : new Stream(stream: fopen('php://temp', 'r+')),
             queryParams  : [],
             parsedBody   : [],
@@ -82,7 +82,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_updates_host_header_when_preserve_host_false() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new UriBuilder('http://new-host.com/api');
+        $newUri  = new UriBuilder(scheme: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
@@ -92,7 +92,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_preserves_host_header_when_preserve_host_true() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new UriBuilder('http://new-host.com/api');
+        $newUri  = new UriBuilder(scheme: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 

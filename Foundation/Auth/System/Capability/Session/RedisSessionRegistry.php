@@ -6,7 +6,9 @@ namespace Avax\Auth\System\Capability\Session;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Redis;
+use SensitiveParameter;
 
 class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSessionsInterface
 {
@@ -36,13 +38,13 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         $this->redis->hMset(key: $key, fieldvals: [
             'session_id'          => $record->sessionId,
             'user_id'             => $record->userId->value,
-            'created_at'          => $record->createdAt->format(format: \DateTimeInterface::ATOM),
-            'last_seen_at'        => $record->lastSeenAt->format(format: \DateTimeInterface::ATOM),
-            'idle_expires_at'     => $record->idleExpiresAt->format(format: \DateTimeInterface::ATOM),
-            'absolute_expires_at' => $record->absoluteExpiresAt->format(format: \DateTimeInterface::ATOM),
+            'created_at'          => $record->createdAt->format(format: DateTimeInterface::ATOM),
+            'last_seen_at'        => $record->lastSeenAt->format(format: DateTimeInterface::ATOM),
+            'idle_expires_at'     => $record->idleExpiresAt->format(format: DateTimeInterface::ATOM),
+            'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
             'ip_created'          => $record->ipCreated ?? '',
             'user_agent_created'  => $record->userAgentCreated ?? '',
-            'revoked_at'          => $record->revokedAt?->format(format: \DateTimeInterface::ATOM) ?? '',
+            'revoked_at'          => $record->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
             'revoke_reason'       => $record->revokeReason ?? '',
         ]);
 
@@ -87,7 +89,7 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         return $records;
     }
 
-    public function find(#[\SensitiveParameter] string $sessionId) : SessionRecord|null
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $key  = self::KEY_PREFIX . $sessionId;
         $data = $this->redis->hGetAll(key: $key);
@@ -116,11 +118,11 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         );
     }
 
-    public function revoke(#[\SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
         $key = self::KEY_PREFIX . $sessionId;
 
-        $this->redis->hSet($key, 'revoked_at', $revokedAt->format(format: \DateTimeInterface::ATOM));
+        $this->redis->hSet($key, 'revoked_at', $revokedAt->format(format: DateTimeInterface::ATOM));
         $this->redis->hSet($key, 'revoke_reason', $reason);
 
         $data = $this->redis->hGetAll(key: $key);

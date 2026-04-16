@@ -19,8 +19,10 @@ use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Foundation\Clock;
+use BadMethodCallException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class PushAuthorizationRequestTest extends TestCase
 {
@@ -97,7 +99,7 @@ final class PushAuthorizationRequestTest extends TestCase
     /**
      * @param array<string, mixed> $claims
      */
-    private function signRs256Jwt(array $claims, #[\SensitiveParameter] string $privateKeyPem) : string
+    private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
         $header       = $this->base64UrlEncode(value: json_encode(['typ' => 'JWT', 'alg' => 'RS256'], JSON_THROW_ON_ERROR));
         $payload      = $this->base64UrlEncode(value: json_encode($claims, JSON_THROW_ON_ERROR));
@@ -177,21 +179,21 @@ final class PushAuthorizationRequestTest extends TestCase
             }
 
             public function issueIdToken(
-                User                               $user,
-                string                             $clientId,
-                array                              $scopes,
-                string|null                        $nonce = null,
-                DateTimeImmutable|null             $authenticatedAt = null,
-                #[\SensitiveParameter] string|null $sessionId = null,
-                bool                               $phishingResistant = false
+                User                              $user,
+                string                            $clientId,
+                array                             $scopes,
+                string|null                       $nonce = null,
+                DateTimeImmutable|null            $authenticatedAt = null,
+                #[SensitiveParameter] string|null $sessionId = null,
+                bool                              $phishingResistant = false
             ) : OidcIdToken
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
 
             public function issueJwt(array $claims) : string
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
 
             public function readProviderMetadata() : OidcProviderMetadata
@@ -221,22 +223,22 @@ final class PushAuthorizationRequestTest extends TestCase
 
             public function readJsonWebKeySet() : OidcJsonWebKeySet
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
 
             public function subjectIdentifier(User $user, string $clientId) : string
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
 
-            public function resolveIdToken(#[\SensitiveParameter] string $idToken) : array|null
+            public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
 
-            public function resolveJwt(#[\SensitiveParameter] string $jwt) : array|null
+            public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
             {
-                throw new \BadMethodCallException(message: 'Not required for this test.');
+                throw new BadMethodCallException(message: 'Not required for this test.');
             }
         };
     }

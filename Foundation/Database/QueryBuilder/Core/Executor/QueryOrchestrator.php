@@ -18,8 +18,16 @@ use Throwable;
 final class QueryOrchestrator
 {
     private bool                                      $isPretending = false;
-    private ExecutionScope|null                       $scope        = null;
-    private IdentityMap|null                          $identityMap  = null;
+    private ExecutionScope|null                       $scope       = null {
+        get {
+            return $this->scope;
+        }
+    }
+    public IdentityMap|null                           $identityMap = null {
+        get {
+            return $this->identityMap;
+        }
+    }
     private readonly TransactionManagerInterface|null $transactionManager;
     private readonly ExecutorInterface                $executor;
 
@@ -136,27 +144,16 @@ final class QueryOrchestrator
 
     public function withIdentityMap(IdentityMap|null $map) : self
     {
-        $clone              = clone $this;
-        $clone->identityMap = $map;
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "identityMap" => $map
+        ]);
     }
 
     public function withScope(ExecutionScope $scope) : self
     {
-        $clone        = clone $this;
-        $clone->scope = $scope;
-
-        return $clone;
+        return clone(object: $this, withProperties: [
+            "scope" => $scope
+        ]);
     }
 
-    public function getScope() : ExecutionScope
-    {
-        return $this->scope;
-    }
-
-    public function getIdentityMap() : IdentityMap|null
-    {
-        return $this->identityMap;
-    }
 }

@@ -95,10 +95,10 @@ final readonly class ReadonlyTarget
 
 final class MethodTarget
 {
-    public string $value = '';
-
-    public function setValue(string $value) : void
-    {
-        $this->value = $value;
+    public string $value = '' {
+        set {
+            $this->value = $value;
+        }
     }
+
 }

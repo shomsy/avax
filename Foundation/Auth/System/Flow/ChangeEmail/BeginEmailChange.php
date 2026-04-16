@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class BeginEmailChange
@@ -49,7 +50,7 @@ final readonly class BeginEmailChange
 
     /**
      * @throws EmailChangeFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
     public function execute(BeginEmailChangeData $data) : EmailChangeChallenge

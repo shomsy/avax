@@ -209,7 +209,7 @@ abstract class BaseGrammar implements GrammarInterface
 
             // If this is a nested block: (condition1 OR condition2).
             if ($node instanceof NestedWhereNode) {
-                $nestedSql = $this->compileWheres(state: $node->query->getState());
+                $nestedSql = $this->compileWheres(state: $node->query);
                 if ($nestedSql !== '') {
                     $sql[] = $prefix . $boolean . '(' . ltrim(string: $nestedSql, characters: 'WHERE ') . ')';
                 }

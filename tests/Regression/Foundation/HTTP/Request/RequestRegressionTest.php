@@ -8,6 +8,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\Uri;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate
@@ -86,7 +87,7 @@ class RequestRegressionTest extends TestCase
 
     public function test_request_must_not_depend_on_trait_assembly_logic() : void
     {
-        $reflection = new \ReflectionClass(objectOrClass: Request::class);
+        $reflection = new ReflectionClass(objectOrClass: Request::class);
         $traits     = $reflection->getTraitNames();
 
         // The new ServerRequest should not be a junkyard of Traits.

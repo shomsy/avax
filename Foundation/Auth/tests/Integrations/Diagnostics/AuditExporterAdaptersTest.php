@@ -18,13 +18,14 @@ use Avax\Auth\Integrations\Diagnostics\SyslogAuditExporter;
 use Avax\Auth\Integrations\Diagnostics\WebhookAuditExporter;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use DateTimeImmutable;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class AuditExporterAdaptersTest extends TestCase
 {
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testJsonLinesExporterMasksSensitiveContextAndChainsHashes() : void
     {
@@ -63,7 +64,7 @@ final class AuditExporterAdaptersTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testSyslogWebhookAndQueueExportersSendNormalizedPayloads() : void
     {
@@ -125,7 +126,7 @@ final class AuditExporterAdaptersTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testLegalHoldPreservesSensitiveContextForForensicExport() : void
     {

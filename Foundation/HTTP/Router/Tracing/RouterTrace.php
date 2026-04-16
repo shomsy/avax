@@ -25,7 +25,11 @@ final class RouterTrace
 
     private float $startTime;
 
-    private int $eventCount;
+    private int $eventCount {
+        get {
+            return $this->eventCount;
+        }
+    }
 
     public function __construct()
     {
@@ -281,14 +285,6 @@ final class RouterTrace
             $this->events,
             static fn (array $event) => $event['event'] === $eventType
         );
-    }
-
-    /**
-     * Get the total number of logged events.
-     */
-    public function getEventCount() : int
-    {
-        return $this->eventCount;
     }
 
     /**

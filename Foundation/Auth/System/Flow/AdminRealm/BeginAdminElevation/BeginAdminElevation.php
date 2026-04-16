@@ -16,6 +16,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class BeginAdminElevation
@@ -46,7 +47,7 @@ final readonly class BeginAdminElevation
 
     /**
      * @throws AdminElevationFailed
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
     public function execute() : AdminElevation

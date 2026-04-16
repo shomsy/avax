@@ -42,16 +42,9 @@ namespace Psr\Http\Message;
  */
 interface ServerRequestInterface extends RequestInterface
 {
-    /**
-     * Retrieve server parameters.
-     *
-     * Retrieves data related to the incoming request environment,
-     * typically derived from PHP's $_SERVER superglobal. The data IS NOT
-     * REQUIRED to originate from $_SERVER.
-     *
-     * @return array
-     */
-    public function getServerParams(): array;
+    public array $serverParams {
+        get;
+    }
 
     /**
      * Retrieve cookies.
@@ -84,19 +77,9 @@ interface ServerRequestInterface extends RequestInterface
      */
     public function withCookieParams(array $cookies): ServerRequestInterface;
 
-    /**
-     * Retrieve query string arguments.
-     *
-     * Retrieves the deserialized query string arguments, if any.
-     *
-     * Note: the query params might not be in sync with the URI or server
-     * params. If you need to ensure you are only getting the original
-     * values, you may need to parse the query string from `getUri()->getQuery()`
-     * or from the `QUERY_STRING` server param.
-     *
-     * @return array
-     */
-    public function getQueryParams(): array;
+    public array $queryParams {
+        get;
+    }
 
     /**
      * Return an instance with the specified query string arguments.

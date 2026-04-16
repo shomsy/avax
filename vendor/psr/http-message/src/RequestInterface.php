@@ -23,23 +23,9 @@ namespace Psr\Http\Message;
  */
 interface RequestInterface extends MessageInterface
 {
-    /**
-     * Retrieves the message's request target.
-     *
-     * Retrieves the message's request-target either as it will appear (for
-     * clients), as it appeared at request (for servers), or as it was
-     * specified for the instance (see withRequestTarget()).
-     *
-     * In most cases, this will be the origin-form of the composed URI,
-     * unless a value was provided to the concrete implementation (see
-     * withRequestTarget() below).
-     *
-     * If no URI is available, and no request-target has been specifically
-     * provided, this method MUST return the string "/".
-     *
-     * @return string
-     */
-    public function getRequestTarget(): string;
+    public null|string $requestTarget {
+        get;
+    }
 
     /**
      * Return an instance with the specific request-target.
@@ -61,12 +47,9 @@ interface RequestInterface extends MessageInterface
     public function withRequestTarget(string $requestTarget): RequestInterface;
 
 
-    /**
-     * Retrieves the HTTP method of the request.
-     *
-     * @return string Returns the request method.
-     */
-    public function getMethod(): string;
+    public string $method {
+        get;
+    }
 
     /**
      * Return an instance with the provided HTTP method.
@@ -85,16 +68,9 @@ interface RequestInterface extends MessageInterface
      */
     public function withMethod(string $method): RequestInterface;
 
-    /**
-     * Retrieves the URI instance.
-     *
-     * This method MUST return a UriInterface instance.
-     *
-     * @link http://tools.ietf.org/html/rfc3986#section-4.3
-     * @return UriInterface Returns a UriInterface instance
-     *     representing the URI of the request.
-     */
-    public function getUri(): UriInterface;
+    public null|\Psr\Http\Message\UriInterface $uri {
+        get;
+    }
 
     /**
      * Returns an instance with the provided URI.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Tenant;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 final readonly class TenantInvite
 {
@@ -19,15 +20,15 @@ final readonly class TenantInvite
     public string                 $inviteId;
 
     public function __construct(
-        string                        $inviteId,
-        string                        $tenantId,
-        #[\SensitiveParameter] string $email,
-        TenantMemberRole              $role,
-        #[\SensitiveParameter] string $tokenHash,
-        string                        $invitedBy,
-        DateTimeImmutable             $createdAt,
-        DateTimeImmutable|null        $acceptedAt = null,
-        int|null                      $acceptedByUserId = null
+        string                       $inviteId,
+        string                       $tenantId,
+        #[SensitiveParameter] string $email,
+        TenantMemberRole             $role,
+        #[SensitiveParameter] string $tokenHash,
+        string                       $invitedBy,
+        DateTimeImmutable            $createdAt,
+        DateTimeImmutable|null       $acceptedAt = null,
+        int|null                     $acceptedByUserId = null
     )
     {
         $this->inviteId         = $inviteId;

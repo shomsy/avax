@@ -53,13 +53,21 @@ class Response implements ResponseInterface
      * This class encapsulates the details of creating, sending, and processing HTTP responses, ensuring that all
      * necessary details are managed consistently.
      */
-    private int $statusCode;
+    public int $statusCode {
+        get {
+            return $this->statusCode;
+        }
+    }
 
     /**
      * Returns the reason phrase for the given HTTP status code.
      * This provides a human-readable explanation or description of the status code.
      */
-    private string|null $reasonPhrase;
+    public string|null $reasonPhrase {
+        get {
+            return $this->reasonPhrase;
+        }
+    }
 
     /**
      * The protocol version used in HTTP communication.
@@ -70,7 +78,11 @@ class Response implements ResponseInterface
      * Notice: Changing this value might affect compatibility with certain servers
      * or clients, depending on the protocol compliance requirements.
      */
-    private string $protocolVersion;
+    private string $protocolVersion {
+        get {
+            return $this->protocolVersion;
+        }
+    }
 
     /**
      * Headers to be sent with the HTTP response.
@@ -80,7 +92,11 @@ class Response implements ResponseInterface
      * Always ensure headers are set before output is sent to the client to avoid
      * any runtime errors or unexpected behavior.
      */
-    private array           $headers;
+    public array            $headers {
+        get {
+            return $this->headers;
+        }
+    }
     private StreamInterface $stream;
 
     /**
@@ -145,22 +161,6 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retrieves the status code.
-     *
-     * @return int The HTTP status code.
-     *
-     * This method is part of a broader class responsible for handling HTTP responses.
-     * The status code is crucial for determining the outcome of client-server interactions.
-     *
-     * Note: Ensure the $statusCode property adheres to correct HTTP status code standards (e.g., 200 for OK, 404 for
-     * Not Found).
-     */
-    public function getStatusCode() : int
-    {
-        return $this->statusCode;
-    }
-
-    /**
      * Returns a new instance with the specified status code and reason phrase.
      *
      * @param int    $code         The HTTP status code. Must be between 100 and 599 inclusive.
@@ -176,35 +176,14 @@ class Response implements ResponseInterface
         //            throw new InvalidArgumentException(message: 'Invalid status code.');
         //        }
 
-        $new               = clone $this;
-        $new->statusCode   = $code;
-        $new->reasonPhrase = $reasonPhrase !== ''
-            ? $reasonPhrase
-            : $this->getDefaultReasonPhrase(
-                statusCode: $code,
-            );
-
-        return $new;
-    }
-
-    /**
-     * Retrieves the reason phrase associated with the response status code.
-     *
-     * @return string The reason phrase, which offers a short textual description of the status code.
-     */
-    public function getReasonPhrase() : string
-    {
-        return $this->reasonPhrase;
-    }
-
-    /**
-     * Retrieves the protocol version used by this instance.
-     *
-     * @return string The protocol version as a string.
-     */
-    public function getProtocolVersion() : string
-    {
-        return $this->protocolVersion;
+        return clone(object: $this, withProperties: [
+            "statusCode"   => $code,
+            "reasonPhrase" => $reasonPhrase !== ''
+                ? $reasonPhrase
+                : $this->getDefaultReasonPhrase(
+                    statusCode: $code,
+                )
+        ]);
     }
 
     /**
@@ -217,25 +196,9 @@ class Response implements ResponseInterface
      */
     public function withProtocolVersion(string $version) : ResponseInterface
     {
-        $new                  = clone $this;
-        $new->protocolVersion = $version;
-
-        return $new;
-    }
-
-    /**
-     * Retrieves the headers associated with the current request or response.
-     *
-     * @return array An associative array of headers.
-     *
-     * While this method is straightforward, it is part of the broader design pattern
-     * where headers are managed as an associative array. This allows for a flexible
-     * and extensible way to handle HTTP headers, adhering to common practices in
-     * HTTP request/response handling.
-     */
-    public function getHeaders() : array
-    {
-        return $this->headers;
+        return clone(object: $this, withProperties: [
+            "protocolVersion" => $version
+        ]);
     }
 
     /**
@@ -350,10 +313,9 @@ class Response implements ResponseInterface
      */
     public function withBody(StreamInterface $stream) : ResponseInterface
     {
-        $new         = clone $this;
-        $new->stream = $stream;
-
-        return $new;
+        return clone(object: $this, withProperties: [
+            "stream" => $stream
+        ]);
     }
 
     /**

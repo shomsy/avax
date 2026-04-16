@@ -40,7 +40,7 @@ final class RouteGroupAttributesConfigurator
              * Strategy for handling 'prefix' - converts the value to a string
              * and applies it as a prefix to the route group context.
              */
-            'prefix'     => fn (RouteGroupContext $context, mixed $value) => $context->setPrefix(prefix: (string) $value),
+            'prefix'     => fn (RouteGroupContext $context, mixed $value) => $context->prefix = (string) $value,
 
             /**
              * Strategy for handling 'middleware' - converts the value to an array
@@ -61,9 +61,7 @@ final class RouteGroupAttributesConfigurator
              * and applies it as a prefix to the names of route group context
              * names.
              */
-            'name'       => fn (RouteGroupContext $context, mixed $value) => $context->setNamePrefix(
-                prefix: (string) $value
-            ),
+            'name'       => fn (RouteGroupContext $context, mixed $value) => $context->namePrefix = (string) $value,
 
             /**
              * Strategy for handling 'authorize' - converts the value to a string

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Oidc;
 
 use Avax\Auth\System\Capability\User\User;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use JsonException;
@@ -88,7 +89,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function issueIdToken(
         User                               $user,

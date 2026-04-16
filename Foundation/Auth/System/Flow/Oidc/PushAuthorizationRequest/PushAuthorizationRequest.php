@@ -16,6 +16,7 @@ use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use JsonException;
+use SensitiveParameter;
 
 final readonly class PushAuthorizationRequest
 {
@@ -167,7 +168,7 @@ final readonly class PushAuthorizationRequest
     /**
      * @return array{0: array<string, mixed>, 1: array<string, mixed>}
      */
-    private function decodeJwtWithoutVerification(#[\SensitiveParameter] string $jwt) : array
+    private function decodeJwtWithoutVerification(#[SensitiveParameter] string $jwt) : array
     {
         $segments = explode('.', $jwt);
 
@@ -233,10 +234,10 @@ final readonly class PushAuthorizationRequest
      * @return array<string, mixed>|null
      */
     private function verifyHmacRequestObject(
-        #[\SensitiveParameter] string $jwt,
-        string                        $clientId,
-        #[\SensitiveParameter] string $clientSecret,
-        string                        $algorithm
+        #[SensitiveParameter] string $jwt,
+        string                       $clientId,
+        #[SensitiveParameter] string $clientSecret,
+        string                       $algorithm
     ) : array|null
     {
         if ($clientSecret === '') {
@@ -255,7 +256,7 @@ final readonly class PushAuthorizationRequest
     /**
      * @return array<string, mixed>|null
      */
-    private function verifyRsaRequestObject(#[\SensitiveParameter] string $jwt, #[\SensitiveParameter] string|null $publicKeyPem) : array|null
+    private function verifyRsaRequestObject(#[SensitiveParameter] string $jwt, #[SensitiveParameter] string|null $publicKeyPem) : array|null
     {
         if ($publicKeyPem === null || trim($publicKeyPem) === '') {
             return null;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
 
 /**
  * Action Owner: Routes body content-type to the appropriate parser.
@@ -13,9 +13,9 @@ final readonly class ParseBodyByContentType
      * @param string $contentType
      * @param string $content
      *
-     * @return array|object|null
+     * @return array|null
      */
-    public function execute(string $contentType, string $content) : array|object|null
+    public function execute(string $contentType, string $content) : array|null
     {
         $mediaType = strtolower(trim(explode(';', $contentType)[0]));
 

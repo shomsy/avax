@@ -35,6 +35,7 @@ use Avax\Auth\System\Flow\Token\IssuedToken;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -143,7 +144,7 @@ final class VerifyMfaChallengeTest extends TestCase
     }
 
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      */
     private function challengeRecord(DateTimeImmutable $expiresAt, string $challengeId = 'challenge-1') : MfaChallengeRecord
     {
@@ -170,7 +171,7 @@ final class VerifyMfaChallengeTest extends TestCase
     }
 
     /**
-     * @throws \DateInvalidOperationException
+     * @throws DateInvalidOperationException
      */
     public function testExpiredChallengeFails() : void
     {

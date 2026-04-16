@@ -7,6 +7,7 @@ namespace Avax\Container\DI\Flows\ResolveService;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Throwable;
 
 /**
  * Public resolution flow for retrieving or building services.
@@ -25,7 +26,7 @@ final readonly class ResolveService
     /**
      * @throws ContainerException
      * @throws ServiceNotFoundException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function get(string $id) : mixed
     {
@@ -37,7 +38,7 @@ final readonly class ResolveService
      *
      * @throws ContainerException
      * @throws ServiceNotFoundException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function make(string $abstract, array $parameters = []) : object
     {

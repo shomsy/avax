@@ -56,10 +56,16 @@ trait HandlesHydration
         }
 
         if (! empty($errors)) {
-            logger()->warning(
-                message: 'DTO hydration failed - ' . $simpleMessage,
-                context: ['errors' => $errors]
-            );
+            if (function_exists('logger')) {
+                try {
+                    logger()->warning(
+                        message: 'DTO hydration failed - ' . $simpleMessage,
+                        context: ['errors' => $errors]
+                    );
+                } catch (Throwable) {
+                    // Logger not available, continue to exception
+                }
+            }
 
             throw new DTOValidationException(
                 message: 'DTO hydration failed - ' . $simpleMessage,
@@ -133,14 +139,20 @@ trait HandlesHydration
         }
 
         // Log a warning indicating that a required field is missing during hydration.
-        logger()->warning(
-            message: 'Missing required field: ' . $name, // Descriptive message for the log entry.
-            context: ['class' => static::class] // Include the class name for debugging context.
-        );
+        if (function_exists('logger')) {
+            try {
+                logger()->warning(
+                    message: 'Missing required field: ' . $name,
+                    context: ['class' => static::class]
+                );
+            } catch (Throwable) {
+                // Logger not available, continue to exception
+            }
+        }
 
         // Throw an exception if the field is required and no value or default is provided.
         throw new InvalidArgumentException(
-            message: "Missing required field: {$name}" // Provide a clear error message.
+            message: "Missing required field: {$name}"
         );
     }
 
@@ -150,8 +162,9 @@ trait HandlesHydration
     private function validateField(string $fieldName, mixed $value, array $attributes) : void
     {
         foreach ($attributes as $attribute) {
-            if (method_exists(object_or_class: $attribute, method: 'validate')) {
-                $attribute->validate(
+            $instance = $attribute->newInstance();
+            if (method_exists($instance, 'validate')) {
+                $instance->validate(
                     value   : $value,
                     property: $fieldName
                 );

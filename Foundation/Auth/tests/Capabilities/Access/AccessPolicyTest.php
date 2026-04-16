@@ -27,6 +27,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -113,7 +114,7 @@ final class AccessPolicyTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws Unauthenticated
      * @throws PermissionDenied
      * @throws RoleDenied

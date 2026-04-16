@@ -10,6 +10,7 @@ use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Redis;
+use SensitiveParameter;
 
 final class RedisSessionRegistryTest extends TestCase
 {
@@ -18,22 +19,22 @@ final class RedisSessionRegistryTest extends TestCase
         $redis  = $this->createMock(Redis::class);
         $record = $this->record(sessionId: 'session-1', userId: 7);
 
-        $redis->expects(invocationRule: $this->once())
-            ->method(constraint: 'hMset')
+        $redis->expects($this->once())
+            ->method('hMset')
             ->with(
                 'auth:session:session-1',
-                $this->callback(callback: static fn (array $payload) : bool => $payload['ip_created'] === '127.0.0.1'
+                $this->callback(static fn (array $payload) : bool => $payload['ip_created'] === '127.0.0.1'
                     && $payload['user_agent_created'] === 'Browser'
                     && $payload['revoked_at'] === '')
             )
-            ->willReturn(value: true);
-        $redis->expects(invocationRule: $this->once())->method(constraint: 'expire')->with('auth:session:session-1', 86400)->willReturn(value: true);
-        $redis->expects(invocationRule: $this->once())->method(constraint: 'sAdd')->with('auth:user_sessions:7', 'session-1')->willReturn(value: 1);
+            ->willReturn(true);
+        $redis->expects($this->once())->method('expire')->with('auth:session:session-1', 86400)->willReturn(true);
+        $redis->expects($this->once())->method('sAdd')->with('auth:user_sessions:7', 'session-1')->willReturn(1);
 
         (new RedisSessionRegistry(redis: $redis))->track(record: $record);
     }
 
-    private function record(#[\SensitiveParameter] string $sessionId, int $userId) : SessionRecord
+    private function record(#[SensitiveParameter] string $sessionId, int $userId) : SessionRecord
     {
         return new SessionRecord(
             sessionId        : $sessionId,
@@ -52,17 +53,17 @@ final class RedisSessionRegistryTest extends TestCase
         $redis    = $this->createMock(Redis::class);
         $registry = new RedisSessionRegistry(redis: $redis);
 
-        $redis->expects(invocationRule: $this->exactly(3))
-            ->method(constraint: 'hGetAll')
+        $redis->expects($this->exactly(3))
+            ->method('hGetAll')
             ->willReturnOnConsecutiveCalls(
                 $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00'),
                 $this->row(sessionId: 'session-2', userId: 7, lastSeenAt: '2026-04-12T12:00:00+00:00'),
                 $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00')
             );
-        $redis->expects(invocationRule: $this->once())
-            ->method(constraint: 'sMembers')
+        $redis->expects($this->once())
+            ->method('sMembers')
             ->with('auth:user_sessions:7')
-            ->willReturn(value: ['session-2', 'session-1']);
+            ->willReturn(['session-2', 'session-1']);
 
         $found  = $registry->find(sessionId: 'session-1');
         $listed = $registry->listForUser(userId: new UserId(value: 7));
@@ -78,12 +79,12 @@ final class RedisSessionRegistryTest extends TestCase
      * @return array<string, string>
      */
     private function row(
-        #[\SensitiveParameter] string $sessionId,
-        int                           $userId,
-        string|null                   $lastSeenAt = null,
-        string|null                   $idleExpiresAt = null,
-        string|null                   $revokedAt = null,
-        string                        $revokeReason = ''
+        #[SensitiveParameter] string $sessionId,
+        int                          $userId,
+        string|null                  $lastSeenAt = null,
+        string|null                  $idleExpiresAt = null,
+        string|null                  $revokedAt = null,
+        string                       $revokeReason = ''
     ) : array
     {
         $lastSeenAt    ??= '2026-04-12T12:05:00+00:00';
@@ -112,33 +113,33 @@ final class RedisSessionRegistryTest extends TestCase
         $hsetCalls = [];
         $sremCalls = [];
 
-        $redis->expects(invocationRule: $this->exactly(4))
-            ->method(constraint: 'hSet')
-            ->willReturnCallback(callback: static function (string $key, string $field, string $value) use (&$hsetCalls) : int {
+        $redis->expects($this->exactly(4))
+            ->method('hSet')
+            ->willReturnCallback(static function (string $key, string $field, string $value) use (&$hsetCalls) : int {
                 $hsetCalls[] = [$key, $field, $value];
 
                 return 1;
             });
-        $redis->expects(invocationRule: $this->exactly(2))
-            ->method(constraint: 'hGetAll')
+        $redis->expects($this->exactly(2))
+            ->method('hGetAll')
             ->willReturnOnConsecutiveCalls(
                 ['user_id' => '7', 'session_id' => 'session-1'],
                 $this->row(sessionId: 'session-2', userId: 7)
             );
-        $redis->expects(invocationRule: $this->exactly(2))
-            ->method(constraint: 'srem')
-            ->willReturnCallback(callback: static function (string $key, #[\SensitiveParameter] string $sessionId) use (&$sremCalls) : int {
+        $redis->expects($this->exactly(2))
+            ->method('srem')
+            ->willReturnCallback(static function (string $key, string $sessionId) use (&$sremCalls) : int {
                 $sremCalls[] = [$key, $sessionId];
 
                 return 1;
             });
-        $redis->expects(invocationRule: $this->once())
-            ->method(constraint: 'sMembers')
+        $redis->expects($this->once())
+            ->method('sMembers')
             ->with('auth:user_sessions:7')
-            ->willReturn(value: ['session-2']);
+            ->willReturn(['session-2']);
 
-        $registry->revoke(sessionId: 'session-1', revokedAt: $revokedAt, reason: 'logout');
-        $registry->revokeForUser(userId: new UserId(value: 7), revokedAt: $revokedAt, reason: 'logout_all');
+        $registry->revoke('session-1', $revokedAt, 'logout');
+        $registry->revokeForUser(new UserId(7), $revokedAt, 'logout_all');
 
         $this->assertSame(
             expected: [
@@ -186,13 +187,13 @@ final class RedisSessionRegistryTest extends TestCase
             });
         $redis->expects(invocationRule: $this->exactly(2))
             ->method(constraint: 'srem')
-            ->willReturnCallback(callback: static function (string $key, #[\SensitiveParameter] string $sessionId) use (&$removedMemberships) : int {
+            ->willReturnCallback(callback: static function (string $key, #[SensitiveParameter] string $sessionId) use (&$removedMemberships) : int {
                 $removedMemberships[] = [$key, $sessionId];
 
                 return 1;
             });
 
-        $removed = $registry->pruneExpired(now: $now);
+        $removed = $registry->pruneExpired($now);
 
         $this->assertSame(expected: 2, actual: $removed);
         $this->assertSame(expected: ['auth:session:expired', 'auth:session:revoked'], actual: $deletedKeys);
@@ -205,10 +206,10 @@ final class RedisSessionRegistryTest extends TestCase
         );
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        if (! class_exists(Redis::class)) {
-            self::markTestSkipped(message: 'Redis extension is not installed in this runtime.');
+        if (! class_exists('Redis')) {
+            self::markTestSkipped('Redis extension is not installed in this runtime.');
         }
     }
 }

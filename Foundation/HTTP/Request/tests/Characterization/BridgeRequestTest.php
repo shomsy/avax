@@ -10,11 +10,14 @@ use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class BridgeRequestTest extends TestCase
 {
-    private function createServerRequest(string $method = 'GET', string $uri = 'http://localhost/') : ServerRequest
+    private function createServerRequest(string|null $method = null, string $uri = 'http://localhost/') : ServerRequest
     {
+        $method ??= 'GET';
+
         return new ServerRequest(
             body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
             method: $method,
@@ -27,61 +30,61 @@ class BridgeRequestTest extends TestCase
         $serverRequest = $this->createServerRequest(method: 'POST', uri: 'https://example.com/api');
         
         // Use reflection to set the private property since constructor is private and we want to inject a mock or specific instance
-        $request = (new \ReflectionClass(Request::class))->newInstanceWithoutConstructor();
-        $property = (new \ReflectionClass(Request::class))->getProperty('serverRequest');
-        $property->setValue($request, $serverRequest);
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
 
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('example.com', $request->getUri()->getHost());
-        $this->assertEquals('/api', $request->getRequestTarget());
+        $this->assertEquals(expected: 'POST', actual: $request->getMethod());
+        $this->assertEquals(expected: 'example.com', actual: $request->getUri()->getHost());
+        $this->assertEquals(expected: '/api', actual: $request->getRequestTarget());
     }
 
     public function test_with_uri_preserve_host_logic() : void
     {
         $serverRequest = $this->createServerRequest(uri: 'http://old.com/');
-        $request = (new \ReflectionClass(Request::class))->newInstanceWithoutConstructor();
-        $property = (new \ReflectionClass(Request::class))->getProperty('serverRequest');
-        $property->setValue($request, $serverRequest);
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
 
         $newUri = UriBuilder::createFromString(uri: 'http://new.com/');
         
         // Preserve host = false (should change Host header)
-        $requestWithNewHost = $request->withUri($newUri, false);
-        $this->assertEquals(['new.com'], $requestWithNewHost->getHeader('Host'));
+        $requestWithNewHost = $request->withUri(uri: $newUri, preserveHost: false);
+        $this->assertEquals(expected: ['new.com'], actual: $requestWithNewHost->getHeader(name: 'Host'));
 
         // Preserve host = true
-        $requestPreserved = $request->withUri($newUri, true);
-        $this->assertEquals(['old.com'], $requestPreserved->getHeader('Host'));
+        $requestPreserved = $request->withUri(uri: $newUri, preserveHost: true);
+        $this->assertEquals(expected: ['old.com'], actual: $requestPreserved->getHeader(name: 'Host'));
     }
 
     public function test_get_request_target_behavior() : void
     {
         $serverRequest = $this->createServerRequest(uri: 'http://localhost/path?query=1');
-        $request = (new \ReflectionClass(Request::class))->newInstanceWithoutConstructor();
-        $property = (new \ReflectionClass(Request::class))->getProperty('serverRequest');
-        $property->setValue($request, $serverRequest);
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
 
-        $this->assertEquals('/path?query=1', $request->getRequestTarget());
+        $this->assertEquals(expected: '/path?query=1', actual: $request->getRequestTarget());
 
-        $requestWithTarget = $request->withRequestTarget('*');
-        $this->assertEquals('*', $requestWithTarget->getRequestTarget());
+        $requestWithTarget = $request->withRequestTarget(requestTarget: '*');
+        $this->assertEquals(expected: '*', actual: $requestWithTarget->getRequestTarget());
     }
 
     public function test_header_casing_and_aggregation() : void
     {
         $serverRequest = $this->createServerRequest();
-        $serverRequest = $serverRequest->withHeader('X-Test', 'val1');
-        $serverRequest = $serverRequest->withAddedHeader('x-test', 'val2');
+        $serverRequest = $serverRequest->withHeader(name: 'X-Test', value: 'val1');
+        $serverRequest = $serverRequest->withAddedHeader(name: 'x-test', value: 'val2');
 
-        $request = (new \ReflectionClass(Request::class))->newInstanceWithoutConstructor();
-        $property = (new \ReflectionClass(Request::class))->getProperty('serverRequest');
-        $property->setValue($request, $serverRequest);
+        $request = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
+        $property = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
+        $property->setValue(objectOrValue: $request, value: $serverRequest);
 
-        $this->assertTrue($request->hasHeader('X-TEST'));
-        $this->assertEquals(['val1', 'val2'], $request->getHeader('x-test'));
-        $this->assertEquals('val1, val2', $request->getHeaderLine('X-Test'));
+        $this->assertTrue(condition: $request->hasHeader(name: 'X-TEST'));
+        $this->assertEquals(expected: ['val1', 'val2'], actual: $request->getHeader(name: 'x-test'));
+        $this->assertEquals(expected: 'val1, val2', actual: $request->getHeaderLine(name: 'X-Test'));
 
-        $requestWithout = $request->withoutHeader('x-test');
-        $this->assertFalse($requestWithout->hasHeader('X-Test'));
+        $requestWithout = $request->withoutHeader(name: 'x-test');
+        $this->assertFalse(condition: $requestWithout->hasHeader(name: 'X-Test'));
     }
 }

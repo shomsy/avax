@@ -129,6 +129,9 @@ assertThrows(
 /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
     message      : 'ServerRequest-scoped services should require an active request scope.'
@@ -144,6 +147,9 @@ assertSame(expected: 1, actual: AdvancedLifetimeSequence::$requestDisposals, mes
 
 assertThrows(
 /**
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
+ */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,

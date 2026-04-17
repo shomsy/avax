@@ -93,13 +93,13 @@ final class DeferredProviderRegistry
     public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
         $providerClass = $provider::class;
-        $ids           = array_values(array_unique(array_filter(
-                                                       array_map(
-                                                           fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
-                                                           $serviceIds
-                                                       ),
-                                                       static fn (string $serviceId) : bool => $serviceId !== ''
-                                                   )));
+        $ids           = array_map(
+                fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
+                $serviceIds
+            )
+                |> (static fn ($x) => array_filter($x, static fn (string $serviceId) : bool => $serviceId !== ''))
+                |> array_unique(...)
+                |> array_values(...);
 
         sort($ids);
 

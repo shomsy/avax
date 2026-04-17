@@ -72,7 +72,7 @@ class AuthBuilderTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
-        $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(static fn ($user) => $user);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('sessionIdentity')->andReturn(null);

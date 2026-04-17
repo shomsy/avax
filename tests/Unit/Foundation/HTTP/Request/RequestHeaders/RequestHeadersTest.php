@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestHeaders;
 
-use Avax\HTTP\Request\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -14,76 +14,76 @@ class RequestHeadersTest extends TestCase
 {
     public function test_stores_single_header_as_list_of_strings() : void
     {
-        $headers = new RequestHeaders(['X-Custom' => 'Alpha']);
+        $headers = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
 
-        $this->assertSame(expected: ['Alpha'], actual: $headers->read('X-Custom'));
+        $this->assertSame(expected: ['Alpha'], actual: $headers->get(name: 'X-Custom'));
     }
 
     public function test_stores_multiple_header_values_as_list_of_strings() : void
     {
-        $headers = new RequestHeaders(['X-Custom' => ['Alpha', 'Beta']]);
+        $headers = new RequestHeaders(headers: ['X-Custom' => ['Alpha', 'Beta']]);
 
-        $this->assertSame(expected: ['Alpha', 'Beta'], actual: $headers->read('X-Custom'));
+        $this->assertSame(expected: ['Alpha', 'Beta'], actual: $headers->get(name: 'X-Custom'));
     }
 
     public function test_reads_header_case_insensitively() : void
     {
-        $headers = new RequestHeaders(['x-cUsTom' => 'Alpha']);
+        $headers = new RequestHeaders(headers: ['x-cUsTom' => 'Alpha']);
 
-        $this->assertTrue(condition: $headers->has('X-Custom'));
-        $this->assertSame(expected: ['Alpha'], actual: $headers->read('X-CUSTOM'));
+        $this->assertTrue(condition: $headers->has(name: 'X-Custom'));
+        $this->assertSame(expected: ['Alpha'], actual: $headers->get(name: 'X-CUSTOM'));
     }
 
     public function test_returns_empty_list_when_header_missing() : void
     {
-        $headers = new RequestHeaders([]);
+        $headers = new RequestHeaders(headers: []);
 
-        $this->assertFalse(condition: $headers->has('X-Missing'));
-        $this->assertSame(expected: [], actual: $headers->read('X-Missing'));
+        $this->assertFalse(condition: $headers->has(name: 'X-Missing'));
+        $this->assertSame(expected: [], actual: $headers->get(name: 'X-Missing'));
     }
 
     public function test_reads_header_line_as_comma_separated_values() : void
     {
-        $headers = new RequestHeaders(['X-Custom' => ['Alpha', 'Beta']]);
+        $headers = new RequestHeaders(headers: ['X-Custom' => ['Alpha', 'Beta']]);
 
-        $this->assertSame(expected: 'Alpha, Beta', actual: $headers->readLine('X-Custom'));
+        $this->assertSame(expected: 'Alpha, Beta', actual: $headers->getLine(name: 'X-Custom'));
     }
 
     public function test_replaces_header_values_immutably() : void
     {
-        $headers    = new RequestHeaders(['X-Custom' => 'Alpha']);
-        $newHeaders = $headers->put('X-Custom', 'Beta');
+        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $newHeaders = $headers->put(name: 'X-Custom', value: 'Beta');
 
         $this->assertNotSame(expected: $headers, actual: $newHeaders);
-        $this->assertSame(expected: ['Alpha'], actual: $headers->read('X-Custom'));
-        $this->assertSame(expected: ['Beta'], actual: $newHeaders->read('X-Custom'));
+        $this->assertSame(expected: ['Alpha'], actual: $headers->get(name: 'X-Custom'));
+        $this->assertSame(expected: ['Beta'], actual: $newHeaders->get(name: 'X-Custom'));
     }
 
     public function test_appends_header_values_immutably() : void
     {
-        $headers    = new RequestHeaders(['X-Custom' => 'Alpha']);
-        $newHeaders = $headers->append('X-Custom', 'Beta');
+        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $newHeaders = $headers->append(name: 'X-Custom', value: 'Beta');
 
         $this->assertNotSame(expected: $headers, actual: $newHeaders);
-        $this->assertSame(expected: ['Alpha'], actual: $headers->read('X-Custom'));
-        $this->assertSame(expected: ['Alpha', 'Beta'], actual: $newHeaders->read('X-Custom'));
+        $this->assertSame(expected: ['Alpha'], actual: $headers->get(name: 'X-Custom'));
+        $this->assertSame(expected: ['Alpha', 'Beta'], actual: $newHeaders->get(name: 'X-Custom'));
     }
 
     public function test_drops_header_immutably() : void
     {
-        $headers    = new RequestHeaders(['X-Custom' => 'Alpha']);
-        $newHeaders = $headers->drop('X-Custom');
+        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $newHeaders = $headers->drop(name: 'X-Custom');
 
-        $this->assertTrue(condition: $headers->has('X-Custom'));
-        $this->assertFalse(condition: $newHeaders->has('X-Custom'));
+        $this->assertTrue(condition: $headers->has(name: 'X-Custom'));
+        $this->assertFalse(condition: $newHeaders->has(name: 'X-Custom'));
     }
 
     public function test_returns_all_headers_in_normalized_public_shape() : void
     {
-        $headers = new RequestHeaders([
-                                          'x-custom' => 'Alpha',
-                                          'host'     => 'example.com'
-                                      ]);
+        $headers = new RequestHeaders(headers: [
+            'x-custom' => 'Alpha',
+            'host'     => 'example.com'
+        ]);
 
         $all = $headers->all();
 

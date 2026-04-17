@@ -34,7 +34,7 @@ final class ViewServiceProviderTest extends TestCase
             $container
                 ->method('singleton')
                 ->willReturnCallback(
-                    callback: function (string $abstract, mixed $concrete = null) use (&$registrations, $builder) : BindingBuilderInterface {
+                    callback: static function (string $abstract, mixed $concrete = null) use (&$registrations, $builder) : BindingBuilderInterface {
                         $registrations[$abstract] = $concrete;
 
                         return $builder;

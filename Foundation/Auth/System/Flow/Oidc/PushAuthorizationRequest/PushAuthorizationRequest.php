@@ -245,11 +245,7 @@ final readonly class PushAuthorizationRequest
         string                       $algorithm
     ) : array|null
     {
-        if ($clientSecret === '') {
-            return null;
-        }
-
-        if (! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
+        if ($clientSecret === '' || ! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
             return null;
         }
 

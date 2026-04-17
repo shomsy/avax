@@ -54,7 +54,10 @@ final readonly class MigrateRollbackCommand
 
         try {
             $this->runner->rollback(migrations: $toRollback, steps: $steps);
-            $this->success(msg: sprintf('Rolled back %d migration(s) successfully!', count(value: $toRollback)));
+            $toRollback
+                |> count(...)
+                |> (static fn ($x) => sprintf('Rolled back %d migration(s) successfully!', $x))
+                |> $this(...);
             foreach ($records as $record) {
                 echo "  ✓ {$record['migration']}\n";
             }

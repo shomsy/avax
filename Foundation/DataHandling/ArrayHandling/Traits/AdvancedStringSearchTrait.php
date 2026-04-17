@@ -339,7 +339,10 @@ trait AdvancedStringSearchTrait
         $process = new Process(fuzz: $fuzz);
 
         // Get unique tokens in the query
-        $uniqueQueryTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $query)));
+        $uniqueQueryTokens = $query
+                |> strtolower(...)
+                |> (static fn ($x) => explode(separator: ' ', string: $x))
+                |> array_unique(...);
         sort(array: $uniqueQueryTokens);
         $sortedQuery = implode(separator: ' ', array: $uniqueQueryTokens);
 
@@ -353,7 +356,10 @@ trait AdvancedStringSearchTrait
                 }
 
                 // Get unique tokens in the target
-                $uniqueTargetTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $target)));
+                $uniqueTargetTokens = $target
+                        |> strtolower(...)
+                        |> (static fn ($x) => explode(separator: ' ', string: $x))
+                        |> array_unique(...);
                 sort(array: $uniqueTargetTokens);
                 $sortedTarget = implode(separator: ' ', array: $uniqueTargetTokens);
 

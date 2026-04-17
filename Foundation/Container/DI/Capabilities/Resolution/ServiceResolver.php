@@ -643,13 +643,12 @@ final class ServiceResolver
 
         $flags = [];
         if (is_array($configuredFlags)) {
-            $flags = array_values(array_filter(
-                                      array_map(
-                                          static fn (mixed $flag) : string => is_string($flag) ? trim($flag) : '',
-                                          $configuredFlags
-                                      ),
-                                      static fn (string $flag) : bool => $flag !== ''
-                                  ));
+            $flags = array_map(
+                    static fn (mixed $flag) : string => is_string($flag) ? trim($flag) : '',
+                    $configuredFlags
+                )
+                    |> (static fn ($x) => array_filter($x, static fn (string $flag) : bool => $flag !== ''))
+                    |> array_values(...);
 
             $flags = array_values(array_unique($flags));
             sort($flags);
@@ -702,11 +701,7 @@ final class ServiceResolver
 
     private function assertRestrictedRuntimeDependency(string $consumerId, ResolveRequest $request) : void
     {
-        if (! $this->isRestrictedDependency(serviceId: $request->serviceId)) {
-            return;
-        }
-
-        if ($this->consumerMayUseRestrictedDependency(consumerId: $consumerId)) {
+        if (! $this->isRestrictedDependency(serviceId: $request->serviceId) || $this->consumerMayUseRestrictedDependency(consumerId: $consumerId)) {
             return;
         }
 
@@ -1824,20 +1819,20 @@ final class ServiceResolver
                     'categories' => ['root'],
                     'services'   => array_column($visible, 'serviceId'),
                     'exports'    => array_column($visible, 'serviceId'),
-                    'public'     => array_values(array_map(
-                                                     static fn (array $row) : string => $row['serviceId'],
-                                                     array_values(array_filter(
-                                                                      $visible,
-                                                                      static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC
-                                                                  ))
-                                                 )),
-                    'shared'     => array_values(array_map(
-                                                     static fn (array $row) : string => $row['serviceId'],
-                                                     array_values(array_filter(
-                                                                      $visible,
-                                                                      static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED
-                                                                  ))
-                                                 )),
+                    'public'     => array_filter(
+                            $visible,
+                            static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC
+                        )
+                            |> array_values(...)
+                            |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                            |> array_values(...),
+                    'shared'     => array_filter(
+                            $visible,
+                            static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED
+                        )
+                            |> array_values(...)
+                            |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                            |> array_values(...),
                     'private'    => [],
                     'internal'   => [],
                     'imports'    => [],
@@ -1875,13 +1870,13 @@ final class ServiceResolver
             $imports[$import] = [
                 'slice'          => $import,
                 'manifest'       => $this->registrations->sliceManifest(slice: $import),
-                'visibleExports' => array_values(array_map(
-                                                     static fn (array $row) : string => $row['serviceId'],
-                                                     array_values(array_filter(
-                                                                      $view['visible'] ?? [],
-                                                                      static fn (array $row) : bool => $row['ownerSlice'] === $import
-                                                                  ))
-                                                 )),
+                'visibleExports' => array_filter(
+                        $view['visible'] ?? [],
+                        static fn (array $row) : bool => $row['ownerSlice'] === $import
+                    )
+                        |> array_values(...)
+                        |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                        |> array_values(...),
             ];
         }
 
@@ -1951,10 +1946,12 @@ final class ServiceResolver
         $visibleIds = $this->visibleServiceIdsForSlice(slice: $slice);
         $targets    = $serviceIds === []
             ? $visibleIds
-            : array_values(array_intersect($visibleIds, array_map(
+            : array_map(
                 fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
                 $serviceIds
-            )));
+            )
+                |> (static fn ($x) => array_intersect($visibleIds, $x))
+                |> array_values(...);
 
         $issues = $this->validate(serviceIds: $targets);
         foreach ($this->debugVisibilityViolationsInContext(serviceIds: $targets, context: $context)['violations'] ?? [] as $violation) {
@@ -2023,13 +2020,11 @@ final class ServiceResolver
             $issues[] = $cycle;
         }
 
-        $validationServiceIds = array_values(array_unique(array_merge(
-                                                              array_keys($graph),
-                                                              $serviceIds !== [] ? array_map(
-                                                                  fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                                                                  $serviceIds
-                                                              ) : array_keys($this->registrations->all())
-                                                          )));
+        $validationServiceIds = $graph
+                |> array_keys(...)
+                |> (fn ($x) => array_merge($x, $serviceIds !== [] ? array_map(fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId), $serviceIds) : array_keys($this->registrations->all())))
+                |> array_unique(...)
+                |> array_values(...);
 
         $this->validateSliceAccess(graph: $graph, issues: $issues);
         $this->validateLifetimeAccess(graph: $graph, issues: $issues);
@@ -2121,10 +2116,12 @@ final class ServiceResolver
             }
         }
 
-        return array_values(array_unique(array_filter(
-                                             $classes,
-                                             static fn (string $class) : bool => class_exists($class)
-                                         )));
+        return array_filter(
+                $classes,
+                static fn (string $class) : bool => class_exists($class)
+            )
+                |> array_unique(...)
+                |> array_values(...);
     }
 
     private function bootDeferredProviderIfNeeded(string $serviceId) : void
@@ -3111,7 +3108,10 @@ final class ServiceResolver
         $filtered   = array_intersect_key($graph, $visibleIds);
 
         foreach ($filtered as $serviceId => $dependencies) {
-            $filtered[$serviceId] = array_values(array_intersect($dependencies, array_keys($visibleIds)));
+            $filtered[$serviceId] = $visibleIds
+                    |> array_keys(...)
+                    |> (static fn ($x) => array_intersect($dependencies, $x))
+                    |> array_values(...);
         }
 
         ksort($filtered);
@@ -3322,10 +3322,12 @@ final class ServiceResolver
         foreach ($this->registrations->all() as $serviceId => $registration) {
             $metadata       = $registration->metadata;
             $consumers      = $dependents[$serviceId] ?? [];
-            $consumerSlices = array_values(array_unique(array_map(
-                                                            fn (string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
-                                                            $consumers
-                                                        )));
+            $consumerSlices = array_map(
+                    fn (string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
+                    $consumers
+                )
+                    |> array_unique(...)
+                    |> array_values(...);
             sort($consumerSlices);
 
             if (
@@ -4205,11 +4207,7 @@ final class ServiceResolver
         $slice        = SliceContext::from(context: $context);
 
         if ($slice !== '') {
-            if (! $registration instanceof ServiceRegistration) {
-                return false;
-            }
-
-            if (! ($this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $serviceId)['allowed'] ?? false)) {
+            if (! $registration instanceof ServiceRegistration || ! ($this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $serviceId)['allowed'] ?? false)) {
                 return false;
             }
         }
@@ -4552,10 +4550,12 @@ final class ServiceResolver
             }
         }
 
-        return array_values(array_unique(array_filter(
-                                             $classes,
-                                             static fn (string $class) : bool => class_exists($class)
-                                         )));
+        return array_filter(
+                $classes,
+                static fn (string $class) : bool => class_exists($class)
+            )
+                |> array_unique(...)
+                |> array_values(...);
     }
 
     /**

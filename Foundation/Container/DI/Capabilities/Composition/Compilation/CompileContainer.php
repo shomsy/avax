@@ -275,7 +275,10 @@ final class CompileContainer
                                           'pruning'        => [
                                               'mode'           => $this->pruneMode,
                                               'rootServices'   => $this->pruneRoots(serviceIds: $serviceIds),
-                                              'prunedServices' => array_values(array_diff(array_keys($this->registrations->all()), $selectedServiceIds)),
+                                              'prunedServices' => $this->registrations->all()
+                                                      |> array_keys(...)
+                                                      |> (static fn ($x) => array_diff($x, $selectedServiceIds))
+                                                      |> array_values(...),
                                           ],
                                           'reusedServices' => $reusedServices,
                                       ]));
@@ -297,7 +300,10 @@ final class CompileContainer
             'pruning'             => [
                 'mode'           => $this->pruneMode,
                 'rootServices'   => $this->pruneRoots(serviceIds: $serviceIds),
-                'prunedServices' => array_values(array_diff(array_keys($this->registrations->all()), $selectedServiceIds)),
+                'prunedServices' => $this->registrations->all()
+                        |> array_keys(...)
+                        |> (static fn ($x) => array_diff($x, $selectedServiceIds))
+                        |> array_values(...),
                 'reasons'        => $this->pruneMode === CreateContainerConfig::PRUNE_MODE_STRICT
                     ? [
                         'strict pruning keeps only safe root services and their proven transitive closure',
@@ -389,7 +395,9 @@ final class CompileContainer
             return;
         }
 
-        $suffix = 'container.' . gmdate('YmdHis') . '.' . substr(sha1(uniqid('', true)), 0, 8);
+        $suffix = 'container.' . gmdate('YmdHis') . '.' . uniqid('', true)
+                |> sha1(...)
+                |> (static fn ($x) => substr($x, 0, 8));
 
         if (is_file($compiledPath)) {
             @rename($compiledPath, $quarantineDirectory . '/' . $suffix . '.php');
@@ -464,10 +472,12 @@ final class CompileContainer
     private function pruneRoots(array $serviceIds) : array
     {
         if ($serviceIds !== []) {
-            $roots = array_values(array_unique(array_map(
-                                                   fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                                                   $serviceIds
-                                               )));
+            $roots = array_map(
+                    fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
+                    $serviceIds
+                )
+                    |> array_unique(...)
+                    |> array_values(...);
             sort($roots);
 
             return $roots;
@@ -527,10 +537,12 @@ final class CompileContainer
             }
         }
 
-        $roots = array_values(array_unique(array_filter(
-                                               $roots,
-                                               static fn (string $serviceId) : bool => $serviceId !== ''
-                                           )));
+        $roots = array_filter(
+                $roots,
+                static fn (string $serviceId) : bool => $serviceId !== ''
+            )
+                |> array_unique(...)
+                |> array_values(...);
         sort($roots);
 
         return $roots;
@@ -674,7 +686,9 @@ final class CompileContainer
             }
         }
 
-        $invalidatedServices = array_values(array_unique(array_merge($changedServices, $removedServices)));
+        $invalidatedServices = array_merge($changedServices, $removedServices)
+                |> array_unique(...)
+                |> array_values(...);
         sort($invalidatedServices);
         $dependencyGraphRevision = sha1(serialize($snapshot['dependencies']));
 
@@ -742,7 +756,10 @@ final class CompileContainer
                                                                                  $snapshot['dependencies']
                                                                              )),
                                          'reusedServices'       => (int) ($snapshot['statistics']['reusedServices'] ?? 0),
-                                         'validationIssues'     => count(array_values(array_unique($validationIssues))),
+                                         'validationIssues'     => $validationIssues
+                                                 |> array_unique(...)
+                                                 |> array_values(...)
+                                                 |> count(...),
                                      ],
             checksum               : sha1('<?php' . PHP_EOL . PHP_EOL . $this->sourceFor(snapshot: $snapshot) . PHP_EOL)
         );
@@ -1000,11 +1017,7 @@ final class CompileContainer
 
         foreach ($ids as $serviceId) {
             $current = $this->services->describe(serviceId: $serviceId);
-            if (($metadata->services[$serviceId]['signature'] ?? null) !== $current['signature']) {
-                return false;
-            }
-
-            if (($metadata->dependencies[$serviceId] ?? []) !== $this->dependenciesForService(serviceId: $serviceId)) {
+            if (($metadata->services[$serviceId]['signature'] ?? null) !== $current['signature'] || ($metadata->dependencies[$serviceId] ?? []) !== $this->dependenciesForService(serviceId: $serviceId)) {
                 return false;
             }
         }

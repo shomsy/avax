@@ -38,21 +38,21 @@ use RuntimeException;
 final readonly class TenancyFacade
 {
     public function __construct(
-        private CreateTenant                     $createTenant,
-        private ReadTenants                      $readTenants,
-        private InviteTenantMember               $inviteTenantMember,
-        private AcceptTenantInvite               $acceptTenantInvite,
-        private ReadTenantMembers                $readTenantMembers,
-        private RemoveTenantMember               $removeTenantMember,
-        private SuspendTenantMember              $suspendTenantMember,
-        private TransferTenantOwnership          $transferTenantOwnership,
-        private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
-        private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
-        private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
-        private BeginTenantSecurityChange        $beginTenantSecurityChange,
-        private ApproveTenantSecurityChange      $approveTenantSecurityChange,
-        private ApplyTenantSecurityChange        $applyTenantSecurityChange,
-        private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
+        private CreateTenant                                            $createTenant,
+        private ReadTenants                                             $readTenants,
+        private InviteTenantMember                                      $inviteTenantMember,
+        private AcceptTenantInvite                                      $acceptTenantInvite,
+        private ReadTenantMembers                                       $readTenantMembers,
+        private RemoveTenantMember                                      $removeTenantMember,
+        private SuspendTenantMember                                     $suspendTenantMember,
+        private TransferTenantOwnership                                 $transferTenantOwnership,
+        #[\SensitiveParameter] private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
+        #[\SensitiveParameter] private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
+        #[\SensitiveParameter] private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
+        #[\SensitiveParameter] private BeginTenantSecurityChange        $beginTenantSecurityChange,
+        #[\SensitiveParameter] private ApproveTenantSecurityChange      $approveTenantSecurityChange,
+        #[\SensitiveParameter] private ApplyTenantSecurityChange        $applyTenantSecurityChange,
+        #[\SensitiveParameter] private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
     ) {}
 
     /**

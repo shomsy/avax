@@ -9,6 +9,7 @@ use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate
@@ -29,6 +30,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: ['Alpha'], actual: $headers['X-Custom']);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function createBlankOldRequest(array $serverParams = []) : Request
     {
         return new Request(

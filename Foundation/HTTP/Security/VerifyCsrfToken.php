@@ -67,7 +67,9 @@ class VerifyCsrfToken
      */
     private function isSafeMethod(Request $request) : bool
     {
-        return in_array(needle: strtoupper($request->getMethod()), haystack: self::SAFE_METHODS, strict: true);
+        return $request->getMethod()
+                |> strtoupper(...)
+                |> (static fn ($x) => in_array(needle: $x, haystack: self::SAFE_METHODS, strict: true));
     }
 
     /**

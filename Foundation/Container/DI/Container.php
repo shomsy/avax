@@ -41,6 +41,9 @@ final readonly class Container implements ContainerInterface
 
     public function __construct(ServiceResolver $resolver) { $this->resolver = $resolver; }
 
+    /**
+     * @throws \Throwable
+     */
     public function get(string $id) : mixed
     {
         return $this->resolveService()->get(id: $id);
@@ -64,6 +67,9 @@ final readonly class Container implements ContainerInterface
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function make(string $abstract, array $parameters = []) : object
     {
         return $this->resolveService()->make(abstract: $abstract, parameters: $parameters);
@@ -79,6 +85,9 @@ final readonly class Container implements ContainerInterface
         return new CallFunction(resolver: $this->resolver);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function injectInto(object $target) : object
     {
         return $this->resolver->injectInto(target: $target);
@@ -189,6 +198,9 @@ final readonly class Container implements ContainerInterface
         return $this->explainService()->debugImports(slice: $slice);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function debugExports(string $slice = '') : array
     {
         return $this->explainService()->debugExports(slice: $slice);
@@ -207,11 +219,17 @@ final readonly class Container implements ContainerInterface
         return $this->explainService()->debugTags(tag: $tag);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function debugGroup(string $group) : array
     {
         return $this->explainService()->debugGroup(group: $group);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function debugSelection(string $id) : array
     {
         return $this->explainService()->debugSelection(id: $id);
@@ -258,11 +276,17 @@ final readonly class Container implements ContainerInterface
         return new CloseScope(resolver: $this->resolver);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function compileContainer(array $serviceIds = []) : void
     {
         $this->resolver->compileContainer(serviceIds: $serviceIds);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function warmCompiled(array $serviceIds = []) : void
     {
         $this->resolver->warmCompiled(serviceIds: $serviceIds);
@@ -320,6 +344,9 @@ final readonly class Container implements ContainerInterface
         return ! empty($report->injectedProperties) || ! empty($report->injectedMethods);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function inspectInjection(object $target) : InjectionReport
     {
         return $this->resolver->inspectInjection(target: $target);
@@ -345,6 +372,9 @@ final readonly class Container implements ContainerInterface
         return $this->exportGraphFlow()->diff(format: $format, id: $id);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function why(string $id) : array
     {
         return $this->exportGraphFlow()->why(id: $id);
@@ -360,6 +390,9 @@ final readonly class Container implements ContainerInterface
         return $this->exportGraphFlow()->whatBreaksIf(id: $id);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function showOwner(string $id) : array
     {
         return $this->exportGraphFlow()->showOwner(id: $id);
@@ -410,11 +443,17 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->tag(abstracts: $abstracts, tags: $tags);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function tagged(string $tag) : array
     {
         return $this->resolver->tagged(tag: $tag);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function grouped(string $group) : array
     {
         return $this->resolver->grouped(group: $group);

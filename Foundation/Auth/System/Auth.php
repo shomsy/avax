@@ -115,12 +115,12 @@ use SensitiveParameter;
 final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private AccessFacade           $accessFacade,
-        private DiagnosticsFacade      $diagnosticsFacade,
-        private IdentityFacade         $identityFacade,
-        private ExternalIdentityFacade $externalIdentityFacade,
-        private IdentitySyncFacade     $identitySyncFacade,
-        private TenancyFacade          $tenancyFacade
+        #[\SensitiveParameter] private AccessFacade $accessFacade,
+        private DiagnosticsFacade                   $diagnosticsFacade,
+        private IdentityFacade                      $identityFacade,
+        private ExternalIdentityFacade              $externalIdentityFacade,
+        private IdentitySyncFacade                  $identitySyncFacade,
+        private TenancyFacade                       $tenancyFacade
     ) {}
 
     public static function configuration() : AuthBuilder
@@ -217,7 +217,7 @@ final readonly class Auth implements AuthInterface
         );
     }
 
-    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[\SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
         return $this->diagnosticsFacade->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
@@ -303,7 +303,7 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentityFacade->readOidcJsonWebKeySet();
     }
 
-    public function readOidcUserInfo(string $accessToken) : OidcUserInfo
+    public function readOidcUserInfo(#[\SensitiveParameter] string $accessToken) : OidcUserInfo
     {
         return $this->externalIdentityFacade->readOidcUserInfo(accessToken: $accessToken);
     }
@@ -558,7 +558,7 @@ final readonly class Auth implements AuthInterface
         return $this->identityFacade->renamePasskey(data: $data);
     }
 
-    public function revokePasskey(string $credentialId) : void
+    public function revokePasskey(#[\SensitiveParameter] string $credentialId) : void
     {
         $this->identityFacade->revokePasskey(credentialId: $credentialId);
     }
@@ -596,7 +596,7 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentityFacade->evaluateFederationBreakGlassBypass(connectionId: $connectionId);
     }
 
-    public function discoverFederationConnection(string $email) : FederationConnection|null
+    public function discoverFederationConnection(#[\SensitiveParameter] string $email) : FederationConnection|null
     {
         return $this->externalIdentityFacade->discoverFederationConnection(email: $email);
     }

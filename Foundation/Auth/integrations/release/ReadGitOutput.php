@@ -83,7 +83,7 @@ final readonly class ReadGitOutput
             return $this->readReference(gitDirectory: $gitDirectory, reference: substr($head, 5));
         }
 
-        return $this->isCommitHash($head) ? $head : '';
+        return $this->isCommitHash(value: $head) ? $head : '';
     }
 
     private function readPreviousHeadCommit(string $gitDirectory) : string
@@ -111,7 +111,7 @@ final readonly class ReadGitOutput
 
         $isAllZeroHash = preg_match('/^0+$/', $hash) === 1;
 
-        return $this->isCommitHash($hash) && ! $isAllZeroHash ? $hash : '';
+        return $this->isCommitHash(value: $hash) && ! $isAllZeroHash ? $hash : '';
     }
 
     private function readHeadReferenceName(string $gitDirectory) : string
@@ -151,7 +151,7 @@ final readonly class ReadGitOutput
         if (is_file($referencePath)) {
             $contents = file_get_contents($referencePath);
 
-            return is_string($contents) && $this->isCommitHash(trim($contents))
+            return is_string($contents) && $this->isCommitHash(value: trim($contents))
                 ? trim($contents)
                 : '';
         }
@@ -183,7 +183,7 @@ final readonly class ReadGitOutput
 
             [$hash, $packedReference] = array_pad($parts, 2, '');
 
-            if ($packedReference === $reference && $this->isCommitHash($hash)) {
+            if ($packedReference === $reference && $this->isCommitHash(value: $hash)) {
                 return $hash;
             }
         }

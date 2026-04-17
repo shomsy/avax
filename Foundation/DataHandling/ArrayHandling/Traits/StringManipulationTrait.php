@@ -157,9 +157,10 @@ trait StringManipulationTrait
     public function camelCase(string|null $key = null) : static
     {
         return $this->processItems(
-            callback: static fn (string $value) : string => lcfirst(
-                string: str_replace(search: ' ', replace: '', subject: ucwords(string: str_replace(search: ['-', '_'], replace: ' ', subject: $value)))
-            ),
+            callback: static fn (string $value) : string => str_replace(search: ['-', '_'], replace: ' ', subject: $value)
+                    |> ucwords(...)
+                    |> (static fn ($x) => str_replace(search: ' ', replace: '', subject: $x))
+                    |> lcfirst(...),
             key     : $key
         );
     }

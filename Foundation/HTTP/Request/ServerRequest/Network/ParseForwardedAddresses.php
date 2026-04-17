@@ -25,6 +25,6 @@ final readonly class ParseForwardedAddresses
 
         $ips = array_map('trim', explode(',', $forwarded));
 
-        return array_values(array_filter($ips, static fn($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false));
+        return array_values(array_filter($ips, static fn ($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false));
     }
 }

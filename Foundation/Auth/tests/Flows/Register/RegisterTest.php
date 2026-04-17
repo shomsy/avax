@@ -38,7 +38,7 @@ class RegisterTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
-        $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(static fn ($user) => $user);
 
         $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
 

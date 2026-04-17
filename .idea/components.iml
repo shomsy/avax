@@ -30,6 +30,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/policies" isTestSource="true" packagePrefix="Avax\Auth\Examples\Policies\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/diagnostics" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Diagnostics\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/release" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Release\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/HTTP/Request/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/storage/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/colinodell/json5" />

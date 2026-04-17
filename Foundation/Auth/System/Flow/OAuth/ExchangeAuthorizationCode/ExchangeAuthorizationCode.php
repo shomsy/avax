@@ -113,7 +113,10 @@ final readonly class ExchangeAuthorizationCode
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
 
-            $expectedChallenge = rtrim(strtr(base64_encode(hash('sha256', $data->codeVerifier, true)), '+/', '-_'), '=');
+            $expectedChallenge = hash('sha256', $data->codeVerifier, true)
+                    |> base64_encode(...)
+                    |> (static fn ($x) => strtr($x, '+/', '-_'))
+                    |> (static fn ($x) => rtrim($x, '='));
 
             if (! hash_equals($record->codeChallenge, $expectedChallenge)) {
                 $this->recordFailure(data: $data, reason: 'pkce_verifier_mismatch');

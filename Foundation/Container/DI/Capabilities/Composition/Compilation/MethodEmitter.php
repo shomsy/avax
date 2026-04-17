@@ -48,7 +48,10 @@ final class MethodEmitter
     {
         $className                     = '\\' . ltrim($class, '\\');
         $arguments                     = $this->emitArguments(plan: $plan, serviceId: $serviceId);
-        $compiledRegistrationArguments = $this->export(value: base64_encode(serialize($registrationArguments)));
+        $compiledRegistrationArguments = $registrationArguments
+                |> serialize(...)
+                |> base64_encode(...)
+                |> $this(...);
 
         $body = <<<PHP
             public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ServiceResolver \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed

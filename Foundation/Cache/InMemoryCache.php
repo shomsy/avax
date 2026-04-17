@@ -164,7 +164,10 @@ class InMemoryCache implements CacheInterface
      */
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
     {
-        $this->validateKeys(keys: array_keys(array: iterator_to_array(iterator: $values)));
+        $values
+            |> iterator_to_array(...)
+            |> array_keys(...)
+            |> $this(...);
 
         foreach ($values as $key => $value) {
             $this->set(key: $key, value: $value, ttl: $ttl);

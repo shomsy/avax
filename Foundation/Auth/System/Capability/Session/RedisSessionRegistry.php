@@ -12,8 +12,8 @@ use SensitiveParameter;
 
 class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSessionsInterface
 {
-    private const KEY_PREFIX      = 'auth:session:';
-    private const USER_KEY_PREFIX = 'auth:user_sessions:';
+    private const string KEY_PREFIX      = 'auth:session:';
+    private const string USER_KEY_PREFIX = 'auth:user_sessions:';
     private readonly int   $ttlSeconds;
     private readonly Redis $redis;
 

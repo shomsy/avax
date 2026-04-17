@@ -58,6 +58,9 @@ class RouterIntegrationTest extends TestCase
         $this->assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function createRequest(string $method, string $path) : Request
     {
         $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");

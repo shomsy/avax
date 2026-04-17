@@ -29,11 +29,7 @@ readonly class MigrationArrayRule
      */
     public function validate(mixed $value, string $property) : void
     {
-        if ($value === null) {
-            return;
-        }
-
-        if (is_array(value: $value)) {
+        if ($value === null || is_array(value: $value)) {
             return;
         }
 

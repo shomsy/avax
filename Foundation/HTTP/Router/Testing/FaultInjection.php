@@ -64,7 +64,7 @@ final class FaultInjection
         $this->activeFaults['memory_exhaustion'] = [
             'type'          => 'memory_exhaustion',
             'trigger_after' => $triggerAfterRoutes,
-            'handler'       => function () use (&$processedRoutes, $triggerAfterRoutes) {
+            'handler'       => static function () use (&$processedRoutes, $triggerAfterRoutes) {
                 $processedRoutes++;
                 if ($processedRoutes >= $triggerAfterRoutes) {
                     throw new RuntimeException(message: "Injected memory exhaustion after {$processedRoutes} routes");
@@ -81,7 +81,7 @@ final class FaultInjection
         $this->activeFaults['random_failure'] = [
             'type'    => 'random_resolution_failure',
             'rate'    => $failureRate,
-            'handler' => function () use ($failureRate) {
+            'handler' => static function () use ($failureRate) {
                 if (mt_rand(0, 100) / 100 < $failureRate) {
                     throw new RuntimeException(message: "Injected random resolution failure");
                 }
@@ -96,7 +96,7 @@ final class FaultInjection
     {
         $this->activeFaults['cache_corruption'] = [
             'type'    => 'cache_corruption',
-            'handler' => function (&$data) {
+            'handler' => static function (&$data) {
                 if (is_array($data)) {
                     // Corrupt route data randomly
                     $data = array_slice($data, 0, mt_rand(0, count($data) - 1));
@@ -113,7 +113,7 @@ final class FaultInjection
         $this->activeFaults['network_partition'] = [
             'type'     => 'network_partition',
             'delay_ms' => $delayMs,
-            'handler'  => function () use ($delayMs) {
+            'handler'  => static function () use ($delayMs) {
                 usleep($delayMs * 1000); // Convert to microseconds
                 throw new RuntimeException(message: "Injected network partition delay");
             }

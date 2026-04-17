@@ -131,10 +131,12 @@ assertSame(
 assertTrue(condition: isset($fullGraph['slices']['capability.payments']), message: 'Full graph reports should include slice manifests.');
 assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), message: 'Full graph reports should include duplicate concept reports.');
 assertTrue(condition: in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, message: 'Live flow services should not be reported as dead.');
-assertSame(expected: [], actual: array_values(array_filter(
-                                                  $validGatewayIssues,
-                                                  static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
-                                              )), message: 'Imported shared capability dependencies should validate cleanly.');
+array_filter(
+    $validGatewayIssues,
+    static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
+)
+    |> array_values(...)
+    |> (static fn ($x) => assertSame(expected: [], actual: $x, message: 'Imported shared capability dependencies should validate cleanly.'));
 
 $invalidAuditText = implode("\n", $invalidAuditIssues);
 assertTrue(
@@ -169,6 +171,9 @@ assertThrows(
 /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: InternalAuditTrail::class);
@@ -178,6 +183,9 @@ assertThrows(
 
 assertThrows(
 /**
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
+ */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,

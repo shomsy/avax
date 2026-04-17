@@ -36,19 +36,19 @@ use RuntimeException;
 final readonly class IdentitySyncFacade
 {
     public function __construct(
-        private RegisterScimDirectory|null    $registerScimDirectory,
-        private ReadScimDirectories|null      $readScimDirectories,
-        private RotateScimToken|null          $rotateScimToken,
-        private MarkScimDirectoryOutage|null  $markScimDirectoryOutage,
-        private RecoverScimDirectoryOutage|null $recoverScimDirectoryOutage,
-        private ProvisionScimUser|null        $provisionScimUser,
-        private DeleteScimUser|null           $deleteScimUser,
-        private ReadScimUsers|null            $readScimUsers,
-        private ReadScimGroups|null           $readScimGroups,
-        private SyncScimGroups|null           $syncScimGroups,
-        private RunScimBulk|null              $runScimBulk,
-        private SuspendUser|null              $suspendUser,
-        private ReactivateUser|null           $reactivateUser,
+        private RegisterScimDirectory|null                  $registerScimDirectory,
+        private ReadScimDirectories|null                    $readScimDirectories,
+        #[\SensitiveParameter] private RotateScimToken|null $rotateScimToken,
+        private MarkScimDirectoryOutage|null                $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null             $recoverScimDirectoryOutage,
+        private ProvisionScimUser|null                      $provisionScimUser,
+        private DeleteScimUser|null                         $deleteScimUser,
+        private ReadScimUsers|null                          $readScimUsers,
+        private ReadScimGroups|null                         $readScimGroups,
+        private SyncScimGroups|null                         $syncScimGroups,
+        private RunScimBulk|null                            $runScimBulk,
+        private SuspendUser|null                            $suspendUser,
+        private ReactivateUser|null                         $reactivateUser,
         private DeprovisionUser|null          $deprovisionUser
     ) {}
 

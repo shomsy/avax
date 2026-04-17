@@ -22,14 +22,14 @@ class Stream implements StreamInterface
     private $stream;
 
     /** @var bool Whether the stream is readable */
-    private bool $readable {
+    public bool $readable {
         get {
             return $this->readable;
         }
     }
 
     /** @var bool Whether the stream is writable */
-    private bool $writable {
+    public bool $writable {
         get {
             return $this->writable;
         }
@@ -48,7 +48,7 @@ class Stream implements StreamInterface
     /**
      * Stream constructor.
      *
-     * @param resource $stream A valid PHP stream resource.
+     * @param  resource  $stream  A valid PHP stream resource.
      *
      * Ensure that the provided stream is a valid resource and initialize its metadata.
      */
@@ -62,11 +62,11 @@ class Stream implements StreamInterface
     /**
      * Ensure the provided argument is a valid resource.
      *
-     * @param mixed $stream The potential resource to validate.
+     * @param  mixed  $stream  The potential resource to validate.
      *
      * @throws RuntimeException If the argument is not a resource.
      */
-    private function ensureIsResource(mixed $stream) : void
+    private function ensureIsResource(mixed $stream): void
     {
         if (! is_resource(value: $stream)) {
             throw new RuntimeException(message: 'Stream must be a valid resource.');
@@ -78,11 +78,11 @@ class Stream implements StreamInterface
      *
      * Set the readability, writability, and seekability of the stream based on its metadata.
      */
-    private function initializeStreamMetadata() : void
+    private function initializeStreamMetadata(): void
     {
-        $meta           = stream_get_meta_data(stream: $this->stream);
+        $meta = stream_get_meta_data(stream: $this->stream);
         $this->seekable = $meta['seekable'] ?? false;
-        $mode           = str_split(string: $meta['mode']);
+        $mode = str_split(string: $meta['mode']);
         $this->readable = in_array(needle: 'r', haystack: $mode) || in_array(needle: '+', haystack: $mode);
         $this->writable = in_array(needle: 'w', haystack: $mode) || in_array(needle: 'a', haystack: $mode) || in_array(needle: '+', haystack: $mode);
     }
@@ -90,11 +90,11 @@ class Stream implements StreamInterface
     /**
      * Create a Stream instance from a string.
      *
-     * @param string $content The content to be written into the stream.
+     * @param  string  $content  The content to be written into the stream.
      *
      * @throws RuntimeException If the temporary stream cannot be opened.
      */
-    public static function fromString(string $content) : self
+    public static function fromString(string $content): self
     {
         $stream = fopen(filename: 'php://temp', mode: 'r+');
         if ($stream === false) {
@@ -112,13 +112,13 @@ class Stream implements StreamInterface
      *
      * Close the stream resource and reset the metadata properties.
      */
-    public function close() : void
+    public function close(): void
     {
         if (is_resource(value: $this->stream)) {
             fclose(stream: $this->stream);
         }
 
-        $this->stream   = null;
+        $this->stream = null;
         $this->readable = false;
         $this->writable = false;
         $this->seekable = false;
@@ -131,7 +131,7 @@ class Stream implements StreamInterface
      */
     public function detach()
     {
-        $stream       = $this->stream;
+        $stream = $this->stream;
         $this->stream = null;
 
         $this->readable = false;
@@ -146,7 +146,7 @@ class Stream implements StreamInterface
      *
      * @return int|null The size in bytes or null if unknown.
      */
-    public function getSize() : int|null
+    public function getSize(): int|null
     {
         if ($this->size !== null) {
             return $this->size;
@@ -168,7 +168,7 @@ class Stream implements StreamInterface
      *
      * @throws RuntimeException If the position cannot be determined.
      */
-    public function tell() : int
+    public function tell(): int
     {
         $this->ensureStreamIsOpen();
         $position = ftell(stream: $this->stream);
@@ -184,7 +184,7 @@ class Stream implements StreamInterface
      *
      * @throws RuntimeException If the stream is not open.
      */
-    private function ensureStreamIsOpen() : void
+    private function ensureStreamIsOpen(): void
     {
         if (! $this->stream) {
             throw new RuntimeException(message: 'Stream is not open.');
@@ -196,7 +196,7 @@ class Stream implements StreamInterface
      *
      * @return bool True if at end-of-file, false otherwise.
      */
-    public function eof() : bool
+    public function eof(): bool
     {
         return ! $this->stream || feof(stream: $this->stream);
     }
@@ -204,13 +204,12 @@ class Stream implements StreamInterface
     /**
      * Write data to the stream.
      *
-     * @param string $string The data to write.
-     *
+     * @param  string  $string  The data to write.
      * @return int The number of bytes written.
      *
      * @throws RuntimeException If the stream is not writable or the write fails.
      */
-    public function write(string $string) : int
+    public function write(string $string): int
     {
         if (! $this->writable) {
             throw new RuntimeException(message: 'Stream is not writable.');
@@ -229,13 +228,12 @@ class Stream implements StreamInterface
     /**
      * Read data from the stream.
      *
-     * @param int $length The maximum number of bytes to read.
-     *
+     * @param  int  $length  The maximum number of bytes to read.
      * @return string The data read from the stream.
      *
      * @throws RuntimeException If the stream is not readable or the read fails.
      */
-    public function read(int $length) : string
+    public function read(int $length): string
     {
         $this->ensureStreamIsOpen();
 
@@ -254,11 +252,10 @@ class Stream implements StreamInterface
     /**
      * Retrieve the stream metadata.
      *
-     * @param string|null $key Optional metadata key to retrieve.
-     *
+     * @param  string|null  $key  Optional metadata key to retrieve.
      * @return mixed The metadata value if $key is specified, or an associative array if $key is null.
      */
-    public function getMetadata(string|null $key = null) : mixed
+    public function getMetadata(string|null $key = null): mixed
     {
         if (! $this->stream) {
             return $key !== null && $key !== '' && $key !== '0' ? null : [];
@@ -274,7 +271,7 @@ class Stream implements StreamInterface
      *
      * @return string The entire content of the stream, or an empty string on error.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         if (! $this->stream) {
             return '';
@@ -298,7 +295,7 @@ class Stream implements StreamInterface
     /**
      * Rewind the stream to the beginning.
      */
-    public function rewind() : void
+    public function rewind(): void
     {
         $this->seek(offset: 0);
     }
@@ -306,12 +303,12 @@ class Stream implements StreamInterface
     /**
      * Seek to a position within the stream.
      *
-     * @param int $offset The stream offset to seek to.
-     * @param int $whence The seek method (SEEK_SET, SEEK_CUR, SEEK_END).
+     * @param  int  $offset  The stream offset to seek to.
+     * @param  int  $whence  The seek method (SEEK_SET, SEEK_CUR, SEEK_END).
      *
      * @throws RuntimeException If the stream is not seekable or the seek operation fails.
      */
-    public function seek(int $offset, int $whence = SEEK_SET) : void
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (! $this->seekable) {
             throw new RuntimeException(message: 'Stream is not seekable.');
@@ -329,7 +326,7 @@ class Stream implements StreamInterface
      *
      * @throws RuntimeException If the stream is not readable or the read fails.
      */
-    public function getContents() : string
+    public function getContents(): string
     {
         if (! $this->readable) {
             throw new RuntimeException(message: 'Stream is not readable.');

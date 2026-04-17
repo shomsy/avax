@@ -76,7 +76,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**

@@ -179,7 +179,7 @@ if (! function_exists('route_compile_pattern')) {
         $pattern = $template;
 
         // Replace {param} placeholders with regex groups
-        $pattern = Pattern::of(raw: '\{([^}]+)\}')->replaceCallback(subject: $pattern, fn: function ($match) use ($constraints) {
+        $pattern = Pattern::of(raw: '\{([^}]+)\}')->replaceCallback(subject: $pattern, fn: static function ($match) use ($constraints) {
             $paramName = $match[1];
 
             // Check for optional parameter (ends with ?)

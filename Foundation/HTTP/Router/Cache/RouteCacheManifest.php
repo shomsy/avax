@@ -110,12 +110,8 @@ final readonly class RouteCacheManifest
     public function matches(self $other) : bool
     {
         // Check if this manifest is stale (generated before the other)
-        if ($this->generatedAt < $other->generatedAt) {
-            return false;
-        }
-
         // Verify basic file integrity
-        if ($this->hash !== $other->hash || $this->files !== $other->files) {
+        if ($this->generatedAt < $other->generatedAt || $this->hash !== $other->hash || $this->files !== $other->files) {
             return false;
         }
 

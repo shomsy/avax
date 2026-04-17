@@ -123,7 +123,9 @@ final class ServiceRegistration
      */
     public function tag(string|array $tags) : self
     {
-        $this->tags = array_values(array_unique(array_merge($this->tags, (array) $tags)));
+        $this->tags = array_merge($this->tags, (array) $tags)
+                |> array_unique(...)
+                |> array_values(...);
 
         return $this;
     }
@@ -170,13 +172,12 @@ final class ServiceRegistration
      */
     private function stringList(mixed $values) : array
     {
-        $items = array_values(array_filter(
-                                  array_map(
-                                      static fn (mixed $value) : string => is_string($value) ? trim($value) : '',
-                                      (array) $values
-                                  ),
-                                  static fn (string $value) : bool => $value !== ''
-                              ));
+        $items = array_map(
+                static fn (mixed $value) : string => is_string($value) ? trim($value) : '',
+                (array) $values
+            )
+                |> (static fn ($x) => array_filter($x, static fn (string $value) : bool => $value !== ''))
+                |> array_values(...);
 
         $items = array_values(array_unique($items));
         sort($items);

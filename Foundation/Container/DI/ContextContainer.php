@@ -147,6 +147,9 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->bootProviders(providers: $providers);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function validate(array $serviceIds = []) : array
     {
         return $this->validateComposition()->validate(serviceIds: $serviceIds, context: $this->context);
@@ -186,6 +189,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->explainService()->debugPlan(id: $id, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function debugGraph(string $id = '') : array
     {
         return $this->exportGraphFlow()->debugGraph(id: $id, context: $this->context);
@@ -216,6 +222,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->explainService()->debugImports(slice: $slice, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function debugExports(string $slice = '') : array
     {
         return $this->explainService()->debugExports(slice: $slice, context: $this->context);
@@ -229,16 +238,25 @@ readonly class ContextContainer implements ContainerInterface
         );
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function debugTags(string $tag) : array
     {
         return $this->explainService()->debugTags(tag: $tag, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function debugGroup(string $group) : array
     {
         return $this->explainService()->debugGroup(group: $group, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function debugSelection(string $id) : array
     {
         return $this->explainService()->debugSelection(id: $id, context: $this->context);
@@ -366,11 +384,17 @@ readonly class ContextContainer implements ContainerInterface
         return $this->base->scopes();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function tagged(string $tag) : array
     {
         return $this->resolver->taggedInContext(tag: $tag, context: $this->context);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function grouped(string $group) : array
     {
         return $this->resolver->groupedInContext(group: $group, context: $this->context);
@@ -401,6 +425,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->exportGraphFlow()->diff(format: $format, id: $id, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function why(string $id) : array
     {
         return $this->exportGraphFlow()->why(id: $id, context: $this->context);
@@ -416,6 +443,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->exportGraphFlow()->whatBreaksIf(id: $id, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function showOwner(string $id) : array
     {
         return $this->exportGraphFlow()->showOwner(id: $id, context: $this->context);

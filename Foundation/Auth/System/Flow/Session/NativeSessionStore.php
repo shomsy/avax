@@ -36,11 +36,7 @@ final class NativeSessionStore implements SessionStoreInterface
             return $this->cliSessionId;
         }
 
-        if (! $this->nativeSessionActive()) {
-            return $this->readNativeSessionId();
-        }
-
-        if (! session_regenerate_id(delete_old_session: true)) {
+        if (! $this->nativeSessionActive() || ! session_regenerate_id(delete_old_session: true)) {
             return $this->readNativeSessionId();
         }
 

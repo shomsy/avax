@@ -99,14 +99,12 @@ final readonly class ProvisionScimUser
 
         if ($user === null) {
             $created = true;
-            $user    = $this->userSource->create(user: User::create(
-                id          : new UserId(value: $this->idGenerator->generate()),
-                email       : new UserEmail(value: $data->email),
-                username    : $data->username,
-                passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(16))),
-                roles       : $data->state === ScimAccountState::DISABLED ? [] : $roles,
-                permissions : []
-            ));
+            $user    = 16
+                    |> random_bytes(...)
+                    |> bin2hex(...)
+                    |> $this->passwordHasher(...)
+                    |> (fn ($x) => User::create(id: new UserId(value: $this->idGenerator->generate()), email: new UserEmail(value: $data->email), username: $data->username, passwordHash: $x, roles: $data->state === ScimAccountState::DISABLED ? [] : $roles, permissions: []))
+                    |> $this->userSource(...);
         }
 
         $this->userSource->updateEmail(id: $user->getId(), email: $data->email);

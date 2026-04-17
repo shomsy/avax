@@ -13,8 +13,8 @@ final readonly class CleanupExpiredSessions
     private Clock                                 $clock;
 
     public function __construct(
-        PruneExpiredSessionsInterface|null $sessionRegistry,
-        Clock                                  $clock
+        #[\SensitiveParameter] PruneExpiredSessionsInterface|null $sessionRegistry,
+        Clock                                                     $clock
     )
     {
         $this->sessionRegistry = $sessionRegistry;

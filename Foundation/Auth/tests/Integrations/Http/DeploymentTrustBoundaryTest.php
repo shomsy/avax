@@ -79,7 +79,10 @@ final class DeploymentTrustBoundaryTest extends TestCase
                                                      'htu' => 'https://api.example.test/me',
                                                      'htm' => 'GET',
                                                      'jkt' => 'thumb-1',
-                                                     'ath' => rtrim(strtr(base64_encode(hash('sha256', 'access-token', true)), '+/', '-_'), '='),
+                                                     'ath' => hash('sha256', 'access-token', true)
+                                                             |> base64_encode(...)
+                                                             |> (static fn ($x) => strtr($x, '+/', '-_'))
+                                                             |> (static fn ($x) => rtrim($x, '=')),
                                                  ]);
         $proxyVerifier  = new VerifyTrustedProxyHeaders(trustedProxies: ['10.0.0.10']);
         $senderVerifier = new VerifyOAuthSenderConstraint(

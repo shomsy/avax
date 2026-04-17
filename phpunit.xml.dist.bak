@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php"
-         colors="true"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" colors="true"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+    <coverage>
+        <report>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
+    </coverage>
     <testsuites>
         <testsuite name="Container">
-            <directory>Foundation/Container/tests</directory>
+            <directory>tests/Foundation/Container</directory>
+        </testsuite>
+        <testsuite name="Database">
+            <directory>tests/Foundation/Database</directory>
+        </testsuite>
+        <testsuite name="Router">
+            <directory>tests/Foundation/HTTP/Router</directory>
+        </testsuite>
+        <testsuite name="Request">
+            <directory>tests/Unit/Foundation/HTTP/Request</directory>
         </testsuite>
     </testsuites>
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
+    <logging/>
+    <source/>
 </phpunit>

@@ -25,16 +25,16 @@ use SensitiveParameter;
 final readonly class AccessFacade
 {
     public function __construct(
-        private AuthenticateRequest   $authenticateRequest,
-        private CurrentAuthentication $currentAuthentication,
-        private CheckAuthentication   $checkAuthentication,
-        private ReadCurrentUser       $readCurrentUser,
-        private AccessInterface       $access,
-        private BeginAdminElevation   $beginAdminElevation,
-        private EndAdminElevation     $endAdminElevation,
-        private RequireAdminElevation $requireAdminElevation,
-        private AssessCurrentRisk     $assessCurrentRisk,
-        private ReadRiskSignals       $readRiskSignals
+        private AuthenticateRequest                          $authenticateRequest,
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[\SensitiveParameter] private CheckAuthentication   $checkAuthentication,
+        private ReadCurrentUser                              $readCurrentUser,
+        #[\SensitiveParameter] private AccessInterface       $access,
+        private BeginAdminElevation                          $beginAdminElevation,
+        private EndAdminElevation                            $endAdminElevation,
+        private RequireAdminElevation                        $requireAdminElevation,
+        private AssessCurrentRisk                            $assessCurrentRisk,
+        private ReadRiskSignals                              $readRiskSignals
     ) {}
 
     public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext

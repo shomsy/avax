@@ -533,11 +533,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         $dependency = $this->metadataFor(serviceId: $serviceId);
-        if ($dependency->ownerSlice === $normalized) {
-            return true;
-        }
-
-        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+        if ($dependency->ownerSlice === $normalized || $dependency->visibility === RegistrationVisibility::PUBLIC) {
             return true;
         }
 
@@ -585,10 +581,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
             $manifests[$slice]['categories'][$metadata->category] = true;
             $manifests[$slice]['services'][]                      = $abstract;
-            $manifests[$slice]['imports']                         = array_values(array_unique(array_merge(
-                                                                                                  $manifests[$slice]['imports'],
-                                                                                                  $metadata->imports
-                                                                                              )));
+            $manifests[$slice]['imports']                         = array_merge(
+                    $manifests[$slice]['imports'],
+                    $metadata->imports
+                )
+                    |> array_unique(...)
+                    |> array_values(...);
 
             if ($metadata->exported) {
                 $manifests[$slice]['exports'][] = $abstract;
@@ -885,11 +883,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             return true;
         }
 
-        if ($dependency->ownerSlice === 'foundation.system') {
-            return true;
-        }
-
-        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+        if ($dependency->ownerSlice === 'foundation.system' || $dependency->visibility === RegistrationVisibility::PUBLIC) {
             return true;
         }
 

@@ -306,10 +306,12 @@ final readonly class ArtifactMetadata
                 continue;
             }
 
-            $values = array_values(array_unique(array_map(
-                                                    static fn (mixed $value) : string => (string) $value,
-                                                    $serviceIds
-                                                )));
+            $values = array_map(
+                    static fn (mixed $value) : string => (string) $value,
+                    $serviceIds
+                )
+                    |> array_unique(...)
+                    |> array_values(...);
             sort($values);
             $tags[$tag] = $values;
         }

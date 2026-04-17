@@ -50,11 +50,9 @@ final class MigrationGenerator
 
     private function getClassName(string $name) : string
     {
-        return str_replace(
-            search : ' ',
-            replace: '',
-            subject: ucwords(string: str_replace(search: '_', replace: ' ', subject: $name))
-        );
+        return str_replace(search: '_', replace: ' ', subject: $name)
+                |> ucwords(...)
+                |> (static fn ($x) => str_replace(search: ' ', replace: '', subject: $x));
     }
 
     private function getStubContent(string|null $table, bool $create) : string

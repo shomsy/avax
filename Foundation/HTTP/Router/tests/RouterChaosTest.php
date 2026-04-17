@@ -68,7 +68,7 @@ final class RouterChaosTest extends TestCase
         $routes2 = [];
 
         // Thread 1: Register API routes
-        $thread1 = function () use (&$routes1) {
+        $thread1 = static function () use (&$routes1) {
             for ($i = 1; $i <= 100; $i++) {
                 $route     = new RouteDefinition(
                     method    : 'GET',
@@ -82,7 +82,7 @@ final class RouterChaosTest extends TestCase
         };
 
         // Thread 2: Register web routes
-        $thread2 = function () use (&$routes2) {
+        $thread2 = static function () use (&$routes2) {
             for ($i = 1; $i <= 100; $i++) {
                 $route     = new RouteDefinition(
                     method    : 'GET',
@@ -117,7 +117,7 @@ final class RouterChaosTest extends TestCase
     public function middleware_chain_interruption_recovery() : void
     {
         // Test middleware that throws exceptions mid-chain
-        $failingMiddleware = function ($request, $next) {
+        $failingMiddleware = static function ($request, $next) {
             static $callCount = 0;
             $callCount++;
 
@@ -132,7 +132,7 @@ final class RouterChaosTest extends TestCase
         $route = new RouteDefinition(
             method    : 'GET',
             path      : '/test',
-            action    : function () { return 'success'; },
+            action    : static function () { return 'success'; },
             middleware: [$failingMiddleware, $failingMiddleware, $failingMiddleware]
         );
 

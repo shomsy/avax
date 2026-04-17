@@ -89,7 +89,10 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
 
     private function hashAccessToken(#[SensitiveParameter] string $token) : string
     {
-        return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
+        return hash('sha256', $token, true)
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**

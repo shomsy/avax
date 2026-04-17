@@ -299,12 +299,8 @@ final class Serializer
     public function isSerialized(string $data) : bool
     {
         // Check for PHP serialization format
-        if (preg_match(pattern: '/^([adObis]):/', subject: $data)) {
-            return true;
-        }
-
         // Check for our compressed format
-        if (str_starts_with(haystack: $data, needle: 'GZIP:')) {
+        if (preg_match(pattern: '/^([adObis]):/', subject: $data) || str_starts_with(haystack: $data, needle: 'GZIP:')) {
             return true;
         }
 

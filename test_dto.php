@@ -6,6 +6,9 @@ class InstrumentedDTO extends \Avax\DataHandling\ObjectHandling\DTO\AbstractDTO
 {
     public string $email = '';
 
+    /**
+     * @throws Throwable
+     */
     protected function hydrateField(string $name, \ReflectionProperty $property, array $attributes, array $data): void
     {
         error_log("InstrumentedDTO::hydrateField called for: $name");
@@ -25,12 +28,12 @@ class InstrumentedDTO extends \Avax\DataHandling\ObjectHandling\DTO\AbstractDTO
             }
         }
 
-        parent::hydrateField($name, $property, $attributes, $data);
+        parent::hydrateField(name: $name, property: $property, attributes: $attributes, data: $data);
 
         error_log("InstrumentedDTO::hydrateField completed for: $name");
     }
 }
 
 echo 'Creating InstrumentedDTO...'.PHP_EOL;
-$dto = new InstrumentedDTO(['email' => 'not-an-email']);
+$dto = new InstrumentedDTO(data: ['email' => 'not-an-email']);
 echo 'Email: '.$dto->email.PHP_EOL;

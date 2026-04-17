@@ -64,9 +64,8 @@ assertTrue(
 );
 assertSame(expected: false, actual: $container->has(id: DeadPrunableService::class), message: 'Pruned private flow services should still stay outside the top-level surface.');
 assertSame(expected: true, actual: $deadSlice->has(id: DeadPrunableService::class), message: 'Pruning must not mutate canonical authored slice visibility.');
-assertTrue(
-    condition: in_array(DeadPrunableService::class, array_column($deadSliceView['visible'] ?? [], 'serviceId'), true),
-    message  : 'Slice views should still expose authored services even when pruning omits them from the artifact.'
-);
+array_column($deadSliceView['visible'] ?? [], 'serviceId')
+    |> (static fn ($x) => in_array(DeadPrunableService::class, $x, true))
+    |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice views should still expose authored services even when pruning omits them from the artifact.'));
 
 echo basename(__FILE__) . " ok\n";

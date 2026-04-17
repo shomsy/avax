@@ -171,17 +171,20 @@ final readonly class CompleteFederatedLogin
     {
         $username = $this->uniqueUsername(displayName: $displayName, email: $email);
 
-        return $this->userSource->create(user: User::create(
-            id          : new UserId(value: $this->idGenerator->generate()),
-            email       : new UserEmail(value: $email),
-            username    : $username,
-            passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(24)))
-        ));
+        return 24
+                |> random_bytes(...)
+                |> bin2hex(...)
+                |> $this->passwordHasher(...)
+                |> (fn ($x) => User::create(id: new UserId(value: $this->idGenerator->generate()), email: new UserEmail(value: $email), username: $username, passwordHash: $x))
+                |> $this->userSource(...);
     }
 
     private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email) : string
     {
-        $normalizedDisplayName = preg_replace('/[^a-z0-9]+/i', '-', strtolower(trim($displayName)));
+        $normalizedDisplayName = $displayName
+                |> trim(...)
+                |> strtolower(...)
+                |> (static fn ($x) => preg_replace('/[^a-z0-9]+/i', '-', $x));
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
             ? $normalizedDisplayName
             : explode('@', $email)[0];

@@ -98,7 +98,10 @@ final readonly class VerifyDpopProof
         }
 
         if ($input->accessToken !== null) {
-            $expectedAth = rtrim(strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'), '=');
+            $expectedAth = hash('sha256', $input->accessToken, true)
+                    |> base64_encode(...)
+                    |> (static fn ($x) => strtr($x, '+/', '-_'))
+                    |> (static fn ($x) => rtrim($x, '='));
 
             if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
                 $this->recordFailure(input: $input, reason: 'access_token_mismatch');

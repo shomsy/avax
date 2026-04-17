@@ -106,13 +106,9 @@ abstract class BaseGrammar implements GrammarInterface
 
         // Handle names with dots (e.g., 'users.name').
         if (str_contains(haystack: $value, needle: '.')) {
-            return implode(
-                separator: '.',
-                array    : array_map(
-                               callback: fn ($segment) => $this->wrapSegment(segment: $segment),
-                               array   : explode(separator: '.', string: $value)
-                           )
-            );
+            return explode(separator: '.', string: $value)
+                    |> (fn ($x) => array_map(callback: fn ($segment) => $this->wrapSegment(segment: $segment), array: $x))
+                    |> (static fn ($x) => implode(separator: '.', array: $x));
         }
 
         return $this->wrapSegment(segment: $value);
@@ -340,21 +336,14 @@ abstract class BaseGrammar implements GrammarInterface
     public function compileInsert(QueryState $state) : string
     {
         $table   = $this->wrap(value: $state->from);
-        $columns = implode(
-            separator: ', ',
-            array    : array_map(
-                           callback: fn ($c) => $this->wrap(value: $c),
-                           array   : array_keys(array: $state->values)
-                       )
-        );
-        $values  = implode(
-            separator: ', ',
-            array    : array_fill(
-                           start_index: 0,
-                           count      : count(value: $state->values),
-                           value      : '?'
-                       )
-        );
+        $columns = $state->values
+                |> array_keys(...)
+                |> (fn ($x) => array_map(callback: fn ($c) => $this->wrap(value: $c), array: $x))
+                |> (static fn ($x) => implode(separator: ', ', array: $x));
+        $values  = $state->values
+                |> count(...)
+                |> (static fn ($x) => array_fill(start_index: 0, count: $x, value: '?'))
+                |> (static fn ($x) => implode(separator: ', ', array: $x));
 
         // We also collect the actual values to be sent with the query later.
         foreach ($state->values as $value) {

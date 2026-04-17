@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Foundation\HTTP\Request;
 
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Classes\Stream;
-use Avax\HTTP\URI\Uri;
+use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,12 +28,29 @@ use PHPUnit\Framework\TestCase;
  */
 class RequestCharacterizationTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function test_getRequestTarget_returns_path_and_query() : void
     {
-        $uri     = new Uri('http://example.com/api/users?status=active');
-        $request = new Request(uri: $uri);
+        $uri     = UriBuilder::createFromString(uri: 'http://example.com/api/users?status=active');
+        $request = new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            method: 'GET',
+            uri: $uri,
+            requestHeaders: null,
+            serverParams: [],
+            requestTarget: null,
+            cookies: null,
+            queryParams: [],
+            uploadedFiles: null,
+            parsedBody: null,
+            attributes: null,
+            session: null,
+            protocolVersion: '1.1'
+        );
 
-        $this->assertSame(expected: '/api/users?status=active', actual: $request->getRequestTarget());
+        $this->assertSame(expected: '/api/users?status=active', actual: $request->requestTarget);
     }
 
     public function test_withHeader_replaces_existing_header_preserves_immutability() : void
@@ -50,17 +68,25 @@ class RequestCharacterizationTest extends TestCase
         $this->assertSame(expected: ['Beta'], actual: $replacedRequest->getHeader(name: 'X-Custom'));
     }
 
-    private function createBlankRequest(array $serverParams = []) : Request
+    /**
+     * @throws \ReflectionException
+     */
+    private function createBlankRequest(array $serverParams = []) : ServerRequest
     {
-        return new Request(
-            session      : null,
-            serverParams : $serverParams,
-            uri          : new Uri('http://localhost'),
-            body         : new Stream(stream: fopen('php://temp', 'r+')),
-            queryParams  : [],
-            parsedBody   : [],
-            cookies      : [],
-            uploadedFiles: []
+        return new ServerRequest(
+            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            method: 'GET',
+            uri: UriBuilder::createFromString(uri: 'http://localhost'),
+            requestHeaders: null,
+            serverParams: $serverParams,
+            requestTarget: null,
+            cookies: null,
+            queryParams: [],
+            uploadedFiles: null,
+            parsedBody: null,
+            attributes: null,
+            session: null,
+            protocolVersion: '1.1'
         );
     }
 
@@ -83,7 +109,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_updates_host_header_when_preserve_host_false() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new Uri('http://new-host.com/api');
+        $newUri  = UriBuilder::createFromString(uri: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
@@ -93,7 +119,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_preserves_host_header_when_preserve_host_true() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = new Uri('http://new-host.com/api');
+        $newUri  = UriBuilder::createFromString(uri: 'http://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 
@@ -105,8 +131,8 @@ class RequestCharacterizationTest extends TestCase
         $request    = $this->createBlankRequest();
         $newRequest = $request->withQueryParams(query: ['search' => 'test']);
 
-        $this->assertSame(expected: [], actual: $request->getQueryParams());
-        $this->assertSame(expected: ['search' => 'test'], actual: $newRequest->getQueryParams());
+        $this->assertSame(expected: [], actual: $request->queryParams);
+        $this->assertSame(expected: ['search' => 'test'], actual: $newRequest->queryParams);
     }
 
     public function test_withCookieParams_replaces_cookie_params() : void
@@ -144,6 +170,6 @@ class RequestCharacterizationTest extends TestCase
         $serverParams = ['REQUEST_METHOD' => 'POST', 'HTTP_HOST' => 'example.com'];
         $request      = $this->createBlankRequest(serverParams: $serverParams);
 
-        $this->assertSame(expected: $serverParams, actual: $request->getServerParams());
+        $this->assertSame(expected: $serverParams, actual: $request->serverParams);
     }
 }

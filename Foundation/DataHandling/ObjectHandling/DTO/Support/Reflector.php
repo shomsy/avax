@@ -264,7 +264,7 @@ final class Reflector
                 'nullable'   => $meta->isNullable(),
 
                 // Map the attributes of the property to their names and add them to the schema array.
-                'attributes' => array_map(callback: fn ($a) => $a->getName(), array: $meta->attributes),
+                'attributes' => array_map(callback: static fn ($a) => $a->getName(), array: $meta->attributes),
             ],
 
             // Retrieve metadata for all public fields of the target object.

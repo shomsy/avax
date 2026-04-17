@@ -473,7 +473,10 @@ final readonly class ServeOidcHttpSurface
             }
 
             if (is_string($value)) {
-                return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+                return $value
+                        |> trim(...)
+                        |> strtolower(...)
+                        |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
             }
         }
 

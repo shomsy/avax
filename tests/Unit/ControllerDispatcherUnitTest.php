@@ -22,7 +22,7 @@ class ControllerDispatcherUnitTest extends TestCase
     public function dispatch_callable_returns_response_when_callable_returns_null() : void
     {
         // Given: A callable that returns null
-        $callable = fn (Request $request) => null;
+        $callable = static fn (Request $request) => null;
 
         // Mock request
         $request = $this->createMock(Request::class);

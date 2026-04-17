@@ -40,7 +40,7 @@ abstract class Request extends AbstractDTO
      *
      * @throws ReflectionException
      */
-    public static function fromRequest(ServerRequest $request): static
+    public static function fromRequest(ServerRequest $request) : static
     {
         return new static(data: $request->inputs()->all());
     }
@@ -50,7 +50,7 @@ abstract class Request extends AbstractDTO
      *
      * @throws ReflectionException
      */
-    public static function fromInputs(array $inputs): static
+    public static function fromInputs(array $inputs) : static
     {
         return new static(data: $inputs);
     }

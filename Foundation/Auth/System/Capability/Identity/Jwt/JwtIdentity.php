@@ -125,7 +125,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             }
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+                $scopes = explode(' ', $scopeClaim)
+                        |> (static fn ($x) => array_filter($x, static fn (string $scope) : bool => $scope !== ''))
+                        |> array_values(...);
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
@@ -243,8 +245,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $scopes                     = [];
             $senderConstraint           = null;
 
-            if (
-                ! $workloadIdentity
+            if (! $workloadIdentity
                 || ! is_int($expiresAt)
                 || ! is_int($issuedAt)
                 || ! is_int($notBefore)
@@ -252,12 +253,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 || trim($subject) === ''
                 || ! is_string($tokenId)
                 || ! is_string($clientId)
-                || ! is_string($issuer)
-            ) {
-                return null;
-            }
-
-            if ($issuer !== ($expectedIssuer ?? $this->issuer)) {
+                || ! is_string($issuer) || $issuer !== ($expectedIssuer ?? $this->issuer)) {
                 return null;
             }
 
@@ -271,16 +267,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
-                return null;
-            }
-
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway) || $this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+                $scopes = explode(' ', $scopeClaim)
+                        |> (static fn ($x) => array_filter($x, static fn (string $scope) : bool => $scope !== ''))
+                        |> array_values(...);
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {

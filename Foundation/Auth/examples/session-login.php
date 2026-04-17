@@ -13,7 +13,8 @@ use Avax\Auth\System\Flow\Login\Credentials;
 
 // Example UserSource (replace with your PDO/Eloquent/etc.)
 class ExampleUserSource implements UserSourceInterface {
-    public function findByCredentials(string $identifier, string $password): ?object {
+    public function findByCredentials(string $identifier, #[\SensitiveParameter] string $password): object|null
+    {
         // Simulate DB lookup + password verify
         if ($identifier === 'user@example.com' && hash('sha256', $password) === hash('sha256', 'password')) {
             return (object)['id' => '1', 'email' => $identifier];

@@ -52,8 +52,9 @@ final readonly class RequestSession
 
     public function put(string $key, mixed $value) : self
     {
-        $newData = $this->data;
+        $newData       = $this->data;
         $newData[$key] = $value;
+
         return new self(data: $newData, id: $this->id);
     }
 
@@ -61,6 +62,7 @@ final readonly class RequestSession
     {
         $newData = $this->data;
         unset($newData[$key]);
+
         return new self(data: $newData, id: $this->id);
     }
 }

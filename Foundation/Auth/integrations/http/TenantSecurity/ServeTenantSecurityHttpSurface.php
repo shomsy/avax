@@ -365,7 +365,11 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
             }
         } catch (Throwable $failure) {
-            $status = str_contains(strtolower($failure->getMessage()), 'not found') || str_contains(strtolower($failure->getMessage()), 'unknown')
+            $status = $failure->getMessage()
+                |> strtolower(...)
+                |> (static fn ($x) => str_contains($x, 'not found')) || $failure->getMessage()
+                |> strtolower(...)
+                |> (static fn ($x) => str_contains($x, 'unknown'))
                 ? 404
                 : 422;
 
@@ -630,7 +634,10 @@ final readonly class ServeTenantSecurityHttpSurface
         }
 
         if (is_string($value)) {
-            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+            return $value
+                    |> trim(...)
+                    |> strtolower(...)
+                    |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
         }
 
         return false;

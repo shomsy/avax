@@ -385,11 +385,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     {
         $client = $this->find(clientId: $clientId);
 
-        if ($client === null) {
-            return false;
-        }
-
-        if (! $client->isActive()) {
+        if ($client === null || ! $client->isActive()) {
             return false;
         }
 

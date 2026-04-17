@@ -173,10 +173,11 @@ final class AuthTest extends TestCase
         $events = $auditLog->events();
         $this->assertNotSame(expected: [], actual: $events);
         $this->assertContainsOnlyInstancesOf(className: AuditEvent::class, haystack: $events);
-        $this->assertSame(
-            expected: ['corr-auth-1'],
-            actual  : array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
-        );
+        array_map(static fn ($event) => $event->correlationId, $events)
+            |> array_filter(...)
+            |> array_unique(...)
+            |> array_values(...)
+            |> (fn ($x) => $this->assertSame(expected: ['corr-auth-1'], actual: $x));
     }
 
     public function testAuthFacadeReadsWorkloadIdentityInventory() : void

@@ -183,7 +183,9 @@ final readonly class RegistrationMetadata
     private static function derivedConcept(string $unitId) : string
     {
         $normalized = str_replace(['\\', '/', '@', ':'], '.', $unitId);
-        $segments   = array_values(array_filter(explode('.', $normalized), static fn (string $segment) : bool => $segment !== ''));
+        $segments   = explode('.', $normalized)
+                |> (static fn ($x) => array_filter($x, static fn (string $segment) : bool => $segment !== ''))
+                |> array_values(...);
         $last       = $segments !== [] ? $segments[array_key_last($segments)] : $unitId;
 
         return strtolower(trim($last)) ?: strtolower($unitId);

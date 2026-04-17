@@ -8,6 +8,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Characterization tests for the old ServerRequest object to establish a baseline
@@ -26,6 +27,9 @@ use PHPUnit\Framework\TestCase;
  */
 class RequestCharacterizationTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function test_getRequestTarget_returns_path_and_query() : void
     {
         $uri     = new UriBuilder(scheme: 'http://example.com/api/users?status=active');
@@ -49,6 +53,9 @@ class RequestCharacterizationTest extends TestCase
         $this->assertSame(expected: ['Beta'], actual: $replacedRequest->getHeader(name: 'X-Custom'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function createBlankRequest(array $serverParams = []) : Request
     {
         return new Request(

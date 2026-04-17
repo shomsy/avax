@@ -110,7 +110,9 @@ final readonly class CheckSourceTruth
                 continue;
             }
 
-            $columns = array_map('trim', explode('|', trim($line, '|')));
+            $columns = trim($line, '|')
+                    |> (static fn ($x) => explode('|', $x))
+                    |> (static fn ($x) => array_map('trim', $x));
 
             if (count($columns) < 4) {
                 continue;

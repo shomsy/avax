@@ -43,13 +43,13 @@ $runtimeInputs = [];
 $conditionals  = [];
 foreach ($serviceIds as $serviceId) {
     $plan                      = $container->debugPlan(id: $serviceId);
-    $runtimeInputs[$serviceId] = array_values(array_map(
-                                                  static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''),
-                                                  array_values(array_filter(
-                                                                   $plan['constructor'] ?? [],
-                                                                   static fn (array $parameter) : bool => ($parameter['source'] ?? '') === 'runtime'
-                                                               ))
-                                              ));
+    $runtimeInputs[$serviceId] = array_filter(
+            $plan['constructor'] ?? [],
+            static fn (array $parameter) : bool => ($parameter['source'] ?? '') === 'runtime'
+        )
+            |> array_values(...)
+            |> (static fn ($x) => array_map(static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), $x))
+            |> array_values(...);
 
     foreach ($plan['methods'] ?? [] as $method) {
         foreach ($method['plan']->parameters ?? [] as $parameter) {
@@ -61,10 +61,12 @@ foreach ($serviceIds as $serviceId) {
         }
     }
 
-    $runtimeInputs[$serviceId] = array_values(array_unique(array_filter(
-                                                               $runtimeInputs[$serviceId],
-                                                               static fn (string $name) : bool => $name !== ''
-                                                           )));
+    $runtimeInputs[$serviceId] = array_filter(
+            $runtimeInputs[$serviceId],
+            static fn (string $name) : bool => $name !== ''
+        )
+            |> array_unique(...)
+            |> array_values(...);
 
     $description = $container->describeService(id: $serviceId);
     $conditions  = $description['ownership'] ?? [];
@@ -114,14 +116,14 @@ $serviceIdUnion = implode('|', array_map(
     static fn (string $serviceId) : string => "'" . str_replace("'", "\\'", $serviceId) . "'",
     $serviceIds
 ));
-$groupUnion     = implode('|', array_map(
-    static fn (string $group) : string => "'" . str_replace("'", "\\'", $group) . "'",
-    array_keys($payload['groups'])
-));
-$sliceUnion     = implode('|', array_map(
-    static fn (string $slice) : string => "'" . str_replace("'", "\\'", $slice) . "'",
-    array_keys($payload['sliceExports'])
-));
+$groupUnion     = $payload['groups']
+        |> array_keys(...)
+        |> (static fn ($x) => array_map(static fn (string $group) : string => "'" . str_replace("'", "\\'", $group) . "'", $x))
+        |> (static fn ($x) => implode('|', $x));
+$sliceUnion     = $payload['sliceExports']
+        |> array_keys(...)
+        |> (static fn ($x) => array_map(static fn (string $slice) : string => "'" . str_replace("'", "\\'", $slice) . "'", $x))
+        |> (static fn ($x) => implode('|', $x));
 
 $stub = <<<PHP
     <?php

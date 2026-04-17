@@ -48,10 +48,10 @@ final readonly class TrustedProxyPolicy
 
         if (str_contains($trusted, '/')) {
             [$range, $netmask] = explode('/', $trusted, 2);
-            
+
             $rangeLong = ip2long($range);
             $ipLong    = ip2long($ip);
-            
+
             if ($rangeLong === false || $ipLong === false) {
                 return false;
             }

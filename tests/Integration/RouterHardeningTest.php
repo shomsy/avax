@@ -78,6 +78,9 @@ class RouterHardeningTest extends TestCase
         );
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function createRequest(string $method, string $path) : Request
     {
         $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");

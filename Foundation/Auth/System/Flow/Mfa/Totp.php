@@ -57,7 +57,10 @@ final readonly class Totp implements TotpInterface
         $length   = strlen($bytes);
 
         for ($index = 0; $index < $length; $index++) {
-            $binary .= str_pad(decbin(ord($bytes[$index])), 8, '0', STR_PAD_LEFT);
+            $binary .= $bytes[$index]
+                    |> ord(...)
+                    |> decbin(...)
+                    |> (static fn ($x) => str_pad($x, 8, '0', STR_PAD_LEFT));
         }
 
         $chunks  = str_split($binary, 5);

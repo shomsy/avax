@@ -37,7 +37,9 @@ final readonly class ProviderBootPlan
 
         $dependencies = [];
         foreach ($instances as $class => $provider) {
-            $dependencyClasses = array_values(array_unique($provider->dependsOn()));
+            $dependencyClasses = $provider->dependsOn()
+                    |> array_unique(...)
+                    |> array_values(...);
             sort($dependencyClasses);
             $dependencies[$class] = $dependencyClasses;
         }

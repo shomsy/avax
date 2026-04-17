@@ -120,7 +120,7 @@ class TracingMiddleware implements MiddlewareInterface
         // Truncate long headers
         foreach ($headers as $name => $values) {
             if (is_array($values)) {
-                $headers[$name] = array_map(function ($value) {
+                $headers[$name] = array_map(static function ($value) {
                     return strlen($value) > 100 ? substr($value, 0, 100) . '...' : $value;
                 }, $values);
             }

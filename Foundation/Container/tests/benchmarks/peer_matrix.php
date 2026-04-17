@@ -108,10 +108,10 @@ function peerThresholdFor(string $scenario, array $thresholds) : array
 function peerMatrixPayload(array $artifacts, array $thresholds) : array
 {
     $current = $artifacts['current'];
-    $peers   = array_values(array_filter(
-                                array_keys($artifacts),
-                                static fn (string $name) : bool => $name !== 'current'
-                            ));
+    $peers   = $artifacts
+            |> array_keys(...)
+            |> (static fn ($x) => array_filter($x, static fn (string $name) : bool => $name !== 'current'))
+            |> array_values(...);
     sort($peers);
 
     $payload = [
@@ -224,10 +224,12 @@ if (is_string($outputPath) && $outputPath !== '') {
 if ($failOnRegression && ($payload['parityIssues'] !== [] || $payload['regressions'] !== [])) {
     throw new RuntimeException(
         message: "Peer benchmark matrix failed:\n- "
-                 . implode("\n- ", array_merge($payload['parityIssues'], array_map(
+                 . array_map(
                    static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
                    $payload['regressions']
-               )))
+               )
+                   |> (static fn ($x) => array_merge($payload['parityIssues'], $x))
+                   |> (static fn ($x) => implode("\n- ", $x))
     );
 }
 

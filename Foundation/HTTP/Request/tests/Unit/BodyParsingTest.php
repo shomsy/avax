@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseFormBody;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseFormBody;
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
 use Avax\HTTP\Response\Classes\Stream;
+use PHPUnit\Framework\TestCase;
 
 class BodyParsingTest extends TestCase
 {
@@ -50,10 +50,10 @@ class BodyParsingTest extends TestCase
         fwrite($handle, 'sample content');
         $stream = new Stream(stream: $handle);
         $stream->seek(offset: 7);
-        
-        $body = new RequestBody(stream: $stream);
+
+        $body    = new RequestBody(stream: $stream);
         $content = $body->content();
-        
+
         $this->assertEquals(expected: 'sample content', actual: $content);
         $this->assertEquals(expected: 7, actual: $stream->tell());
     }

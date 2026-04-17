@@ -134,7 +134,9 @@ final class ResolveDependencies
                 'inputName'  => $this->inputNameFor(parameter: $parameter),
                 'hasDefault' => $parameter->isDefaultValueAvailable(),
                 'default'    => $parameter->isDefaultValueAvailable()
-                    ? base64_encode(serialize($parameter->getDefaultValue()))
+                    ? $parameter->getDefaultValue()
+                        |> serialize(...)
+                        |> base64_encode(...)
                     : '',
                 'allowsNull' => $parameter->allowsNull(),
             ];

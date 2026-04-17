@@ -10,7 +10,7 @@ use SensitiveParameter;
 
 final readonly class DiagnosticsFacade
 {
-    public function __construct(private AuthIssueExplainer $authIssueExplainer) {}
+    public function __construct(#[\SensitiveParameter] private AuthIssueExplainer $authIssueExplainer) {}
 
     public function explainAccessDenied(
         string      $resource,
@@ -28,11 +28,13 @@ final readonly class DiagnosticsFacade
     }
 
     public function explainStepUpRequired(
-        string   $action,
-        bool     $phishingResistantRequired = false,
-        int|null $freshAfterSeconds = null
+        string    $action,
+        bool|null $phishingResistantRequired = null,
+        int|null  $freshAfterSeconds = null
     ) : AuthIssueExplanation
     {
+        $phishingResistantRequired ??= false;
+
         return $this->authIssueExplainer->explainStepUpRequired(
             action                   : $action,
             phishingResistantRequired: $phishingResistantRequired,

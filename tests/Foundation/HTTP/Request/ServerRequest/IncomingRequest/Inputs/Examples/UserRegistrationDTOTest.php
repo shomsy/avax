@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
 
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples\UserRegistrationDTO;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO;
 use PHPUnit\Framework\TestCase;
 
 final class UserRegistrationDTOTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function test_valid_data_hydrates_successfully(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -19,12 +22,15 @@ final class UserRegistrationDTOTest extends TestCase
             'age' => 25,
         ]);
 
-        $this->assertSame('John Doe', $dto->name);
-        $this->assertSame('john@example.com', $dto->email);
-        $this->assertSame('SecurePass123', $dto->password);
-        $this->assertSame(25, $dto->age);
+        $this->assertSame(expected: 'John Doe', actual: $dto->name);
+        $this->assertSame(expected: 'john@example.com', actual: $dto->email);
+        $this->assertSame(expected: 'SecurePass123', actual: $dto->password);
+        $this->assertSame(expected: 25, actual: $dto->age);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_validates_email_format(): void
     {
         $this->expectException(DTOValidationException::class);
@@ -36,6 +42,9 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_validates_password_min_length(): void
     {
         $this->expectException(DTOValidationException::class);
@@ -47,6 +56,9 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_validates_password_complexity(): void
     {
         $this->expectException(DTOValidationException::class);
@@ -58,6 +70,9 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_validates_age_minimum(): void
     {
         $this->expectException(DTOValidationException::class);
@@ -70,6 +85,9 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_optional_phone_is_nullable(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -78,9 +96,12 @@ final class UserRegistrationDTOTest extends TestCase
             'password' => 'SecurePass123',
         ]);
 
-        $this->assertNull($dto->phone);
+        $this->assertNull(actual: $dto->phone);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_age_has_default_value(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -89,9 +110,12 @@ final class UserRegistrationDTOTest extends TestCase
             'password' => 'SecurePass123',
         ]);
 
-        $this->assertSame(18, $dto->age);
+        $this->assertSame(expected: 18, actual: $dto->age);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_collects_all_validation_errors(): void
     {
         try {
@@ -100,12 +124,12 @@ final class UserRegistrationDTOTest extends TestCase
                 'email' => 'invalid',
                 'password' => 'x',
             ]);
-            $this->fail('Expected DTOValidationException');
+            $this->fail(message: 'Expected DTOValidationException');
         } catch (DTOValidationException $e) {
             $errors = $e->getErrors();
-            $this->assertArrayHasKey('name', $errors);
-            $this->assertArrayHasKey('email', $errors);
-            $this->assertArrayHasKey('password', $errors);
+            $this->assertArrayHasKey(key: 'name', array: $errors);
+            $this->assertArrayHasKey(key: 'email', array: $errors);
+            $this->assertArrayHasKey(key: 'password', array: $errors);
         }
     }
 }

@@ -876,430 +876,137 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\PublicEntryPointRequest;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\URI\UriBuilder;
-use NoDiscard;
-use Override;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
+use ReflectionException;
 
 /**
- * Legacy Bridge: This class maintains the old namespace but delegates
- * everything to the new ServerRequest architecture.
+ * Request - Base class for HTTP Request-backed DTOs.
  *
- * @deprecated Use Avax\HTTP\ServerRequest\ServerRequest\IncomingRequest\PublicEntryPointRequest instead.
+ * Enables declarative request handling using PHP 8 attributes.
+ * Automatically hydrates from ServerRequest inputs with validation.
+ *
+ * Usage:
+ * ```php
+ * class CreateNewProjectRequest extends \Avax\HTTP\Request\Request
+ * {
+ *     #[Required]
+ *     #[Min(3)]
+ *     public string $projectName;
+ *
+ *     #[Required]
+ *     #[Integer]
+ *     #[Min(1)]
+ *     public int $projectNumber;
+ * }
+ *
+ * // Usage in controller:
+ * $request = CreateNewProjectRequest::fromRequest($httpRequest);
+ * $request->projectName; // already validated!
+ * ```
  */
-class Request implements ServerRequestInterface
+abstract class Request extends AbstractDTO
 {
-    private function __construct(private readonly ServerRequest $serverRequest)
+    /**
+     * Create a Request DTO instance from ServerRequest.
+     *
+     * @throws ReflectionException
+     */
+    public static function fromRequest(ServerRequest $request): static
     {
+        return new static(data: $request->inputs()->all());
     }
 
-    public array $serverParams {
-        get {
-            return $this->serverRequest->serverParams;
+    /**
+     * Create a Request DTO from raw input array.
+     *
+     * @throws ReflectionException
+     */
+    public static function fromInputs(array $inputs): static
+    {
+        return new static(data: $inputs);
+    }
+}
+
+=== RequestServiceProvider.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request;
+
+use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\ContainerInterface;
+use Avax\Container\Providers\ServiceProvider;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\CreateRequestFromIncomingHttp;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseFormBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Override;
+
+/**
+ * Service provider for HTTP Request component.
+ *
+ * Registers all Request-related services with the DI container,
+ * enabling dependency injection for request handling components.
+ */
+final class RequestServiceProvider extends ServiceProvider
+{
+
+
+    public function dependsOn() : array
+    {
+        return [];
+    }
+
+    #[Override]
+    public function register() : void
+    {
+        $this->registerBodyParsers();
+        $this->registerNetwork();
+        $this->registerUtilities();
+    }
+
+    public function boot() : void
+    {
+        // No boot-time side effects required
+    }
+
+    private function registerBodyParsers() : void
+    {
+        if (! $this->app->has(id: ParseBodyByContentType::class)) {
+            $this->app->singleton(id: ParseBodyByContentType::class, implementation: ParseBodyByContentType::class);
+        }
+
+        if (! $this->app->has(id: ParseJsonBody::class)) {
+            $this->app->singleton(id: ParseJsonBody::class, implementation: ParseJsonBody::class);
+        }
+
+        if (! $this->app->has(id: ParseFormBody::class)) {
+            $this->app->singleton(id: ParseFormBody::class, implementation: ParseFormBody::class);
         }
     }
 
-    public array $queryParams {
-        get {
-            return $this->serverRequest->queryParams;
+    private function registerNetwork() : void
+    {
+        // Network services will be registered here when available
+    }
+
+    private function registerUtilities() : void
+    {
+        if (! $this->app->has(id: NormalizeProtocolVersion::class)) {
+            $this->app->singleton(id: NormalizeProtocolVersion::class, implementation: NormalizeProtocolVersion::class);
         }
-    }
 
-    public null|string $requestTarget {
-        get {
-            return $this->serverRequest->requestTarget;
+        if (! $this->app->has(id: NormalizeUploadedFiles::class)) {
+            $this->app->singleton(id: NormalizeUploadedFiles::class, implementation: NormalizeUploadedFiles::class);
         }
-    }
 
-    public string $method {
-        get {
-            return $this->serverRequest->method;
+        if (! $this->app->has(id: CreateRequestFromIncomingHttp::class)) {
+            $this->app->singleton(id: CreateRequestFromIncomingHttp::class, implementation: CreateRequestFromIncomingHttp::class);
         }
-    }
-
-    public string $protocolVersion {
-        get {
-            return $this->serverRequest->protocolVersion;
-        }
-    }
-
-    public array $headers {
-        get {
-            return $this->serverRequest->headers;
-        }
-    }
-
-    public UriInterface|null $uri {
-        get {
-            return $this->serverRequest->uri;
-        }
-    }
-
-    public static function capture(): self
-    {
-        return new self(serverRequest: PublicEntryPointRequest::fromIncomingHttp());
-    }
-
-    private static function createStream(string $content = ''): StreamInterface
-    {
-        $resource = fopen('php://memory', 'r+');
-        fwrite($resource, $content);
-        rewind($resource);
-
-        return new class($resource) implements StreamInterface {
-            private $resource;
-            private ?int $size = null;
-
-            public bool $seekable {
-                get {
-                    return true;
-                }
-            }
-
-            public bool $writable {
-                get {
-                    return is_writable(stream_get_meta_data($this->resource)['uri']);
-                }
-            }
-
-            public bool $readable {
-                get {
-                    $mode = stream_get_meta_data($this->resource)['mode'];
-                    return str_contains($mode, 'r') || str_contains($mode, '+');
-                }
-            }
-
-            public function __construct($resource) {
-                $this->resource = $resource;
-            }
-
-            public function __toString(): string {
-                return $this->getContents();
-            }
-
-            public function close(): void {
-                if (is_resource($this->resource)) {
-                    fclose($this->resource);
-                }
-            }
-
-            public function detach(): mixed {
-                $resource = $this->resource;
-                $this->resource = null;
-                return $resource;
-            }
-
-            public function getSize(): ?int {
-                if ($this->size !== null) {
-                    return $this->size;
-                }
-                $stats = fstat($this->resource);
-                $this->size = $stats['size'] ?? null;
-                return $this->size;
-            }
-
-            public function tell(): int {
-                return ftell($this->resource);
-            }
-
-            public function eof(): bool {
-                return feof($this->resource);
-            }
-
-            public function seek(int $offset, int $whence = SEEK_SET): void {
-                fseek($this->resource, $offset, $whence);
-            }
-
-            public function rewind(): void {
-                rewind($this->resource);
-            }
-
-            public function write(string $string): int {
-                return fwrite($this->resource, $string);
-            }
-
-            public function read(int $length): string {
-                return fread($this->resource, $length);
-            }
-
-            public function getContents(): string {
-                return stream_get_contents($this->resource);
-            }
-
-            public function getMetadata(?string $key = null): ?array {
-                $metadata = stream_get_meta_data($this->resource);
-                return $key !== null ? ($metadata[$key] ?? null) : $metadata;
-            }
-        };
-    }
-
-    public static function create(
-        array $serverParams = [],
-        array $queryParams = [],
-        array $parsedBody = [],
-        UriInterface|null $uri = null,
-    ): self {
-        $uri ??= new UriBuilder(scheme: 'http', host: 'localhost');
-
-        return new self(
-            serverRequest: new ServerRequest(
-                body: new RequestBody(stream: self::createStream('')),
-                serverParams: $serverParams,
-                queryParams: $queryParams,
-                parsedBody: new ParsedBody(data: $parsedBody),
-                uri: $uri,
-            )
-        );
-    }
-
-    /** PSR-7 Implementation via Delegation **/
-
-    public function getProtocolVersion(): string
-    {
-        return $this->serverRequest->protocolVersion;
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withProtocolVersion($version): static
-    {
-        return new self(serverRequest: $this->serverRequest->withProtocolVersion(version: $version));
-    }
-
-    #[Override]
-    public function hasHeader($name): bool
-    {
-        return $this->serverRequest->hasHeader(name: $name);
-    }
-
-    #[Override]
-    public function getHeader($name): array
-    {
-        return $this->serverRequest->getHeader(name: $name);
-    }
-
-    #[Override]
-    public function getHeaderLine($name): string
-    {
-        return $this->serverRequest->getHeaderLine(name: $name);
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withHeader($name, $value): static
-    {
-        return new self(serverRequest: $this->serverRequest->withHeader(name: $name, value: $value));
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withAddedHeader($name, $value): static
-    {
-        return new self(serverRequest: $this->serverRequest->withAddedHeader(name: $name, value: $value));
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withoutHeader($name): static
-    {
-        return new self(serverRequest: $this->serverRequest->withoutHeader(name: $name));
-    }
-
-    #[Override]
-    public function getBody(): StreamInterface
-    {
-        return $this->serverRequest->getBody();
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withBody(StreamInterface $body): static
-    {
-        return new self(serverRequest: $this->serverRequest->withBody(body: $body));
-    }
-
-    public function getRequestTarget(): string
-    {
-        return $this->serverRequest->requestTarget ?? '/';
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withRequestTarget($requestTarget): static
-    {
-        return new self(serverRequest: $this->serverRequest->withRequestTarget(requestTarget: $requestTarget));
-    }
-
-    public function getMethod(): string
-    {
-        return $this->serverRequest->method;
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withMethod($method): static
-    {
-        return new self(serverRequest: $this->serverRequest->withMethod(method: $method));
-    }
-
-    public function getUri(): UriInterface
-    {
-        return $this->serverRequest->uri;
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withUri(UriInterface $uri, $preserveHost = false): static
-    {
-        return new self(serverRequest: $this->serverRequest->withUri(uri: $uri, preserveHost: $preserveHost));
-    }
-
-    public function getServerParams(): array
-    {
-        return $this->serverRequest->serverParams;
-    }
-
-    public function getCookieParams(): array
-    {
-        return $this->serverRequest->getCookieParams();
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withCookieParams(array $cookies): static
-    {
-        return new self(serverRequest: $this->serverRequest->withCookieParams(cookies: $cookies));
-    }
-
-    public function getQueryParams(): array
-    {
-        return $this->serverRequest->queryParams;
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withQueryParams(array $query): static
-    {
-        return new self(serverRequest: $this->serverRequest->withQueryParams(query: $query));
-    }
-
-    public function getUploadedFiles(): array
-    {
-        return $this->serverRequest->getUploadedFiles();
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withUploadedFiles(array $uploadedFiles): static
-    {
-        return new self(serverRequest: $this->serverRequest->withUploadedFiles(uploadedFiles: $uploadedFiles));
-    }
-
-    public function getParsedBody(): array|object|null
-    {
-        return $this->serverRequest->getParsedBody();
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withParsedBody($data): static
-    {
-        return new self(serverRequest: $this->serverRequest->withParsedBody(data: $data));
-    }
-
-    #[Override]
-    public function getAttributes(): array
-    {
-        return $this->serverRequest->getAttributes();
-    }
-
-    #[Override]
-    public function getAttribute($name, $default = null): mixed
-    {
-        return $this->serverRequest->getAttribute(name: $name, default: $default);
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withAttribute($name, $value): static
-    {
-        return new self(serverRequest: $this->serverRequest->withAttribute(name: $name, value: $value));
-    }
-
-    #[Override]
-    #[NoDiscard]
-    public function withoutAttribute($name): static
-    {
-        return new self(serverRequest: $this->serverRequest->withoutAttribute(name: $name));
-    }
-
-    /** Legacy Helpers (Map to DSL) **/
-    public function input(string $key, mixed $default = null): mixed
-    {
-        return $this->serverRequest->inputs()->get(key: $key, default: $default);
-    }
-
-    public function all(): array
-    {
-        return $this->serverRequest->inputs()->all();
-    }
-
-    public function query(string $key, mixed $default = null): mixed
-    {
-        return $this->serverRequest->inputs()->get(key: $key, default: $default);
-    }
-
-    public function has(string $key): bool
-    {
-        $inputs = $this->serverRequest->inputs();
-        $all = $inputs->all();
-        return array_key_exists($key, $all);
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $this->input(key: $key, default: $default);
-    }
-
-    public function session(string|null $key = null, mixed $default = null): mixed
-    {
-        return $this->serverRequest->requestSession()?->get(key: $key ?? '', default: $default) ?? $default;
-    }
-
-    public function hasSession(string $key): bool
-    {
-        return $this->serverRequest->requestSession()?->has(key: $key) ?? false;
-    }
-
-    public function putSession(string $key, mixed $value): void
-    {
-        $this->serverRequest->requestSession()?->put(key: $key, value: $value);
-    }
-
-    public function forgetSession(string $key): void
-    {
-        $this->serverRequest->requestSession()?->forget(key: $key);
-    }
-
-    public function path(): string
-    {
-        return $this->serverRequest->uri->getPath();
-    }
-
-    public function route(string $key, mixed $default = null): mixed
-    {
-        return $this->serverRequest->getAttribute(name: $key, default: $default);
-    }
-
-    public function user(): mixed
-    {
-        return $this->serverRequest->getAttribute(name: 'user');
     }
 }
 
@@ -1331,9 +1038,9 @@ final readonly class CreateRequestFromIncomingHttp
     /**
      * Entry point using superglobals.
      */
-    public static function capture() : ServerRequest
+    public static function capture(): ServerRequest
     {
-        return (new self())->execute(
+        return (new self)->execute(
             server: $_SERVER,
             query : $_GET,
             cookie: $_COOKIE,
@@ -1350,42 +1057,43 @@ final readonly class CreateRequestFromIncomingHttp
         array|null $cookie = null,
         array|null $files = null,
         mixed      $body = null
-    ) : ServerRequest
-    {
+    ): ServerRequest {
         // 1. Resolve URI
-        $query  ??= [];
+        $query ??= [];
         $cookie ??= [];
-        $files  ??= [];
-        $uri    = $this->createUri(server: $server);
+        $files ??= [];
+        $uri = $this->createUri(server: $server);
 
         // 2. Pre-process headers
-        $headers        = $this->extractHeaders(server: $server);
+        $headers = $this->extractHeaders(server: $server);
         $requestHeaders = new RequestHeaders(headers: $headers);
 
         // 3. Resolve body
         $bodyOwner = $this->resolveBody(body: $body);
 
         // 4. Parse body if needed
-        $contentType    = $requestHeaders->getLine(name: 'Content-Type');
-        $parsedBodyData = (new ParseBodyByContentType())->execute(contentType: $contentType, content: $bodyOwner->content());
-        $parsedBody     = new ParsedBody(data: $parsedBodyData);
+        $contentType = $requestHeaders->getLine(name: 'Content-Type');
+        $parsedBodyData = (new ParseBodyByContentType)->execute(contentType: $contentType, content: $bodyOwner->content());
+        $parsedBody = new ParsedBody(data: $parsedBodyData);
 
         // 5. Build ServerRequest
         return new ServerRequest(
-            body           : $bodyOwner,
-            method         : $server['REQUEST_METHOD'] ?? 'GET',
-            uri            : $uri,
-            headers        : $requestHeaders,
-            serverParams   : $server,
-            cookies        : new RequestCookies(cookies: $cookie),
-            queryParams    : $query,
-            uploadedFiles  : new UploadedFiles(files: (new NormalizeUploadedFiles())->execute(files: $files)),
-            parsedBody     : $parsedBody,
-            protocolVersion: (new NormalizeProtocolVersion())->execute(protocol: $server['SERVER_PROTOCOL'] ?? '1.1')
+            body          : $bodyOwner,
+            method        : $server['REQUEST_METHOD'] ?? 'GET',
+            uri           : $uri,
+            requestHeaders: $requestHeaders,
+            serverParams  : $server,
+            requestTarget : new RequestCookies(cookies: $cookie ?? []),
+            cookies       : $query ?? [],
+            queryParams   : new UploadedFiles(files: (new NormalizeUploadedFiles)->execute(files: $files)),
+            uploadedFiles : $parsedBody,
+            parsedBody    : null,
+            attributes    : null,
+            session       : (new NormalizeProtocolVersion)->execute(protocol: $server['SERVER_PROTOCOL'] ?? '1.1')
         );
     }
 
-    private function resolveBody(mixed $body) : RequestBody
+    private function resolveBody(mixed $body): RequestBody
     {
         if ($body instanceof RequestBody) {
             return $body;
@@ -1399,693 +1107,35 @@ final readonly class CreateRequestFromIncomingHttp
 
         // Safety check for fopen
         if ($streamHandle === false) {
-             $streamHandle = fopen('php://temp', 'r+');
+            $streamHandle = fopen('php://temp', 'r+');
         }
 
         return new RequestBody(stream: new Stream(stream: $streamHandle));
     }
 
-    private function createUri(array $server) : UriBuilder
+    private function createUri(array $server): UriBuilder
     {
         $protocol = (empty($server['HTTPS']) || $server['HTTPS'] === 'off') ? 'http' : 'https';
-        $host     = $server['HTTP_HOST'] ?? 'localhost';
-        $uri      = $server['REQUEST_URI'] ?? '/';
+        $host = $server['HTTP_HOST'] ?? 'localhost';
+        $uri = $server['REQUEST_URI'] ?? '/';
 
         return UriBuilder::createFromString(uri: "$protocol://$host$uri");
     }
 
-    private function extractHeaders(array $server) : array
+    private function extractHeaders(array $server): array
     {
         $headers = [];
         foreach ($server as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {
-                $name           = str_replace('_', '-', substr($key, 5));
+                $name = str_replace('_', '-', substr($key, 5));
                 $headers[$name] = $value;
             } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
-                $name           = str_replace('_', '-', $key);
+                $name = str_replace('_', '-', $key);
                 $headers[$name] = $value;
             }
         }
 
         return $headers;
-    }
-}
-
-=== ServerRequest/IncomingRequest/Inputs/DTO/InputValueDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-
-/**
- * InputValueDTO - Single input value with type information.
- *
- * Wraps a single input value with its key and provides
- * convenient accessors for different types.
- */
-class InputValueDTO extends AbstractDTO
-{
-    public function __construct(
-        public readonly string $key,
-        public readonly mixed $value,
-        public readonly string $source = 'auto'
-    ) {}
-
-    public static function fromQuery(string $key, mixed $value): self
-    {
-        return new self(key: $key, value: $value, source: 'query');
-    }
-
-    public static function fromBody(string $key, mixed $value): self
-    {
-        return new self(key: $key, value: $value, source: 'body');
-    }
-
-    public function isNull(): bool
-    {
-        return $this->value === null;
-    }
-
-    public function isEmpty(): bool
-    {
-        return $this->value === null || $this->value === '' || $this->value === [];
-    }
-
-    public function string(string $default = ''): string
-    {
-        if ($this->value === null) {
-            return $default;
-        }
-        return is_scalar($this->value) ? (string) $this->value : $default;
-    }
-
-    public function int(int $default = 0): int
-    {
-        if ($this->value === null) {
-            return $default;
-        }
-        return filter_var($this->value, FILTER_VALIDATE_INT) !== false
-            ? (int) $this->value
-            : $default;
-    }
-
-    public function float(float $default = 0.0): float
-    {
-        if ($this->value === null) {
-            return $default;
-        }
-        return filter_var($this->value, FILTER_VALIDATE_FLOAT) !== false
-            ? (float) $this->value
-            : $default;
-    }
-
-    public function bool(bool $default = false): bool
-    {
-        if ($this->value === null) {
-            return $default;
-        }
-        return filter_var($this->value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $default;
-    }
-
-    public function array(array $default = []): array
-    {
-        if ($this->value === null) {
-            return $default;
-        }
-        return is_array($this->value) ? $this->value : $default;
-    }
-
-    public function enum(string $enumClass, mixed $default = null): mixed
-    {
-        if ($this->value === null || !enum_exists($enumClass)) {
-            return $default;
-        }
-
-        $enum = $enumClass::tryFrom($this->value);
-        return $enum ?? $default;
-    }
-}
-
-=== ServerRequest/IncomingRequest/Inputs/DTO/InputsDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-
-/**
- * InputsDTO - Unified request inputs DTO.
- *
- * Combines query parameters and parsed body into a single strongly-typed DTO.
- * Provides priority-based access (body takes precedence over query).
- *
- * Usage:
- * ```php
- * // Define a typed DTO
- * class UserCreateDTO extends AbstractDTO {
- *     public string $email;
- *     public string $name;
- *     public int $age = 18;
- * }
- *
- * // Use with InputsDTO
- * $inputs = InputsDTO::fromSlices(
- *     queryParams: ['page' => '1'],
- *     parsedBody: ['email' => 'test@example.com', 'name' => 'John']
- * );
- *
- * // Get as typed DTO
- * $user = $inputs->as(UserCreateDTO::class);
- * ```
- */
-class InputsDTO extends AbstractDTO
-{
-    /** @var array<string, mixed> */
-    public array $query = [];
-
-    /** @var array<string, mixed> */
-    public array $body = [];
-
-    public static function fromSlices(array $queryParams, array|object|null $parsedBody): self
-    {
-        $body = self::normalizeBody($parsedBody);
-
-        return new self(data: [
-            'query' => $queryParams,
-            'body' => $body,
-        ]);
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self(data: $data);
-    }
-
-    private static function normalizeBody(array|object|null $parsedBody): array
-    {
-        if ($parsedBody === null) {
-            return [];
-        }
-
-        if (is_object($parsedBody) && !$parsedBody instanceof self) {
-            return (array) $parsedBody;
-        }
-
-        return is_array($parsedBody) ? $parsedBody : [];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function all(): array
-    {
-        return array_merge($this->query, $this->body);
-    }
-
-    /**
-     * Get merged inputs (body takes precedence).
-     *
-     * @return array<string, mixed>
-     */
-    public function merged(): array
-    {
-        return $this->all();
-    }
-
-    /**
-     * Get input value with priority: body > query.
-     */
-    public function get(string $key, mixed $default = null): mixed
-    {
-        if (isset($this->body[$key])) {
-            return $this->body[$key];
-        }
-
-        return $this->query[$key] ?? $default;
-    }
-
-    public function has(string $key): bool
-    {
-        return isset($this->body[$key]) || isset($this->query[$key]);
-    }
-
-    public function hasInBody(string $key): bool
-    {
-        return isset($this->body[$key]);
-    }
-
-    public function hasInQuery(string $key): bool
-    {
-        return isset($this->query[$key]);
-    }
-
-    /**
-     * Get input value only from body.
-     */
-    public function fromBody(string $key, mixed $default = null): mixed
-    {
-        return $this->body[$key] ?? $default;
-    }
-
-    /**
-     * Get input value only from query.
-     */
-    public function fromQuery(string $key, mixed $default = null): mixed
-    {
-        return $this->query[$key] ?? $default;
-    }
-
-    /**
-     * Map inputs to a typed DTO class.
-     *
-     * @template T of AbstractDTO
-     * @param class-string<T> $dtoClass
-     * @return T
-     */
-    public function as(string $dtoClass): AbstractDTO
-    {
-        return new $dtoClass($this->all());
-    }
-
-    /**
-     * Get only specified keys from merged inputs.
-     *
-     * @param array<string> $keys
-     * @return array<string, mixed>
-     */
-    public function only(array $keys): array
-    {
-        $result = [];
-        $merged = $this->all();
-
-        foreach ($keys as $key) {
-            if (isset($merged[$key])) {
-                $result[$key] = $merged[$key];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get all keys except specified from merged inputs.
-     *
-     * @param array<string> $keys
-     * @return array<string, mixed>
-     */
-    public function except(array $keys): array
-    {
-        $result = [];
-        $merged = $this->all();
-
-        foreach ($merged as $key => $value) {
-            if (!in_array($key, $keys, true)) {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get input as typed value.
-     */
-    public function string(string $key, string $default = ''): string
-    {
-        $value = $this->get($key);
-        return is_scalar($value) ? (string) $value : $default;
-    }
-
-    public function int(string $key, int $default = 0): int
-    {
-        $value = $this->get($key);
-        return filter_var($value, FILTER_VALIDATE_INT) !== false ? (int) $value : $default;
-    }
-
-    public function float(string $key, float $default = 0.0): float
-    {
-        $value = $this->get($key);
-        return filter_var($value, FILTER_VALIDATE_FLOAT) !== false ? (float) $value : $default;
-    }
-
-    public function bool(string $key, bool $default = false): bool
-    {
-        $value = $this->get($key);
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $default;
-    }
-
-    /**
-     * @param array<string, mixed> $default
-     * @return array<string, mixed>
-     */
-    public function array(string $key, array $default = []): array
-    {
-        $value = $this->get($key);
-        return is_array($value) ? $value : $default;
-    }
-
-    /**
-     * Get input as enum value.
-     *
-     * @template T of \BackedEnum
-     * @param string $key
-     * @param class-string<T> $enumClass
-     * @param T|null $default
-     * @return T|null
-     */
-    public function enum(string $key, string $enumClass, mixed $default = null): ?\BackedEnum
-    {
-        $value = $this->get($key);
-
-        if ($value === null) {
-            return $default;
-        }
-
-        return $enumClass::tryFrom($value) ?? $default;
-    }
-}
-
-=== ServerRequest/IncomingRequest/Inputs/DTO/ParsedBodyDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-
-/**
- * ParsedBodyDTO - Strongly typed parsed body DTO.
- *
- * Provides automatic type casting and validation for parsed body data.
- * Supports nested DTOs, arrays of DTOs, and BackedEnums.
- */
-class ParsedBodyDTO extends AbstractDTO
-{
-    public static function fromArray(array|object|null $data): self
-    {
-        if ($data === null) {
-            return new self(data: []);
-        }
-
-        if (is_object($data) && !$data instanceof self) {
-            $data = (array) $data;
-        }
-
-        return new self(data: is_array($data) ? $data : []);
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $this->{$key} ?? $default;
-    }
-
-    public function has(string $key): bool
-    {
-        return isset($this->{$key});
-    }
-
-    public function only(array $keys): array
-    {
-        $result = [];
-        foreach ($keys as $key) {
-            if ($this->has($key)) {
-                $result[$key] = $this->{$key};
-            }
-        }
-        return $result;
-    }
-
-    public function except(array $keys): array
-    {
-        $result = [];
-        foreach (get_object_vars($this) as $key => $value) {
-            if (!in_array($key, $keys, true)) {
-                $result[$key] = $value;
-            }
-        }
-        return $result;
-    }
-}
-
-=== ServerRequest/IncomingRequest/Inputs/DTO/QueryParamsDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use ReflectionException;
-
-/**
- * QueryParamsDTO - Strongly typed query parameters DTO.
- *
- * Provides automatic type casting for query parameters.
- * Supports nested DTOs, arrays of DTOs, and BackedEnums.
- */
-class QueryParamsDTO extends AbstractDTO
-{
-    /**
-     * @throws ReflectionException
-     */
-    public static function fromArray(array $params): self
-    {
-        return new self(data: $params);
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $this->{$key} ?? $default;
-    }
-
-    public function has(string $key): bool
-    {
-        return isset($this->{$key});
-    }
-
-    public function only(array $keys): array
-    {
-        $result = [];
-        foreach ($keys as $key) {
-            if ($this->has($key)) {
-                $result[$key] = $this->{$key};
-            }
-        }
-        return $result;
-    }
-
-    public function except(array $keys): array
-    {
-        $result = [];
-        foreach (get_object_vars($this) as $key => $value) {
-            if (!in_array($key, $keys, true)) {
-                $result[$key] = $value;
-            }
-        }
-        return $result;
-    }
-}
-
-=== ServerRequest/IncomingRequest/Inputs/Examples/LoginDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use Avax\DataHandling\Validation\Attributes\Rules\Required;
-use Avax\DataHandling\Validation\Attributes\Rules\Email;
-use Avax\DataHandling\Validation\Attributes\Rules\Min;
-
-/**
- * LoginDTO - Example of validated Login Request DTO.
- *
- * Usage:
- * ```php
- * $dto = $request->inputs()->as(LoginDTO::class);
- * ```
- */
-class LoginDTO extends AbstractDTO
-{
-    #[Required]
-    #[Email]
-    public string $email;
-
-    #[Required]
-    #[Min(1)]
-    public string $password;
-
-    public bool $remember_me = false;
-}
-
-=== ServerRequest/IncomingRequest/Inputs/Examples/UserRegistrationDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples;
-
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use Avax\DataHandling\Validation\Attributes\Rules\Email;
-use Avax\DataHandling\Validation\Attributes\Rules\Required;
-use Avax\DataHandling\Validation\Attributes\Rules\Min;
-use Avax\DataHandling\Validation\Attributes\Rules\Max;
-use Avax\DataHandling\Validation\Attributes\Rules\RegexException;
-
-/**
- * UserRegistrationDTO - Example of validated Request DTO.
- *
- * Demonstrates declarative validation through PHP 8 attributes.
- * Validation runs automatically during hydration from request inputs.
- *
- * Usage:
- * ```php
- * $dto = $request->inputs()->as(UserRegistrationDTO::class);
- * // Automatically validates all fields
- * ```
- */
-class UserRegistrationDTO extends AbstractDTO
-{
-    #[Required]
-    #[Min(2)]
-    #[Max(100)]
-    public string $name;
-
-    #[Required]
-    #[Email]
-    public string $email;
-
-    #[Required]
-    #[Min(8)]
-    #[RegexException(
-        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
-        message: 'Password must contain uppercase, lowercase and number'
-    )]
-    public string $password;
-
-    #[Min(18)]
-    #[Max(120)]
-    public int $age = 18;
-
-    public ?string $phone = null;
-}
-
-=== ServerRequest/IncomingRequest/Inputs/Examples/UserRegistrationDTOTest.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
-
-use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples\UserRegistrationDTO;
-use PHPUnit\Framework\TestCase;
-
-final class UserRegistrationDTOTest extends TestCase
-{
-    public function test_valid_data_hydrates_successfully(): void
-    {
-        $dto = new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'SecurePass123',
-            'age' => 25,
-        ]);
-
-        $this->assertSame('John Doe', $dto->name);
-        $this->assertSame('john@example.com', $dto->email);
-        $this->assertSame('SecurePass123', $dto->password);
-        $this->assertSame(25, $dto->age);
-    }
-
-    public function test_validates_email_format(): void
-    {
-        $this->expectException(DTOValidationException::class);
-
-        new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'not-an-email',
-            'password' => 'SecurePass123',
-        ]);
-    }
-
-    public function test_validates_password_min_length(): void
-    {
-        $this->expectException(DTOValidationException::class);
-
-        new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'short', // too short
-        ]);
-    }
-
-    public function test_validates_password_complexity(): void
-    {
-        $this->expectException(DTOValidationException::class);
-
-        new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'alllowercase123', // no uppercase
-        ]);
-    }
-
-    public function test_validates_age_minimum(): void
-    {
-        $this->expectException(DTOValidationException::class);
-
-        new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'SecurePass123',
-            'age' => 15, // below minimum 18
-        ]);
-    }
-
-    public function test_optional_phone_is_nullable(): void
-    {
-        $dto = new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'SecurePass123',
-        ]);
-
-        $this->assertNull($dto->phone);
-    }
-
-    public function test_age_has_default_value(): void
-    {
-        $dto = new UserRegistrationDTO(data: [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'SecurePass123',
-        ]);
-
-        $this->assertSame(18, $dto->age);
-    }
-
-    public function test_collects_all_validation_errors(): void
-    {
-        try {
-            new UserRegistrationDTO(data: [
-                'name' => 'J', // too short
-                'email' => 'invalid',
-                'password' => 'x',
-            ]);
-            $this->fail('Expected DTOValidationException');
-        } catch (DTOValidationException $e) {
-            $this->assertArrayHasKey('name', $e->errors);
-            $this->assertArrayHasKey('email', $e->errors);
-            $this->assertArrayHasKey('password', $e->errors);
-        }
     }
 }
 
@@ -2703,6 +1753,770 @@ final readonly class ReadRequestTarget
     }
 }
 
+=== ServerRequest/IncomingRequest/RequestedInputs/Inputs/AccessesTypedValues.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs;
+
+use BackedEnum;
+use Stringable;
+
+/**
+ * AccessesTypedValues
+ *
+ * Shared typed read helpers for key-value input bags.
+ *
+ * Important semantic rule:
+ * - key presence uses array_key_exists()
+ * - null is treated as "present but null"
+ *
+ * That keeps request semantics honest.
+ */
+trait AccessesTypedValues
+{
+    /**
+     * @return array<string, mixed>
+     */
+    abstract protected function data(): array;
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $data = $this->data();
+
+        return array_key_exists($key, $data)
+            ? $data[$key]
+            : $default;
+    }
+
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->data());
+    }
+
+    public function hasNonNull(string $key): bool
+    {
+        return $this->has($key) && $this->get($key) !== null;
+    }
+
+    /**
+     * @param  array<int, string>  $keys
+     * @return array<string, mixed>
+     */
+    public function only(array $keys): array
+    {
+        $result = [];
+        $data = $this->data();
+
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $data)) {
+                $result[$key] = $data[$key];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param  array<int, string>  $keys
+     * @return array<string, mixed>
+     */
+    public function except(array $keys): array
+    {
+        $result = $this->data();
+
+        foreach ($keys as $key) {
+            unset($result[$key]);
+        }
+
+        return $result;
+    }
+
+    public function string(string $key, string $default = ''): string
+    {
+        $value = $this->get($key);
+
+        return $this->toString($value) ?? $default;
+    }
+
+    public function int(string $key, int $default = 0): int
+    {
+        $value = $this->normalizeScalar($this->get($key));
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $filtered = filter_var($value, FILTER_VALIDATE_INT);
+
+        return $filtered !== false
+            ? (int) $filtered
+            : $default;
+    }
+
+    public function float(string $key, float $default = 0.0): float
+    {
+        $value = $this->normalizeScalar($this->get($key));
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $filtered = filter_var($value, FILTER_VALIDATE_FLOAT);
+
+        return $filtered !== false
+            ? (float) $filtered
+            : $default;
+    }
+
+    public function bool(string $key, bool $default = false): bool
+    {
+        $value = $this->normalizeScalar($this->get($key));
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $lower = strtolower($value);
+        if ($lower === \true\ || $lower === \1\) {
+            return true;
+        }
+        if ($lower === \false\ || $lower === \0\) {
+            return false;
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function array(string $key, array $default = []): array
+    {
+        $value = $this->get($key);
+
+        return is_array($value)
+            ? $value
+            : $default;
+    }
+
+    /**
+     * @template T of BackedEnum
+     *
+     * @param  class-string<T>  $enumClass
+     * @return T|null
+     */
+    public function enum(string $key, string $enumClass, mixed $default = null): ?BackedEnum
+    {
+        $value = $this->get($key);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        if (! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
+            return $default;
+        }
+
+        /** @var T|null $enum */
+        $enum = $enumClass::tryFrom($value);
+
+        return $enum ?? $default;
+    }
+
+    private function toString(mixed $value): ?string
+    {
+        if (is_scalar($value) || $value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        return null;
+    }
+
+    private function normalizeScalar(mixed $value): string|int|float|bool|null
+    {
+        if (is_scalar($value)) {
+            return $value;
+        }
+
+        if ($value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        return null;
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Inputs/InputValue.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
+
+use BackedEnum;
+use Stringable;
+
+/**
+ * InputValue
+ *
+ * Single requested input value with source information.
+ */
+final readonly class InputValue
+{
+    public const SOURCE_BODY = 'body';
+    public const SOURCE_QUERY = 'query';
+    public const SOURCE_MISSING = 'missing';
+
+    public function __construct(
+        public string $key,
+        public mixed $value,
+        public string $source,
+    ) {}
+
+    public static function fromQuery(string $key, mixed $value): self
+    {
+        return new self(
+            key: $key,
+            value: $value,
+            source: self::SOURCE_QUERY,
+        );
+    }
+
+    public static function fromBody(string $key, mixed $value): self
+    {
+        return new self(
+            key: $key,
+            value: $value,
+            source: self::SOURCE_BODY,
+        );
+    }
+
+    public static function missing(string $key, mixed $default = null): self
+    {
+        return new self(
+            key: $key,
+            value: $default,
+            source: self::SOURCE_MISSING,
+        );
+    }
+
+    public function exists(): bool
+    {
+        return $this->source !== self::SOURCE_MISSING;
+    }
+
+    public function isFromBody(): bool
+    {
+        return $this->source === self::SOURCE_BODY;
+    }
+
+    public function isFromQuery(): bool
+    {
+        return $this->source === self::SOURCE_QUERY;
+    }
+
+    public function isNull(): bool
+    {
+        return $this->value === null;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->value === null
+            || $this->value === ''
+            || $this->value === [];
+    }
+
+    public function string(string $default = ''): string
+    {
+        if (is_scalar($this->value) || $this->value instanceof Stringable) {
+            return (string) $this->value;
+        }
+
+        return $default;
+    }
+
+    public function int(int $default = 0): int
+    {
+        $value = $this->normalizeScalar($this->value);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $filtered = filter_var($value, FILTER_VALIDATE_INT);
+
+        return $filtered !== false
+            ? (int) $filtered
+            : $default;
+    }
+
+    public function float(float $default = 0.0): float
+    {
+        $value = $this->normalizeScalar($this->value);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $filtered = filter_var($value, FILTER_VALIDATE_FLOAT);
+
+        return $filtered !== false
+            ? (float) $filtered
+            : $default;
+    }
+
+    public function bool(bool $default = false): bool
+    {
+        $value = $this->normalizeScalar($this->value);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        return filter_var(
+            $value,
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE,
+        ) ?? $default;
+    }
+
+    /**
+     * @param array<string, mixed> $default
+     * @return array<string, mixed>
+     */
+    public function array(array $default = []): array
+    {
+        return is_array($this->value)
+            ? $this->value
+            : $default;
+    }
+
+    /**
+     * @template T of BackedEnum
+     * @param class-string<T> $enumClass
+     * @return T|null
+     */
+    public function enum(string $enumClass, mixed $default = null): ?BackedEnum
+    {
+        if ($this->value === null) {
+            return $default;
+        }
+
+        if (!enum_exists($enumClass) || !is_subclass_of($enumClass, BackedEnum::class)) {
+            return $default;
+        }
+
+        /** @var T|null $enum */
+        $enum = $enumClass::tryFrom($this->value);
+
+        return $enum ?? $default;
+    }
+
+    /**
+     * @return string|int|float|bool|null
+     */
+    private function normalizeScalar(mixed $value): string|int|float|bool|null
+    {
+        if (is_scalar($value)) {
+            return $value;
+        }
+
+        if ($value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        return null;
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Inputs/MergedInputs.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs;
+
+/**
+ * MergedInputs
+ *
+ * Internal merged view over query params and parsed body.
+ *
+ * Merge rule:
+ * - body wins over query when the same key exists in both places
+ */
+final readonly class MergedInputs
+{
+    use AccessesTypedValues;
+
+    private QueryParams $queryParams;
+
+    private ParsedBody $parsedBody;
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $merged;
+
+    public function __construct(
+        ?QueryParams $queryParams = null,
+        ?ParsedBody $parsedBody = null,
+    ) {
+        $this->queryParams = $queryParams ?? new QueryParams;
+        $this->parsedBody = $parsedBody ?? new ParsedBody;
+
+        $this->merged = array_merge(
+            $this->queryParams->all(),
+            $this->parsedBody->all(),
+        );
+    }
+
+    public static function fromSlices(
+        array $queryParams = [],
+        array|object|null $parsedBody = null,
+    ): self {
+        return new self(
+            queryParams: QueryParams::fromArray($queryParams),
+            parsedBody: ParsedBody::fromArray($parsedBody),
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function data(): array
+    {
+        return $this->merged;
+    }
+
+    public function query(): QueryParams
+    {
+        return $this->queryParams;
+    }
+
+    public function body(): ParsedBody
+    {
+        return $this->parsedBody;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->merged;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function merged(): array
+    {
+        return $this->merged;
+    }
+
+    public function hasInput(): bool
+    {
+        return $this->merged !== [];
+    }
+
+    public function hasInBody(string $key): bool
+    {
+        return $this->parsedBody->has($key);
+    }
+
+    public function hasInQuery(string $key): bool
+    {
+        return $this->queryParams->has($key);
+    }
+
+    public function fromBody(string $key, mixed $default = null): mixed
+    {
+        return $this->parsedBody->get($key, $default);
+    }
+
+    public function fromQuery(string $key, mixed $default = null): mixed
+    {
+        return $this->queryParams->get($key, $default);
+    }
+
+    public function value(string $key, mixed $default = null): InputValue
+    {
+        if ($this->parsedBody->has($key)) {
+            return InputValue::fromBody(
+                key: $key,
+                value: $this->parsedBody->get($key),
+            );
+        }
+
+        if ($this->queryParams->has($key)) {
+            return InputValue::fromQuery(
+                key: $key,
+                value: $this->queryParams->get($key),
+            );
+        }
+
+        return InputValue::missing(
+            key: $key,
+            default: $default,
+        );
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Inputs/ParsedBody.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs;
+
+/**
+ * ParsedBody
+ *
+ * Strongly-typed wrapper for parsed body input.
+ */
+final readonly class ParsedBody
+{
+    use AccessesTypedValues;
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $data;
+
+    public function __construct(array|object|null $data = null)
+    {
+        $this->data = self::normalize($data);
+    }
+
+    public static function fromArray(array|object|null $data): self
+    {
+        return new self($data);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function data(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function normalize(array|object|null $data): array
+    {
+        if ($data === null) {
+            return [];
+        }
+
+        if (is_array($data)) {
+            return $data;
+        }
+
+        return get_object_vars($data);
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Inputs/QueryParams.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs;
+
+/**
+ * QueryParams
+ *
+ * Strongly-typed wrapper for query parameter input.
+ */
+final readonly class QueryParams
+{
+    use AccessesTypedValues;
+
+    /**
+     * @param  array<string, mixed>  $params
+     */
+    public function __construct(
+        private array $params = [],
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $params
+     */
+    public static function fromArray(array $params): self
+    {
+        return new self($params);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function data(): array
+    {
+        return $this->params;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->params;
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Mapping/.gitkeep ===
+
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Mapping/MapRequestedInputsToDto.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
+
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use InvalidArgumentException;
+use RuntimeException;
+
+/**
+ * MapRequestedInputsToDto
+ *
+ * DTO mapping adapter for RequestedInputs -> AbstractDTO.
+ *
+ * This is a thin adapter layer, not a full generic mapper.
+ * It delegates hydration and validation to the project's
+ * AbstractDTO component.
+ */
+final readonly class MapRequestedInputsToDto
+{
+    /**
+     * @template T of AbstractDTO
+     *
+     * @param  class-string<T>  $dtoClass  Must extend AbstractDTO and accept array payload
+     * @return T
+     *
+     * @throws InvalidArgumentException When class does not exist or is not instantiable
+     * @throws RuntimeException When DTO instantiation fails or does not extend AbstractDTO
+     */
+    public function map(RequestedInputs $inputs, string $dtoClass): object
+    {
+        if (! class_exists($dtoClass)) {
+            throw new InvalidArgumentException(
+                sprintf('DTO class does not exist: %s', $dtoClass)
+            );
+        }
+
+        try {
+            /** @var T $dto */
+            $dto = new $dtoClass($inputs->all());
+        } catch (\ReflectionException $e) {
+            throw new InvalidArgumentException(
+                sprintf('Failed to instantiate DTO "%s": %s', $dtoClass, $e->getMessage()),
+                previous: $e,
+            );
+        }
+
+        if (! $dto instanceof AbstractDTO) {
+            throw new RuntimeException(
+                sprintf('DTO class "%s" must extend %s', $dtoClass, AbstractDTO::class)
+            );
+        }
+
+        return $dto;
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Pipeline/MergeRequestedInputs.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Pipeline;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\MergedInputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\QueryParams;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\ParsedBody;
+
+final class MergeRequestedInputs
+{
+    public function __construct(
+        private QueryParams $queryParams,
+        private ParsedBody $parsedBody,
+    ) {
+    }
+
+    public function get(): MergedInputs
+    {
+        return new MergedInputs(
+            queryParams: $this->queryParams,
+            parsedBody: $this->parsedBody,
+        );
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Pipeline/ReadParsedBody.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Pipeline;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\ParsedBody;
+
+final class ReadParsedBody
+{
+    /**
+     * @param array<mixed>|object|null $parsedBody
+     */
+    public function __construct(private array|object|null $parsedBody)
+    {
+    }
+
+    public function get(): ParsedBody
+    {
+        return ParsedBody::fromArray($this->parsedBody);
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Pipeline/ReadQueryParams.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Pipeline;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\QueryParams;
+
+final class ReadQueryParams
+{
+    /**
+     * @param array<string, mixed> $queryParams
+     */
+    public function __construct(private array $queryParams)
+    {
+    }
+
+    public function get(): QueryParams
+    {
+        return QueryParams::fromArray($this->queryParams);
+    }
+}
+
 === ServerRequest/IncomingRequest/RequestedInputs/RequestedInputs.php ===
 <?php
 
@@ -2711,186 +2525,499 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
 
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
 use BackedEnum;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\MergedInputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\QueryParams;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\SanitizedRequestedInputs;
+use RuntimeException;
 
 /**
- * Capability Owner: Provides a DSL-friendly way to access request inputs.
+ * RequestedInputs
  *
- * Aggregates Query Parameters and Parsed Body data.
- * Delegates to InputsDTO for strongly-typed operations.
+ * Root flow-owner for the RequestedInputs feature.
+ *
+ * Public API is intentionally pipeline-oriented for readability.
+ * Internal stages are exposed via private/protected methods so the
+ * top-level flow can be expressed clearly without exposing helpers.
+ *
+ * Typical usage:
+ *
+ *     $inputs = RequestedInputs::fromSlices($query, $body);
+ *     $email   = $inputs->string('email');
+ *     $safe    = $inputs->sanitized()->html('content');
+ *     $command = $inputs->as(CreateUserCommand::class);
+ *
+ * Key semantic rules preserved:
+ *   - key presence uses array_key_exists()
+ *   - null means "present but null"
+ *   - body wins over query on collision
  */
 final readonly class RequestedInputs
 {
-    public function __construct(
-        private InputsDTO $dto
-    ) {}
+    use \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\AccessesTypedValues;
+    use \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\InputValue;
+
+    private MergedInputs $merged;
+
+    private InputSanitizer $sanitizer;
+
+    private MapRequestedInputsToDto $mapper;
+
+    public function data(): array
+    {
+        return $this->merged->all();
+    }
 
     /**
+     * @param  array<string, mixed>  $queryParams
+     * @param  array<mixed>|object|null  $parsedBody
+     */
+    public function __construct(
+        array $queryParams = [],
+        array|object|null $parsedBody = null,
+        ?InputSanitizer $sanitizer = null,
+        ?MapRequestedInputsToDto $mapper = null,
+    ) {
+        $this->merged = $this->createMergedInputs($queryParams, $parsedBody);
+        $this->sanitizer = $sanitizer ?? new InputSanitizer;
+        $this->mapper = $mapper ?? new MapRequestedInputsToDto;
+    }
+
+    /**
+     * @param  array<string, mixed>  $queryParams
+     * @param  array<mixed>|object|null  $parsedBody
+     */
+    public static function fromSlices(
+        array $queryParams = [],
+        array|object|null $parsedBody = null,
+    ): self {
+        return new self($queryParams, $parsedBody);
+    }
+
+    /**
+     * Create from an associative array treated as merged input.
+     *
+     * Note: this is a convenience constructor for simple cases
+     * where input is already merged. It is semantically distinct
+     * from fromSlices because there is no separate query/body split.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self([], $data);
+    }
+
+    // ---------------------------------------------------------------------
+    // Stage 1: Source intake
+    // ---------------------------------------------------------------------
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function rawQueryParams(): array
+    {
+        return $this->merged->query()->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function rawParsedBody(): array
+    {
+        return $this->merged->body()->all();
+    }
+
+    // ---------------------------------------------------------------------
+    // Stage 2: Merge stage
+    // ---------------------------------------------------------------------
+
+    protected function createMergedInputs(array $queryParams, array|object|null $parsedBody): MergedInputs
+    {
+        return new MergedInputs(
+            queryParams: QueryParams::fromArray($queryParams),
+            parsedBody: ParsedBody::fromArray($parsedBody),
+        );
+    }
+
+    // ---------------------------------------------------------------------
+    // Stage 3: Typed read access (the primary read path)
+    // ---------------------------------------------------------------------
+
+    /**
+     * Get a value by key with source precedence:
+     * body > query > default.
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->merged->get($key, $default);
+    }
+
+    /**
+     * Check if key exists in either query or body.
+     *
+     * Uses array_key_exists() so a key present with null value returns true.
+     */
+    public function has(string $key): bool
+    {
+        return $this->merged->has($key);
+    }
+
+    /**
+     * Check if key exists and is not null.
+     */
+    public function hasNonNull(string $key): bool
+    {
+        return $this->merged->hasNonNull($key);
+    }
+
+    /**
+     * Access only from body.
+     */
+    public function fromBody(string $key, mixed $default = null): mixed
+    {
+        return $this->merged->fromBody($key, $default);
+    }
+
+    /**
+     * Access only from query.
+     */
+    public function fromQuery(string $key, mixed $default = null): mixed
+    {
+        return $this->merged->fromQuery($key, $default);
+    }
+
+    /**
+     * Return source-aware input value wrapper.
+     */
+    public function value(string $key, mixed $default = null): InputValue
+    {
+        return $this->merged->value($key, $default);
+    }
+
+    /**
+     * Return all merged inputs.
+     *
      * @return array<string, mixed>
      */
     public function all(): array
     {
-        return $this->dto->all();
+        return $this->merged->all();
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function query(): array
+    // ---------------------------------------------------------------------
+    // Stage 4: Convenience accessors (typed)
+    // ---------------------------------------------------------------------
+
+    public function text(string $key, string $default = ''): string
     {
-        return $this->dto->query;
+        return $this->string($key, $default);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function body(): array
+    public function string(string $key, string $default = ''): string
     {
-        return $this->dto->body;
-    }
-
-    /**
-     * Map the requested inputs to a DTO class.
-     *
-     * @template T of AbstractDTO
-     * @param class-string<T> $dtoClass The Fully Qualified Class Name of the DTO.
-     * @return T
-     */
-    public function as(string $dtoClass): AbstractDTO
-    {
-        return $this->dto->as($dtoClass);
-    }
-
-    public function bool(string $key, bool $default = false): bool
-    {
-        return $this->dto->bool($key, $default);
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $this->dto->get($key, $default);
+        return $this->merged->string($key, $default);
     }
 
     public function int(string $key, int $default = 0): int
     {
-        return $this->dto->int($key, $default);
+        return $this->merged->int($key, $default);
     }
 
     public function float(string $key, float $default = 0.0): float
     {
-        return $this->dto->float($key, $default);
+        return $this->merged->float($key, $default);
     }
 
-    public function text(string $key, string $default = ''): string
+    public function bool(string $key, bool $default = false): bool
     {
-        return $this->dto->string($key, $default);
+        return $this->merged->bool($key, $default);
     }
 
     /**
-     * @param string $key
-     * @param array  $default
-     *
-     * @return array
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
      */
-    public function list(string $key, array $default = []): array
+    public function array(string $key, array $default = []): array
     {
-        return $this->dto->array($key, $default);
-    }
-
-    public function has(string $key): bool
-    {
-        return $this->dto->has($key);
-    }
-
-    public function only(array $keys): array
-    {
-        return $this->dto->only($keys);
-    }
-
-    public function except(array $keys): array
-    {
-        return $this->dto->except($keys);
+        return $this->merged->array($key, $default);
     }
 
     /**
      * @template T of BackedEnum
-     * @param string $key
-     * @param class-string<T> $enumClass
-     * @param T|null $default
+     *
+     * @param  class-string<T>  $enumClass
      * @return T|null
      */
-    public function enum(string $key, string $enumClass, mixed $default = null): BackedEnum|null
+    public function enum(string $key, string $enumClass, mixed $default = null): ?BackedEnum
     {
-        return $this->dto->enum($key, $enumClass, $default);
+        return $this->merged->enum($key, $enumClass, $default);
     }
+
+    // ---------------------------------------------------------------------
+    // Stage 5: Sanitized read views
+    // ---------------------------------------------------------------------
+
+    public function sanitized(): SanitizedRequestedInputs
+    {
+        return new SanitizedRequestedInputs(
+            inputs: $this,
+            sanitizer: $this->sanitizer,
+        );
+    }
+
+    public function sanitizedHtml(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->html($key, $default);
+    }
+
+    public function sanitizedJs(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->js($key, $default);
+    }
+
+    public function sanitizedPath(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->path($key, $default);
+    }
+
+    public function sanitizedRegex(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->regex($key, $default);
+    }
+
+    public function strippedControls(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->withoutControls($key, $default);
+    }
+
+    public function normalizedUtf8(string $key, string $default = ''): string
+    {
+        return $this->sanitized()->utf8($key, $default);
+    }
+
+    // ---------------------------------------------------------------------
+    // Stage 6: DTO mapping using existing DTO component
+    // ---------------------------------------------------------------------
+
+    /**
+     * Map all merged inputs into a typed DTO using the project's
+     * AbstractDTO-based DTO component.
+     *
+     * The DTO class must accept an array in its constructor and
+     * extend AbstractDTO (which provides hydration, casting, etc.).
+     *
+     * @template T of AbstractDTO
+     *
+     * @param  class-string<T>  $dtoClass
+     * @return T
+     *
+     * @throws RuntimeException When DTO class cannot be instantiated
+     */
+    public function as(string $dtoClass): object
+    {
+        return (new MapRequestedInputsToDto)->map($this, $dtoClass);
+    }
+
+    // ---------------------------------------------------------------------
+    // Backward-compatible aliases (removed in pipeline-first redesign)
+    // ---------------------------------------------------------------------
 }
 
-=== ServerRequest/IncomingRequest/RequestedInputs/RequestedInputsDTO.php ===
+=== ServerRequest/IncomingRequest/RequestedInputs/Sanitization/InputSanitizer.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
-use ReflectionException;
+use Stringable;
 
 /**
- * State Owner: Data Transfer Object encapsulating raw HTTP payloads.
+ * InputSanitizer
  *
- * This class is now a thin wrapper around InputsDTO for backwards compatibility.
+ * Stateless sanitizer / escaper helper for requested input values.
  *
- * @deprecated Use InputsDTO directly for new code.
+ * This is not a value object.
+ * This is a small service with context-specific output-safe transformations.
  */
-final class RequestedInputsDTO extends InputsDTO
+final class InputSanitizer
 {
-    /**
-     * Create a DTO instance from request input slices.
-     *
-     * @param array<string, mixed> $queryParams
-     * @param array|object|null    $parsedBody
-     *
-     * @return RequestedInputsDTO
-     * @throws ReflectionException
-     */
-    public static function fromSlices(array $queryParams, array|object|null $parsedBody): self
+    public function sanitizeHtml(mixed $value): string
     {
-        return new self(data: [
-            'query' => $queryParams,
-            'body' => self::normalizeBody($parsedBody),
-        ]);
-    }
+        $string = $this->toString($value);
 
-    private static function normalizeBody(array|object|null $parsedBody): array
-    {
-        if ($parsedBody === null) {
-            return [];
+        if ($string === null) {
+            return '';
         }
 
-        if (is_object($parsedBody) && !$parsedBody instanceof self) {
-            return (array) $parsedBody;
+        return htmlspecialchars(
+            $string,
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8',
+        );
+    }
+
+    public function sanitizeJs(mixed $value): string
+    {
+        $string = $this->toString($value);
+
+        if ($string === null) {
+            return '';
         }
 
-        return is_array($parsedBody) ? $parsedBody : [];
+        $string = addcslashes($string, "\\'\"\\\\\n\r\t\v\f\$`");
+
+        return preg_replace('/[\x00-\x1F\x7F]/u', '', $string) ?? '';
     }
 
-    /**
-     * @deprecated Use query() instead
-     * @return array<string, mixed>
-     */
-    public function getQueryParams(): array
+    public function sanitizePath(mixed $value): string
     {
-        return $this->query;
+        $string = $this->toString($value);
+
+        if ($string === null) {
+            return '';
+        }
+
+        $string = str_replace("\0", '', $string);
+        $string = preg_replace('/^[a-zA-Z]:/', '', $string) ?? '';
+        $string = str_replace('\\', '/', $string);
+
+        $segments = [];
+
+        foreach (explode('/', $string) as $segment) {
+            $segment = trim($segment);
+
+            if ($segment === '' || $segment === '.' || $segment === '..') {
+                continue;
+            }
+
+            $segments[] = $segment;
+        }
+
+        return implode('/', $segments);
     }
 
-    /**
-     * @deprecated Use body() instead
-     * @return array<string, mixed>
-     */
-    public function getParsedBody(): array
+    public function sanitizeRegex(mixed $value): string
     {
-        return $this->body;
+        $string = $this->toString($value);
+
+        if ($string === null) {
+            return '';
+        }
+
+        return preg_quote($string, '/');
+    }
+
+    public function stripControls(mixed $value): string
+    {
+        $string = $this->toString($value);
+
+        if ($string === null) {
+            return '';
+        }
+
+        return preg_replace('/[\x00-\x1F\x7F]/u', '', $string) ?? '';
+    }
+
+    public function normalizeUtf8(mixed $value): string
+    {
+        $string = $this->toString($value);
+
+        if ($string === null) {
+            return '';
+        }
+
+        $string = mb_convert_encoding($string, 'UTF-8', 'UTF-8');
+        $string = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $string) ?? '';
+
+        if (class_exists(\Normalizer::class)) {
+            $normalized = \Normalizer::normalize($string, \Normalizer::FORM_C);
+
+            if ($normalized !== false) {
+                $string = $normalized;
+            }
+        }
+
+        return $string;
+    }
+
+    private function toString(mixed $value): ?string
+    {
+        if (is_scalar($value) || $value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        return null;
+    }
+}
+
+=== ServerRequest/IncomingRequest/RequestedInputs/Sanitization/SanitizedRequestedInputs.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+
+/**
+ * SanitizedRequestedInputs
+ *
+ * Context-aware sanitized view over RequestedInputs.
+ *
+ * This keeps sanitization logic out of the raw data containers,
+ * while still giving a pleasant DX.
+ */
+final readonly class SanitizedRequestedInputs
+{
+    public function __construct(
+        private RequestedInputs $inputs,
+        ?InputSanitizer $sanitizer = null,
+    ) {
+        $this->sanitizer = $sanitizer ?? new InputSanitizer;
+    }
+
+    private InputSanitizer $sanitizer;
+
+    public function html(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->sanitizeHtml($this->valueOrDefault($key, $default));
+    }
+
+    public function js(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->sanitizeJs($this->valueOrDefault($key, $default));
+    }
+
+    public function path(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->sanitizePath($this->valueOrDefault($key, $default));
+    }
+
+    public function regex(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->sanitizeRegex($this->valueOrDefault($key, $default));
+    }
+
+    public function withoutControls(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->stripControls($this->valueOrDefault($key, $default));
+    }
+
+    public function utf8(string $key, string $default = ''): string
+    {
+        return $this->sanitizer->normalizeUtf8($this->valueOrDefault($key, $default));
+    }
+
+    private function valueOrDefault(string $key, mixed $default = null): mixed
+    {
+        return $this->inputs->has($key)
+            ? $this->inputs->get($key)
+            : $default;
     }
 }
 
@@ -2983,6 +3110,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ReadRequestTarget\ReadRequestTarget;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
@@ -2990,7 +3118,6 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookie
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Inputs\DTO\InputsDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
@@ -3080,7 +3207,7 @@ final class ServerRequest implements ServerRequestInterface
         $this->method           = self::normalizeMethod(method: $method);
         $this->protocolVersion  = self::normalizeProtocolVersion(version: $protocolVersion);
         $this->serverParams     = $serverParams;
-        $this->requestTarget    = $requestTarget;
+        $this->requestTarget    = $requestTarget ?? ($uri ? (new ReadRequestTarget(explicitTarget: null, uri: $uri))->resolve() : null);
         $this->queryParams      = $queryParams ?? [];
         $this->session          = $session;
     }
@@ -3288,12 +3415,10 @@ final class ServerRequest implements ServerRequestInterface
 
     public function inputs(): RequestedInputs
     {
-        $dto = InputsDTO::fromSlices(
+        return new RequestedInputs(
             queryParams: $this->queryParams,
-            parsedBody: $this->getParsedBody()
+            parsedBody:  $this->getParsedBody(),
         );
-
-        return new RequestedInputs(dto: $dto);
     }
 
     public function serverEnvironment(): ServerEnvironment
@@ -3744,6 +3869,164 @@ final readonly class TrustedProxyPolicy
     }
 }
 
+=== docs/RequestedInputs/how-this-works.md ===
+---
+title: RequestedInputs-how-this-works
+owner: HTTP Foundation Team
+last_reviewed: 2026-04-17
+classification: internal
+---
+
+# RequestedInputs How This Works
+
+## What this folder is
+
+This folder contains the **input accessor layer** for HTTP requests. It is the single entry point for accessing all HTTP request inputs (query parameters, parsed body, uploaded files) with typed accessors, security sanitization, and DTO mapping.
+
+This is NOT about:
+- Request routing
+- Response formatting
+- Authentication/authorization
+- Validation (that's handled by DTOs)
+
+## Real commands or triggers that reach this folder
+
+- `ServerRequest::inputs()` - Creates RequestedInputs from HTTP request
+- `$request->inputs()` - In controllers to access input data
+
+## Exact upstream handoffs
+
+- `Foundation/HTTP/Request/ServerRequest.php`
+  - function: `ServerRequest::inputs()`
+  - Creates: `new RequestedInputs(queryParams, parsedBody)`
+
+## The simplest story
+
+1. HTTP request arrives at `ServerRequest`
+2. Body is parsed (JSON, form, etc.)
+3. `$request->inputs()` creates `RequestedInputs`
+4. Controller accesses typed values: `$inputs->string('email')`
+5. Outputs to HTML? Use: `$inputs->sanitizedHtml('content')`
+
+## The first important path
+
+```mermaid
+sequenceDiagram
+    participant HTTP as HTTP Request
+    participant SR as ServerRequest
+    participant RI as RequestedInputs
+    participant Ctrl as Controller
+
+    HTTP->>SR: Incoming HTTP request
+    SR->>SR: Parse body (JSON/form)
+    SR->>RI: new RequestedInputs(query, body)
+    RI->>Ctrl: $request->inputs()
+    Ctrl->>RI: $inputs->string('email')
+    RI-->>Ctrl: "user@example.com"
+    Ctrl->>RI: $inputs->sanitizedHtml('content')
+    RI-->>Ctrl: "&lt;script&gt;...&lt;/script&gt;" (safe)
+```
+
+- **Step 1:** ServerRequest parses incoming HTTP request
+- **Step 2:** RequestedInputs created with query + body data
+- **Step 3:** Controller gets typed values
+- **Step 4:** For HTML output, use sanitized methods
+
+## Direct files in this folder
+
+### RequestedInputs.php
+
+The main facade - extends Inputs and adds:
+- Security sanitization (SanitizesInput trait)
+- DTO mapping via `as()` method
+- Typed accessors via AccessesTypedValues trait
+
+Key methods:
+- `string()`, `int()`, `bool()`, `float()`, `enum()` - typed values
+- `sanitizedHtml()`, `sanitizedJs()`, `sanitizedPath()` - security
+- `as(MyDTO::class)` - map to DTO/Command
+
+### Inputs.php
+
+Base Value Object combining query + body:
+- Body takes precedence over query on conflicts
+- Provides: `query()`, `body()`, `all()`, `get()`, `has()`
+
+### AccessesTypedValues.php
+
+Shared trait with typed accessor methods:
+- Eliminates code duplication
+- Used by Inputs, QueryParams, ParsedBody
+
+### SanitizesInput.php
+
+OWASP-compliant security traits:
+- HTML encoding (XSS prevention)
+- JavaScript escaping
+- Path sanitization
+- Regex escaping
+- Control character removal
+- UTF-8 normalization
+
+### QueryParams.php
+
+Query string only - Value Object for /?foo=bar style inputs.
+
+### ParsedBody.php
+
+Parsed body only - Value Object for POST body data.
+
+### InputValue.php
+
+Single input value wrapper with type conversion.
+
+## Security boundaries (OWASP)
+
+```
+┌─────────────────────────────────────────┐
+│         HTTP Request (UNTRUSTED)          │
+└──────────────────┬──────────┬─────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────┐
+│         RequestedInputs                   │
+│  ┌───────────────────────────────┐     │
+│  │ Input enters here           │     │
+│  │ - raw, unsanitized        │     │
+│  │ - potentially malicious  │     │
+│  └───────────────────────────────┘     │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+        ▼                     ▼
+   Typed access          Security sanitization
+   (for logic)          (for output)
+   string()            sanitizedHtml() -> HTML
+   int()               sanitizedJs() -> JavaScript
+   bool()             sanitizedPath() -> filesystem
+```
+
+Security implementation:
+- **For logic**: Use `string()`, `int()`, etc.
+- **For HTML output**: Use `sanitizedHtml()`
+- **For JS output**: Use `sanitizedJs()`
+- **For filesystem**: Use `sanitizedPath()`
+
+## What to remember
+
+1. **Input enters untrusted** - Always sanitize before output
+2. **Body > query** - On conflicts, body wins
+3. **Use typed accessors** - `string()` not `get()` for type safety
+4. **Use DTOs for validation** - `$inputs->as(MyDTO::class)`
+5. **Security is layered** - Logic uses typed methods, output uses sanitized*
+
+## Debug first
+
+- Start in `RequestedInputs.php` when inputs seem wrong
+- Start in `SanitizesInput.php` when XSS warnings appear
+- Start in `AccessesTypedValues.php` when typed accessors fail
+
 === docs/architecture/decisions/psr-surface-vs-internal-ownership.md ===
 # ADR: PSR Surface vs Internal Ownership
 
@@ -4139,6 +4422,9 @@ class BridgeRequestTest extends TestCase
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_bridge_delegates_to_server_request() : void
     {
         $serverRequest = $this->createServerRequest(method: 'POST', uri: 'https://example.com/api');
@@ -4153,6 +4439,9 @@ class BridgeRequestTest extends TestCase
         $this->assertEquals(expected: '/api', actual: $request->getRequestTarget());
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_with_uri_preserve_host_logic() : void
     {
         $serverRequest = $this->createServerRequest(uri: 'http://old.com/');
@@ -4171,6 +4460,9 @@ class BridgeRequestTest extends TestCase
         $this->assertEquals(expected: ['old.com'], actual: $requestPreserved->getHeader(name: 'Host'));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_get_request_target_behavior() : void
     {
         $serverRequest = $this->createServerRequest(uri: 'http://localhost/path?query=1');
@@ -4184,6 +4476,9 @@ class BridgeRequestTest extends TestCase
         $this->assertEquals(expected: '*', actual: $requestWithTarget->getRequestTarget());
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_header_casing_and_aggregation() : void
     {
         $serverRequest = $this->createServerRequest();
@@ -4232,6 +4527,9 @@ use PHPUnit\Framework\TestCase;
  */
 class RequestCharacterizationTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function test_getRequestTarget_returns_path_and_query() : void
     {
         $uri     = new UriBuilder(scheme: 'http://example.com/api/users?status=active');
@@ -4255,6 +4553,9 @@ class RequestCharacterizationTest extends TestCase
         $this->assertSame(expected: ['Beta'], actual: $replacedRequest->getHeader(name: 'X-Custom'));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function createBlankRequest(array $serverParams = []) : Request
     {
         return new Request(
@@ -4385,6 +4686,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: ['Alpha'], actual: $headers['X-Custom']);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function createBlankOldRequest(array $serverParams = []) : Request
     {
         return new Request(
@@ -4537,6 +4841,9 @@ use ReflectionClass;
 
 class BridgeRequestImmutabilityTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     private function createRequest(): Request
     {
         $serverRequest = new ServerRequest(
@@ -4691,14 +4998,14 @@ class CreateRequestTest extends TestCase
     }
 }
 
-=== tests/Unit/IncomingHttp/ReadRequest/RequestHeaders/RequestHeadersTest.php ===
+=== tests/Unit/Foundation/HTTP/Request/IncomingHttp/ReadRequest/RequestHeaders/RequestHeadersTest.php ===
 <?php
 
 declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit\IncomingHttp\ReadRequest\RequestHeaders;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -4809,14 +5116,14 @@ class RequestHeadersTest extends TestCase
     }
 }
 
-=== tests/Unit/IncomingHttp/ReadRequest/RequestTarget/ReadRequestTargetTest.php ===
+=== tests/Unit/Foundation/HTTP/Request/IncomingHttp/ReadRequest/RequestTarget/ReadRequestTargetTest.php ===
 <?php
 
 declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit\IncomingHttp\ReadRequest\RequestTarget;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestTarget\ReadRequestTarget;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -4940,8 +5247,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit;
 
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use PHPUnit\Framework\TestCase;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestedInputs\RequestedInputs;
 
 class RequestedInputsTest extends TestCase
 {
@@ -4967,23 +5274,28 @@ class RequestedInputsTest extends TestCase
         $this->assertEquals(expected: 'baz', actual: $all['bar']);
     }
 
-    public function test_bool_accepts_true_false_zero_one_strings()
+    public function test_bool_accepts_valid_boolean_strings()
     {
         $inputs = new RequestedInputs(parsedBody: [
             't' => 'true',
             'f' => 'false',
             '1' => '1',
             '0' => '0',
-            'y' => 'yes',
-            'n' => 'no'
+            'on' => 'on',
+            'off' => 'off',
+            'yes' => 'yes',
+            'no' => 'no',
         ]);
 
         $this->assertTrue(condition: $inputs->bool(key: 't'));
         $this->assertFalse(condition: $inputs->bool(key: 'f'));
         $this->assertTrue(condition: $inputs->bool(key: '1'));
         $this->assertFalse(condition: $inputs->bool(key: '0'));
-        $this->assertTrue(condition: $inputs->bool(key: 'y'));
-        $this->assertFalse(condition: $inputs->bool(key: 'n'));
+        $this->assertTrue(condition: $inputs->bool(key: 'on'));
+        $this->assertFalse(condition: $inputs->bool(key: 'off'));
+        // yes/no are NOT standard FILTER_VALIDATE_BOOLEAN values
+        $this->assertFalse(condition: $inputs->bool(key: 'yes'));
+        $this->assertTrue(condition: $inputs->bool(key: 'no', default: true));
     }
 
     public function test_bool_returns_default_for_invalid_value()
@@ -5017,22 +5329,73 @@ class RequestedInputsTest extends TestCase
         $this->assertEquals(expected: 1.1, actual: $inputs->float(key: 'foo', default: 1.1));
     }
 
-    public function test_text_casts_scalar_to_string()
+    public function test_string_casts_scalar_to_string()
     {
         $inputs = new RequestedInputs(parsedBody: ['foo' => 123]);
-        $this->assertEquals(expected: '123', actual: $inputs->text(key: 'foo'));
+        $this->assertEquals(expected: '123', actual: $inputs->string(key: 'foo'));
     }
 
-    public function test_list_wraps_scalar_into_array()
-    {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 'bar']);
-        $this->assertEquals(expected: ['bar'], actual: $inputs->list(key: 'foo'));
-    }
-
-    public function test_list_returns_array_as_is()
+    public function test_array_returns_array_as_is()
     {
         $inputs = new RequestedInputs(parsedBody: ['foo' => ['a', 'b']]);
-        $this->assertEquals(expected: ['a', 'b'], actual: $inputs->list(key: 'foo'));
+        $this->assertEquals(expected: ['a', 'b'], actual: $inputs->array(key: 'foo'));
+    }
+
+    public function test_array_returns_default_for_scalar()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => 'bar']);
+        $this->assertEquals(expected: [], actual: $inputs->array(key: 'foo'));
+    }
+
+    public function test_has_uses_array_key_exists_not_isset()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['foo' => null]);
+        $this->assertTrue(condition: $inputs->has(key: 'foo'));
+        $this->assertFalse(condition: $inputs->hasNonNull(key: 'foo'));
+    }
+
+    public function test_from_slices_static_factory()
+    {
+        $inputs = RequestedInputs::fromSlices(
+            queryParams: ['page' => '1'],
+            parsedBody: ['email' => 'test@example.com'],
+        );
+
+        $this->assertEquals(expected: 'test@example.com', actual: $inputs->get(key: 'email'));
+        $this->assertEquals(expected: '1', actual: $inputs->get(key: 'page'));
+    }
+
+    public function test_sanitized_html_prevents_xss()
+    {
+        $inputs = new RequestedInputs(parsedBody: ['content' => '<script>alert("xss")</script>']);
+        $safe = $inputs->sanitizedHtml(key: 'content');
+
+        $this->assertStringNotContainsString(needle: '<script>', haystack: $safe);
+        $this->assertStringContainsString(needle: '&lt;script&gt;', haystack: $safe);
+    }
+
+    public function test_value_returns_inputvalue_with_source()
+    {
+        $inputs = new RequestedInputs(
+            queryParams: ['from' => 'query'],
+            parsedBody: ['from' => 'body'],
+        );
+
+        $value = $inputs->value(key: 'from');
+        $this->assertTrue(condition: $value->isFromBody());
+        $this->assertFalse(condition: $value->isFromQuery());
+        $this->assertEquals(expected: 'body', actual: $value->value);
+    }
+
+    public function test_query_and_body_accessors()
+    {
+        $inputs = new RequestedInputs(
+            queryParams: ['q' => 'search'],
+            parsedBody: ['b' => 'data'],
+        );
+
+        $this->assertEquals(expected: 'search', actual: $inputs->fromQuery(key: 'q'));
+        $this->assertEquals(expected: 'data', actual: $inputs->fromBody(key: 'b'));
     }
 }
 

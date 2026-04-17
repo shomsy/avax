@@ -29,6 +29,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: ['Alpha'], actual: $headers['X-Custom']);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function createBlankOldRequest(array $serverParams = []) : Request
     {
         return new Request(

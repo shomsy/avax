@@ -68,7 +68,10 @@ final readonly class MigrateCommand
             return 0;
         }
 
-        $this->info(msg: sprintf('Found %d pending migration(s).', count(value: $pending)));
+        $pending
+            |> count(...)
+            |> (static fn ($x) => sprintf('Found %d pending migration(s).', $x))
+            |> $this(...);
 
         try {
             $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
@@ -76,7 +79,10 @@ final readonly class MigrateCommand
             if ($dryRun) {
                 $this->success(msg: 'Dry run completed successfully. No changes made.');
             } else {
-                $this->success(msg: sprintf('Migrated %d migration(s) successfully!', count(value: $pending)));
+                $pending
+                    |> count(...)
+                    |> (static fn ($x) => sprintf('Migrated %d migration(s) successfully!', $x))
+                    |> $this(...);
             }
 
             foreach (array_keys(array: $pending) as $name) {

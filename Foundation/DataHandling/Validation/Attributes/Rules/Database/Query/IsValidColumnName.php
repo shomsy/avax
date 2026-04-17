@@ -34,12 +34,8 @@ class IsValidColumnName extends AbstractRule
         }
 
         // Allow wildcard '*'
-        if ($value === '*') {
-            return;
-        }
-
         // Allow 'table.*'
-        if (preg_match(pattern: '/^[a-zA-Z0-9_]+\.\*$/', subject: $value)) {
+        if ($value === '*' || preg_match(pattern: '/^[a-zA-Z0-9_]+\.\*$/', subject: $value)) {
             return;
         }
 

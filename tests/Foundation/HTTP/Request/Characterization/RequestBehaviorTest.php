@@ -138,7 +138,7 @@ final class RequestBehaviorTest extends TestCase
      */
     public function test_session_returns_session_instance_when_no_key() : void
     {
-        $this->markTestSkipped('Session integration requires container initialization');
+        $this->markTestSkipped(message: 'Session integration requires container initialization');
     }
 
     /**
@@ -163,7 +163,7 @@ final class RequestBehaviorTest extends TestCase
 
     public function test_put_session_stores_value() : void
     {
-        $this->markTestSkipped('Session operations require mutable architecture');
+        $this->markTestSkipped(message: 'Session operations require mutable architecture');
     }
 
     public function test_forget_session_removes_value() : void
@@ -220,6 +220,6 @@ final class RequestBehaviorTest extends TestCase
      */
     public function test_get_returns_session_value() : void
     {
-        $this->markTestSkipped('Session operations require mutable architecture');
+        $this->markTestSkipped(message: 'Session operations require mutable architecture');
     }
 }

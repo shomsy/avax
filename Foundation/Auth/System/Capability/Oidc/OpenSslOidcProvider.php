@@ -180,7 +180,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**
@@ -244,11 +247,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     {
         $claims = $this->resolveJwt(jwt: $idToken);
 
-        if ($claims === null) {
-            return null;
-        }
-
-        if (! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
+        if ($claims === null || ! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
             return null;
         }
 
@@ -302,11 +301,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $issuer    = $claims['iss'] ?? null;
         $expiresAt = $claims['exp'] ?? null;
 
-        if (! is_string($issuer) || $issuer !== $this->issuer || ! is_int($expiresAt)) {
-            return null;
-        }
-
-        if ($expiresAt <= time()) {
+        if (! is_string($issuer) || $issuer !== $this->issuer || ! is_int($expiresAt) || $expiresAt <= time()) {
             return null;
         }
 

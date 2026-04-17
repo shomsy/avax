@@ -25,12 +25,12 @@ use SensitiveParameter;
  */
 final readonly class ServeScimHttpSurface
 {
-    private const SCIM_CONTENT_TYPE     = 'application/scim+json';
-    private const LIST_RESPONSE_SCHEMA  = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
-    private const ERROR_SCHEMA          = 'urn:ietf:params:scim:api:messages:2.0:Error';
-    private const USER_SCHEMA           = 'urn:ietf:params:scim:schemas:core:2.0:User';
-    private const GROUP_SCHEMA          = 'urn:ietf:params:scim:schemas:core:2.0:Group';
-    private const USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
+    private const string SCIM_CONTENT_TYPE    = 'application/scim+json';
+    private const string LIST_RESPONSE_SCHEMA = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
+    private const string ERROR_SCHEMA         = 'urn:ietf:params:scim:api:messages:2.0:Error';
+    private const string USER_SCHEMA   = 'urn:ietf:params:scim:schemas:core:2.0:User';
+    private const string GROUP_SCHEMA = 'urn:ietf:params:scim:schemas:core:2.0:Group';
+    private const string USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
     private ReadBearerToken $readBearerToken;
     private AuthInterface   $auth;
 
@@ -432,11 +432,7 @@ final readonly class ServeScimHttpSurface
      */
     private function username(array $body, string|null $fallback = null) : string
     {
-        if (is_scalar($body['userName'] ?? null)) {
-            return trim((string) $body['userName']);
-        }
-
-        if (is_scalar($body['username'] ?? null)) {
+        if (is_scalar($body['userName'] ?? null) || is_scalar($body['username'] ?? null)) {
             return trim((string) $body['username']);
         }
 
@@ -487,7 +483,10 @@ final readonly class ServeScimHttpSurface
     private function state(array $body, ScimAccountState $fallback) : ScimAccountState
     {
         if (is_scalar($body['state'] ?? null)) {
-            $state = ScimAccountState::tryFrom(value: strtolower(trim((string) $body['state'])));
+            $state = (string) $body['state']
+                    |> trim(...)
+                    |> strtolower(...)
+                    |> ScimAccountState(...);
 
             if ($state !== null) {
                 return $state;
@@ -545,7 +544,7 @@ final readonly class ServeScimHttpSurface
         return $this->response(statusCode: 200, body: [
             'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
             'Operations' => array_map(
-                fn (ScimBulkOperationResult $result) : array => [
+                static fn (ScimBulkOperationResult $result) : array => [
                     'method'   => $result->method,
                     'path'     => $result->path,
                     'status'   => (string) $result->status,

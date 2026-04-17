@@ -111,7 +111,7 @@ class JwtIdentityTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')
-            ->with(Mockery::on(closure: fn ($id) => $id instanceof UserId && $id->value === 9))
+            ->with(Mockery::on(closure: static fn ($id) => $id instanceof UserId && $id->value === 9))
             ->andReturn($inactiveUser);
 
         $jwt = new JwtIdentity(

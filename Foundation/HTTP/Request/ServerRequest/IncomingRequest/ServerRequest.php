@@ -4,299 +4,262 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
-use InvalidArgumentException;
-use NoDiscard;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Fluent API wrapper around RequestInit.
- *
- * This class is just a thin layer that delegates to RequestInit.
- * All state and logic is in RequestInit.
+ * ServerRequest - The thin, immutable PSR-7 surface.
  */
 final class ServerRequest implements ServerRequestInterface
 {
-    public UriInterface|null $uri {
-        get => $this->init->uri;
-    }
 
-    public array $serverParams {
-        get => $this->init->serverParams;
-    }
-
-    public array $queryParams {
-        get => $this->init->queryParams;
-    }
-
-    public string|null $requestTarget {
-        get => $this->init->requestTarget;
-    }
-
-    public string $method {
-        get => $this->init->method;
-    }
-
-    public string $protocolVersion {
-        get => $this->init->protocolVersion;
-    }
-
-    public array $headers {
-        get => $this->init->headers;
-    }
-
-    public function __construct(private readonly RequestInit $init) {}
-
-    public static function create(RequestInit $init): self
+    public function __construct(private ServerInit $setup)
     {
-        return new self(init: $init);
     }
 
-    private static function requireString(mixed $value, string $argumentName): string
-    {
-        if (! is_string($value)) {
-            throw new InvalidArgumentException(message: sprintf('%s must be a string.', $argumentName));
-        }
 
-        return $value;
+    // PSR-7 Interface Methods
+
+    public function getProtocolVersion(): string
+    {
+        return $this->setup->state->protocolVersion;
     }
 
-    public function getUri(): UriInterface
+    public function withProtocolVersion($version): self
     {
-        return $this->init->uri;
+        return $this->initializeRequest(
+            state: $this->setup->state->withProtocolVersion(protocolVersion: $version)
+        );
     }
 
-    public function getServerParams(): array
+    public function getHeaders(): array
     {
-        return $this->init->serverParams;
+        return $this->setup->state->requestHeaders->all();
     }
 
-    public function getQueryParams(): array
+    public function hasHeader($name): bool
     {
-        return $this->init->queryParams;
+        return $this->setup->state->requestHeaders->has(name: $name);
     }
 
-    public function getParsedBody(): array|object|null
+    public function getHeader($name): array
     {
-        return $this->init->parsedBody->data();
+        return $this->setup->state->requestHeaders->get(name: $name);
     }
 
-    public function getCookieParams(): array
+    public function getHeaderLine($name): string
     {
-        return $this->init->cookies->all();
+        return $this->setup->state->requestHeaders->getLine(name: $name);
     }
 
-    public function getUploadedFiles(): array
+    public function withHeader($name, $value): self
     {
-        return $this->init->uploadedFiles->all();
+        return $this->initializeRequest(
+            state: $this->setup->state->withRequestHeaders(
+                requestHeaders: $this->setup->state->requestHeaders->put(name: $name, value: $value)
+            )
+        );
     }
 
-    public function getAttributes(): array
+    public function withAddedHeader($name, $value): self
     {
-        return $this->init->attributes->all();
+        return $this->initializeRequest(
+            state: $this->setup->state->withRequestHeaders(
+                requestHeaders: $this->setup->state->requestHeaders->append(name: $name, value: $value)
+            )
+        );
     }
 
-    public function getAttribute($name, $default = null): mixed
+    public function withoutHeader($name): self
     {
-        return $this->init->attributes->get(
-            name: self::requireString(value: $name, argumentName: 'Attribute name'),
-            default: $default,
+        return $this->initializeRequest(
+            state: $this->setup->state->withRequestHeaders(
+                requestHeaders: $this->setup->state->requestHeaders->drop(name: $name)
+            )
+        );
+    }
+
+    public function getBody(): StreamInterface
+    {
+        return $this->setup->state->body->stream();
+    }
+
+    public function withBody(StreamInterface $body): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withBody(
+                body: new RequestBody\RequestBody(stream: $body)
+            )
+        );
+    }
+
+    public function getRequestTarget(): string
+    {
+        return $this->setup->state->requestTarget;
+    }
+
+    public function withRequestTarget($requestTarget): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withRequestTarget(requestTarget: $requestTarget)
         );
     }
 
     public function getMethod(): string
     {
-        return $this->init->method;
+        return $this->setup->state->method;
     }
 
-    public function getRequestTarget(): string
+    public function withMethod($method): self
     {
-        return $this->init->requestTarget ?? '';
+        return $this->initializeRequest(
+            state: $this->setup->state->withMethod(method: $method)
+        );
     }
 
-    public function getProtocolVersion(): string
+    public function getUri(): UriInterface
     {
-        return $this->init->protocolVersion;
+        return $this->setup->state->uri;
     }
 
-    public function getHeaders(): array
+    public function withUri(UriInterface $uri, $preserveHost = false): self
     {
-        return $this->init->headers;
+        $state = $this->setup->state->withUri(uri: $uri);
+
+        if ($preserveHost && $this->hasHeader('Host')) {
+            return $this->initializeRequest(state: $state);
+        }
+
+        $host = $uri->getHost();
+        if ($host === '') {
+            return $this->initializeRequest(state: $state);
+        }
+
+        if (($port = $uri->getPort()) !== null) {
+            $host .= ':' . $port;
+        }
+
+        return $this->initializeRequest(
+            state: $state->withRequestHeaders(
+                requestHeaders: $state->requestHeaders->put(name: 'Host', value: $host)
+            )
+        );
     }
 
-    public function hasHeader($name): bool
+    public function getServerParams(): array
     {
-        return $this->init->requestHeaders->has(name: self::requireString(value: $name, argumentName: 'Header name'));
+        return $this->setup->state->serverParams;
     }
 
-    public function getHeader($name): array
+    public function getCookieParams(): array
     {
-        return $this->init->requestHeaders->get(name: self::requireString(value: $name, argumentName: 'Header name'));
+        return $this->setup->state->cookies->all();
     }
 
-    public function getHeaderLine($name): string
+    public function withCookieParams(array $cookies): self
     {
-        return $this->init->requestHeaders->getLine(name: self::requireString(value: $name, argumentName: 'Header name'));
+        return $this->initializeRequest(
+            state: $this->setup->state->withCookies(
+                cookies: new RequestCookies\RequestCookies(cookies: $cookies)
+            )
+        );
     }
 
-    public function getBody(): StreamInterface
+    public function getQueryParams(): array
     {
-        return $this->init->body->stream();
+        return $this->setup->state->queryParams;
     }
+
+    public function withQueryParams(array $query): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withQueryParams(queryParams: $query)
+        );
+    }
+
+    public function getUploadedFiles(): array
+    {
+        return $this->setup->state->uploadedFiles->all();
+    }
+
+    public function withUploadedFiles(array $uploadedFiles): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withUploadedFiles(
+                uploadedFiles: new UploadedFiles\UploadedFiles(files: $uploadedFiles)
+            )
+        );
+    }
+
+    public function getParsedBody(): array|object|null
+    {
+        return $this->setup->state->parsedBody->data();
+    }
+
+    public function withParsedBody($data): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withParsedBody(
+                parsedBody: new RequestBody\ParsedBody(data: $data)
+            )
+        );
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->setup->state->attributes->all();
+    }
+
+    public function getAttribute($name, $default = null): mixed
+    {
+        return $this->setup->state->attributes->get(name: $name, default: $default);
+    }
+
+    public function withAttribute($name, $value): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withAttributes(
+                attributes: $this->setup->state->attributes->put(name: $name, value: $value)
+            )
+        );
+    }
+
+    public function withoutAttribute($name): self
+    {
+        return $this->initializeRequest(
+            state: $this->setup->state->withAttributes(
+                attributes: $this->setup->state->attributes->drop(name: $name)
+            )
+        );
+    }
+
+    // Custom Capabilities
 
     public function inputs(): RequestedInputs
     {
         return new RequestedInputs(
-            queryParams: $this->init->queryParams,
-            parsedBody: $this->getParsedBody(),
+            merged:    Inputs::fromSlices(
+                queryParams: $this->setup->state->queryParams,
+                parsedBody: $this->setup->state->parsedBody->data(),
+            ),
+            sanitizer: $this->setup->sanitizer,
+            mapper:    $this->setup->mapper,
         );
     }
 
-    public function serverEnvironment(): ServerEnvironment
+    public function resolveClientAddress(array $serverParams): ?string
     {
-        return ServerEnvironment::fromServerParams(serverParams: $this->init->serverParams);
+        return $this->setup->preparer->resolveClientAddress(serverParams: $serverParams);
     }
 
-    public function requestSession(): RequestSession|null
+    private function initializeRequest(RequestInit $state): self
     {
-        return $this->init->session;
-    }
+        $new = clone $this;
+        $new->setup = $this->setup->withState(state: $state);
 
-    #[NoDiscard]
-    public function withProtocolVersion($version): self
-    {
-        return new self(init: $this->init->withProtocolVersion(protocolVersion: $version));
-    }
-
-    #[NoDiscard]
-    public function withRequestTarget($requestTarget): self
-    {
-        return new self(init: $this->init->withRequestTarget(
-            requestTarget: self::requireString(value: $requestTarget, argumentName: 'Request target')
-        ));
-    }
-
-    #[NoDiscard]
-    public function withMethod($method): self
-    {
-        return new self(init: $this->init->withMethod(method: $method));
-    }
-
-    #[NoDiscard]
-    public function withUri(UriInterface $uri, $preserveHost = false): self
-    {
-        $init = $this->init->withUri(uri: $uri);
-
-        $host = $uri->getHost();
-        if ($host === '') {
-            return new self(init: $init);
-        }
-
-        if ($preserveHost && $this->hasHeader(name: 'Host')) {
-            return new self(init: $init);
-        }
-
-        $port = $uri->getPort();
-        $hostHeader = $port === null
-            ? $host
-            : sprintf('%s:%d', $host, $port);
-
-        $init = $init->withRequestHeaders(
-            requestHeaders: $this->init->requestHeaders->put(name: 'Host', value: $hostHeader)
-        );
-
-        return new self(init: $init);
-    }
-
-    #[NoDiscard]
-    public function withHeader($name, $value): self
-    {
-        return new self(init: $this->init->withRequestHeaders(
-            requestHeaders: $this->init->requestHeaders->put(name: self::requireString(value: $name, argumentName: 'Header name'), value: $value)
-        ));
-    }
-
-    #[NoDiscard]
-    public function withAddedHeader($name, $value): self
-    {
-        return new self(init: $this->init->withRequestHeaders(
-            requestHeaders: $this->init->requestHeaders->append(name: self::requireString(value: $name, argumentName: 'Header name'), value: $value)
-        ));
-    }
-
-    #[NoDiscard]
-    public function withoutHeader($name): self
-    {
-        return new self(init: $this->init->withRequestHeaders(
-            requestHeaders: $this->init->requestHeaders->drop(name: self::requireString(value: $name, argumentName: 'Header name'))
-        ));
-    }
-
-    #[NoDiscard]
-    public function withBody(StreamInterface $body): self
-    {
-        return new self(init: $this->init->withBody(body: new RequestBody(stream: $body)));
-    }
-
-    #[NoDiscard]
-    public function withQueryParams(array $query): self
-    {
-        return new self(init: $this->init->withQueryParams(queryParams: $query));
-    }
-
-    #[NoDiscard]
-    public function withCookieParams(array $cookies): self
-    {
-        return new self(init: $this->init->withCookies(cookies: new RequestCookies(cookies: $cookies)));
-    }
-
-    #[NoDiscard]
-    public function withUploadedFiles(array $uploadedFiles): self
-    {
-        (new GuardUploadedFiles)->execute(files: $uploadedFiles);
-
-        return new self(init: $this->init->withUploadedFiles(uploadedFiles: new UploadedFiles(files: $uploadedFiles)));
-    }
-
-    #[NoDiscard]
-    public function withParsedBody($data): self
-    {
-        if ($data !== null && ! is_array($data) && ! is_object($data)) {
-            throw new InvalidArgumentException(
-                message: 'Parsed body must be null, an array, or an object.',
-            );
-        }
-
-        return new self(init: $this->init->withParsedBody(parsedBody: new ParsedBody(data: $data)));
-    }
-
-    #[NoDiscard]
-    public function withAttribute($name, $value): self
-    {
-        return new self(init: $this->init->withAttributes(
-            attributes: $this->init->attributes->put(
-                name: self::requireString(value: $name, argumentName: 'Attribute name'),
-                value: $value,
-            )
-        ));
-    }
-
-    #[NoDiscard]
-    public function withoutAttribute($name): self
-    {
-        return new self(init: $this->init->withAttributes(
-            attributes: $this->init->attributes->drop(
-                name: self::requireString(value: $name, argumentName: 'Attribute name'),
-            )
-        ));
+        return $new;
     }
 }

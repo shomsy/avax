@@ -4,16 +4,26 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit;
 
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
 use PHPUnit\Framework\TestCase;
 
 class RequestedInputsTest extends TestCase
 {
+    private InputSanitizer          $sanitizer;
+    private MapRequestedInputsToDto $mapper;
+
     public function test_get_prefers_body_over_query_for_same_key()
     {
         $inputs = new RequestedInputs(
-            queryParams: ['foo' => 'query'],
-            parsedBody : ['foo' => 'body']
+            merged   : Inputs::fromSlices(
+                         queryParams: ['foo' => 'query'],
+                         parsedBody : ['foo' => 'body'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
         );
 
         $this->assertEquals(expected: 'body', actual: $inputs->get(key: 'foo'));
@@ -22,8 +32,12 @@ class RequestedInputsTest extends TestCase
     public function test_all_prefers_body_over_query_for_same_key()
     {
         $inputs = new RequestedInputs(
-            queryParams: ['foo' => 'query', 'bar' => 'baz'],
-            parsedBody : ['foo' => 'body']
+            merged   : Inputs::fromSlices(
+                         queryParams: ['foo' => 'query', 'bar' => 'baz'],
+                         parsedBody : ['foo' => 'body'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
         );
 
         $all = $inputs->all();
@@ -33,16 +47,23 @@ class RequestedInputsTest extends TestCase
 
     public function test_bool_accepts_valid_boolean_strings()
     {
-        $inputs = new RequestedInputs(parsedBody: [
-                                                      't'   => 'true',
-                                                      'f'   => 'false',
-                                                      '1'   => '1',
-                                                      '0'   => '0',
-                                                      'on'  => 'on',
-                                                      'off' => 'off',
-                                                      'yes' => 'yes',
-                                                      'no'  => 'no',
-                                                  ]);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          't'   => 'true',
+                                          'f'   => 'false',
+                                          '1'   => '1',
+                                          '0'   => '0',
+                                          'on'  => 'on',
+                                          'off' => 'off',
+                                          'yes' => 'yes',
+                                          'no'  => 'no',
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
 
         $this->assertTrue(condition: $inputs->bool(key: 't'));
         $this->assertFalse(condition: $inputs->bool(key: 'f'));
@@ -50,81 +71,139 @@ class RequestedInputsTest extends TestCase
         $this->assertFalse(condition: $inputs->bool(key: '0'));
         $this->assertTrue(condition: $inputs->bool(key: 'on'));
         $this->assertFalse(condition: $inputs->bool(key: 'off'));
-        // yes/no are NOT standard FILTER_VALIDATE_BOOLEAN values
-        $this->assertFalse(condition: $inputs->bool(key: 'yes'));
-        $this->assertTrue(condition: $inputs->bool(key: 'no', default: true));
+        $this->assertTrue(condition: $inputs->bool(key: 'yes', default: true));
+        $this->assertFalse(condition: $inputs->bool(key: 'no'));
     }
 
     public function test_bool_returns_default_for_invalid_value()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 'not-a-bool']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => 'not-a-bool'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertTrue(condition: $inputs->bool(key: 'foo', default: true));
         $this->assertFalse(condition: $inputs->bool(key: 'foo', default: false));
     }
 
     public function test_int_accepts_valid_integer_string()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => '123']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => '123'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: 123, actual: $inputs->int(key: 'foo'));
     }
 
     public function test_int_returns_default_for_invalid_string()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 'abc']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => 'abc'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: 5, actual: $inputs->int(key: 'foo', default: 5));
     }
 
     public function test_float_accepts_valid_float_string()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => '1.23']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => '1.23'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: 1.23, actual: $inputs->float(key: 'foo'));
     }
 
     public function test_float_returns_default_for_invalid_value()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 'abc']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => 'abc'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: 1.1, actual: $inputs->float(key: 'foo', default: 1.1));
     }
 
     public function test_string_casts_scalar_to_string()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 123]);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => 123],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: '123', actual: $inputs->string(key: 'foo'));
     }
 
     public function test_array_returns_array_as_is()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => ['a', 'b']]);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => ['a', 'b']],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: ['a', 'b'], actual: $inputs->array(key: 'foo'));
     }
 
     public function test_array_returns_default_for_scalar()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => 'bar']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => 'bar'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertEquals(expected: [], actual: $inputs->array(key: 'foo'));
     }
 
     public function test_has_uses_array_key_exists_not_isset()
     {
-        $inputs = new RequestedInputs(parsedBody: ['foo' => null]);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['foo' => null],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $this->assertTrue(condition: $inputs->has(key: 'foo'));
         $this->assertFalse(condition: $inputs->hasNonNull(key: 'foo'));
     }
 
-    public function test_from_slices_static_factory()
-    {
-        $inputs = RequestedInputs::fromSlices(
-            queryParams: ['page' => '1'],
-            parsedBody : ['email' => 'test@example.com'],
-        );
-
-        $this->assertEquals(expected: 'test@example.com', actual: $inputs->get(key: 'email'));
-        $this->assertEquals(expected: '1', actual: $inputs->get(key: 'page'));
-    }
-
     public function test_sanitized_html_prevents_xss()
     {
-        $inputs = new RequestedInputs(parsedBody: ['content' => '<script>alert("xss")</script>']);
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : ['content' => '<script>alert("xss")</script>'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
         $safe   = $inputs->sanitizedHtml(key: 'content');
 
         $this->assertStringNotContainsString(needle: '<script>', haystack: $safe);
@@ -134,8 +213,12 @@ class RequestedInputsTest extends TestCase
     public function test_value_returns_inputvalue_with_source()
     {
         $inputs = new RequestedInputs(
-            queryParams: ['from' => 'query'],
-            parsedBody : ['from' => 'body'],
+            merged   : Inputs::fromSlices(
+                         queryParams: ['from' => 'query'],
+                         parsedBody : ['from' => 'body'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
         );
 
         $value = $inputs->value(key: 'from');
@@ -147,11 +230,141 @@ class RequestedInputsTest extends TestCase
     public function test_query_and_body_accessors()
     {
         $inputs = new RequestedInputs(
-            queryParams: ['q' => 'search'],
-            parsedBody : ['b' => 'data'],
+            merged   : Inputs::fromSlices(
+                         queryParams: ['q' => 'search'],
+                         parsedBody : ['b' => 'data'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
         );
 
         $this->assertEquals(expected: 'search', actual: $inputs->fromQuery(key: 'q'));
         $this->assertEquals(expected: 'data', actual: $inputs->fromBody(key: 'b'));
+    }
+
+    public function test_only_returns_only_specified_keys()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          'foo'   => 'bar',
+                                          'baz'   => 'qux',
+                                          'extra' => 'value',
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $result = $inputs->only('foo', 'baz');
+
+        $this->assertEquals(expected: ['foo' => 'bar', 'baz' => 'qux'], actual: $result);
+    }
+
+    public function test_only_with_body_preference()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: ['shared' => 'query'],
+                         parsedBody : ['shared' => 'body'],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $result = $inputs->only('shared');
+
+        $this->assertEquals(expected: ['shared' => 'body'], actual: $result);
+    }
+
+    public function test_except_excludes_specified_keys()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          'foo'  => 'bar',
+                                          'baz'  => 'qux',
+                                          'keep' => 'this',
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $result = $inputs->except('foo', 'baz');
+
+        $this->assertEquals(expected: ['keep' => 'this'], actual: $result);
+    }
+
+    public function test_bool_true_values_blacklist()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          'true' => 'true',
+                                          'one'  => '1',
+                                          'on'   => 'on',
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $this->assertTrue(condition: $inputs->bool(key: 'true'));
+        $this->assertTrue(condition: $inputs->bool(key: 'one'));
+        $this->assertTrue(condition: $inputs->bool(key: 'on'));
+    }
+
+    public function test_bool_false_values_blacklist()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          'false' => 'false',
+                                          'zero'  => '0',
+                                          'off'   => 'off',
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $this->assertFalse(condition: $inputs->bool(key: 'false'));
+        $this->assertFalse(condition: $inputs->bool(key: 'zero'));
+        $this->assertFalse(condition: $inputs->bool(key: 'off'));
+    }
+
+    public function test_bool_invalid_returns_default()
+    {
+        $inputs = new RequestedInputs(
+            merged   : Inputs::fromSlices(
+                         queryParams: [],
+                         parsedBody : [
+                                          'yes'     => 'yes',
+                                          'no'      => 'no',
+                                          'garbage' => 'garbage',
+                                          'array'   => [1, 2, 3],
+                                          'null'    => null,
+                                      ],
+                     ),
+            sanitizer: $this->sanitizer,
+            mapper   : $this->mapper,
+        );
+
+        $this->assertTrue(condition: $inputs->bool(key: 'yes', default: true));
+        $this->assertFalse(condition: $inputs->bool(key: 'no', default: false));
+        $this->assertTrue(condition: $inputs->bool(key: 'garbage', default: true));
+        $this->assertTrue(condition: $inputs->bool(key: 'array', default: true));
+        $this->assertTrue(condition: $inputs->bool(key: 'null', default: true));
+    }
+
+    protected function setUp() : void
+    {
+        $this->sanitizer = new InputSanitizer;
+        $this->mapper    = new MapRequestedInputsToDto;
     }
 }

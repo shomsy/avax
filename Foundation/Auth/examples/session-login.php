@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Avax\Auth\System\Auth;
 use Avax\Auth\System\AuthBuilder;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;

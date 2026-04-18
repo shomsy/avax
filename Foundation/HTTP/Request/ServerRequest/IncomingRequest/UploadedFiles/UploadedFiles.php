@@ -9,17 +9,9 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
  */
 final readonly class UploadedFiles
 {
-    private array $files;
-
-    /**
-     * @param array $files Tree of UploadedFileInterface objects.
-     */
     public function __construct(
-        array $files = []
-    )
-    {
-        $this->files = $files;
-    }
+        private array $files = []
+    ) {}
 
     /**
      * @return array Tree of UploadedFileInterface objects.
@@ -29,11 +21,6 @@ final readonly class UploadedFiles
         return $this->files;
     }
 
-    /**
-     * @param array $files
-     *
-     * @return UploadedFiles
-     */
     public function with(array $files) : self
     {
         return new self(files: $files);

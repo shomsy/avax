@@ -11,12 +11,7 @@ use JsonException;
  */
 final readonly class ParseJsonBody
 {
-    /**
-     * @param string $content
-     *
-     * @return array|null
-     */
-    public function execute(string $content) : array|null
+    public function execute(string $content) : ?array
     {
         $content = trim($content);
         if ($content === '') {

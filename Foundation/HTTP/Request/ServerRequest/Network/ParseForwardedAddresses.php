@@ -2,29 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\Network;
-
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
-use SensitiveParameter;
+namespace Avax\HTTP\Request\ServerRequest\Network;
 
 /**
- * Action Owner: Parses IP address chains from forwarded headers.
+ * ParseForwardedAddresses - Action owner for extracting IP addresses from proxy headers.
  */
 final readonly class ParseForwardedAddresses
 {
     /**
      * @return string[]
      */
-    public function execute(#[SensitiveParameter] RequestHeaders $headers) : array
+    public function execute(string $headerLine) : array
     {
-        $forwarded = $headers->getLine(name: 'X-Forwarded-For');
-
-        if ($forwarded === '') {
+        if ($headerLine === '') {
             return [];
         }
 
-        $ips = array_map('trim', explode(',', $forwarded));
-
-        return array_values(array_filter($ips, static fn ($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false));
+        $ips = array_map('trim', explode(',', $headerLine));
+        
+        return array_filter($ips, static fn($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false);
     }
 }

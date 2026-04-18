@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Access;
 
-use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Flow\AdminRealm\AdminElevation;

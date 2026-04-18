@@ -2,51 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\IncomingHttp\Network;
+namespace Avax\HTTP\Request\ServerRequest\Network;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
-use SensitiveParameter;
 
 /**
- * Action Owner: Securely resolves the client IP address.
+ * ResolveClientAddress - Action owner for determining the actual client IP.
  */
 final readonly class ResolveClientAddress
 {
-    private TrustedProxyPolicy $proxyPolicy;
-
     public function __construct(
-        TrustedProxyPolicy $proxyPolicy = new TrustedProxyPolicy()
-    )
-    {
-        $this->proxyPolicy = $proxyPolicy;
-    }
+        private TrustedProxyPolicy      $proxyPolicy,
+        private ParseForwardedAddresses $forwardedParser,
+    ) {}
 
-    public function execute(string $remoteAddr, #[SensitiveParameter] RequestHeaders $headers) : string
+    public function execute(string $remoteAddr, RequestHeaders $headers) : ?string
     {
         if (! $this->proxyPolicy->isTrusted(ip: $remoteAddr)) {
             return $remoteAddr;
         }
 
-        $forwarded = (new ParseForwardedAddresses())->execute(headers: $headers);
+        $forwardedFor = $headers->getLine(name: 'X-Forwarded-For');
+        $ips          = $this->forwardedParser->execute(headerLine: $forwardedFor);
 
-        if ($forwarded === []) {
+        if ($ips === []) {
             return $remoteAddr;
         }
 
-        // Traverse the chain from right to left, stripping trusted proxies.
-        // The first non-trusted IP we encounter is the real client IP.
-        $clientAddress = $remoteAddr;
-        $ips           = array_reverse($forwarded);
-
-        foreach ($ips as $ip) {
-            if ($this->proxyPolicy->isTrusted(ip: $ip)) {
-                $clientAddress = $ip; // Still a trusted proxy, keep moving left
-                continue;
-            }
-
-            return $ip; // Found the real client
-        }
-
-        return $clientAddress;
+        return reset($ips);
     }
 }

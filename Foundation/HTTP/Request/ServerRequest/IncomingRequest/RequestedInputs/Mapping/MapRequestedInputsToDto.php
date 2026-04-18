@@ -29,7 +29,8 @@ final readonly class MapRequestedInputsToDto
      * @return T
      *
      * @throws InvalidArgumentException When class does not exist or is not instantiable
-     * @throws RuntimeException When DTO instantiation fails or does not extend AbstractDTO
+     * @throws InvalidArgumentException When class does not extend AbstractDTO
+     * @throws RuntimeException When DTO instantiation fails
      */
     public function map(RequestedInputs $inputs, string $dtoClass) : object
     {
@@ -39,19 +40,19 @@ final readonly class MapRequestedInputsToDto
             );
         }
 
+        if (! is_a($dtoClass, AbstractDTO::class, allow_string: true)) {
+            throw new InvalidArgumentException(
+                message: sprintf('DTO class "%s" must extend %s', $dtoClass, AbstractDTO::class)
+            );
+        }
+
         try {
             /** @var T $dto */
             $dto = new $dtoClass($inputs->all());
         } catch (ReflectionException $e) {
-            throw new InvalidArgumentException(
+            throw new RuntimeException(
                 message : sprintf('Failed to instantiate DTO "%s": %s', $dtoClass, $e->getMessage()),
                 previous: $e,
-            );
-        }
-
-        if (! $dto instanceof AbstractDTO) {
-            throw new RuntimeException(
-                message: sprintf('DTO class "%s" must extend %s', $dtoClass, AbstractDTO::class)
             );
         }
 

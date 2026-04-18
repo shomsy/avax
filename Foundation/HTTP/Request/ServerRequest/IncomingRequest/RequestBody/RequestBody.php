@@ -17,9 +17,9 @@ use Psr\Http\Message\StreamInterface;
  */
 final readonly class RequestBody
 {
-    public function __construct(
-        private StreamInterface $stream
-    ) {}
+    public function __construct(private StreamInterface $stream)
+    {
+    }
 
     public function stream(): StreamInterface
     {

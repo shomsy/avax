@@ -60,7 +60,9 @@ class NetworkSecurityTest extends TestCase
                                                     ]);
         $result  = $resolver->execute(remoteAddr: '192.168.1.100', headers: $headers);
 
-        $this->assertEquals(expected: '10.0.0.1', actual: $result);
+        // Since 192.168.1.100 is NOT in trusted proxies (only 192.168.1.1 is),
+        // we must ignore the spoofed forwarded header and return the untrusted remote IP.
+        $this->assertEquals(expected: '192.168.1.100', actual: $result);
     }
 
     public function test_trusted_proxy_with_forwarded_chain()

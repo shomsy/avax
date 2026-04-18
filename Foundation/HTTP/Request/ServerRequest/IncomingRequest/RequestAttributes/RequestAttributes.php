@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes;
 
 /**
- * Capability Owner: Manages arbitrary request attributes.
+ * RequestAttributes - Capability Owner: Manages arbitrary request attributes.
  *
- * Attributes are variables passed to the handler by middleware,
- * authentication flows, or other system participants.
+ * Semantic rules:
+ * - key presence uses `array_key_exists()`. An attribute can be explicitly set to `null`.
+ * - `has()` determines presence, regardless of nullability.
  */
 final readonly class RequestAttributes
 {
@@ -24,9 +25,16 @@ final readonly class RequestAttributes
         return $this->attributes;
     }
 
-    public function get(string $name, mixed $default = null) : mixed
+    public function has(string $name): bool
     {
-        return $this->attributes[$name] ?? $default;
+        return array_key_exists($name, $this->attributes);
+    }
+
+    public function get(string $name, mixed $default = null): mixed
+    {
+        return array_key_exists($name, $this->attributes) 
+            ? $this->attributes[$name] 
+            : $default;
     }
 
     public function put(string $name, mixed $value) : self

@@ -11,10 +11,10 @@ se ubuduće tehnički razvoji ne bi rasplinuli.
 ## Odluka (Decision)
 
 Odlučili smo da trajno uspostavimo mapiranu _flow_ arhitekturu prema sledećem rečniku i rasporedu odgovornosti.
-Namespace system root za ovu komponentu je mapiran unutar `Avax\HTTP\Request\IncomingHttp\IncomingRequest\` (odnosno
+Namespace system root za ovu komponentu je mapiran unutar `Avax\HTTP\Request\ServerRequest\IncomingRequest\` (odnosno
 odgovarajući folder unutar Foundation/HTTP/Request).
 
-- **Flow**: `IncomingHttp`
+- **Flow**: `ServerRequest`
 - **Subflow**: `IncomingRequest`
 - **State Owner**: `ServerRequest` (puna PSR-7 implementacija)
 - **Legacy Bridge**: `Request` (podržava `input()`, `all()` za compatibility)
@@ -29,7 +29,7 @@ odgovarajući folder unutar Foundation/HTTP/Request).
     - `NormalizeUploadedFiles`, `GuardUploadedFiles`
     - `BearerTokenReader`, `ResolveClientAddress`, `TrustedProxyPolicy`, `ParseForwardedAddresses`
 - **Configuration Owners**:
-    - `PublicEntryPointRequest`, `CreateRequestFromIncomingHttp`
+    - `AssembleIncomingRequest`, `PrepareRequest`
 
 Istovremeno **ZABRANJUJEMO** dalju primenu:
 

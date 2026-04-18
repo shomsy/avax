@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\PublicEntryPointRequest;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * PublicEntryPointTest - REMOVED.
+ *
+ * PublicEntryPointRequest has been removed from the codebase.
+ * The canonical entry flow is now AssembleIncomingRequest.
+ *
+ * @see AssembleIncomingRequestTest
+ */
 class PublicEntryPointTest extends TestCase
 {
-    public function test_public_entry_point_creates_server_request_from_current_http_environment()
+    public function test_this_test_class_is_intentionally_empty(): void
     {
-        // Mocking superglobals isn't easy in PHPUnit, but we can check if it returns a ServerRequest
-        // This will likely fail with a fatal error due to the argument mismatch if not fixed.
-        $request = PublicEntryPointRequest::fromIncomingHttp();
-
-        $this->assertInstanceOf(expected: ServerRequest::class, actual: $request);
+        $this->markTestSkipped(
+            'PublicEntryPointRequest removed. See AssembleIncomingRequestTest for canonical entry flow tests.'
+        );
     }
 }

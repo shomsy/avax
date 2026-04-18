@@ -1,164 +1,54 @@
 ---
-title: RequestedInputs-how-this-works
+title: RequestedInputs - How This Works
 owner: HTTP Foundation Team
-last_reviewed: 2026-04-17
+last_reviewed: 2026-04-18
 classification: internal
 ---
 
-# RequestedInputs How This Works
+# RequestedInputs Capability
 
-## What this folder is
+The `RequestedInputs` component provides a domain-aware, typed, and sanitized view of the incoming request data (Query Parameters + Parsed Body).
 
-This folder contains the **input accessor layer** for HTTP requests. It is the single entry point for accessing all HTTP
-request inputs (query parameters, parsed body, uploaded files) with typed accessors, security sanitization, and DTO
-mapping.
+## Core Principles
 
-This is NOT about:
+1. **Composition over Inheritance**: `RequestedInputs` is a standalone capability that consumes `MergedInputs`.
+2. **Body over Query**: Body parameters take precedence over query parameters in merged views.
+3. **Type Safety**: Provides explicit methods for `string`, `int`, `float`, `bool`, and `array`.
+4. **Sanitization by Default**: The `sanitized()` view enforces security policies before data reaches the domain.
 
-- Request routing
-- Response formatting
-- Authentication/authorization
-- Validation (that's handled by DTOs)
+## Component Structure
 
-## Real commands or triggers that reach this folder
+- **RequestedInputs**: The primary API for input access.
+- **MergedInputs**: Internal state container for merged query and body data.
+- **InputSanitizer**: Action owner responsible for filtering and cleaning raw input.
+- **MapRequestedInputsToDto**: Integration point for hydrating Data Transfer Objects.
 
-- `ServerRequest::inputs()` - Creates RequestedInputs from HTTP request
-- `$request->inputs()` - In controllers to access input data
+## Usage Example
 
-## Exact upstream handoffs
+```php
+$inputs = $request->inputs();
 
-- `Foundation/HTTP/Request/ServerRequest.php`
-    - function: `ServerRequest::inputs()`
-    - Creates: `new RequestedInputs(queryParams, parsedBody)`
+// Raw access
+$id = $inputs->int('id');
 
-## The simplest story
+// Sanitized access
+$name = $inputs->sanitized()->string('name');
 
-1. HTTP request arrives at `ServerRequest`
-2. Body is parsed (JSON, form, etc.)
-3. `$request->inputs()` creates `RequestedInputs`
-4. Controller accesses typed values: `$inputs->string('email')`
-5. Outputs to HTML? Use: `$inputs->sanitizedHtml('content')`
-
-## The first important path
-
-```mermaid
-sequenceDiagram
-    participant HTTP as HTTP Request
-    participant SR as ServerRequest
-    participant RI as RequestedInputs
-    participant Ctrl as Controller
-    HTTP ->> SR: Incoming HTTP request
-    SR ->> SR: Parse body (JSON/form)
-    SR ->> RI: new RequestedInputs(query, body)
-    RI ->> Ctrl: $request->inputs()
-    Ctrl ->> RI: $inputs->string('email')
-    RI -->> Ctrl: "user@example.com"
-    Ctrl ->> RI: $inputs->sanitizedHtml('content')
-    RI -->> Ctrl: "&lt;script&gt;...&lt;/script&gt;" (safe)
+// DTO Mapping
+$dto = $inputs->as(CreateUserDto::class);
 ```
 
-- **Step 1:** ServerRequest parses incoming HTTP request
-- **Step 2:** RequestedInputs created with query + body data
-- **Step 3:** Controller gets typed values
-- **Step 4:** For HTML output, use sanitized methods
+## Assembly Flow
 
-## Direct files in this folder
+Inputs are assembled during the `ServerRequest` initialization via the `AssembleIncomingRequest` pipeline.
 
-### RequestedInputs.php
+1. **IO Capture**: `PrepareRequest` captures the raw body once.
+2. **Merging**: `MergedInputs` combines GET and POST data.
+3. **Injection**: `RequestedInputs` is created and injected with the required service dependencies (Sanitizer, Mapper).
 
-The main facade - extends Inputs and adds:
+## Security Boundaries
 
-- Security sanitization (SanitizesInput trait)
-- DTO mapping via `as()` method
-- Typed accessors via AccessesTypedValues trait
-
-Key methods:
-
-- `string()`, `int()`, `bool()`, `float()`, `enum()` - typed values
-- `sanitizedHtml()`, `sanitizedJs()`, `sanitizedPath()` - security
-- `as(MyDTO::class)` - map to DTO/Command
-
-### Inputs.php
-
-Base Value Object combining query + body:
-
-- Body takes precedence over query on conflicts
-- Provides: `query()`, `body()`, `all()`, `get()`, `has()`
-
-### AccessesTypedValues.php
-
-Shared trait with typed accessor methods:
-
-- Eliminates code duplication
-- Used by Inputs, QueryParams, ParsedBody
-
-### SanitizesInput.php
-
-OWASP-compliant security traits:
-
-- HTML encoding (XSS prevention)
-- JavaScript escaping
-- Path sanitization
-- Regex escaping
-- Control character removal
-- UTF-8 normalization
-
-### QueryParams.php
-
-Query string only - Value Object for /?foo=bar style inputs.
-
-### ParsedBody.php
-
-Parsed body only - Value Object for POST body data.
-
-### InputValue.php
-
-Single input value wrapper with type conversion.
-
-## Security boundaries (OWASP)
-
+Always use `sanitized()` when returning data to a browser context to prevent XSS and other injection attacks.
+```php
+$safeName = $inputs->sanitized()->html('name');
 ```
-┌─────────────────────────────────────────┐
-│         HTTP Request (UNTRUSTED)          │
-└──────────────────┬──────────┬─────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────┐
-│         RequestedInputs                   │
-│  ┌───────────────────────────────┐     │
-│  │ Input enters here           │     │
-│  │ - raw, unsanitized        │     │
-│  │ - potentially malicious  │     │
-│  └───────────────────────────────┘     │
-└──────────────────┬──────────────────────┘
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-        ▼                     ▼
-   Typed access          Security sanitization
-   (for logic)          (for output)
-   string()            sanitizedHtml() -> HTML
-   int()               sanitizedJs() -> JavaScript
-   bool()             sanitizedPath() -> filesystem
-```
-
-Security implementation:
-
-- **For logic**: Use `string()`, `int()`, etc.
-- **For HTML output**: Use `sanitizedHtml()`
-- **For JS output**: Use `sanitizedJs()`
-- **For filesystem**: Use `sanitizedPath()`
-
-## What to remember
-
-1. **Input enters untrusted** - Always sanitize before output
-2. **Body > query** - On conflicts, body wins
-3. **Use typed accessors** - `string()` not `get()` for type safety
-4. **Use DTOs for validation** - `$inputs->as(MyDTO::class)`
-5. **Security is layered** - Logic uses typed methods, output uses sanitized*
-
-## Debug first
-
-- Start in `RequestedInputs.php` when inputs seem wrong
-- Start in `SanitizesInput.php` when XSS warnings appear
-- Start in `AccessesTypedValues.php` when typed accessors fail

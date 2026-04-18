@@ -14,8 +14,10 @@ use Stringable;
  */
 final readonly class InputValue
 {
-    public const string SOURCE_BODY  = 'body';
+    public const string SOURCE_BODY = 'body';
+
     public const string SOURCE_QUERY = 'query';
+
     public const string SOURCE_MISSING = 'missing';
 
     public function __construct(
@@ -102,9 +104,6 @@ final readonly class InputValue
             : $default;
     }
 
-    /**
-     * @return string|int|float|bool|null
-     */
     private function normalizeScalar(mixed $value) : string|int|float|bool|null
     {
         if (is_scalar($value)) {
@@ -141,11 +140,15 @@ final readonly class InputValue
             return $default;
         }
 
-        return filter_var(
-            $value,
-            FILTER_VALIDATE_BOOLEAN,
-            FILTER_NULL_ON_FAILURE,
-        ) ?? $default;
+        $lower = strtolower($value);
+        if (in_array($lower, ['true', '1', 'on'], true)) {
+            return true;
+        }
+        if (in_array($lower, ['false', '0', 'off'], true)) {
+            return false;
+        }
+
+        return $default;
     }
 
     /**
@@ -162,11 +165,12 @@ final readonly class InputValue
 
     /**
      * @template T of BackedEnum
+     *
      * @param class-string<T> $enumClass
      *
      * @return T|null
      */
-    public function enum(string $enumClass, mixed $default = null) : BackedEnum|null
+    public function enum(string $enumClass, mixed $default = null) : ?BackedEnum
     {
         if ($this->value === null || ! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
             return $default;

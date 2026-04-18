@@ -12,13 +12,12 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion;
  */
 final readonly class NormalizeProtocolVersion
 {
-    public function execute(string|null $protocol = null) : string
+    public function execute(?string $protocol = null) : string
     {
         if ($protocol === null || $protocol === '') {
             return '1.1';
         }
 
-        // Handle formats like "HTTP/1.1" or "1.1"
         if (preg_match('#(?:HTTP/)?(?P<version>1\.[01]|2(?:\.0)?|3)#i', $protocol, $matches)) {
             return $matches['version'];
         }

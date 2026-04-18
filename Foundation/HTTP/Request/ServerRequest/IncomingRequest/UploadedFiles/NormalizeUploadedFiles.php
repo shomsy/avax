@@ -24,16 +24,19 @@ final readonly class NormalizeUploadedFiles
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
+
                 continue;
             }
 
             if (is_array($value) && isset($value['tmp_name'])) {
                 $normalized[$key] = $this->createUploadedFileFromSpec(value: $value);
+
                 continue;
             }
 
             if (is_array($value)) {
                 $normalized[$key] = $this->execute(files: $value);
+
                 continue;
             }
         }
@@ -41,9 +44,6 @@ final readonly class NormalizeUploadedFiles
         return $normalized;
     }
 
-    /**
-     * Handles normalization of PHP's nested $_FILES structure.
-     */
     private function createUploadedFileFromSpec(array $value) : array|UploadedFileInterface
     {
         if (is_array($value['tmp_name'])) {
@@ -62,14 +62,16 @@ final readonly class NormalizeUploadedFiles
     private function normalizeNestedFileSpec(array $files) : array
     {
         $normalized = [];
+
         foreach (array_keys($files['tmp_name']) as $key) {
-            $spec             = [
+            $spec = [
                 'tmp_name' => $files['tmp_name'][$key],
                 'size'     => $files['size'][$key],
                 'error'    => $files['error'][$key],
                 'name'     => $files['name'][$key],
                 'type'     => $files['type'][$key],
             ];
+
             $normalized[$key] = $this->createUploadedFileFromSpec(value: $spec);
         }
 

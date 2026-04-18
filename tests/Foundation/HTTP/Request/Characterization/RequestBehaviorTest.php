@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\HTTP\Tests\Foundation\Request\Characterization;
 
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Session\NullSession;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Tests\Unit;
 
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\GuardUploadedFiles;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
-use Avax\HTTP\Request\IncomingHttp\IncomingRequest\UploadedFiles\UploadedFile;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFile;
 use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ class UploadedFilesHardeningTest extends TestCase
     public function test_normalize_uploaded_files_accepts_uploaded_file_interface_instances()
     {
         $file       = new UploadedFile(stream: new Stream(stream: fopen('php://temp', 'r+')), size: 0, error: UPLOAD_ERR_OK);
-        $normalizer = new NormalizeUploadedFiles();
+        $normalizer = new NormalizeUploadedFiles;
 
         $result = $normalizer->execute(files: ['avatar' => $file]);
         $this->assertSame(expected: $file, actual: $result['avatar']);
@@ -32,11 +32,11 @@ class UploadedFilesHardeningTest extends TestCase
                 'size'     => 10,
                 'error'    => UPLOAD_ERR_OK,
                 'name'     => 'me.png',
-                'type'     => 'image/png'
-            ]
+                'type'     => 'image/png',
+            ],
         ];
 
-        $normalizer = new NormalizeUploadedFiles();
+        $normalizer = new NormalizeUploadedFiles;
         $result     = $normalizer->execute(files: $files);
 
         $this->assertInstanceOf(expected: UploadedFile::class, actual: $result['avatar']);
@@ -45,7 +45,7 @@ class UploadedFilesHardeningTest extends TestCase
 
     public function test_guard_uploaded_files_rejects_invalid_leaf()
     {
-        $guard = new GuardUploadedFiles();
+        $guard = new GuardUploadedFiles;
         $this->expectException(InvalidArgumentException::class);
         $guard->execute(files: ['avatar' => 'not-a-file']);
     }

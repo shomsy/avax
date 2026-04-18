@@ -22,11 +22,14 @@ final readonly class GuardUploadedFiles
         foreach ($files as $file) {
             if (is_array($file)) {
                 $this->execute(files: $file);
+
                 continue;
             }
 
             if (! $file instanceof UploadedFileInterface) {
-                throw new InvalidArgumentException(message: 'Invalid uploaded file encountered in the tree.');
+                throw new InvalidArgumentException(
+                    message: 'Invalid uploaded file encountered in the tree.'
+                );
             }
         }
     }

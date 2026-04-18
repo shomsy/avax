@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Pipeline;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\MergedInputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\ParsedBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\QueryParams;
 
@@ -15,9 +15,9 @@ final readonly class MergeRequestedInputs
         private ParsedBody  $parsedBody,
     ) {}
 
-    public function get() : MergedInputs
+    public function get() : Inputs
     {
-        return new MergedInputs(
+        return new Inputs(
             queryParams: $this->queryParams,
             parsedBody : $this->parsedBody,
         );

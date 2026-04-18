@@ -86,7 +86,7 @@ trait AccessesTypedValues
         return $this->toString(value: $value) ?? $default;
     }
 
-    private function toString(mixed $value) : string|null
+    private function toString(mixed $value) : ?string
     {
         if (is_scalar($value) || $value instanceof Stringable) {
             return (string) $value;
@@ -147,10 +147,10 @@ trait AccessesTypedValues
         }
 
         $lower = strtolower($value);
-        if ($lower === 'true' || $lower === '1') {
+        if (in_array($lower, ['true', '1', 'on'], true)) {
             return true;
         }
-        if ($lower === 'false' || $lower === '0') {
+        if (in_array($lower, ['false', '0', 'off'], true)) {
             return false;
         }
 
@@ -178,7 +178,7 @@ trait AccessesTypedValues
      *
      * @return T|null
      */
-    public function enum(string $key, string $enumClass, mixed $default = null) : BackedEnum|null
+    public function enum(string $key, string $enumClass, mixed $default = null) : ?BackedEnum
     {
         $value = $this->get(key: $key);
 

@@ -4,81 +4,64 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
+use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 
 /**
- * Unit: Concrete implementation of a PSR-7 uploaded file.
+ * UploadedFile - State owner for a single uploaded file.
  */
 final class UploadedFile implements UploadedFileInterface
 {
-    private bool                     $moved = false;
-    private readonly string|null     $clientMediaType;
-    private readonly string|null     $clientFilename;
-    private readonly int             $error;
-    private readonly int|null        $size;
-    private readonly StreamInterface $stream;
+    private bool $moved = false;
 
     public function __construct(
-        StreamInterface $stream,
-        int|null        $size,
-        int             $error,
-        string|null     $clientFilename = null,
-        string|null     $clientMediaType = null
-    )
-    {
-        $this->stream          = $stream;
-        $this->size            = $size;
-        $this->error           = $error;
-        $this->clientFilename  = $clientFilename;
-        $this->clientMediaType = $clientMediaType;
-    }
+        private readonly string  $tmpName,
+        private readonly int     $size,
+        private readonly int     $error,
+        private readonly ?string $name = null,
+        private readonly ?string $type = null
+    ) {}
 
     public function getStream() : StreamInterface
     {
         if ($this->moved) {
-            throw new RuntimeException(message: 'File already moved');
-        }
-
-        return $this->stream;
-    }
-
-    public function moveTo(string $targetPath) : void
-    {
-        if ($this->moved) {
-            throw new RuntimeException(message: 'File already moved');
+            throw new RuntimeException('Cannot retrieve stream after file has been moved.');
         }
 
         if ($this->error !== UPLOAD_ERR_OK) {
-            throw new RuntimeException(message: 'Cannot move file with upload error: ' . $this->error);
+            throw new RuntimeException('Cannot retrieve stream for file with upload error.');
         }
 
-        if ($targetPath === '') {
-            throw new InvalidArgumentException(message: 'Invalid target path');
+        return new Stream(stream: fopen($this->tmpName, 'r'));
+    }
+
+    public function moveTo($targetPath) : void
+    {
+        if ($this->moved) {
+            throw new RuntimeException('File has already been moved.');
         }
 
-        // Standard PHP move_uploaded_file behavior is expected here.
-        // For our implementation, we'll cast a note that this is the seam.
+        if (! is_string($targetPath) || $targetPath === '') {
+            throw new InvalidArgumentException('Invalid target path provided.');
+        }
+
         if (PHP_SAPI === 'cli') {
-            // In CLI context we just write the stream
-            if ($this->stream) {
-                $this->stream->rewind();
-            }
-            file_put_contents($targetPath, (string) $this->stream);
+            $success = rename($this->tmpName, $targetPath);
         } else {
-            // Actual SAPI integration
-            $uri = $this->stream->getMetadata(key: 'uri');
-            if ($uri === null || ! move_uploaded_file($uri, $targetPath)) {
-                throw new RuntimeException(message: 'Failed to move uploaded file');
-            }
+            $success = move_uploaded_file($this->tmpName, $targetPath);
+        }
+
+        if (! $success) {
+            throw new RuntimeException('Failed to move uploaded file.');
         }
 
         $this->moved = true;
     }
 
-    public function getSize() : int|null
+    public function getSize() : ?int
     {
         return $this->size;
     }
@@ -88,13 +71,13 @@ final class UploadedFile implements UploadedFileInterface
         return $this->error;
     }
 
-    public function getClientFilename() : string|null
+    public function getClientFilename() : ?string
     {
-        return $this->clientFilename;
+        return $this->name;
     }
 
-    public function getClientMediaType() : string|null
+    public function getClientMediaType() : ?string
     {
-        return $this->clientMediaType;
+        return $this->type;
     }
 }

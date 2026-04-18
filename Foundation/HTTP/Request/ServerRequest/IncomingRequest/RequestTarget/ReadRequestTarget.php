@@ -7,28 +7,18 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Action Owner: Resolves the request-target according to PSR-7 rules.
- *
- * If no explicit request-target is provided, it must return the
- * origin-form (path + query string) of the URI.
+ * ReadRequestTarget - Action owner for resolving the request-target.
  */
 final readonly class ReadRequestTarget
 {
-    private UriInterface $uri;
-    private string|null  $explicitTarget;
-
     public function __construct(
-        string|null  $explicitTarget,
-        UriInterface $uri
-    )
-    {
-        $this->explicitTarget = $explicitTarget;
-        $this->uri            = $uri;
-    }
+        private ?string      $explicitTarget,
+        private UriInterface $uri
+    ) {}
 
     public function resolve() : string
     {
-        if ($this->explicitTarget !== null) {
+        if ($this->explicitTarget !== null && $this->explicitTarget !== '') {
             return $this->explicitTarget;
         }
 

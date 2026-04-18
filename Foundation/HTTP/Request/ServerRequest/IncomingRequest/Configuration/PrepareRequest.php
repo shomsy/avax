@@ -1,0 +1,261 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
+
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
+use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\URI\UriBuilder;
+
+/**
+ * PrepareRequest - Internal assembly pipeline owner.
+ */
+final readonly class PrepareRequest
+{
+    public function __construct(
+        private ParseBodyByContentType   $bodyParser,
+        private NormalizeProtocolVersion $protocolNormalizer,
+        private NormalizeUploadedFiles   $filesNormalizer,
+        private TrustedProxyPolicy       $trustedProxyPolicy,
+        private ParseForwardedAddresses  $forwardedParser,
+        private ResolveClientAddress     $clientResolver,
+    ) {}
+
+    public function fromGlobals(
+        ?array $server = null,
+        ?array $query = null,
+        ?array $cookie = null,
+        ?array $files = null,
+    ) : RequestInit
+    {
+        $server = $server ?? $_SERVER ?? [];
+        $query  = $query ?? $_GET ?? [];
+        $cookie = $cookie ?? $_COOKIE ?? [];
+        $files  = $files ?? $_FILES ?? [];
+
+        $method          = $this->stageReadMethod(server: $server);
+        $protocolVersion = $this->stageReadProtocol(server: $server);
+        $uri             = $this->stageReadUri(server: $server);
+        $requestHeaders  = $this->stageExtractHeaders(server: $server);
+
+        // Capture raw body once to avoid multiple IO reads
+        $rawBody = $this->captureRawBody(method: $method);
+
+        $bodyStream      = $this->stageResolveBodyStream(rawBody: $rawBody);
+        $parsedBody      = $this->stageParseBody(rawBody: $rawBody, requestHeaders: $requestHeaders);
+        $session         = $this->stageResolveSession();
+
+        return RequestInit::fromResolvedParts(
+            body           : new RequestBody(stream: $bodyStream),
+            method         : $method,
+            uri            : $uri,
+            requestHeaders : $requestHeaders,
+            serverParams   : $server,
+            explicitTarget : null,
+            cookies        : new RequestCookies(cookies: $cookie),
+            queryParams    : $query,
+            uploadedFiles  : $this->filesNormalizer->execute(files: $files),
+            parsedBody     : $parsedBody,
+            attributes     : new RequestAttributes,
+            session        : $session,
+            protocolVersion: $protocolVersion,
+        );
+    }
+
+    private function captureRawBody(string $method) : string
+    {
+        if (! $this->isBodyAllowedMethod(method: $method)) {
+            return '';
+        }
+
+        $content = file_get_contents('php://input');
+
+        return $content !== false ? $content : '';
+    }
+
+    private function stageReadMethod(array $server) : string
+    {
+        return strtoupper($server['REQUEST_METHOD'] ?? 'GET');
+    }
+
+    private function stageReadProtocol(array $server) : string
+    {
+        return $this->protocolNormalizer->execute(
+            protocol: $server['SERVER_PROTOCOL'] ?? '1.1'
+        );
+    }
+
+    private function stageReadUri(array $server) : UriBuilder
+    {
+        $protocol = empty($server['HTTPS']) || $server['HTTPS'] === 'off'
+            ? 'http'
+            : 'https';
+        $host     = $server['HTTP_HOST'] ?? 'localhost';
+        $uri      = $server['REQUEST_URI'] ?? '/';
+
+        return UriBuilder::createFromString(uri: "{$protocol}://{$host}{$uri}");
+    }
+
+    private function stageExtractHeaders(array $server) : RequestHeaders
+    {
+        $headers = [];
+        foreach ($server as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $name           = str_replace('_', '-', substr($key, 5));
+                $headers[$name] = $value;
+            } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'], true)) {
+                $name           = str_replace('_', '-', $key);
+                $headers[$name] = $value;
+            }
+        }
+
+        return new RequestHeaders(headersInput: $headers);
+    }
+
+    private function stageResolveBodyStream(string $rawBody) : Stream
+    {
+        if ($rawBody === '') {
+            return $this->createEmptyBodyStream();
+        }
+
+        return $this->createBodyStreamFromRaw(rawBody: $rawBody);
+    }
+
+    private function isBodyAllowedMethod(string $method) : bool
+    {
+        return in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+    }
+
+    private function createEmptyBodyStream() : Stream
+    {
+        $handle = @fopen('php://temp', 'r+');
+        if ($handle === false) {
+            return new Stream(stream: fopen('php://temp', 'r+'));
+        }
+
+        return new Stream(stream: $handle);
+    }
+
+    private function createBodyStreamFromRaw(string $rawBody) : Stream
+    {
+        $handle = @fopen('php://temp', 'r+');
+        if ($handle === false) {
+            return new Stream(stream: fopen('php://temp', 'r+'));
+        }
+
+        $stream = new Stream(stream: $handle);
+        $stream->write(string: $rawBody);
+        $stream->rewind();
+
+        return $stream;
+    }
+
+    private function stageParseBody(string $rawBody, RequestHeaders $requestHeaders) : ParsedBody
+    {
+        if ($rawBody === '') {
+            return new ParsedBody;
+        }
+
+        $contentType = $requestHeaders->getLine(name: 'Content-Type');
+        $parsedData  = $this->bodyParser->execute(
+            contentType: $contentType,
+            content    : $rawBody,
+        );
+
+        return $parsedData !== []
+            ? new ParsedBody(data: $parsedData)
+            : new ParsedBody;
+    }
+
+    private function stageResolveSession() : ?RequestSession
+    {
+        $status = session_status();
+
+        if ($status === PHP_SESSION_NONE || $status !== PHP_SESSION_ACTIVE) {
+            return null;
+        }
+
+        if ($_SESSION === []) {
+            return null;
+        }
+
+        return new RequestSession(data: $_SESSION);
+    }
+
+    public function fromSlices(
+        ?array            $queryParams = null,
+        array|object|null $parsedBody = null,
+        string            $method = 'GET',
+    ) : RequestInit
+    {
+        $queryParams    ??= [];
+        $parsedBodyData = is_array($parsedBody)
+            ? $parsedBody
+            : (is_object($parsedBody) ? (array) $parsedBody : []);
+
+        return $this->defaults()
+            ->withMethod(method: $method)
+            ->withQueryParams(queryParams: $queryParams)
+            ->withParsedBody(parsedBody: new ParsedBody(data: $parsedBodyData));
+    }
+
+    public function defaults() : RequestInit
+    {
+        $uri            = UriBuilder::createFromString(uri: 'http://localhost');
+        $requestHeaders = new RequestHeaders;
+
+        return RequestInit::fromResolvedParts(
+            body           : new RequestBody(stream: $this->createEmptyBodyStream()),
+            method         : 'GET',
+            uri            : $uri,
+            requestHeaders : $requestHeaders,
+            serverParams   : [],
+            explicitTarget : '',
+            cookies        : new RequestCookies,
+            queryParams    : [],
+            uploadedFiles  : new UploadedFiles,
+            parsedBody     : new ParsedBody,
+            attributes     : new RequestAttributes,
+            session        : null,
+            protocolVersion: '1.1',
+        );
+    }
+
+    public function resolveClientAddress(array $serverParams) : ?string
+    {
+        $remoteAddr = $serverParams['REMOTE_ADDR'] ?? null;
+
+        if ($remoteAddr === null) {
+            return null;
+        }
+
+        $headers = $this->stageExtractHeaders(server: $serverParams);
+
+        return $this->clientResolver->execute(
+            remoteAddr: $remoteAddr,
+            headers   : $headers,
+        );
+    }
+
+    public function isFromTrustedProxy(array $serverParams) : bool
+    {
+        $remoteAddr = $serverParams['REMOTE_ADDR'] ?? null;
+
+        return $remoteAddr !== null
+            && $this->trustedProxyPolicy->isTrusted(ip: $remoteAddr);
+    }
+}

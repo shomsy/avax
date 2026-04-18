@@ -11,23 +11,12 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
  */
 final readonly class RequestSession
 {
-    private string|null $id;
-    private array       $data;
-
-    /**
-     * @param array<string, mixed> $data
-     */
     public function __construct(
-        array|null  $data = null,
-        string|null $id = null
-    )
-    {
-        $data       ??= [];
-        $this->data = $data;
-        $this->id   = $id;
-    }
+        private array   $data = [],
+        private ?string $id = null
+    ) {}
 
-    public function id() : string|null
+    public function id() : ?string
     {
         return $this->id;
     }

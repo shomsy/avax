@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
 
 /**
- * Capability Owner: Manages the session data attached to a request.
+ * RequestSession - Capability Owner: Manages the session data attached to a request.
  *
- * This follows the "Attached Capability" pattern.
+ * Semantic rules:
+ * - key presence uses `array_key_exists()`. A session value can be explicitly set to `null`.
+ * - `has()` determines presence, regardless of nullability.
  */
 final readonly class RequestSession
 {
@@ -29,14 +31,16 @@ final readonly class RequestSession
         return $this->data;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        return $this->data[$key] ?? $default;
+        return array_key_exists($key, $this->data) 
+            ? $this->data[$key] 
+            : $default;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
-        return isset($this->data[$key]);
+        return array_key_exists($key, $this->data);
     }
 
     public function put(string $key, mixed $value) : self

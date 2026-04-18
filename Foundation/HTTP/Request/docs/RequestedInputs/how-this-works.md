@@ -1,5 +1,5 @@
 ---
-title: RequestedInputs - How This Works
+title: RequestedInputs - Runtime Architecture
 owner: HTTP Foundation Team
 last_reviewed: 2026-04-18
 classification: internal
@@ -7,48 +7,61 @@ classification: internal
 
 # RequestedInputs Capability
 
-The `RequestedInputs` component provides a domain-aware, typed, and sanitized view of the incoming request data (Query Parameters + Parsed Body).
+The `RequestedInputs` component is the **Capability Owner** for typed, sanitized, and unified access to incoming request data (Query Parameters + Parsed Body). It completely abstracts away the `$_GET` and `$_POST` paradigms in favor of a clean, state-injected model.
 
-## Core Principles
+## Core Semantic Rules (The Contract)
 
-1. **Composition over Inheritance**: `RequestedInputs` is a standalone capability that consumes `MergedInputs`.
-2. **Body over Query**: Body parameters take precedence over query parameters in merged views.
-3. **Type Safety**: Provides explicit methods for `string`, `int`, `float`, `bool`, and `array`.
-4. **Sanitization by Default**: The `sanitized()` view enforces security policies before data reaches the domain.
+1. **Composition over Inheritance**: `RequestedInputs` is not a Request. It is a capability object exposed via `$request->inputs()`.
+2. **Body Wins Collision**: If the same key exists in both the Query and the Parsed Body, the **Body value strictly wins**. 
+3. **Presence vs Nullability (`isset` vs `array_key_exists`)**:
+   - `has('key')` uses strict `array_key_exists`. A key can be present but hold a `null` value.
+   - `hasNonNull('key')` ensures the key is both present and not strictly `null`.
+   - `null` is a valid domain value (e.g., explicitly cleared fields in JSON payloads).
+4. **Source-Awareness via `InputValue`**: You can explicitly ask for the source of a value using `$inputs->value('key')`, which returns an `InputValue` object detailing whether the value came from the `body`, `query`, or is `missing`.
 
-## Component Structure
+## Runtime Assembly Flow
 
-- **RequestedInputs**: The primary API for input access.
-- **MergedInputs**: Internal state container for merged query and body data.
-- **InputSanitizer**: Action owner responsible for filtering and cleaning raw input.
-- **MapRequestedInputsToDto**: Integration point for hydrating Data Transfer Objects.
+Inputs are strictly assembled exactly **once** during the `AssembleIncomingRequest` pipeline:
 
-## Usage Example
+1. **Single-Pass IO**: The raw body stream is read exactly once and buffered.
+2. **Strict Parsing**: The buffered body is parsed via `ParseBodyByContentType` into a `ParsedBody` capability.
+3. **Merging**: `MergedInputs` takes `QueryParams` and `ParsedBody` and unifies them in memory.
+4. **Injection**: `RequestedInputs` acts as a facade over `MergedInputs`, injecting the stateless `InputSanitizer` and `MapRequestedInputsToDto` services for extended capabilities.
+
+## Type Safety & Casting
+
+The API enforces strict type casting at the boundary. If a value cannot be safely cast, it falls back to the provided default (or a sensible primitive default).
 
 ```php
 $inputs = $request->inputs();
 
-// Raw access
-$id = $inputs->int('id');
-
-// Sanitized access
-$name = $inputs->sanitized()->string('name');
-
-// DTO Mapping
-$dto = $inputs->as(CreateUserDto::class);
+$id    = $inputs->int('id', 0);           // Strict int cast
+$name  = $inputs->string('name', '');     // Strict string cast
+$flags = $inputs->array('flags', []);     // Enforces array
+$debug = $inputs->bool('debug', false);   // Understands 'true', '1', 'on', 'false', '0', 'off'
+$role  = $inputs->enum('role', Role::class); // BackedEnum hydration
 ```
 
-## Assembly Flow
+## Security & Sanitization
 
-Inputs are assembled during the `ServerRequest` initialization via the `AssembleIncomingRequest` pipeline.
+Raw access is permitted for safe domain transfers, but when echoing to views or logs, the `sanitized()` facade must be used:
 
-1. **IO Capture**: `PrepareRequest` captures the raw body once.
-2. **Merging**: `MergedInputs` combines GET and POST data.
-3. **Injection**: `RequestedInputs` is created and injected with the required service dependencies (Sanitizer, Mapper).
-
-## Security Boundaries
-
-Always use `sanitized()` when returning data to a browser context to prevent XSS and other injection attacks.
 ```php
-$safeName = $inputs->sanitized()->html('name');
+// Strips control characters
+$cleanString = $inputs->sanitized()->string('title');
+
+// Encodes for HTML output (htmlspecialchars)
+$safeHtml = $inputs->sanitized()->html('description');
+
+// Encodes for JS injection
+$safeJs = $inputs->sanitized()->js('config');
+```
+
+## DTO Hydration Boundary
+
+`RequestedInputs` is the exclusive integration point for Data Transfer Objects.
+
+```php
+// Automatically maps merged inputs via Reflection
+$dto = $request->inputs()->as(RegisterUserDto::class);
 ```

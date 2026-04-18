@@ -362,6 +362,112 @@ class RequestedInputsTest extends TestCase
         $this->assertTrue(condition: $inputs->bool(key: 'null', default: true));
     }
 
+    public function test_has_vs_has_non_null_semantics()
+    {
+        $inputs = new RequestedInputs(
+            merged: Inputs::fromSlices(
+                queryParams: [],
+                parsedBody: ['explicit_null' => null, 'value' => 1]
+            ),
+            sanitizer: $this->sanitizer,
+            mapper: $this->mapper,
+        );
+
+        // Strict presence
+        $this->assertTrue($inputs->has('explicit_null'));
+        $this->assertFalse($inputs->has('missing'));
+
+        // Non-null presence
+        $this->assertFalse($inputs->hasNonNull('explicit_null'));
+        $this->assertTrue($inputs->hasNonNull('value'));
+    }
+
+    public function test_enum_hydration()
+    {
+        if (!enum_exists('TestRoleEnum')) {
+            eval('enum TestRoleEnum: string { case Admin = "admin"; case User = "user"; }');
+        }
+
+        $inputs = new RequestedInputs(
+            merged: Inputs::fromSlices(
+                queryParams: [],
+                parsedBody: ['role' => 'admin', 'invalid' => 'superadmin']
+            ),
+            sanitizer: $this->sanitizer,
+            mapper: $this->mapper,
+        );
+
+        $this->assertEquals(\TestRoleEnum::Admin, $inputs->enum('role', \TestRoleEnum::class));
+        $this->assertNull($inputs->enum('invalid', \TestRoleEnum::class));
+        $this->assertEquals(\TestRoleEnum::User, $inputs->enum('invalid', \TestRoleEnum::class, \TestRoleEnum::User));
+    }
+
+    public function test_dto_mapping_throws_when_class_missing()
+    {
+        $inputs = new RequestedInputs(
+            merged: Inputs::fromSlices([], []),
+            sanitizer: $this->sanitizer,
+            mapper: clone $this->mapper,
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('DTO class does not exist');
+
+        $inputs->as('NonExistentDtoClass');
+    }
+
+    public function test_dto_mapping_throws_when_not_abstract_dto()
+    {
+        if (!class_exists('NotADtoClass')) {
+            eval('class NotADtoClass {}');
+        }
+
+        $inputs = new RequestedInputs(
+            merged: Inputs::fromSlices([], []),
+            sanitizer: $this->sanitizer,
+            mapper: clone $this->mapper,
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('must extend');
+
+        $inputs->as(\NotADtoClass::class);
+    }
+
+    public function test_dto_mapping_path()
+    {
+        if (!class_exists('Avax\HTTP\Request\Tests\Unit\TestDtoClass')) {
+            eval('
+                namespace Avax\HTTP\Request\Tests\Unit;
+                use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+                class TestDtoClass extends AbstractDTO {
+                    public string $name;
+                    public int $age;
+                    public function __construct(array $payload) {
+                        $this->name = $payload["name"] ?? "";
+                        $this->age = (int)($payload["age"] ?? 0);
+                    }
+                }
+            ');
+        }
+
+        $inputs = new RequestedInputs(
+            merged: Inputs::fromSlices(
+                queryParams: [],
+                parsedBody: ['name' => 'John', 'age' => '30']
+            ),
+            sanitizer: $this->sanitizer,
+            mapper: clone $this->mapper,
+        );
+
+        $dto = $inputs->as('Avax\HTTP\Request\Tests\Unit\TestDtoClass');
+        
+        $this->assertInstanceOf('Avax\HTTP\Request\Tests\Unit\TestDtoClass', $dto);
+        $this->assertEquals('John', $dto->name);
+        $this->assertEquals(30, $dto->age);
+    }
+
     protected function setUp() : void
     {
         $this->sanitizer = new InputSanitizer;

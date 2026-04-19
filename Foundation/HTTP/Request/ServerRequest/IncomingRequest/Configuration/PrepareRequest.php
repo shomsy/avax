@@ -17,7 +17,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploa
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use SensitiveParameter;
@@ -31,7 +31,7 @@ final readonly class PrepareRequest
         private ParseBodyByContentType   $bodyParser,
         private NormalizeProtocolVersion $protocolNormalizer,
         private NormalizeUploadedFiles   $filesNormalizer,
-        private TrustedProxyPolicy       $trustedProxyPolicy,
+        private TrustedIpv4ProxyPolicy   $trustedProxyPolicy,
         private ResolveClientAddress     $clientResolver,
     ) {}
 

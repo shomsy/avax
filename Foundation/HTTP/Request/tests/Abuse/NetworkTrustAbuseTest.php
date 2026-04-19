@@ -15,7 +15,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -73,10 +73,10 @@ class NetworkTrustAbuseTest extends TestCase
                                 ),
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
-            trustedProxyPolicy: new TrustedProxyPolicy(trustedProxies: ['127.0.0.1']),
+            trustedProxyPolicy: new TrustedIpv4ProxyPolicy(trustedProxies: ['127.0.0.1']),
             forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedProxyPolicy(trustedProxies: ['127.0.0.1']),
+                                    proxyPolicy    : new TrustedIpv4ProxyPolicy(trustedProxies: ['127.0.0.1']),
                                     forwardedParser: new ParseForwardedAddresses
                                 )
         );

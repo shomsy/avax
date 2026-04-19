@@ -15,7 +15,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -61,10 +61,10 @@ class BodyParsingAbuseTest extends TestCase
                                 ),
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
-            trustedProxyPolicy: new TrustedProxyPolicy,
+            trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
             forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedProxyPolicy,
+                                    proxyPolicy    : new TrustedIpv4ProxyPolicy,
                                     forwardedParser: new ParseForwardedAddresses
                                 )
         );

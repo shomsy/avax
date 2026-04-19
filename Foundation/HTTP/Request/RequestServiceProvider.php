@@ -19,7 +19,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedF
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -62,7 +62,7 @@ final readonly class RequestServiceProvider implements ServiceProviderInterface
 
     private function registerNetwork(): void
     {
-        $this->app->singleton(abstract: TrustedProxyPolicy::class, concrete: function () {
+        $this->app->singleton(abstract: TrustedIpv4ProxyPolicy::class, concrete: function () {
             $trustedProxies = [];
             
             if ($this->app->has(id: 'config')) {
@@ -70,7 +70,7 @@ final readonly class RequestServiceProvider implements ServiceProviderInterface
                 $trustedProxies = method_exists($config, 'get') ? $config->get('request.trusted_proxies', []) : [];
             }
 
-            return new TrustedProxyPolicy(
+            return new TrustedIpv4ProxyPolicy(
                 trustedProxies: is_array($trustedProxies) ? $trustedProxies : [],
             );
         });
@@ -100,7 +100,5 @@ final readonly class RequestServiceProvider implements ServiceProviderInterface
         $this->app->alias(alias: ServerRequestInterface::class, abstract: ServerRequest::class);
     }
 
-    public function boot(): void
-    {
-    }
+    public function boot(): void {}
 }

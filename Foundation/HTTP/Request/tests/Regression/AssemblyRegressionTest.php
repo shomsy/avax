@@ -12,7 +12,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJso
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use PHPUnit\Framework\TestCase;
 
 class AssemblyRegressionTest extends TestCase
@@ -300,10 +300,10 @@ class AssemblyRegressionTest extends TestCase
                                 ),
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
-            trustedProxyPolicy: new TrustedProxyPolicy(trustedProxies: []),
+            trustedProxyPolicy: new TrustedIpv4ProxyPolicy(trustedProxies: []),
             forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedProxyPolicy(trustedProxies: []),
+                                    proxyPolicy    : new TrustedIpv4ProxyPolicy(trustedProxies: []),
                                     forwardedParser: new ParseForwardedAddresses
                                 ),
         );

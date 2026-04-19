@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Characterization;
+namespace Avax\HTTP\Request\tests\Characterization;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -128,11 +128,10 @@ class BridgeRequestTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedIpv4ProxyPolicy,
-                                    forwardedParser: new ParseForwardedAddresses
-                                )
+                proxyPolicy    : new TrustedIpv4ProxyPolicy,
+                forwardedParser: new ParseForwardedAddresses
+            )
         );
 
         $this->assembler = new AssembleIncomingRequest(

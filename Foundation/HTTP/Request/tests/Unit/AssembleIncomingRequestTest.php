@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -141,7 +141,6 @@ class AssembleIncomingRequestTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer: new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser: new ParseForwardedAddresses,
             clientResolver: new ResolveClientAddress(
                 proxyPolicy: new TrustedIpv4ProxyPolicy,
                 forwardedParser: new ParseForwardedAddresses,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
@@ -40,8 +40,7 @@ class ServerRequestCorrectnessTest extends TestCase
             parsedBody : null,
             method     : 'GET'
         )->withUri(
-            uri         : UriBuilder::createFromString(uri: 'http://localhost/'),
-            preserveHost: false
+            uri: UriBuilder::createFromString(uri: 'http://localhost/'),
         )->withHeader(name: 'Host', value: 'localhost');
     }
 
@@ -50,7 +49,7 @@ class ServerRequestCorrectnessTest extends TestCase
         $request = $this->createServerRequest();
         $newUri  = UriBuilder::createFromString(uri: 'https://example.com/foo');
 
-        $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
+        $newRequest = $request->withUri(uri: $newUri);
 
         $this->assertEquals(expected: ['example.com'], actual: $newRequest->getHeader(name: 'Host'));
     }
@@ -70,7 +69,7 @@ class ServerRequestCorrectnessTest extends TestCase
         $request = $this->createServerRequest();
         $newUri  = UriBuilder::createFromString(uri: 'http://localhost/path-only');
 
-        $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
+        $newRequest = $request->withUri(uri: $newUri);
 
         $this->assertEquals(expected: ['localhost'], actual: $newRequest->getHeader(name: 'Host'));
     }
@@ -87,6 +86,7 @@ class ServerRequestCorrectnessTest extends TestCase
         $this->assertEquals(expected: '/foo?bar=baz', actual: $request->requestTarget);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $preparer = new PrepareRequest(
@@ -97,7 +97,6 @@ class ServerRequestCorrectnessTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
                                     proxyPolicy    : new TrustedIpv4ProxyPolicy,
                                     forwardedParser: new ParseForwardedAddresses

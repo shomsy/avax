@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -46,24 +46,26 @@ class BridgeRequestImmutabilityTest extends TestCase
     private function createRequest() : Request
     {
         $serverRequest = new ServerRequest(
-            init     : new RequestInit(
-                           body           : new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
-                           method         : 'GET',
-                           uri            : UriBuilder::createFromString(uri: 'http://localhost/'),
-                           requestHeaders : null,
-                           serverParams   : [],
-                           requestTarget  : null,
-                           cookies        : null,
-                           queryParams    : [],
-                           uploadedFiles  : null,
-                           parsedBody     : null,
-                           attributes     : null,
-                           session        : null,
-                           protocolVersion: '1.1'
-                       ),
-            preparer : $this->preparer,
-            sanitizer: $this->sanitizer,
-            mapper   : $this->mapper
+            setup: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerInit(
+                state: new RequestInit(
+                    body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+                    method: 'GET',
+                    uri: UriBuilder::createFromString(uri: 'http://localhost/'),
+                    requestHeaders: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders([]),
+                    serverParams: [],
+                    requestTarget: '/',
+                    cookies: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies([]),
+                    queryParams: [],
+                    uploadedFiles: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles([]),
+                    parsedBody: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody(null),
+                    attributes: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes([]),
+                    session: null,
+                    protocolVersion: '1.1'
+                ),
+                preparer: $this->preparer,
+                sanitizer: $this->sanitizer,
+                mapper: $this->mapper
+            )
         );
 
         // Use reflection to call the private constructor
@@ -125,7 +127,6 @@ class BridgeRequestImmutabilityTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
                                     proxyPolicy    : new TrustedIpv4ProxyPolicy,
                                     forwardedParser: new ParseForwardedAddresses

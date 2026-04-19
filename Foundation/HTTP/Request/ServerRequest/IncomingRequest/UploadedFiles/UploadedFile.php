@@ -25,6 +25,7 @@ final class UploadedFile implements UploadedFileInterface
         private readonly string|null $type = null
     ) {}
 
+    #[\Override]
     public function getStream() : StreamInterface
     {
         if ($this->moved) {
@@ -38,7 +39,8 @@ final class UploadedFile implements UploadedFileInterface
         return new Stream(stream: fopen($this->tmpName, 'r'));
     }
 
-    public function moveTo($targetPath) : void
+    #[\Override]
+    public function moveTo(string $targetPath) : void
     {
         if ($this->moved) {
             throw new RuntimeException(message: 'File has already been moved.');
@@ -61,22 +63,26 @@ final class UploadedFile implements UploadedFileInterface
         $this->moved = true;
     }
 
-    public function getSize() : int|null
+    #[\Override]
+    public function getSize() : ?int
     {
         return $this->size;
     }
 
+    #[\Override]
     public function getError() : int
     {
         return $this->error;
     }
 
-    public function getClientFilename() : string|null
+    #[\Override]
+    public function getClientFilename() : ?string
     {
         return $this->name;
     }
 
-    public function getClientMediaType() : string|null
+    #[\Override]
+    public function getClientMediaType() : ?string
     {
         return $this->type;
     }

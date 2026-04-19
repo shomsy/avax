@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Regression;
+namespace Avax\HTTP\Request\tests\Regression;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -75,13 +75,13 @@ class PSR7ComplianceTest extends TestCase
 
     public function test_with_uri_preserve_host_logic() : void
     {
-        $request = $this->assembler->fromSlices(method: 'GET')
+        $request = $this->assembler->fromSlices()
             ->withHeader(name: 'Host', value: 'old.com');
         
         $newUri = UriBuilder::createFromString(uri: 'https://new.com/path');
         
         // preserveHost = false
-        $r1 = $request->withUri(uri: $newUri, preserveHost: false);
+        $r1 = $request->withUri(uri: $newUri);
         $this->assertEquals(expected: ['new.com'], actual: $r1->getHeader(name: 'Host'));
         
         // preserveHost = true
@@ -113,11 +113,10 @@ class PSR7ComplianceTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedIpv4ProxyPolicy,
-                                    forwardedParser: new ParseForwardedAddresses
-                                )
+                proxyPolicy    : new TrustedIpv4ProxyPolicy,
+                forwardedParser: new ParseForwardedAddresses
+            )
         );
 
         $this->assembler = new AssembleIncomingRequest(

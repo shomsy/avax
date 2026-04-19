@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
@@ -16,7 +16,7 @@ class UploadedFilesHardeningTest extends TestCase
 {
     public function test_normalize_uploaded_files_accepts_uploaded_file_interface_instances()
     {
-        $file       = new UploadedFile(stream: new Stream(stream: fopen('php://temp', 'r+')), size: 0, error: UPLOAD_ERR_OK);
+        $file       = new UploadedFile(tmpName: 'php://temp', size: 0, error: UPLOAD_ERR_OK);
         $normalizer = new NormalizeUploadedFiles;
 
         $result = $normalizer->execute(files: ['avatar' => $file]);
@@ -52,8 +52,7 @@ class UploadedFilesHardeningTest extends TestCase
 
     public function test_uploaded_file_rejects_move_when_error_state()
     {
-        $stream = new Stream(stream: fopen('php://temp', 'r+'));
-        $file   = new UploadedFile(stream: $stream, size: 0, error: UPLOAD_ERR_NO_FILE);
+        $file   = new UploadedFile(tmpName: 'php://temp', size: 0, error: UPLOAD_ERR_NO_FILE);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot move file with upload error');

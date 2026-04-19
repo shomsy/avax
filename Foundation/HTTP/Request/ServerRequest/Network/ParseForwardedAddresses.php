@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\Network;
 
+use SensitiveParameter;
+
 /**
  * ParseForwardedAddresses - Action owner for extracting IP addresses from proxy headers.
  */
@@ -12,7 +14,7 @@ final readonly class ParseForwardedAddresses
     /**
      * @return string[]
      */
-    public function execute(string $headerLine) : array
+    public function execute(#[SensitiveParameter] string $headerLine) : array
     {
         if ($headerLine === '') {
             return [];

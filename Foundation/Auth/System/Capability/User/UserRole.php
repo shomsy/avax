@@ -24,7 +24,7 @@ enum UserRole: string
         };
     }
 
-    public function canAccess(UserRole $required) : bool
+    public function canAccess(self $required) : bool
     {
         return $this->hierarchyLevel() >= $required->hierarchyLevel();
     }

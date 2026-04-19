@@ -125,6 +125,7 @@ class RouterDslAnyTest extends TestCase
         $this->assertEquals(expected: 'GET', actual: $matchedRoute->method);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         // Create minimal dependencies for testing

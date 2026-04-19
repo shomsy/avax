@@ -107,7 +107,7 @@ final readonly class CompletePasskeyAuthentication
         );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser(user: $user),
-            mode                : $issued->mode === AuthenticationMode::SESSION ? AuthenticationMode::SESSION : $issued->mode,
+            mode                : $issued->mode,
             sessionId           : $issued->sessionId,
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,

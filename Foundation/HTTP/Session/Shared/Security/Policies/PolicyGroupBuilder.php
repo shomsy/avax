@@ -324,7 +324,6 @@ final class PolicyGroupBuilder
         $policy = $this->build();
 
         if ($policy instanceof CompositePolicy) {
-            return [$policy];
         }
 
         return [$policy];

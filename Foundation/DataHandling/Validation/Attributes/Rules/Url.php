@@ -20,7 +20,7 @@ use Avax\Exceptions\ValidationException;
  * Applied at TARGET_PROPERTY level to ensure properties are valid URLs.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
-class URL
+class Url
 {
     /**
      * @throws \Avax\Exceptions\ValidationException

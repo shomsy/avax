@@ -38,7 +38,7 @@ final readonly class RouteCacheCompiler
         $registry = new RouteRegistry;
 
         foreach ($locator->discover(baseDir: $directory) as $file) {
-            $registry->scoped(closure: static function () use ($file, &$routes, $registry) : void {
+            $registry->scoped(closure: static function () use ($file, $registry, &$routes) : void {
                 require $file->getPathname();
 
                 $builders = $registry->flush();

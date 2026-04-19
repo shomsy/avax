@@ -274,7 +274,7 @@ final class RouterChaosTest extends TestCase
 
         // Create concurrent operations
         for ($op = 0; $op < $concurrentOperations; $op++) {
-            $operations[] = function () use ($op, $routesPerOperation) {
+            $operations[] = function () use ($routesPerOperation, $op) {
                 for ($i = 0; $i < $routesPerOperation; $i++) {
                     $routeId = ($op * $routesPerOperation) + $i;
                     $route   = new RouteDefinition(
@@ -379,6 +379,7 @@ final class RouterChaosTest extends TestCase
         );
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->router = new HttpRequestRouter(

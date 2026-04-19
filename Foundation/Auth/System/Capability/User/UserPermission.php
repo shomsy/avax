@@ -18,7 +18,7 @@ final readonly class UserPermission
         $this->value = $value;
     }
 
-    public function equals(UserPermission $other) : bool
+    public function equals(self $other) : bool
     {
         return $this->value === $other->value;
     }

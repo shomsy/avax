@@ -98,7 +98,7 @@ interface RouterInterface
      *
      * @return RouteRegistrarProxy[] Array of proxies, each corresponding to the registered method.
      */
-    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy;
+    public function any(string $path, callable|array|string $action) : array;
 
     public function anyExpanded(string $path, callable|array|string $action) : array;
 

@@ -9,6 +9,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Characterization tests for the existing ServerRequest class.
@@ -29,11 +30,10 @@ use PHPUnit\Framework\TestCase;
 class RequestCharacterizationTest extends TestCase
 {
     /**
-     * @throws \ReflectionException
      */
     public function test_getRequestTarget_returns_path_and_query() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'http://example.com/api/users?status=active');
+        $uri     = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
         $request = new ServerRequest(
             body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
             method: 'GET',
@@ -69,7 +69,9 @@ class RequestCharacterizationTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @param array $serverParams
+     *
+     * @return ServerRequest
      */
     private function createBlankRequest(array $serverParams = []) : ServerRequest
     {
@@ -109,7 +111,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_updates_host_header_when_preserve_host_false() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = UriBuilder::createFromString(uri: 'http://new-host.com/api');
+        $newUri  = UriBuilder::createFromString(uri: 'https://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
@@ -119,7 +121,7 @@ class RequestCharacterizationTest extends TestCase
     public function test_withUri_preserves_host_header_when_preserve_host_true() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = UriBuilder::createFromString(uri: 'http://new-host.com/api');
+        $newUri  = UriBuilder::createFromString(uri: 'https://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 

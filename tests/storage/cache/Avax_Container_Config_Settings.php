@@ -11,18 +11,17 @@ return ServicePrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' =>
                                                                                                 [
-                                                                                                    0 =>
-                                                                                                        ParameterPrototype::__set_state(array: [
-                                                                                                                                                   'name'       => 'items',
-                                                                                                                                                   'type'       => null,
-                                                                                                                                                   'hasDefault' => true,
-                                                                                                                                                   'default'    =>
-                                                                                                                                                       [
-                                                                                                                                                       ],
-                                                                                                                                                   'isVariadic' => false,
-                                                                                                                                                   'allowsNull' => false,
-                                                                                                                                                   'required'   => false,
-                                                                                                                                               ]),
+                                                                                                    ParameterPrototype::__set_state(array: [
+                                                                                                                                               'name'       => 'items',
+                                                                                                                                               'type'       => null,
+                                                                                                                                               'hasDefault' => true,
+                                                                                                                                               'default'    =>
+                                                                                                                                                   [
+                                                                                                                                                   ],
+                                                                                                                                               'isVariadic' => false,
+                                                                                                                                               'allowsNull' => false,
+                                                                                                                                               'required'   => false,
+                                                                                                                                           ]),
                                                                                                 ],
                                                                                         ]),
                                                 'injectedProperties' =>

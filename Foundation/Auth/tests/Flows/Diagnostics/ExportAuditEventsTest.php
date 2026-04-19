@@ -30,7 +30,7 @@ final class ExportAuditEventsTest extends TestCase
                           /**
                            * @param list<AuditEvent> $events
                            */
-                          public function __construct(stdClass $capture) { $this->capture = $capture; }
+                          public function __construct(array $events) { $this->capture = $capture; }
 
                           public function export(array $events) : void
                           {

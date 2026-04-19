@@ -86,9 +86,11 @@ final readonly class ExportGraph
     }
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whoUses(string $id, array $context = []) : array
     {
@@ -100,9 +102,11 @@ final readonly class ExportGraph
     }
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whatBreaksIf(string $id, array $context = []) : array
     {

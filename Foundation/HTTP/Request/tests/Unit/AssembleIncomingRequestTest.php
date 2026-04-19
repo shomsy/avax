@@ -41,11 +41,11 @@ class AssembleIncomingRequestTest extends TestCase
 
         $request = $this->assembler->fromGlobals(server: $server);
 
-        $this->assertInstanceOf(ServerRequestInterface::class, $request);
-        $this->assertInstanceOf(ServerRequest::class, $request);
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('/test', $request->getUri()->getPath());
-        $this->assertEquals('example.com', $request->getUri()->getHost());
+        $this->assertInstanceOf(expected: ServerRequestInterface::class, actual: $request);
+        $this->assertInstanceOf(expected: ServerRequest::class, actual: $request);
+        $this->assertEquals(expected: 'POST', actual: $request->getMethod());
+        $this->assertEquals(expected: '/test', actual: $request->getUri()->getPath());
+        $this->assertEquals(expected: 'example.com', actual: $request->getUri()->getHost());
     }
 
     public function test_from_slices_creates_valid_server_request(): void
@@ -56,18 +56,18 @@ class AssembleIncomingRequestTest extends TestCase
             method: 'PUT',
         );
 
-        $this->assertEquals('PUT', $request->getMethod());
-        $this->assertEquals(['foo' => 'bar'], $request->getQueryParams());
-        $this->assertEquals(['baz' => 'qux'], $request->getParsedBody());
+        $this->assertEquals(expected: 'PUT', actual: $request->getMethod());
+        $this->assertEquals(expected: ['foo' => 'bar'], actual: $request->getQueryParams());
+        $this->assertEquals(expected: ['baz' => 'qux'], actual: $request->getParsedBody());
     }
 
     public function test_empty_creates_default_get_request(): void
     {
         $request = $this->assembler->empty();
 
-        $this->assertEquals('GET', $request->getMethod());
-        $this->assertEquals('1.1', $request->getProtocolVersion());
-        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+        $this->assertEquals(expected: 'GET', actual: $request->getMethod());
+        $this->assertEquals(expected: '1.1', actual: $request->getProtocolVersion());
+        $this->assertInstanceOf(expected: ServerRequestInterface::class, actual: $request);
     }
 
     public function test_from_globals_preserves_server_params(): void
@@ -81,7 +81,7 @@ class AssembleIncomingRequestTest extends TestCase
 
         $request = $this->assembler->fromGlobals(server: $server);
 
-        $this->assertEquals($server, $request->getServerParams());
+        $this->assertEquals(expected: $server, actual: $request->getServerParams());
     }
 
     public function test_from_globals_with_query_and_cookies(): void
@@ -94,8 +94,8 @@ class AssembleIncomingRequestTest extends TestCase
             cookie: ['session' => 'abc'],
         );
 
-        $this->assertEquals(['q' => 'search'], $request->getQueryParams());
-        $this->assertEquals(['session' => 'abc'], $request->getCookieParams());
+        $this->assertEquals(expected: ['q' => 'search'], actual: $request->getQueryParams());
+        $this->assertEquals(expected: ['session' => 'abc'], actual: $request->getCookieParams());
     }
 
     public function test_from_slices_with_null_body(): void
@@ -106,7 +106,7 @@ class AssembleIncomingRequestTest extends TestCase
             method: 'GET',
         );
 
-        $this->assertEquals(['id' => '42'], $request->getQueryParams());
+        $this->assertEquals(expected: ['id' => '42'], actual: $request->getQueryParams());
     }
 
     public function test_immutability_across_all_from_methods(): void
@@ -114,9 +114,9 @@ class AssembleIncomingRequestTest extends TestCase
         $r1 = $this->assembler->fromSlices(method: 'GET');
         $r2 = $this->assembler->fromSlices(method: 'POST');
 
-        $this->assertNotSame($r1, $r2);
-        $this->assertEquals('GET', $r1->getMethod());
-        $this->assertEquals('POST', $r2->getMethod());
+        $this->assertNotSame(expected: $r1, actual: $r2);
+        $this->assertEquals(expected: 'GET', actual: $r1->getMethod());
+        $this->assertEquals(expected: 'POST', actual: $r2->getMethod());
     }
 
     public function test_inputs_capability_is_available(): void
@@ -127,8 +127,8 @@ class AssembleIncomingRequestTest extends TestCase
         );
 
         $inputs = $request->inputs();
-        $this->assertEquals('test', $inputs->get('name'));
-        $this->assertEquals('25', $inputs->get('age'));
+        $this->assertEquals(expected: 'test', actual: $inputs->get(key: 'name'));
+        $this->assertEquals(expected: '25', actual: $inputs->get(key: 'age'));
     }
 
     protected function setUp(): void

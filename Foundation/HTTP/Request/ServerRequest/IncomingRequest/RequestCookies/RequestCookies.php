@@ -13,9 +13,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies;
  */
 final readonly class RequestCookies
 {
-    public function __construct(
-        private array $cookies = []
-    ) {}
+    public function __construct(private array $cookies = []) {}
 
     /**
      * @return array<string, string>
@@ -25,15 +23,15 @@ final readonly class RequestCookies
         return $this->cookies;
     }
 
-    public function has(string $name): bool
+    public function has(string $name) : bool
     {
         return array_key_exists($name, $this->cookies);
     }
 
-    public function get(string $name, ?string $default = null): ?string
+    public function get(string $name, string|null $default = null) : string|null
     {
-        return array_key_exists($name, $this->cookies) 
-            ? $this->cookies[$name] 
+        return array_key_exists($name, $this->cookies)
+            ? $this->cookies[$name]
             : $default;
     }
 

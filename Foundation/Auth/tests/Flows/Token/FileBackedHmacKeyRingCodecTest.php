@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flow\Token;
 
 use Avax\Auth\System\Flow\Token\FileBackedHmacKeyRingCodec;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 
 final class FileBackedHmacKeyRingCodecTest extends TestCase
 {
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testCodecSupportsRolloverWithoutRedeploy() : void
     {
@@ -52,6 +53,9 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
 
     /**
      * @param array<string, mixed> $configuration
+     *
+     * @return string
+     * @throws JsonException
      */
     private function createKeyRingFile(array $configuration) : string
     {
@@ -63,7 +67,7 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testCodecSupportsCryptoAgilityAcrossAlgorithms() : void
     {

@@ -8,7 +8,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-final class ScopedService {}
+final class ManageScopesSmokeTest {}
 
 $container = makeTestContainer();
 $container->scoped(abstract: ScopedService::class, concrete: ScopedService::class);

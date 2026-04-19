@@ -29,7 +29,7 @@ final readonly class UserEmail implements Stringable
         return $this->value;
     }
 
-    public function equals(UserEmail $other) : bool
+    public function equals(self $other) : bool
     {
         return strtolower($this->value) === strtolower($other->value);
     }

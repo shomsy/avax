@@ -39,7 +39,7 @@ function rrmdir($dir)
 foreach ($dirs as $dir) {
     $path = $base . DIRECTORY_SEPARATOR . $dir;
     if (rrmdir(dir: $path)) {
-        echo "Deleted Legacy: $dir\n";
+        echo "Deleted Legacy: {$dir}\n";
     }
 }
 unlink($base . DIRECTORY_SEPARATOR . 'Auth.txt');

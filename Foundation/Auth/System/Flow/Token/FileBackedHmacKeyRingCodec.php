@@ -79,7 +79,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         $verification = [];
 
         foreach ($decoded['verification'] ?? [] as $index => $key) {
-            $verification[] = $this->normalizeKey(candidate: $key, label: "verification[$index]");
+            $verification[] = $this->normalizeKey(candidate: $key, label: "verification[{$index}]");
         }
 
         return [
@@ -89,7 +89,8 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     }
 
     /**
-     * @param mixed $candidate
+     * @param mixed  $candidate
+     * @param string $label
      *
      * @return array{secret:string, algorithm:string, kid:string|null}
      */

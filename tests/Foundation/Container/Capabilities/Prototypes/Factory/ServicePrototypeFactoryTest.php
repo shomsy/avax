@@ -65,6 +65,7 @@ final class ServicePrototypeFactoryTest extends TestCase
         $this->factory->createFor(class: 'Iterator');
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->cache   = $this->createMock(PrototypeCache::class);

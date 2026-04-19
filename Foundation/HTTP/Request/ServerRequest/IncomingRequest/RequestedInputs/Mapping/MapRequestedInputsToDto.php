@@ -7,7 +7,6 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mappin
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use InvalidArgumentException;
-use ReflectionException;
 use RuntimeException;
 
 /**
@@ -46,16 +45,6 @@ final readonly class MapRequestedInputsToDto
             );
         }
 
-        try {
-            /** @var T $dto */
-            $dto = new $dtoClass($inputs->all());
-        } catch (ReflectionException $e) {
-            throw new RuntimeException(
-                message : sprintf('Failed to instantiate DTO "%s": %s', $dtoClass, $e->getMessage()),
-                previous: $e,
-            );
-        }
-
-        return $dto;
+        return new $dtoClass($inputs->all());
     }
 }

@@ -23,10 +23,11 @@ final readonly class CallFunction
     }
 
     /**
+     * @param callable|string      $target
      * @param array<string, mixed> $parameters
      *
-     * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @return mixed
+     * @throws \ReflectionException
      */
     public function call(callable|string $target, array $parameters = []) : mixed
     {

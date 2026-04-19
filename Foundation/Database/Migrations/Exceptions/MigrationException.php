@@ -27,6 +27,7 @@ final class MigrationException extends DatabaseException
      * @param string|null    $sql            The specific SQL statement that failed
      * @param Throwable|null $previous       Underlying system trigger
      */
+    #[\Override]
     public function __construct(
         string         $migrationClass,
         string         $message,

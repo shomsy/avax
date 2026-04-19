@@ -45,7 +45,7 @@ final class ProductBoundaryTest extends TestCase
                 $fullPath = dirname(__DIR__, 2) . '/' . $path;
                 $this->assertFileExists(
                     filename: $fullPath,
-                    message : "Auth kernel capability missing: $capability ($path)"
+                    message : "Auth kernel capability missing: {$capability} ({$path})"
                 );
             }
         }
@@ -63,19 +63,19 @@ final class ProductBoundaryTest extends TestCase
             if ($capability === 'Admin UI') {
                 $this->assertFalse(
                     condition: is_dir($uiPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'SIEM') {
                 $this->assertFalse(
                     condition: is_dir($siemPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'Email') {
                 $this->assertFalse(
                     condition: is_dir($emailPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
         }
@@ -96,7 +96,7 @@ final class ProductBoundaryTest extends TestCase
         foreach ($boundaryDocs as $doc) {
             $this->assertFileExists(
                 filename: $doc,
-                message : "Boundary documentation missing: $doc"
+                message : "Boundary documentation missing: {$doc}"
             );
         }
     }

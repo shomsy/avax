@@ -16,6 +16,7 @@ return new class extends BaseMigration {
      *
      * @throws Throwable
      */
+    #[\Override]
     public function up() : void
     {
         $this->create(table: 'products', callback: function (Blueprint $table) {
@@ -88,6 +89,7 @@ return new class extends BaseMigration {
      *
      * @throws Throwable
      */
+    #[\Override]
     public function down() : void
     {
         $this->drop(table: 'products');

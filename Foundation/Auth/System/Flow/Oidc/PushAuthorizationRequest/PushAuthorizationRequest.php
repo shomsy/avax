@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use JsonException;
@@ -43,7 +44,7 @@ final readonly class PushAuthorizationRequest
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function execute(PushAuthorizationRequestData $data) : PushedAuthorizationRequest

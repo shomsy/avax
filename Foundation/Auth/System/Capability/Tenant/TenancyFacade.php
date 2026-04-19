@@ -31,25 +31,26 @@ use Avax\Auth\System\Flow\TenantSecurity\ReadConfiguration\ReadTenantSecurityCon
 use Avax\Auth\System\Flow\Tenant\TenantFailed;
 use Avax\Auth\System\Flow\TenantSecurity\RollbackChange\RollbackTenantSecurityChange;
 use Random\RandomException;
+use SensitiveParameter;
 
 final readonly class TenancyFacade
 {
     public function __construct(
-        private CreateTenant                                            $createTenant,
-        private ReadTenants                                             $readTenants,
-        private InviteTenantMember                                      $inviteTenantMember,
-        private AcceptTenantInvite                                      $acceptTenantInvite,
-        private ReadTenantMembers                                       $readTenantMembers,
-        private RemoveTenantMember                                      $removeTenantMember,
-        private SuspendTenantMember                                     $suspendTenantMember,
-        private TransferTenantOwnership                                 $transferTenantOwnership,
-        #[\SensitiveParameter] private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
-        #[\SensitiveParameter] private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
-        #[\SensitiveParameter] private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
-        #[\SensitiveParameter] private BeginTenantSecurityChange        $beginTenantSecurityChange,
-        #[\SensitiveParameter] private ApproveTenantSecurityChange      $approveTenantSecurityChange,
-        #[\SensitiveParameter] private ApplyTenantSecurityChange        $applyTenantSecurityChange,
-        #[\SensitiveParameter] private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
+        private CreateTenant                                           $createTenant,
+        private ReadTenants                                            $readTenants,
+        private InviteTenantMember                                     $inviteTenantMember,
+        private AcceptTenantInvite                                     $acceptTenantInvite,
+        private ReadTenantMembers                                      $readTenantMembers,
+        private RemoveTenantMember                                     $removeTenantMember,
+        private SuspendTenantMember                                    $suspendTenantMember,
+        private TransferTenantOwnership                                $transferTenantOwnership,
+        #[SensitiveParameter] private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
+        #[SensitiveParameter] private BeginTenantSecurityChange        $beginTenantSecurityChange,
+        #[SensitiveParameter] private ApproveTenantSecurityChange      $approveTenantSecurityChange,
+        #[SensitiveParameter] private ApplyTenantSecurityChange        $applyTenantSecurityChange,
+        #[SensitiveParameter] private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
     ) {}
 
     /**

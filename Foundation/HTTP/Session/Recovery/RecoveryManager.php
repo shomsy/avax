@@ -150,9 +150,9 @@ final readonly class RecoveryManager
     /**
      * Check if a transaction is currently active.
      *
-     * @return bool True if transaction is active, false otherwise.
+     * @return Recovery True if transaction is active, false otherwise.
      */
-    public function isInTransaction() : bool
+    public function isInTransaction() : Recovery
     {
         return $this->recovery;
     }

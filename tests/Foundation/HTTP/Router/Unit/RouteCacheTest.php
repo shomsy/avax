@@ -88,6 +88,6 @@ final class RouteCacheTest extends TestCase
     {
         $files = glob(pattern: $dir . '/*') ?: [];
         array_map('unlink', $files);
-        @rmdir($dir);
+        rmdir($dir);
     }
 }

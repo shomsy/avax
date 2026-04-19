@@ -12,7 +12,7 @@ use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
 
 #[Singleton]
-final class BlueprintTarget
+final class CreateServiceBlueprintSmokeTest
 {
     #[Inject]
     public stdClass          $property;

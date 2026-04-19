@@ -28,11 +28,10 @@ class BridgeRequestTest extends TestCase
     private AssembleIncomingRequest $assembler;
 
     /**
-     * @throws ReflectionException
      */
     public function test_constructor_sets_properties() : void
     {
-        $request = $this->createServerRequest(method: 'POST', uri: 'http://example.com/api');
+        $request = $this->createServerRequest(method: 'POST', uri: 'https://example.com/api');
 
         $this->assertEquals(expected: 'POST', actual: $request->method);
         $this->assertEquals(expected: 'example.com', actual: $request->uri->getHost());
@@ -55,12 +54,12 @@ class BridgeRequestTest extends TestCase
      */
     public function test_with_uri_preserve_host_logic() : void
     {
-        $serverRequest = $this->createServerRequest(uri: 'http://old.com/');
+        $serverRequest = $this->createServerRequest(uri: 'https://old.com/');
         $request       = (new ReflectionClass(objectOrClass: Request::class))->newInstanceWithoutConstructor();
         $property      = (new ReflectionClass(objectOrClass: Request::class))->getProperty(name: 'serverRequest');
         $property->setValue(objectOrValue: $request, value: $serverRequest);
 
-        $newUri = UriBuilder::createFromString(uri: 'http://new.com/');
+        $newUri = UriBuilder::createFromString(uri: 'https://new.com/');
 
         $requestWithNewHost = $request->withUri(uri: $newUri, preserveHost: false);
         $this->assertEquals(expected: ['new.com'], actual: $requestWithNewHost->getHeader(name: 'Host'));

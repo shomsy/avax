@@ -15,10 +15,10 @@ final readonly class RequestSession
 {
     public function __construct(
         private array   $data = [],
-        private ?string $id = null
+        private string|null $id = null
     ) {}
 
-    public function id() : ?string
+    public function id() : string|null
     {
         return $this->id;
     }

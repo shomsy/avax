@@ -31,6 +31,7 @@ class QueryException extends DatabaseException
      * @param string         $sql      The dialect-specific SQL string that failed
      * @param Throwable|null $previous The underlying driver exception
      */
+    #[\Override]
     public function __construct(
         string                      $message,
         string                      $sql,

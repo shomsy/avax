@@ -56,7 +56,7 @@ final readonly class BackChannelLogout
         $claims           = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
         $sessionId        = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
         $events           = $claims['events'] ?? null;
-        $backChannelEvent = 'http://schemas.openid.net/event/backchannel-logout';
+        $backChannelEvent = 'https://schemas.openid.net/event/backchannel-logout';
         $client           = $this->resolveClientFromClaims(claims: $claims);
 
         if (! is_array($events) || ! array_key_exists($backChannelEvent, $events)) {

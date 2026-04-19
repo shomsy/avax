@@ -15,7 +15,7 @@ $files = [
 $allGood = true;
 
 foreach ($files as $file) {
-    echo "Checking: $file\n";
+    echo "Checking: {$file}\n";
     
     if (!file_exists($file)) {
         echo "  ❌ File not found\n";
@@ -62,7 +62,7 @@ $testFiles = [
 ];
 
 foreach ($testFiles as $name => $path) {
-    echo "Testing $name... ";
+    echo "Testing {$name}... ";
     $content = file_get_contents($path);
     
     // Basic syntax check - look for class definition

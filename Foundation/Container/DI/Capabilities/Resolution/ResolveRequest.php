@@ -10,9 +10,9 @@ namespace Avax\Container\DI\Capabilities\Resolution;
 final readonly class ResolveRequest
 {
     public string|null         $consumer;
-    public bool                $manualInjection;
-    public ResolveRequest|null $parent;
-    public array               $context;
+    public bool      $manualInjection;
+    public self|null $parent;
+    public array     $context;
     public array               $overrides;
     public string              $serviceId;
 

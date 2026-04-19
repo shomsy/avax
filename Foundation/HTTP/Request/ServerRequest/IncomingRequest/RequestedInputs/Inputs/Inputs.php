@@ -7,118 +7,136 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs
 /**
  * Inputs
  *
- * Internal merged view over query params and parsed body.
+ * Immutable merged view over query params and parsed body.
  *
  * Merge rule:
  * - body wins over query when the same key exists in both places
  */
-final readonly class Inputs
+final class Inputs
 {
     use AccessesTypedValues;
 
-    private QueryParams $queryParams;
-
-    private ParsedBody $parsedBody;
+    /** @var array<string, mixed>|null */
+    private array|null $valuesCache = null;
 
     /**
+     * Lazily built merged view.
+     *
+     * Body values override query values for the same key.
+     *
      * @var array<string, mixed>
      */
-    private array $merged;
-
-    public function __construct(
-        QueryParams|null $queryParams = null,
-        ParsedBody|null  $parsedBody = null,
-    )
-    {
-        $this->queryParams = $queryParams ?? new QueryParams;
-        $this->parsedBody  = $parsedBody ?? new ParsedBody;
-
-        $this->merged = array_merge(
+    private array $values {
+        get => $this->valuesCache ??= array_replace(
             $this->queryParams->all(),
             $this->parsedBody->all(),
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function all() : array
+    public function __construct(
+        private readonly QueryParams $queryParams = new QueryParams(),
+        private readonly ParsedBody $parsedBody = new ParsedBody(),
+    ) {}
+
+    public static function empty(): self
     {
-        return $this->merged;
+        return new self();
     }
 
-    public static function fromSlices(
-        array             $queryParams = [],
+    /**
+     * @param array<string, mixed> $queryParams
+     */
+    public static function fromQueryAndBody(
+        array|null        $queryParams = null,
         array|object|null $parsedBody = null,
-    ) : self
-    {
+    ): self {
+        $queryParams ??= [];
+
         return new self(
-            queryParams: QueryParams::fromArray(params: $queryParams),
-            parsedBody : ParsedBody::fromArray(data: $parsedBody),
+            queryParams: QueryParams::fromQueryParams(params: $queryParams),
+            parsedBody: ParsedBody::fromParsedBody(data: $parsedBody),
         );
     }
 
-    public function query() : QueryParams
+    /**
+     * @return array<string, mixed>
+     */
+    public function all(): array
+    {
+        return $this->values;
+    }
+
+    public function query(): QueryParams
     {
         return $this->queryParams;
     }
 
-    public function body() : ParsedBody
+    public function body(): ParsedBody
     {
         return $this->parsedBody;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function merged() : array
+    public function isEmpty(): bool
     {
-        return $this->merged;
+        return $this->values === [];
     }
 
-    public function hasInput() : bool
+    public function has(string $key): bool
     {
-        return $this->merged !== [];
+        return $this->hasInBody(key: $key) || $this->hasInQuery(key: $key);
     }
 
-    public function hasInBody(string $key) : bool
+    public function hasInBody(string $key): bool
     {
         return $this->parsedBody->has(key: $key);
     }
 
-    public function hasInQuery(string $key) : bool
+    public function hasInQuery(string $key): bool
     {
         return $this->queryParams->has(key: $key);
     }
 
-    public function value(string $key, mixed $default = null) : InputValue
+    public function get(string $key, mixed $default = null): mixed
+    {
+        if ($this->parsedBody->has(key: $key)) {
+            return $this->parsedBody->get(key: $key);
+        }
+
+        if ($this->queryParams->has(key: $key)) {
+            return $this->queryParams->get(key: $key);
+        }
+
+        return $default;
+    }
+
+    public function value(string $key, mixed $default = null): InputValue
     {
         if ($this->parsedBody->has(key: $key)) {
             return InputValue::fromBody(
-                key  : $key,
+                key: $key,
                 value: $this->parsedBody->get(key: $key),
             );
         }
 
         if ($this->queryParams->has(key: $key)) {
             return InputValue::fromQuery(
-                key  : $key,
+                key: $key,
                 value: $this->queryParams->get(key: $key),
             );
         }
 
         return InputValue::missing(
-            key    : $key,
+            key: $key,
             default: $default,
         );
     }
 
-    public function fromBody(string $key, mixed $default = null) : mixed
+    public function bodyValue(string $key, mixed $default = null): mixed
     {
         return $this->parsedBody->get(key: $key, default: $default);
     }
 
-    public function fromQuery(string $key, mixed $default = null) : mixed
+    public function queryValue(string $key, mixed $default = null): mixed
     {
         return $this->queryParams->get(key: $key, default: $default);
     }
@@ -126,8 +144,8 @@ final readonly class Inputs
     /**
      * @return array<string, mixed>
      */
-    protected function data() : array
+    protected function data(): array
     {
-        return $this->merged;
+        return $this->values;
     }
 }

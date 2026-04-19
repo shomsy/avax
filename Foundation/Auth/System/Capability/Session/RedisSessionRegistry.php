@@ -101,7 +101,12 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         return $this->hydrate(data: $data);
     }
 
-    /** @param array<string, string> $data */
+    /**
+     * @param array<string, string> $data
+     *
+     * @return SessionRecord
+     * @throws \DateMalformedStringException
+     */
     private function hydrate(array $data) : SessionRecord
     {
         return new SessionRecord(

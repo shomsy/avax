@@ -262,7 +262,7 @@ class InMemoryCache implements CacheInterface
 
         $currentValue = $this->get(key: $key, default: 0);
         if (! is_numeric(value: $currentValue)) {
-            throw new InMemoryInvalidArgumentException(message: "Value at key '$key' is not numeric.");
+            throw new InMemoryInvalidArgumentException(message: "Value at key '{$key}' is not numeric.");
         }
 
         $newValue = (int) $currentValue + $value;

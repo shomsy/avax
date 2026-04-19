@@ -27,6 +27,7 @@ class IsValidColumnName extends AbstractRule
         $this->message = $message;
     }
 
+    #[\Override]
     public function validate(mixed $value, array $data, string $property) : void
     {
         if (! is_string(value: $value)) {

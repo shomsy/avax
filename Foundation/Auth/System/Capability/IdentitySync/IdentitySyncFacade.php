@@ -21,7 +21,9 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
 use Avax\Auth\System\Flow\Scim\ReadGroups\ReadScimGroups;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutage;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
@@ -32,23 +34,24 @@ use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Random\RandomException;
 use RuntimeException;
+use SensitiveParameter;
 
 final readonly class IdentitySyncFacade
 {
     public function __construct(
-        private RegisterScimDirectory|null                  $registerScimDirectory,
-        private ReadScimDirectories|null                    $readScimDirectories,
-        #[\SensitiveParameter] private RotateScimToken|null $rotateScimToken,
-        private MarkScimDirectoryOutage|null                $markScimDirectoryOutage,
-        private RecoverScimDirectoryOutage|null             $recoverScimDirectoryOutage,
-        private ProvisionScimUser|null                      $provisionScimUser,
-        private DeleteScimUser|null                         $deleteScimUser,
-        private ReadScimUsers|null                          $readScimUsers,
-        private ReadScimGroups|null                         $readScimGroups,
-        private SyncScimGroups|null                         $syncScimGroups,
-        private RunScimBulk|null                            $runScimBulk,
-        private SuspendUser|null                            $suspendUser,
-        private ReactivateUser|null                         $reactivateUser,
+        private RegisterScimDirectory|null                 $registerScimDirectory,
+        private ReadScimDirectories|null                   $readScimDirectories,
+        #[SensitiveParameter] private RotateScimToken|null $rotateScimToken,
+        private MarkScimDirectoryOutage|null               $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null            $recoverScimDirectoryOutage,
+        private ProvisionScimUser|null                     $provisionScimUser,
+        private DeleteScimUser|null                        $deleteScimUser,
+        private ReadScimUsers|null                         $readScimUsers,
+        private ReadScimGroups|null                        $readScimGroups,
+        private SyncScimGroups|null                        $syncScimGroups,
+        private RunScimBulk|null                           $runScimBulk,
+        private SuspendUser|null                           $suspendUser,
+        private ReactivateUser|null                        $reactivateUser,
         private DeprovisionUser|null          $deprovisionUser
     ) {}
 
@@ -100,7 +103,7 @@ final readonly class IdentitySyncFacade
     }
 
     /**
-     * @return list<\Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection>
+     * @return list<ScimUserProjection>
      */
     public function readScimUsers(string $directoryId) : array
     {
@@ -108,7 +111,7 @@ final readonly class IdentitySyncFacade
     }
 
     /**
-     * @return list<\Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection>
+     * @return list<ScimGroupProjection>
      */
     public function readScimGroups(string $directoryId) : array
     {

@@ -29,6 +29,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
+            #[\Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
@@ -70,6 +71,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
+            #[\Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);

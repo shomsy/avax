@@ -442,7 +442,7 @@ trait AdvancedStringSearchTrait
      */
     public function regexSearch(string $pattern, string|null $key = null) : static
     {
-        if (@preg_match(pattern: $pattern, subject: '') === false) {
+        if (preg_match(pattern: $pattern, subject: '') === false) {
             throw new InvalidArgumentException(message: 'Invalid regular expression pattern.');
         }
 

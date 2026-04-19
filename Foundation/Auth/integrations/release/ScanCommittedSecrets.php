@@ -34,7 +34,7 @@ final readonly class ScanCommittedSecrets
 
             $lineNumber = 0;
 
-            $lines = @file($path, FILE_IGNORE_NEW_LINES);
+            $lines = file($path, FILE_IGNORE_NEW_LINES);
 
             foreach ($lines !== false ? $lines : [] as $line) {
                 $lineNumber++;

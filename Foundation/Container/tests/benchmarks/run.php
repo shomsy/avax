@@ -416,7 +416,6 @@ function benchmarkScenarios() : array
             'callback'   => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchLazyService::class, concrete: BenchLazyService::class);
-                /** @var LazyProxy $lazy */
                 $lazy = $container->lazy(abstract: BenchLazyService::class);
                 $lazy->value();
             },

@@ -13,37 +13,37 @@ class CapabilitySemanticsTest extends TestCase
 {
     public function test_attributes_null_semantics()
     {
-        $attributes = new RequestAttributes(['explicit_null' => null, 'value' => 123]);
+        $attributes = new RequestAttributes(attributes: ['explicit_null' => null, 'value' => 123]);
 
-        $this->assertTrue($attributes->has('explicit_null'), 'Attributes must recognize null as present');
-        $this->assertTrue($attributes->has('value'));
-        $this->assertFalse($attributes->has('missing'));
+        $this->assertTrue(condition: $attributes->has(name: 'explicit_null'), message: 'Attributes must recognize null as present');
+        $this->assertTrue(condition: $attributes->has(name: 'value'));
+        $this->assertFalse(condition: $attributes->has(name: 'missing'));
 
-        $this->assertNull($attributes->get('explicit_null', 'default'));
-        $this->assertEquals('default', $attributes->get('missing', 'default'));
+        $this->assertNull(actual: $attributes->get(name: 'explicit_null', default: 'default'));
+        $this->assertEquals(expected: 'default', actual: $attributes->get(name: 'missing', default: 'default'));
     }
 
     public function test_cookies_null_semantics()
     {
-        $cookies = new RequestCookies(['explicit_null' => null, 'value' => 'abc']);
+        $cookies = new RequestCookies(cookies: ['explicit_null' => null, 'value' => 'abc']);
 
-        $this->assertTrue($cookies->has('explicit_null'), 'Cookies must recognize null as present');
-        $this->assertTrue($cookies->has('value'));
-        $this->assertFalse($cookies->has('missing'));
+        $this->assertTrue(condition: $cookies->has(name: 'explicit_null'), message: 'Cookies must recognize null as present');
+        $this->assertTrue(condition: $cookies->has(name: 'value'));
+        $this->assertFalse(condition: $cookies->has(name: 'missing'));
 
-        $this->assertNull($cookies->get('explicit_null', 'default'));
-        $this->assertEquals('default', $cookies->get('missing', 'default'));
+        $this->assertNull(actual: $cookies->get(name: 'explicit_null', default: 'default'));
+        $this->assertEquals(expected: 'default', actual: $cookies->get(name: 'missing', default: 'default'));
     }
 
     public function test_session_null_semantics()
     {
-        $session = new RequestSession(['explicit_null' => null, 'value' => 'abc'], 'sid');
+        $session = new RequestSession(data: ['explicit_null' => null, 'value' => 'abc'], id: 'sid');
 
-        $this->assertTrue($session->has('explicit_null'), 'Session must recognize null as present');
-        $this->assertTrue($session->has('value'));
-        $this->assertFalse($session->has('missing'));
+        $this->assertTrue(condition: $session->has(key: 'explicit_null'), message: 'Session must recognize null as present');
+        $this->assertTrue(condition: $session->has(key: 'value'));
+        $this->assertFalse(condition: $session->has(key: 'missing'));
 
-        $this->assertNull($session->get('explicit_null', 'default'));
-        $this->assertEquals('default', $session->get('missing', 'default'));
+        $this->assertNull(actual: $session->get(key: 'explicit_null', default: 'default'));
+        $this->assertEquals(expected: 'default', actual: $session->get(key: 'missing', default: 'default'));
     }
 }

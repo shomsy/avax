@@ -113,7 +113,7 @@ final readonly class RouterDsl implements RouterInterface
         return $this->register(method: HttpMethod::HEAD->value, path: $path, action: $action);
     }
 
-    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function any(string $path, callable|array|string $action) : array
     {
         return $this->register(method: HttpMethod::ANY->value, path: $path, action: $action);
     }

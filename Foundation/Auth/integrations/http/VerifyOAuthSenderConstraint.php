@@ -32,9 +32,12 @@ final readonly class VerifyOAuthSenderConstraint
     }
 
     /**
-     * @throws DpopProofFailed
-     * @throws MtlsBindingFailed
-     * @throws SenderConstraintVerificationFailed
+     * @param HttpOAuthProofInput            $input
+     * @param OAuthSenderConstraint|null     $expectedSenderConstraint
+     * @param OAuthSenderConstraintType|null $requiredSenderConstraint
+     *
+     * @return OAuthSenderConstraint|null
+     * @throws \DateMalformedStringException
      */
     public function execute(
         HttpOAuthProofInput            $input,

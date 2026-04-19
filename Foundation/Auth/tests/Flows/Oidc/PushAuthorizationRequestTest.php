@@ -20,7 +20,9 @@ use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Foundation\Clock;
 use BadMethodCallException;
+use DateMalformedStringException;
 use DateTimeImmutable;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use SensitiveParameter;
@@ -28,9 +30,9 @@ use SensitiveParameter;
 final class PushAuthorizationRequestTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testPushAuthorizationRequestAcceptsRsaSignedRequestObjectForPublicClient() : void
     {
@@ -104,6 +106,10 @@ final class PushAuthorizationRequestTest extends TestCase
 
     /**
      * @param array<string, mixed> $claims
+     * @param string               $privateKeyPem
+     *
+     * @return string
+     * @throws JsonException
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
@@ -127,9 +133,9 @@ final class PushAuthorizationRequestTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testPushAuthorizationRequestRejectsSignedRequestObjectWhenIssuerDoesNotMatchClient() : void
     {

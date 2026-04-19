@@ -126,10 +126,10 @@ final class MiddlewareRegistry
      * @param string $identifier The middleware identifier
      * @param array  $args       Constructor arguments
      *
-     * @return MiddlewareInterface The middleware instance
+     * @return string|object The middleware instance
      * @throws ReflectionException
      */
-    public static function create(string $identifier, array $args = []) : MiddlewareInterface
+    public static function create(string $identifier, array $args = []) : string|object
     {
         $className = self::get(identifier: $identifier);
         self::validateMiddlewareClass(className: $className);

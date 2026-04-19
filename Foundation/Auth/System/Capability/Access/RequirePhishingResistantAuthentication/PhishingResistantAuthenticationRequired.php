@@ -8,6 +8,7 @@ use RuntimeException;
 
 final class PhishingResistantAuthenticationRequired extends RuntimeException
 {
+    #[\Override]
     public function __construct(
         string $message = 'Phishing-resistant authentication is required.'
     )

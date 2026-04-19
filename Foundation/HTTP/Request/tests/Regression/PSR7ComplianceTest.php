@@ -31,38 +31,38 @@ class PSR7ComplianceTest extends TestCase
     {
         $request = $this->assembler->empty();
         
-        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+        $this->assertInstanceOf(expected: ServerRequestInterface::class, actual: $request);
     }
 
     public function test_immutability_on_all_with_methods() : void
     {
         $request = $this->assembler->empty();
 
-        $this->assertNotSame($request, $request->withMethod('POST'));
-        $this->assertNotSame($request, $request->withUri(UriBuilder::createFromString('https://avax.dev')));
-        $this->assertNotSame($request, $request->withHeader('X-Test', '1'));
-        $this->assertNotSame($request, $request->withAddedHeader('X-Test', '2'));
-        $this->assertNotSame($request, $request->withoutHeader('X-Test'));
-        $this->assertNotSame($request, $request->withQueryParams(['a' => 'b']));
-        $this->assertNotSame($request, $request->withParsedBody(['c' => 'd']));
-        $this->assertNotSame($request, $request->withCookieParams(['e' => 'f']));
-        $this->assertNotSame($request, $request->withAttribute('g', 'h'));
-        $this->assertNotSame($request, $request->withoutAttribute('g'));
-        $this->assertNotSame($request, $request->withUploadedFiles([]));
+        $this->assertNotSame(expected: $request, actual: $request->withMethod(method: 'POST'));
+        $this->assertNotSame(expected: $request, actual: $request->withUri(uri: UriBuilder::createFromString(uri: 'https://avax.dev')));
+        $this->assertNotSame(expected: $request, actual: $request->withHeader(name: 'X-Test', value: '1'));
+        $this->assertNotSame(expected: $request, actual: $request->withAddedHeader(name: 'X-Test', value: '2'));
+        $this->assertNotSame(expected: $request, actual: $request->withoutHeader(name: 'X-Test'));
+        $this->assertNotSame(expected: $request, actual: $request->withQueryParams(query: ['a' => 'b']));
+        $this->assertNotSame(expected: $request, actual: $request->withParsedBody(data: ['c' => 'd']));
+        $this->assertNotSame(expected: $request, actual: $request->withCookieParams(cookies: ['e' => 'f']));
+        $this->assertNotSame(expected: $request, actual: $request->withAttribute(name: 'g', value: 'h'));
+        $this->assertNotSame(expected: $request, actual: $request->withoutAttribute(name: 'g'));
+        $this->assertNotSame(expected: $request, actual: $request->withUploadedFiles(uploadedFiles: []));
     }
 
     public function test_header_behavior_is_correct() : void
     {
         $request = $this->assembler->empty()
-            ->withHeader('X-Multi', 'v1')
-            ->withAddedHeader('X-Multi', 'v2');
+            ->withHeader(name: 'X-Multi', value: 'v1')
+            ->withAddedHeader(name: 'X-Multi', value: 'v2');
 
-        $this->assertEquals(['v1', 'v2'], $request->getHeader('X-Multi'));
-        $this->assertEquals('v1,v2', $request->getHeaderLine('X-Multi'));
-        $this->assertTrue($request->hasHeader('x-multi')); // Case insensitive
+        $this->assertEquals(expected: ['v1', 'v2'], actual: $request->getHeader(name: 'X-Multi'));
+        $this->assertEquals(expected: 'v1,v2', actual: $request->getHeaderLine(name: 'X-Multi'));
+        $this->assertTrue(condition: $request->hasHeader(name: 'x-multi')); // Case insensitive
         
-        $request = $request->withoutHeader('X-MULTI');
-        $this->assertFalse($request->hasHeader('X-Multi'));
+        $request = $request->withoutHeader(name: 'X-MULTI');
+        $this->assertFalse(condition: $request->hasHeader(name: 'X-Multi'));
     }
 
     public function test_server_params_preservation() : void
@@ -70,37 +70,37 @@ class PSR7ComplianceTest extends TestCase
         $server  = ['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1'];
         $request = $this->assembler->fromGlobals(server: $server);
         
-        $this->assertEquals($server, $request->getServerParams());
+        $this->assertEquals(expected: $server, actual: $request->getServerParams());
     }
 
     public function test_with_uri_preserve_host_logic() : void
     {
         $request = $this->assembler->fromSlices(method: 'GET')
-            ->withHeader('Host', 'old.com');
+            ->withHeader(name: 'Host', value: 'old.com');
         
-        $newUri = UriBuilder::createFromString('https://new.com/path');
+        $newUri = UriBuilder::createFromString(uri: 'https://new.com/path');
         
         // preserveHost = false
-        $r1 = $request->withUri($newUri, false);
-        $this->assertEquals(['new.com'], $r1->getHeader('Host'));
+        $r1 = $request->withUri(uri: $newUri, preserveHost: false);
+        $this->assertEquals(expected: ['new.com'], actual: $r1->getHeader(name: 'Host'));
         
         // preserveHost = true
-        $r2 = $request->withUri($newUri, true);
-        $this->assertEquals(['old.com'], $r2->getHeader('Host'));
+        $r2 = $request->withUri(uri: $newUri, preserveHost: true);
+        $this->assertEquals(expected: ['old.com'], actual: $r2->getHeader(name: 'Host'));
     }
 
     public function test_attribute_management() : void
     {
         $request = $this->assembler->empty()
-            ->withAttribute('user_id', 123)
-            ->withAttribute('role', 'admin');
+            ->withAttribute(name: 'user_id', value: 123)
+            ->withAttribute(name: 'role', value: 'admin');
             
-        $this->assertEquals(123, $request->getAttribute('user_id'));
-        $this->assertEquals(['user_id' => 123, 'role' => 'admin'], $request->getAttributes());
+        $this->assertEquals(expected: 123, actual: $request->getAttribute(name: 'user_id'));
+        $this->assertEquals(expected: ['user_id' => 123, 'role' => 'admin'], actual: $request->getAttributes());
         
-        $request = $request->withoutAttribute('role');
-        $this->assertNull($request->getAttribute('role'));
-        $this->assertEquals('default', $request->getAttribute('role', 'default'));
+        $request = $request->withoutAttribute(name: 'role');
+        $this->assertNull(actual: $request->getAttribute(name: 'role'));
+        $this->assertEquals(expected: 'default', actual: $request->getAttribute(name: 'role', default: 'default'));
     }
 
     protected function setUp() : void

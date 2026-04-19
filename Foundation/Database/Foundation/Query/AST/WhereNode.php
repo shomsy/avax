@@ -25,11 +25,11 @@ final readonly class WhereNode
      * @param string $type     The type classification of the constraint (e.g., 'Basic', 'Null', 'Raw').
      */
     public function __construct(
-        string      $column,
-        string      $operator,
-        mixed       $value = null,
-        string|null $boolean = null,
-        string      $type = 'Basic'
+        string $column,
+        string $operator,
+        mixed  $value = null,
+        string $boolean = null,
+        string $type = 'Basic'
     )
     {
         $boolean        ??= 'AND';

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\Events;
 
+use Override;
+
 /**
  * Event emitted when a connection is acquired from the pool.
  *
@@ -21,6 +23,7 @@ final readonly class ConnectionAcquired extends Event
      * @param string $correlationId    The technical trace identifier used for correlating this event with a specific
      *                                 execution scope.
      */
+    #[Override]
     public function __construct(
         string $connectionName,
         bool   $isRecycled,

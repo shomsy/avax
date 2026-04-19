@@ -170,7 +170,7 @@ final readonly class InputValue
      *
      * @return T|null
      */
-    public function enum(string $enumClass, mixed $default = null) : ?BackedEnum
+    public function enum(string $enumClass, mixed $default = null) : BackedEnum|null
     {
         if ($this->value === null || ! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
             return $default;

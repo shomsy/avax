@@ -23,6 +23,7 @@ trait SendsHttpRequestsTrait
      *
      * @throws \RuntimeException
      */
+    #[\Override]
     public function sendRequest(
         string                           $method,
         string                           $url,

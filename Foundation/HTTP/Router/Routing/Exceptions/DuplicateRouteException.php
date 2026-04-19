@@ -11,6 +11,7 @@ use Exception;
  */
 final class DuplicateRouteException extends Exception
 {
+    #[\Override]
     public function __construct(string $method, string $path, string|null $domain = null, string|null $name = null)
     {
         $key = $this->buildKey(method: $method, path: $path, domain: $domain, name: $name);

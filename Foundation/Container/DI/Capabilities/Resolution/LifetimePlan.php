@@ -96,13 +96,12 @@ final readonly class LifetimePlan
     private static function scopeKindFor(string $name) : string
     {
         return match ($name) {
-            OperationLifetime::NAME => ScopeKind::OPERATION,
-            RequestLifetime::NAME   => ScopeKind::REQUEST,
-            JobLifetime::NAME       => ScopeKind::JOB,
-            TenantLifetime::NAME    => ScopeKind::TENANT,
-            PooledLifetime::NAME    => ScopeKind::OPERATION,
-            ScopedLifetime::NAME    => ScopeKind::ANY,
-            default                 => '',
+            OperationLifetime::NAME, PooledLifetime::NAME => ScopeKind::OPERATION,
+            RequestLifetime::NAME                         => ScopeKind::REQUEST,
+            JobLifetime::NAME                             => ScopeKind::JOB,
+            TenantLifetime::NAME                          => ScopeKind::TENANT,
+            ScopedLifetime::NAME                          => ScopeKind::ANY,
+            default                                       => '',
         };
     }
 

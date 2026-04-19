@@ -147,7 +147,7 @@
         {
           "name": "Jordi Boggiano",
           "email": "j.boggiano@seld.be",
-          "homepage": "http://seld.be"
+          "homepage": "https://seld.be"
         }
       ],
       "description": "PCRE wrapping library that offers type-safe preg_* replacements.",

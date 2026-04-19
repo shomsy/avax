@@ -3,7 +3,7 @@
 use Avax\Container\Features\Think\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => 'Avax\\HTTP\\Router\\Routing\\ErrorResponseFactory',
+                                                'class'              => \Avax\HTTP\Router\Routing\ErrorResponseFactory::class,
                                                 'constructor'        => null,
                                                 'injectedProperties' =>
                                                     [

@@ -23,6 +23,7 @@ final class RouteResolutionTest extends TestCase
 
     /**
      * @throws ReservedRouteNameException
+     * @throws \ReflectionException
      */
     public function test_compile_optional_parameter() : void
     {
@@ -41,7 +42,7 @@ final class RouteResolutionTest extends TestCase
         ]
         ];
 
-        $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'http://example.com/users/123'));
+        $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'https://example.com/users/123'));
         $result  = $this->matcher->match(routes: $routes, request: $request);
 
         $this->assertNotNull(actual: $result);
@@ -52,6 +53,7 @@ final class RouteResolutionTest extends TestCase
 
     /**
      * @throws ReservedRouteNameException
+     * @throws \ReflectionException
      */
     public function test_compile_wildcard_parameter() : void
     {
@@ -70,7 +72,7 @@ final class RouteResolutionTest extends TestCase
         ]
         ];
 
-        $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'http://example.com/files/a/b/c'));
+        $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'https://example.com/files/a/b/c'));
         $result  = $this->matcher->match(routes: $routes, request: $request);
 
         $this->assertNotNull(actual: $result);
@@ -79,6 +81,7 @@ final class RouteResolutionTest extends TestCase
         $this->assertEquals(expected: 'a/b/c', actual: $matches['path']);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->matcher = new RouteMatcher(logger: new NullLogger);

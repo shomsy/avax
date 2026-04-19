@@ -23,6 +23,7 @@ final class InvalidCriteriaException extends DatabaseException
      * @param string $method Technical name of the builder method
      * @param string $reason Human-readable explanation of why the input is invalid
      */
+    #[\Override]
     public function __construct(
         string $method,
         string $reason

@@ -181,10 +181,9 @@ final readonly class RunScimBulk
         $state  = is_string($body['state'] ?? null) ? strtolower(trim($body['state'])) : null;
 
         return match (true) {
-            $state === 'disabled'  => ScimAccountState::DISABLED,
-            $state === 'suspended' => ScimAccountState::SUSPENDED,
-            $active === false      => ScimAccountState::SUSPENDED,
-            default                => ScimAccountState::ACTIVE,
+            $state === 'disabled'                     => ScimAccountState::DISABLED,
+            $state === 'suspended', $active === false => ScimAccountState::SUSPENDED,
+            default                                   => ScimAccountState::ACTIVE,
         };
     }
 

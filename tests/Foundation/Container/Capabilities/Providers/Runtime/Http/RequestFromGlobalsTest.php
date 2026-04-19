@@ -115,9 +115,9 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
             $this->assertSame(expected: $session, actual: $this->extractSession(request: $request));
         }
 
+        #[\Override]
         protected function setUp() : void
         {
-            parent::setUp();
 
             $this->serverBackup = $_SERVER ?? [];
             $this->getBackup    = $_GET ?? [];
@@ -139,6 +139,7 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
             $_FILES  = [];
         }
 
+        #[\Override]
         protected function tearDown() : void
         {
             $_SERVER = $this->serverBackup;
@@ -147,7 +148,6 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
             $_COOKIE = $this->cookieBackup;
             $_FILES  = $this->filesBackup;
 
-            parent::tearDown();
         }
     }
 }

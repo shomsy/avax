@@ -21,9 +21,9 @@ final readonly class PaginationOptions
      * @param int|null $total   The optional total record count discovered for calculating pagination metadata.
      */
     public function __construct(
-        int|null $page = null,
-        int|null $perPage = null,
-        int|null $total = null
+        int  $page = null,
+        int  $perPage = null,
+        ?int $total = null
     )
     {
         $page          ??= 1;

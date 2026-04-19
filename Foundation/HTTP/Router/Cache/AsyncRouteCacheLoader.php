@@ -89,7 +89,7 @@ final readonly class AsyncRouteCacheLoader
 
         // Check if files exist asynchronously
         return $this->filesystem->existsAsync(path: $cachePath)->then(
-            function ($cacheExists) use ($cachePath, $metadataPath, $routesPath) {
+            function ($cacheExists) use ($cachePath, $metadataPath) {
                 if (! $cacheExists) {
                     throw new RuntimeException(message: "Route cache file not found: {$cachePath}");
                 }
@@ -97,7 +97,7 @@ final readonly class AsyncRouteCacheLoader
                 return $this->filesystem->existsAsync(path: $metadataPath);
             }
         )->then(
-            function ($metadataExists) use ($metadataPath, $cachePath, $routesPath) {
+            function ($metadataExists) use ($metadataPath, $cachePath) {
                 if (! $metadataExists) {
                     throw new RuntimeException(message: "Route cache metadata not found: {$metadataPath}");
                 }

@@ -34,7 +34,7 @@ class NetworkTrustAbuseTest extends TestCase
 
         $request = $this->assembler->fromGlobals(server: $server);
         
-        $this->assertEquals('203.0.113.1', $request->resolveClientAddress($server));
+        $this->assertEquals(expected: '203.0.113.1', actual: $request->resolveClientAddress(serverParams: $server));
     }
 
     public function test_trusted_proxy_chain_resolution() : void
@@ -47,7 +47,7 @@ class NetworkTrustAbuseTest extends TestCase
         $request = $this->assembler->fromGlobals(server: $server);
         
         // With default policy trusting 127.0.0.1
-        $this->assertEquals('203.0.113.5', $request->resolveClientAddress($server));
+        $this->assertEquals(expected: '203.0.113.5', actual: $request->resolveClientAddress(serverParams: $server));
     }
 
     public function test_malformed_forwarded_header_fails_gracefully() : void
@@ -60,8 +60,8 @@ class NetworkTrustAbuseTest extends TestCase
         $request = $this->assembler->fromGlobals(server: $server);
         
         // Should fall back to remote addr or return null if totally broken
-        $clientIp = $request->resolveClientAddress($server);
-        $this->assertTrue($clientIp === '127.0.0.1' || $clientIp === null);
+        $clientIp = $request->resolveClientAddress(serverParams: $server);
+        $this->assertTrue(condition: $clientIp === '127.0.0.1' || $clientIp === null);
     }
 
     protected function setUp() : void

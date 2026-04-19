@@ -88,7 +88,7 @@ class BridgeRequestImmutabilityTest extends TestCase
     public function test_with_uri_returns_new_bridge_instance()
     {
         $request    = $this->createRequest();
-        $uri        = UriBuilder::createFromString(uri: 'http://example.com/');
+        $uri        = UriBuilder::createFromString(uri: 'https://example.com/');
         $newRequest = $request->withUri(uri: $uri);
 
         $this->assertNotSame(expected: $request, actual: $newRequest);

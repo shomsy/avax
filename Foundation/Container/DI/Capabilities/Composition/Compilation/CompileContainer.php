@@ -400,11 +400,11 @@ final class CompileContainer
                 |> (static fn ($x) => substr($x, 0, 8));
 
         if (is_file($compiledPath)) {
-            @rename($compiledPath, $quarantineDirectory . '/' . $suffix . '.php');
+            rename($compiledPath, $quarantineDirectory . '/' . $suffix . '.php');
         }
 
         if (is_file($metadataPath)) {
-            @rename($metadataPath, $quarantineDirectory . '/' . $suffix . '.json');
+            rename($metadataPath, $quarantineDirectory . '/' . $suffix . '.json');
         }
 
         $this->metrics?->increment(name: 'container_compiled_container_quarantines_total');
@@ -647,7 +647,6 @@ final class CompileContainer
     }
 
     /**
-     * @param ArtifactMetadata|null $previous
      * @param array{
      *     fingerprint: string,
      *     entries: array<string, string>,
@@ -659,9 +658,12 @@ final class CompileContainer
      *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool,
      *     poolSize: int, poolResetBeforeReuse: bool}>, deferred: array<string, bool>, decorations: array<string, int>,
      *     ownership: array<string, array<string, mixed>>, slices: array<string, array<string, mixed>>, pruning:
-     *     array<string, mixed>, statistics: array<string, int>, invalidationReasons: list<string>
-     * }                            $snapshot
-     * @param list<string>          $validationIssues
+     *     array<string, mixed>, statistics: array<string, int>, invalidationReasons: list<string> } $snapshot
+     * @param list<string>                                                                           $validationIssues
+     * @param ArtifactMetadata|null                                                                  $previous
+     * @param bool                                                                                   $warmed
+     *
+     * @return ArtifactMetadata
      */
     private function metadataFor(
         array                 $snapshot,
@@ -920,7 +922,7 @@ final class CompileContainer
         $this->writeAtomically(path: $this->metadataPath(), body: $json);
 
         if (function_exists('opcache_invalidate')) {
-            @opcache_invalidate($this->path(), true);
+            opcache_invalidate($this->path(), true);
         }
     }
 
@@ -933,7 +935,7 @@ final class CompileContainer
         }
 
         if (! rename($temp, $path)) {
-            @unlink($temp);
+            unlink($temp);
             throw new RuntimeException(message: "Cannot publish compiled container artifact [{$path}].");
         }
     }
@@ -942,6 +944,9 @@ final class CompileContainer
      * Loads one compiled container artifact when it is available and fresh.
      *
      * @param list<string> $serviceIds
+     *
+     * @return CompiledContainer|null
+     * @throws ReflectionException
      */
     public function load(array $serviceIds = []) : CompiledContainer|null
     {
@@ -1184,7 +1189,11 @@ final class CompileContainer
     }
 
     /**
-     * @param list<string> $serviceIds
+     * @param ArtifactMetadata|null $metadata
+     * @param list<string>          $serviceIds
+     *
+     * @return string
+     * @throws ReflectionException
      */
     private function freshnessStateFor(ArtifactMetadata|null $metadata, array $serviceIds) : string
     {

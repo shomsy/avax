@@ -37,7 +37,6 @@ final class NativeSessionStore implements SessionStoreInterface
         }
 
         if (! $this->nativeSessionActive() || ! session_regenerate_id(delete_old_session: true)) {
-            return $this->readNativeSessionId();
         }
 
         return $this->readNativeSessionId();
@@ -73,7 +72,7 @@ final class NativeSessionStore implements SessionStoreInterface
                                       ]);
         }
 
-        @session_start();
+        session_start();
 
         if (! $this->nativeSessionActive() && $this->canStartAfterOutput()) {
             $this->activateCliFallback();
@@ -171,6 +170,8 @@ final class NativeSessionStore implements SessionStoreInterface
     }
 
     /**
+     * @param string $sameSite
+     *
      * @return 'Lax'|'Strict'|'None'
      */
     private function normalizeSameSite(string $sameSite) : string

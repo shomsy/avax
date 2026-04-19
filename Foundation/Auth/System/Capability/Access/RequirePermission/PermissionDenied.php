@@ -14,6 +14,7 @@ class PermissionDenied extends Exception
 {
     private readonly UserPermission $requirement;
 
+    #[\Override]
     public function __construct(
         UserPermission $requirement,
         string         $message = 'Access denied.',

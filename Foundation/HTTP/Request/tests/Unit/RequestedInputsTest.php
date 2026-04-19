@@ -8,7 +8,10 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Input
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use InvalidArgumentException;
+use NotADtoClass;
 use PHPUnit\Framework\TestCase;
+use TestRoleEnum;
 
 class RequestedInputsTest extends TestCase
 {
@@ -374,12 +377,12 @@ class RequestedInputsTest extends TestCase
         );
 
         // Strict presence
-        $this->assertTrue($inputs->has('explicit_null'));
-        $this->assertFalse($inputs->has('missing'));
+        $this->assertTrue(condition: $inputs->has(key: 'explicit_null'));
+        $this->assertFalse(condition: $inputs->has(key: 'missing'));
 
         // Non-null presence
-        $this->assertFalse($inputs->hasNonNull('explicit_null'));
-        $this->assertTrue($inputs->hasNonNull('value'));
+        $this->assertFalse(condition: $inputs->hasNonNull(key: 'explicit_null'));
+        $this->assertTrue(condition: $inputs->hasNonNull(key: 'value'));
     }
 
     public function test_enum_hydration()
@@ -397,9 +400,9 @@ class RequestedInputsTest extends TestCase
             mapper: $this->mapper,
         );
 
-        $this->assertEquals(\TestRoleEnum::Admin, $inputs->enum('role', \TestRoleEnum::class));
-        $this->assertNull($inputs->enum('invalid', \TestRoleEnum::class));
-        $this->assertEquals(\TestRoleEnum::User, $inputs->enum('invalid', \TestRoleEnum::class, \TestRoleEnum::User));
+        $this->assertEquals(expected: TestRoleEnum::Admin, actual: $inputs->enum(key: 'role', enumClass: TestRoleEnum::class));
+        $this->assertNull(actual: $inputs->enum(key: 'invalid', enumClass: TestRoleEnum::class));
+        $this->assertEquals(expected: TestRoleEnum::User, actual: $inputs->enum(key: 'invalid', enumClass: TestRoleEnum::class, default: TestRoleEnum::User));
     }
 
     public function test_dto_mapping_throws_when_class_missing()
@@ -410,10 +413,10 @@ class RequestedInputsTest extends TestCase
             mapper: clone $this->mapper,
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('DTO class does not exist');
 
-        $inputs->as('NonExistentDtoClass');
+        $inputs->as(dtoClass: 'NonExistentDtoClass');
     }
 
     public function test_dto_mapping_throws_when_not_abstract_dto()
@@ -428,10 +431,10 @@ class RequestedInputsTest extends TestCase
             mapper: clone $this->mapper,
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('must extend');
 
-        $inputs->as(\NotADtoClass::class);
+        $inputs->as(dtoClass: NotADtoClass::class);
     }
 
     public function test_dto_mapping_path()
@@ -461,11 +464,11 @@ class RequestedInputsTest extends TestCase
             mapper: clone $this->mapper,
         );
 
-        $dto = $inputs->as('Avax\HTTP\Request\Tests\Unit\TestDtoClass');
+        $dto = $inputs->as(dtoClass: 'Avax\HTTP\Request\Tests\Unit\TestDtoClass');
         
-        $this->assertInstanceOf('Avax\HTTP\Request\Tests\Unit\TestDtoClass', $dto);
-        $this->assertEquals('John', $dto->name);
-        $this->assertEquals(30, $dto->age);
+        $this->assertInstanceOf(expected: 'Avax\HTTP\Request\Tests\Unit\TestDtoClass', actual: $dto);
+        $this->assertEquals(expected: 'John', actual: $dto->name);
+        $this->assertEquals(expected: 30, actual: $dto->age);
     }
 
     protected function setUp() : void

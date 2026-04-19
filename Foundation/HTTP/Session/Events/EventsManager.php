@@ -175,9 +175,9 @@ final readonly class EventsManager
     /**
      * Check if event system is enabled.
      *
-     * @return bool True if enabled, false otherwise.
+     * @return Events True if enabled, false otherwise.
      */
-    public function isEnabled() : bool
+    public function isEnabled() : Events
     {
         return $this->events;
     }

@@ -331,7 +331,6 @@ final readonly class ServeOidcHttpSurface
                 return (string) $value;
             }
 
-            return null;
         }
 
         return null;

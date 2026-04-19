@@ -18,18 +18,18 @@ return [
     'schemaVersion' => 1,
     'serviceIds'    =>
         [
-            0 => 'HintConditionalService',
-            1 => 'HintIdentityService',
-            2 => 'HintPipelineStepA',
-            3 => 'HintPipelineStepB',
-            4 => 'HintRuntimeInputConsumer',
+            'HintConditionalService',
+            'HintIdentityService',
+            'HintPipelineStepA',
+            'HintPipelineStepB',
+            'HintRuntimeInputConsumer',
         ],
     'sliceExports'  =>
         [
             'capability.identity' =>
                 [
-                    0 => 'HintConditionalService',
-                    1 => 'HintIdentityService',
+                    'HintConditionalService',
+                    'HintIdentityService',
                 ],
             'flow.hints'          =>
                 [
@@ -42,15 +42,15 @@ return [
                 ],
             'flow.hints'          =>
                 [
-                    0 => 'capability.identity',
+                    'capability.identity',
                 ],
         ],
     'groups'        =>
         [
             'hint.pipeline' =>
                 [
-                    0 => 'HintPipelineStepA',
-                    1 => 'HintPipelineStepB',
+                    'HintPipelineStepA',
+                    'HintPipelineStepB',
                 ],
         ],
     'runtimeInputs' =>
@@ -69,7 +69,7 @@ return [
                 ],
             'HintRuntimeInputConsumer' =>
                 [
-                    0 => 'token',
+                    'token',
                 ],
         ],
     'conditionals'  =>
@@ -78,11 +78,11 @@ return [
                 [
                     'profiles' =>
                         [
-                            0 => 'prod',
+                            'prod',
                         ],
                     'flags'    =>
                         [
-                            0 => 'beta',
+                            'beta',
                         ],
                     'tenants'  =>
                         [

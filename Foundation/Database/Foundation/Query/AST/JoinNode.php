@@ -29,12 +29,12 @@ final readonly class JoinNode
      * @param JoinClause|null $clause   Optional container for complex, multi-condition join logic.
      */
     public function __construct(
-        string          $table,
-        string|null     $type = null,
-        string|null     $first = null,
-        string|null     $operator = null,
-        string|null     $second = null,
-        JoinClause|null $clause = null
+        string      $table,
+        string      $type = null,
+        ?string     $first = null,
+        ?string     $operator = null,
+        ?string     $second = null,
+        ?JoinClause $clause = null
     )
     {
         $type           ??= 'inner';

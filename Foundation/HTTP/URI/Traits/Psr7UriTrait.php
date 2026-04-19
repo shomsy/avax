@@ -139,6 +139,7 @@ trait Psr7UriTrait
         );
     }
 
+    #[\Override]
     public function getAuthority() : string
     {
         $authority = $this->host;

@@ -114,7 +114,7 @@ final class RouteCollector
         $collector = $this;
 
         // Create isolated execution environment
-        $executionClosure = function () use ($code, $collector) : void {
+        $executionClosure = function () use ($collector, $code) : void {
             // Make collector available to global DSL functions via closure binding
             // This replaces the global state approach
             $dslFunctions = [

@@ -51,7 +51,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance for continued fluent configuration.
      */
-    public function begin() : TransactionManagerInterface;
+    public function begin() : self;
 
     /**
      * Coordinate the permanent persistence of all technical changes made within the current transaction window.
@@ -62,7 +62,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance.
      */
-    public function commit() : TransactionManagerInterface;
+    public function commit() : self;
 
     /**
      * Coordinate the technical reversion of all changes made during the active transaction window.
@@ -73,7 +73,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance.
      */
-    public function rollback() : TransactionManagerInterface;
+    public function rollback() : self;
 
     /**
      * Retrieve the authorized technical connection gateway managed by this authority.

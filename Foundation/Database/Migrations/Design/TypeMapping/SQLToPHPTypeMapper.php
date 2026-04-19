@@ -150,17 +150,16 @@ final class SQLToPHPTypeMapper
         $baseType = $this->extractBaseType(sqlType: $sqlType);
 
         return match ($baseType) {
-            'UUID'       => 'Uuid',
-            'INET'       => 'IpAddress',
-            'CIDR'       => 'NetworkRange',
-            'MACADDR'    => 'MacAddress',
-            'MONEY'      => 'Money',
-            'SMALLMONEY' => 'Money',
-            'POINT'      => 'GeoPoint',
-            'POLYGON'    => 'GeoPolygon',
-            'GEOMETRY'   => 'Geometry',
-            'GEOGRAPHY'  => 'Geography',
-            default      => null,
+            'UUID'                => 'Uuid',
+            'INET'                => 'IpAddress',
+            'CIDR'                => 'NetworkRange',
+            'MACADDR'             => 'MacAddress',
+            'MONEY', 'SMALLMONEY' => 'Money',
+            'POINT'               => 'GeoPoint',
+            'POLYGON'             => 'GeoPolygon',
+            'GEOMETRY'            => 'Geometry',
+            'GEOGRAPHY'           => 'Geography',
+            default               => null,
         };
     }
 

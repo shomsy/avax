@@ -18,13 +18,14 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class AdminElevationTest extends TestCase
 {
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testAdminElevationLifecycle() : void
     {
@@ -68,7 +69,7 @@ final class AdminElevationTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
     {

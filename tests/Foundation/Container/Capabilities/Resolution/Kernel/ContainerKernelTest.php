@@ -54,6 +54,7 @@ final class ContainerKernelTest extends TestCase
         $this->assertTrue(condition: $this->kernel->has(id: 'service'));
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->definitions = new DefinitionStore;

@@ -46,7 +46,7 @@ final class CriticalPathTest extends TestCase
 
             public function getName() : string { return 'test'; }
 
-            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+            public function config(string|null $key = null, mixed $default = null) : mixed { return null; }
 
             public function ping() : bool { return true; }
 
@@ -92,7 +92,7 @@ final class CriticalPathTest extends TestCase
 
             public function getName() : string { return 'test'; }
 
-            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+            public function config(string|null $key = null, mixed $default = null) : mixed { return null; }
 
             public function ping() : bool { return true; }
 
@@ -138,7 +138,7 @@ final class CriticalPathTest extends TestCase
 
             public function getName() : string { return 'test'; }
 
-            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+            public function config(string|null $key = null, mixed $default = null) : mixed { return null; }
 
             public function ping() : bool { return true; }
 
@@ -162,6 +162,7 @@ final class CriticalPathTest extends TestCase
         }
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->pdo = new PDO(dsn: 'sqlite::memory:');

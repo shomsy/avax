@@ -11,7 +11,7 @@ $files = [
 ];
 
 foreach ($files as $name => $path) {
-    echo "Checking $name: ";
+    echo "Checking {$name}: ";
     $content = file_get_contents($path);
     
     // Check for session_regenerate_id with proper parameters

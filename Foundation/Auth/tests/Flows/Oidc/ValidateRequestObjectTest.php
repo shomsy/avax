@@ -11,6 +11,7 @@ use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -18,7 +19,7 @@ use Random\RandomException;
 final class ValidateRequestObjectTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testValidateRequestObjectNormalizesClaims() : void
     {
@@ -50,7 +51,7 @@ final class ValidateRequestObjectTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testValidateRequestObjectRejectsMissingClaims() : void
     {
@@ -73,7 +74,7 @@ final class ValidateRequestObjectTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testValidateRequestObjectRejectsUnsignedObjectWhenClientRequiresSignature() : void

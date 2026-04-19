@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Logout\Logout;
 use Avax\Auth\System\Flow\Mfa\Backup\RegenerateBackupCodes;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
@@ -110,7 +111,11 @@ final readonly class IdentityFacade
     ) {}
 
     /**
+     * @param Credentials $credentials
+     *
+     * @return AuthenticationResult
      * @throws AuthenticationFailed
+     * @throws RateLimitException
      */
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
@@ -148,8 +153,11 @@ final readonly class IdentityFacade
     }
 
     /**
-     * @throws Unauthenticated
+     * @param ChangePasswordData $data
+     *
      * @throws PasswordChangeFailed
+     * @throws RateLimitException
+     * @throws Unauthenticated
      */
     public function changePassword(ChangePasswordData $data) : void
     {
@@ -167,7 +175,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param RegistrationData $data
+     *
+     * @return RegistrationResult
      * @throws RegistrationFailed
+     * @throws RateLimitException
      */
     public function register(RegistrationData $data) : RegistrationResult
     {
@@ -175,7 +187,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param RefreshAuthenticationRequest $request
+     *
+     * @return AuthenticationResult
      * @throws RefreshAuthenticationFailed
+     * @throws \DateMalformedStringException
      */
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult
     {
@@ -203,7 +219,9 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return MfaEnrollment
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function startMfaEnrollment() : MfaEnrollment
     {
@@ -211,6 +229,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param ConfirmMfaEnrollmentData $data
+     *
+     * @return BackupCodeSet
+     * @throws RandomException
      * @throws Unauthenticated
      */
     public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data) : BackupCodeSet
@@ -227,7 +249,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return MfaChallenge
+     * @throws RandomException
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function beginMfaChallenge() : MfaChallenge
     {
@@ -240,6 +265,8 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return BackupCodeSet
+     * @throws RandomException
      * @throws Unauthenticated
      */
     public function regenerateBackupCodes() : BackupCodeSet
@@ -266,8 +293,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return PasskeyRegistration
      * @throws RandomException
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function beginPasskeyRegistration() : PasskeyRegistration
     {
@@ -280,7 +309,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param BeginPasskeyAuthenticationData $data
+     *
+     * @return PasskeyAuthenticationChallenge
      * @throws RandomException
+     * @throws \DateMalformedStringException
      */
     public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {

@@ -25,6 +25,7 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
         }
     }
 
+    #[\Override]
     public function __construct(
         string         $message,
         int            $httpStatusCode,

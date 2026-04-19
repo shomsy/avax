@@ -364,7 +364,6 @@ class RouterBenchmark
             $memoryPerRoute = ($memoryAfter - $initialMemory) / $count;
 
             // Log memory scaling characteristics
-            error_log("Routes: {$count}, Memory per route: {$memoryPerRoute} bytes");
         }
     }
 }

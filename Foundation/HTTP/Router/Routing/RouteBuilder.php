@@ -115,7 +115,7 @@ final class RouteBuilder
         return $this->name;
     }
 
-    public function setName(string|null $name) : RouteBuilder
+    public function setName(string|null $name) : self
     {
         $this->name = $name;
 
@@ -130,7 +130,7 @@ final class RouteBuilder
         return $this->middleware;
     }
 
-    public function setMiddleware(array $middleware) : RouteBuilder
+    public function setMiddleware(array $middleware) : self
     {
         $this->middleware = $middleware;
 
@@ -145,7 +145,7 @@ final class RouteBuilder
         return $this->action;
     }
 
-    public function setAction(mixed $action) : RouteBuilder
+    public function setAction(mixed $action) : self
     {
         $this->action = $action;
 
@@ -162,7 +162,7 @@ final class RouteBuilder
         return $this->constraints;
     }
 
-    public function setConstraints(array $constraints) : RouteBuilder
+    public function setConstraints(array $constraints) : self
     {
         $this->constraints = $constraints;
 
@@ -179,7 +179,7 @@ final class RouteBuilder
         return $this->defaults;
     }
 
-    public function setDefaults(array $defaults) : RouteBuilder
+    public function setDefaults(array $defaults) : self
     {
         $this->defaults = $defaults;
 
@@ -194,7 +194,7 @@ final class RouteBuilder
         return $this->domain;
     }
 
-    public function setDomain(string|null $domain) : RouteBuilder
+    public function setDomain(string|null $domain) : self
     {
         $this->domain = $domain;
 
@@ -211,7 +211,7 @@ final class RouteBuilder
         return $this->attributes;
     }
 
-    public function setAttributes(array $attributes) : RouteBuilder
+    public function setAttributes(array $attributes) : self
     {
         $this->attributes = $attributes;
 
@@ -223,7 +223,7 @@ final class RouteBuilder
         return $this->authorization;
     }
 
-    public function setAuthorization(string|null $authorization) : RouteBuilder
+    public function setAuthorization(string|null $authorization) : self
     {
         $this->authorization = $authorization;
 

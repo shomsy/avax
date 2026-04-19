@@ -36,6 +36,7 @@ final readonly class QueryExecuted extends Event
      * @param string $correlationId  The Trace ID (Luggage Tag) for this request.
      * @param bool   $redactBindings Should we use the "Black Marker" to hide values in the main report?
      */
+    #[\Override]
     public function __construct(
         string                      $sql,
         #[SensitiveParameter] array $bindings,

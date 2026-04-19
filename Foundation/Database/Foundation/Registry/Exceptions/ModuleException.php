@@ -40,6 +40,7 @@ final class ModuleException extends DatabaseException
      * @param string         $message     A clear explanation of what went wrong.
      * @param Throwable|null $previous    The raw system error that caused the crash.
      */
+    #[\Override]
     public function __construct(
         string         $moduleClass,
         string         $phase,

@@ -18,21 +18,21 @@ final class UploadedFile implements UploadedFileInterface
     private bool $moved = false;
 
     public function __construct(
-        private readonly string  $tmpName,
-        private readonly int     $size,
-        private readonly int     $error,
-        private readonly ?string $name = null,
-        private readonly ?string $type = null
+        private readonly string      $tmpName,
+        private readonly int         $size,
+        private readonly int         $error,
+        private readonly string|null $name = null,
+        private readonly string|null $type = null
     ) {}
 
     public function getStream() : StreamInterface
     {
         if ($this->moved) {
-            throw new RuntimeException('Cannot retrieve stream after file has been moved.');
+            throw new RuntimeException(message: 'Cannot retrieve stream after file has been moved.');
         }
 
         if ($this->error !== UPLOAD_ERR_OK) {
-            throw new RuntimeException('Cannot retrieve stream for file with upload error.');
+            throw new RuntimeException(message: 'Cannot retrieve stream for file with upload error.');
         }
 
         return new Stream(stream: fopen($this->tmpName, 'r'));
@@ -41,11 +41,11 @@ final class UploadedFile implements UploadedFileInterface
     public function moveTo($targetPath) : void
     {
         if ($this->moved) {
-            throw new RuntimeException('File has already been moved.');
+            throw new RuntimeException(message: 'File has already been moved.');
         }
 
         if (! is_string($targetPath) || $targetPath === '') {
-            throw new InvalidArgumentException('Invalid target path provided.');
+            throw new InvalidArgumentException(message: 'Invalid target path provided.');
         }
 
         if (PHP_SAPI === 'cli') {
@@ -55,13 +55,13 @@ final class UploadedFile implements UploadedFileInterface
         }
 
         if (! $success) {
-            throw new RuntimeException('Failed to move uploaded file.');
+            throw new RuntimeException(message: 'Failed to move uploaded file.');
         }
 
         $this->moved = true;
     }
 
-    public function getSize() : ?int
+    public function getSize() : int|null
     {
         return $this->size;
     }
@@ -71,12 +71,12 @@ final class UploadedFile implements UploadedFileInterface
         return $this->error;
     }
 
-    public function getClientFilename() : ?string
+    public function getClientFilename() : string|null
     {
         return $this->name;
     }
 
-    public function getClientMediaType() : ?string
+    public function getClientMediaType() : string|null
     {
         return $this->type;
     }

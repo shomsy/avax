@@ -43,7 +43,7 @@ function rrmdir($dir)
 foreach ($dirs as $dir) {
     $path = $base . DIRECTORY_SEPARATOR . $dir;
     if (rrmdir(dir: $path)) {
-        echo "Deleted Directory: $dir\n";
+        echo "Deleted Directory: {$dir}\n";
     }
 }
 
@@ -51,7 +51,7 @@ foreach ($files as $file) {
     $path = $base . DIRECTORY_SEPARATOR . $file;
     if (is_file($path)) {
         unlink($path);
-        echo "Deleted File: $file\n";
+        echo "Deleted File: {$file}\n";
     }
 }
 unlink(__FILE__);

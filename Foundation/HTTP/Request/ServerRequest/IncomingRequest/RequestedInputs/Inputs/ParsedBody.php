@@ -8,25 +8,54 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs
  * ParsedBody
  *
  * Strongly-typed wrapper for parsed body input.
+ *
+ * Semantic rules:
+ * - internal state is always a normalized array
+ * - null becomes []
+ * - arrays stay unchanged
+ * - objects are reduced to their public properties via get_object_vars()
  */
 final readonly class ParsedBody
 {
     use AccessesTypedValues;
 
     /**
-     * @var array<string, mixed>
+     * @param array<string, mixed> $data
      */
-    private array $data;
+    private function __construct(private array $data = [] ) {}
 
-    public function __construct(array|object|null $data = null)
+    public static function empty(): self
     {
-        $this->data = self::normalize(data: $data);
+        return new self();
+    }
+
+    public static function fromParsedBody(array|object|null $data): self
+    {
+        return new self(
+            data: self::normalize($data),
+        );
     }
 
     /**
      * @return array<string, mixed>
      */
-    private static function normalize(array|object|null $data) : array
+    public function all(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function data(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function normalize(array|object|null $data): array
     {
         if ($data === null) {
             return [];
@@ -37,26 +66,5 @@ final readonly class ParsedBody
         }
 
         return get_object_vars($data);
-    }
-
-    public static function fromArray(array|object|null $data) : self
-    {
-        return new self(data: $data);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function all() : array
-    {
-        return $this->data;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function data() : array
-    {
-        return $this->data;
     }
 }

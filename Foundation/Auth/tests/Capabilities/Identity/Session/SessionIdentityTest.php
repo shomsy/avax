@@ -10,6 +10,7 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 final class SessionIdentityTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testIssueStoresUserAndReturnsRegeneratedSessionId() : void
     {
@@ -38,7 +39,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testResolveUserIdExpiresIdleSession() : void
     {
@@ -61,7 +62,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testResolveUserIdExpiresAbsoluteSession() : void
     {
@@ -82,7 +83,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testIssueRegeneratesExistingSessionIdToPreventFixation() : void
     {

@@ -17,6 +17,7 @@ use Avax\Auth\Integrations\Release\RunKeyCompromiseDrill;
 use Avax\Auth\Integrations\Release\RunKeyRolloverDrill;
 use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
@@ -91,7 +92,7 @@ final class ReleaseToolingTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testDependencyReviewRejectsUnreviewedOrUnapprovedPackages() : void
     {
@@ -157,7 +158,7 @@ final class ReleaseToolingTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testKeyLifecycleDrillsRunAgainstKeyRingFiles() : void
     {
@@ -202,6 +203,9 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @param array<string, mixed> $configuration
+     *
+     * @return string
+     * @throws JsonException
      */
     private function createKeyRingFile(array $configuration) : string
     {
@@ -238,7 +242,7 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testEvidenceBundleTracksArtifactPresence() : void
     {
@@ -264,7 +268,7 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testMigrationPathCheckDetectsLegacyReferencesAndMissingGuide() : void
     {

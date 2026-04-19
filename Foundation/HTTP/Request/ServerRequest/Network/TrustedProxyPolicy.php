@@ -25,7 +25,7 @@ final readonly class TrustedProxyPolicy
             }
 
             if (str_contains($proxy, '/')) {
-                if ($this->ipMatchesCidr($ip, $proxy)) {
+                if ($this->ipMatchesCidr(ip: $ip, cidr: $proxy)) {
                     return true;
                 }
             } elseif ($ip === $proxy) {

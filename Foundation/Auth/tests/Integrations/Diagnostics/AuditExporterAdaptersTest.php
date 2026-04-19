@@ -60,7 +60,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertArrayHasKey(key: 'record_hash', array: $second);
         $this->assertSame(expected: $first['record_hash'], actual: $second['previous_hash']);
 
-        @unlink($path);
+        unlink($path);
     }
 
     /**
@@ -158,7 +158,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertSame(expected: 'admin@example.com', actual: $payload['context']['email']);
         $this->assertSame(expected: '127.0.0.1', actual: $payload['context']['ip_address']);
 
-        @unlink($path);
+        unlink($path);
     }
 
     public function testSecurityNotificationExporterRoutesHighSignalEvents() : void

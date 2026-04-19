@@ -17,7 +17,6 @@ final class GraphExporter
     public function export(array $artifact, string $format = 'json') : string
     {
         return match (strtolower(trim($format))) {
-            'json'            => $this->toJson(artifact: $artifact),
             'mermaid'         => $this->toMermaid(artifact: $artifact),
             'dot', 'graphviz' => $this->toDot(artifact: $artifact),
             'html'            => $this->toHtml(artifact: $artifact),

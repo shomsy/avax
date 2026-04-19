@@ -110,6 +110,6 @@ class LocalFileService implements FileServiceInterface
      */
     public function createDirectory(string $path, int $permissions) : bool
     {
-        return ! (! is_dir(filename: $path) && ! @mkdir(directory: $path, permissions: $permissions, recursive: true));
+        return ! (! is_dir(filename: $path) && ! mkdir(directory: $path, permissions: $permissions, recursive: true));
     }
 }

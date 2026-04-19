@@ -111,13 +111,11 @@ final readonly class FileStore implements StoreInterface
             $metadata = unserialize(data: $this->storage->read(path: $path));
 
             // Check expiration
-            if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null) {
-                if (time() > $metadata['expires_at']) {
-                    // Expired - delete and return default
-                    $this->delete(key: $key);
+            if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null && time() > $metadata['expires_at']) {
+                // Expired - delete and return default
+                $this->delete(key: $key);
 
-                    return $default;
-                }
+                return $default;
             }
 
             return $metadata['value'] ?? $default;
@@ -167,12 +165,10 @@ final readonly class FileStore implements StoreInterface
             $metadata = unserialize(data: $this->storage->read(path: $path));
 
             // Check expiration
-            if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null) {
-                if (time() > $metadata['expires_at']) {
-                    $this->delete(key: $key);
+            if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null && time() > $metadata['expires_at']) {
+                $this->delete(key: $key);
 
-                    return false;
-                }
+                return false;
             }
 
             return true;
@@ -200,12 +196,10 @@ final readonly class FileStore implements StoreInterface
                 $metadata = unserialize(data: $content);
 
                 // Skip expired entries
-                if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null) {
-                    if (time() > $metadata['expires_at']) {
-                        $this->storage->delete(path: $file);
+                if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null && time() > $metadata['expires_at']) {
+                    $this->storage->delete(path: $file);
 
-                        continue;
-                    }
+                    continue;
                 }
 
                 // Use original key, not MD5 hash

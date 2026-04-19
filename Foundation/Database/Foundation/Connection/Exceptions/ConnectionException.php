@@ -38,6 +38,7 @@ class ConnectionException extends DatabaseException
      * @param string         $message  The human-readable description of what went wrong.
      * @param Throwable|null $previous The raw system error that triggered this report.
      */
+    #[\Override]
     public function __construct(
         string         $name,
         string         $message,

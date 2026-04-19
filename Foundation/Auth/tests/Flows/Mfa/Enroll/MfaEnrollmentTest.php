@@ -33,6 +33,7 @@ final class MfaEnrollmentTest extends TestCase
 {
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentStartsAndCompletesOnlyAfterValidTotpProof() : void
     {
@@ -102,6 +103,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentRejectsInvalidFirstCodeAndDoesNotHalfEnableMfa() : void
     {
@@ -144,6 +146,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentCanBeCancelledSafely() : void
     {
@@ -173,6 +176,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentExpires() : void
     {

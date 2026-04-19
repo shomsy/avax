@@ -879,11 +879,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $consumer   = $this->metadataFor(serviceId: $consumerId);
         $dependency = $this->metadataFor(serviceId: $dependencyId);
 
-        if ($consumer->ownerSlice === $dependency->ownerSlice) {
-            return true;
-        }
-
-        if ($dependency->ownerSlice === 'foundation.system' || $dependency->visibility === RegistrationVisibility::PUBLIC) {
+        if ($consumer->ownerSlice === $dependency->ownerSlice || $dependency->ownerSlice === 'foundation.system' || $dependency->visibility === RegistrationVisibility::PUBLIC) {
             return true;
         }
 

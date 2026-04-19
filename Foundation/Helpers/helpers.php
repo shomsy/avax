@@ -155,7 +155,6 @@ if (! function_exists(function: 'view')) {
 
             return response(status: 200, headers: ['Content-Type' => 'text/html'], body: $body);
         } catch (Throwable $throwable) {
-            dump('dump view ', $throwable);
             logger(message: 'View rendering failed.', context: ['template' => $template, 'exception' => $throwable]);
 
             return response(status: 500, body: 'An error occurred while rendering the view.');
@@ -259,7 +258,7 @@ if (! function_exists(function: 'auth')) {
 if (! function_exists(function: 'asset')) {
     function asset(string $path) : string
     {
-        $baseUrl = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $baseUrl = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'https://';
         $baseUrl .= $_SERVER['HTTP_HOST'] ?? 'localhost';
 
         return $baseUrl . '/' . ltrim(string: $path, characters: '/');

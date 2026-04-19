@@ -197,7 +197,7 @@ final readonly class Audit
             mkdir(directory: $dir, permissions: 0775, recursive: true);
         }
 
-        @file_put_contents(filename: $this->logPath, data: $json . PHP_EOL, flags: FILE_APPEND | LOCK_EX);
+        file_put_contents(filename: $this->logPath, data: $json . PHP_EOL, flags: FILE_APPEND | LOCK_EX);
     }
 
     /**

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\Container\Providers\ServiceProvider;
+use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\ContainerInterface;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
@@ -19,99 +20,87 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploa
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
-use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * RequestServiceProvider - Infrastructure owner for HTTP Request component.
+ * RequestServiceProvider
+ *
+ * Registers infrastructure and request-assembly services for the HTTP request flow.
+ *
+ * Lifetime rules:
+ * - singleton: stateless, shareable collaborators
+ * - scoped: request-local runtime state
  */
-final class RequestServiceProvider extends ServiceProvider
+final readonly class RequestServiceProvider implements ServiceProviderInterface
 {
-    #[Override]
-    public function register() : void
+    public function __construct(private ContainerInterface $app) {}
+
+    public function dependsOn(): array
+    {
+        return [];
+    }
+
+    public function register(): void
     {
         $this->registerInfrastructure();
-        $this->registerParsers();
         $this->registerNetwork();
-        $this->registerPreparer();
         $this->registerInputServices();
-        $this->registerAssembler();
+        $this->registerAssembly();
+        $this->registerRuntimeRequest();
     }
 
-    private function registerInfrastructure() : void
+    private function registerInfrastructure(): void
     {
-        $this->app->singleton(NormalizeProtocolVersion::class);
-        $this->app->singleton(NormalizeUploadedFiles::class);
-        $this->app->singleton(GuardUploadedFiles::class);
+        $this->app->singleton(abstract: NormalizeProtocolVersion::class);
+        $this->app->singleton(abstract: NormalizeUploadedFiles::class);
+        $this->app->singleton(abstract: GuardUploadedFiles::class);
+
+        $this->app->singleton(abstract: ParseJsonBody::class);
+        $this->app->singleton(abstract: ParseFormBody::class);
+        $this->app->singleton(abstract: ParseBodyByContentType::class);
     }
 
-    private function registerParsers() : void
+    private function registerNetwork(): void
     {
-        $this->app->singleton(ParseJsonBody::class);
-        $this->app->singleton(ParseFormBody::class);
-        
-        $this->app->singleton(ParseBodyByContentType::class, function () {
-            return new ParseBodyByContentType(
-                jsonParser: $this->app->get(ParseJsonBody::class),
-                formParser: $this->app->get(ParseFormBody::class)
-            );
-        });
-    }
+        $this->app->singleton(abstract: TrustedProxyPolicy::class, concrete: function () {
+            $trustedProxies = [];
+            
+            if ($this->app->has(id: 'config')) {
+                $config = $this->app->get(id: 'config');
+                $trustedProxies = method_exists($config, 'get') ? $config->get('request.trusted_proxies', []) : [];
+            }
 
-    private function registerNetwork() : void
-    {
-        $this->app->singleton(TrustedProxyPolicy::class, function () {
             return new TrustedProxyPolicy(
-                trustedProxies: $this->app->config('request.trusted_proxies', [])
+                trustedProxies: is_array($trustedProxies) ? $trustedProxies : [],
             );
         });
 
-        $this->app->singleton(ParseForwardedAddresses::class);
-
-        $this->app->singleton(ResolveClientAddress::class, function () {
-            return new ResolveClientAddress(
-                proxyPolicy    : $this->app->get(TrustedProxyPolicy::class),
-                forwardedParser: $this->app->get(ParseForwardedAddresses::class)
-            );
-        });
+        $this->app->singleton(abstract: ParseForwardedAddresses::class);
+        $this->app->singleton(abstract: ResolveClientAddress::class);
     }
 
-    private function registerPreparer() : void
+    private function registerInputServices(): void
     {
-        $this->app->singleton(PrepareRequest::class, function () {
-            return new PrepareRequest(
-                bodyParser        : $this->app->get(ParseBodyByContentType::class),
-                protocolNormalizer: $this->app->get(NormalizeProtocolVersion::class),
-                filesNormalizer   : $this->app->get(NormalizeUploadedFiles::class),
-                trustedProxyPolicy: $this->app->get(TrustedProxyPolicy::class),
-                forwardedParser   : $this->app->get(ParseForwardedAddresses::class),
-                clientResolver    : $this->app->get(ResolveClientAddress::class)
-            );
-        });
+        $this->app->singleton(abstract: InputSanitizer::class);
+        $this->app->singleton(abstract: MapRequestedInputsToDto::class);
     }
 
-    private function registerInputServices() : void
+    private function registerAssembly(): void
     {
-        $this->app->singleton(InputSanitizer::class);
-        $this->app->singleton(MapRequestedInputsToDto::class);
+        $this->app->singleton(abstract: PrepareRequest::class);
+        $this->app->singleton(abstract: AssembleIncomingRequest::class);
     }
 
-    private function registerAssembler() : void
+    private function registerRuntimeRequest(): void
     {
-        $this->app->singleton(AssembleIncomingRequest::class, function () {
-            return new AssembleIncomingRequest(
-                preparer : $this->app->get(PrepareRequest::class),
-                sanitizer: $this->app->get(InputSanitizer::class),
-                mapper   : $this->app->get(MapRequestedInputsToDto::class)
-            );
+        $this->app->scoped(abstract: ServerRequest::class, concrete: function () {
+            return $this->app->get(id: AssembleIncomingRequest::class)->fromGlobals();
         });
 
-        $this->app->singleton(ServerRequestInterface::class, function () {
-            return $this->app->get(AssembleIncomingRequest::class)->fromGlobals();
-        });
-
-        $this->app->alias(ServerRequest::class, ServerRequestInterface::class);
+        $this->app->alias(alias: ServerRequestInterface::class, abstract: ServerRequest::class);
     }
 
-    public function boot() : void {}
+    public function boot(): void
+    {
+    }
 }

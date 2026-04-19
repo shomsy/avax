@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\Events;
 
+use Override;
+
 /**
  * Event emitted when a fresh database connection is opened.
  *
@@ -18,6 +20,7 @@ final readonly class ConnectionOpened extends Event
      * @param string $correlationId    The technical trace identifier used for correlating this event with a specific
      *                                 execution scope.
      */
+    #[Override]
     public function __construct(
         string $connectionName,
         string $correlationId

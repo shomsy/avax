@@ -14,6 +14,7 @@ class RoleDenied extends Exception
 {
     private readonly UserRole $requirement;
 
+    #[\Override]
     public function __construct(
         UserRole $requirement,
         string   $message = 'Access denied.',

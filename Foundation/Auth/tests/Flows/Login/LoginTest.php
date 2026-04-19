@@ -384,6 +384,7 @@ class LoginTest extends TestCase
         $this->assertTrue(condition: $result->isAuthenticated());
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -50,8 +51,11 @@ final readonly class ConfirmMfaEnrollment
     }
 
     /**
+     * @param ConfirmMfaEnrollmentData $data
+     *
+     * @return BackupCodeSet
      * @throws Unauthenticated
-     * @throws MfaEnrollmentFailed
+     * @throws RandomException
      */
     public function execute(ConfirmMfaEnrollmentData $data) : BackupCodeSet
     {

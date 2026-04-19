@@ -53,8 +53,13 @@ final readonly class StartMfaChallenge
     }
 
     /**
+     * @param string|null $ipAddress
+     * @param string|null $userAgent
+     *
+     * @return MfaChallenge
+     * @throws DateMalformedStringException
+     * @throws RandomException
      * @throws Unauthenticated
-     * @throws MfaChallengeFailed
      */
     public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
@@ -117,7 +122,13 @@ final readonly class StartMfaChallenge
     }
 
     /**
-     * @throws MfaChallengeFailed
+     * @param User        $user
+     * @param string|null $ipAddress
+     * @param string|null $userAgent
+     *
+     * @return MfaChallenge
+     * @throws DateMalformedStringException
+     * @throws RandomException
      */
     public function issueForLogin(User $user, #[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {

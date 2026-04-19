@@ -58,6 +58,12 @@ final class RouterBootstrapper
     /**
      * Register multiple routes for different HTTP methods on the same path.
      *
+     * @param array                 $methods
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function match(array $methods, string $path, callable|array|string $handler) : self
@@ -92,6 +98,11 @@ final class RouterBootstrapper
     /**
      * Register GET route.
      *
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function get(string $path, callable|array|string $handler) : self
@@ -102,6 +113,11 @@ final class RouterBootstrapper
     /**
      * Register POST route.
      *
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function post(string $path, callable|array|string $handler) : self
@@ -112,6 +128,11 @@ final class RouterBootstrapper
     /**
      * Register PUT route.
      *
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function put(string $path, callable|array|string $handler) : self
@@ -122,6 +143,11 @@ final class RouterBootstrapper
     /**
      * Register DELETE route.
      *
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function delete(string $path, callable|array|string $handler) : self
@@ -132,6 +158,11 @@ final class RouterBootstrapper
     /**
      * Register PATCH route.
      *
+     * @param string                $path
+     * @param callable|array|string $handler
+     *
+     * @return RouterBootstrapper
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     public function patch(string $path, callable|array|string $handler) : self

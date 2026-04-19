@@ -22,11 +22,13 @@ final class FrozenClock extends Clock
         $this->now = $now;
     }
 
+    #[\Override]
     public function now() : DateTimeImmutable
     {
         return $this->now;
     }
 
+    #[\Override]
     public function timestamp() : int
     {
         return $this->now->getTimestamp();

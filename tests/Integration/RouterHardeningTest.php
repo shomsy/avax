@@ -242,6 +242,7 @@ class RouterHardeningTest extends TestCase
         $this->assertEquals(expected: 200, actual: $response->statusCode);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $providers = [

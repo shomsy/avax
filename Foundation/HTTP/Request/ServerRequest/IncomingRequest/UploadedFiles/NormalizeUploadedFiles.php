@@ -50,11 +50,11 @@ final readonly class NormalizeUploadedFiles
         }
 
         return new UploadedFile(
-            stream         : new Stream(stream: fopen($value['tmp_name'], 'r')),
-            size           : $value['size'],
-            error          : $value['error'],
-            clientFilename : $value['name'],
-            clientMediaType: $value['type']
+            tmpName: $value['tmp_name'],
+            size   : $value['size'],
+            error  : $value['error'],
+            name   : $value['name'],
+            type   : $value['type'],
         );
     }
 

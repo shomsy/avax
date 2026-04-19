@@ -7,15 +7,21 @@ namespace Avax\HTTP\Request\tests\Unit;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseFormBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerInit;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
@@ -46,19 +52,19 @@ class BridgeRequestImmutabilityTest extends TestCase
     private function createRequest() : Request
     {
         $serverRequest = new ServerRequest(
-            setup: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerInit(
+            setup: new ServerInit(
                 state: new RequestInit(
                     body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
                     method: 'GET',
                     uri: UriBuilder::createFromString(uri: 'http://localhost/'),
-                    requestHeaders: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders([]),
+                    requestHeaders: new RequestHeaders([]),
                     serverParams: [],
                     requestTarget: '/',
-                    cookies: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies([]),
+                    cookies: new RequestCookies([]),
                     queryParams: [],
-                    uploadedFiles: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles([]),
-                    parsedBody: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody(null),
-                    attributes: new \Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes([]),
+                    uploadedFiles: new UploadedFiles([]),
+                    parsedBody: new ParsedBody(null),
+                    attributes: new RequestAttributes([]),
                     session: null,
                     protocolVersion: '1.1'
                 ),

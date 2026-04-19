@@ -248,16 +248,16 @@ class RequestedInputsTest extends TestCase
     public function test_only_returns_only_specified_keys()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          'foo'   => 'bar',
-                                          'baz'   => 'qux',
-                                          'extra' => 'value',
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    'foo' => 'bar',
+                    'baz' => 'qux',
+                    'extra' => 'value',
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $result = $inputs->only('foo', 'baz');
@@ -268,12 +268,12 @@ class RequestedInputsTest extends TestCase
     public function test_only_with_body_preference()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: ['shared' => 'query'],
-                         parsedBody : ['shared' => 'body'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: ['shared' => 'query'],
+                parsedBody: ['shared' => 'body'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $result = $inputs->only('shared');
@@ -284,16 +284,16 @@ class RequestedInputsTest extends TestCase
     public function test_except_excludes_specified_keys()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          'foo'  => 'bar',
-                                          'baz'  => 'qux',
-                                          'keep' => 'this',
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    'foo' => 'bar',
+                    'baz' => 'qux',
+                    'keep' => 'this',
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $result = $inputs->except('foo', 'baz');
@@ -304,16 +304,16 @@ class RequestedInputsTest extends TestCase
     public function test_bool_true_values_blacklist()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          'true' => 'true',
-                                          'one'  => '1',
-                                          'on'   => 'on',
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    'true' => 'true',
+                    'one' => '1',
+                    'on' => 'on',
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertTrue(condition: $inputs->bool(key: 'true'));
@@ -324,16 +324,16 @@ class RequestedInputsTest extends TestCase
     public function test_bool_false_values_blacklist()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          'false' => 'false',
-                                          'zero'  => '0',
-                                          'off'   => 'off',
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    'false' => 'false',
+                    'zero' => '0',
+                    'off' => 'off',
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertFalse(condition: $inputs->bool(key: 'false'));
@@ -344,18 +344,18 @@ class RequestedInputsTest extends TestCase
     public function test_bool_invalid_returns_default()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          'yes'     => 'yes',
-                                          'no'      => 'no',
-                                          'garbage' => 'garbage',
-                                          'array'   => [1, 2, 3],
-                                          'null'    => null,
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    'yes' => 'yes',
+                    'no' => 'no',
+                    'garbage' => 'garbage',
+                    'array' => [1, 2, 3],
+                    'null' => null,
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertTrue(condition: $inputs->bool(key: 'yes', default: true));
@@ -368,7 +368,7 @@ class RequestedInputsTest extends TestCase
     public function test_has_vs_has_non_null_semantics()
     {
         $inputs = new RequestedInputs(
-            merged: Inputs::fromSlices(
+            inputs: Inputs::fromQueryAndBody(
                 queryParams: [],
                 parsedBody: ['explicit_null' => null, 'value' => 1]
             ),
@@ -392,7 +392,7 @@ class RequestedInputsTest extends TestCase
         }
 
         $inputs = new RequestedInputs(
-            merged: Inputs::fromSlices(
+            inputs: Inputs::fromQueryAndBody(
                 queryParams: [],
                 parsedBody: ['role' => 'admin', 'invalid' => 'superadmin']
             ),
@@ -408,7 +408,7 @@ class RequestedInputsTest extends TestCase
     public function test_dto_mapping_throws_when_class_missing()
     {
         $inputs = new RequestedInputs(
-            merged: Inputs::fromSlices([], []),
+            inputs: Inputs::fromQueryAndBody([], []),
             sanitizer: $this->sanitizer,
             mapper: clone $this->mapper,
         );
@@ -426,7 +426,7 @@ class RequestedInputsTest extends TestCase
         }
 
         $inputs = new RequestedInputs(
-            merged: Inputs::fromSlices([], []),
+            inputs: Inputs::fromQueryAndBody([], []),
             sanitizer: $this->sanitizer,
             mapper: clone $this->mapper,
         );
@@ -461,8 +461,8 @@ class RequestedInputsTest extends TestCase
 
         if (!enum_exists('TestRoleEnum')) {
             enum TestRoleEnum: string {
-                case ADMIN = 'admin';
-                case USER = 'user';
+                case Admin = 'admin';
+                case User = 'user';
             }
         }
 

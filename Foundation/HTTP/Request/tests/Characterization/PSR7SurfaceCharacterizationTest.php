@@ -409,7 +409,6 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         return $this->assembler->empty();
     }
 
-    #[\Override]
     protected function setUp(): void
     {
         $preparer = new PrepareRequest(

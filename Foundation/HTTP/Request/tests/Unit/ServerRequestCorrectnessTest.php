@@ -86,7 +86,6 @@ class ServerRequestCorrectnessTest extends TestCase
         $this->assertEquals(expected: '/foo?bar=baz', actual: $request->requestTarget);
     }
 
-    #[\Override]
     protected function setUp() : void
     {
         $preparer = new PrepareRequest(

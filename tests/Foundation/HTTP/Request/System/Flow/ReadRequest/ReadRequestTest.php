@@ -17,9 +17,6 @@ use PHPUnit\Framework\TestCase;
 final class ReadRequestTest extends TestCase
 {
     private ReadRequest          $readRequest;
-    private InputAccessor        $inputAccessor;
-    private RequestSessionBridge $sessionBridge;
-    private JsonBodyParser       $jsonParser;
 
     public function test_execute_returns_result_with_all_inputs() : void
     {
@@ -110,23 +107,23 @@ final class ReadRequestTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->inputAccessor = new InputAccessor(
+        $inputAccessor = new InputAccessor(
             query  : new ParameterBag(['foo' => 'query-foo']),
             body   : new ParameterBag(['bar' => 'body-bar']),
             cookies: new ParameterBag(['session' => 'cookie-session']),
             files  : new ParameterBag([])
         );
 
-        $this->sessionBridge = new RequestSessionBridge(
+        $sessionBridge = new RequestSessionBridge(
             $this->createMock(SessionInterface::class)
         );
 
-        $this->jsonParser = new JsonBodyParser();
+        $jsonParser = new JsonBodyParser();
 
         $this->readRequest = new ReadRequest(
-            inputAccessor: $this->inputAccessor,
-            sessionBridge: $this->sessionBridge,
-            jsonParser   : $this->jsonParser
+            inputAccessor: $inputAccessor,
+            sessionBridge: $sessionBridge,
+            jsonParser   : $jsonParser
         );
     }
 }

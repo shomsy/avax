@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Release;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -58,7 +59,7 @@ final readonly class CheckMigrationPath
     {
         $matches  = [];
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: RecursiveDirectoryIterator::SKIP_DOTS)
+            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: FilesystemIterator::SKIP_DOTS)
         );
 
         /** @var SplFileInfo $file */

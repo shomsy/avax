@@ -89,8 +89,9 @@ final class RouterMetricsCollector
         $this->metrics[$key]['labels']   = $labels;
     }
 
-    private function setGauge(string $name, float $value, array $labels = []) : void
+    private function setGauge(string $name, float $value) : void
     {
+        $labels                           = [];
         $key                              = $this->metricKey(name: $name, labels: $labels);
         $this->metrics[$key]['value']     = $value;
         $this->metrics[$key]['type']      = 'gauge';
@@ -236,7 +237,7 @@ final class RouterMetricsCollector
         $alerts = [];
 
         // Check route resolution failures
-        $failures = $this->getCounterValue(name: 'route_resolution_failures_total', windowSeconds: 60); // per minute
+        $failures = $this->getCounterValue(name: 'route_resolution_failures_total'); // per minute
         if ($failures >= $this->alertThresholds['route_resolution_failures']['critical']) {
             $alerts['route_resolution_failures'] = [
                 'level'       => 'critical',
@@ -254,7 +255,7 @@ final class RouterMetricsCollector
         }
 
         // Check cache invalidations
-        $invalidations = $this->getCounterValue(name: 'cache_invalidations_total', windowSeconds: 60);
+        $invalidations = $this->getCounterValue(name: 'cache_invalidations_total');
         if ($invalidations >= $this->alertThresholds['cache_invalidations']['critical']) {
             $alerts['cache_invalidations'] = [
                 'level'       => 'critical',
@@ -272,7 +273,7 @@ final class RouterMetricsCollector
         }
 
         // Check route resolution time (95th percentile)
-        $resolutionTime = $this->getPercentile(name: 'route_resolution_duration', percentile: 95);
+        $resolutionTime = $this->getPercentile();
         if ($resolutionTime >= $this->alertThresholds['route_resolution_time']['critical']) {
             $alerts['route_resolution_time'] = [
                 'level'       => 'critical',
@@ -290,7 +291,7 @@ final class RouterMetricsCollector
         }
 
         // Check concurrent requests
-        $concurrent = $this->getGaugeValue(name: 'concurrent_requests');
+        $concurrent = $this->getGaugeValue();
         if ($concurrent >= $this->alertThresholds['concurrent_requests']['critical']) {
             $alerts['concurrent_requests'] = [
                 'level'       => 'critical',
@@ -310,10 +311,10 @@ final class RouterMetricsCollector
         return $alerts;
     }
 
-    private function getCounterValue(string $name, int $windowSeconds = 60) : int
+    private function getCounterValue(string $name) : int
     {
         $total  = 0;
-        $cutoff = microtime(true) - $windowSeconds;
+        $cutoff = microtime(true) - 60;
 
         foreach ($this->metrics as $metric) {
             if (($metric['name'] ?? '') === $name &&
@@ -325,12 +326,12 @@ final class RouterMetricsCollector
         return $total;
     }
 
-    private function getPercentile(string $name, float $percentile) : float
+    private function getPercentile() : float
     {
         $values = [];
 
         foreach ($this->metrics as $metric) {
-            if (($metric['name'] ?? '') === $name && isset($metric['values'])) {
+            if (($metric['name'] ?? '') === 'route_resolution_duration' && isset($metric['values'])) {
                 $values = array_merge($values, $metric['values']);
             }
         }
@@ -340,15 +341,15 @@ final class RouterMetricsCollector
         }
 
         sort($values);
-        $index = (int) (count($values) * ($percentile / 100));
+        $index = (int) (count($values) * (95 / 100));
 
         return $values[$index] ?? end($values);
     }
 
-    private function getGaugeValue(string $name) : float
+    private function getGaugeValue() : float
     {
         foreach ($this->metrics as $metric) {
-            if (($metric['name'] ?? '') === $name && $metric['type'] === 'gauge') {
+            if (($metric['name'] ?? '') === 'concurrent_requests' && $metric['type'] === 'gauge') {
                 return $metric['value'] ?? 0.0;
             }
         }

@@ -24,7 +24,6 @@ final class RouterIntegrationTest extends TestCase
     private HttpRequestRouter     $router;
     private RouteCacheLoader|null $cacheLoader;
     private string                $cacheDir;
-    private string                $routesFile;
 
     /**
      * Ensures that cached routes produce identical results to runtime registration.
@@ -212,13 +211,13 @@ final class RouterIntegrationTest extends TestCase
     #[\Override]
     protected function setUp() : void
     {
-        $this->cacheDir   = sys_get_temp_dir() . '/router-cache-' . uniqid();
-        $this->routesFile = $this->cacheDir . '/routes.php';
+        $this->cacheDir = sys_get_temp_dir() . '/router-cache-' . uniqid();
+        $routesFile     = $this->cacheDir . '/routes.php';
 
         mkdir($this->cacheDir, 0777, true);
 
         // Create a sample routes file
-        file_put_contents($this->routesFile, $this->getSampleRoutesContent());
+        file_put_contents($routesFile, $this->getSampleRoutesContent());
 
         $this->initializeRouterComponents();
     }

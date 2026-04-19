@@ -31,8 +31,8 @@ final readonly class VerifyMtlsSenderConstraint
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $thumbprint = $this->readServerValue(server: $input->server, name: 'TLS_CLIENT_CERT_SHA256')
-            ?? $this->readHeader(headers: $input->headers, name: 'x-tls-client-cert-sha256');
+        $thumbprint = $this->readServerValue(server: $input->server)
+            ?? $this->readHeader(headers: $input->headers);
 
         if ($thumbprint === null || $thumbprint === '') {
             $this->recordFailure(reason: 'missing_certificate', input: $input);
@@ -56,9 +56,9 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['TLS_CLIENT_CERT_SHA256'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }
@@ -66,10 +66,10 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'x-tls-client-cert-sha256') !== 0) {
                 continue;
             }
 

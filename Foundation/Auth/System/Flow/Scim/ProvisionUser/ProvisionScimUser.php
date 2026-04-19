@@ -73,7 +73,7 @@ final readonly class ProvisionScimUser
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'provision');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
         $roles            = $this->resolveRoles(directory: $directory, groups: $data->groups);
         $fingerprint      = $this->fingerprint(data: $data, roles: $roles);
         $existingIdentity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
@@ -191,18 +191,18 @@ final readonly class ProvisionScimUser
         }
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'provision';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'provision');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);

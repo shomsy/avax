@@ -199,15 +199,10 @@ final class Transaction implements TransactionManagerInterface
     {
         $scope = new TransactionScope(manager: $this);
 
-        try {
-            $result = $callback($scope);
-            $scope->complete();
+        $result = $callback($scope);
+        $scope->complete();
 
-            return $result;
-        } catch (Throwable $e) {
-            // The scope object's destructor will handle the rollback for us.
-            throw $e;
-        }
+        return $result;
     }
 
     /**

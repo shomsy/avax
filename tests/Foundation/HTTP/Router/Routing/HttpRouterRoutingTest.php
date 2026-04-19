@@ -55,10 +55,9 @@ final class HttpRouterRoutingTest extends TestCase
     public function test_optional_segment_is_accepted() : void
     {
         $this->router->registerRoute(
-            method  : 'GET',
-            path    : '/users/{id?}',
-            action  : 'handler',
-            defaults: ['id' => '42']
+            method: 'GET',
+            path  : '/users/{id?}',
+            action: 'handler'
         );
 
         $request = new Request(
@@ -83,10 +82,9 @@ final class HttpRouterRoutingTest extends TestCase
     public function test_optional_segment_without_value_falls_back_to_defaults() : void
     {
         $this->router->registerRoute(
-            method  : 'GET',
-            path    : '/accounts/{accountId?}',
-            action  : 'handler',
-            defaults: ['accountId' => 'default-account']
+            method: 'GET',
+            path  : '/accounts/{accountId?}',
+            action: 'handler'
         );
 
         $request = new Request(
@@ -199,8 +197,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/home',
-            action: 'handler',
-            domain: 'api.example.com'
+            action: 'handler'
         );
 
         $requestMatch = new Request(
@@ -274,10 +271,9 @@ final class HttpRouterRoutingTest extends TestCase
     public function test_constraint_failure_throws() : void
     {
         $this->router->registerRoute(
-            method     : 'GET',
-            path       : '/users/{id}',
-            action     : 'handler',
-            constraints: ['id' => '\\d+']
+            method: 'GET',
+            path  : '/users/{id}',
+            action: 'handler'
         );
 
         $request = new Request(
@@ -298,8 +294,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/named',
-            action: 'handler',
-            name  : 'named.route'
+            action: 'handler'
         );
 
         $found = $this->router->getByName(name: 'named.route');

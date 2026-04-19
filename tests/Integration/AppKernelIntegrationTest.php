@@ -25,8 +25,6 @@ class AppKernelIntegrationTest extends TestCase
 {
     private RouterInterface $router;
 
-    private RouteCollection $routeCollection;
-
     private ControllerDispatcher $dispatcher;
 
     private ResponseFactory $responseFactory;
@@ -170,15 +168,15 @@ class AppKernelIntegrationTest extends TestCase
     {
         $psr17Factory = new Psr17Factory;
 
-        $this->router          = $this->createMock(RouterInterface::class);
-        $this->routeCollection = new RouteCollection;
-        $this->dispatcher      = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
+        $this->router     = $this->createMock(RouterInterface::class);
+        $routeCollection  = new RouteCollection;
+        $this->dispatcher = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
         $this->responseFactory = new ResponseFactory(
             streamFactory: $psr17Factory->createStreamFactory(),
             response     : $psr17Factory->createResponseFactory()->createResponse()
         );
 
-        $this->bootstrapper = new RouterBootstrapper(router: $this->router, routeCollection: $this->routeCollection);
+        $this->bootstrapper = new RouterBootstrapper(router: $this->router, routeCollection: $routeCollection);
     }
 }
 

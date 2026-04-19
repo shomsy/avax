@@ -153,15 +153,15 @@ final readonly class ServeTenantSecurityHttpSurface
                                                                      allowedAudiences               : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
                                                                      allowedGrantTypes              : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
                                                                      audienceScopeBoundaries        : $this->audienceScopeBoundaries(body: $input->body),
-                                                                     tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
-                                                                     requiredSenderConstraint       : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                                                                     tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body),
+                                                                     requiredSenderConstraint       : $this->senderConstraintType(body: $input->body),
                                                                      workloadIdentity               : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                                                                      phishingResistantRequired      : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
                                                                      requestObjectSignatureRequired : $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                                                                      frontChannelLogoutSupported    : $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                                                                      backChannelLogoutSupported     : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                                                                      approvalRequired               : $this->boolValue(body: $input->body, field: 'approvalRequired'),
-                                                                     requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
+                                                                     requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body)
                                                                  ));
 
                 return $this->response(statusCode: 201, body: [
@@ -190,15 +190,15 @@ final readonly class ServeTenantSecurityHttpSurface
                                                                    allowedAudiences               : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
                                                                    allowedGrantTypes              : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
                                                                    audienceScopeBoundaries        : $this->audienceScopeBoundaries(body: $input->body),
-                                                                   tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
-                                                                   requiredSenderConstraint       : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                                                                   tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body),
+                                                                   requiredSenderConstraint       : $this->senderConstraintType(body: $input->body),
                                                                    workloadIdentity               : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                                                                    phishingResistantRequired      : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
                                                                    requestObjectSignatureRequired : $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                                                                    frontChannelLogoutSupported    : $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                                                                    backChannelLogoutSupported     : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                                                                    approvalRequired               : $this->boolValue(body: $input->body, field: 'approvalRequired'),
-                                                                   requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
+                                                                   requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body)
                                                                ));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
@@ -601,9 +601,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function tokenEndpointAuthMethod(array $body, string $field) : OAuthTokenEndpointAuthMethod|null
+    private function tokenEndpointAuthMethod(array $body) : OAuthTokenEndpointAuthMethod|null
     {
-        $value = $this->nullableString(body: $body, field: $field);
+        $value = $this->nullableString(body: $body, field: 'tokenEndpointAuthMethod');
 
         return $value !== null && $value !== ''
             ? OAuthTokenEndpointAuthMethod::from(value: strtolower($value))
@@ -613,9 +613,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function senderConstraintType(array $body, string $field) : OAuthSenderConstraintType|null
+    private function senderConstraintType(array $body) : OAuthSenderConstraintType|null
     {
-        $value = $this->nullableString(body: $body, field: $field);
+        $value = $this->nullableString(body: $body, field: 'requiredSenderConstraint');
 
         return $value !== null && $value !== ''
             ? OAuthSenderConstraintType::from(value: strtolower($value))
@@ -646,9 +646,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function nullableMultilineString(array $body, string $field) : string|null
+    private function nullableMultilineString(array $body) : string|null
     {
-        $value = $body[$field] ?? null;
+        $value = $body['requestObjectVerificationKeyPem'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }

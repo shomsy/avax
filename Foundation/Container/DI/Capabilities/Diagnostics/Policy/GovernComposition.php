@@ -95,11 +95,11 @@ final readonly class GovernComposition
             foreach ($findings as $finding) {
                 $messages[] = strtoupper((string) ($finding['severity'] ?? 'warn'))
                     . ' '
-                    . (string) ($finding['code'] ?? 'POLICY')
+                    . ($finding['code'] ?? 'POLICY')
                     . ' ['
                     . $serviceId
                     . ']: '
-                    . (string) ($finding['message'] ?? 'policy finding');
+                    . ($finding['message'] ?? 'policy finding');
             }
         }
 

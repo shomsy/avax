@@ -31,7 +31,7 @@ final readonly class MigrateMakeCommand
         try {
             $filepath = $this->generator->generate(name: $name, path: $path, table: $table, create: $create);
             $filename = basename(path: $filepath);
-            $this->success(msg: 'Migration created successfully!');
+            $this->success();
             echo "  📄 {$filename}\n";
 
             return 0;
@@ -47,9 +47,9 @@ final readonly class MigrateMakeCommand
         echo "\033[36m{$msg}\033[0m\n";
     }
 
-    private function success(string $msg) : void
+    private function success() : void
     {
-        echo "\033[32m{$msg}\033[0m\n";
+        echo "\033[32mMigration created successfully!\033[0m\n";
     }
 
     private function error(string $msg) : void

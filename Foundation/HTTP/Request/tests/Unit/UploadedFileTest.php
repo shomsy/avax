@@ -23,7 +23,7 @@ class UploadedFileTest extends TestCase
         unlink($target);
     }
 
-    private function createUploadedFile(int $error = UPLOAD_ERR_OK) : UploadedFile
+    private function createUploadedFile() : UploadedFile
     {
         $stream = new Stream(stream: fopen('php://temp', 'r+'));
         $stream->write(string: 'dummy content');
@@ -31,7 +31,7 @@ class UploadedFileTest extends TestCase
         return new UploadedFile(
             stream         : $stream,
             size           : 13,
-            error          : $error,
+            error          : UPLOAD_ERR_OK,
             clientFilename : 'test.txt',
             clientMediaType: 'text/plain'
         );

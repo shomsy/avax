@@ -144,7 +144,7 @@ $config = new SessionConfig($key);
 $config = SessionConfig::hardened($key);
 ```
 
-2. **Session termination:**
+1. **Session termination:**
 
 ```php
 // Old
@@ -155,7 +155,7 @@ session_destroy();
 $session->terminate('logout');
 ```
 
-3. **Login flow:**
+1. **Login flow:**
 
 ```php
 // Old

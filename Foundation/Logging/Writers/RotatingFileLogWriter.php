@@ -167,12 +167,10 @@ final class RotatingFileLogWriter implements LogWriterInterface
      * This method ensures that the logging directory does not exceed a defined maximum file retention period.
      * Adheres to best practices such as validating file paths and ensuring atomic operations with `unlink`.
      *
-     * @param int $maxFileAgeInDays    Defaults to 30 days if not specified.
      *                                 Represents the maximum age (in days) for retaining log files.
      */
-    private function rotateLogs(int $maxFileAgeInDays = 30) : void
-    {
-        // Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
+    private function rotateLogs() : void
+    {// Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
         // This uses the `glob` function to find all files matching the wildcard pattern.
         $logFiles = glob(pattern: "{$this->baseLogPath}-*.log");
 
@@ -185,7 +183,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
         $now = time();
 
         // Calculate the maximum file age in seconds by multiplying the provided days by the number of seconds in a day (86,400).
-        $maxFileAgeInSeconds = $maxFileAgeInDays * 86400;
+        $maxFileAgeInSeconds = 30 * 86400;
 
         // Iterate over each file path returned by `glob`.
         foreach ($logFiles as $file) {

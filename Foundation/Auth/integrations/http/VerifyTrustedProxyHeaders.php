@@ -38,7 +38,7 @@ final readonly class VerifyTrustedProxyHeaders
      */
     public function execute(HttpOAuthProofInput $input) : void
     {
-        $remoteAddress = $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR');
+        $remoteAddress = $this->readServerValue(server: $input->server);
 
         if ($remoteAddress !== null && in_array($remoteAddress, $this->trustedProxies, true)) {
             return;
@@ -64,9 +64,9 @@ final readonly class VerifyTrustedProxyHeaders
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['REMOTE_ADDR'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }

@@ -55,7 +55,7 @@ final readonly class DeleteScimUser
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'delete');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
         $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($identity === null) {
@@ -109,18 +109,18 @@ final readonly class DeleteScimUser
         }
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'delete';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'delete');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);

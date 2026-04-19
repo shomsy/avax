@@ -56,7 +56,7 @@ final readonly class RotateScimToken
             throw ScimFailed::serviceUnavailable();
         }
 
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'rotate');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
 
         $plainTextToken = bin2hex(random_bytes(24));
         $rotated        = new ScimDirectory(
@@ -82,18 +82,18 @@ final readonly class RotateScimToken
         return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'rotate';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'rotate');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);

@@ -11,10 +11,6 @@ use PHPUnit\Framework\TestCase;
 final class InputAccessorTest extends TestCase
 {
     private InputAccessor $accessor;
-    private ParameterBag  $queryBag;
-    private ParameterBag  $bodyBag;
-    private ParameterBag  $cookiesBag;
-    private ParameterBag  $filesBag;
 
     public function test_input_returns_value_from_query_params() : void
     {
@@ -123,16 +119,16 @@ final class InputAccessorTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->queryBag   = new ParameterBag(['foo' => 'query-foo', 'shared' => 'query-shared']);
-        $this->bodyBag    = new ParameterBag(['bar' => 'body-bar', 'shared' => 'body-shared']);
-        $this->cookiesBag = new ParameterBag(['session' => 'cookie-session']);
-        $this->filesBag   = new ParameterBag(['document' => ['name' => 'test.pdf']]);
+        $queryBag   = new ParameterBag(['foo' => 'query-foo', 'shared' => 'query-shared']);
+        $bodyBag    = new ParameterBag(['bar' => 'body-bar', 'shared' => 'body-shared']);
+        $cookiesBag = new ParameterBag(['session' => 'cookie-session']);
+        $filesBag   = new ParameterBag(['document' => ['name' => 'test.pdf']]);
 
         $this->accessor = new InputAccessor(
-            query  : $this->queryBag,
-            body   : $this->bodyBag,
-            cookies: $this->cookiesBag,
-            files  : $this->filesBag
+            query  : $queryBag,
+            body   : $bodyBag,
+            cookies: $cookiesBag,
+            files  : $filesBag
         );
     }
 }

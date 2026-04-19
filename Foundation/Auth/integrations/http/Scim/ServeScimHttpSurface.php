@@ -117,31 +117,31 @@ final readonly class ServeScimHttpSurface
 
     private function serviceProviderConfig() : JsonHttpResponse
     {
-        return $this->response(statusCode: 200, body: [
-            'schemas'               => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
-            'patch'                 => ['supported' => true],
-            'bulk'                  => ['supported' => true, 'maxOperations' => 100, 'maxPayloadSize' => 1048576],
-            'filter'                => ['supported' => true, 'maxResults' => 100],
-            'changePassword'        => ['supported' => false],
-            'sort'                  => ['supported' => false],
-            'etag'                  => ['supported' => false],
-            'authenticationSchemes' => [[
-                                            'type'        => 'oauthbearertoken',
-                                            'name'        => 'OAuth Bearer Token',
-                                            'description' => 'Directory-scoped bearer token for SCIM runtime access.',
-                                            'specUri'     => 'https://www.rfc-editor.org/rfc/rfc6750',
-                                            'primary'     => true,
-                                        ]],
-        ]);
+        return $this->response(body: [
+                                         'schemas'               => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
+                                         'patch'                 => ['supported' => true],
+                                         'bulk'                  => ['supported' => true, 'maxOperations' => 100, 'maxPayloadSize' => 1048576],
+                                         'filter'                => ['supported' => true, 'maxResults' => 100],
+                                         'changePassword'        => ['supported' => false],
+                                         'sort'                  => ['supported' => false],
+                                         'etag'                  => ['supported' => false],
+                                         'authenticationSchemes' => [[
+                                                                         'type'        => 'oauthbearertoken',
+                                                                         'name'        => 'OAuth Bearer Token',
+                                                                         'description' => 'Directory-scoped bearer token for SCIM runtime access.',
+                                                                         'specUri'     => 'https://www.rfc-editor.org/rfc/rfc6750',
+                                                                         'primary'     => true,
+                                                                     ]],
+                                     ]);
     }
 
     /**
      * @param array<string, mixed> $body
      */
-    private function response(int $statusCode, array $body) : JsonHttpResponse
+    private function response(array $body) : JsonHttpResponse
     {
         return new JsonHttpResponse(
-            statusCode: $statusCode,
+            statusCode: 200,
             body      : $body,
             headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE]
         );
@@ -173,13 +173,13 @@ final readonly class ServeScimHttpSurface
      */
     private function listResponse(array $resources) : JsonHttpResponse
     {
-        return $this->response(statusCode: 200, body: [
-            'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-            'totalResults' => count($resources),
-            'startIndex'   => 1,
-            'itemsPerPage' => count($resources),
-            'Resources'    => $resources,
-        ]);
+        return $this->response(body: [
+                                         'schemas'      => [self::LIST_RESPONSE_SCHEMA],
+                                         'totalResults' => count($resources),
+                                         'startIndex'   => 1,
+                                         'itemsPerPage' => count($resources),
+                                         'Resources'    => $resources,
+                                     ]);
     }
 
     private function schemas() : JsonHttpResponse
@@ -231,13 +231,13 @@ final readonly class ServeScimHttpSurface
         $count      = $this->intValue(source: $input->query, field: 'count') ?? count($users);
         $slice      = array_slice($users, $startIndex - 1, $count);
 
-        return $this->response(statusCode: 200, body: [
-            'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-            'totalResults' => count($users),
-            'startIndex'   => $startIndex,
-            'itemsPerPage' => count($slice),
-            'Resources'    => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
-        ]);
+        return $this->response(body: [
+                                         'schemas'      => [self::LIST_RESPONSE_SCHEMA],
+                                         'totalResults' => count($users),
+                                         'startIndex'   => $startIndex,
+                                         'itemsPerPage' => count($slice),
+                                         'Resources'    => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
+                                     ]);
     }
 
     private function directoryId(HttpEndpointInput $input) : string
@@ -541,19 +541,19 @@ final readonly class ServeScimHttpSurface
         );
         $response = $this->auth->runScimBulk(data: $request);
 
-        return $this->response(statusCode: 200, body: [
-            'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
-            'Operations' => array_map(
-                static fn (ScimBulkOperationResult $result) : array => [
-                    'method'   => $result->method,
-                    'path'     => $result->path,
-                    'status'   => (string) $result->status,
-                    'bulkId'   => $result->bulkId,
-                    'response' => $result->response,
-                ],
-                $response->operations
-            ),
-        ]);
+        return $this->response(body: [
+                                         'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
+                                         'Operations' => array_map(
+                                             static fn (ScimBulkOperationResult $result) : array => [
+                                                 'method'   => $result->method,
+                                                 'path'     => $result->path,
+                                                 'status'   => (string) $result->status,
+                                                 'bulkId'   => $result->bulkId,
+                                                 'response' => $result->response,
+                                             ],
+                                             $response->operations
+                                         ),
+                                     ]);
     }
 
     /**
@@ -603,7 +603,7 @@ final readonly class ServeScimHttpSurface
             return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM user was not found.');
         }
 
-        return $this->response(statusCode: 200, body: $this->userResource(user: $user));
+        return $this->response(body: $this->userResource(user: $user));
     }
 
     private function error(int $statusCode, string $scimType, string $detail) : JsonHttpResponse
@@ -625,7 +625,7 @@ final readonly class ServeScimHttpSurface
         $this->auth->provisionScimUser(data: $this->provisionData(input: $input, forcedExternalId: $externalId));
         $user = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $externalId);
 
-        return $this->response(statusCode: 200, body: $user !== null ? $this->userResource(user: $user) : []);
+        return $this->response(body: $user !== null ? $this->userResource(user: $user) : []);
     }
 
     private function patchUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
@@ -739,7 +739,7 @@ final readonly class ServeScimHttpSurface
 
         foreach ($this->auth->readScimGroups(directoryId: $this->directoryId(input: $input)) as $group) {
             if ($group->groupId === $groupId) {
-                return $this->response(statusCode: 200, body: $this->groupResource(group: $group));
+                return $this->response(body: $this->groupResource(group: $group));
             }
         }
 

@@ -91,7 +91,7 @@ If the compiled artifact is incompatible with the current runtime:
 3. inspect `compileReport()->freshnessState`
 4. confirm whether `configHash`, `environment`, `compileMode`, `diagnosticsMode`, or `strict` changed between compile
    and load
-4. rebuild the artifact instead of assuming the hot path is still valid
+5. rebuild the artifact instead of assuming the hot path is still valid
 
 If the compiled artifact is corrupt:
 

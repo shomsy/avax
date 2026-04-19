@@ -18,7 +18,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\URI\UriBuilder;
 use GuzzleHttp\Psr7\Stream;
 use PHPUnit\Framework\TestCase;
@@ -124,10 +124,10 @@ class BridgeRequestImmutabilityTest extends TestCase
                                 ),
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
-            trustedProxyPolicy: new TrustedProxyPolicy,
+            trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
             forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
-                                    proxyPolicy    : new TrustedProxyPolicy,
+                                    proxyPolicy    : new TrustedIpv4ProxyPolicy,
                                     forwardedParser: new ParseForwardedAddresses
                                 )
         );

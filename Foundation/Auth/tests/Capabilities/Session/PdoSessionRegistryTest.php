@@ -72,7 +72,7 @@ final class PdoSessionRegistryTest extends TestCase
         $findStatement->expects(invocationRule: $this->once())
             ->method(constraint: 'fetch')
             ->with(PDO::FETCH_ASSOC)
-            ->willReturn(value: $this->row(sessionId: 'session-1', userId: 77));
+            ->willReturn(value: $this->row(sessionId: 'session-1'));
 
         $listStatement->expects(invocationRule: $this->once())
             ->method(constraint: 'execute')
@@ -82,8 +82,8 @@ final class PdoSessionRegistryTest extends TestCase
             ->method(constraint: 'fetchAll')
             ->with(PDO::FETCH_ASSOC)
             ->willReturn(value: [
-                                    $this->row(sessionId: 'session-2', userId: 77, lastSeenAt: '2026-04-12T11:30:00+00:00'),
-                                    $this->row(sessionId: 'session-1', userId: 77, lastSeenAt: '2026-04-12T12:00:00+00:00'),
+                                    $this->row(sessionId: 'session-2', lastSeenAt: '2026-04-12T11:30:00+00:00'),
+                                    $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:00:00+00:00'),
                                 ]);
 
         $record   = $registry->find(sessionId: 'session-1');
@@ -99,11 +99,11 @@ final class PdoSessionRegistryTest extends TestCase
     /**
      * @return array<string, scalar|null>
      */
-    private function row(#[SensitiveParameter] string $sessionId, int $userId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
+    private function row(#[SensitiveParameter] string $sessionId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
     {
         return [
             'session_id'          => $sessionId,
-            'user_id'             => $userId,
+            'user_id'             => 77,
             'created_at'          => '2026-04-12T11:00:00+00:00',
             'last_seen_at'        => $lastSeenAt,
             'idle_expires_at'     => '2026-04-12T12:15:00+00:00',

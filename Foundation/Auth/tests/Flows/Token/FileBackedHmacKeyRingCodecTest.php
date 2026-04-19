@@ -15,14 +15,7 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
      */
     public function testCodecSupportsRolloverWithoutRedeploy() : void
     {
-        $path = $this->createKeyRingFile(configuration: [
-                                                            'primary'      => [
-                                                                'kid'       => '2026-04',
-                                                                'secret'    => 'secret-a',
-                                                                'algorithm' => 'HS256',
-                                                            ],
-                                                            'verification' => [],
-                                                        ]);
+        $path = $this->createKeyRingFile();
 
         $codec    = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
         $oldToken = $codec->encode(claims: ['sub' => 1, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'old-token']);
@@ -52,14 +45,21 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $configuration
      *
      * @return string
      * @throws JsonException
      */
-    private function createKeyRingFile(array $configuration) : string
+    private function createKeyRingFile() : string
     {
-        $path = tempnam(sys_get_temp_dir(), 'auth-keyring-');
+        $configuration = [
+            'primary'      => [
+                'kid'       => '2026-04',
+                'secret'    => 'secret-a',
+                'algorithm' => 'HS256',
+            ],
+            'verification' => [],
+        ];
+        $path          = tempnam(sys_get_temp_dir(), 'auth-keyring-');
         self::assertIsString(actual: $path);
         file_put_contents($path, json_encode($configuration, JSON_THROW_ON_ERROR));
 
@@ -71,14 +71,7 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
      */
     public function testCodecSupportsCryptoAgilityAcrossAlgorithms() : void
     {
-        $path = $this->createKeyRingFile(configuration: [
-                                                            'primary'      => [
-                                                                'kid'       => '2026-04',
-                                                                'secret'    => 'secret-a',
-                                                                'algorithm' => 'HS256',
-                                                            ],
-                                                            'verification' => [],
-                                                        ]);
+        $path = $this->createKeyRingFile();
 
         $codec    = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
         $oldToken = $codec->encode(claims: ['sub' => 7, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'agility-old']);

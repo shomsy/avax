@@ -295,16 +295,9 @@ final readonly class RouteBootstrapper
             }
 
             $this->httpRequestRouter->registerRoute(
-                method       : $definition->method,
-                path         : $definition->path,
-                action       : $definition->action,
-                middleware   : $definition->middleware,
-                name         : $definition->name,
-                constraints  : $definition->constraints,
-                defaults     : $definition->defaults,
-                domain       : $definition->domain,
-                attributes   : $definition->attributes,
-                authorization: $definition->authorization,
+                method: $definition->method,
+                path  : $definition->path,
+                action: $definition->action,
             );
         }
     }

@@ -25,7 +25,6 @@ final class AbsoluteServerRequestTest extends TestCase
     private function createRequest(
         array|null           $serverParams = null,
         UriInterface|null    $uri = null,
-        StreamInterface|null $body = null,
         array|null           $queryParams = null,
         array|null           $parsedBody = null,
         array|null           $cookies = null,
@@ -41,7 +40,7 @@ final class AbsoluteServerRequestTest extends TestCase
         return new AbsoluteServerRequest(
             server       : $serverParams,
             uri          : $uri ?? $defaultUri,
-            body         : $body,
+            body         : null,
             queryParams  : $queryParams,
             parsedBody   : $parsedBody,
             cookies      : $cookies,
@@ -101,14 +100,14 @@ final class AbsoluteServerRequestTest extends TestCase
 
     public function test_get_query_params_returns_query_array() : void
     {
-        $request = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: ['foo' => 'bar', 'baz' => 'qux']);
+        $request = $this->createRequest(serverParams: [], uri: null, queryParams: ['foo' => 'bar', 'baz' => 'qux']);
 
         $this->assertSame(expected: ['foo' => 'bar', 'baz' => 'qux'], actual: $request->getQueryParams());
     }
 
     public function test_with_query_params_returns_cloned_instance() : void
     {
-        $request    = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: ['foo' => 'bar']);
+        $request    = $this->createRequest(serverParams: [], uri: null, queryParams: ['foo' => 'bar']);
         $newRequest = $request->withQueryParams(['baz' => 'qux']);
 
         $this->assertNotSame(expected: $request, actual: $newRequest);
@@ -118,14 +117,14 @@ final class AbsoluteServerRequestTest extends TestCase
 
     public function test_get_parsed_body_returns_body_array() : void
     {
-        $request = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: [], parsedBody: ['name' => 'John']);
+        $request = $this->createRequest(serverParams: [], uri: null, queryParams: [], parsedBody: ['name' => 'John']);
 
         $this->assertSame(expected: ['name' => 'John'], actual: $request->getParsedBody());
     }
 
     public function test_with_parsed_body_returns_cloned_instance() : void
     {
-        $request    = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: [], parsedBody: ['name' => 'John']);
+        $request    = $this->createRequest(serverParams: [], uri: null, queryParams: [], parsedBody: ['name' => 'John']);
         $newRequest = $request->withParsedBody(['name' => 'Jane']);
 
         $this->assertNotSame(expected: $request, actual: $newRequest);
@@ -135,14 +134,14 @@ final class AbsoluteServerRequestTest extends TestCase
 
     public function test_get_cookie_params_returns_cookies_array() : void
     {
-        $request = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: [], parsedBody: [], cookies: ['session' => 'abc123']);
+        $request = $this->createRequest(serverParams: [], uri: null, queryParams: [], parsedBody: [], cookies: ['session' => 'abc123']);
 
         $this->assertSame(expected: ['session' => 'abc123'], actual: $request->getCookieParams());
     }
 
     public function test_with_cookie_params_returns_cloned_instance() : void
     {
-        $request    = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: [], parsedBody: [], cookies: ['session' => 'abc123']);
+        $request    = $this->createRequest(serverParams: [], uri: null, queryParams: [], parsedBody: [], cookies: ['session' => 'abc123']);
         $newRequest = $request->withCookieParams(['session' => 'xyz789']);
 
         $this->assertNotSame(expected: $request, actual: $newRequest);
@@ -153,7 +152,7 @@ final class AbsoluteServerRequestTest extends TestCase
     public function test_get_uploaded_files_returns_files_array() : void
     {
         $uploadedFiles = $this->createMockUploadedFiles();
-        $request       = $this->createRequest(serverParams: [], uri: null, body: null, queryParams: [], parsedBody: [], cookies: [], uploadedFiles: $uploadedFiles);
+        $request       = $this->createRequest(serverParams: [], uri: null, queryParams: [], parsedBody: [], cookies: [], uploadedFiles: $uploadedFiles);
 
         $this->assertSame(expected: $uploadedFiles, actual: $request->getUploadedFiles());
     }

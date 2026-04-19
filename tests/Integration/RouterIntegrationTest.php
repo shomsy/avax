@@ -40,7 +40,7 @@ class RouterIntegrationTest extends TestCase
     public function get_root_route_returns_200_with_correct_body_and_headers() : void
     {
         // Given: A GET request to the root path
-        $request = $this->createRequest(method: 'GET', path: '/');
+        $request = $this->createRequest(path: '/');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
@@ -61,12 +61,12 @@ class RouterIntegrationTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    private function createRequest(string $method, string $path) : Request
+    private function createRequest(string $path) : Request
     {
         $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
 
         return new Request(
-            serverParams: ['REQUEST_METHOD' => $method],
+            serverParams: ['REQUEST_METHOD' => 'GET'],
             uri         : $uri
         );
     }
@@ -82,7 +82,7 @@ class RouterIntegrationTest extends TestCase
     public function get_health_route_returns_ok_body() : void
     {
         // Given: A GET request to /health
-        $request = $this->createRequest(method: 'GET', path: '/health');
+        $request = $this->createRequest(path: '/health');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
@@ -103,7 +103,7 @@ class RouterIntegrationTest extends TestCase
     public function get_test_route_returns_enterprise_router_message() : void
     {
         // Given: A GET request to /test
-        $request = $this->createRequest(method: 'GET', path: '/test');
+        $request = $this->createRequest(path: '/test');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
@@ -124,7 +124,7 @@ class RouterIntegrationTest extends TestCase
     public function get_nonexistent_route_returns_500_due_to_exception_handling() : void
     {
         // Given: A GET request to a non-existing route
-        $request = $this->createRequest(method: 'GET', path: '/missing');
+        $request = $this->createRequest(path: '/missing');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
@@ -153,7 +153,7 @@ class RouterIntegrationTest extends TestCase
     public function favicon_route_returns_204_no_content() : void
     {
         // Given: A GET request to /favicon.ico
-        $request = $this->createRequest(method: 'GET', path: '/favicon.ico');
+        $request = $this->createRequest(path: '/favicon.ico');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
@@ -174,7 +174,7 @@ class RouterIntegrationTest extends TestCase
 
         foreach ($routes as $route) {
             // Given: A request to each route
-            $request = $this->createRequest(method: 'GET', path: $route);
+            $request = $this->createRequest(path: $route);
 
             // When: The router resolves the request
             $response = $this->getRouter()->resolve($request);
@@ -197,7 +197,7 @@ class RouterIntegrationTest extends TestCase
 
         foreach ($routes as $route) {
             // Given: A request to each route
-            $request = $this->createRequest(method: 'GET', path: $route);
+            $request = $this->createRequest(path: $route);
 
             // When: The router resolves the request
             $response = $this->getRouter()->resolve($request);

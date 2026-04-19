@@ -45,8 +45,8 @@ final readonly class VerifyDpopProof
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $proof = $this->readHeader(headers: $input->headers, name: 'DPoP')
-            ?? $this->readServerValue(server: $input->server, name: 'HTTP_DPOP');
+        $proof = $this->readHeader(headers: $input->headers)
+            ?? $this->readServerValue(server: $input->server);
 
         if ($proof === null || $proof === '') {
             $this->recordFailure(input: $input, reason: 'missing_proof');
@@ -125,10 +125,10 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'DPoP') !== 0) {
                 continue;
             }
 
@@ -145,9 +145,9 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['HTTP_DPOP'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }

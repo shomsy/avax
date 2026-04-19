@@ -17,7 +17,7 @@ final class RedisSessionRegistryTest extends TestCase
     public function testTrackPersistsFullSessionRecord() : void
     {
         $redis  = $this->createMock(Redis::class);
-        $record = $this->record(sessionId: 'session-1', userId: 7);
+        $record = $this->record();
 
         $redis->expects(invocationRule: $this->once())
             ->method(constraint: 'hMset')
@@ -34,11 +34,11 @@ final class RedisSessionRegistryTest extends TestCase
         (new RedisSessionRegistry(redis: $redis))->track(record: $record);
     }
 
-    private function record(#[SensitiveParameter] string $sessionId, int $userId) : SessionRecord
+    private function record() : SessionRecord
     {
         return new SessionRecord(
-            sessionId        : $sessionId,
-            userId           : new UserId(value: $userId),
+            sessionId        : 'session-1',
+            userId           : new UserId(value: 7),
             createdAt        : new DateTimeImmutable(datetime: '2026-04-12T11:00:00+00:00'),
             lastSeenAt       : new DateTimeImmutable(datetime: '2026-04-12T12:05:00+00:00'),
             idleExpiresAt    : new DateTimeImmutable(datetime: '2026-04-12T12:30:00+00:00'),
@@ -56,9 +56,9 @@ final class RedisSessionRegistryTest extends TestCase
         $redis->expects(invocationRule: $this->exactly(3))
             ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
-                $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00'),
-                $this->row(sessionId: 'session-2', userId: 7, lastSeenAt: '2026-04-12T12:00:00+00:00'),
-                $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00')
+                $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:10:00+00:00'),
+                $this->row(sessionId: 'session-2', lastSeenAt: '2026-04-12T12:00:00+00:00'),
+                $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:10:00+00:00')
             );
         $redis->expects(invocationRule: $this->once())
             ->method(constraint: 'sMembers')
@@ -80,20 +80,20 @@ final class RedisSessionRegistryTest extends TestCase
      */
     private function row(
         #[SensitiveParameter] string $sessionId,
-        int                          $userId,
         string|null                  $lastSeenAt = null,
         string|null                  $idleExpiresAt = null,
         string|null                  $revokedAt = null,
         string                       $revokeReason = ''
     ) : array
     {
+        $userId        = 7;
         $lastSeenAt    ??= '2026-04-12T12:05:00+00:00';
         $idleExpiresAt ??= '2026-04-12T12:30:00+00:00';
         $revokedAt     ??= '';
 
         return [
             'session_id'          => $sessionId,
-            'user_id'             => (string) $userId,
+            'user_id'             => (string) (7),
             'created_at'          => '2026-04-12T11:00:00+00:00',
             'last_seen_at'        => $lastSeenAt,
             'idle_expires_at'     => $idleExpiresAt,
@@ -124,7 +124,7 @@ final class RedisSessionRegistryTest extends TestCase
             ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
                 ['user_id' => '7', 'session_id' => 'session-1'],
-                $this->row(sessionId: 'session-2', userId: 7)
+                $this->row(sessionId: 'session-2')
             );
         $redis->expects(invocationRule: $this->exactly(2))
             ->method(constraint: 'srem')
@@ -174,9 +174,9 @@ final class RedisSessionRegistryTest extends TestCase
         $redis->expects(invocationRule: $this->exactly(3))
             ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
-                $this->row(sessionId: 'expired', userId: 7, idleExpiresAt: '2026-04-12T12:00:00+00:00'),
-                $this->row(sessionId: 'revoked', userId: 7, revokedAt: '2026-04-12T12:10:00+00:00', revokeReason: 'logout'),
-                $this->row(sessionId: 'active', userId: 7, idleExpiresAt: '2026-04-12T13:00:00+00:00')
+                $this->row(sessionId: 'expired', lastSeenAt: '2026-04-12T12:00:00+00:00', idleExpiresAt: '2026-04-12T12:00:00+00:00'),
+                $this->row(sessionId: 'revoked', lastSeenAt: '2026-04-12T12:10:00+00:00', idleExpiresAt: 'logout', revokedAt: '2026-04-12T12:10:00+00:00', revokeReason: 'logout'),
+                $this->row(sessionId: 'active', lastSeenAt: '2026-04-12T13:00:00+00:00', idleExpiresAt: '2026-04-12T13:00:00+00:00')
             );
         $redis->expects(invocationRule: $this->exactly(2))
             ->method(constraint: 'del')

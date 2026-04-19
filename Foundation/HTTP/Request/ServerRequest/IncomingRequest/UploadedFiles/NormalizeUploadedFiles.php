@@ -37,7 +37,6 @@ final readonly class NormalizeUploadedFiles
             if (is_array($value)) {
                 $normalized[$key] = $this->execute(files: $value);
 
-                continue;
             }
         }
 

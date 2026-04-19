@@ -142,7 +142,7 @@ trait ArrayConversionTrait
      * @param array            $data The data to convert.
      * @param SimpleXMLElement $xml  The XML element to append data to.
      */
-    private function arrayToXml(array $data, SimpleXMLElement &$xml) : void
+    private function arrayToXml(array $data, SimpleXMLElement $xml) : void
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys by using 'item' as the tag name

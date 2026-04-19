@@ -77,7 +77,7 @@ final readonly class MigrateCommand
             $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
 
             if ($dryRun) {
-                $this->success(msg: 'Dry run completed successfully. No changes made.');
+                $this->success();
             } else {
                 $pending
                     |> count(...)
@@ -107,8 +107,8 @@ final readonly class MigrateCommand
         echo "\033[31m{$msg}\033[0m\n";
     }
 
-    private function success(string $msg) : void
+    private function success() : void
     {
-        echo "\033[32m{$msg}\033[0m\n";
+        echo "\033[32mDry run completed successfully. No changes made.\033[0m\n";
     }
 }

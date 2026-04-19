@@ -44,8 +44,7 @@ final readonly class HeadRequestFallback
         } catch (RouteNotFoundException) {
             // Attempt GET route fallback
             $request = $request->withMethod(method: 'GET');
-        } catch (ReservedRouteNameException $e) {
-        } catch (InvalidConstraintException $e) {
+        } catch (ReservedRouteNameException|InvalidConstraintException $e) {
         }
 
         return $request;

@@ -26,17 +26,15 @@ use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 class RouterBenchmark
 {
     private HttpRequestRouter        $router;
-    private RouteMatcherInterface    $matcher;
-    private RouteConstraintValidator $validator;
 
     public function setUp() : void
     {
-        $this->matcher   = $this->createMock(RouteMatcherInterface::class);
-        $this->validator = $this->createMock(RouteConstraintValidator::class);
+        $matcher   = $this->createMock(RouteMatcherInterface::class);
+        $validator = $this->createMock(RouteConstraintValidator::class);
 
         $this->router = new HttpRequestRouter(
-            constraintValidator: $this->validator,
-            matcher            : $this->matcher
+            constraintValidator: $validator,
+            matcher            : $matcher
         );
     }
 

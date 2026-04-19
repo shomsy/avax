@@ -128,7 +128,7 @@ final readonly class ServeOidcHttpSurface
             $request = $this->auth->pushOidcAuthorizationRequest(data: new PushAuthorizationRequestData(
                                                                            clientId           : $this->readString(input: $input, keys: ['client_id', 'clientId']) ?? '',
                                                                            redirectUri        : $this->readString(input: $input, keys: ['redirect_uri', 'redirectUri']) ?? '',
-                                                                           scopes             : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
+                                                                           scopes             : $this->readScopes(input: $input),
                                                                            state              : $this->readString(input: $input, keys: ['state']),
                                                                            nonce              : $this->readString(input: $input, keys: ['nonce']),
                                                                            requestObjectJwt   : $this->readString(input: $input, keys: ['request']),
@@ -157,11 +157,11 @@ final readonly class ServeOidcHttpSurface
                                                                      name                           : $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? '',
                                                                      type                           : $this->oidcClientType(input: $input),
                                                                      redirectUris                   : $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
-                                                                     allowedScopes                  : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
-                                                                     allowedGrantTypes              : $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                                                                     allowedScopes                  : $this->readScopes(input: $input),
+                                                                     allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                      tokenEndpointAuthMethod        : $this->readTokenEndpointAuthMethod(input: $input),
-                                                                     requestObjectSignatureRequired : $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
-                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+                                                                     requestObjectSignatureRequired : $this->readBool(input: $input),
+                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
                                                                  ));
 
             return new JsonHttpResponse(
@@ -193,11 +193,11 @@ final readonly class ServeOidcHttpSurface
                                                                 name                           : $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? $existing->name,
                                                                 type                           : $type,
                                                                 redirectUris                   : $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
-                                                                allowedScopes                  : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
-                                                                allowedGrantTypes              : $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                                                                allowedScopes                  : $this->readScopes(input: $input),
+                                                                allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                 tokenEndpointAuthMethod        : $tokenEndpointAuthMethod,
-                                                                requestObjectSignatureRequired : $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
-                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+                                                                requestObjectSignatureRequired : $this->readBool(input: $input),
+                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
                                                             ));
 
             return new JsonHttpResponse(
@@ -337,12 +337,12 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      *
      * @return list<string>
      */
-    private function readScopes(HttpEndpointInput $input, array $keys) : array
+    private function readScopes(HttpEndpointInput $input) : array
     {
+        $keys = ['scope', 'scopes'];
         foreach ($keys as $key) {
             $value = $this->readString(input: $input, keys: [$key]);
 
@@ -438,12 +438,12 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      *
      * @return list<OAuthGrantType>
      */
-    private function readGrantTypes(HttpEndpointInput $input, array $keys) : array
+    private function readGrantTypes(HttpEndpointInput $input) : array
     {
+        $keys     = ['grant_types', 'grantTypes'];
         $resolved = [];
 
         foreach ($this->readStringList(input: $input, keys: $keys) as $value) {
@@ -460,10 +460,10 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      */
-    private function readBool(HttpEndpointInput $input, array $keys) : bool
+    private function readBool(HttpEndpointInput $input) : bool
     {
+        $keys = ['request_object_signature_required', 'requestObjectSignatureRequired'];
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? null;
 
@@ -483,10 +483,10 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      */
-    private function readMultilineString(HttpEndpointInput $input, array $keys) : string|null
+    private function readMultilineString(HttpEndpointInput $input) : string|null
     {
+        $keys = ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'];
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? $input->routeParameters[$key] ?? null;
 

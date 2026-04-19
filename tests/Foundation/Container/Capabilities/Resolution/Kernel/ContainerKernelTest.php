@@ -32,8 +32,6 @@ final class ContainerKernelTest extends TestCase
 {
     private DefinitionStore $definitions;
 
-    private KernelConfig $config;
-
     private ContainerKernel $kernel;
 
     public function test_get_delegates_to_runtime() : void
@@ -86,7 +84,7 @@ final class ContainerKernelTest extends TestCase
         );
         $invoker          = new InvokeAction(container: null, resolver: $resolver);
 
-        $this->config = new KernelConfig(
+        $config = new KernelConfig(
             engine          : $engine,
             injector        : $injector,
             invoker         : $invoker,
@@ -96,7 +94,7 @@ final class ContainerKernelTest extends TestCase
             autoDefine      : true
         );
 
-        $this->kernel     = new ContainerKernel(definitions: $this->definitions, config: $this->config);
+        $this->kernel     = new ContainerKernel(definitions: $this->definitions, config: $config);
         $container        = new Container(kernel: $this->kernel);
         $runtimeContainer = new RuntimeContainer(container: $container, kernel: $this->kernel);
 

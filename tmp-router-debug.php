@@ -10,7 +10,7 @@ use Avax\HTTP\URI\UriBuilder;
 use Psr\Log\NullLogger;
 
 $router = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new RouteMatcher(logger: new NullLogger));
-$router->registerRoute(method: 'GET', path: '/users/{id?}', action: 'handler', defaults: ['id' => '42']);
+$router->registerRoute(method: 'GET', path: '/users/{id?}', action: 'handler');
 
 $ref = new ReflectionMethod(objectOrMethod: HttpRequestRouter::class, method: 'compileRoutePattern');
 $ref->setAccessible(accessible: true);

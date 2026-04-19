@@ -69,10 +69,8 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        foreach ($this->roles as $userRole) {
-            if ($userRole === $role) {
-                return true;
-            }
+        if (in_array($role, $this->roles, true)) {
+            return true;
         }
 
         return false;

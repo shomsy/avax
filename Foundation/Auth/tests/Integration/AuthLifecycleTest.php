@@ -40,7 +40,6 @@ use PHPUnit\Framework\TestCase;
 class AuthLifecycleTest extends TestCase
 {
     private Auth               $auth;
-    private InMemoryUserSource $userSource;
 
     /**
      * @throws Exception
@@ -153,10 +152,10 @@ class AuthLifecycleTest extends TestCase
     #[\Override]
     protected function setUp() : void
     {
-        $this->userSource = new InMemoryUserSource();
-        $refreshTokens    = new InMemoryRefreshTokenStore();
-        $jwtIdentity      = new JwtIdentity(
-            userSource       : $this->userSource,
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $jwtIdentity   = new JwtIdentity(
+            userSource       : $userSource,
             codec            : new HmacTokenCodec(secret: 'integration-secret'),
             clock            : new Clock(),
             revocationStore  : new InMemoryTokenRevocationStore(),
@@ -165,7 +164,7 @@ class AuthLifecycleTest extends TestCase
         $identity         = new Identity(jwtIdentity: $jwtIdentity);
 
         $this->auth = Auth::configuration()
-            ->forUser(userSource: $this->userSource)
+            ->forUser(userSource: $userSource)
             ->withIdentity(identity: $identity)
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();

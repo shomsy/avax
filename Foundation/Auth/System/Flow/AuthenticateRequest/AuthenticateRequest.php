@@ -166,6 +166,6 @@ final readonly class AuthenticateRequest
             return $left;
         }
 
-        return $left >= $right ? $left : $right;
+        return max($left, $right);
     }
 }

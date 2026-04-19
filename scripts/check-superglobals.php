@@ -16,7 +16,7 @@ $allowedFiles = [
 
 $violations = [];
 $iterator   = new RecursiveIteratorIterator(
-    iterator: new RecursiveDirectoryIterator(directory: $root . '/Foundation', flags: RecursiveDirectoryIterator::SKIP_DOTS)
+    iterator: new RecursiveDirectoryIterator(directory: $root . '/Foundation', flags: FilesystemIterator::SKIP_DOTS)
 );
 
 foreach ($iterator as $file) {

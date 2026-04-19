@@ -76,7 +76,7 @@ final readonly class RequestInit
 
     public function withMethod(string $method) : self
     {
-        return $this->copy(method: $method);
+        return $this->copy(body: $method, method: $method);
     }
 
     public function withUri(UriInterface $uri) : self
@@ -87,34 +87,34 @@ final readonly class RequestInit
         );
 
         return $this->copy(
-            uri          : $uri,
-            requestTarget: $resolver->resolve()
+            body  : $uri,
+            method: $resolver->resolve(), uri: $uri, requestHeaders: null, requestTarget: $resolver->resolve()
         );
     }
 
     public function withQueryParams(array $queryParams) : self
     {
-        return $this->copy(queryParams: $queryParams);
+        return $this->copy(body: $queryParams, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: $queryParams);
     }
 
     public function withParsedBody(ParsedBody $parsedBody) : self
     {
-        return $this->copy(parsedBody: $parsedBody);
+        return $this->copy(body: $parsedBody, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: $parsedBody);
     }
 
     public function withRequestTarget(string $requestTarget) : self
     {
-        return $this->copy(requestTarget: $requestTarget);
+        return $this->copy(body: $requestTarget, method: null, uri: null, requestHeaders: null, requestTarget: $requestTarget);
     }
 
     public function withProtocolVersion(string $protocolVersion) : self
     {
-        return $this->copy(protocolVersion: $protocolVersion);
+        return $this->copy(body: $protocolVersion, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: null, session: null, protocolVersion: $protocolVersion);
     }
 
     public function withRequestHeaders(#[SensitiveParameter] RequestHeaders $requestHeaders) : self
     {
-        return $this->copy(requestHeaders: $requestHeaders);
+        return $this->copy(body: $requestHeaders, method: null, uri: null, requestHeaders: $requestHeaders);
     }
 
     public function withBody(RequestBody $body) : self
@@ -124,22 +124,22 @@ final readonly class RequestInit
 
     public function withSession(#[SensitiveParameter] RequestSession $session) : self
     {
-        return $this->copy(session: $session);
+        return $this->copy(body: $session, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: null, session: $session);
     }
 
     public function withAttributes(RequestAttributes $attributes) : self
     {
-        return $this->copy(attributes: $attributes);
+        return $this->copy(body: $attributes, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: $attributes);
     }
 
     public function withCookies(RequestCookies $cookies) : self
     {
-        return $this->copy(cookies: $cookies);
+        return $this->copy(body: $cookies, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: $cookies);
     }
 
     public function withUploadedFiles(UploadedFiles $uploadedFiles) : self
     {
-        return $this->copy(uploadedFiles: $uploadedFiles);
+        return $this->copy(body: $uploadedFiles, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: $uploadedFiles);
     }
 
     private function copy(
@@ -147,7 +147,6 @@ final readonly class RequestInit
         string|null                                $method = null,
         UriInterface|null                          $uri = null,
         #[\SensitiveParameter] RequestHeaders|null $requestHeaders = null,
-        array|null                                 $serverParams = null,
         string|null                                $requestTarget = null,
         RequestCookies|null                        $cookies = null,
         array|null                                 $queryParams = null,
@@ -158,6 +157,8 @@ final readonly class RequestInit
         string|null                                $protocolVersion = null,
     ) : self
     {
+        $serverParams = null;
+
         return new self(
             body           : $body ?? $this->body,
             method         : $method ?? $this->method,

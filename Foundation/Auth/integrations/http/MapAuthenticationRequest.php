@@ -38,7 +38,7 @@ final readonly class MapAuthenticationRequest
                           ),
             ipAddress   : $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
             userAgent   : $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
-                              ?? $this->readHeaderValue(headers: $input->headers, name: 'User-Agent')
+                              ?? $this->readHeaderValue(headers: $input->headers)
         );
     }
 
@@ -55,10 +55,10 @@ final readonly class MapAuthenticationRequest
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeaderValue(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeaderValue(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'User-Agent') !== 0) {
                 continue;
             }
 

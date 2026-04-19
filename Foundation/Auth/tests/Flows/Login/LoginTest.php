@@ -55,8 +55,7 @@ class LoginTest extends TestCase
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
@@ -112,7 +111,6 @@ class LoginTest extends TestCase
     private function userWithPassword(
         #[SensitiveParameter] PasswordHasher $passwordHasher,
         UserId                               $userId,
-        #[SensitiveParameter] string         $password,
         bool                                 $isActive = true
     ) : User
     {
@@ -120,7 +118,7 @@ class LoginTest extends TestCase
             id          : $userId,
             email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
-            passwordHash: $passwordHasher->hash(password: $password),
+            passwordHash: $passwordHasher->hash(password: 'password'),
             roles       : [],
             permissions : [],
             isActive    : $isActive
@@ -194,7 +192,6 @@ class LoginTest extends TestCase
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
             userId        : new UserId(value: 1),
-            password      : 'password',
             isActive      : false
         );
 
@@ -290,8 +287,7 @@ class LoginTest extends TestCase
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
@@ -342,8 +338,7 @@ class LoginTest extends TestCase
         $legacyHasher  = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
         $user          = $this->userWithPassword(
             passwordHasher: $legacyHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
         $currentHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 12]);
 

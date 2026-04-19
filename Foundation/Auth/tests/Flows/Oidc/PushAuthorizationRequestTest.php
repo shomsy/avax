@@ -162,7 +162,7 @@ final class PushAuthorizationRequestTest extends TestCase
             auditLog          : new NullAuditLog(),
             clock             : new Clock(),
             clientRegistry    : $registry,
-            oidcProvider      : $this->oidcProvider(issuer: 'https://auth.example.test')
+            oidcProvider      : $this->oidcProvider()
         );
 
         $this->expectException(OAuthAuthorizationFailed::class);
@@ -186,9 +186,9 @@ final class PushAuthorizationRequestTest extends TestCase
                              ));
     }
 
-    private function oidcProvider(string $issuer) : OidcProviderInterface
+    private function oidcProvider() : OidcProviderInterface
     {
-        return new class($issuer) implements OidcProviderInterface {
+        return new class('https://auth.example.test') implements OidcProviderInterface {
             private readonly string $issuer;
 
             public function __construct(

@@ -89,16 +89,9 @@ final readonly class AttributeRouteRegistrar
 
         foreach ($methods as $method) {
             $this->router->registerRoute(
-                method       : $method,
-                path         : $path,
-                action       : [$controllerClass, $methodName],
-                middleware   : $middleware,
-                name         : $name,
-                constraints  : $constraints,
-                defaults     : $defaults,
-                domain       : $domain,
-                attributes   : $attributes,
-                authorization: $authorization
+                method: $method,
+                path  : $path,
+                action: [$controllerClass, $methodName]
             );
         }
     }

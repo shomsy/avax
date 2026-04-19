@@ -10,8 +10,8 @@ Read the component in this order:
    `src/Capabilities/Resolution/`, `src/Capabilities/Execution/`, `src/Capabilities/Runtime/`, and
    `src/Capabilities/Diagnostics/`
 4. tiny primitives under `src/Foundation/`
-8. tests under `tests/`
-9. benchmark harnesses under `tests/benchmarks/`
+5. tests under `tests/`
+6. benchmark harnesses under `tests/benchmarks/`
 
 That order matches the intended mental model:
 

@@ -21,157 +21,154 @@ use SensitiveParameter;
 final readonly class RequestInit
 {
     public function __construct(
-        public RequestBody                               $body,
-        public string                                    $method,
-        public UriInterface                              $uri,
-        #[SensitiveParameter] public RequestHeaders      $requestHeaders,
-        public array                                     $serverParams,
-        public string|null                               $requestTarget,
-        public RequestCookies                            $cookies,
-        public array                                     $queryParams,
-        public UploadedFiles                             $uploadedFiles,
-        public ParsedBody                                $parsedBody,
-        public RequestAttributes                         $attributes,
+        public RequestBody $body,
+        public string $method,
+        public UriInterface $uri,
+        #[SensitiveParameter] public RequestHeaders $requestHeaders,
+        public array $serverParams,
+        public string|null $requestTarget,
+        public RequestCookies $cookies,
+        public array $queryParams,
+        public UploadedFiles $uploadedFiles,
+        public ParsedBody $parsedBody,
+        public RequestAttributes $attributes,
         #[SensitiveParameter] public RequestSession|null $session,
-        public string                                    $protocolVersion,
-    ) {}
+        public string $protocolVersion,
+    ) {
+    }
 
     public static function fromResolvedParts(
-        RequestBody                               $body,
-        string                                    $method,
-        UriInterface                              $uri,
-        #[SensitiveParameter] RequestHeaders      $requestHeaders,
-        array                                     $serverParams,
-        string|null                               $explicitTarget,
-        RequestCookies                            $cookies,
-        array                                     $queryParams,
-        UploadedFiles                             $uploadedFiles,
-        ParsedBody                                $parsedBody,
-        RequestAttributes                         $attributes,
+        RequestBody $body,
+        string $method,
+        UriInterface $uri,
+        #[SensitiveParameter] RequestHeaders $requestHeaders,
+        array $serverParams,
+        string|null $explicitTarget,
+        RequestCookies $cookies,
+        array $queryParams,
+        UploadedFiles $uploadedFiles,
+        ParsedBody $parsedBody,
+        RequestAttributes $attributes,
         #[SensitiveParameter] RequestSession|null $session,
-        string                                    $protocolVersion,
-    ) : self
-    {
+        string $protocolVersion,
+    ): self {
         $resolver = new ReadRequestTarget(
             explicitTarget: $explicitTarget,
-            uri           : $uri,
+            uri: $uri,
         );
 
         return new self(
-            body           : $body,
-            method         : $method,
-            uri            : $uri,
-            requestHeaders : $requestHeaders,
-            serverParams   : $serverParams,
-            requestTarget  : $resolver->resolve(),
-            cookies        : $cookies,
-            queryParams    : $queryParams,
-            uploadedFiles  : $uploadedFiles,
-            parsedBody     : $parsedBody,
-            attributes     : $attributes,
-            session        : $session,
+            body: $body,
+            method: $method,
+            uri: $uri,
+            requestHeaders: $requestHeaders,
+            serverParams: $serverParams,
+            requestTarget: $resolver->resolve(),
+            cookies: $cookies,
+            queryParams: $queryParams,
+            uploadedFiles: $uploadedFiles,
+            parsedBody: $parsedBody,
+            attributes: $attributes,
+            session: $session,
             protocolVersion: $protocolVersion,
         );
     }
 
-    public function withMethod(string $method) : self
+    public function withMethod(string $method): self
     {
-        return $this->copy(body: $method, method: $method);
+        return $this->copy(method: $method);
     }
 
-    public function withUri(UriInterface $uri) : self
+    public function withUri(UriInterface $uri): self
     {
         $resolver = new ReadRequestTarget(
             explicitTarget: null,
-            uri           : $uri,
+            uri: $uri,
         );
 
         return $this->copy(
-            body  : $uri,
-            method: $resolver->resolve(), uri: $uri, requestHeaders: null, requestTarget: $resolver->resolve()
+            uri: $uri,
+            requestTarget: $resolver->resolve()
         );
     }
 
-    public function withQueryParams(array $queryParams) : self
+    public function withQueryParams(array $queryParams): self
     {
-        return $this->copy(body: $queryParams, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: $queryParams);
+        return $this->copy(queryParams: $queryParams);
     }
 
-    public function withParsedBody(ParsedBody $parsedBody) : self
+    public function withParsedBody(ParsedBody $parsedBody): self
     {
-        return $this->copy(body: $parsedBody, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: $parsedBody);
+        return $this->copy(parsedBody: $parsedBody);
     }
 
-    public function withRequestTarget(string $requestTarget) : self
+    public function withRequestTarget(string $requestTarget): self
     {
-        return $this->copy(body: $requestTarget, method: null, uri: null, requestHeaders: null, requestTarget: $requestTarget);
+        return $this->copy(requestTarget: $requestTarget);
     }
 
-    public function withProtocolVersion(string $protocolVersion) : self
+    public function withProtocolVersion(string $protocolVersion): self
     {
-        return $this->copy(body: $protocolVersion, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: null, session: null, protocolVersion: $protocolVersion);
+        return $this->copy(protocolVersion: $protocolVersion);
     }
 
-    public function withRequestHeaders(#[SensitiveParameter] RequestHeaders $requestHeaders) : self
+    public function withRequestHeaders(#[SensitiveParameter] RequestHeaders $requestHeaders): self
     {
-        return $this->copy(body: $requestHeaders, method: null, uri: null, requestHeaders: $requestHeaders);
+        return $this->copy(requestHeaders: $requestHeaders);
     }
 
-    public function withBody(RequestBody $body) : self
+    public function withBody(RequestBody $body): self
     {
         return $this->copy(body: $body);
     }
 
-    public function withSession(#[SensitiveParameter] RequestSession $session) : self
+    public function withSession(#[SensitiveParameter] RequestSession $session): self
     {
-        return $this->copy(body: $session, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: null, session: $session);
+        return $this->copy(session: $session);
     }
 
-    public function withAttributes(RequestAttributes $attributes) : self
+    public function withAttributes(RequestAttributes $attributes): self
     {
-        return $this->copy(body: $attributes, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: null, parsedBody: null, attributes: $attributes);
+        return $this->copy(attributes: $attributes);
     }
 
-    public function withCookies(RequestCookies $cookies) : self
+    public function withCookies(RequestCookies $cookies): self
     {
-        return $this->copy(body: $cookies, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: $cookies);
+        return $this->copy(cookies: $cookies);
     }
 
-    public function withUploadedFiles(UploadedFiles $uploadedFiles) : self
+    public function withUploadedFiles(UploadedFiles $uploadedFiles): self
     {
-        return $this->copy(body: $uploadedFiles, method: null, uri: null, requestHeaders: null, requestTarget: null, cookies: null, queryParams: null, uploadedFiles: $uploadedFiles);
+        return $this->copy(uploadedFiles: $uploadedFiles);
     }
 
     private function copy(
-        RequestBody|null                           $body = null,
-        string|null                                $method = null,
-        UriInterface|null                          $uri = null,
-        #[\SensitiveParameter] RequestHeaders|null $requestHeaders = null,
-        string|null                                $requestTarget = null,
-        RequestCookies|null                        $cookies = null,
-        array|null                                 $queryParams = null,
-        UploadedFiles|null                         $uploadedFiles = null,
-        ParsedBody|null                            $parsedBody = null,
-        RequestAttributes|null                     $attributes = null,
-        #[\SensitiveParameter] RequestSession|null $session = null,
-        string|null                                $protocolVersion = null,
-    ) : self
-    {
-        $serverParams = null;
-
+        RequestBody|null $body = null,
+        string|null $method = null,
+        UriInterface|null $uri = null,
+        #[SensitiveParameter] RequestHeaders|null $requestHeaders = null,
+        string|null $requestTarget = null,
+        RequestCookies|null $cookies = null,
+        array|null $queryParams = null,
+        UploadedFiles|null $uploadedFiles = null,
+        ParsedBody|null $parsedBody = null,
+        RequestAttributes|null $attributes = null,
+        #[SensitiveParameter] RequestSession|null $session = null,
+        string|null $protocolVersion = null,
+    ): self {
         return new self(
-            body           : $body ?? $this->body,
-            method         : $method ?? $this->method,
-            uri            : $uri ?? $this->uri,
-            requestHeaders : $requestHeaders ?? $this->requestHeaders,
-            serverParams   : $serverParams ?? $this->serverParams,
-            requestTarget  : $requestTarget ?? $this->requestTarget,
-            cookies        : $cookies ?? $this->cookies,
-            queryParams    : $queryParams ?? $this->queryParams,
-            uploadedFiles  : $uploadedFiles ?? $this->uploadedFiles,
-            parsedBody     : $parsedBody ?? $this->parsedBody,
-            attributes     : $attributes ?? $this->attributes,
-            session        : $session ?? $this->session,
+            body: $body ?? $this->body,
+            method: $method ?? $this->method,
+            uri: $uri ?? $this->uri,
+            requestHeaders: $requestHeaders ?? $this->requestHeaders,
+            serverParams: $this->serverParams,
+            requestTarget: $requestTarget ?? $this->requestTarget,
+            cookies: $cookies ?? $this->cookies,
+            queryParams: $queryParams ?? $this->queryParams,
+            uploadedFiles: $uploadedFiles ?? $this->uploadedFiles,
+            parsedBody: $parsedBody ?? $this->parsedBody,
+            attributes: $attributes ?? $this->attributes,
+            session: $session ?? $this->session,
             protocolVersion: $protocolVersion ?? $this->protocolVersion,
         );
     }

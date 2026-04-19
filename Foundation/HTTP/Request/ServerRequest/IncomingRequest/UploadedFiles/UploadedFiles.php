@@ -9,9 +9,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
  */
 final readonly class UploadedFiles
 {
-    public function __construct(
-        private array $files = []
-    ) {}
+    public function __construct(private array $files = []) {}
 
     /**
      * @return array Tree of UploadedFileInterface objects.

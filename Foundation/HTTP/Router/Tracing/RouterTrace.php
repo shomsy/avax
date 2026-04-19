@@ -49,9 +49,9 @@ final class RouterTrace
      * @param array  $autoEnrich Automatic enrichment flags
      */
     public function record(
-        string     $event,
-        array|null $context = null,
-        array      $autoEnrich = ['request_id', 'memory', 'route']
+        string $event,
+        array  $context = null,
+        array  $autoEnrich = ['request_id', 'memory', 'route']
     ) : void
     {
         $context         ??= [];

@@ -7,7 +7,7 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Container\DI\Capabilities\Runtime\ServicePool;
 
-final class PoolBucketService implements ResettableInterface
+final class ServicePoolSmokeTest implements ResettableInterface
 {
     public int $resets = 0;
 

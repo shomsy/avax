@@ -48,7 +48,7 @@ class ServerRequestCorrectnessTest extends TestCase
     public function test_with_uri_sets_host_when_preserve_host_is_false()
     {
         $request = $this->createServerRequest();
-        $newUri  = UriBuilder::createFromString(uri: 'http://example.com/foo');
+        $newUri  = UriBuilder::createFromString(uri: 'https://example.com/foo');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
@@ -58,7 +58,7 @@ class ServerRequestCorrectnessTest extends TestCase
     public function test_with_uri_preserves_existing_host_when_requested()
     {
         $request = $this->createServerRequest();
-        $newUri  = UriBuilder::createFromString(uri: 'http://example.com/foo');
+        $newUri  = UriBuilder::createFromString(uri: 'https://example.com/foo');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 

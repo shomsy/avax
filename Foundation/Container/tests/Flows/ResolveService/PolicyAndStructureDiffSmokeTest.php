@@ -120,6 +120,6 @@ assertTrue(
     message  : 'Validation should surface policy errors for direct flow-to-flow dependencies.'
 );
 
-@rmdir($cacheDir);
+rmdir($cacheDir);
 
 echo basename(__FILE__) . " ok\n";

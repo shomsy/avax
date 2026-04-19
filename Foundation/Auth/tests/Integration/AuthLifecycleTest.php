@@ -150,6 +150,7 @@ class AuthLifecycleTest extends TestCase
         $this->auth->login(credentials: new Credentials(identifier: 'login@fail.com', password: 'WRONG'));
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->userSource = new InMemoryUserSource();

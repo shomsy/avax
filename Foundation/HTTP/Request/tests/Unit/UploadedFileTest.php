@@ -20,7 +20,7 @@ class UploadedFileTest extends TestCase
         $file->moveTo(targetPath: $target);
 
         $this->assertTrue(condition: file_exists($target));
-        @unlink($target);
+        unlink($target);
     }
 
     private function createUploadedFile(int $error = UPLOAD_ERR_OK) : UploadedFile
@@ -51,8 +51,8 @@ class UploadedFileTest extends TestCase
         try {
             $file->moveTo(targetPath: $target2);
         } finally {
-            @unlink($target1);
-            @unlink($target2);
+            unlink($target1);
+            unlink($target2);
         }
     }
 
@@ -69,7 +69,7 @@ class UploadedFileTest extends TestCase
         try {
             $file->getStream();
         } finally {
-            @unlink($target);
+            unlink($target);
         }
     }
 

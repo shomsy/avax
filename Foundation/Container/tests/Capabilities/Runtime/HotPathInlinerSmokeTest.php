@@ -9,7 +9,7 @@ use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Avax\Container\DI\Capabilities\Runtime\HotPathInliner;
 
-final class InlineSmokeCompiled extends CompiledContainer
+final class HotPathInlinerSmokeTest extends CompiledContainer
 {
     protected string $fingerprint = 'hot-path-smoke';
 

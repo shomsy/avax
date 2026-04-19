@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-final class LazyCounter
+final class LazyProxySmokeTest
 {
     public int $value = 0;
 

@@ -15,6 +15,7 @@ use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\Tests\Support\FrozenClock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 final class BeginPasswordResetTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testPasswordResetRequestsAreThrottledAfterConfiguredLimit() : void
     {

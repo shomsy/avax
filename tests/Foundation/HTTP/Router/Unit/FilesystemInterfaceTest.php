@@ -85,7 +85,6 @@ class FilesystemInterfaceTest extends TestCase
             ->willReturnCallback(callback: static function ($path) {
                 return match ($path) {
                     '/existing/file.txt'    => true,
-                    '/nonexistent/file.txt' => false,
                     default                 => false
                 };
             });
@@ -184,6 +183,7 @@ class FilesystemInterfaceTest extends TestCase
         $this->filesystem->delete(path: '/protected/file.txt');
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         // This would be a concrete implementation in real usage

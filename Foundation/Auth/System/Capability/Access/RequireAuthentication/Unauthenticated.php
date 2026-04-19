@@ -11,6 +11,7 @@ use Exception;
  */
 class Unauthenticated extends Exception
 {
+    #[\Override]
     public function __construct(string $message = 'Authentication required.', int $code = 401)
     {
         parent::__construct(message: $message, code: $code);

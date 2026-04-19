@@ -12,7 +12,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion;
  */
 final readonly class NormalizeProtocolVersion
 {
-    public function execute(?string $protocol = null) : string
+    public function execute(string|null $protocol = null) : string
     {
         if ($protocol === null || $protocol === '') {
             return '1.1';

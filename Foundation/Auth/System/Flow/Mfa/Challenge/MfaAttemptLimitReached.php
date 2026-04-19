@@ -13,6 +13,7 @@ final class MfaAttemptLimitReached extends RuntimeException
 {
     private readonly int $retryAfter;
 
+    #[\Override]
     public function __construct(
         int $retryAfter
     )

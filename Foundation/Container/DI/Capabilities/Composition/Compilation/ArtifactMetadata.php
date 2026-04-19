@@ -50,7 +50,7 @@ final readonly class ArtifactMetadata
 
     /**
      * @param array<string, string>                                       $entries
-     * @param array<string, array{method: string, signature: string}>
+     * @param array<string, array{method: string, signature: string}>     $schemaVersion
      *                                                                   $services
      * @param array<string, string>                                       $sources
      * @param array<string, list<string>>                                 $dependencies
@@ -60,9 +60,9 @@ final readonly class ArtifactMetadata
      *                                  int, poolResetBeforeReuse: bool}> $lifetimes
      * @param array<string, bool>                                         $deferred
      * @param array<string, int>                                          $decorations
-     * @param array<string, array<string, mixed>>
+     * @param array<string, array<string, mixed>>                         $pruneMode
      *                                                                   $ownership
-     * @param array<string, array<string, mixed>>
+     * @param array<string, array<string, mixed>>                         $diagnosticsMode
      *                                                                   $slices
      * @param array<string, mixed>                                        $pruning
      * @param list<string>                                                $changedServices

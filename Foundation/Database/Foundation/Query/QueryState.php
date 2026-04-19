@@ -60,19 +60,19 @@ final readonly class QueryState
      *                                                        tokens.
      */
     public function __construct(
-        array|null  $columns = null,
-        string|null $from = null,
-        array|null  $joins = null,
-        array|null  $wheres = null,
-        array|null  $groups = null,
-        array|null  $havings = null,
-        array|null  $orders = null,
-        int|null    $limit = null,
-        int|null    $offset = null,
-        array|null  $values = null,
-        array|null  $updateColumns = null,
-        bool|null   $distinct = null,
-        BindingBag  $bindings = new BindingBag
+        ?array     $columns = null,
+        ?string    $from = null,
+        ?array     $joins = null,
+        ?array     $wheres = null,
+        ?array     $groups = null,
+        array      $havings = null,
+        ?array     $orders = null,
+        ?int       $limit = null,
+        ?int       $offset = null,
+        array      $values = null,
+        ?array     $updateColumns = null,
+        bool       $distinct = null,
+        BindingBag $bindings = new BindingBag
     )
     {
         $columns             ??= ['*'];

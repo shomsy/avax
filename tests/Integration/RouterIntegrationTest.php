@@ -210,6 +210,7 @@ class RouterIntegrationTest extends TestCase
         }
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $providers = [

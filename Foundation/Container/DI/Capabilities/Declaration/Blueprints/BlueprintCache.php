@@ -148,7 +148,7 @@ final class BlueprintCache
         }
 
         if (! rename($temp, $path)) {
-            @unlink($temp);
+            unlink($temp);
             throw new ContainerException(message: "Cannot publish blueprint cache file [{$path}].");
         }
 

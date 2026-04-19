@@ -40,6 +40,7 @@ use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakePasskeyRuntime;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
@@ -47,7 +48,7 @@ final class PasskeyFlowTest extends TestCase
 {
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testPasskeyRegistrationAuthenticationAndRevocation() : void
@@ -166,7 +167,7 @@ final class PasskeyFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testPasskeyAuthenticationChallengeCannotBeReplayed() : void

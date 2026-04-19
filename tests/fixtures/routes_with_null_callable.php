@@ -19,7 +19,6 @@ Route::fallback(static function (Request $request) : ResponseInterface {
         $request->getMethod(),
         $request->getUri()->getPath()
     );
-    error_log("Fallback called, returning message: " . $message);
 
     return new Response(
         stream    : Stream::fromString(content: $message),

@@ -20,7 +20,6 @@ use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * PSR-7 Full Surface Characterization Test.
@@ -36,38 +35,38 @@ class PSR7SurfaceCharacterizationTest extends TestCase
 
     public function test_getRequestTarget_returns_path_from_uri(): void
     {
-        $request = $this->make()->withUri(UriBuilder::createFromString('http://example.com/api/users'));
-        $this->assertEquals('/api/users', $request->getRequestTarget());
+        $request = $this->make()->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com/api/users'));
+        $this->assertEquals(expected: '/api/users', actual: $request->getRequestTarget());
     }
 
     public function test_getRequestTarget_includes_query_string(): void
     {
-        $request = $this->make()->withUri(UriBuilder::createFromString('http://example.com/api?status=active'));
-        $this->assertEquals('/api?status=active', $request->getRequestTarget());
+        $request = $this->make()->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com/api?status=active'));
+        $this->assertEquals(expected: '/api?status=active', actual: $request->getRequestTarget());
     }
 
     public function test_getRequestTarget_defaults_to_slash_for_empty_path(): void
     {
-        $request = $this->make()->withUri(UriBuilder::createFromString('http://example.com'));
+        $request = $this->make()->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com'));
         $target  = $request->getRequestTarget();
-        $this->assertNotEmpty($target);
+        $this->assertNotEmpty(actual: $target);
     }
 
     public function test_withRequestTarget_preserves_explicit_override(): void
     {
-        $request = $this->make()->withRequestTarget('*');
-        $this->assertEquals('*', $request->getRequestTarget());
+        $request = $this->make()->withRequestTarget(requestTarget: '*');
+        $this->assertEquals(expected: '*', actual: $request->getRequestTarget());
     }
 
     public function test_withRequestTarget_is_not_overridden_by_withUri(): void
     {
         $request = $this->make()
-            ->withRequestTarget('*')
-            ->withUri(UriBuilder::createFromString('http://other.com/path'));
+            ->withRequestTarget(requestTarget: '*')
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://other.com/path'));
 
         // After withUri, the request target should be recalculated from URI
         // This tests that withUri recalculates, not preserves explicit target
-        $this->assertNotEquals('*', $request->getRequestTarget());
+        $this->assertNotEquals(expected: '*', actual: $request->getRequestTarget());
     }
 
     // --- Method ---
@@ -75,17 +74,17 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getMethod_returns_current_method(): void
     {
         $request = $this->make();
-        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals(expected: 'GET', actual: $request->getMethod());
     }
 
     public function test_withMethod_returns_new_instance(): void
     {
         $original = $this->make();
-        $modified = $original->withMethod('POST');
+        $modified = $original->withMethod(method: 'POST');
 
-        $this->assertEquals('GET', $original->getMethod());
-        $this->assertEquals('POST', $modified->getMethod());
-        $this->assertNotSame($original, $modified);
+        $this->assertEquals(expected: 'GET', actual: $original->getMethod());
+        $this->assertEquals(expected: 'POST', actual: $modified->getMethod());
+        $this->assertNotSame(expected: $original, actual: $modified);
     }
 
     // --- Protocol Version ---
@@ -93,13 +92,13 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getProtocolVersion_returns_version(): void
     {
         $request = $this->make();
-        $this->assertEquals('1.1', $request->getProtocolVersion());
+        $this->assertEquals(expected: '1.1', actual: $request->getProtocolVersion());
     }
 
     public function test_withProtocolVersion_changes_version(): void
     {
-        $request = $this->make()->withProtocolVersion('2.0');
-        $this->assertEquals('2.0', $request->getProtocolVersion());
+        $request = $this->make()->withProtocolVersion(version: '2.0');
+        $this->assertEquals(expected: '2.0', actual: $request->getProtocolVersion());
     }
 
     // --- Headers ---
@@ -107,81 +106,81 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getHeaders_returns_all_headers(): void
     {
         $request = $this->make()
-            ->withHeader('X-A', 'a')
-            ->withHeader('X-B', 'b');
+            ->withHeader(name: 'X-A', value: 'a')
+            ->withHeader(name: 'X-B', value: 'b');
 
         $headers = $request->getHeaders();
-        $this->assertArrayHasKey('X-A', $headers);
-        $this->assertArrayHasKey('X-B', $headers);
+        $this->assertArrayHasKey(key: 'X-A', array: $headers);
+        $this->assertArrayHasKey(key: 'X-B', array: $headers);
     }
 
     public function test_getHeader_returns_array_of_values(): void
     {
-        $request = $this->make()->withHeader('X-Test', 'value');
-        $this->assertEquals(['value'], $request->getHeader('X-Test'));
+        $request = $this->make()->withHeader(name: 'X-Test', value: 'value');
+        $this->assertEquals(expected: ['value'], actual: $request->getHeader(name: 'X-Test'));
     }
 
     public function test_getHeader_returns_empty_for_missing(): void
     {
         $request = $this->make();
-        $this->assertEquals([], $request->getHeader('X-Missing'));
+        $this->assertEquals(expected: [], actual: $request->getHeader(name: 'X-Missing'));
     }
 
     public function test_getHeaderLine_joins_values_with_comma(): void
     {
         $request = $this->make()
-            ->withHeader('X-Multi', 'v1')
-            ->withAddedHeader('X-Multi', 'v2');
+            ->withHeader(name: 'X-Multi', value: 'v1')
+            ->withAddedHeader(name: 'X-Multi', value: 'v2');
 
-        $this->assertEquals('v1, v2', $request->getHeaderLine('X-Multi'));
+        $this->assertEquals(expected: 'v1, v2', actual: $request->getHeaderLine(name: 'X-Multi'));
     }
 
     public function test_getHeaderLine_returns_empty_for_missing(): void
     {
-        $this->assertEquals('', $this->make()->getHeaderLine('X-Missing'));
+        $this->assertEquals(expected: '', actual: $this->make()->getHeaderLine(name: 'X-Missing'));
     }
 
     public function test_hasHeader_is_case_insensitive(): void
     {
-        $request = $this->make()->withHeader('Content-Type', 'text/html');
-        $this->assertTrue($request->hasHeader('content-type'));
-        $this->assertTrue($request->hasHeader('CONTENT-TYPE'));
+        $request = $this->make()->withHeader(name: 'Content-Type', value: 'text/html');
+        $this->assertTrue(condition: $request->hasHeader(name: 'content-type'));
+        $this->assertTrue(condition: $request->hasHeader(name: 'CONTENT-TYPE'));
     }
 
     public function test_withHeader_replaces_existing(): void
     {
         $request = $this->make()
-            ->withHeader('X-Test', 'old')
-            ->withHeader('X-Test', 'new');
+            ->withHeader(name: 'X-Test', value: 'old')
+            ->withHeader(name: 'X-Test', value: 'new');
 
-        $this->assertEquals(['new'], $request->getHeader('X-Test'));
+        $this->assertEquals(expected: ['new'], actual: $request->getHeader(name: 'X-Test'));
     }
 
     public function test_withAddedHeader_appends(): void
     {
         $request = $this->make()
-            ->withHeader('X-Test', 'a')
-            ->withAddedHeader('X-Test', 'b');
+            ->withHeader(name: 'X-Test', value: 'a')
+            ->withAddedHeader(name: 'X-Test', value: 'b');
 
-        $this->assertEquals(['a', 'b'], $request->getHeader('X-Test'));
+        $this->assertEquals(expected: ['a', 'b'], actual: $request->getHeader(name: 'X-Test'));
     }
 
     public function test_withoutHeader_removes(): void
     {
         $request = $this->make()
-            ->withHeader('X-Test', 'value')
-            ->withoutHeader('X-Test');
+            ->withHeader(name: 'X-Test', value: 'value')
+            ->withoutHeader(name: 'X-Test');
 
-        $this->assertFalse($request->hasHeader('X-Test'));
+        $this->assertFalse(condition: $request->hasHeader(name: 'X-Test'));
     }
 
     public function test_withoutHeader_is_case_insensitive(): void
     {
         $request = $this->make()
-            ->withHeader('X-Test', 'value')
-            ->withoutHeader('x-test');
+            ->withHeader(name: 'X-Test', value: 'value')
+            ->withoutHeader(name: 'x-test');
 
-        $this->assertFalse($request->hasHeader('X-Test'));
+        $this->assertFalse(condition: $request->hasHeader(name: 'X-Test'));
     }
 
     // --- Body ---
@@ -189,9 +188,9 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getBody_returns_stream(): void
     {
         $stream  = new Stream(stream: fopen('php://temp', 'r+'));
-        $request = $this->make()->withBody($stream);
+        $request = $this->make()->withBody(body: $stream);
 
-        $this->assertSame($stream, $request->getBody());
+        $this->assertSame(expected: $stream, actual: $request->getBody());
     }
 
     public function test_withBody_replaces_stream(): void
@@ -199,10 +198,10 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         $stream1 = new Stream(stream: fopen('php://temp', 'r+'));
         $stream2 = new Stream(stream: fopen('php://temp', 'r+'));
 
-        $r1 = $this->make()->withBody($stream1);
-        $r2 = $r1->withBody($stream2);
+        $r1 = $this->make()->withBody(body: $stream1);
+        $r2 = $r1->withBody(body: $stream2);
 
-        $this->assertNotSame($r1->getBody(), $r2->getBody());
+        $this->assertNotSame(expected: $r1->getBody(), actual: $r2->getBody());
     }
 
     // --- URI ---
@@ -210,34 +209,34 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getUri_returns_uri(): void
     {
         $request = $this->make();
-        $this->assertNotNull($request->getUri());
+        $this->assertNotNull(actual: $request->getUri());
     }
 
     public function test_withUri_updates_host_header_by_default(): void
     {
         $request = $this->make()
-            ->withHeader('Host', 'old.com')
-            ->withUri(UriBuilder::createFromString('http://new.com/path'), false);
+            ->withHeader(name: 'Host', value: 'old.com')
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://new.com/path'), preserveHost: false);
 
-        $this->assertEquals(['new.com'], $request->getHeader('Host'));
+        $this->assertEquals(expected: ['new.com'], actual: $request->getHeader(name: 'Host'));
     }
 
     public function test_withUri_preserves_host_when_flag_set(): void
     {
         $request = $this->make()
-            ->withHeader('Host', 'old.com')
-            ->withUri(UriBuilder::createFromString('http://new.com/path'), true);
+            ->withHeader(name: 'Host', value: 'old.com')
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://new.com/path'), preserveHost: true);
 
-        $this->assertEquals(['old.com'], $request->getHeader('Host'));
+        $this->assertEquals(expected: ['old.com'], actual: $request->getHeader(name: 'Host'));
     }
 
     public function test_withUri_includes_port_in_host_header(): void
     {
         $request = $this->make()
-            ->withUri(UriBuilder::createFromString('http://example.com:8080/path'), false);
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com:8080/path'), preserveHost: false);
 
-        $hostLine = $request->getHeaderLine('Host');
-        $this->assertStringContainsString('8080', $hostLine);
+        $hostLine = $request->getHeaderLine(name: 'Host');
+        $this->assertStringContainsString(needle: '8080', haystack: $hostLine);
     }
 
     // --- Server Params ---
@@ -247,24 +246,24 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         $server  = ['REQUEST_METHOD' => 'POST', 'REMOTE_ADDR' => '127.0.0.1'];
         $request = $this->assembler->fromGlobals(server: $server);
 
-        $this->assertEquals($server, $request->getServerParams());
+        $this->assertEquals(expected: $server, actual: $request->getServerParams());
     }
 
     // --- Cookie Params ---
 
     public function test_getCookieParams_returns_cookies(): void
     {
-        $request = $this->make()->withCookieParams(['sid' => 'abc']);
-        $this->assertEquals(['sid' => 'abc'], $request->getCookieParams());
+        $request = $this->make()->withCookieParams(cookies: ['sid' => 'abc']);
+        $this->assertEquals(expected: ['sid' => 'abc'], actual: $request->getCookieParams());
     }
 
     public function test_withCookieParams_replaces_all(): void
     {
         $request = $this->make()
-            ->withCookieParams(['a' => '1'])
-            ->withCookieParams(['b' => '2']);
+            ->withCookieParams(cookies: ['a' => '1'])
+            ->withCookieParams(cookies: ['b' => '2']);
 
-        $this->assertEquals(['b' => '2'], $request->getCookieParams());
+        $this->assertEquals(expected: ['b' => '2'], actual: $request->getCookieParams());
     }
 
     // --- Query Params ---
@@ -272,16 +271,16 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getQueryParams_returns_query(): void
     {
         $request = $this->assembler->fromSlices(queryParams: ['q' => 'test']);
-        $this->assertEquals(['q' => 'test'], $request->getQueryParams());
+        $this->assertEquals(expected: ['q' => 'test'], actual: $request->getQueryParams());
     }
 
     public function test_withQueryParams_replaces_all(): void
     {
         $request = $this->make()
-            ->withQueryParams(['a' => '1'])
-            ->withQueryParams(['b' => '2']);
+            ->withQueryParams(query: ['a' => '1'])
+            ->withQueryParams(query: ['b' => '2']);
 
-        $this->assertEquals(['b' => '2'], $request->getQueryParams());
+        $this->assertEquals(expected: ['b' => '2'], actual: $request->getQueryParams());
     }
 
     // --- Uploaded Files ---
@@ -289,14 +288,14 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getUploadedFiles_returns_array(): void
     {
         $request = $this->make();
-        $this->assertIsArray($request->getUploadedFiles());
+        $this->assertIsArray(actual: $request->getUploadedFiles());
     }
 
     public function test_withUploadedFiles_replaces_files(): void
     {
         $original = $this->make();
-        $modified = $original->withUploadedFiles([]);
-        $this->assertNotSame($original, $modified);
+        $modified = $original->withUploadedFiles(uploadedFiles: []);
+        $this->assertNotSame(expected: $original, actual: $modified);
     }
 
     // --- Parsed Body ---
@@ -306,22 +305,22 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         $request = $this->make();
         $body    = $request->getParsedBody();
         // Could be null or empty array depending on factory
-        $this->assertTrue($body === null || $body === []);
+        $this->assertTrue(condition: $body === null || $body === []);
     }
 
     public function test_withParsedBody_replaces_body(): void
     {
-        $request = $this->make()->withParsedBody(['name' => 'test']);
-        $this->assertEquals(['name' => 'test'], $request->getParsedBody());
+        $request = $this->make()->withParsedBody(data: ['name' => 'test']);
+        $this->assertEquals(expected: ['name' => 'test'], actual: $request->getParsedBody());
     }
 
     public function test_withParsedBody_null_clears(): void
     {
         $request = $this->make()
-            ->withParsedBody(['name' => 'test'])
-            ->withParsedBody(null);
+            ->withParsedBody(data: ['name' => 'test'])
+            ->withParsedBody(data: null);
 
-        $this->assertNull($request->getParsedBody());
+        $this->assertNull(actual: $request->getParsedBody());
     }
 
     // --- Attributes ---
@@ -329,55 +328,55 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_getAttributes_returns_all(): void
     {
         $request = $this->make()
-            ->withAttribute('user_id', 123)
-            ->withAttribute('role', 'admin');
+            ->withAttribute(name: 'user_id', value: 123)
+            ->withAttribute(name: 'role', value: 'admin');
 
-        $this->assertEquals(['user_id' => 123, 'role' => 'admin'], $request->getAttributes());
+        $this->assertEquals(expected: ['user_id' => 123, 'role' => 'admin'], actual: $request->getAttributes());
     }
 
     public function test_getAttribute_returns_value(): void
     {
-        $request = $this->make()->withAttribute('key', 'value');
-        $this->assertEquals('value', $request->getAttribute('key'));
+        $request = $this->make()->withAttribute(name: 'key', value: 'value');
+        $this->assertEquals(expected: 'value', actual: $request->getAttribute(name: 'key'));
     }
 
     public function test_getAttribute_returns_default_for_missing(): void
     {
-        $this->assertEquals('fallback', $this->make()->getAttribute('missing', 'fallback'));
+        $this->assertEquals(expected: 'fallback', actual: $this->make()->getAttribute(name: 'missing', default: 'fallback'));
     }
 
     public function test_getAttribute_returns_null_for_missing_no_default(): void
     {
-        $this->assertNull($this->make()->getAttribute('missing'));
+        $this->assertNull(actual: $this->make()->getAttribute(name: 'missing'));
     }
 
     public function test_withAttribute_is_immutable(): void
     {
         $original = $this->make();
-        $modified = $original->withAttribute('key', 'value');
+        $modified = $original->withAttribute(name: 'key', value: 'value');
 
-        $this->assertNull($original->getAttribute('key'));
-        $this->assertEquals('value', $modified->getAttribute('key'));
+        $this->assertNull(actual: $original->getAttribute(name: 'key'));
+        $this->assertEquals(expected: 'value', actual: $modified->getAttribute(name: 'key'));
     }
 
     public function test_withoutAttribute_removes(): void
     {
         $request = $this->make()
-            ->withAttribute('key', 'value')
-            ->withoutAttribute('key');
+            ->withAttribute(name: 'key', value: 'value')
+            ->withoutAttribute(name: 'key');
 
-        $this->assertNull($request->getAttribute('key'));
+        $this->assertNull(actual: $request->getAttribute(name: 'key'));
     }
 
     public function test_withoutAttribute_does_not_affect_other_attributes(): void
     {
         $request = $this->make()
-            ->withAttribute('keep', 'yes')
-            ->withAttribute('remove', 'no')
-            ->withoutAttribute('remove');
+            ->withAttribute(name: 'keep', value: 'yes')
+            ->withAttribute(name: 'remove', value: 'no')
+            ->withoutAttribute(name: 'remove');
 
-        $this->assertEquals('yes', $request->getAttribute('keep'));
-        $this->assertNull($request->getAttribute('remove'));
+        $this->assertEquals(expected: 'yes', actual: $request->getAttribute(name: 'keep'));
+        $this->assertNull(actual: $request->getAttribute(name: 'remove'));
     }
 
     // --- Immutability across all with* methods ---
@@ -387,20 +386,20 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         $request = $this->make();
         $stream  = new Stream(stream: fopen('php://temp', 'r+'));
 
-        $this->assertNotSame($request, $request->withMethod('POST'));
-        $this->assertNotSame($request, $request->withUri(UriBuilder::createFromString('http://x.com')));
-        $this->assertNotSame($request, $request->withHeader('X', '1'));
-        $this->assertNotSame($request, $request->withAddedHeader('X', '2'));
-        $this->assertNotSame($request, $request->withoutHeader('X'));
-        $this->assertNotSame($request, $request->withBody($stream));
-        $this->assertNotSame($request, $request->withRequestTarget('/'));
-        $this->assertNotSame($request, $request->withProtocolVersion('2.0'));
-        $this->assertNotSame($request, $request->withQueryParams(['a' => 'b']));
-        $this->assertNotSame($request, $request->withParsedBody(['c' => 'd']));
-        $this->assertNotSame($request, $request->withCookieParams(['e' => 'f']));
-        $this->assertNotSame($request, $request->withUploadedFiles([]));
-        $this->assertNotSame($request, $request->withAttribute('g', 'h'));
-        $this->assertNotSame($request, $request->withoutAttribute('g'));
+        $this->assertNotSame(expected: $request, actual: $request->withMethod(method: 'POST'));
+        $this->assertNotSame(expected: $request, actual: $request->withUri(uri: UriBuilder::createFromString(uri: 'https://x.com')));
+        $this->assertNotSame(expected: $request, actual: $request->withHeader(name: 'X', value: '1'));
+        $this->assertNotSame(expected: $request, actual: $request->withAddedHeader(name: 'X', value: '2'));
+        $this->assertNotSame(expected: $request, actual: $request->withoutHeader(name: 'X'));
+        $this->assertNotSame(expected: $request, actual: $request->withBody(body: $stream));
+        $this->assertNotSame(expected: $request, actual: $request->withRequestTarget(requestTarget: '/'));
+        $this->assertNotSame(expected: $request, actual: $request->withProtocolVersion(version: '2.0'));
+        $this->assertNotSame(expected: $request, actual: $request->withQueryParams(query: ['a' => 'b']));
+        $this->assertNotSame(expected: $request, actual: $request->withParsedBody(data: ['c' => 'd']));
+        $this->assertNotSame(expected: $request, actual: $request->withCookieParams(cookies: ['e' => 'f']));
+        $this->assertNotSame(expected: $request, actual: $request->withUploadedFiles(uploadedFiles: []));
+        $this->assertNotSame(expected: $request, actual: $request->withAttribute(name: 'g', value: 'h'));
+        $this->assertNotSame(expected: $request, actual: $request->withoutAttribute(name: 'g'));
     }
 
     // --- Helpers ---

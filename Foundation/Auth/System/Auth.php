@@ -6,6 +6,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Access\AccessFacade;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Diagnostics\DiagnosticsFacade;
 use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
 use Avax\Auth\System\Capability\ExternalIdentity\ExternalIdentityFacade;
@@ -155,6 +156,7 @@ final readonly class Auth implements AuthInterface
 
     /**
      * @return list<ActiveSession>
+     * @throws Unauthenticated
      */
     public function readActiveSessions() : array
     {

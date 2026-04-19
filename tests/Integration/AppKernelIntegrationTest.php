@@ -165,6 +165,7 @@ class AppKernelIntegrationTest extends TestCase
         $this->bootstrapper->useGroup(name: 'nonexistent');
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $psr17Factory = new Psr17Factory;

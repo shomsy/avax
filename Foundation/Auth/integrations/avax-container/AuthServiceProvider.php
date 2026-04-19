@@ -25,6 +25,7 @@ use RuntimeException;
  */
 final class AuthServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register() : void
     {
         $this->registerFoundation();

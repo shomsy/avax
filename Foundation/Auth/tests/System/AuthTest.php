@@ -42,8 +42,6 @@ final class AuthTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testAuthFacadeRunsCorePublicFlowSurface() : void
     {
@@ -93,8 +91,6 @@ final class AuthTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
     {
@@ -137,8 +133,6 @@ final class AuthTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
     {

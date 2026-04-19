@@ -83,7 +83,7 @@ function refactorFile(string $file, array $mapping) : void
 
     if ($content !== $original) {
         file_put_contents($file, $content);
-        echo "Refactored: $file\n";
+        echo "Refactored: {$file}\n";
     }
 }
 
@@ -101,7 +101,7 @@ if ($argc > 1 && $argv[1] === '--dry-run') {
     echo "Dry run mode - showing what would be changed:\n";
     // For dry run, just show the mapping
     foreach ($mapping as $old => $new) {
-        echo "$old -> $new\n";
+        echo "{$old} -> {$new}\n";
     }
 } else {
     echo "Starting namespace refactor...\n";

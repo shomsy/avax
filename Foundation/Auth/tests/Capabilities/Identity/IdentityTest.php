@@ -119,6 +119,7 @@ class IdentityTest extends TestCase
         $this->assertSame(expected: $jwt, actual: $identity->jwtIdentity());
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

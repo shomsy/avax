@@ -43,14 +43,12 @@ final readonly class EndpointPostureEngine
 
         foreach ($signals as $signal) {
             $weight = match ($signal->type) {
-                EndpointPostureSignal::IP_REPUTATION       => 0.3,
-                EndpointPostureSignal::IMPOSSIBLE_TRAVEL   => 0.4,
-                EndpointPostureSignal::VPN_DETECTION       => 0.25,
-                EndpointPostureSignal::PROXY_DETECTION     => 0.25,
-                EndpointPostureSignal::GEO_VELOCITY        => 0.2,
-                EndpointPostureSignal::ASN_REPUTATION      => 0.15,
-                EndpointPostureSignal::DEVICE_FINGERPRINT  => 0.1,
-                EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
+                EndpointPostureSignal::IP_REPUTATION                                                  => 0.3,
+                EndpointPostureSignal::IMPOSSIBLE_TRAVEL                                              => 0.4,
+                EndpointPostureSignal::VPN_DETECTION, EndpointPostureSignal::PROXY_DETECTION          => 0.25,
+                EndpointPostureSignal::GEO_VELOCITY                                                   => 0.2,
+                EndpointPostureSignal::ASN_REPUTATION                                                 => 0.15,
+                EndpointPostureSignal::DEVICE_FINGERPRINT, EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
             };
 
             $totalScore += $signal->score * $weight;

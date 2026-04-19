@@ -718,7 +718,7 @@ final class ServiceResolver
             PsrContainerInterface::class,
             ContainerInterface::class,
             Container::class,
-            ServiceResolver::class,
+            self::class,
             ServiceRegistryInterface::class,
             ServiceRegistry::class,
             CreateContainerConfig::class,
@@ -1715,7 +1715,10 @@ final class ServiceResolver
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugGovernance(string $id = '') : array
     {
@@ -3051,14 +3054,13 @@ final class ServiceResolver
         }
 
         return match ($normalizedKind) {
-            'usage'        => $this->usageGraphArtifact(id: $id, slice: $slice),
-            'owner'        => $this->ownerGraphArtifact(slice: $slice),
-            'slice'        => $this->sliceGraphArtifact(slice: $slice),
-            'override'     => $this->overrideGraphArtifact(id: $id, slice: $slice),
-            'architecture' => $this->architectureGraphArtifact(id: $id, slice: $slice),
-            'governance'   => $this->policyGraphArtifact(id: $id, slice: $slice),
-            'policy'       => $this->policyGraphArtifact(id: $id, slice: $slice),
-            default        => $this->dependencyGraphArtifact(id: $id, slice: $slice),
+            'usage'                => $this->usageGraphArtifact(id: $id, slice: $slice),
+            'owner'                => $this->ownerGraphArtifact(slice: $slice),
+            'slice'                => $this->sliceGraphArtifact(slice: $slice),
+            'override'             => $this->overrideGraphArtifact(id: $id, slice: $slice),
+            'architecture'         => $this->architectureGraphArtifact(id: $id, slice: $slice),
+            'governance', 'policy' => $this->policyGraphArtifact(id: $id, slice: $slice),
+            default                => $this->dependencyGraphArtifact(id: $id, slice: $slice),
         };
     }
 
@@ -3230,7 +3232,11 @@ final class ServiceResolver
     }
 
     /**
+     * @param string $id
+     * @param string $slice
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     private function architectureGraphArtifact(string $id, string $slice) : array
     {
@@ -3466,7 +3472,11 @@ final class ServiceResolver
     }
 
     /**
+     * @param string $id
+     * @param string $slice
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     private function policyGraphArtifact(string $id, string $slice) : array
     {
@@ -3966,7 +3976,10 @@ final class ServiceResolver
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugArchitecture(string $id = '') : array
     {
@@ -4103,9 +4116,11 @@ final class ServiceResolver
     }
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whoUsesInContext(string $id, array $context) : array
     {
@@ -4135,9 +4150,11 @@ final class ServiceResolver
     }
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whatBreaksIfInContext(string $id, array $context) : array
     {
@@ -4245,6 +4262,7 @@ final class ServiceResolver
      *
      * @return mixed
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function callInContext(callable|string $callable, array $parameters, array $context) : mixed
     {
@@ -4260,11 +4278,12 @@ final class ServiceResolver
     /**
      * Calls one function, method, or invokable object through the resolver.
      *
+     * @param callable|string      $callable
      * @param array<string, mixed> $parameters
      *
-     * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @return mixed
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
@@ -4317,6 +4336,7 @@ final class ServiceResolver
      *
      * @return object
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function injectInto(object $target) : object
     {
@@ -4360,6 +4380,7 @@ final class ServiceResolver
      *
      * @return object
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function injectIntoInContext(object $target, array $context) : object
     {
@@ -4437,8 +4458,8 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      * Compiles and marks the runtime as warmed up.
      *
-     * @throws ContainerException
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function warmCompiled(array $serviceIds = []) : void
     {
@@ -4594,7 +4615,8 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      * Rebuilds compiled artifacts from scratch.
      *
-     * @throws ContainerException
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function rebuildCompiled(array $serviceIds = []) : void
     {
@@ -4644,8 +4666,8 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      * Builds compiled runtime artifacts for the requested service set.
      *
-     * @throws ContainerException
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function compileContainer(array $serviceIds = []) : void
     {
@@ -4944,6 +4966,7 @@ final class ServiceResolver
      * @param array<string, list<string>> $dependents
      *
      * @return array<string, list<array{code: string, severity: string, category: string, message: string}>>
+     * @throws ReflectionException
      */
     private function policyFindings(array $graph, array $dependents) : array
     {

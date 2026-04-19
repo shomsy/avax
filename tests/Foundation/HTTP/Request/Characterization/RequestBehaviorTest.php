@@ -176,7 +176,7 @@ final class RequestBehaviorTest extends TestCase
 
     public function test_path_returns_uri_path() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'http://example.com/test/path?foo=bar');
+        $uri     = UriBuilder::createFromString(uri: 'https://example.com/test/path?foo=bar');
         $request = Request::create(
             serverParams: [
                 'REQUEST_METHOD' => 'GET',

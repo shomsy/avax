@@ -36,7 +36,7 @@ class BodyParsingAbuseTest extends TestCase
             parsedBody: null // Simulate empty/failed parse
         );
         
-        $this->assertNull($request->getParsedBody());
+        $this->assertNull(actual: $request->getParsedBody());
     }
 
     public function test_unsupported_content_type_behavior() : void
@@ -49,7 +49,7 @@ class BodyParsingAbuseTest extends TestCase
         $request = $this->assembler->fromGlobals(server: $server);
         
         // Should not crash, should return null or empty body
-        $this->assertNull($request->getParsedBody());
+        $this->assertNull(actual: $request->getParsedBody());
     }
 
     protected function setUp() : void

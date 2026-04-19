@@ -39,6 +39,7 @@ use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -249,6 +250,7 @@ final class VerifyMfaChallengeTest extends TestCase
     /**
      * @return array{0: VerifyMfaChallenge, 1: Totp, 2: FrozenClock, 3: InMemoryMfaChallengeStore, 4:
      *                  CurrentAuthentication, 5: string}
+     * @throws RandomException
      */
     private function makeFlowWithBackupCode() : array
     {

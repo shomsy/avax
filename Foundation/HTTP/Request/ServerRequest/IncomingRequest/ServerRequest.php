@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -15,9 +14,34 @@ use Psr\Http\Message\UriInterface;
  */
 final class ServerRequest implements ServerRequestInterface
 {
+    public function __construct(private readonly ServerInit $setup) {}
 
-    public function __construct(private ServerInit $setup)
-    {
+    public string $protocolVersion {
+        get => $this->setup->state->protocolVersion;
+    }
+
+    public array $headers {
+        get => $this->setup->state->requestHeaders->all();
+    }
+
+    public string|null $requestTarget {
+        get => $this->setup->state->requestTarget;
+    }
+
+    public string $method {
+        get => $this->setup->state->method;
+    }
+
+    public UriInterface|null $uri {
+        get => $this->setup->state->uri;
+    }
+
+    public array $serverParams {
+        get => $this->setup->state->serverParams;
+    }
+
+    public array $queryParams {
+        get => $this->setup->state->queryParams;
     }
 
 
@@ -129,7 +153,7 @@ final class ServerRequest implements ServerRequestInterface
     {
         $state = $this->setup->state->withUri(uri: $uri);
 
-        if ($preserveHost && $this->hasHeader('Host')) {
+        if ($preserveHost && $this->hasHeader(name: 'Host')) {
             return $this->initializeRequest(state: $state);
         }
 
@@ -240,26 +264,23 @@ final class ServerRequest implements ServerRequestInterface
 
     public function inputs(): RequestedInputs
     {
-        return new RequestedInputs(
-            merged:    Inputs::fromSlices(
-                queryParams: $this->setup->state->queryParams,
-                parsedBody: $this->setup->state->parsedBody->data(),
-            ),
+        return RequestedInputs::fromQueryAndBody(
+            queryParams: $this->setup->state->queryParams,
+            parsedBody: (array) ($this->setup->state->parsedBody->data() ?? []),
             sanitizer: $this->setup->sanitizer,
-            mapper:    $this->setup->mapper,
+            mapper: $this->setup->mapper,
         );
     }
 
-    public function resolveClientAddress(array $serverParams): ?string
+    public function resolveClientAddress(array $serverParams): string|null
     {
         return $this->setup->preparer->resolveClientAddress(serverParams: $serverParams);
     }
 
     private function initializeRequest(RequestInit $state): self
     {
-        $new = clone $this;
-        $new->setup = $this->setup->withState(state: $state);
-
-        return $new;
+        return clone($this, [
+            "setup" => $this->setup->withState(state: $state)
+        ]);
     }
 }

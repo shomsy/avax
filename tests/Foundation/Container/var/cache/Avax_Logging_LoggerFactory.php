@@ -3,7 +3,7 @@
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => 'Avax\\Logging\\LoggerFactory',
+                                                'class'              => \Avax\Logging\LoggerFactory::class,
                                                 'constructor'        => null,
                                                 'injectedProperties' => [
                                                 ],

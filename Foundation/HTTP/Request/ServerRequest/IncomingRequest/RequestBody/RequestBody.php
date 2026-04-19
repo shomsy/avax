@@ -7,42 +7,41 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * RequestBody - State owner for the raw request body stream.
+ * RequestBody
+ *
+ * State owner for the raw request body stream.
  *
  * Contract:
- * - content() reads the full stream content regardless of current cursor position
- * - content() restores cursor to its original position after reading (for seekable streams)
- * - content() is safe to call multiple times
- * - stream() returns the raw PSR-7 StreamInterface
+ * - stream() returns the underlying PSR-7 stream
+ * - content() reads the full body content
+ * - for seekable streams, content() restores the original cursor position
+ * - for non-seekable streams, content() reads from the current cursor position
  */
 final readonly class RequestBody
 {
-    public function __construct(private StreamInterface $stream)
-    {
-    }
+    public function __construct(private StreamInterface $stream) {}
 
-    public function stream(): StreamInterface
+    public function stream() : StreamInterface
     {
         return $this->stream;
     }
 
-    /**
-     * Read the full body content.
-     *
-     * Preserves cursor position for seekable streams.
-     * Safe for repeated reads.
-     */
-    public function content(): string
+    public function content() : string
     {
-        if ($this->stream->isSeekable()) {
-            $originalPosition = $this->stream->tell();
-            $this->stream->rewind();
-            $content = $this->stream->getContents();
-            $this->stream->seek($originalPosition);
+        $stream = $this->stream;
 
-            return $content;
+        if (! $stream->isSeekable()) {
+            return $stream->getContents();
         }
 
-        return $this->stream->getContents();
+        $originalPosition = $stream->tell();
+
+        try {
+            $stream->rewind();
+
+            return $stream->getContents();
+        } finally {
+            $stream->seek($originalPosition);
+        }
     }
 }

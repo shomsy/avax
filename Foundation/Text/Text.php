@@ -335,7 +335,7 @@ final readonly class Text
         $s = preg_replace('~([a-z0-9])([A-Z])~', '$1' . $delimiter . '$2', $s);
         $s = preg_replace('~[\s\-]+~', $delimiter, (string) $s);
 
-        return Text::of(value: (string) $s)->lower();
+        return self::of(value: (string) $s)->lower();
     }
 
     // DSL Methods - Human-readable operations without exposing regex patterns

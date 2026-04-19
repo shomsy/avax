@@ -31,6 +31,8 @@ use Avax\Container\DI\Flows\RegisterServices\RegisterServices;
 use Avax\Container\DI\Flows\ResolveService\ResolveService;
 use Avax\Container\DI\Flows\ValidateComposition\ValidateComposition;
 use Closure;
+use ReflectionException;
+use Throwable;
 
 /**
  * Stable public facade for the container component.
@@ -42,7 +44,7 @@ final readonly class Container implements ContainerInterface
     public function __construct(ServiceResolver $resolver) { $this->resolver = $resolver; }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function get(string $id) : mixed
     {
@@ -68,7 +70,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function make(string $abstract, array $parameters = []) : object
     {
@@ -86,7 +88,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function injectInto(object $target) : object
     {
@@ -125,6 +127,7 @@ final readonly class Container implements ContainerInterface
      * @param list<string> $serviceIds
      *
      * @return list<string>
+     * @throws ReflectionException
      */
     public function validate(array $serviceIds = []) : array
     {
@@ -137,7 +140,10 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function describeService(string $id) : array
     {
@@ -150,7 +156,10 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugService(string $id) : array
     {
@@ -158,7 +167,10 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugPlan(string $id) : array
     {
@@ -166,7 +178,10 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugGraph(string $id = '') : array
     {
@@ -199,7 +214,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugExports(string $slice = '') : array
     {
@@ -212,7 +227,10 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
+     * @param string $tag
+     *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugTags(string $tag) : array
     {
@@ -220,7 +238,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugGroup(string $group) : array
     {
@@ -228,7 +246,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugSelection(string $id) : array
     {
@@ -277,7 +295,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function compileContainer(array $serviceIds = []) : void
     {
@@ -285,7 +303,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function warmCompiled(array $serviceIds = []) : void
     {
@@ -345,7 +363,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function inspectInjection(object $target) : InjectionReport
     {
@@ -373,7 +391,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function why(string $id) : array
     {
@@ -391,7 +409,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function showOwner(string $id) : array
     {
@@ -444,7 +462,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function tagged(string $tag) : array
     {
@@ -452,7 +470,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function grouped(string $group) : array
     {

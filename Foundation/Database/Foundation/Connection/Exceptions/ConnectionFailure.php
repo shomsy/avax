@@ -38,6 +38,7 @@ class ConnectionFailure extends DatabaseException
      * @param string         $message  The detailed explanation of the failure.
      * @param Throwable|null $previous The raw technical error from the network or driver.
      */
+    #[\Override]
     public function __construct(
         string         $name,
         string         $message = '',

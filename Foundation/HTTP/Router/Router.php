@@ -76,10 +76,15 @@ final readonly class Router implements RouterRuntimeInterface
     }
 
     /**
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
+     * @param Request $request
+     *
+     * @return ResponseInterface
      * @throws ContainerExceptionInterface
      * @throws InvalidConstraintException
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     * @throws ReservedRouteNameException
+     * @throws \Throwable
      */
     public function resolve(Request $request) : ResponseInterface
     {

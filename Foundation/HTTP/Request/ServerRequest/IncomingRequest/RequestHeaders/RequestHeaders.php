@@ -4,94 +4,149 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
+use NoDiscard;
 use SensitiveParameter;
 
-/**
- * RequestHeaders - Manages HTTP request headers.
- */
-final readonly class RequestHeaders
+final class RequestHeaders
 {
     /** @var array<string, string[]> */
-    private array $headers;
-
-    /** @var array<string, string> */
-    private array $nameMap;
-
-    public function __construct(
-        #[SensitiveParameter]
-        array $headersInput = []
-    )
-    {
-        $this->headers = (new NormalizeHeaders)->execute(headers: $headersInput);
-
-        $nameMap = [];
-        foreach (array_keys($this->headers) as $name) {
-            $nameMap[strtolower($name)] = $name;
-        }
-        $this->nameMap = $nameMap;
+    private array $headers = [] {
+        set => self::normalizeHeaders(headers: $value);
     }
 
-    public function all() : array
+    /** @var array<string, string>|null */
+    private array|null $nameMapCache = null;
+
+    /**
+     * @var array<string, string>
+     */
+    private array $nameMap {
+        get => $this->nameMapCache ??= self::buildLookupMap(
+        normalizedHeaders: $this->headers,
+        );
+    }
+
+    public function __construct(#[SensitiveParameter] array $headersInput = [])
+    {
+        $this->headers = $headersInput;
+    }
+
+    /**
+     * @return array<string, string[]>
+     */
+    public function all(): array
     {
         return $this->headers;
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->nameMap[strtolower($name)]);
     }
 
-    public function getLine(string $name) : string
+    public function getLine(string $name): string
     {
-        $values = $this->get(name: $name);
-        return $values === [] ? '' : implode(', ', $values);
+        return implode(', ', $this->get(name: $name));
     }
 
     /**
      * @return string[]
      */
-    public function get(string $name) : array
+    public function get(string $name): array
     {
-        $normalizedName = strtolower($name);
-        if (! isset($this->nameMap[$normalizedName])) {
-            return [];
+        $canonicalName = $this->nameMap[strtolower($name)] ?? null;
+
+        return $canonicalName === null
+            ? []
+            : $this->headers[$canonicalName];
+    }
+
+    #[NoDiscard(message: 'RequestHeaders is immutable; use the returned instance.')]
+    public function append(string $name, string|array $value): self
+    {
+        [, $toAdd] = self::normalizeSingleHeader(name: $name, value: $value);
+
+        return $this->put(
+            name: $name,
+            value: [...$this->get(name: $name), ...$toAdd],
+        );
+    }
+
+    #[NoDiscard(message: 'RequestHeaders is immutable; use the returned instance.')]
+    public function put(string $name, string|array $value): self
+    {
+        $headers = $this->headers;
+        $existingName = $this->nameMap[strtolower($name)] ?? null;
+
+        if ($existingName !== null) {
+            unset($headers[$existingName]);
         }
 
-        return $this->headers[$this->nameMap[$normalizedName]];
+        [$canonicalName, $normalizedValues] = self::normalizeSingleHeader(
+            name: $name,
+            value: $value,
+        );
+
+        $headers[$canonicalName] = $normalizedValues;
+
+        return $this->withHeaders(headers: $headers);
     }
 
-    public function append(string $name, string|array $value) : self
+    #[NoDiscard(message: 'RequestHeaders is immutable; use the returned instance.')]
+    public function drop(string $name): self
     {
-        $current = $this->get(name: $name);
-        $toAdd   = (new NormalizeHeaders)->execute(headers: [$name => $value])[$name];
+        $existingName = $this->nameMap[strtolower($name)] ?? null;
 
-        return $this->put(name: $name, value: array_merge($current, $toAdd));
-    }
-
-    public function put(string $name, string|array $value) : self
-    {
-        $newHeaders     = $this->headers;
-        $normalizedName = strtolower($name);
-
-        if (isset($this->nameMap[$normalizedName])) {
-            unset($newHeaders[$this->nameMap[$normalizedName]]);
-        }
-
-        $newHeaders[$name] = (new NormalizeHeaders)->execute(headers: [$name => $value])[$name];
-
-        return new self(headersInput: $newHeaders);
-    }
-
-    public function drop(string $name) : self
-    {
-        $normalizedName = strtolower($name);
-        if (! isset($this->nameMap[$normalizedName])) {
+        if ($existingName === null) {
             return $this;
         }
 
-        $newHeaders = $this->headers;
-        unset($newHeaders[$this->nameMap[$normalizedName]]);
+        $headers = $this->headers;
+        unset($headers[$existingName]);
 
-        return new self(headersInput: $newHeaders);
+        return $this->withHeaders(headers: $headers);
+    }
+
+    /**
+     * @param array<string, string|array<int, string>> $headers
+     */
+    private function withHeaders(#[SensitiveParameter] array $headers): self
+    {
+        $clone = clone $this;
+        $clone->headers = $headers;
+        $clone->nameMapCache = null;
+
+        return $clone;
+    }
+
+    /**
+     * @param array<string, string|array<int, string>> $headers
+     * @return array<string, string[]>
+     */
+    private static function normalizeHeaders(#[SensitiveParameter] array $headers): array
+    {
+        return NormalizeHeaders::normalizeHeaders(headers: $headers);
+    }
+
+    /**
+     * @param array<string, string[]> $normalizedHeaders
+     * @return array<string, string>
+     */
+    private static function buildLookupMap(#[SensitiveParameter] array $normalizedHeaders): array
+    {
+        return NormalizeHeaders::buildLookupMap(normalizedHeaders: $normalizedHeaders);
+    }
+
+    /**
+     * @return array{0: string, 1: string[]}
+     */
+    private static function normalizeSingleHeader(string $name, string|array $value): array
+    {
+        $normalized = self::normalizeHeaders(headers: [$name => $value]);
+        $canonicalName = array_key_first($normalized);
+
+        return $canonicalName === null
+            ? [$name, []]
+            : [$canonicalName, $normalized[$canonicalName]];
     }
 }

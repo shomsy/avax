@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  * Focuses on the critical bug: RouteBuilder::make() calling static RouteGroupStack::apply().
  * This catches issues that integration tests miss due to mocking limitations.
  */
-class RouterCoreFunctionalityTest extends TestCase
+class RouterDslIntegrationTest extends TestCase
 {
     /**
      * @test

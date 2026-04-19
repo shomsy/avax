@@ -13,6 +13,7 @@ class RateLimitException extends Exception
 {
     private readonly int $retryAfter;
 
+    #[\Override]
     public function __construct(
         string $message,
         int    $retryAfter

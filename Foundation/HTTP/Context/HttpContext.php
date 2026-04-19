@@ -39,10 +39,8 @@ final readonly class HttpContext implements HttpContextInterface
         $port   = $this->port();
 
         $authority = $host;
-        if ($port !== null && ! $this->isStandardPort(scheme: $scheme, port: $port)) {
-            if (! str_contains($host, ':')) {
-                $authority = $host . ':' . $port;
-            }
+        if ($port !== null && ! $this->isStandardPort(scheme: $scheme, port: $port) && ! str_contains($host, ':')) {
+            $authority = $host . ':' . $port;
         }
 
         return sprintf('%s://%s', $scheme, $authority);
@@ -61,7 +59,7 @@ final readonly class HttpContext implements HttpContextInterface
         return (! empty($server['HTTPS']) && $server['HTTPS'] !== 'off') ? 'https' : 'http';
     }
 
-    public function serverParams() : array
+    public function serverParams() : ServerRequestInterface
     {
         return $this->request ?? $this->globals->server();
     }

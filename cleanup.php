@@ -22,6 +22,6 @@ foreach ($dirs as $dir) {
             }
         }
         rmdir($path);
-        echo "Deleted $dir\n";
+        echo "Deleted {$dir}\n";
     }
 }

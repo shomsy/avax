@@ -9,6 +9,7 @@ use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\Uri;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate
@@ -30,7 +31,7 @@ class RequestRegressionTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function createBlankOldRequest(array $serverParams = []) : Request
     {
@@ -65,7 +66,7 @@ class RequestRegressionTest extends TestCase
     public function test_request_target_must_not_blindly_follow_uri_path_mutation() : void
     {
         $request = $this->createBlankOldRequest()->withRequestTarget(requestTarget: '/explicit-target');
-        $newUri  = new Uri('http://example.com/new-path');
+        $newUri  = new Uri('https://example.com/new-path');
 
         $requestWithNewUri = $request->withUri(uri: $newUri);
 

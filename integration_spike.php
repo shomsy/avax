@@ -125,7 +125,7 @@ echo "\n🧪 TEST 6: Syntax Validation\n";
 
 $syntaxErrors = [];
 foreach ($requiredFiles as $file) {
-    $output = shell_exec("php -l \"$file\" 2>&1");
+    $output = shell_exec("php -l \"{$file}\" 2>&1");
     if (strpos($output, 'No syntax errors detected') === false) {
         $syntaxErrors[] = $file . ': ' . trim($output);
     }
@@ -136,7 +136,7 @@ if (empty($syntaxErrors)) {
 } else {
     echo "❌ Syntax errors found:\n";
     foreach ($syntaxErrors as $error) {
-        echo "  - $error\n";
+        echo "  - {$error}\n";
     }
     exit(1);
 }

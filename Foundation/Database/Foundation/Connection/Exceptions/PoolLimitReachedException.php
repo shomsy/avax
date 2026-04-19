@@ -39,6 +39,7 @@ final class PoolLimitReachedException extends DatabaseException
      * @param string $name  The nickname of the pool that is full.
      * @param int    $limit The maximum number of people allowed in at once.
      */
+    #[\Override]
     public function __construct(
         string $name,
         int    $limit

@@ -16,6 +16,7 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ use Random\RandomException;
 class JwtIdentityTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityIssueResolveAndRevokeCycle() : void
@@ -63,7 +64,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
@@ -89,7 +90,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityRejectsInactiveUserTokens() : void
@@ -126,7 +127,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testJwtIdentityIssuesRefreshTokenWhenStoreConfigured() : void
     {
@@ -152,7 +153,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityPreservesOAuthClientClaims() : void
@@ -186,7 +187,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityPreservesSenderConstraintClaims() : void
@@ -225,7 +226,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
@@ -266,6 +267,7 @@ class JwtIdentityTest extends TestCase
         $this->assertNull(actual: $jwt->resolveWorkloadToken(token: $issued->token, expectedAudience: 'orders-api'));
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

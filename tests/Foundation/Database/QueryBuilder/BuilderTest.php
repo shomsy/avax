@@ -46,6 +46,7 @@ class BuilderTest extends TestCase
     /**
      * @throws Throwable
      */
+    #[\Override]
     protected function setUp() : void
     {
         parent::setUp();

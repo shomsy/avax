@@ -137,6 +137,7 @@ class AuthBuilderTest extends TestCase
         $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

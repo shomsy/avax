@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
  * The methods defined are for sending synchronous and asynchronous HTTP requests,
  * as well as aggregating data from multiple endpoints.
  */
-interface AvaxClientInterface
+interface GeminiClientInterface
 {
     /**
      * Send a POST request with the specified body and optional headers.

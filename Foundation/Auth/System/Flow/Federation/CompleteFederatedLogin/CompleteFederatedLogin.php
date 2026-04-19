@@ -78,7 +78,10 @@ final readonly class CompleteFederatedLogin
     }
 
     /**
-     * @throws FederationFailed
+     * @param CompleteFederatedLoginData $data
+     *
+     * @return AuthenticationResult
+     * @throws RandomException
      */
     public function execute(CompleteFederatedLoginData $data) : AuthenticationResult
     {
@@ -165,7 +168,10 @@ final readonly class CompleteFederatedLogin
     }
 
     /**
-     * @throws RandomException
+     * @param string $email
+     * @param string $displayName
+     *
+     * @return User
      */
     private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
     {

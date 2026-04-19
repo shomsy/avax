@@ -249,7 +249,7 @@ class LocalFileStorage implements FileStorageInterface
             throw new RuntimeException(message: sprintf('Path does not exist: %s', $path));
         }
 
-        if (! @chmod(filename: $path, permissions: $permissions)) { // Suppress warning to handle it manually
+        if (! chmod(filename: $path, permissions: $permissions)) { // Suppress warning to handle it manually
             error_log(message: sprintf('Failed to set permissions on: %s', $path));
 
             return false;

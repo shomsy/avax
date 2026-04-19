@@ -168,6 +168,6 @@ $container->reset();
 
 assertSame(expected: 1, actual: AdvancedLifetimeSequence::$sharedDisposals, message: 'Reset should dispose explicitly disposable shared services.');
 
-@rmdir($cacheDir);
+rmdir($cacheDir);
 
 echo basename(__FILE__) . " ok\n";

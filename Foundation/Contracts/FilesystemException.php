@@ -12,6 +12,7 @@ use Throwable;
  */
 class FilesystemException extends Exception
 {
+    #[\Override]
     public function __construct(string $message, string $path = '', int $code = 0, Throwable|null $previous = null)
     {
         $fullMessage = $message;

@@ -46,6 +46,7 @@ class LogoutTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

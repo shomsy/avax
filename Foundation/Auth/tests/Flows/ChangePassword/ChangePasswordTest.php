@@ -194,6 +194,7 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

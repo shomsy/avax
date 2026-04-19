@@ -8,6 +8,11 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs
  * QueryParams
  *
  * Strongly-typed wrapper for query parameter input.
+ *
+ * Semantic rules:
+ * - internal state is always an array
+ * - query params are read-only
+ * - presence semantics are delegated to AccessesTypedValues
  */
 final readonly class QueryParams
 {
@@ -16,14 +21,17 @@ final readonly class QueryParams
     /**
      * @param array<string, mixed> $params
      */
-    public function __construct(
-        private array $params = [],
-    ) {}
+    private function __construct(private array $params = []) {}
+
+    public static function empty(): self
+    {
+        return new self();
+    }
 
     /**
      * @param array<string, mixed> $params
      */
-    public static function fromArray(array $params) : self
+    public static function fromQueryParams(array $params): self
     {
         return new self(params: $params);
     }
@@ -31,7 +39,7 @@ final readonly class QueryParams
     /**
      * @return array<string, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->params;
     }
@@ -39,7 +47,7 @@ final readonly class QueryParams
     /**
      * @return array<string, mixed>
      */
-    protected function data() : array
+    protected function data(): array
     {
         return $this->params;
     }

@@ -49,6 +49,7 @@ final class MySQLGrammar extends BaseGrammar
      * @param array      $uniqueBy Ignored in MySQL (MySQL figures this out from your DB keys).
      * @param array      $update   The list of columns to change if a conflict happens.
      */
+    #[\Override]
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
     {
         $sql = $this->compileInsert(state: $state);
@@ -72,8 +73,10 @@ final class MySQLGrammar extends BaseGrammar
      *
      * @param mixed $value The name (e.g., 'users.name').
      */
+    #[\Override]
     public function wrap(mixed $value) : string
     {
+        parent::wrap($value);
         if ($value instanceof Expression) {
             return $value->getValue();
         }
@@ -104,8 +107,10 @@ final class MySQLGrammar extends BaseGrammar
     /**
      * The internal "Backtick Printer" for a single name.
      */
+    #[\Override]
     protected function wrapSegment(string $segment) : string
     {
+        parent::wrapSegment($segment);
         if ($segment === '*' || $segment === '') {
             return $segment;
         }
@@ -117,6 +122,7 @@ final class MySQLGrammar extends BaseGrammar
     /**
      * Get the MySQL snippet for random ordering.
      */
+    #[\Override]
     public function compileRandomOrder() : string
     {
         return 'RAND()';
@@ -125,6 +131,7 @@ final class MySQLGrammar extends BaseGrammar
     /**
      * Build the command to completely empty a table.
      */
+    #[\Override]
     public function compileTruncate(string $table) : string
     {
         return 'TRUNCATE TABLE ' . $this->wrap(value: $table);
@@ -133,6 +140,7 @@ final class MySQLGrammar extends BaseGrammar
     /**
      * Build the command to delete a table if it exists.
      */
+    #[\Override]
     public function compileDropIfExists(string $table) : string
     {
         return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);

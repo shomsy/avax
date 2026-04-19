@@ -13,9 +13,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes;
  */
 final readonly class RequestAttributes
 {
-    public function __construct(
-        private array $attributes = []
-    ) {}
+    public function __construct(private array $attributes = []) {}
 
     /**
      * @return array<string, mixed>

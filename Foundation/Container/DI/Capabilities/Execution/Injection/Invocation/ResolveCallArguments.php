@@ -42,9 +42,13 @@ final readonly class ResolveCallArguments
     }
 
     /**
+     * @param ResolvePlan          $plan
      * @param array<string, mixed> $overrides
+     * @param ServiceResolver      $resolver
+     * @param ResolveRequest|null  $request
      *
      * @return array<int, mixed>
+     * @throws \Throwable
      */
     public function resolvePlan(
         ResolvePlan         $plan,

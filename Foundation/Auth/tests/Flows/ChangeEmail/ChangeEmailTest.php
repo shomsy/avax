@@ -37,6 +37,7 @@ use DateMalformedStringException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use SensitiveParameter;
 
 final class ChangeEmailTest extends TestCase
@@ -198,6 +199,7 @@ final class ChangeEmailTest extends TestCase
 
     /**
      * @throws DateInvalidOperationException
+     * @throws RandomException
      */
     public function testConfirmEmailChangeSuccess() : void
     {

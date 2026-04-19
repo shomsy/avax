@@ -34,6 +34,7 @@ final class TransactionException extends DatabaseException
      *                                     intercepted.
      * @param Throwable|null $previous     The underlying technical driver or unit-of-work exception.
      */
+    #[\Override]
     public function __construct(
         string         $message,
         int            $nestingLevel,

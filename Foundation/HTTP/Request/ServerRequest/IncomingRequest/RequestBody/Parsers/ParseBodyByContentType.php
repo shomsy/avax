@@ -14,7 +14,7 @@ final readonly class ParseBodyByContentType
         private ParseFormBody $formParser,
     ) {}
 
-    public function execute(string $contentType, string $content) : ?array
+    public function execute(string $contentType, string $content) : array|null
     {
         if ($content === '') {
             return null;

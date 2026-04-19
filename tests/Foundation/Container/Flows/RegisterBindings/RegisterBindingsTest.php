@@ -68,6 +68,7 @@ final class RegisterBindingsTest extends TestCase
         $this->app->getContainer()->endScope();
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->app = AppFactory::http(

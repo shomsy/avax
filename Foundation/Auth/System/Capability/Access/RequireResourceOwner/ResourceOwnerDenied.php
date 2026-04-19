@@ -10,6 +10,7 @@ final class ResourceOwnerDenied extends RuntimeException
 {
     private readonly int $ownerUserId;
 
+    #[\Override]
     public function __construct(
         int    $ownerUserId,
         string $message = 'Current user does not own this resource.'

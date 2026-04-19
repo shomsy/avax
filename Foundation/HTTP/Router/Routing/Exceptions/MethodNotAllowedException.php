@@ -17,6 +17,7 @@ final class MethodNotAllowedException extends RuntimeException
         }
     }
 
+    #[\Override]
     public function __construct(string $method, string $path, array $allowedMethods)
     {
         parent::__construct(message: "Method {$method} not allowed for {$path}");

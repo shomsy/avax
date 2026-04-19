@@ -127,6 +127,7 @@ class HttpKernelIntegrationTest extends TestCase
     {
         // Given: IP restriction middleware that blocks
         $ipMiddleware = new class($this->responseFactory) extends IpRestrictionMiddleware {
+            #[\Override]
             protected function isAllowedIp(#[\SensitiveParameter] string $ipAddress) : bool
             {
                 return $ipAddress !== '192.168.1.100'; // Block this IP
@@ -312,6 +313,7 @@ class HttpKernelIntegrationTest extends TestCase
         $this->assertNotEquals(expected: 403, actual: $response->statusCode);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $psr17Factory = new Psr17Factory;

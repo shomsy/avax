@@ -11,6 +11,7 @@ use Exception;
  */
 class ReservedRouteNameException extends Exception
 {
+    #[\Override]
     public function __construct(string $name)
     {
         parent::__construct(message: "Route name '{$name}' is reserved. Names starting with '__avax.' are not allowed.");

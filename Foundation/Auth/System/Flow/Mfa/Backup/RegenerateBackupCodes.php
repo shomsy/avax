@@ -16,6 +16,7 @@ use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -48,9 +49,9 @@ final readonly class RegenerateBackupCodes
     }
 
     /**
+     * @return BackupCodeSet
      * @throws Unauthenticated
-     * @throws FreshMfaRequired
-     * @throws MfaChallengeFailed
+     * @throws RandomException
      */
     public function execute() : BackupCodeSet
     {

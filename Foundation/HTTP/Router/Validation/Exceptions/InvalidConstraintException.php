@@ -11,6 +11,7 @@ use Exception;
  */
 class InvalidConstraintException extends Exception
 {
+    #[\Override]
     public function __construct(string $pattern, string $reason = '')
     {
         $message = "Invalid route constraint pattern: {$pattern}";

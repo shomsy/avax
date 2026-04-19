@@ -65,8 +65,9 @@ final readonly class ProvisionScimUser
     }
 
     /**
-     * @throws ScimFailed
-     * @throws RandomException
+     * @param ProvisionScimUserData $data
+     *
+     * @return ScimProvisioningResult
      */
     public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
     {

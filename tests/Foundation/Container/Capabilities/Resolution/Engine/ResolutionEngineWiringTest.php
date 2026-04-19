@@ -31,6 +31,7 @@ final class ResolutionEngineWiringTest extends TestCase
         $this->engine->setContainer(container: $container);
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $resolver     = new DependencyResolver;

@@ -25,7 +25,7 @@ final readonly class UserId implements Stringable
         return (string) $this->value;
     }
 
-    public function equals(UserId $other) : bool
+    public function equals(self $other) : bool
     {
         return $this->value === $other->value;
     }

@@ -144,9 +144,9 @@ final readonly class RunConformanceHarness
     private function runCommand(array $command, string $workingDirectory) : array
     {
         $descriptor = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
+            ['pipe', 'r'],
+            ['pipe', 'w'],
+            ['pipe', 'w'],
         ];
 
         $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);

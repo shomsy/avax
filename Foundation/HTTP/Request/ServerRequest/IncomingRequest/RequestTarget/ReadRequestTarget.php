@@ -12,7 +12,7 @@ use Psr\Http\Message\UriInterface;
 final readonly class ReadRequestTarget
 {
     public function __construct(
-        private ?string      $explicitTarget,
+        private string|null  $explicitTarget,
         private UriInterface $uri
     ) {}
 

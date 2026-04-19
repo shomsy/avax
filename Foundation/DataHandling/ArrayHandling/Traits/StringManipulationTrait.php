@@ -73,7 +73,7 @@ trait StringManipulationTrait
      */
     private function processItems(callable $callback, string|null $key = null) : static
     {
-        return $this->map(callback: static function ($item) use ($callback, $key) {
+        return $this->map(callback: static function ($item) use ($key, $callback) {
             if ($key !== null && is_array(value: $item) && isset($item[$key]) && is_string(value: $item[$key])) {
                 $item[$key] = $callback($item[$key]);
 

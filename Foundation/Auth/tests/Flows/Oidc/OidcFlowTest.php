@@ -32,13 +32,12 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class OidcFlowTest extends TestCase
 {
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcDiscoveryJwksIdTokenAndUserInfoFlow() : void
     {
@@ -154,8 +153,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcParAuthorizationRequestAndJarmResponseFlow() : void
     {
@@ -207,8 +204,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcParAcceptsClientSignedRequestObjects() : void
     {
@@ -259,8 +254,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcLogoutRevokesCurrentSession() : void
     {
@@ -291,8 +284,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcAuthorizationRejectsUnknownRequestUri() : void
     {
@@ -328,8 +319,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcAuthorizationRequiresNonce() : void
     {
@@ -363,8 +352,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcAuthorizationFailsWhenProviderIsMissing() : void
     {
@@ -411,8 +398,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testPairwiseOidcProviderIssuesStablePairwiseSubjects() : void
     {
@@ -475,7 +460,7 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testRotatingOidcProviderPublishesOverlapKeysAndVerifiesLegacyTokens() : void
     {

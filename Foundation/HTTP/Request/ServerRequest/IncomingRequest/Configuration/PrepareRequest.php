@@ -15,11 +15,12 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
-use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
+
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
+use SensitiveParameter;
 
 /**
  * PrepareRequest - Internal assembly pipeline owner.
@@ -31,15 +32,14 @@ final readonly class PrepareRequest
         private NormalizeProtocolVersion $protocolNormalizer,
         private NormalizeUploadedFiles   $filesNormalizer,
         private TrustedProxyPolicy       $trustedProxyPolicy,
-        private ParseForwardedAddresses  $forwardedParser,
         private ResolveClientAddress     $clientResolver,
     ) {}
 
     public function fromGlobals(
-        ?array $server = null,
-        ?array $query = null,
-        ?array $cookie = null,
-        ?array $files = null,
+        array|null $server = null,
+        array|null $query = null,
+        array|null $cookie = null,
+        array|null $files = null,
     ) : RequestInit
     {
         $server = $server ?? $_SERVER ?? [];
@@ -68,7 +68,7 @@ final readonly class PrepareRequest
             explicitTarget : null,
             cookies        : new RequestCookies(cookies: $cookie),
             queryParams    : $query,
-            uploadedFiles  : $this->filesNormalizer->execute(files: $files),
+            uploadedFiles  : new UploadedFiles(files: $this->filesNormalizer->execute(files: $files)),
             parsedBody     : $parsedBody,
             attributes     : new RequestAttributes,
             session        : $session,
@@ -142,7 +142,7 @@ final readonly class PrepareRequest
 
     private function createEmptyBodyStream() : Stream
     {
-        $handle = @fopen('php://temp', 'r+');
+        $handle = fopen('php://temp', 'r+');
         if ($handle === false) {
             return new Stream(stream: fopen('php://temp', 'r+'));
         }
@@ -152,7 +152,7 @@ final readonly class PrepareRequest
 
     private function createBodyStreamFromRaw(string $rawBody) : Stream
     {
-        $handle = @fopen('php://temp', 'r+');
+        $handle = fopen('php://temp', 'r+');
         if ($handle === false) {
             return new Stream(stream: fopen('php://temp', 'r+'));
         }
@@ -164,7 +164,7 @@ final readonly class PrepareRequest
         return $stream;
     }
 
-    private function stageParseBody(string $rawBody, RequestHeaders $requestHeaders) : ParsedBody
+    private function stageParseBody(string $rawBody, #[SensitiveParameter] RequestHeaders $requestHeaders) : ParsedBody
     {
         if ($rawBody === '') {
             return new ParsedBody;
@@ -181,15 +181,11 @@ final readonly class PrepareRequest
             : new ParsedBody;
     }
 
-    private function stageResolveSession() : ?RequestSession
+    private function stageResolveSession() : RequestSession|null
     {
         $status = session_status();
 
-        if ($status === PHP_SESSION_NONE || $status !== PHP_SESSION_ACTIVE) {
-            return null;
-        }
-
-        if ($_SESSION === []) {
+        if ($status !== PHP_SESSION_ACTIVE || $_SESSION === []) {
             return null;
         }
 
@@ -197,7 +193,7 @@ final readonly class PrepareRequest
     }
 
     public function fromSlices(
-        ?array            $queryParams = null,
+        array|null        $queryParams = null,
         array|object|null $parsedBody = null,
         string            $method = 'GET',
     ) : RequestInit
@@ -235,7 +231,7 @@ final readonly class PrepareRequest
         );
     }
 
-    public function resolveClientAddress(array $serverParams) : ?string
+    public function resolveClientAddress(array $serverParams) : string|null
     {
         $remoteAddr = $serverParams['REMOTE_ADDR'] ?? null;
 

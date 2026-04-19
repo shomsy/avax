@@ -50,6 +50,7 @@ final class FunctionCaller
      *
      * @return mixed
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function call(
         callable|string     $target,

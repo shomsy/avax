@@ -21,7 +21,6 @@ final readonly class ReadGitOutput
             ['rev-parse', 'HEAD'], ['rev-parse', '--verify', 'HEAD'] => $this->readHeadCommit(gitDirectory: $gitDirectory),
             ['rev-parse', '--verify', 'HEAD^'] => $this->readPreviousHeadCommit(gitDirectory: $gitDirectory),
             ['rev-parse', '--abbrev-ref', 'HEAD'] => $this->readHeadReferenceName(gitDirectory: $gitDirectory),
-            ['status', '--short'] => '',
             default => '',
         };
     }

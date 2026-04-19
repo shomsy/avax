@@ -3212,7 +3212,7 @@
         }
       ],
       "description": "? Nette NEON: encodes and decodes NEON file format.",
-      "homepage": "http://ne-on.org",
+      "homepage": "https://ne-on.org",
       "keywords": [
         "export",
         "import",
@@ -3448,7 +3448,7 @@
       "authors": [
         {
           "name": "Chris Boulton",
-          "homepage": "http://github.com/chrisboulton"
+          "homepage": "https://github.com/chrisboulton"
         }
       ],
       "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
@@ -4317,8 +4317,8 @@
           "email": "accounts@sentry.io"
         }
       ],
-      "description": "PHP SDK for Sentry (http://sentry.io)",
-      "homepage": "http://sentry.io",
+      "description": "PHP SDK for Sentry (https://sentry.io)",
+      "homepage": "https://sentry.io",
       "keywords": [
         "crash-reporting",
         "crash-reports",
@@ -7001,7 +7001,7 @@
         {
           "name": "Jordi Boggiano",
           "email": "j.boggiano@seld.be",
-          "homepage": "http://seld.be"
+          "homepage": "https://seld.be"
         }
       ],
       "description": "PCRE wrapping library that offers type-safe preg_* replacements.",
@@ -7071,17 +7071,17 @@
         {
           "name": "Nils Adermann",
           "email": "naderman@naderman.de",
-          "homepage": "http://www.naderman.de"
+          "homepage": "https://www.naderman.de"
         },
         {
           "name": "Jordi Boggiano",
           "email": "j.boggiano@seld.be",
-          "homepage": "http://seld.be"
+          "homepage": "https://seld.be"
         },
         {
           "name": "Rob Bast",
           "email": "rob.bast@gmail.com",
-          "homepage": "http://robbast.nl"
+          "homepage": "https://robbast.nl"
         }
       ],
       "description": "Semver library that offers utilities, version constraint parsing and validation.",
@@ -8857,7 +8857,7 @@
       "authors": [
         {
           "name": "PHP-FIG",
-          "homepage": "http://www.php-fig.org/"
+          "homepage": "https://www.php-fig.org/"
         }
       ],
       "description": "Standard interfaces for event handling.",

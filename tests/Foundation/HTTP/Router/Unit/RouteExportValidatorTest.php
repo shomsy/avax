@@ -276,6 +276,7 @@ class RouteExportValidatorTest extends TestCase
         $this->assertTrue(condition: $this->validator->validate(route: $route));
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->logger    = $this->createMock(LoggerInterface::class);

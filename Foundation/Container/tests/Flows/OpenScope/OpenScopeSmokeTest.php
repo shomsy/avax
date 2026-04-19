@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-final class OpenScopedService {}
+final class OpenScopeSmokeTest {}
 
 $container = makeTestContainer();
 $container->scoped(abstract: OpenScopedService::class, concrete: OpenScopedService::class);

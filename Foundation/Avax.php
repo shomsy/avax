@@ -50,7 +50,7 @@ enum Avax: string
      */
     public static function all() : array
     {
-        return array_map(callback: fn (Avax $Avax) : string => $Avax->resolve(), array: self::cases());
+        return array_map(callback: fn (self $Avax) : string => $Avax->resolve(), array: self::cases());
     }
 
     /**

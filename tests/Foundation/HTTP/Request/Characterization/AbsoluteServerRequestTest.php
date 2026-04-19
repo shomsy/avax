@@ -75,7 +75,7 @@ final class AbsoluteServerRequestTest extends TestCase
 
     public function test_get_uri_returns_uri() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'http://example.com/test/path?foo=bar');
+        $uri     = UriBuilder::createFromString(uri: 'https://example.com/test/path?foo=bar');
         $request = $this->createRequest(serverParams: [], uri: $uri);
 
         $this->assertSame(expected: $uri, actual: $request->getUri());
@@ -84,7 +84,7 @@ final class AbsoluteServerRequestTest extends TestCase
     public function test_with_uri_returns_cloned_instance() : void
     {
         $request    = $this->createRequest();
-        $newUri     = UriBuilder::createFromString(uri: 'http://example.com/new/path');
+        $newUri     = UriBuilder::createFromString(uri: 'https://example.com/new/path');
         $newRequest = $request->withUri($newUri);
 
         $this->assertNotSame(expected: $request, actual: $newRequest);
@@ -316,7 +316,7 @@ final class AbsoluteServerRequestTest extends TestCase
 
     public function test_get_request_target() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'http://example.com/test/path?foo=bar');
+        $uri     = UriBuilder::createFromString(uri: 'https://example.com/test/path?foo=bar');
         $request = $this->createRequest(serverParams: [], uri: $uri);
 
         $this->assertSame(expected: '/test/path?foo=bar', actual: $request->getRequestTarget());

@@ -4,35 +4,102 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
+use SensitiveParameter;
+
 /**
- * NormalizeHeaders - Standardizes header keys and values.
+ * Normalizes raw header input into a stable internal representation.
  */
-final readonly class NormalizeHeaders
+final class NormalizeHeaders
 {
     /**
-     * @param array<string, string|string[]> $headers
+     * @param array<string, string|array<int, string>> $headers
      * @return array<string, string[]>
      */
-    public function execute(array $headers) : array
+    public static function normalizeHeaders(#[SensitiveParameter] array $headers): array
     {
-        $normalized = [];
+        $normalizedHeaders = [];
+        $canonicalNames = [];
+
         foreach ($headers as $name => $value) {
-            if (! is_string($name) || $name === '') {
+            $normalizedHeader = self::normalizeHeader(name: $name, value: $value);
+
+            if ($normalizedHeader === null) {
                 continue;
             }
 
-            $normalized[$name] = $this->normalizeValue(value: $value);
+            $lookupKey = strtolower($normalizedHeader['name']);
+
+            if (! isset($canonicalNames[$lookupKey])) {
+                $canonicalNames[$lookupKey] = $normalizedHeader['name'];
+                $normalizedHeaders[$normalizedHeader['name']] = $normalizedHeader['values'];
+
+                continue;
+            }
+
+            $canonicalName = $canonicalNames[$lookupKey];
+            $normalizedHeaders[$canonicalName] = [
+                ...$normalizedHeaders[$canonicalName],
+                ...$normalizedHeader['values'],
+            ];
         }
 
-        return $normalized;
+        return $normalizedHeaders;
     }
 
-    private function normalizeValue(string|array $value) : array
+    /**
+     * @return array{name: string, values: string[]}|null
+     */
+    public static function normalizeHeader(string $name, string|array $value): array|null
     {
-        if (is_array($value)) {
-            return array_values(array_map('trim', $value));
+        $normalizedName = self::normalizeHeaderName(name: $name);
+
+        if ($normalizedName === null) {
+            return null;
         }
 
-        return [trim((string)$value)];
+        return [
+            'name' => $normalizedName,
+            'values' => self::normalizeValues(value: $value),
+        ];
+    }
+
+    /**
+     * @param array<string, string[]> $normalizedHeaders
+     * @return array<string, string>
+     */
+    public static function buildLookupMap(#[SensitiveParameter] array $normalizedHeaders): array
+    {
+        $nameMap = [];
+
+        foreach ($normalizedHeaders as $name => $_) {
+            $nameMap[strtolower($name)] = $name;
+        }
+
+        return $nameMap;
+    }
+
+    private static function normalizeHeaderName(string $name): string|null
+    {
+        $normalizedName = trim($name);
+
+        return $normalizedName === ''
+            ? null
+            : $normalizedName;
+    }
+
+    /**
+     * @param string|array<int, string> $value
+     * @return string[]
+     */
+    private static function normalizeValues(string|array $value): array
+    {
+        if (is_string($value)) {
+            return [trim($value)];
+        }
+
+        return array_map(
+            static fn (string $item): string => trim($item),
+            array_values($value),
+        );
     }
 }

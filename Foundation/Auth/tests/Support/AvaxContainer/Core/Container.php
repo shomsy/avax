@@ -50,7 +50,7 @@ final class Container
             return $this->build(class: $id);
         }
 
-        throw new RuntimeException(message: "Container binding [$id] is missing.");
+        throw new RuntimeException(message: "Container binding [{$id}] is missing.");
     }
 
     /**
@@ -97,7 +97,7 @@ final class Container
                 continue;
             }
 
-            throw new RuntimeException(message: "Container cannot resolve parameter [{$parameter->getName()}] for [$class].");
+            throw new RuntimeException(message: "Container cannot resolve parameter [{$parameter->getName()}] for [{$class}].");
         }
 
         return $reflection->newInstanceArgs(args: $arguments);

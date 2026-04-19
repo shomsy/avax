@@ -16,6 +16,7 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 
@@ -96,7 +97,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testDpopProofMismatchAndKeyRotationAreRejected() : void
     {

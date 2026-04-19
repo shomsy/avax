@@ -16,7 +16,7 @@ $GLOBALS['_composer_bin_dir'] = __DIR__;
 $GLOBALS['_composer_autoload_path'] = __DIR__ . '/..'.'/autoload.php';
 
 if (PHP_VERSION_ID < 80000) {
-    if (!class_exists('Composer\BinProxyWrapper')) {
+    if (!class_exists(\Composer\BinProxyWrapper::class)) {
         /**
          * @internal
          */
@@ -68,7 +68,7 @@ if (PHP_VERSION_ID < 80000) {
 
             public function stream_seek($offset, $whence)
             {
-                if (0 === fseek($this->handle, $offset, $whence)) {
+                if (fseek($this->handle, $offset, $whence) === 0) {
                     $this->position = ftell($this->handle);
                     return true;
                 }
@@ -110,7 +110,7 @@ if (PHP_VERSION_ID < 80000) {
 
     if (
         (function_exists('stream_get_wrappers') && in_array('phpvfscomposer', stream_get_wrappers(), true))
-        || (function_exists('stream_wrapper_register') && stream_wrapper_register('phpvfscomposer', 'Composer\BinProxyWrapper'))
+        || (function_exists('stream_wrapper_register') && stream_wrapper_register('phpvfscomposer', \Composer\BinProxyWrapper::class))
     ) {
         return include("phpvfscomposer://" . __DIR__ . '/..'.'/nunomaduro/phpinsights/bin/phpinsights');
     }

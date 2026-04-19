@@ -14,6 +14,7 @@ final class MfaChallengeFailed extends RuntimeException
     private readonly int|null            $retryAfter;
     private readonly MfaChallengeFailure $reason;
 
+    #[\Override]
     public function __construct(
         MfaChallengeFailure $reason,
         int|null            $retryAfter = null,

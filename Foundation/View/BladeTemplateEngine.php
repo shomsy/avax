@@ -13,6 +13,7 @@ class BladeTemplateEngine extends Blade
 {
     public string $baseAssetPath;
 
+    #[\Override]
     public function __construct(string $viewsPath, string $cachePath)
     {
         parent::__construct(viewPaths: $viewsPath, cachePath: $cachePath);

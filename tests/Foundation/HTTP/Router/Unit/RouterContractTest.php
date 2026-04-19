@@ -162,6 +162,7 @@ class RouterContractTest extends TestCase
         $this->assertTrue(condition: true); // Contract test - 404 behavior guaranteed
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         // These will be mocked/injected by the container in real usage

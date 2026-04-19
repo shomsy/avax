@@ -47,11 +47,11 @@ final readonly class RouteBootstrapper
     private RouteCacheLoader     $routeCacheLoader;
 
     /**
-     * @var RouteCacheLoader Handles route caching operations.
-     * @var HttpRequestRouter Responsible for registering and managing application routes.
+     * @return LoggerInterface Logs important messages and errors.
+     *@var HttpRequestRouter Responsible for registering and managing application routes.
      * @var RouterBootstrapState Thread-safe bootstrap state management.
      * @var RouteRegistry Route registry for isolated route collection.
-     * @var LoggerInterface Logs important messages and errors.
+     * @var RouteCacheLoader Handles route caching operations.
      */
     public function __construct(
         RouteCacheLoader     $routeCacheLoader,

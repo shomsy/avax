@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
+use Random\RandomException;
 
 final readonly class SyncScimGroups
 {
@@ -34,7 +35,10 @@ final readonly class SyncScimGroups
     }
 
     /**
-     * @throws ScimFailed
+     * @param SyncScimGroupsData $data
+     *
+     * @return ScimProvisioningResult
+     * @throws RandomException
      */
     public function execute(SyncScimGroupsData $data) : ScimProvisioningResult
     {

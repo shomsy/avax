@@ -325,10 +325,10 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      *
      * @param array<string, mixed> $context
      */
-    public function forContext(array $context) : ContainerInterface;
+    public function forContext(array $context) : self;
 
     /**
      * Returns one slice-aware view over the same container runtime.
      */
-    public function forSlice(string $slice) : ContainerInterface;
+    public function forSlice(string $slice) : self;
 }

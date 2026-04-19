@@ -18,10 +18,13 @@ use Throwable;
 final class ResolveDependencies
 {
     /**
+     * @param array                $parameters
      * @param array<string, mixed> $overrides
+     * @param ServiceResolver      $resolver
+     * @param ResolveRequest|null  $request
      *
      * @return array<int, mixed>
-     * @throws ContainerException
+     * @throws Throwable
      */
     public function resolveParameters(
         array               $parameters,

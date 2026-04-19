@@ -34,6 +34,7 @@ class TemplateEngine extends BladeOne
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
+    #[\Override]
     public function __construct(
         string $templatePath,
         string $compiledPath,
@@ -63,9 +64,6 @@ class TemplateEngine extends BladeOne
     }
 
     /**
-     * @throws FoundationContainerException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function initializeBaseAssetPath() : void
     {
@@ -80,6 +78,7 @@ class TemplateEngine extends BladeOne
      *
      * This method dynamically constructs the base URL making it flexible for different environments and protocols.
      */
+    #[\Override]
     public function getBaseUrl() : string
     {
         $context = function_exists('http_context') ? http_context() : null;

@@ -7,11 +7,11 @@ namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 final class UserRegistrationDTOTest extends TestCase
 {
     /**
-     * @throws \ReflectionException
      */
     public function test_valid_data_hydrates_successfully(): void
     {
@@ -29,7 +29,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_validates_email_format(): void
     {
@@ -43,7 +42,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_validates_password_min_length(): void
     {
@@ -57,7 +55,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_validates_password_complexity(): void
     {
@@ -71,7 +68,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_validates_age_minimum(): void
     {
@@ -86,7 +82,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_optional_phone_is_nullable(): void
     {
@@ -100,7 +95,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_age_has_default_value(): void
     {
@@ -114,7 +108,6 @@ final class UserRegistrationDTOTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
      */
     public function test_collects_all_validation_errors(): void
     {

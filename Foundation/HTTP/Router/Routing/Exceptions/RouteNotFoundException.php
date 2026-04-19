@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use Override;
+
 /**
  * Thrown when no route matches the incoming request.
  *
@@ -37,6 +39,7 @@ final class RouteNotFoundException extends RouterException
     /**
      * Get the HTTP status code (404).
      */
+    #[Override]
     public function getHttpStatusCode() : int
     {
         return 404;

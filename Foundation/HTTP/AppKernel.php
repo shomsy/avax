@@ -133,6 +133,7 @@ final readonly class AppKernel implements Kernel
     private function createOfficeIpRestriction(ResponseFactory $responseFactory) : MiddlewareInterface
     {
         return new class($responseFactory) extends IpRestrictionMiddleware {
+            #[\Override]
             protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
                 // Example: Allow local development and office IPs

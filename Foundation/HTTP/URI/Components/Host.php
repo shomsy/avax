@@ -52,7 +52,7 @@ final readonly class Host implements Stringable
         }
 
         if (str_contains($normalizedHost, ':') && ! str_starts_with($normalizedHost, '[')) {
-            $parsed = parse_url(url: 'http://' . $normalizedHost);
+            $parsed = parse_url(url: 'https://' . $normalizedHost);
             if ($parsed !== false && isset($parsed['host'])) {
                 $normalizedHost = $parsed['host'];
             }

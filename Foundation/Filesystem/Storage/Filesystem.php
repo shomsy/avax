@@ -38,10 +38,7 @@ readonly class Filesystem
      *
      * @return FileStorageInterface The instance of the file storage based on the disk configuration.
      *
-     * @throws FoundationContainerException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws \Exception
+     * @throws Exception
      */
     public function disk(string|null $name = null) : FileStorageInterface
     {

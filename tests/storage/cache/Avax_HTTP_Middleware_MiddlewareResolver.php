@@ -5,22 +5,21 @@ use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => 'Avax\\HTTP\\Middleware\\MiddlewareResolver',
+                                                'class'              => \Avax\HTTP\Middleware\MiddlewareResolver::class,
                                                 'constructor'        =>
                                                     MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' =>
                                                                                                 [
-                                                                                                    0 =>
-                                                                                                        ParameterPrototype::__set_state(array: [
-                                                                                                                                                   'name'       => 'groupResolver',
-                                                                                                                                                   'type'       => 'Avax\\HTTP\\Middleware\\MiddlewareGroupResolver',
-                                                                                                                                                   'hasDefault' => false,
-                                                                                                                                                   'default'    => null,
-                                                                                                                                                   'isVariadic' => false,
-                                                                                                                                                   'allowsNull' => false,
-                                                                                                                                                   'required'   => true,
-                                                                                                                                               ]),
+                                                                                                    ParameterPrototype::__set_state(array: [
+                                                                                                                                               'name'       => 'groupResolver',
+                                                                                                                                               'type'       => \Avax\HTTP\Middleware\MiddlewareGroupResolver::class,
+                                                                                                                                               'hasDefault' => false,
+                                                                                                                                               'default'    => null,
+                                                                                                                                               'isVariadic' => false,
+                                                                                                                                               'allowsNull' => false,
+                                                                                                                                               'required'   => true,
+                                                                                                                                           ]),
                                                                                                 ],
                                                                                         ]),
                                                 'injectedProperties' =>

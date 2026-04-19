@@ -25,8 +25,8 @@ final class ViewServiceProviderTest extends TestCase
         $builder->method('withArguments')->willReturnSelf();
         $builder->method('withArgument')->willReturnSelf();
 
-        @mkdir($temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', 0777, true);
-        @mkdir($defaultCache, 0777, true);
+        mkdir($temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', 0777, true);
+        mkdir($defaultCache, 0777, true);
         chdir($temporaryBase);
 
         try {

@@ -17,6 +17,7 @@ class ValidationException extends RuntimeException
     /**
      * Constructor for the ValidationException.
      */
+    #[\Override]
     public function __construct(
         string         $message,
         int            $code = 422,

@@ -22,7 +22,6 @@ final class ScopeKind
     public static function rank(string $kind) : int
     {
         return match (self::normalize(kind: $kind)) {
-            self::ANY       => 0,
             self::OPERATION => 1,
             self::REQUEST   => 2,
             self::JOB       => 3,

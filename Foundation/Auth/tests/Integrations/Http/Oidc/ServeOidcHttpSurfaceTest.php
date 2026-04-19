@@ -25,14 +25,13 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 
 final class ServeOidcHttpSurfaceTest extends TestCase
 {
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcHttpSurfaceServesDiscoveryJwksAndUserInfo() : void
     {
@@ -202,8 +201,6 @@ final class ServeOidcHttpSurfaceTest extends TestCase
     }
 
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcHttpSurfaceAcceptsSignedJarParRequest() : void
     {
@@ -370,7 +367,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testOidcHttpSurfaceRegistersRequestObjectVerificationKeyForSignedPar() : void
     {
@@ -420,6 +417,10 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
     /**
      * @param array<string, mixed> $claims
+     * @param string               $privateKeyPem
+     *
+     * @return string
+     * @throws JsonException
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {

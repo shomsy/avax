@@ -26,6 +26,7 @@ class IsValidTableName extends AbstractRule
         $this->message = $message;
     }
 
+    #[\Override]
     public function validate(mixed $value, array $data, string $property) : void
     {
         if (! is_string(value: $value) || ! preg_match(pattern: '/^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)?$/', subject: $value)) {

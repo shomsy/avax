@@ -13,6 +13,7 @@ final class FreshMfaRequired extends RuntimeException
 {
     private readonly int $maxAgeSeconds;
 
+    #[\Override]
     public function __construct(
         int    $maxAgeSeconds,
         string $message = 'Fresh MFA verification is required.'

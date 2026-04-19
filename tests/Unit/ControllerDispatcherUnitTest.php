@@ -87,6 +87,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $this->assertEquals(expected: 'Controller returned null', actual: (string) $response->getBody());
     }
 
+    #[\Override]
     protected function setUp() : void
     {
         $this->container  = $this->createMock(ContainerInterface::class);

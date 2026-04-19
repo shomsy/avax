@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Oidc\JarmResponse;
 
 use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 
 final readonly class BuildJarmResponse
@@ -23,7 +24,7 @@ final readonly class BuildJarmResponse
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function execute(BuildJarmResponseData $data) : JarmResponse

@@ -33,7 +33,7 @@ class Integer
     /**
      * Custom error message for validation failures.
      *
-     * @var string|null A custom message provided at instantiation to override the default.
+     * @return string|null A custom message provided at instantiation to override the default.
      *                  If null, the default error message will be used.
      */
     public function __construct(string|null $message = null) { $this->message = $message; }

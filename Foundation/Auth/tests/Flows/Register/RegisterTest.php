@@ -148,6 +148,7 @@ class RegisterTest extends TestCase
         $register->execute(data: $data);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

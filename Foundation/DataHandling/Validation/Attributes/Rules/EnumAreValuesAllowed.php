@@ -32,7 +32,7 @@ readonly class EnumAreValuesAllowed
     /**
      * Fully qualified class name of the Enum to validate against.
      *
-     * @var string The expected Enum class, which must implement `BackedEnum` to support `tryFrom`.
+     * @return string The expected Enum class, which must implement `BackedEnum` to support `tryFrom`.
      */
     public function __construct(
         string $enumClass,

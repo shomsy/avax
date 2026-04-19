@@ -36,7 +36,7 @@ $connection     = new class($pdo) implements DatabaseConnection {
 
     public function getName() : string { return 'primary'; }
 
-    public function config(string $key = null, mixed $default = null) : mixed { return null; }
+    public function config(string|null $key = null, mixed $default = null) : mixed { return null; }
 
     public function ping() : bool { return true; }
 

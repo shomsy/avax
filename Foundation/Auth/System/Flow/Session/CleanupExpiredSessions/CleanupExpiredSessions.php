@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Session\CleanupExpiredSessions;
 
 use Avax\Auth\System\Capability\Session\PruneExpiredSessionsInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class CleanupExpiredSessions
 {
@@ -13,8 +14,8 @@ final readonly class CleanupExpiredSessions
     private Clock                                 $clock;
 
     public function __construct(
-        #[\SensitiveParameter] PruneExpiredSessionsInterface|null $sessionRegistry,
-        Clock                                                     $clock
+        #[SensitiveParameter] PruneExpiredSessionsInterface|null $sessionRegistry,
+        Clock                                                    $clock
     )
     {
         $this->sessionRegistry = $sessionRegistry;

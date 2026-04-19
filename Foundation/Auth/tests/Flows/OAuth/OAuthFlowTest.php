@@ -30,14 +30,12 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class OAuthFlowTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testPublicClientRequiresPkceDuringAuthorization() : void
     {
@@ -91,9 +89,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOAuthAuthorizationCodeRefreshIntrospectionAndRevokeCycle() : void
     {
@@ -185,9 +180,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testPhishingResistantOAuthClientRejectsCompatibilityLoginAsPrimaryPath() : void
     {
@@ -222,9 +214,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOAuthRefreshRequiresMatchingSenderConstraint() : void
     {

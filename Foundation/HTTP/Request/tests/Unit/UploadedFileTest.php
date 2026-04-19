@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFile;
 use Avax\HTTP\Response\Classes\Stream;
@@ -25,15 +25,15 @@ class UploadedFileTest extends TestCase
 
     private function createUploadedFile() : UploadedFile
     {
-        $stream = new Stream(stream: fopen('php://temp', 'r+'));
-        $stream->write(string: 'dummy content');
+        $path = sys_get_temp_dir() . '/uploaded_test_' . uniqid();
+        file_put_contents($path, 'dummy content');
 
         return new UploadedFile(
-            stream         : $stream,
-            size           : 13,
-            error          : UPLOAD_ERR_OK,
-            clientFilename : 'test.txt',
-            clientMediaType: 'text/plain'
+            tmpName: $path,
+            size: 13,
+            error: UPLOAD_ERR_OK,
+            name: 'test.txt',
+            type: 'text/plain'
         );
     }
 

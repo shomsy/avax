@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Regression;
+namespace Avax\HTTP\Request\tests\Regression;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
@@ -301,7 +301,6 @@ class AssemblyRegressionTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy(trustedProxies: []),
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
                                     proxyPolicy    : new TrustedIpv4ProxyPolicy(trustedProxies: []),
                                     forwardedParser: new ParseForwardedAddresses

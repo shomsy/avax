@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Characterization;
+namespace Avax\HTTP\Request\tests\Characterization;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -216,7 +216,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     {
         $request = $this->make()
             ->withHeader(name: 'Host', value: 'old.com')
-            ->withUri(uri: UriBuilder::createFromString(uri: 'https://new.com/path'), preserveHost: false);
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://new.com/path'));
 
         $this->assertEquals(expected: ['new.com'], actual: $request->getHeader(name: 'Host'));
     }
@@ -233,7 +233,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_withUri_includes_port_in_host_header(): void
     {
         $request = $this->make()
-            ->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com:8080/path'), preserveHost: false);
+            ->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com:8080/path'));
 
         $hostLine = $request->getHeaderLine(name: 'Host');
         $this->assertStringContainsString(needle: '8080', haystack: $hostLine);
@@ -409,6 +409,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
         return $this->assembler->empty();
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $preparer = new PrepareRequest(
@@ -419,7 +420,6 @@ class PSR7SurfaceCharacterizationTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer: new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-            forwardedParser: new ParseForwardedAddresses,
             clientResolver: new ResolveClientAddress(
                 proxyPolicy: new TrustedIpv4ProxyPolicy,
                 forwardedParser: new ParseForwardedAddresses,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Abuse;
+namespace Avax\HTTP\Request\tests\Abuse;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
@@ -74,7 +74,6 @@ class NetworkTrustAbuseTest extends TestCase
             protocolNormalizer: new NormalizeProtocolVersion,
             filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: new TrustedIpv4ProxyPolicy(trustedProxies: ['127.0.0.1']),
-            forwardedParser   : new ParseForwardedAddresses,
             clientResolver    : new ResolveClientAddress(
                                     proxyPolicy    : new TrustedIpv4ProxyPolicy(trustedProxies: ['127.0.0.1']),
                                     forwardedParser: new ParseForwardedAddresses

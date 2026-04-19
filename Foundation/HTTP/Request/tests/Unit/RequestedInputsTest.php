@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\Tests\Unit;
+namespace Avax\HTTP\Request\tests\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
@@ -21,12 +21,12 @@ class RequestedInputsTest extends TestCase
     public function test_get_prefers_body_over_query_for_same_key()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: ['foo' => 'query'],
-                         parsedBody : ['foo' => 'body'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: ['foo' => 'query'],
+                parsedBody: ['foo' => 'body'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertEquals(expected: 'body', actual: $inputs->get(key: 'foo'));
@@ -35,12 +35,12 @@ class RequestedInputsTest extends TestCase
     public function test_all_prefers_body_over_query_for_same_key()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: ['foo' => 'query', 'bar' => 'baz'],
-                         parsedBody : ['foo' => 'body'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: ['foo' => 'query', 'bar' => 'baz'],
+                parsedBody: ['foo' => 'body'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $all = $inputs->all();
@@ -51,21 +51,21 @@ class RequestedInputsTest extends TestCase
     public function test_bool_accepts_valid_boolean_strings()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : [
-                                          't'   => 'true',
-                                          'f'   => 'false',
-                                          '1'   => '1',
-                                          '0'   => '0',
-                                          'on'  => 'on',
-                                          'off' => 'off',
-                                          'yes' => 'yes',
-                                          'no'  => 'no',
-                                      ],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: [
+                    't' => 'true',
+                    'f' => 'false',
+                    '1' => '1',
+                    '0' => '0',
+                    'on' => 'on',
+                    'off' => 'off',
+                    'yes' => 'yes',
+                    'no' => 'no',
+                ],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertTrue(condition: $inputs->bool(key: 't'));
@@ -81,12 +81,12 @@ class RequestedInputsTest extends TestCase
     public function test_bool_returns_default_for_invalid_value()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => 'not-a-bool'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => 'not-a-bool'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertTrue(condition: $inputs->bool(key: 'foo', default: true));
         $this->assertFalse(condition: $inputs->bool(key: 'foo', default: false));
@@ -95,12 +95,12 @@ class RequestedInputsTest extends TestCase
     public function test_int_accepts_valid_integer_string()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => '123'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => '123'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: 123, actual: $inputs->int(key: 'foo'));
     }
@@ -108,12 +108,12 @@ class RequestedInputsTest extends TestCase
     public function test_int_returns_default_for_invalid_string()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => 'abc'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => 'abc'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: 5, actual: $inputs->int(key: 'foo', default: 5));
     }
@@ -121,12 +121,12 @@ class RequestedInputsTest extends TestCase
     public function test_float_accepts_valid_float_string()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => '1.23'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => '1.23'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: 1.23, actual: $inputs->float(key: 'foo'));
     }
@@ -134,12 +134,12 @@ class RequestedInputsTest extends TestCase
     public function test_float_returns_default_for_invalid_value()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => 'abc'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => 'abc'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: 1.1, actual: $inputs->float(key: 'foo', default: 1.1));
     }
@@ -147,12 +147,12 @@ class RequestedInputsTest extends TestCase
     public function test_string_casts_scalar_to_string()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => 123],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => 123],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: '123', actual: $inputs->string(key: 'foo'));
     }
@@ -160,12 +160,12 @@ class RequestedInputsTest extends TestCase
     public function test_array_returns_array_as_is()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => ['a', 'b']],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => ['a', 'b']],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: ['a', 'b'], actual: $inputs->array(key: 'foo'));
     }
@@ -173,12 +173,12 @@ class RequestedInputsTest extends TestCase
     public function test_array_returns_default_for_scalar()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => 'bar'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => 'bar'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertEquals(expected: [], actual: $inputs->array(key: 'foo'));
     }
@@ -186,12 +186,12 @@ class RequestedInputsTest extends TestCase
     public function test_has_uses_array_key_exists_not_isset()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['foo' => null],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['foo' => null],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $this->assertTrue(condition: $inputs->has(key: 'foo'));
         $this->assertFalse(condition: $inputs->hasNonNull(key: 'foo'));
@@ -200,12 +200,12 @@ class RequestedInputsTest extends TestCase
     public function test_sanitized_html_prevents_xss()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: [],
-                         parsedBody : ['content' => '<script>alert("xss")</script>'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: [],
+                parsedBody: ['content' => '<script>alert("xss")</script>'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
         $safe   = $inputs->sanitizedHtml(key: 'content');
 
@@ -216,12 +216,12 @@ class RequestedInputsTest extends TestCase
     public function test_value_returns_inputvalue_with_source()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: ['from' => 'query'],
-                         parsedBody : ['from' => 'body'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: ['from' => 'query'],
+                parsedBody: ['from' => 'body'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $value = $inputs->value(key: 'from');
@@ -233,12 +233,12 @@ class RequestedInputsTest extends TestCase
     public function test_query_and_body_accessors()
     {
         $inputs = new RequestedInputs(
-            merged   : Inputs::fromSlices(
-                         queryParams: ['q' => 'search'],
-                         parsedBody : ['b' => 'data'],
-                     ),
+            inputs: Inputs::fromQueryAndBody(
+                queryParams: ['q' => 'search'],
+                parsedBody: ['b' => 'data'],
+            ),
             sanitizer: $this->sanitizer,
-            mapper   : $this->mapper,
+            mapper: $this->mapper,
         );
 
         $this->assertEquals(expected: 'search', actual: $inputs->fromQuery(key: 'q'));
@@ -441,7 +441,7 @@ class RequestedInputsTest extends TestCase
     {
         if (!class_exists('Avax\HTTP\Request\Tests\Unit\TestDtoClass')) {
             eval('
-                namespace Avax\HTTP\Request\Tests\Unit;
+                namespace Avax\HTTP\Request\tests\Unit;
                 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 
                 class TestDtoClass extends AbstractDTO {
@@ -455,8 +455,19 @@ class RequestedInputsTest extends TestCase
             ');
         }
 
+        if (!class_exists('NotADtoClass')) {
+            class NotADtoClass {}
+        }
+
+        if (!enum_exists('TestRoleEnum')) {
+            enum TestRoleEnum: string {
+                case ADMIN = 'admin';
+                case USER = 'user';
+            }
+        }
+
         $inputs = new RequestedInputs(
-            merged: Inputs::fromSlices(
+            inputs: Inputs::fromQueryAndBody(
                 queryParams: [],
                 parsedBody: ['name' => 'John', 'age' => '30']
             ),
@@ -464,9 +475,9 @@ class RequestedInputsTest extends TestCase
             mapper: clone $this->mapper,
         );
 
-        $dto = $inputs->as(dtoClass: 'Avax\HTTP\Request\Tests\Unit\TestDtoClass');
+        $dto = $inputs->as(dtoClass: 'Avax\HTTP\Request\tests\Unit\TestDtoClass');
         
-        $this->assertInstanceOf(expected: 'Avax\HTTP\Request\Tests\Unit\TestDtoClass', actual: $dto);
+        $this->assertInstanceOf(expected: 'Avax\HTTP\Request\tests\Unit\TestDtoClass', actual: $dto);
         $this->assertEquals(expected: 'John', actual: $dto->name);
         $this->assertEquals(expected: 30, actual: $dto->age);
     }

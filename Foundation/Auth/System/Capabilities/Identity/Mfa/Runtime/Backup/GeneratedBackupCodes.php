@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Backup;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
-use Avax\Auth\System\Flows\Mfa\BackupCodeRecord;
-use Avax\Auth\System\Flows\Mfa\BackupCodeSet;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeSet;
 use SensitiveParameter;
 
 /**

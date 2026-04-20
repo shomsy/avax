@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\AuthorizeCode;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode;
 
-use Avax\Auth\System\Capabilities\OAuth\AuthorizationCodeStoreInterface;
-use Avax\Auth\System\Capabilities\OAuth\IssuedAuthorizationCode;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\OAuth\OAuthAuthorizationFailed;
-use Avax\Auth\System\Flows\Oidc\ValidateRequestObject\ValidateRequestObject;
-use Avax\Auth\System\Flows\Oidc\ValidateRequestObject\ValidateRequestObjectData;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthorizationCode;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObject;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObjectData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;

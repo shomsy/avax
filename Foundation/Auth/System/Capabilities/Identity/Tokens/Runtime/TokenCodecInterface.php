@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Token;
+namespace Avax\Auth\System\Capabilities\Identity\Tokens\Runtime;
 
 /**
  * Signs and verifies opaque token strings from package-owned claims.

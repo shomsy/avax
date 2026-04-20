@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\MarkOutage;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage;
 
 final readonly class MarkScimDirectoryOutageData
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\ReadClients;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ReadClients;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClient;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
 
 final readonly class ReadClients
 {

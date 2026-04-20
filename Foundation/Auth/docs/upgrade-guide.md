@@ -33,12 +33,12 @@ composer require avax/auth:^1.0.0
 
 ### Namespace Mapping
 
-| Old                              | New                            |
-|----------------------------------|--------------------------------|
-| `AvaxContainer\Auth\Actions\`    | `Avax\Auth\System\Flow\`       |
-| `AvaxContainer\Auth\Adapters\`   | `Avax\Auth\Integrations\`      |
-| `AvaxContainer\Auth\Contracts\`  | `Avax\Auth\System\Capability\` |
-| `AvaxContainer\Auth\Foundation\` | `Avax\Auth\System\Foundation\` |
+| Old                              | New                              |
+|----------------------------------|----------------------------------|
+| `AvaxContainer\Auth\Actions\`    | `Avax\Auth\System\Flows\`        |
+| `AvaxContainer\Auth\Adapters\`   | `Avax\Auth\Integrations\`        |
+| `AvaxContainer\Auth\Contracts\`  | `Avax\Auth\System\Capabilities\` |
+| `AvaxContainer\Auth\Foundation\` | `Avax\Auth\System\Foundation\`   |
 
 ---
 

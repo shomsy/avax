@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Passkey;
 
-use Avax\Auth\System\Capabilities\Passkey\InMemoryPasskeyChallengeStore;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengePurpose;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeRecord;
-use Avax\Auth\System\Flows\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\InMemoryPasskeyChallengeStore;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

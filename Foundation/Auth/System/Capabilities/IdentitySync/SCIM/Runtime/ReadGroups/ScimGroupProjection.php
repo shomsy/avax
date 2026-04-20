@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ReadGroups;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadGroups;
 
 final readonly class ScimGroupProjection
 {

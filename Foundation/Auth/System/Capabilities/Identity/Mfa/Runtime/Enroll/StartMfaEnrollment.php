@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Enroll;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\MfaEnrollment;
-use Avax\Auth\System\Flows\Mfa\MfaEnrollmentFailed;
-use Avax\Auth\System\Flows\Mfa\MfaEnrollmentRecord;
-use Avax\Auth\System\Flows\Mfa\MfaMethod;
-use Avax\Auth\System\Flows\Mfa\MfaStatus;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
-use Avax\Auth\System\Flows\Mfa\TotpInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollment;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethod;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStatus;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\TotpInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Release;
 
-use Avax\Auth\System\Flows\Token\FileBackedHmacKeyRingCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\FileBackedHmacKeyRingCodec;
 use RuntimeException;
 
 final readonly class RunKeyCompromiseDrill

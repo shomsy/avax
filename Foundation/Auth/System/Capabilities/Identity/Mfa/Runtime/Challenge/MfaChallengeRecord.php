@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Challenge;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge;
 
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\Mfa\MfaChallenge;
-use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
-use Avax\Auth\System\Flows\Mfa\MfaVerificationAttempt;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaVerificationAttempt;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 
 /**

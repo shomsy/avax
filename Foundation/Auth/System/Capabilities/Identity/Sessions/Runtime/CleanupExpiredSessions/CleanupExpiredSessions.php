@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Session\CleanupExpiredSessions;
+namespace Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions;
 
-use Avax\Auth\System\Capabilities\Session\PruneExpiredSessionsInterface;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\PruneExpiredSessionsInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

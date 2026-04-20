@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\Risk;
 
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\Risk\InMemoryKnownAuthenticationEnvironmentStore;
-use Avax\Auth\System\Capabilities\Risk\InMemoryRiskSignalStore;
-use Avax\Auth\System\Capabilities\Risk\RiskAction;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\InMemoryKnownAuthenticationEnvironmentStore;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\InMemoryRiskSignalStore;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskAction;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

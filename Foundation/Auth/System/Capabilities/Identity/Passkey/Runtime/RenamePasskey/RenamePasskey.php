@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\RenamePasskey;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey;
 
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredential;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredentialStoreInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Passkey\PasskeyOperationFailed;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 final readonly class RenamePasskey

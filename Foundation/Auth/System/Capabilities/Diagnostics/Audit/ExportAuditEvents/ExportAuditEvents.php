@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Diagnostics\ExportAuditEvents;
+namespace Avax\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents;
 
-use Avax\Auth\System\Flows\Diagnostics\AuditExporterInterface;
-use Avax\Auth\System\Flows\Diagnostics\DrainAuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\DrainAuditLogInterface;
 
 final readonly class ExportAuditEvents
 {

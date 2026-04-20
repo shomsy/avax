@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Scim;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support;
 
 interface ScimProvisionedIdentityStoreInterface
 {

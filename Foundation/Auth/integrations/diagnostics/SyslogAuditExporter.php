@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Diagnostics;
 
-use Avax\Auth\System\Flows\Diagnostics\AuditExporterInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
 use JsonException;
 
 /**

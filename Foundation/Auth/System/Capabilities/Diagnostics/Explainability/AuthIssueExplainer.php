@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Explainability;
+namespace Avax\Auth\System\Capabilities\Diagnostics\Explainability;
 
 use SensitiveParameter;
 

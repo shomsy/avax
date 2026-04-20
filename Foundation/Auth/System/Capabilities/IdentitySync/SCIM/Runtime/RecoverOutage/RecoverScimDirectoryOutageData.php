@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\RecoverOutage;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage;
 
 final readonly class RecoverScimDirectoryOutageData
 {

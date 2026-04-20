@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access;
 
-use Avax\Auth\System\Capabilities\Risk\RiskDecision;
-use Avax\Auth\System\Capabilities\Risk\RiskSignal;
-use Avax\Auth\System\Flows\AdminRealm\AdminElevation;
-use Avax\Auth\System\Flows\AdminRealm\BeginAdminElevation\BeginAdminElevation;
-use Avax\Auth\System\Flows\AdminRealm\EndAdminElevation\EndAdminElevation;
-use Avax\Auth\System\Flows\AdminRealm\RequireAdminElevation\RequireAdminElevation;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticateRequest;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationRequest;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\AssessCurrentRisk\AssessCurrentRisk;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskSignal;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticateRequest;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Flows\Risk\AssessCurrentRisk\AssessCurrentRisk;
-use Avax\Auth\System\Flows\Risk\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
 use SensitiveParameter;
 
 final readonly class AccessFacade

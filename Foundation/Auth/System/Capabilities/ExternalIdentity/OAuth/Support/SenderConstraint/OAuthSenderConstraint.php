@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\OAuth\SenderConstraint;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint;
 
 /**
  * Bound proof material attached to a sender-constrained OAuth token.

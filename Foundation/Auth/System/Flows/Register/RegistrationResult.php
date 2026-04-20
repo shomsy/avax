@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\Register;
 
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 
 /**
  * Stable public result of a registration flow.

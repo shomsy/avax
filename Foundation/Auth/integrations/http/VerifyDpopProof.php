@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\DpopProofReplayStoreInterface;
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Diagnostics\NullAuditLog;
-use Avax\Auth\System\Flows\Token\TokenCodecInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\DpopProofReplayStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenCodecInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use SensitiveParameter;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\CompleteAuthentication;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteAuthentication;
 
 use SensitiveParameter;
 

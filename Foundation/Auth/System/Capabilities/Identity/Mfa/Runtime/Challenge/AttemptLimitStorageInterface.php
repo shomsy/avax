@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Challenge;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge;
 
 /**
  * Stores MFA verification attempt counts by key.

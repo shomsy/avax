@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Federation;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport;
 
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 
 /**
  * Validates tenant-owned federation group-to-role mappings.

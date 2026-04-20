@@ -6,11 +6,11 @@ namespace Avax\Auth\Tests\Integrations\Http;
 
 use Avax\Auth\Integrations\Http\MapAuthFailure;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaAttemptLimitReached;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flows\Mfa\Challenge\MfaAttemptLimitReached;
-use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

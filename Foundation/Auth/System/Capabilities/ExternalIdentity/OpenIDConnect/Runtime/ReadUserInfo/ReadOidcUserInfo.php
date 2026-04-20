@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ReadUserInfo;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\User;
 use RuntimeException;
 use SensitiveParameter;
 

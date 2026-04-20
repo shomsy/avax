@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation\RegisterConnection;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection;
 
-use Avax\Auth\System\Capabilities\Federation\FederationProvider;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationProvider;
 
 final readonly class RegisterFederationConnectionData
 {

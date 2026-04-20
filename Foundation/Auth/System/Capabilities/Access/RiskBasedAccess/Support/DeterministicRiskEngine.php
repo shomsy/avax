@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Risk;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support;
 
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

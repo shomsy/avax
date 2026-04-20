@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Verify;
+namespace Avax\Auth\System\Flows\VerifyIdentity\EmailVerification;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 
 /**
  * In-memory verification state for tests and demos.

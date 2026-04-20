@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\UserSource;
+namespace Avax\Auth\System\Capabilities\Identity\UserSource;
 
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 
 /**
  * Extended user-source contract for lifecycle and provisioning mutations.

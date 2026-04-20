@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation\DiscoverConnection;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\DiscoverConnection;
 
-use Avax\Auth\System\Capabilities\Federation\FederationConnection;
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
 use SensitiveParameter;
 
 final readonly class DiscoverFederationConnection

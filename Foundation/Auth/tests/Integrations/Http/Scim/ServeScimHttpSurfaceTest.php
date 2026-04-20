@@ -9,11 +9,11 @@ use Avax\Auth\Integrations\Http\Scim\ServeScimHttpSurface;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flows\Scim\RegisterDirectory\RegisterScimDirectoryData;
-use Avax\Auth\System\Flows\Token\HmacTokenCodec;
-use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\AuthorizeCode;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode;
 
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use SensitiveParameter;
 
 final readonly class AuthorizeCodeData

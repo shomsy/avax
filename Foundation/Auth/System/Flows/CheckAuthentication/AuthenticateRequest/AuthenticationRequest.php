@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\AuthenticateRequest;
+namespace Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
 use SensitiveParameter;
 

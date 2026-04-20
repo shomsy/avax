@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Support;
 
-use Avax\Auth\System\Capabilities\Federation\FederatedIdentity;
-use Avax\Auth\System\Capabilities\Federation\FederationConnection;
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionHealth;
-use Avax\Auth\System\Capabilities\Federation\FederationHealthCheckInterface;
-use Avax\Auth\System\Capabilities\Federation\FederationMetadata;
-use Avax\Auth\System\Capabilities\Federation\FederationMetadataRuntimeInterface;
-use Avax\Auth\System\Capabilities\Federation\FederationRuntimeInterface;
-use Avax\Auth\System\Capabilities\Federation\StartedFederatedLogin;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederatedIdentity;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationHealthCheckInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationMetadata;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationMetadataRuntimeInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationRuntimeInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin;
 
 final class FakeFederationRuntime implements FederationRuntimeInterface, FederationMetadataRuntimeInterface, FederationHealthCheckInterface
 {

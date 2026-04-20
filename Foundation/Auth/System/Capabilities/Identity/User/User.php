@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\User;
+namespace Avax\Auth\System\Capabilities\Identity\User;
 
 use SensitiveParameter;
 use Stringable;

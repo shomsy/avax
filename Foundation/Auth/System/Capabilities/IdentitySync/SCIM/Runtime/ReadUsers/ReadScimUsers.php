@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ReadUsers;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers;
 
-use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentityStoreInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 
 final readonly class ReadScimUsers
 {

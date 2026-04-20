@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Risk\ReadRiskSignals;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\ReadRiskSignals;
 
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\Risk\RiskSignal;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskSignal;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 final readonly class ReadRiskSignals

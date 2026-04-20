@@ -2,31 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ProvisionUser;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser;
 
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Scim\ScimAccountState;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryHealth;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentity;
-use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentityStoreInterface;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottleExceeded;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Capabilities\UserSource\ProvisionableUserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentity;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use JsonException;
-use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class ProvisionScimUser

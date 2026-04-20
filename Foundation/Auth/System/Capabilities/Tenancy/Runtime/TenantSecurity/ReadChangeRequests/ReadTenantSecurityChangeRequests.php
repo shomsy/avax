@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\TenantSecurity\ReadChangeRequests;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\ReadChangeRequests;
 
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequest;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStoreInterface;
 
 final readonly class ReadTenantSecurityChangeRequests
 {

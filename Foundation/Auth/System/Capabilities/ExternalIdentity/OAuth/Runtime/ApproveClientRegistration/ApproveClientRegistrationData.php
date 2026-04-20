@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\ApproveClientRegistration;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration;
 
 final readonly class ApproveClientRegistrationData
 {

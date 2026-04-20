@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Risk;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support;
 
 interface KnownAuthenticationEnvironmentStoreInterface
 {

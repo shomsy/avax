@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\EndpointPosture;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\EndpointPosture;
 
 /**
  * Risk signal types for endpoint posture.

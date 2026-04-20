@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Token;
 
-use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
 use PHPUnit\Framework\TestCase;
 
 final class HmacTokenCodecTest extends TestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Diagnostics;
+namespace Avax\Auth\System\Capabilities\Diagnostics\Audit;
 
 /**
  * Default audit sink when external diagnostics are not configured.

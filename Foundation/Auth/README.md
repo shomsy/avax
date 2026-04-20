@@ -39,15 +39,15 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
 
 ```php
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
-use Avax\Auth\System\Flow\Mfa\Totp;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 
@@ -77,7 +77,7 @@ $login = $auth->login(new Credentials(
 
 if ($login->requiresMfa()) {
     $login = $auth->verifyMfaChallenge(
-        new \Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData(
+        new \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\VerifyMfaChallengeData(
             challengeId: $login->mfaChallengeId() ?? '',
             code: $backupCodeOrTotp
         )

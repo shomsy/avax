@@ -7,16 +7,16 @@ namespace Avax\Auth\Integrations\Http;
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaAttemptLimitReached;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryFailed;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshAuthenticationFailed;
 use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flows\Mfa\Challenge\MfaAttemptLimitReached;
-use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
-use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flows\Mfa\MfaEnrollmentFailed;
-use Avax\Auth\System\Flows\Mfa\MfaRecoveryFailed;
 use Avax\Auth\System\Flows\Register\RegistrationFailed;
-use Avax\Auth\System\Flows\Token\RefreshAuthenticationFailed;
 use Throwable;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Recover;
+namespace Avax\Auth\System\Flows\RecoverAccess\PasswordReset;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 use Random\RandomException;
 use SensitiveParameter;

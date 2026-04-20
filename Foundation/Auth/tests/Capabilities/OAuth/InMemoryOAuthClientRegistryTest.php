@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\OAuth;
 
-use Avax\Auth\System\Capabilities\OAuth\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
-use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capabilities\OAuth\OAuthTokenEndpointAuthMethod;
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

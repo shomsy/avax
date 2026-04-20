@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime;
 
 final readonly class PasskeyRegistration
 {

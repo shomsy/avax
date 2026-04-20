@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\IntrospectToken;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken;
 
 use SensitiveParameter;
 

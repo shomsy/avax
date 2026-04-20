@@ -481,13 +481,13 @@ final class ReleaseToolingTest extends TestCase
         mkdir($root);
         mkdir($root . '/docs/architecture', 0777, true);
         mkdir($root . '/.agents/management/evidence', 0777, true);
-        file_put_contents($root . '/AGENTS.md', "Source roots:\n- `System/Flows/`\n- `System/Capabilities/`\n");
+        file_put_contents($root . '/AGENTS.md', "Source roots:\n- `System/Flow/`\n- `System/Capability/`\n");
         file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
         file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
         file_put_contents($root . '/docs/current-state.md', "# Current State\n");
         file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
         file_put_contents($root . '/docs/capability-matrix.md', "# Capability Matrix\n");
-        file_put_contents($root . '/docs/architecture/system-shape.md', "# Shape\n`System/Flows/`\n");
+        file_put_contents($root . '/docs/architecture/system-shape.md', "# Shape\n`System/Flow/`\n");
         file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
         file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
 
@@ -495,11 +495,11 @@ final class ReleaseToolingTest extends TestCase
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(
-            needle  : 'Legacy singular system root reference found in AGENTS.md: System/Flows/',
+            needle  : 'Legacy singular system root reference found in AGENTS.md: System/Flow/',
             haystack: $result['issues']
         );
         $this->assertContains(
-            needle  : 'Legacy singular system root reference found in docs/architecture/system-shape.md: System/Flows/',
+            needle  : 'Legacy singular system root reference found in docs/architecture/system-shape.md: System/Flow/',
             haystack: $result['issues']
         );
     }

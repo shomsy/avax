@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Session;
+namespace Avax\Auth\System\Capabilities\Identity\Sessions\Runtime;
 
 use DateTimeImmutable;
 use SensitiveParameter;

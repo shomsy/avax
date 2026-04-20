@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\TenantSecurity\BeginChange;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange;
 
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionStoreInterface;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequest;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStatus;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStoreInterface;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityConfiguration;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityConfigurationStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\TenantSecurity\TenantSecurityFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\TenantSecurityFailed;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStatus;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfigurationStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use JsonException;
 use Random\RandomException;

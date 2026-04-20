@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\OAuth;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 
 /**

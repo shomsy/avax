@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\DisableClient;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\DisableClient;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClient;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
 use Avax\Auth\System\Foundation\Clock;
 use RuntimeException;
 

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity\Jwt;
 
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Flows\Token\IssuedRefreshToken;
-use Avax\Auth\System\Flows\Token\IssuedToken;
-use Avax\Auth\System\Flows\Token\ResolvedToken;
-use Avax\Auth\System\Flows\Token\ResolvedWorkloadToken;
-use Avax\Auth\System\Flows\Token\TokenIssuerInterface;
-use Avax\Auth\System\Flows\Token\TokenVerifierInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedWorkloadToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenIssuerInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenVerifierInterface;
+use Avax\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 
 /**

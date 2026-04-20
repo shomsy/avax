@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\Logout;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout;
 
-use Avax\Auth\System\Flows\Oidc\BackChannelLogout\BackChannelLogout;
-use Avax\Auth\System\Flows\Oidc\BackChannelLogout\BackChannelLogoutData;
-use Avax\Auth\System\Flows\Oidc\FrontChannelLogout\FrontChannelLogout;
-use Avax\Auth\System\Flows\Oidc\FrontChannelLogout\FrontChannelLogoutData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\BackChannelLogout\BackChannelLogout;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\BackChannelLogout\BackChannelLogoutData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\FrontChannelLogout\FrontChannelLogout;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\FrontChannelLogout\FrontChannelLogoutData;
 
 final readonly class Logout
 {

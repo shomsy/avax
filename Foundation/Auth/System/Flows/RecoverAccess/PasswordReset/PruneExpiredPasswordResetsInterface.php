@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Recover;
+namespace Avax\Auth\System\Flows\RecoverAccess\PasswordReset;
 
 use DateTimeImmutable;
 

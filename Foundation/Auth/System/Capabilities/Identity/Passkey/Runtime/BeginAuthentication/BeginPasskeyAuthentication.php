@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\BeginAuthentication;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginAuthentication;
 
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengePurpose;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeRecord;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredentialStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyRuntimeInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Passkey\PasskeyAuthenticationChallenge;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyAuthenticationChallenge;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;

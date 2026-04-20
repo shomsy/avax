@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\OAuth;
 
 use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
-use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flows\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
-use Avax\Auth\System\Flows\OAuth\RegisterClient\RegisterClientData;
-use Avax\Auth\System\Flows\Token\HmacTokenCodec;
-use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

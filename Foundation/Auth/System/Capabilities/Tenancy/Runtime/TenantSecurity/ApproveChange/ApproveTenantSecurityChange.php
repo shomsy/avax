@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\TenantSecurity\ApproveChange;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\ApproveChange;
 
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequest;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStatus;
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\TenantSecurity\TenantSecurityFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\TenantSecurityFailed;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStatus;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class ApproveTenantSecurityChange

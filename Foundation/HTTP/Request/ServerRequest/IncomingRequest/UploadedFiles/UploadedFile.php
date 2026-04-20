@@ -6,7 +6,6 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
 use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
-use Override;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
@@ -19,14 +18,13 @@ final class UploadedFile implements UploadedFileInterface
     private bool $moved = false;
 
     public function __construct(
-        private readonly string      $tmpName,
-        private readonly int         $size,
-        private readonly int         $error,
-        private readonly string|null $name = null,
-        private readonly string|null $type = null
+        private readonly string  $tmpName,
+        private readonly int     $size,
+        private readonly int     $error,
+        private readonly ?string $name = null,
+        private readonly ?string $type = null
     ) {}
 
-    #[Override]
     public function getStream() : StreamInterface
     {
         if ($this->moved) {
@@ -40,7 +38,6 @@ final class UploadedFile implements UploadedFileInterface
         return new Stream(stream: fopen($this->tmpName, 'r'));
     }
 
-    #[Override]
     public function moveTo(string $targetPath) : void
     {
         if ($this->moved) {
@@ -68,25 +65,21 @@ final class UploadedFile implements UploadedFileInterface
         $this->moved = true;
     }
 
-    #[Override]
     public function getSize() : ?int
     {
         return $this->size;
     }
 
-    #[Override]
     public function getError() : int
     {
         return $this->error;
     }
 
-    #[Override]
     public function getClientFilename() : ?string
     {
         return $this->name;
     }
 
-    #[Override]
     public function getClientMediaType() : ?string
     {
         return $this->type;

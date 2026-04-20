@@ -107,8 +107,8 @@ final readonly class CheckSourceTruth
             'docs/architecture/capability-boundaries.md',
         ];
         $legacyMarkers = [
-            'System/Flows/',
-            'System/Capabilities/',
+            'System/Flow/',
+            'System/Capability/',
         ];
 
         foreach ($trackedFiles as $relativePath) {

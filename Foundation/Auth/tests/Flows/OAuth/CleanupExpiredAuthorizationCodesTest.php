@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\OAuth;
 
-use Avax\Auth\System\Capabilities\OAuth\InMemoryAuthorizationCodeStore;
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryAuthorizationCodeStore;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

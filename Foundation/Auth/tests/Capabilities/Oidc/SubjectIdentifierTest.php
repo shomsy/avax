@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\Oidc;
 
-use Avax\Auth\System\Capabilities\Oidc\SubjectIdentifier;
-use Avax\Auth\System\Capabilities\Oidc\SubjectIdentifierStrategy;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifier;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifierStrategy;
 use PHPUnit\Framework\TestCase;
 
 final class SubjectIdentifierTest extends TestCase

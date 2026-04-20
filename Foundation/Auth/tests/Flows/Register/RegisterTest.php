@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Register;
 
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flows\Mfa\InMemoryMfaStore;
 use Avax\Auth\System\Flows\Register\Register;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Flows\Register\RegistrationFailed;
-use Avax\Auth\System\Flows\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Exception;

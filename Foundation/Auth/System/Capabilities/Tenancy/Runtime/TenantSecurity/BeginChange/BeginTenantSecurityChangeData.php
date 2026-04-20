@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\TenantSecurity\BeginChange;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange;
 
-use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityConfiguration;
+use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
 
 final readonly class BeginTenantSecurityChangeData
 {

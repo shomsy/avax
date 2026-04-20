@@ -2,19 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Backup;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\BackupCodeSet;
-use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
-use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flows\Mfa\MfaMethodRecord;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
-use Avax\Auth\System\Flows\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeSet;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethodRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use Random\RandomException;
 use SensitiveParameter;

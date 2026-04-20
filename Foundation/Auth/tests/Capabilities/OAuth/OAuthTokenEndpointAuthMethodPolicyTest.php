@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\OAuth;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
-use Avax\Auth\System\Capabilities\OAuth\OAuthTokenEndpointAuthMethod;
-use Avax\Auth\System\Capabilities\OAuth\OAuthTokenEndpointAuthMethodPolicy;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethodPolicy;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

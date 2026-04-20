@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Logout;
 
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -21,9 +21,9 @@ use PHPUnit\Framework\TestCase;
  */
 class LogoutTest extends TestCase
 {
-    public function testLogoutClearsIdentity() : void
+    public function test_logout_clears_identity() : void
     {
-        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication = new CurrentAuthentication;
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user                : new AuthenticatedUser(id: 7, email: 'logout@example.com', username: 'logout'),
             mode                : AuthenticationMode::TOKEN,
@@ -37,8 +37,8 @@ class LogoutTest extends TestCase
         $logout = new Logout(
             identity             : $identity,
             currentAuthentication: $currentAuthentication,
-            auditLog             : new InMemoryAuditLog(),
-            clock                : new Clock(),
+            auditLog             : new InMemoryAuditLog,
+            clock                : new Clock,
             refreshTokenStore    : $refreshTokenStore
         );
         $logout->execute();
@@ -46,7 +46,6 @@ class LogoutTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
-    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();

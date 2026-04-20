@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\RecoverOutage;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage;
 
-use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class RecoverScimDirectoryOutage

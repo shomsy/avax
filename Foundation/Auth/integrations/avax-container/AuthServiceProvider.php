@@ -6,14 +6,14 @@ namespace Avax\Auth\Integrations\AvaxContainer;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Auth\System\Foundation\Clock;

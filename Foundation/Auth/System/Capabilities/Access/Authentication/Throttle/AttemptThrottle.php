@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Throttle;
+namespace Avax\Auth\System\Capabilities\Access\Authentication\Throttle;
 
 use Avax\Auth\System\Foundation\Clock;
 use InvalidArgumentException;

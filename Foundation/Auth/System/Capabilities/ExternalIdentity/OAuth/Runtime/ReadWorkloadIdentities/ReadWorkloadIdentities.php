@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\ReadWorkloadIdentities;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ReadWorkloadIdentities;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
 
 final readonly class ReadWorkloadIdentities
 {

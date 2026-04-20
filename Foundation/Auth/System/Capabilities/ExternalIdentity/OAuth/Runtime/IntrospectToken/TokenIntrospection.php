@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\IntrospectToken;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken;
 
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 
 final readonly class TokenIntrospection

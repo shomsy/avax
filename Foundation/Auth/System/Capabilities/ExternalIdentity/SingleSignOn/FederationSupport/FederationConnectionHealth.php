@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Federation;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport;
 
 enum FederationConnectionHealth: string
 {

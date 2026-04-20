@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\OAuth;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
 /**
  * OAuth grant types explicitly supported by the package-owned client policy.

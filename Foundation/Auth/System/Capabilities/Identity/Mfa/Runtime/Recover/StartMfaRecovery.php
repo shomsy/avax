@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Recover;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover;
 
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottleExceeded;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\MfaRecoveryChallenge;
-use Avax\Auth\System\Flows\Mfa\MfaRecoveryRecord;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;

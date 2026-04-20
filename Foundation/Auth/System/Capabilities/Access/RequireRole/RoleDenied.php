@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access\RequireRole;
 
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 use Exception;
 
 /**

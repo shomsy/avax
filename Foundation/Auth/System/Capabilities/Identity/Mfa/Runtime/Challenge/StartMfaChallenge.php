@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Challenge;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\MfaChallenge;
-use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;

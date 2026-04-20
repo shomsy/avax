@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\Bulk;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk;
 
-use Avax\Auth\System\Capabilities\Scim\ScimAccountState;
-use Avax\Auth\System\Flows\Scim\DeleteUser\DeleteScimUser;
-use Avax\Auth\System\Flows\Scim\DeleteUser\DeleteScimUserData;
-use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUser;
-use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUserData;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUser;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUser;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
 use InvalidArgumentException;
 use Random\RandomException;
 

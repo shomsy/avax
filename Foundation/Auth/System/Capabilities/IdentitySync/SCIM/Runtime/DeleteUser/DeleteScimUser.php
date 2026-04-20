@@ -1,0 +1,128 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flows\Scim\DeleteUser;
+
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
+use Avax\Auth\System\Capabilities\Scim\ScimDirectoryHealth;
+use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentityStoreInterface;
+use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capabilities\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
+
+final readonly class DeleteScimUser
+{
+    private AttemptThrottle|null                  $attemptThrottle;
+    private LifecycleOrchestrator|null            $lifecycle;
+    private Clock                                 $clock;
+    private AuditLogInterface                     $auditLog;
+    private ScimProvisionedIdentityStoreInterface $identityStore;
+    private ScimDirectoryStoreInterface           $directoryStore;
+    private ProvisionableUserSourceInterface      $userSource;
+
+    public function __construct(
+        ProvisionableUserSourceInterface      $userSource,
+        ScimDirectoryStoreInterface           $directoryStore,
+        ScimProvisionedIdentityStoreInterface $identityStore,
+        AuditLogInterface                     $auditLog,
+        Clock                                 $clock,
+        LifecycleOrchestrator|null            $lifecycle = null,
+        AttemptThrottle|null                  $attemptThrottle = null
+    )
+    {
+        $this->userSource      = $userSource;
+        $this->directoryStore  = $directoryStore;
+        $this->identityStore   = $identityStore;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+        $this->lifecycle       = $lifecycle;
+        $this->attemptThrottle = $attemptThrottle;
+    }
+
+    /**
+     * @throws ScimFailed
+     */
+    public function execute(DeleteScimUserData $data) : void
+    {
+        $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
+        $this->enforceDirectoryAvailability(directory: $directory);
+        $this->enforceThrottle(directoryId: $directory->directoryId);
+        $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
+
+        if ($identity === null) {
+            throw ScimFailed::unknownProvisionedIdentity();
+        }
+
+        $this->lifecycle?->deprovision(userId: $identity->userId, source: LifecycleSource::SCIM, reason: 'scim_deleted');
+        if ($this->lifecycle === null) {
+            $this->userSource->deactivate(id: $identity->userId);
+            $this->userSource->replaceRoles(id: $identity->userId, roles: []);
+            $this->userSource->replacePermissions(id: $identity->userId, permissions: []);
+        }
+        $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
+        $this->auditLog->record(event: new AuditEvent(
+                                           name      : 'auth.scim.user.deleted',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id' => $directory->directoryId,
+                                                           'tenant'       => $directory->tenantSlug,
+                                                           'external_id'  => $data->externalId,
+                                                           'user_id'      => $identity->userId->value,
+                                                       ]
+                                       ));
+    }
+
+    /**
+     * @throws ScimFailed
+     */
+    private function authenticateDirectory(
+        string                       $directoryId,
+        #[SensitiveParameter] string $directoryToken
+    ) : ScimDirectory
+    {
+        $directory = $this->directoryStore->find(directoryId: $directoryId);
+
+        if ($directory === null) {
+            throw ScimFailed::unknownDirectory();
+        }
+
+        if (! $this->directoryStore->verifyToken(directoryId: $directoryId, plainTextToken: $directoryToken)) {
+            throw ScimFailed::invalidDirectoryToken();
+        }
+
+        return $directory;
+    }
+
+    private function enforceDirectoryAvailability(ScimDirectory $directory) : void
+    {
+        if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
+            throw ScimFailed::serviceUnavailable();
+        }
+    }
+
+    private function enforceThrottle(string $directoryId) : void
+    {
+        if ($this->attemptThrottle === null) {
+            return;
+        }
+
+        $key = 'scim:' . $directoryId . ':' . 'delete';
+
+        try {
+            $this->attemptThrottle->check(key: $key);
+        } catch (AttemptThrottleExceeded $exceeded) {
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'delete');
+        }
+
+        $this->attemptThrottle->recordAttempt(key: $key);
+    }
+}

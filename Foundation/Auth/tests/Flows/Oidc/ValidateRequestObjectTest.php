@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Oidc;
+namespace Avax\Auth\Tests\Flows\Oidc;
 
-use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capability\OAuth\OAuthClientType;
-use Avax\Auth\System\Capability\Oidc\InMemoryOidcRequestObjectStore;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
-use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
-use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
+use Avax\Auth\System\Capabilities\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
+use Avax\Auth\System\Capabilities\Oidc\InMemoryOidcRequestObjectStore;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flows\OAuth\OAuthAuthorizationFailed;
+use Avax\Auth\System\Flows\Oidc\ValidateRequestObject\ValidateRequestObject;
+use Avax\Auth\System\Flows\Oidc\ValidateRequestObject\ValidateRequestObjectData;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Mfa\Enroll;
+namespace Avax\Auth\Tests\Flows\Mfa\Enroll;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Mfa\Backup\GenerateBackupCodes;
-use Avax\Auth\System\Flow\Mfa\Enroll\CancelMfaEnrollment;
-use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollment;
-use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
-use Avax\Auth\System\Flow\Mfa\Enroll\StartMfaEnrollment;
-use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Mfa\MfaEnrollmentFailed;
-use Avax\Auth\System\Flow\Mfa\MfaStatus;
-use Avax\Auth\System\Flow\Mfa\Totp;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Mfa\Backup\GenerateBackupCodes;
+use Avax\Auth\System\Flows\Mfa\Enroll\CancelMfaEnrollment;
+use Avax\Auth\System\Flows\Mfa\Enroll\ConfirmMfaEnrollment;
+use Avax\Auth\System\Flows\Mfa\Enroll\ConfirmMfaEnrollmentData;
+use Avax\Auth\System\Flows\Mfa\Enroll\StartMfaEnrollment;
+use Avax\Auth\System\Flows\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flows\Mfa\MfaEnrollmentFailed;
+use Avax\Auth\System\Flows\Mfa\MfaStatus;
+use Avax\Auth\System\Flows\Mfa\Totp;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
 use DateTimeImmutable;

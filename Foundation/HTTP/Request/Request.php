@@ -7,6 +7,7 @@ namespace Avax\HTTP\Request;
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Psr\Http\Message\UriInterface;
+use LogicException;
 use ReflectionException;
 
 /**
@@ -51,97 +52,66 @@ abstract class Request extends AbstractDTO
         return $instance;
     }
 
-    public function getMethod() : string
+    /**
+     * Get the underlying PSR-7 server request.
+     */
+    public function serverRequest() : ServerRequest
     {
-        return $this->serverRequest->getMethod();
-    }
-
-    public function withMethod(string $method) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withMethod($method)
-        ]);
-    }
-
-    public function getUri() : UriInterface
-    {
-        return $this->serverRequest->getUri();
-    }
-
-    public function withUri(UriInterface $uri, bool $preserveHost = false) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withUri($uri, $preserveHost)
-        ]);
-    }
-
-    public function getHeader(string $name) : array
-    {
-        return $this->serverRequest->getHeader($name);
-    }
-
-    public function getHeaderLine(string $name) : string
-    {
-        return $this->serverRequest->getHeaderLine($name);
-    }
-
-    public function withHeader(string $name, $value) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withHeader($name, $value)
-        ]);
-    }
-
-    public function withAddedHeader(string $name, $value) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withAddedHeader($name, $value)
-        ]);
-    }
-
-    public function withoutHeader(string $name) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withoutHeader($name)
-        ]);
-    }
-
-    public function hasHeader(string $name) : bool
-    {
-        return $this->serverRequest->hasHeader($name);
-    }
-
-    public function getRequestTarget() : string
-    {
-        return $this->serverRequest->getRequestTarget();
-    }
-
-    public function withRequestTarget(string $requestTarget) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withRequestTarget($requestTarget)
-        ]);
-    }
-
-    public function getParsedBody() : array|null|object
-    {
-        return $this->serverRequest->getParsedBody();
-    }
-
-    public function withParsedBody($data) : static
-    {
-        return clone($this, [
-            "serverRequest" => $this->serverRequest->withParsedBody($data)
-        ]);
+        return $this->requireServerRequest();
     }
 
     /**
-     * Create a Request DTO from raw input array.
+     * Get the HTTP method.
+     */
+    public function method() : string
+    {
+        return $this->requireServerRequest()->getMethod();
+    }
+
+    /**
+     * Get the request URI.
+     */
+    public function uri() : UriInterface
+    {
+        return $this->requireServerRequest()->getUri();
+    }
+
+    /**
+     * Get a specific header line.
+     */
+    public function header(string $name) : string
+    {
+        return $this->requireServerRequest()->getHeaderLine($name);
+    }
+
+    /**
+     * Get the client IP address.
+     */
+    public function clientAddress() : string|null
+    {
+        $serverRequest = $this->requireServerRequest();
+
+        return $serverRequest->resolveClientAddress($serverRequest->getServerParams());
+    }
+
+    /**
+     * Create a Request DTO from raw input array (detached from ServerRequest).
      *
      * @throws ReflectionException
      */
     public static function fromInputs(array $inputs) : static
     {
         return new static(data: $inputs);
+    }
+
+    private function requireServerRequest() : ServerRequest
+    {
+        if (! isset($this->serverRequest)) {
+            throw new LogicException(
+                message: 'Request is detached from ServerRequest. Use fromRequest() or RequestDtoFactory to create an attached request.'
+            );
+        }
+
+        return $this->serverRequest;
     }
 }

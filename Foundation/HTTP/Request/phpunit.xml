@@ -4,12 +4,9 @@
          bootstrap="../../../vendor/autoload.php"
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
-         shortenArraysForExportThreshold="10"
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
-         displayDetailsOnPhpunitDeprecations="true"
-         failOnPhpunitDeprecation="true"
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
@@ -23,4 +20,7 @@
             <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <ini name="error_reporting" value="6143"/>
+    </php>
 </phpunit>

@@ -4,51 +4,52 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Avax\Auth\System\AuthBuilder;
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\Login\AuthFailed;
-use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Auth\System\Flows\Login\Credentials;
 
-// Example UserSource (replace with your PDO/Eloquent/etc.)
-class ExampleUserSource implements UserSourceInterface {
-    public function findByCredentials(string $identifier, #[\SensitiveParameter] string $password): object|null
-    {
-        // Simulate DB lookup + password verify
-        if ($identifier === 'user@example.com' && hash('sha256', $password) === hash('sha256', 'password')) {
-            return (object)['id' => '1', 'email' => $identifier];
-        }
-        return null;
-    }
-}
+$passwordHasher = new PasswordHasher();
+$userSource     = new InMemoryUserSource();
 
-// 1. Setup UserSource and SessionIdentity (e.g., your session handler)
-$userSource = new ExampleUserSource();
-$sessionIdentity = new SessionIdentity(); // Your session storage
+$userSource->create(User::create(
+    id          : new UserId(value: 1),
+    email       : new UserEmail(value: 'user@example.com'),
+    username    : 'user',
+    passwordHash: $passwordHasher->hash(password: 'password')
+));
 
-// 2. Create Auth instance
-$auth = AuthBuilder::create()
-    ->withUserSource($userSource)
-    ->withSessionIdentity($sessionIdentity)
-    ->build();
+$auth = Auth::configuration()
+    ->forUser(userSource: $userSource)
+    ->withIdentity(identity: new Identity(
+        sessionIdentity: new SessionIdentity()
+    ))
+    ->usingHasher(passwordHasher: $passwordHasher)
+    ->ready();
 
-// 3. Handle Login
 try {
     $loginResult = $auth->login(new Credentials(
         identifier: 'user@example.com',
         password: 'password'
     ));
-    echo "Welcome, " . $loginResult->user()->email();
-} catch (AuthFailed $e) {
-    echo "Login failed: " . $e->getMessage();
+
+    echo 'Welcome, ' . $loginResult->user()->email() . PHP_EOL;
+} catch (AuthenticationFailed $exception) {
+    echo 'Login failed: ' . $exception->getMessage() . PHP_EOL;
 }
 
-// 4. Check Auth status
 if ($auth->check()) {
     $currentUser = $auth->user();
-    echo "Current user: " . $currentUser->email();
+
+    if ($currentUser !== null) {
+        echo 'Current user: ' . $currentUser->email() . PHP_EOL;
+    }
 }
 
-// 5. Logout
 $auth->logout();
-

@@ -60,7 +60,8 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/submit',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/json',
-                    ]
+                    ],
+            rawBody: '{"name":"test"}',
         );
 
         $parsedBody = $result->parsedBody->data();
@@ -76,7 +77,8 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/update',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/json',
-                    ]
+                    ],
+            rawBody: '{"name":"test"}',
         );
 
         $parsedBody = $result->parsedBody->data();
@@ -92,7 +94,8 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/modify',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/json',
-                    ]
+                    ],
+            rawBody: '{"name":"test"}',
         );
 
         $parsedBody = $result->parsedBody->data();
@@ -108,7 +111,8 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/remove',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/json',
-                    ]
+                    ],
+            rawBody: '{"name":"test"}',
         );
 
         $parsedBody = $result->parsedBody->data();
@@ -169,10 +173,11 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/api',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/json',
-                    ]
+                    ],
+            rawBody: '{"foo":"bar"}',
         );
 
-        $this->assertIsArray(actual: $result->parsedBody->data());
+        $this->assertSame(expected: ['foo' => 'bar'], actual: $result->parsedBody->data());
     }
 
     public function test_parsed_body_correctness_by_content_type_form()
@@ -184,10 +189,11 @@ class AssemblyRegressionTest extends TestCase
                         'REQUEST_URI'     => '/submit',
                         'SERVER_PROTOCOL' => 'HTTP/1.1',
                         'CONTENT_TYPE'    => 'application/x-www-form-urlencoded',
-                    ]
+                    ],
+            rawBody: 'foo=bar&baz=1',
         );
 
-        $this->assertIsArray(actual: $result->parsedBody->data());
+        $this->assertSame(expected: ['foo' => 'bar', 'baz' => '1'], actual: $result->parsedBody->data());
     }
 
     public function test_protocol_normalization_integration()

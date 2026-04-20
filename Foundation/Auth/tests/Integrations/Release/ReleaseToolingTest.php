@@ -240,6 +240,101 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 1, actual: $report['summary']['failed']);
     }
 
+    public function testPhpUnitConfigurationDoesNotReferenceRemovedLegacyTestRoots() : void
+    {
+        $root     = dirname(__DIR__, 3);
+        $contents = file_get_contents($root . '/phpunit.xml.dist');
+
+        self::assertIsString(actual: $contents);
+        $configuration = simplexml_load_string($contents);
+        self::assertNotFalse(condition: $configuration);
+
+        $directories = [];
+
+        foreach ($configuration->testsuites->testsuite as $testsuite) {
+            foreach ($testsuite->directory as $directory) {
+                $directories[] = (string) $directory;
+            }
+        }
+
+        $this->assertNotContains(needle: 'tests/Flow', haystack: $directories);
+        $this->assertNotContains(needle: 'tests/Capability', haystack: $directories);
+        $this->assertContains(needle: 'tests/Flows', haystack: $directories);
+        $this->assertContains(needle: 'tests/System', haystack: $directories);
+    }
+
+    public function testIntegrationFlowAnchorFilesDeclarePhpUnitTestCases() : void
+    {
+        $root  = dirname(__DIR__, 3);
+        $files = glob($root . '/tests/Integration/*FlowTest.php');
+
+        self::assertIsArray(actual: $files);
+        self::assertNotSame(expected: [], actual: $files);
+
+        foreach ($files as $file) {
+            $class = 'Avax\\Auth\\Tests\\Integration\\' . basename($file, '.php');
+
+            self::assertTrue(
+                condition: class_exists($class),
+                message  : sprintf('Expected %s to declare %s.', $file, $class)
+            );
+            self::assertTrue(
+                condition: is_subclass_of($class, TestCase::class),
+                message  : sprintf('Expected %s to extend %s.', $class, TestCase::class)
+            );
+        }
+    }
+
+    public function testProductionSourcesPassPhpStanAnalysisWithoutInternalErrors() : void
+    {
+        $root   = dirname(__DIR__, 3);
+        $report = (new RunConformanceHarness())->execute(
+            repositoryRoot: $root,
+            checks        : [[
+                                 'name'        => 'phpstan',
+                                 'description' => 'Static analysis of production sources',
+                                 'command'     => [
+                                     PHP_BINARY,
+                                     $root . '/vendor/bin/phpstan',
+                                     'analyse',
+                                     '--memory-limit=1G',
+                                     '--no-progress',
+                                     '--error-format=raw',
+                                 ],
+                             ]]
+        );
+
+        $this->assertSame(expected: 'PASSED', actual: $report['overall']);
+        $this->assertSame(expected: 1, actual: $report['summary']['passed']);
+        $this->assertSame(expected: 0, actual: $report['summary']['failed']);
+    }
+
+    public function testProductionSourcesPassStrictPhpStanAnalysis() : void
+    {
+        $root   = dirname(__DIR__, 3);
+        $report = (new RunConformanceHarness())->execute(
+            repositoryRoot: $root,
+            checks        : [[
+                                 'name'        => 'phpstan-strict',
+                                 'description' => 'Strict static analysis of production sources',
+                                 'command'     => [
+                                     PHP_BINARY,
+                                     $root . '/vendor/bin/phpstan',
+                                     'analyse',
+                                     '--memory-limit=1G',
+                                     '-c',
+                                     'phpstan.strict.neon',
+                                     '--no-progress',
+                                     '--error-format=raw',
+                                 ],
+                             ]]
+        );
+
+        $this->assertSame(expected: 'PASSED', actual: $report['overall']);
+        $this->assertSame(expected: 1, actual: $report['summary']['passed']);
+        $this->assertSame(expected: 0, actual: $report['summary']['failed']);
+    }
+
     /**
      * @throws RandomException
      * @throws JsonException
@@ -329,7 +424,7 @@ final class ReleaseToolingTest extends TestCase
             $root . '/docs/capability-matrix.md',
             "| Capability | Status | Ownership | Evidence |\n"
             . "|---|---|---|---|\n"
-            . "| demo capability | ✅ supported | kernel | `tests/Flows/MissingTest.php`, `System/Flow/Missing/` |\n"
+            . "| demo capability | ✅ supported | kernel | `tests/Flows/MissingTest.php`, `System/Flows/Missing/` |\n"
         );
         file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
         file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
@@ -352,7 +447,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir($root);
         mkdir($root . '/docs', 0777, true);
         mkdir($root . '/.agents/management/evidence', 0777, true);
-        mkdir($root . '/System/Capability/PasswordHashing', 0777, true);
+        mkdir($root . '/System/Capabilities/PasswordHashing', 0777, true);
         mkdir($root . '/tests/Capabilities/PasswordHashing', 0777, true);
         file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
         file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
@@ -363,7 +458,7 @@ final class ReleaseToolingTest extends TestCase
             "# Capability Matrix\n\n"
             . "| Capability       | Status      | Ownership | Evidence |\n"
             . "|------------------|-------------|-----------|----------|\n"
-            . "| password hashing | ✅ supported | kernel    | `System/Capability/PasswordHashing/`, `tests/Capabilities/PasswordHashing/` |\n\n"
+            . "| password hashing | ✅ supported | kernel    | `System/Capabilities/PasswordHashing/`, `tests/Capabilities/PasswordHashing/` |\n\n"
             . "## Status Legend\n\n"
             . "| Symbol      | Meaning |\n"
             . "|-------------|---------|\n"
@@ -372,6 +467,46 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
         file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
 
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSourceTruthCheckRejectsLegacySingularSystemRootsInCanonicalContracts() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-source-truth-roots-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/docs/architecture', 0777, true);
+        mkdir($root . '/.agents/management/evidence', 0777, true);
+        file_put_contents($root . '/AGENTS.md', "Source roots:\n- `System/Flows/`\n- `System/Capabilities/`\n");
+        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
+        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
+        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
+        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        file_put_contents($root . '/docs/capability-matrix.md', "# Capability Matrix\n");
+        file_put_contents($root . '/docs/architecture/system-shape.md', "# Shape\n`System/Flows/`\n");
+        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
+        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertContains(
+            needle  : 'Legacy singular system root reference found in AGENTS.md: System/Flows/',
+            haystack: $result['issues']
+        );
+        $this->assertContains(
+            needle  : 'Legacy singular system root reference found in docs/architecture/system-shape.md: System/Flows/',
+            haystack: $result['issues']
+        );
+    }
+
+    public function testSourceTruthCheckApprovesCurrentRepository() : void
+    {
+        $root   = dirname(__DIR__, 3);
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
         $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
@@ -389,15 +524,140 @@ final class ReleaseToolingTest extends TestCase
         mkdir($root . '/System/Configuration', 0777, true);
         mkdir($root . '/System/Foundation', 0777, true);
         mkdir($root . '/System/Actions', 0777, true);
-        mkdir($root . '/System/Capability/Helpers', 0777, true);
+        mkdir($root . '/System/Capabilities/Helpers', 0777, true);
         file_put_contents($root . '/System/Auth.php', "<?php\n");
         file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
-        $this->assertSame(expected: ['System/Actions'], actual: $result['unexpected_top_level']);
+        $this->assertSame(
+            expected: ['System/Actions', 'System/Capability', 'System/Flow'],
+            actual  : $result['unexpected_top_level']
+        );
         $this->assertContains(needle: 'System/Actions', haystack: $result['forbidden_directories']);
-        $this->assertContains(needle: 'System/Capability/Helpers', haystack: $result['forbidden_directories']);
+        $this->assertContains(needle: 'System/Capabilities/Helpers', haystack: $result['forbidden_directories']);
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSystemShapeCheckApprovesCanonicalPluralTree() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-shape-canonical-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        foreach ([
+            '/System/Flows/Login',
+            '/System/Flows/Logout',
+            '/System/Flows/Register',
+            '/System/Flows/ChangePassword',
+            '/System/Flows/ChangeEmail',
+            '/System/Flows/RecoverAccess',
+            '/System/Flows/VerifyIdentity',
+            '/System/Flows/CheckAuthentication',
+            '/System/Capabilities/Access',
+            '/System/Capabilities/Identity',
+            '/System/Capabilities/ExternalIdentity',
+            '/System/Capabilities/IdentitySync',
+            '/System/Capabilities/Tenancy',
+            '/System/Capabilities/Diagnostics',
+        ] as $directory) {
+            mkdir($root . $directory, 0777, true);
+        }
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/System/Foundation', 0777, true);
+        file_put_contents($root . '/System/Auth.php', "<?php\n");
+        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+
+        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+
+        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+        $this->assertSame(expected: [], actual: $result['unexpected_top_level']);
+        $this->assertSame(expected: [], actual: $result['forbidden_directories']);
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSystemShapeCheckRejectsUnexpectedBoundaryDirectoriesInsideFlowsAndCapabilities() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-shape-boundaries-' . bin2hex(random_bytes(4));
+        mkdir($root);
+
+        foreach ([
+            '/System/Flows/Login',
+            '/System/Flows/Logout',
+            '/System/Flows/Register',
+            '/System/Flows/ChangePassword',
+            '/System/Flows/ChangeEmail',
+            '/System/Flows/RecoverAccess',
+            '/System/Flows/VerifyIdentity',
+            '/System/Flows/CheckAuthentication',
+            '/System/Flows/OAuth',
+            '/System/Capabilities/Access',
+            '/System/Capabilities/Identity',
+            '/System/Capabilities/ExternalIdentity',
+            '/System/Capabilities/IdentitySync',
+            '/System/Capabilities/Tenancy',
+            '/System/Capabilities/Diagnostics',
+            '/System/Capabilities/OAuth',
+        ] as $directory) {
+            mkdir($root . $directory, 0777, true);
+        }
+
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/System/Foundation', 0777, true);
+        file_put_contents($root . '/System/Auth.php', "<?php\n");
+        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+
+        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertSame(expected: ['System/Flows/OAuth'], actual: $result['unexpected_flow_top_level']);
+        $this->assertSame(expected: ['System/Capabilities/OAuth'], actual: $result['unexpected_capability_top_level']);
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSystemShapeCheckRejectsLegacySingularRoots() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-shape-legacy-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/System/Flow', 0777, true);
+        mkdir($root . '/System/Capability', 0777, true);
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/System/Foundation', 0777, true);
+        file_put_contents($root . '/System/Auth.php', "<?php\n");
+        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+
+        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertContains(needle: 'System/Capability', haystack: $result['unexpected_top_level']);
+        $this->assertContains(needle: 'System/Flow', haystack: $result['unexpected_top_level']);
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSystemShapeCheckRejectsLegacySymlinkAliases() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-shape-links-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/System/Flows', 0777, true);
+        mkdir($root . '/System/Capabilities', 0777, true);
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/System/Foundation', 0777, true);
+        file_put_contents($root . '/System/Auth.php', "<?php\n");
+        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+        symlink($root . '/System/Flows', $root . '/System/Flow');
+        symlink($root . '/System/Capabilities', $root . '/System/Capability');
+
+        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertContains(needle: 'System/Capability', haystack: $result['unexpected_top_level']);
+        $this->assertContains(needle: 'System/Flow', haystack: $result['unexpected_top_level']);
     }
 }

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\OAuth;
+namespace Avax\Auth\Tests\Flows\OAuth;
 
-use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capability\OAuth\OAuthClientType;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
-use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Capabilities\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\OAuth\RegisterClient\RegisterClient;
+use Avax\Auth\System\Flows\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

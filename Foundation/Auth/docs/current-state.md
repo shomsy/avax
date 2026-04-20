@@ -9,5 +9,5 @@ Canonical truth now lives in:
 - `docs/capability-matrix.md` for executable capability evidence
 - `docs/archive/historical-review-snapshots.md` for archived review history
 
-Use `REFAKTOR.md` only as the detailed implementation backlog, not as the
-authoritative shipped-state document.
+Use `REFAKTOR.md` only as archived refactor context, not as the authoritative
+shipped-state document.

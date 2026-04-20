@@ -11,11 +11,11 @@ use Avax\Auth\Integrations\Http\VerifyDpopProof;
 use Avax\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
 use Avax\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
 use Avax\Auth\Integrations\Http\VerifyTrustedProxyHeaders;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\InMemoryDpopProofReplayStore;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
 use PHPUnit\Framework\TestCase;
 
 final class DeploymentTrustBoundaryTest extends TestCase

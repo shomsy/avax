@@ -22,7 +22,6 @@ final class UriBuilder extends BaseUri implements UriInterface
 
     private QueryParams $queryParams;
 
-    #[\Override]
     public function __construct(
         string                            $scheme = '',
         string                            $host = '',

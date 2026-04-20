@@ -1,6 +1,6 @@
 # Flow Boundaries
 
-`System/Flow/` owns end-to-end behavior.
+`System/Flows/` owns end-to-end behavior.
 
 A flow is the first honest owner when:
 
@@ -10,13 +10,13 @@ A flow is the first honest owner when:
 
 Examples in this package:
 
-- `Flow/Login/`
-- `Flow/Register/`
-- `Flow/ChangePassword/`
-- `Flow/Recover/`
-- `Flow/Oidc/`
-- `Flow/Scim/`
-- `Flow/TenantSecurity/`
+- `Flows/Login/`
+- `Flows/Register/`
+- `Flows/ChangePassword/`
+- `Flows/RecoverAccess/`
+- `Flows/Oidc/`
+- `Flows/Scim/`
+- `Flows/TenantSecurity/`
 
 Locality rules:
 

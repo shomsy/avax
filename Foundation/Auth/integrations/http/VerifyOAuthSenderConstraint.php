@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flows\Diagnostics\NullAuditLog;
 use DateTimeImmutable;
 
 /**

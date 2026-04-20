@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Oidc;
+namespace Avax\Auth\Tests\Flows\Oidc;
 
-use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capability\OAuth\OAuthClient;
-use Avax\Auth\System\Capability\OAuth\OAuthClientType;
-use Avax\Auth\System\Capability\Oidc\InMemoryOidcRequestObjectStore;
-use Avax\Auth\System\Capability\Oidc\OidcIdToken;
-use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
-use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
-use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Capabilities\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClient;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
+use Avax\Auth\System\Capabilities\Oidc\InMemoryOidcRequestObjectStore;
+use Avax\Auth\System\Capabilities\Oidc\OidcIdToken;
+use Avax\Auth\System\Capabilities\Oidc\OidcJsonWebKeySet;
+use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\Oidc\OidcProviderMetadata;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Flows\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Flows\OAuth\OAuthAuthorizationFailed;
+use Avax\Auth\System\Flows\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
+use Avax\Auth\System\Flows\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Foundation\Clock;
 use BadMethodCallException;
 use DateMalformedStringException;

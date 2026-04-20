@@ -2,7 +2,7 @@
 
 Owner: `Access`
 
-Primary implementation: `System/Flow/AuthenticateRequest/`, `System/Flow/CheckAuthentication/`, `System/Flow/ReadCurrentUser/`
+Primary implementation: `System/Flows/CheckAuthentication/`, `System/Flows/CheckAuthentication/AuthenticateRequest/`, `System/Flows/CheckAuthentication/ReadCurrentUser/`
 
 Sequence:
 

@@ -456,14 +456,11 @@ class RequestedInputsTest extends TestCase
         }
 
         if (!class_exists('NotADtoClass')) {
-            class NotADtoClass {}
+            eval('class NotADtoClass {}');
         }
 
         if (!enum_exists('TestRoleEnum')) {
-            enum TestRoleEnum: string {
-                case Admin = 'admin';
-                case User = 'user';
-            }
+            eval('enum TestRoleEnum: string { case Admin = "admin"; case User = "user"; }');
         }
 
         $inputs = new RequestedInputs(

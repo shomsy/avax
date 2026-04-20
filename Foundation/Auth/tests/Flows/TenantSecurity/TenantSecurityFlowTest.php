@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\TenantSecurity;
+namespace Avax\Auth\Tests\Flows\TenantSecurity;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Federation\FederationProvider;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequestStatus;
-use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
-use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
-use Avax\Auth\System\Flow\TenantSecurity\TenantSecurityFailed;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Federation\FederationProvider;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequestStatus;
+use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityConfiguration;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Federation\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Auth\System\Flows\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flows\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
+use Avax\Auth\System\Flows\TenantSecurity\TenantSecurityFailed;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use PHPUnit\Framework\TestCase;

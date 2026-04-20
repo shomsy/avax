@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\PasswordHashing;
+namespace Avax\Auth\Tests\Capabilities\PasswordHashing;
 
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -135,8 +135,9 @@ class RequestHeadersTest extends TestCase
                                                         'X-Custom' => 'value',
                                                     ]);
 
-        $headers->append(name: 'X-Custom', value: 'new');
+        $newHeaders = $headers->append(name: 'X-Custom', value: 'new');
 
         $this->assertSame(expected: ['value'], actual: $headers->get(name: 'X-Custom'));
+        $this->assertSame(expected: ['value', 'new'], actual: $newHeaders->get(name: 'X-Custom'));
     }
 }

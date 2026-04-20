@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Mfa;
+namespace Avax\Auth\Tests\Flows\Mfa;
 
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Flow\Mfa\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
-use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
-use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Flows\Mfa\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
+use Avax\Auth\System\Flows\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flows\Mfa\Challenge\MfaChallengeRecord;
+use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

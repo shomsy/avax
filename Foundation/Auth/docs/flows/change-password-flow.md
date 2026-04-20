@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/ChangePassword/`
+Primary implementation: `System/Flows/ChangePassword/`
 
 Sequence:
 

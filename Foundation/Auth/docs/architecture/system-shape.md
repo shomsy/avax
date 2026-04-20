@@ -6,14 +6,8 @@ Canonical production root: `System/`
 System/
   Auth.php
   AuthInterface.php
-  Access/
-  Diagnostics/
-  ExternalIdentity/
-  Identity/
-  IdentitySync/
-  Tenancy/
-  Flow/
-  Capability/
+  Flows/
+  Capabilities/
   Configuration/
   Foundation/
 ```
@@ -21,14 +15,15 @@ System/
 Reading model:
 
 1. `Auth.php` is the package entry.
-2. Root ownership zones provide explicit top-level ownership.
-3. `Flow/` contains local stories such as `Login`, `Register`, `Scim`, `TenantSecurity`, `Oidc`.
-4. `Capability/` contains shared mechanisms such as `Access`, `Identity`, `OAuth`, `Oidc`, `Tenant`, `Session`.
+2. `Flows/` contains local stories such as `Login`, `Register`, `RecoverAccess`, `VerifyIdentity`, `Scim`,
+   `TenantSecurity`, and `Oidc`.
+3. `Capabilities/` contains owner zones and shared mechanisms such as `Access`, `Identity`, `ExternalIdentity`,
+   `IdentitySync`, `Tenancy`, `Diagnostics`, `Session`, and `Passkey`.
 5. `Configuration/` assembles the system.
 6. `Foundation/` holds small neutral primitives.
 
 Important implementation decision:
 
-- the package keeps `System/Flow/` as the concrete flow lane to avoid unnecessary namespace churn
-- the root ownership zones sit above it and make system ownership obvious
+- the package ships plural filesystem roots: `System/Flows/` and `System/Capabilities/`
+- owner zones live under `System/Capabilities/` and make system ownership obvious
 - no new top-level slice may be added unless it owns a real story or shared boundary

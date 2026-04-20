@@ -141,6 +141,21 @@ class Stream implements StreamInterface
         return $stream;
     }
 
+    public function isSeekable(): bool
+    {
+        return $this->seekable;
+    }
+
+    public function isReadable(): bool
+    {
+        return $this->readable;
+    }
+
+    public function isWritable(): bool
+    {
+        return $this->writable;
+    }
+
     /**
      * Get the size of the stream, if known.
      *

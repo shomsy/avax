@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Session;
+namespace Avax\Auth\Tests\Flows\Session;
 
-use Avax\Auth\System\Flow\Session\SessionCookieSettings;
+use Avax\Auth\System\Flows\Session\SessionCookieSettings;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flows\Passkey\RenamePasskey;
+
+use Avax\Auth\System\Capabilities\Passkey\PasskeyCredential;
+use Avax\Auth\System\Capabilities\Passkey\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\Passkey\PasskeyOperationFailed;
+use SensitiveParameter;
+
+final readonly class RenamePasskey
+{
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private CurrentAuthentication           $currentAuthentication;
+
+    public function __construct(
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->credentialStore       = $credentialStore;
+    }
+
+    /**
+     * @throws PasskeyOperationFailed
+     */
+    public function execute(RenamePasskeyData $data) : PasskeyCredential
+    {
+        $user       = $this->currentAuthentication->read()->user();
+        $credential = $this->credentialStore->find(credentialId: $data->credentialId);
+
+        if ($user === null) {
+            throw PasskeyOperationFailed::unauthenticated();
+        }
+
+        if ($credential === null || $credential->userId !== $user->id) {
+            throw PasskeyOperationFailed::notFound();
+        }
+
+        $label = trim($data->label);
+
+        if ($label === '') {
+            throw PasskeyOperationFailed::invalidLabel();
+        }
+
+        $this->credentialStore->rename(credentialId: $credential->credentialId, label: $label);
+
+        return $this->credentialStore->find(credentialId: $credential->credentialId)
+            ?? throw PasskeyOperationFailed::notFound();
+    }
+}

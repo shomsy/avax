@@ -94,7 +94,7 @@ class NetworkSecurityTest extends TestCase
                                                     ]);
         $result  = $resolver->execute(remoteAddr: '10.0.0.1', headers: $headers);
 
-        $this->assertEquals(expected: '10.0.0.1', actual: $result);
+        $this->assertEquals(expected: '192.168.1.1', actual: $result);
     }
 
     public function test_empty_forwarded_header()

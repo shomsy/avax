@@ -2,7 +2,7 @@
 
 Owner: `ExternalIdentity`
 
-Primary implementation: `System/Flow/Federation/`, `System/Flow/Oidc/`, `System/Flow/OAuth/`
+Primary implementation: `System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/`, `System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/`, `System/Capabilities/ExternalIdentity/OAuth/Runtime/`
 
 Sequence:
 

@@ -7,35 +7,35 @@ namespace Avax\Auth\Integrations\Http\TenantSecurity;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
-use Avax\Auth\System\Capability\Federation\FederationConnection;
-use Avax\Auth\System\Capability\Federation\FederationProvider;
-use Avax\Auth\System\Capability\OAuth\OAuthClient;
-use Avax\Auth\System\Capability\OAuth\OAuthClientType;
-use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capability\Scim\ScimDirectory;
-use Avax\Auth\System\Capability\Tenant\Tenant;
-use Avax\Auth\System\Capability\Tenant\TenantInvite;
-use Avax\Auth\System\Capability\Tenant\TenantMember;
-use Avax\Auth\System\Capability\Tenant\TenantMemberRole;
-use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
-use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
-use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
-use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
-use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
-use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
-use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
-use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
-use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
-use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInviteData;
-use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenantData;
-use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnershipData;
-use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
+use Avax\Auth\System\Capabilities\Federation\FederationConnection;
+use Avax\Auth\System\Capabilities\Federation\FederationProvider;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClient;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
+use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
+use Avax\Auth\System\Capabilities\OAuth\OAuthTokenEndpointAuthMethod;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
+use Avax\Auth\System\Capabilities\Tenant\Tenant;
+use Avax\Auth\System\Capabilities\Tenant\TenantInvite;
+use Avax\Auth\System\Capabilities\Tenant\TenantMember;
+use Avax\Auth\System\Capabilities\Tenant\TenantMemberRole;
+use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capabilities\TenantSecurity\TenantSecurityConfiguration;
+use Avax\Auth\System\Flows\Federation\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Auth\System\Flows\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flows\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
+use Avax\Auth\System\Flows\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flows\OAuth\UpdateClient\UpdateClientData;
+use Avax\Auth\System\Flows\Scim\MarkOutage\MarkScimDirectoryOutageData;
+use Avax\Auth\System\Flows\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
+use Avax\Auth\System\Flows\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flows\Tenant\AcceptInvite\AcceptTenantInviteData;
+use Avax\Auth\System\Flows\Tenant\CreateTenant\CreateTenantData;
+use Avax\Auth\System\Flows\Tenant\InviteMember\InviteTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\RemoveMember\RemoveTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\SuspendMember\SuspendTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\TransferOwnership\TransferTenantOwnershipData;
+use Avax\Auth\System\Flows\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
 use InvalidArgumentException;
 use SensitiveParameter;
 use Throwable;
@@ -365,11 +365,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
             }
         } catch (Throwable $failure) {
-            $status = $failure->getMessage()
-                |> strtolower(...)
-                |> (static fn ($x) => str_contains($x, 'not found')) || $failure->getMessage()
-                |> strtolower(...)
-                |> (static fn ($x) => str_contains($x, 'unknown'))
+            $message = strtolower($failure->getMessage());
+            $status  = str_contains($message, 'not found') || str_contains($message, 'unknown')
                 ? 404
                 : 422;
 
@@ -634,10 +631,7 @@ final readonly class ServeTenantSecurityHttpSurface
         }
 
         if (is_string($value)) {
-            return $value
-                    |> trim(...)
-                    |> strtolower(...)
-                    |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
+            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
         }
 
         return false;

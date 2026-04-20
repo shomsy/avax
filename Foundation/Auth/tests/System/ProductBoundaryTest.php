@@ -15,19 +15,18 @@ final class ProductBoundaryTest extends TestCase
                 'System/AuthInterface.php',
             ],
             'Authentication' => [
-                'System/Flow/Login',
-                'System/Flow/ChangePassword',
-                'System/Flow/Recover',
+                'System/Flows/Login',
+                'System/Flows/ChangePassword',
+                'System/Flows/RecoverAccess',
             ],
             'MFA'            => [
-                'System/Flow/Mfa',
+                'System/Capabilities/Identity/Mfa',
             ],
             'OAuth'          => [
-                'System/Flow/OAuth',
+                'System/Capabilities/ExternalIdentity/OAuth',
             ],
             'Sessions'       => [
-                'System/Flow/Session',
-                'System/Capability/Session',
+                'System/Capabilities/Identity/Sessions',
             ],
         ];
 
@@ -115,9 +114,9 @@ final class ProductBoundaryTest extends TestCase
     {
         $root = dirname(__DIR__, 2);
 
-        $tenantPath     = $root . '/System/Capability/Tenant';
-        $scimPath       = $root . '/System/Flow/Scim';
-        $federationPath = $root . '/System/Capability/Federation';
+        $tenantPath     = $root . '/System/Capabilities/Tenancy';
+        $scimPath       = $root . '/System/Capabilities/IdentitySync/SCIM';
+        $federationPath = $root . '/System/Capabilities/ExternalIdentity/SingleSignOn';
 
         $this->assertFileExists(
             filename: $tenantPath,
@@ -131,5 +130,597 @@ final class ProductBoundaryTest extends TestCase
             filename: $federationPath,
             message : "Identity kernel - Federation capability missing"
         );
+    }
+
+    public function testCanonicalBoundaryDirectoriesExist() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredDirectories = [
+            $root . '/System/Flows/Login',
+            $root . '/System/Flows/Logout',
+            $root . '/System/Flows/Register',
+            $root . '/System/Flows/ChangePassword',
+            $root . '/System/Flows/ChangeEmail',
+            $root . '/System/Flows/RecoverAccess',
+            $root . '/System/Flows/VerifyIdentity',
+            $root . '/System/Flows/CheckAuthentication',
+            $root . '/System/Capabilities/Access/RequireAuthentication',
+            $root . '/System/Capabilities/Access/RequirePermission',
+            $root . '/System/Capabilities/Access/RequireRole',
+            $root . '/System/Capabilities/Access/RiskBasedAccess',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime',
+            $root . '/System/Capabilities/Tenancy/Runtime',
+            $root . '/System/Capabilities/Diagnostics',
+        ];
+
+        foreach ($requiredDirectories as $directory) {
+            $this->assertDirectoryExists(
+                directory: $directory,
+                message  : "Canonical architectural boundary missing: {$directory}"
+            );
+        }
+    }
+
+    public function testCanonicalFlowsTopLevelShapeMatchesRefactorPlan() : void
+    {
+        $root     = dirname(__DIR__, 2);
+        $expected = [
+            'ChangeEmail',
+            'ChangePassword',
+            'CheckAuthentication',
+            'Login',
+            'Logout',
+            'RecoverAccess',
+            'Register',
+            'VerifyIdentity',
+        ];
+
+        $this->assertSame(
+            expected: $expected,
+            actual  : $this->topLevelDirectories($root . '/System/Flows'),
+            message : 'System/Flows top-level shape drifted away from the 8 canonical flow roots.'
+        );
+    }
+
+    public function testCanonicalCapabilitiesTopLevelShapeMatchesRefactorPlan() : void
+    {
+        $root     = dirname(__DIR__, 2);
+        $expected = [
+            'Access',
+            'Diagnostics',
+            'ExternalIdentity',
+            'Identity',
+            'IdentitySync',
+            'Tenancy',
+        ];
+
+        $this->assertSame(
+            expected: $expected,
+            actual  : $this->topLevelDirectories($root . '/System/Capabilities'),
+            message : 'System/Capabilities top-level shape drifted away from the canonical owner zones.'
+        );
+    }
+
+    public function testCanonicalAnchorFilesExist() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredFiles = [
+            $root . '/System/Flows/Login/AuthenticationResult.php',
+            $root . '/System/Flows/Register/RegistrationResult.php',
+            $root . '/System/Flows/ChangeEmail/BeginEmailChange.php',
+            $root . '/System/Flows/RecoverAccess/PasswordReset/BeginPasswordReset.php',
+            $root . '/System/Flows/VerifyIdentity/EmailVerification/VerifyEmail.php',
+            $root . '/System/Flows/CheckAuthentication/ReadCurrentUser/ReadCurrentUser.php',
+            $root . '/System/Capabilities/Access/RequireAuthentication/RequireAuthentication.php',
+            $root . '/System/Capabilities/Access/RequirePermission/RequirePermission.php',
+            $root . '/System/Capabilities/Access/RequireRole/RequireRole.php',
+            $root . '/System/Capabilities/Access/RiskBasedAccess/Runtime/AssessCurrentRisk/AssessCurrentRisk.php',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime/ReadActiveSessions/ReadActiveSessions.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/RefreshAuthentication.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/StartMfaEnrollment.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/ListPasskeys/ListPasskeys.php',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/StartFederatedLogin/StartFederatedLogin.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/AuthorizeCode/AuthorizeCode.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ReadProviderMetadata/ReadOidcProviderMetadata.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/Bulk/RunScimBulk.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/CreateTenant/CreateTenant.php',
+            $root . '/System/Capabilities/Diagnostics/DiagnosticsFacade.php',
+        ];
+
+        foreach ($requiredFiles as $file) {
+            $this->assertFileExists(
+                filename: $file,
+                message : "Canonical anchor file missing: {$file}"
+            );
+        }
+    }
+
+    public function testCanonicalContractsUsePluralSystemRoots() : void
+    {
+        $root  = dirname(__DIR__, 2);
+        $files = [
+            $root . '/AGENTS.md',
+            $root . '/README.md',
+            $root . '/docs/STATUS.md',
+            $root . '/docs/architecture/system-shape.md',
+            $root . '/docs/architecture/flow-boundaries.md',
+            $root . '/docs/architecture/capability-boundaries.md',
+            $root . '/docs/architecture/migration-map.md',
+        ];
+
+        foreach (glob($root . '/docs/flows/*.md') ?: [] as $flowDoc) {
+            $files[] = $flowDoc;
+        }
+
+        foreach ($files as $file) {
+            $contents = file_get_contents($file);
+
+            self::assertIsString(actual: $contents);
+            $this->assertStringNotContainsString(
+                needle  : 'System/Flows/',
+                haystack: $contents,
+                message : "Legacy singular flow root documented in {$file}"
+            );
+            $this->assertStringNotContainsString(
+                needle  : 'System/Capabilities/',
+                haystack: $contents,
+                message : "Legacy singular capability root documented in {$file}"
+            );
+        }
+
+        $agents = file_get_contents($root . '/AGENTS.md');
+        $shape  = file_get_contents($root . '/docs/architecture/system-shape.md');
+
+        self::assertIsString(actual: $agents);
+        self::assertIsString(actual: $shape);
+        $this->assertStringContainsString(needle: 'Flows/', haystack: $agents);
+        $this->assertStringContainsString(needle: 'Capabilities/', haystack: $agents);
+        $this->assertStringContainsString(needle: 'System/Flows/', haystack: $shape);
+        $this->assertStringContainsString(needle: 'System/Capabilities/', haystack: $shape);
+    }
+
+    public function testLegacySingularDirectoryRootsAreRemoved() : void
+    {
+        $root       = dirname(__DIR__, 2);
+        $legacyDirs = [
+            $root . '/System/Flow',
+            $root . '/System/Capability',
+            $root . '/tests/Flow',
+            $root . '/tests/Capability',
+        ];
+
+        foreach ($legacyDirs as $directory) {
+            $this->assertDirectoryDoesNotExist(
+                directory: $directory,
+                message  : "Legacy singular directory root still present: {$directory}"
+            );
+        }
+    }
+
+    public function testNoLegacyCompatibilityShimsRemainInSystemTree() : void
+    {
+        $root     = dirname(__DIR__, 2);
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($root . '/System', \FilesystemIterator::SKIP_DOTS)
+        );
+
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if (! $file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $contents = file_get_contents($file->getPathname());
+
+            self::assertIsString(actual: $contents);
+            $this->assertStringNotContainsString(
+                needle  : 'class_alias(',
+                haystack: $contents,
+                message : "Legacy class_alias shim still exists in {$file->getPathname()}"
+            );
+            $this->assertStringNotContainsString(
+                needle  : 'namespace Avax\\Auth\\System\\Capability\\',
+                haystack: $contents,
+                message : "Legacy singular capability namespace still exists in {$file->getPathname()}"
+            );
+            $this->assertStringNotContainsString(
+                needle  : 'namespace Avax\\Auth\\System\\Flow\\',
+                haystack: $contents,
+                message : "Legacy singular flow namespace still exists in {$file->getPathname()}"
+            );
+        }
+    }
+
+    public function testRefactorAndClosureDocsReflectPluralCanonicalRoots() : void
+    {
+        $root  = dirname(__DIR__, 2);
+        $files = [
+            $root . '/REFAKTOR.md',
+            $root . '/complete-this.md',
+        ];
+
+        foreach ($files as $file) {
+            $contents = file_get_contents($file);
+
+            self::assertIsString(actual: $contents);
+            $this->assertStringNotContainsString(
+                needle  : 'System/Flows/',
+                haystack: $contents,
+                message : "Legacy singular flow root still documented in {$file}"
+            );
+            $this->assertStringNotContainsString(
+                needle  : 'System/Capabilities/',
+                haystack: $contents,
+                message : "Legacy singular capability root still documented in {$file}"
+            );
+        }
+    }
+
+    public function testMutationConfigurationUsesPluralSystemRoots() : void
+    {
+        $root     = dirname(__DIR__, 2);
+        $contents = file_get_contents($root . '/infection.json.dist');
+
+        self::assertIsString(actual: $contents);
+        $this->assertStringNotContainsString(needle: 'System/Flows/', haystack: $contents);
+        $this->assertStringNotContainsString(needle: 'System/Capabilities/', haystack: $contents);
+        $this->assertStringContainsString(needle: 'System/Flows/', haystack: $contents);
+        $this->assertStringContainsString(needle: 'System/Capabilities/', haystack: $contents);
+    }
+
+    public function testTargetFoundationArchitectureExists() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredDirectories = [
+            $root . '/System/Foundation/Ids',
+            $root . '/System/Foundation/Time',
+            $root . '/System/Foundation/Text',
+            $root . '/System/Foundation/Exceptions',
+        ];
+
+        foreach ($requiredDirectories as $directory) {
+            $this->assertDirectoryExists(
+                directory: $directory,
+                message  : "Target foundation directory missing: {$directory}"
+            );
+        }
+
+        $requiredFiles = [
+            $root . '/System/Foundation/Ids/UserId.php',
+            $root . '/System/Foundation/Ids/TenantId.php',
+            $root . '/System/Foundation/Ids/SessionId.php',
+            $root . '/System/Foundation/Ids/TokenId.php',
+            $root . '/System/Foundation/Ids/ClientId.php',
+            $root . '/System/Foundation/Ids/DirectoryId.php',
+            $root . '/System/Foundation/Ids/PasskeyId.php',
+            $root . '/System/Foundation/Ids/ChallengeId.php',
+            $root . '/System/Foundation/Time/Clock.php',
+            $root . '/System/Foundation/Time/SystemClock.php',
+            $root . '/System/Foundation/Time/Expiry.php',
+            $root . '/System/Foundation/Time/TimeWindow.php',
+            $root . '/System/Foundation/Text/NormalizeEmail.php',
+            $root . '/System/Foundation/Text/NormalizeUsername.php',
+            $root . '/System/Foundation/Text/NormalizeScope.php',
+            $root . '/System/Foundation/Text/MaskSecret.php',
+            $root . '/System/Foundation/Exceptions/AuthException.php',
+            $root . '/System/Foundation/Exceptions/ConfigurationException.php',
+            $root . '/System/Foundation/Exceptions/ExternalIdentityException.php',
+            $root . '/System/Foundation/Exceptions/IdentitySyncException.php',
+        ];
+
+        foreach ($requiredFiles as $file) {
+            $this->assertFileExists(
+                filename: $file,
+                message : "Target foundation file missing: {$file}"
+            );
+        }
+    }
+
+    public function testTargetCapabilitiesArchitectureExists() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredDirectories = [
+            $root . '/System/Capabilities/Access/Authentication',
+            $root . '/System/Capabilities/Access/RequireAuthentication',
+            $root . '/System/Capabilities/Access/RequirePermission',
+            $root . '/System/Capabilities/Access/RequireRole',
+            $root . '/System/Capabilities/Access/RiskBasedAccess/Runtime',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime',
+            $root . '/System/Capabilities/Tenancy/Runtime',
+            $root . '/System/Capabilities/Diagnostics',
+        ];
+
+        foreach ($requiredDirectories as $directory) {
+            $this->assertDirectoryExists(
+                directory: $directory,
+                message  : "Target capabilities directory missing: {$directory}"
+            );
+        }
+
+        $requiredFiles = [
+            $root . '/System/Capabilities/Access/RequireAuthentication/RequireAuthentication.php',
+            $root . '/System/Capabilities/Access/RequireAuthentication/Unauthenticated.php',
+            $root . '/System/Capabilities/Access/RequirePermission/RequirePermission.php',
+            $root . '/System/Capabilities/Access/RequirePermission/PermissionDenied.php',
+            $root . '/System/Capabilities/Access/RequireRole/RequireRole.php',
+            $root . '/System/Capabilities/Access/RequireRole/RoleDenied.php',
+            $root . '/System/Capabilities/Access/RiskBasedAccess/Runtime/AssessCurrentRisk/AssessCurrentRisk.php',
+            $root . '/System/Capabilities/Access/RiskBasedAccess/Runtime/ReadRiskSignals/ReadRiskSignals.php',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime/ReadActiveSessions/ReadActiveSessions.php',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime/RevokeSession/RevokeSession.php',
+            $root . '/System/Capabilities/Identity/Sessions/Runtime/LogoutAllSessions/LogoutAllSessions.php',
+            $root . '/System/Capabilities/Identity/Tokens/TokenState.php',
+            $root . '/System/Capabilities/Identity/Tokens/ReadToken.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/RefreshAuthentication.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/IssuedToken.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/StartMfaEnrollment.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/ConfirmMfaEnrollment.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/StartMfaChallenge.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/VerifyMfaChallenge.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recovery/StartMfaRecovery.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recovery/ConfirmMfaRecovery.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Backup/RegenerateBackupCodes.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Disable/DisableMfa.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/BeginRegistration/BeginPasskeyRegistration.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/CompleteRegistration/CompletePasskeyRegistration.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/BeginAuthentication/BeginPasskeyAuthentication.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/CompleteAuthentication/CompletePasskeyAuthentication.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/ListPasskeys/ListPasskeys.php',
+            $root . '/System/Capabilities/Identity/Passkey/Runtime/RevokePasskey/RevokePasskey.php',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/StartFederatedLogin/StartFederatedLogin.php',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/CompleteFederatedLogin/CompleteFederatedLogin.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/AuthorizeCode/AuthorizeCode.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/ExchangeAuthorizationCode/ExchangeAuthorizationCode.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/ExchangeClientCredentials/ExchangeClientCredentials.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/ExchangeRefreshToken/ExchangeRefreshToken.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/ReadClients/ReadClients.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/ReadWorkloadIdentities/ReadWorkloadIdentities.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/RegisterClient/RegisterClient.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/Runtime/UpdateClient/UpdateClient.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ReadProviderMetadata/ReadOidcProviderMetadata.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ReadJsonWebKeySet/ReadOidcJsonWebKeySet.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/PushAuthorizationRequest/PushAuthorizationRequest.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ValidateRequestObject/ValidateRequestObject.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/Logout/Logout.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ReadUserInfo/ReadOidcUserInfo.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/Bulk/RunScimBulk.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/ReadDirectories/ReadScimDirectories.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/ReadUsers/ReadScimUsers.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/ReadGroups/ReadScimGroups.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/MarkOutage/MarkScimDirectoryOutage.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/RecoverOutage/RecoverScimDirectoryOutage.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/RegisterDirectory/RegisterScimDirectory.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/RotateToken/RotateScimToken.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/DeleteUser/DeleteScimUser.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/ProvisionUser/ProvisionScimUser.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/CreateTenant/CreateTenant.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/ReadTenants/ReadTenants.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/ReadMembers/ReadTenantMembers.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/InviteMember/InviteTenantMember.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/AcceptInvite/AcceptTenantInvite.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/RemoveMember/RemoveTenantMember.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/SuspendMember/SuspendTenantMember.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/Tenant/TransferOwnership/TransferTenantOwnership.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ReadConfiguration/ReadTenantSecurityConfiguration.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ReadChangeRequests/ReadTenantSecurityChangeRequests.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/BeginChange/BeginTenantSecurityChange.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ApplyChange/ApplyTenantSecurityChange.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ApproveChange/ApproveTenantSecurityChange.php',
+            $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/RollbackChange/RollbackTenantSecurityChange.php',
+            $root . '/System/Capabilities/Diagnostics/DiagnosticsFacade.php',
+            $root . '/System/Capabilities/Diagnostics/DiagnosticReport.php',
+        ];
+
+        foreach ($requiredFiles as $file) {
+            $this->assertFileExists(
+                filename: $file,
+                message : "Target capabilities file missing: {$file}"
+            );
+        }
+
+        return;
+    }
+
+    public function testTargetTestArchitectureExists() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredDirectories = [
+            $root . '/tests/Unit/System/Flows/Login',
+            $root . '/tests/Unit/System/Flows/Logout',
+            $root . '/tests/Unit/System/Flows/Register',
+            $root . '/tests/Unit/System/Flows/ChangePassword',
+            $root . '/tests/Unit/System/Flows/ChangeEmail',
+            $root . '/tests/Unit/System/Flows/RecoverAccess',
+            $root . '/tests/Unit/System/Flows/VerifyIdentity',
+            $root . '/tests/Unit/System/Flows/CheckAuthentication',
+            $root . '/tests/Unit/System/Capabilities/Access/Authentication',
+            $root . '/tests/Unit/System/Capabilities/Access/Authorization',
+            $root . '/tests/Unit/System/Capabilities/Access/RiskBasedAccess',
+            $root . '/tests/Unit/System/Capabilities/Identity/Sessions',
+            $root . '/tests/Unit/System/Capabilities/Identity/Tokens',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/SingleSignOn',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM',
+            $root . '/tests/Unit/System/Capabilities/Tenancy',
+            $root . '/tests/Unit/System/Capabilities/Diagnostics',
+            $root . '/tests/Unit/System/Configuration',
+            $root . '/tests/Unit/System/Foundation/Ids',
+            $root . '/tests/Unit/System/Foundation/Time',
+            $root . '/tests/Unit/System/Foundation/Text',
+            $root . '/tests/Integration',
+            $root . '/tests/Characterization',
+        ];
+
+        foreach ($requiredDirectories as $directory) {
+            $this->assertDirectoryExists(
+                directory: $directory,
+                message  : "Target tests directory missing: {$directory}"
+            );
+        }
+
+        $requiredFiles = [
+            $root . '/tests/Unit/System/Flows/Login/LoginTest.php',
+            $root . '/tests/Unit/System/Flows/Login/CredentialsTest.php',
+            $root . '/tests/Unit/System/Flows/Logout/LogoutTest.php',
+            $root . '/tests/Unit/System/Flows/Register/RegisterTest.php',
+            $root . '/tests/Unit/System/Flows/Register/RegistrationDataTest.php',
+            $root . '/tests/Unit/System/Flows/ChangePassword/ChangePasswordTest.php',
+            $root . '/tests/Unit/System/Flows/ChangeEmail/ChangeEmailTest.php',
+            $root . '/tests/Unit/System/Flows/RecoverAccess/BeginRecoveryTest.php',
+            $root . '/tests/Unit/System/Flows/RecoverAccess/ConfirmRecoveryTest.php',
+            $root . '/tests/Unit/System/Flows/VerifyIdentity/VerifyIdentityTest.php',
+            $root . '/tests/Unit/System/Flows/CheckAuthentication/CheckAuthenticationTest.php',
+            $root . '/tests/Unit/System/Flows/CheckAuthentication/ReadAuthenticatedUserTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/Authentication/AuthenticateRequestTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/Authentication/RequireAuthenticationTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/Authorization/RequirePermissionTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/Authorization/RequireRoleTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/RiskBasedAccess/AssessAccessRiskTest.php',
+            $root . '/tests/Unit/System/Capabilities/Access/RiskBasedAccess/AccessRiskPolicyTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Sessions/ReadActiveSessionsTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Sessions/RevokeSessionTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Sessions/LogoutAllSessionsTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Tokens/IssueTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Tokens/RefreshTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Tokens/RevokeTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/StartEnrollmentTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/ConfirmEnrollmentTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/StartChallengeTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/VerifyChallengeTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/RegenerateBackupCodesTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Mfa/DisableMfaTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey/StartRegistrationTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey/ConfirmRegistrationTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey/StartChallengeTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey/VerifyChallengeTest.php',
+            $root . '/tests/Unit/System/Capabilities/Identity/Passkey/RemovePasskeyTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/SingleSignOn/StartSingleSignOnTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/SingleSignOn/CompleteSingleSignOnTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth/AuthorizeCodeTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth/ExchangeAuthorizationCodeTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth/ExchangeClientCredentialsTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth/ExchangeRefreshTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OAuth/IntrospectTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect/ReadProviderMetadataTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect/ReadJsonWebKeySetTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect/PushAuthorizationRequestTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect/ValidateRequestObjectTest.php',
+            $root . '/tests/Unit/System/Capabilities/ExternalIdentity/OpenIDConnect/ReadUserInfoTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/AddIdentityTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/RemoveIdentityTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/RegisterDirectoryTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/RotateDirectoryTokenTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/AddUserTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/RemoveUserTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/SyncGroupsTest.php',
+            $root . '/tests/Unit/System/Capabilities/IdentitySync/SCIM/RunBulkSyncTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/CreateTenantTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/InviteMemberTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/AcceptInviteTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/ReadMembersTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/SuspendMemberTest.php',
+            $root . '/tests/Unit/System/Capabilities/Tenancy/TransferOwnershipTest.php',
+            $root . '/tests/Unit/System/Capabilities/Diagnostics/RunDiagnosticsTest.php',
+            $root . '/tests/Unit/System/Configuration/AuthBuilderTest.php',
+            $root . '/tests/Unit/System/Configuration/AuthConfigurationTest.php',
+            $root . '/tests/Unit/System/Foundation/Ids/UserIdTest.php',
+            $root . '/tests/Unit/System/Foundation/Ids/TenantIdTest.php',
+            $root . '/tests/Unit/System/Foundation/Time/ExpiryTest.php',
+            $root . '/tests/Unit/System/Foundation/Time/TimeWindowTest.php',
+            $root . '/tests/Unit/System/Foundation/Text/NormalizeEmailTest.php',
+            $root . '/tests/Unit/System/Foundation/Text/NormalizeScopeTest.php',
+            $root . '/tests/Integration/LoginFlowTest.php',
+            $root . '/tests/Integration/RegisterFlowTest.php',
+            $root . '/tests/Integration/ChangePasswordFlowTest.php',
+            $root . '/tests/Integration/ChangeEmailFlowTest.php',
+            $root . '/tests/Integration/RecoverAccessFlowTest.php',
+            $root . '/tests/Integration/VerifyIdentityFlowTest.php',
+            $root . '/tests/Integration/SessionLifecycleFlowTest.php',
+            $root . '/tests/Integration/TokenLifecycleFlowTest.php',
+            $root . '/tests/Integration/MfaFlowTest.php',
+            $root . '/tests/Integration/PasskeyFlowTest.php',
+            $root . '/tests/Integration/SingleSignOnFlowTest.php',
+            $root . '/tests/Integration/ScimIdentitySyncFlowTest.php',
+            $root . '/tests/Integration/TenantMembershipFlowTest.php',
+            $root . '/tests/Characterization/LegacyAuthenticationBehaviorTest.php',
+            $root . '/tests/Characterization/LegacySessionBehaviorTest.php',
+            $root . '/tests/Characterization/LegacyTokenRefreshBehaviorTest.php',
+            $root . '/tests/Characterization/LegacySingleSignOnBehaviorTest.php',
+        ];
+
+        foreach ($requiredFiles as $file) {
+            $this->assertFileExists(
+                filename: $file,
+                message : "Target tests file missing: {$file}"
+            );
+        }
+    }
+
+    public function testCoreFlowsDoNotCreateClockInternally() : void
+    {
+        $root  = dirname(__DIR__, 2);
+        $files = [
+            $root . '/System/Flows/Login/Login.php',
+            $root . '/System/Flows/Register/Register.php',
+            $root . '/System/Flows/CheckAuthentication/AuthenticateRequest/AuthenticateRequest.php',
+        ];
+
+        foreach ($files as $file) {
+            $contents = file_get_contents($file);
+
+            self::assertIsString(actual: $contents);
+            $this->assertStringNotContainsString(
+                needle  : 'new Clock(',
+                haystack: $contents,
+                message : "Flow must receive time through DI instead of creating Clock internally: {$file}"
+            );
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function topLevelDirectories(string $root) : array
+    {
+        $entries = scandir($root);
+        self::assertNotFalse($entries);
+
+        $directories = [];
+
+        foreach ($entries as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            if (is_dir($root . '/' . $entry)) {
+                $directories[] = $entry;
+            }
+        }
+
+        sort($directories);
+
+        return $directories;
     }
 }

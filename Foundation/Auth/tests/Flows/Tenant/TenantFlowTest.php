@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Tenant;
+namespace Avax\Auth\Tests\Flows\Tenant;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\Tenant\TenantMemberRole;
-use Avax\Auth\System\Capability\Tenant\TenantMemberState;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInviteData;
-use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenantData;
-use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMemberData;
-use Avax\Auth\System\Flow\Tenant\TenantFailed;
-use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnershipData;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Tenant\TenantMemberRole;
+use Avax\Auth\System\Capabilities\Tenant\TenantMemberState;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Tenant\AcceptInvite\AcceptTenantInviteData;
+use Avax\Auth\System\Flows\Tenant\CreateTenant\CreateTenantData;
+use Avax\Auth\System\Flows\Tenant\InviteMember\InviteTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\RemoveMember\RemoveTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\SuspendMember\SuspendTenantMemberData;
+use Avax\Auth\System\Flows\Tenant\TenantFailed;
+use Avax\Auth\System\Flows\Tenant\TransferOwnership\TransferTenantOwnershipData;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

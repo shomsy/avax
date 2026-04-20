@@ -31,14 +31,14 @@ final readonly class RouteExecutor
      * Executes the route action and returns the response.
      *
      * @param RouteDefinition $route   The matched route definition.
-     * @param Request         $request The HTTP request with injected parameters.
+     * @param ServerRequest   $request The HTTP request with injected parameters.
      *
      * @return ResponseInterface The response from the controller.
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    public function execute(RouteDefinition $route, Request $request) : ResponseInterface
+    public function execute(RouteDefinition $route, ServerRequest $request) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
             action : $route->action,

@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Register/`
+Primary implementation: `System/Flows/Register/`
 
 Sequence:
 

@@ -14476,7 +14476,7 @@ Update rules:
 owner: codex
 actual: 1h
 
-2. `[doc][medium] 2026-03-27 18:01 CET - Thinned AGENTS.md and wired the required questions into .agents`
+1. `[doc][medium] 2026-03-27 18:01 CET - Thinned AGENTS.md and wired the required questions into .agents`
    owner: codex
    actual: 1h
 
@@ -22548,16 +22548,14 @@ Stop immediately if:
 === .agents/management/ACTIVE.md ===
 # ACTIVE Board
 
-Visual live board for currently active work across `TODO.md` and `BUGS.md`.
+No active items remain.
 
 ## Board
 
 ```mermaid
 flowchart LR
     subgraph Ready["Ready"]
-        R1["AUTH-006 | Implementation of missing tests | 2026-04-06 16:30 CET"]
-        R2["AUTH-007 | Docs Audit | 2026-04-06 16:30 CET"]
-        R3["AUTH-008 | Examples Audit | 2026-04-06 16:30 CET"]
+        R0["No active items"]
     end
 
     subgraph InProgress["In Progress"]
@@ -22784,7 +22782,7 @@ The goal is to compare expectation with reality over time.
 === .agents/management/TODO.md ===
 # TODO
 
-Canonical active implementation queue.
+Completed implementation archive. No active items remain.
 
 ## Entry Format
 
@@ -25882,17 +25880,17 @@ non-goals.
 require that package.
 
 === REFAKTOR.md ===
-Refaktor plan:
+Refaktor archive:
 
 ## Status Summary
 
-Updated: 2026-04-16
+Archived: 2026-04-19
 
 Legenda:
 
-- `[x]` done in package scope
-- `[~]` done with an intentional implementation variant
-- `[ ]` not implemented
+- done in package scope
+- historical implementation variant preserved for context
+- not implemented in historical material only
 
 Current truth:
 
@@ -25904,7 +25902,9 @@ Current truth:
 - `[x]` Faza 7: unjustified top-level hallway drift is constrained by root owner facades plus `tooling/check-system-shape.php`
 - `[x]` Faza 8: `Auth.php` remains the package ingress but now delegates to explicit zone owners instead of directly owning the full flow graph
 - `[x]` Faza 9: the canonical docs tree from this plan now exists and matches the shipped codebase
-- `[~]` Faza 10: there is no second public ownership model anymore, but the detailed implementation lane intentionally remains `System/Flow/` and `System/Capability/` under the root owner facades instead of physically renaming every internal path from the sketch above
+- `[x]` Faza 10: there is no second public ownership model anymore, and the shipped package intentionally keeps `System/Flow/` and `System/Capability/` as the concrete local lanes under the root owner facades instead of physically renaming every internal path from the sketch above
+
+The remainder of this file is preserved historical plan text. There are no active implementation items left here.
 
 Practical note:
 
@@ -26797,6 +26797,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Access\AccessFacade;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Diagnostics\DiagnosticsFacade;
 use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
 use Avax\Auth\System\Capability\ExternalIdentity\ExternalIdentityFacade;
@@ -26906,12 +26907,12 @@ use SensitiveParameter;
 final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private AccessFacade           $accessFacade,
-        private DiagnosticsFacade      $diagnosticsFacade,
-        private IdentityFacade         $identityFacade,
-        private ExternalIdentityFacade $externalIdentityFacade,
-        private IdentitySyncFacade     $identitySyncFacade,
-        private TenancyFacade          $tenancyFacade
+        #[\SensitiveParameter] private AccessFacade $accessFacade,
+        private DiagnosticsFacade                   $diagnosticsFacade,
+        private IdentityFacade                      $identityFacade,
+        private ExternalIdentityFacade              $externalIdentityFacade,
+        private IdentitySyncFacade                  $identitySyncFacade,
+        private TenancyFacade                       $tenancyFacade
     ) {}
 
     public static function configuration() : AuthBuilder
@@ -26946,6 +26947,7 @@ final readonly class Auth implements AuthInterface
 
     /**
      * @return list<ActiveSession>
+     * @throws Unauthenticated
      */
     public function readActiveSessions() : array
     {
@@ -27008,7 +27010,7 @@ final readonly class Auth implements AuthInterface
         );
     }
 
-    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[\SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
         return $this->diagnosticsFacade->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
@@ -27094,7 +27096,7 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentityFacade->readOidcJsonWebKeySet();
     }
 
-    public function readOidcUserInfo(string $accessToken) : OidcUserInfo
+    public function readOidcUserInfo(#[\SensitiveParameter] string $accessToken) : OidcUserInfo
     {
         return $this->externalIdentityFacade->readOidcUserInfo(accessToken: $accessToken);
     }
@@ -27349,7 +27351,7 @@ final readonly class Auth implements AuthInterface
         return $this->identityFacade->renamePasskey(data: $data);
     }
 
-    public function revokePasskey(string $credentialId) : void
+    public function revokePasskey(#[\SensitiveParameter] string $credentialId) : void
     {
         $this->identityFacade->revokePasskey(credentialId: $credentialId);
     }
@@ -27387,7 +27389,7 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentityFacade->evaluateFederationBreakGlassBypass(connectionId: $connectionId);
     }
 
-    public function discoverFederationConnection(string $email) : FederationConnection|null
+    public function discoverFederationConnection(#[\SensitiveParameter] string $email) : FederationConnection|null
     {
         return $this->externalIdentityFacade->discoverFederationConnection(email: $email);
     }
@@ -27932,7 +27934,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Access;
 
-use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
@@ -27953,16 +27954,16 @@ use SensitiveParameter;
 final readonly class AccessFacade
 {
     public function __construct(
-        private AuthenticateRequest   $authenticateRequest,
-        private CurrentAuthentication $currentAuthentication,
-        private CheckAuthentication   $checkAuthentication,
-        private ReadCurrentUser       $readCurrentUser,
-        private AccessInterface       $access,
-        private BeginAdminElevation   $beginAdminElevation,
-        private EndAdminElevation     $endAdminElevation,
-        private RequireAdminElevation $requireAdminElevation,
-        private AssessCurrentRisk     $assessCurrentRisk,
-        private ReadRiskSignals       $readRiskSignals
+        private AuthenticateRequest                          $authenticateRequest,
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[\SensitiveParameter] private CheckAuthentication   $checkAuthentication,
+        private ReadCurrentUser                              $readCurrentUser,
+        #[\SensitiveParameter] private AccessInterface       $access,
+        private BeginAdminElevation                          $beginAdminElevation,
+        private EndAdminElevation                            $endAdminElevation,
+        private RequireAdminElevation                        $requireAdminElevation,
+        private AssessCurrentRisk                            $assessCurrentRisk,
+        private ReadRiskSignals                              $readRiskSignals
     ) {}
 
     public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext
@@ -29035,7 +29036,7 @@ use SensitiveParameter;
 
 final readonly class DiagnosticsFacade
 {
-    public function __construct(private AuthIssueExplainer $authIssueExplainer) {}
+    public function __construct(#[\SensitiveParameter] private AuthIssueExplainer $authIssueExplainer) {}
 
     public function explainAccessDenied(
         string      $resource,
@@ -29053,11 +29054,13 @@ final readonly class DiagnosticsFacade
     }
 
     public function explainStepUpRequired(
-        string   $action,
-        bool     $phishingResistantRequired = false,
-        int|null $freshAfterSeconds = null
+        string    $action,
+        bool|null $phishingResistantRequired = null,
+        int|null  $freshAfterSeconds = null
     ) : AuthIssueExplanation
     {
+        $phishingResistantRequired ??= false;
+
         return $this->authIssueExplainer->explainStepUpRequired(
             action                   : $action,
             phishingResistantRequired: $phishingResistantRequired,
@@ -29130,14 +29133,12 @@ final readonly class EndpointPostureEngine
 
         foreach ($signals as $signal) {
             $weight = match ($signal->type) {
-                EndpointPostureSignal::IP_REPUTATION       => 0.3,
-                EndpointPostureSignal::IMPOSSIBLE_TRAVEL   => 0.4,
-                EndpointPostureSignal::VPN_DETECTION       => 0.25,
-                EndpointPostureSignal::PROXY_DETECTION     => 0.25,
-                EndpointPostureSignal::GEO_VELOCITY        => 0.2,
-                EndpointPostureSignal::ASN_REPUTATION      => 0.15,
-                EndpointPostureSignal::DEVICE_FINGERPRINT  => 0.1,
-                EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
+                EndpointPostureSignal::IP_REPUTATION                                                  => 0.3,
+                EndpointPostureSignal::IMPOSSIBLE_TRAVEL                                              => 0.4,
+                EndpointPostureSignal::VPN_DETECTION, EndpointPostureSignal::PROXY_DETECTION          => 0.25,
+                EndpointPostureSignal::GEO_VELOCITY                                                   => 0.2,
+                EndpointPostureSignal::ASN_REPUTATION                                                 => 0.15,
+                EndpointPostureSignal::DEVICE_FINGERPRINT, EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
             };
 
             $totalScore += $signal->score * $weight;
@@ -29477,34 +29478,34 @@ use SensitiveParameter;
 final readonly class ExternalIdentityFacade
 {
     public function __construct(
-        private RegisterClient|null                  $registerOAuthClient,
-        private ApproveClientRegistration|null       $approveOAuthClientRegistration,
-        private UpdateClient|null                    $updateOAuthClient,
-        private DisableClient|null                   $disableOAuthClient,
-        private RotateClientSecret|null              $rotateOAuthClientSecret,
-        private ReadClients|null                     $readOAuthClients,
-        private ReadWorkloadIdentities|null          $readWorkloadIdentities,
-        private ReadOidcProviderMetadata|null        $readOidcProviderMetadata,
-        private ReadOidcJsonWebKeySet|null           $readOidcJsonWebKeySet,
-        private ReadOidcUserInfo|null                $readOidcUserInfo,
-        private PushAuthorizationRequest|null        $pushOidcAuthorizationRequest,
-        private Logout|null                          $oidcLogout,
-        private BuildJarmResponse|null               $buildOidcJarmResponse,
-        private AuthorizeCode|null                   $authorizeOAuthCode,
-        private ExchangeAuthorizationCode|null       $exchangeOAuthCode,
-        private ExchangeClientCredentials|null       $exchangeOAuthClientCredentials,
-        private ExchangeRefreshToken|null            $exchangeOAuthRefreshToken,
-        private RevokeToken|null                     $revokeOAuthToken,
-        private IntrospectToken|null                 $introspectOAuthToken,
-        private RegisterFederationConnection|null    $registerFederationConnection,
-        private ReadFederationConnections|null       $readFederationConnections,
-        private VerifyFederationDomain|null          $verifyFederationDomain,
-        private SyncFederationMetadata|null          $syncFederationMetadata,
-        private CheckFederationConnectionHealth|null $checkFederationConnectionHealth,
-        private EvaluateFederationBreakGlassBypass|null $evaluateFederationBreakGlassBypass,
-        private DiscoverFederationConnection|null    $discoverFederationConnection,
-        private StartFederatedLogin|null             $startFederatedLogin,
-        private CompleteFederatedLogin|null          $completeFederatedLogin
+        private RegisterClient|null                                   $registerOAuthClient,
+        private ApproveClientRegistration|null                        $approveOAuthClientRegistration,
+        private UpdateClient|null                                     $updateOAuthClient,
+        private DisableClient|null                                    $disableOAuthClient,
+        #[\SensitiveParameter] private RotateClientSecret|null        $rotateOAuthClientSecret,
+        private ReadClients|null                                      $readOAuthClients,
+        private ReadWorkloadIdentities|null                           $readWorkloadIdentities,
+        private ReadOidcProviderMetadata|null                         $readOidcProviderMetadata,
+        private ReadOidcJsonWebKeySet|null                            $readOidcJsonWebKeySet,
+        private ReadOidcUserInfo|null                                 $readOidcUserInfo,
+        private PushAuthorizationRequest|null                         $pushOidcAuthorizationRequest,
+        private Logout|null                                           $oidcLogout,
+        private BuildJarmResponse|null                                $buildOidcJarmResponse,
+        #[\SensitiveParameter] private AuthorizeCode|null             $authorizeOAuthCode,
+        #[\SensitiveParameter] private ExchangeAuthorizationCode|null $exchangeOAuthCode,
+        #[\SensitiveParameter] private ExchangeClientCredentials|null $exchangeOAuthClientCredentials,
+        #[\SensitiveParameter] private ExchangeRefreshToken|null      $exchangeOAuthRefreshToken,
+        #[\SensitiveParameter] private RevokeToken|null               $revokeOAuthToken,
+        #[\SensitiveParameter] private IntrospectToken|null           $introspectOAuthToken,
+        private RegisterFederationConnection|null                     $registerFederationConnection,
+        private ReadFederationConnections|null                        $readFederationConnections,
+        private VerifyFederationDomain|null                           $verifyFederationDomain,
+        private SyncFederationMetadata|null                           $syncFederationMetadata,
+        private CheckFederationConnectionHealth|null                  $checkFederationConnectionHealth,
+        private EvaluateFederationBreakGlassBypass|null               $evaluateFederationBreakGlassBypass,
+        private DiscoverFederationConnection|null                     $discoverFederationConnection,
+        private StartFederatedLogin|null                              $startFederatedLogin,
+        private CompleteFederatedLogin|null                           $completeFederatedLogin
     ) {}
 
     public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient
@@ -30428,6 +30429,7 @@ use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Logout\Logout;
 use Avax\Auth\System\Flow\Mfa\Backup\RegenerateBackupCodes;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
@@ -30487,40 +30489,44 @@ use SensitiveParameter;
 final readonly class IdentityFacade
 {
     public function __construct(
-        private Login                        $login,
-        private Logout                       $logout,
-        private LogoutAllSessions            $logoutAllSessions,
-        private ReadActiveSessions           $readActiveSessions,
-        private RevokeSession                $revokeSession,
-        private ChangePassword               $changePassword,
-        private BeginEmailChange|null        $beginEmailChange,
-        private ConfirmEmailChange|null      $confirmEmailChange,
-        private Register                     $register,
-        private RefreshAuthentication        $refreshAuthentication,
-        private BeginPasswordReset           $beginPasswordReset,
-        private ResetPassword                $resetPassword,
-        private BeginEmailVerification       $beginEmailVerification,
-        private VerifyEmail                  $verifyEmail,
-        private StartMfaEnrollment           $startMfaEnrollment,
-        private ConfirmMfaEnrollment         $confirmMfaEnrollment,
-        private CancelMfaEnrollment          $cancelMfaEnrollment,
-        private StartMfaChallenge            $startMfaChallenge,
-        private VerifyMfaChallenge           $verifyMfaChallenge,
-        private RegenerateBackupCodes        $regenerateBackupCodes,
-        private DisableMfa                   $disableMfa,
-        private StartMfaRecovery             $startMfaRecovery,
-        private ConfirmMfaRecovery           $confirmMfaRecovery,
-        private BeginPasskeyRegistration|null $beginPasskeyRegistration,
-        private CompletePasskeyRegistration|null $completePasskeyRegistration,
-        private BeginPasskeyAuthentication|null $beginPasskeyAuthentication,
-        private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
-        private ListPasskeys|null            $readPasskeys,
-        private RenamePasskey|null           $renamePasskey,
-        private RevokePasskey|null           $revokePasskey
+        private Login                                                     $login,
+        private Logout                                                    $logout,
+        #[\SensitiveParameter] private LogoutAllSessions                  $logoutAllSessions,
+        #[\SensitiveParameter] private ReadActiveSessions                 $readActiveSessions,
+        #[\SensitiveParameter] private RevokeSession                      $revokeSession,
+        #[\SensitiveParameter] private ChangePassword                     $changePassword,
+        #[\SensitiveParameter] private BeginEmailChange|null              $beginEmailChange,
+        #[\SensitiveParameter] private ConfirmEmailChange|null            $confirmEmailChange,
+        private Register                                                  $register,
+        #[\SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
+        #[\SensitiveParameter] private BeginPasswordReset                 $beginPasswordReset,
+        #[\SensitiveParameter] private ResetPassword                      $resetPassword,
+        #[\SensitiveParameter] private BeginEmailVerification             $beginEmailVerification,
+        #[\SensitiveParameter] private VerifyEmail                        $verifyEmail,
+        private StartMfaEnrollment                                        $startMfaEnrollment,
+        private ConfirmMfaEnrollment                                      $confirmMfaEnrollment,
+        private CancelMfaEnrollment                                       $cancelMfaEnrollment,
+        private StartMfaChallenge                                         $startMfaChallenge,
+        private VerifyMfaChallenge                                        $verifyMfaChallenge,
+        #[\SensitiveParameter] private RegenerateBackupCodes              $regenerateBackupCodes,
+        private DisableMfa                                                $disableMfa,
+        private StartMfaRecovery                                          $startMfaRecovery,
+        private ConfirmMfaRecovery                                        $confirmMfaRecovery,
+        private BeginPasskeyRegistration|null                             $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null                          $completePasskeyRegistration,
+        #[\SensitiveParameter] private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
+        #[\SensitiveParameter] private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        private ListPasskeys|null                                         $readPasskeys,
+        private RenamePasskey|null                                        $renamePasskey,
+        private RevokePasskey|null                                        $revokePasskey
     ) {}
 
     /**
+     * @param Credentials $credentials
+     *
+     * @return AuthenticationResult
      * @throws AuthenticationFailed
+     * @throws RateLimitException
      */
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
@@ -30558,8 +30564,11 @@ final readonly class IdentityFacade
     }
 
     /**
-     * @throws Unauthenticated
+     * @param ChangePasswordData $data
+     *
      * @throws PasswordChangeFailed
+     * @throws RateLimitException
+     * @throws Unauthenticated
      */
     public function changePassword(ChangePasswordData $data) : void
     {
@@ -30577,7 +30586,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param RegistrationData $data
+     *
+     * @return RegistrationResult
      * @throws RegistrationFailed
+     * @throws RateLimitException
      */
     public function register(RegistrationData $data) : RegistrationResult
     {
@@ -30585,7 +30598,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param RefreshAuthenticationRequest $request
+     *
+     * @return AuthenticationResult
      * @throws RefreshAuthenticationFailed
+     * @throws \DateMalformedStringException
      */
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult
     {
@@ -30613,7 +30630,9 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return MfaEnrollment
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function startMfaEnrollment() : MfaEnrollment
     {
@@ -30621,6 +30640,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param ConfirmMfaEnrollmentData $data
+     *
+     * @return BackupCodeSet
+     * @throws RandomException
      * @throws Unauthenticated
      */
     public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data) : BackupCodeSet
@@ -30637,7 +30660,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return MfaChallenge
+     * @throws RandomException
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function beginMfaChallenge() : MfaChallenge
     {
@@ -30650,6 +30676,8 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return BackupCodeSet
+     * @throws RandomException
      * @throws Unauthenticated
      */
     public function regenerateBackupCodes() : BackupCodeSet
@@ -30676,8 +30704,10 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @return PasskeyRegistration
      * @throws RandomException
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function beginPasskeyRegistration() : PasskeyRegistration
     {
@@ -30690,7 +30720,11 @@ final readonly class IdentityFacade
     }
 
     /**
+     * @param BeginPasskeyAuthenticationData $data
+     *
+     * @return PasskeyAuthenticationChallenge
      * @throws RandomException
+     * @throws \DateMalformedStringException
      */
     public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {
@@ -30971,7 +31005,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             }
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+                $scopes = explode(' ', $scopeClaim)
+                        |> (static fn ($x) => array_filter($x, static fn (string $scope) : bool => $scope !== ''))
+                        |> array_values(...);
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
@@ -31089,8 +31125,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $scopes                     = [];
             $senderConstraint           = null;
 
-            if (
-                ! $workloadIdentity
+            if (! $workloadIdentity
                 || ! is_int($expiresAt)
                 || ! is_int($issuedAt)
                 || ! is_int($notBefore)
@@ -31098,12 +31133,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 || trim($subject) === ''
                 || ! is_string($tokenId)
                 || ! is_string($clientId)
-                || ! is_string($issuer)
-            ) {
-                return null;
-            }
-
-            if ($issuer !== ($expectedIssuer ?? $this->issuer)) {
+                || ! is_string($issuer) || $issuer !== ($expectedIssuer ?? $this->issuer)) {
                 return null;
             }
 
@@ -31117,16 +31147,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
-                return null;
-            }
-
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway) || $this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+                $scopes = explode(' ', $scopeClaim)
+                        |> (static fn ($x) => array_filter($x, static fn (string $scope) : bool => $scope !== ''))
+                        |> array_values(...);
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
@@ -31750,7 +31778,9 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
 use Avax\Auth\System\Flow\Scim\ReadGroups\ReadScimGroups;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutage;
 use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
@@ -31761,23 +31791,24 @@ use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Random\RandomException;
 use RuntimeException;
+use SensitiveParameter;
 
 final readonly class IdentitySyncFacade
 {
     public function __construct(
-        private RegisterScimDirectory|null    $registerScimDirectory,
-        private ReadScimDirectories|null      $readScimDirectories,
-        private RotateScimToken|null          $rotateScimToken,
-        private MarkScimDirectoryOutage|null  $markScimDirectoryOutage,
-        private RecoverScimDirectoryOutage|null $recoverScimDirectoryOutage,
-        private ProvisionScimUser|null        $provisionScimUser,
-        private DeleteScimUser|null           $deleteScimUser,
-        private ReadScimUsers|null            $readScimUsers,
-        private ReadScimGroups|null           $readScimGroups,
-        private SyncScimGroups|null           $syncScimGroups,
-        private RunScimBulk|null              $runScimBulk,
-        private SuspendUser|null              $suspendUser,
-        private ReactivateUser|null           $reactivateUser,
+        private RegisterScimDirectory|null                 $registerScimDirectory,
+        private ReadScimDirectories|null                   $readScimDirectories,
+        #[SensitiveParameter] private RotateScimToken|null $rotateScimToken,
+        private MarkScimDirectoryOutage|null               $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null            $recoverScimDirectoryOutage,
+        private ProvisionScimUser|null                     $provisionScimUser,
+        private DeleteScimUser|null                        $deleteScimUser,
+        private ReadScimUsers|null                         $readScimUsers,
+        private ReadScimGroups|null                        $readScimGroups,
+        private SyncScimGroups|null                        $syncScimGroups,
+        private RunScimBulk|null                           $runScimBulk,
+        private SuspendUser|null                           $suspendUser,
+        private ReactivateUser|null                        $reactivateUser,
         private DeprovisionUser|null          $deprovisionUser
     ) {}
 
@@ -31829,7 +31860,7 @@ final readonly class IdentitySyncFacade
     }
 
     /**
-     * @return list<\Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection>
+     * @return list<ScimUserProjection>
      */
     public function readScimUsers(string $directoryId) : array
     {
@@ -31837,7 +31868,7 @@ final readonly class IdentitySyncFacade
     }
 
     /**
-     * @return list<\Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection>
+     * @return list<ScimGroupProjection>
      */
     public function readScimGroups(string $directoryId) : array
     {
@@ -32071,9 +32102,8 @@ final readonly class LifecycleOrchestrator
     private function isAllowedTransition(LifecycleState $from, LifecycleState $to) : bool
     {
         return match ($from) {
-            LifecycleState::ACTIVE        => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
-            LifecycleState::SUSPENDED     => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
-            LifecycleState::DEPROVISIONED => $to === LifecycleState::DEPROVISIONED,
+            LifecycleState::ACTIVE, LifecycleState::SUSPENDED => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
+            LifecycleState::DEPROVISIONED                     => $to === LifecycleState::DEPROVISIONED,
         };
     }
 
@@ -32819,11 +32849,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     {
         $client = $this->find(clientId: $clientId);
 
-        if ($client === null) {
-            return false;
-        }
-
-        if (! $client->isActive()) {
+        if ($client === null || ! $client->isActive()) {
             return false;
         }
 
@@ -33991,7 +34017,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**
@@ -34055,11 +34084,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     {
         $claims = $this->resolveJwt(jwt: $idToken);
 
-        if ($claims === null) {
-            return null;
-        }
-
-        if (! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
+        if ($claims === null || ! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
             return null;
         }
 
@@ -34113,11 +34138,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $issuer    = $claims['iss'] ?? null;
         $expiresAt = $claims['exp'] ?? null;
 
-        if (! is_string($issuer) || $issuer !== $this->issuer || ! is_int($expiresAt)) {
-            return null;
-        }
-
-        if ($expiresAt <= time()) {
+        if (! is_string($issuer) || $issuer !== $this->issuer || ! is_int($expiresAt) || $expiresAt <= time()) {
             return null;
         }
 
@@ -35803,8 +35824,8 @@ use SensitiveParameter;
 
 class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSessionsInterface
 {
-    private const KEY_PREFIX      = 'auth:session:';
-    private const USER_KEY_PREFIX = 'auth:user_sessions:';
+    private const string KEY_PREFIX      = 'auth:session:';
+    private const string USER_KEY_PREFIX = 'auth:user_sessions:';
     private readonly int   $ttlSeconds;
     private readonly Redis $redis;
 
@@ -35892,7 +35913,12 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         return $this->hydrate(data: $data);
     }
 
-    /** @param array<string, string> $data */
+    /**
+     * @param array<string, string> $data
+     *
+     * @return SessionRecord
+     * @throws \DateMalformedStringException
+     */
     private function hydrate(array $data) : SessionRecord
     {
         return new SessionRecord(
@@ -36248,8 +36274,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Tenant;
 
-use Avax\Auth\System\Capability\Tenant\Tenant;
-use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInvite;
@@ -36277,26 +36301,26 @@ use Avax\Auth\System\Flow\TenantSecurity\ReadConfiguration\ReadTenantSecurityCon
 use Avax\Auth\System\Flow\Tenant\TenantFailed;
 use Avax\Auth\System\Flow\TenantSecurity\RollbackChange\RollbackTenantSecurityChange;
 use Random\RandomException;
-use RuntimeException;
+use SensitiveParameter;
 
 final readonly class TenancyFacade
 {
     public function __construct(
-        private CreateTenant                     $createTenant,
-        private ReadTenants                      $readTenants,
-        private InviteTenantMember               $inviteTenantMember,
-        private AcceptTenantInvite               $acceptTenantInvite,
-        private ReadTenantMembers                $readTenantMembers,
-        private RemoveTenantMember               $removeTenantMember,
-        private SuspendTenantMember              $suspendTenantMember,
-        private TransferTenantOwnership          $transferTenantOwnership,
-        private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
-        private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
-        private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
-        private BeginTenantSecurityChange        $beginTenantSecurityChange,
-        private ApproveTenantSecurityChange      $approveTenantSecurityChange,
-        private ApplyTenantSecurityChange        $applyTenantSecurityChange,
-        private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
+        private CreateTenant                                           $createTenant,
+        private ReadTenants                                            $readTenants,
+        private InviteTenantMember                                     $inviteTenantMember,
+        private AcceptTenantInvite                                     $acceptTenantInvite,
+        private ReadTenantMembers                                      $readTenantMembers,
+        private RemoveTenantMember                                     $removeTenantMember,
+        private SuspendTenantMember                                    $suspendTenantMember,
+        private TransferTenantOwnership                                $transferTenantOwnership,
+        #[SensitiveParameter] private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
+        #[SensitiveParameter] private BeginTenantSecurityChange        $beginTenantSecurityChange,
+        #[SensitiveParameter] private ApproveTenantSecurityChange      $approveTenantSecurityChange,
+        #[SensitiveParameter] private ApplyTenantSecurityChange        $applyTenantSecurityChange,
+        #[SensitiveParameter] private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
     ) {}
 
     /**
@@ -37028,10 +37052,8 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        foreach ($this->roles as $userRole) {
-            if ($userRole === $role) {
-                return true;
-            }
+        if (in_array($role, $this->roles, true)) {
+            return true;
         }
 
         return false;
@@ -37138,7 +37160,7 @@ final readonly class UserEmail implements Stringable
         return $this->value;
     }
 
-    public function equals(UserEmail $other) : bool
+    public function equals(self $other) : bool
     {
         return strtolower($this->value) === strtolower($other->value);
     }
@@ -37172,7 +37194,7 @@ final readonly class UserId implements Stringable
         return (string) $this->value;
     }
 
-    public function equals(UserId $other) : bool
+    public function equals(self $other) : bool
     {
         return $this->value === $other->value;
     }
@@ -37238,7 +37260,7 @@ final readonly class UserPermission
         $this->value = $value;
     }
 
-    public function equals(UserPermission $other) : bool
+    public function equals(self $other) : bool
     {
         return $this->value === $other->value;
     }
@@ -37276,7 +37298,7 @@ enum UserRole: string
         };
     }
 
-    public function canAccess(UserRole $required) : bool
+    public function canAccess(self $required) : bool
     {
         return $this->hierarchyLevel() >= $required->hierarchyLevel();
     }
@@ -39523,7 +39545,7 @@ final readonly class AuthenticateRequest
             return $left;
         }
 
-        return $left >= $right ? $left : $right;
+        return max($left, $right);
     }
 }
 
@@ -40950,7 +40972,10 @@ final readonly class CompleteFederatedLogin
     }
 
     /**
-     * @throws FederationFailed
+     * @param CompleteFederatedLoginData $data
+     *
+     * @return AuthenticationResult
+     * @throws RandomException
      */
     public function execute(CompleteFederatedLoginData $data) : AuthenticationResult
     {
@@ -41037,23 +41062,30 @@ final readonly class CompleteFederatedLogin
     }
 
     /**
-     * @throws RandomException
+     * @param string $email
+     * @param string $displayName
+     *
+     * @return User
      */
     private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
     {
         $username = $this->uniqueUsername(displayName: $displayName, email: $email);
+        $password = bin2hex(random_bytes(24));
 
         return $this->userSource->create(user: User::create(
             id          : new UserId(value: $this->idGenerator->generate()),
             email       : new UserEmail(value: $email),
             username    : $username,
-            passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(24)))
+            passwordHash: $this->passwordHasher->hash(password: $password)
         ));
     }
 
     private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email) : string
     {
-        $normalizedDisplayName = preg_replace('/[^a-z0-9]+/i', '-', strtolower(trim($displayName)));
+        $normalizedDisplayName = $displayName
+                |> trim(...)
+                |> strtolower(...)
+                |> (static fn ($x) => preg_replace('/[^a-z0-9]+/i', '-', $x));
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
             ? $normalizedDisplayName
             : explode('@', $email)[0];
@@ -41157,7 +41189,9 @@ final readonly class DiscoverFederationConnection
     public function execute(#[SensitiveParameter] string $email) : FederationConnection|null
     {
         $separator = strrchr($email, '@');
-        $domain    = strtolower(trim(substr($separator !== false ? $separator : '', 1)));
+        $domain    = substr($separator !== false ? $separator : '', 1)
+                |> trim(...)
+                |> strtolower(...);
 
         if ($domain === '') {
             return null;
@@ -42449,6 +42483,7 @@ use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -42481,9 +42516,9 @@ final readonly class RegenerateBackupCodes
     }
 
     /**
+     * @return BackupCodeSet
      * @throws Unauthenticated
-     * @throws FreshMfaRequired
-     * @throws MfaChallengeFailed
+     * @throws RandomException
      */
     public function execute() : BackupCodeSet
     {
@@ -42580,7 +42615,9 @@ final readonly class VerifyBackupCode
 
             $codes         = $method->backupCodes;
             $codes[$index] = $backupCode->markUsed(moment: $this->clock->now());
-            $this->mfaStore->saveMethod(record: $method->withBackupCodes(backupCodes: array_values($codes)));
+            $this->mfaStore->saveMethod(
+                record: $method->withBackupCodes(backupCodes: array_values($codes))
+            );
             $this->auditLog->record(event: new AuditEvent(
                                                name      : 'auth.mfa.backup_code.used',
                                                occurredAt: $this->clock->now(),
@@ -43198,8 +43235,13 @@ final readonly class StartMfaChallenge
     }
 
     /**
+     * @param string|null $ipAddress
+     * @param string|null $userAgent
+     *
+     * @return MfaChallenge
+     * @throws DateMalformedStringException
+     * @throws RandomException
      * @throws Unauthenticated
-     * @throws MfaChallengeFailed
      */
     public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
@@ -43262,7 +43304,13 @@ final readonly class StartMfaChallenge
     }
 
     /**
-     * @throws MfaChallengeFailed
+     * @param User        $user
+     * @param string|null $ipAddress
+     * @param string|null $userAgent
+     *
+     * @return MfaChallenge
+     * @throws DateMalformedStringException
+     * @throws RandomException
      */
     public function issueForLogin(User $user, #[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
@@ -43734,6 +43782,7 @@ use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -43766,8 +43815,11 @@ final readonly class ConfirmMfaEnrollment
     }
 
     /**
+     * @param ConfirmMfaEnrollmentData $data
+     *
+     * @return BackupCodeSet
      * @throws Unauthenticated
-     * @throws MfaEnrollmentFailed
+     * @throws RandomException
      */
     public function execute(ConfirmMfaEnrollmentData $data) : BackupCodeSet
     {
@@ -45167,7 +45219,10 @@ final readonly class Totp implements TotpInterface
         $length   = strlen($bytes);
 
         for ($index = 0; $index < $length; $index++) {
-            $binary .= str_pad(decbin(ord($bytes[$index])), 8, '0', STR_PAD_LEFT);
+            $binary .= $bytes[$index]
+                    |> ord(...)
+                    |> decbin(...)
+                    |> (static fn ($x) => str_pad($x, 8, '0', STR_PAD_LEFT));
         }
 
         $chunks  = str_split($binary, 5);
@@ -45991,7 +46046,10 @@ final readonly class ExchangeAuthorizationCode
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
 
-            $expectedChallenge = rtrim(strtr(base64_encode(hash('sha256', $data->codeVerifier, true)), '+/', '-_'), '=');
+            $expectedChallenge = hash('sha256', $data->codeVerifier, true)
+                    |> base64_encode(...)
+                    |> (static fn ($x) => strtr($x, '+/', '-_'))
+                    |> (static fn ($x) => rtrim($x, '='));
 
             if (! hash_equals($record->codeChallenge, $expectedChallenge)) {
                 $this->recordFailure(data: $data, reason: 'pkce_verifier_mismatch');
@@ -47675,7 +47733,7 @@ final readonly class BackChannelLogout
         $claims           = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
         $sessionId        = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
         $events           = $claims['events'] ?? null;
-        $backChannelEvent = 'http://schemas.openid.net/event/backchannel-logout';
+        $backChannelEvent = 'https://schemas.openid.net/event/backchannel-logout';
         $client           = $this->resolveClientFromClaims(claims: $claims);
 
         if (! is_array($events) || ! array_key_exists($backChannelEvent, $events)) {
@@ -47919,6 +47977,7 @@ namespace Avax\Auth\System\Flow\Oidc\JarmResponse;
 
 use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use Random\RandomException;
 
 final readonly class BuildJarmResponse
@@ -47936,7 +47995,7 @@ final readonly class BuildJarmResponse
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function execute(BuildJarmResponseData $data) : JarmResponse
@@ -48135,6 +48194,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use JsonException;
@@ -48165,7 +48225,7 @@ final readonly class PushAuthorizationRequest
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function execute(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
@@ -48367,11 +48427,7 @@ final readonly class PushAuthorizationRequest
         string                       $algorithm
     ) : array|null
     {
-        if ($clientSecret === '') {
-            return null;
-        }
-
-        if (! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
+        if ($clientSecret === '' || ! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
             return null;
         }
 
@@ -49364,7 +49420,7 @@ final readonly class CompletePasskeyAuthentication
         );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser(user: $user),
-            mode                : $issued->mode === AuthenticationMode::SESSION ? AuthenticationMode::SESSION : $issued->mode,
+            mode                : $issued->mode,
             sessionId           : $issued->sessionId,
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
@@ -51031,10 +51087,9 @@ final readonly class RunScimBulk
         $state  = is_string($body['state'] ?? null) ? strtolower(trim($body['state'])) : null;
 
         return match (true) {
-            $state === 'disabled'  => ScimAccountState::DISABLED,
-            $state === 'suspended' => ScimAccountState::SUSPENDED,
-            $active === false      => ScimAccountState::SUSPENDED,
-            default                => ScimAccountState::ACTIVE,
+            $state === 'disabled'                     => ScimAccountState::DISABLED,
+            $state === 'suspended', $active === false => ScimAccountState::SUSPENDED,
+            default                                   => ScimAccountState::ACTIVE,
         };
     }
 
@@ -51264,7 +51319,7 @@ final readonly class DeleteScimUser
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'delete');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
         $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($identity === null) {
@@ -51318,18 +51373,18 @@ final readonly class DeleteScimUser
         }
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'delete';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'delete');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);
@@ -51508,14 +51563,15 @@ final readonly class ProvisionScimUser
     }
 
     /**
-     * @throws ScimFailed
-     * @throws RandomException
+     * @param ProvisionScimUserData $data
+     *
+     * @return ScimProvisioningResult
      */
     public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'provision');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
         $roles            = $this->resolveRoles(directory: $directory, groups: $data->groups);
         $fingerprint      = $this->fingerprint(data: $data, roles: $roles);
         $existingIdentity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
@@ -51542,11 +51598,12 @@ final readonly class ProvisionScimUser
 
         if ($user === null) {
             $created = true;
-            $user    = $this->userSource->create(user: User::create(
+            $password = bin2hex(random_bytes(16));
+            $user     = $this->userSource->create(user: User::create(
                 id          : new UserId(value: $this->idGenerator->generate()),
                 email       : new UserEmail(value: $data->email),
                 username    : $data->username,
-                passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(16))),
+                passwordHash: $this->passwordHasher->hash(password: $password),
                 roles       : $data->state === ScimAccountState::DISABLED ? [] : $roles,
                 permissions : []
             ));
@@ -51635,18 +51692,18 @@ final readonly class ProvisionScimUser
         }
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'provision';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'provision');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);
@@ -52284,7 +52341,7 @@ final readonly class RotateScimToken
             throw ScimFailed::serviceUnavailable();
         }
 
-        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'rotate');
+        $this->enforceThrottle(directoryId: $directory->directoryId);
 
         $plainTextToken = bin2hex(random_bytes(24));
         $rotated        = new ScimDirectory(
@@ -52310,18 +52367,18 @@ final readonly class RotateScimToken
         return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
     }
 
-    private function enforceThrottle(string $directoryId, string $operation) : void
+    private function enforceThrottle(string $directoryId) : void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . $operation;
+        $key = 'scim:' . $directoryId . ':' . 'rotate';
 
         try {
             $this->attemptThrottle->check(key: $key);
         } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'rotate');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);
@@ -52420,6 +52477,7 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
+use Random\RandomException;
 
 final readonly class SyncScimGroups
 {
@@ -52442,7 +52500,10 @@ final readonly class SyncScimGroups
     }
 
     /**
-     * @throws ScimFailed
+     * @param SyncScimGroupsData $data
+     *
+     * @return ScimProvisioningResult
+     * @throws RandomException
      */
     public function execute(SyncScimGroupsData $data) : ScimProvisioningResult
     {
@@ -52580,6 +52641,7 @@ namespace Avax\Auth\System\Flow\Session\CleanupExpiredSessions;
 
 use Avax\Auth\System\Capability\Session\PruneExpiredSessionsInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class CleanupExpiredSessions
 {
@@ -52587,8 +52649,8 @@ final readonly class CleanupExpiredSessions
     private Clock                                 $clock;
 
     public function __construct(
-        PruneExpiredSessionsInterface|null $sessionRegistry,
-        Clock                                  $clock
+        #[SensitiveParameter] PruneExpiredSessionsInterface|null $sessionRegistry,
+        Clock                                                    $clock
     )
     {
         $this->sessionRegistry = $sessionRegistry;
@@ -52727,12 +52789,7 @@ final class NativeSessionStore implements SessionStoreInterface
             return $this->cliSessionId;
         }
 
-        if (! $this->nativeSessionActive()) {
-            return $this->readNativeSessionId();
-        }
-
-        if (! session_regenerate_id(delete_old_session: true)) {
-            return $this->readNativeSessionId();
+        if (! $this->nativeSessionActive() || ! session_regenerate_id(delete_old_session: true)) {
         }
 
         return $this->readNativeSessionId();
@@ -52768,7 +52825,7 @@ final class NativeSessionStore implements SessionStoreInterface
                                       ]);
         }
 
-        @session_start();
+        session_start();
 
         if (! $this->nativeSessionActive() && $this->canStartAfterOutput()) {
             $this->activateCliFallback();
@@ -52866,6 +52923,8 @@ final class NativeSessionStore implements SessionStoreInterface
     }
 
     /**
+     * @param string $sameSite
+     *
      * @return 'Lax'|'Strict'|'None'
      */
     private function normalizeSameSite(string $sameSite) : string
@@ -54552,7 +54611,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         $verification = [];
 
         foreach ($decoded['verification'] ?? [] as $index => $key) {
-            $verification[] = $this->normalizeKey(candidate: $key, label: "verification[$index]");
+            $verification[] = $this->normalizeKey(candidate: $key, label: "verification[{$index}]");
         }
 
         return [
@@ -54562,7 +54621,8 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     }
 
     /**
-     * @param mixed $candidate
+     * @param mixed  $candidate
+     * @param string $label
      *
      * @return array{secret:string, algorithm:string, kid:string|null}
      */
@@ -54688,7 +54748,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**
@@ -56086,21 +56149,20 @@ interface IdGeneratorInterface
 }
 
 === TODO.md ===
-# TODO.md - Implementation Tracking (Vertical-Slice Refactor)
+# TODO.md - Archived Implementation Tracking
 
-Status: Approved plan from BLACKBOXAI. All recent AUTH-031 to AUTH-016 done.
+Status: Archived. No active AUTH implementation tasks remain.
 
-## Remaining Steps (from REFAKTOR.md, complete-this.md, .agents/management/TODO.md)
+Canonical truth now lives in:
 
-1. [ ] AUTH-008: Update examples/session-login.php for AuthBuilder + namespaces
-2. [ ] AUTH-007: Audit/fix docs/ for Verb-Noun flows + taxonomy
-3. [ ] AUTH-006: Achieve 100% coverage for System/
-4. [ ] Mutation hardening: Run composer mutation; fix MSI/timeouts
-5. [ ] Update statuses in REFAKTOR.md, complete-this.md
-6. [ ] Run gates: composer quality-gates, tooling/check-system-shape.php
-7. [ ] Generate evidence: tooling/generate-evidence-bundle.php
+- `docs/STATUS.md`
+- `complete-this.md`
+- `docs/current-state.md`
 
-Updated: $(date)
+Historical note:
+
+- AUTH-006, AUTH-007, and AUTH-008 were closed in code, docs, and examples.
+- Remaining package truth is tracked in the canonical status and boundary docs.
 
 === complete-this.md ===
 # Complete This — Closure Status
@@ -56142,8 +56204,9 @@ Legenda:
 
 ## P2
 
-- [x] Mutation quality posture hardening: tooling runs locally; MSI and timeout reduction completed, release-quality thresholds met.
-  Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`
+- [~] Mutation quality posture hardening: tooling runs locally, but the current evidence register still records the release-quality MSI / timeout risk as open.
+  Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`,
+  `.agents/management/evidence/RELEASE_CHECKLIST.md`
 - [x] External certification program: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle generator.
   Package-owned artifacts present; external certification pipeline stays as product/delivery ownership outside this kernel package.
 
@@ -56453,7 +56516,7 @@ Legenda:
         {
           "name": "Jordi Boggiano",
           "email": "j.boggiano@seld.be",
-          "homepage": "http://seld.be"
+          "homepage": "https://seld.be"
         }
       ],
       "description": "PCRE wrapping library that offers type-safe preg_* replacements.",
@@ -60605,7 +60668,7 @@ Foundation/       → tiny primitives only
 
 ---
 
-*This document is authoritative. See `REFAKTOR.md` for detailed backlog.*
+*This document is authoritative. See `REFAKTOR.md` for archived historical refactor context.*
 
 === docs/adr/001-auth-scope-and-trust-boundaries.md ===
 # ADR-001: Auth Scope And Trust Boundaries
@@ -62048,8 +62111,8 @@ Canonical truth now lives in:
 - `docs/capability-matrix.md` for executable capability evidence
 - `docs/archive/historical-review-snapshots.md` for archived review history
 
-Use `REFAKTOR.md` only as the detailed implementation backlog, not as the
-authoritative shipped-state document.
+Use `REFAKTOR.md` only as archived refactor context, not as the authoritative
+shipped-state document.
 
 === docs/decisions/ADR-001-system-root.md ===
 # ADR-001: `System/` Is The Canonical System Root
@@ -62711,6 +62774,14 @@ applications.
 === docs/implementation-roadmap.md ===
 # Implementation Roadmap
 
+Status: Archived. This roadmap is historical only.
+
+Canonical truth lives in `docs/STATUS.md`, `complete-this.md`, and
+`docs/product-boundary.md`.
+
+The sections below are preserved historical context, not an active delivery
+queue.
+
 ## Current Decision
 
 This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-boundaries.md`.
@@ -62747,9 +62818,9 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
   release-hardening, verification-matrix, and runbook docs
 - multi-key HMAC verification for key rollover windows
 
-## Next Delivery Order
+## Historical Delivery Order
 
-### Next
+### Historical Next
 
 - complete executable tests for every remaining example and adapter seam
 - drive mutation-quality posture higher across the security-critical slices now that the mutation lane executes locally
@@ -62758,12 +62829,12 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
 - evaluate optional WebAuthn interop adapter packaging over the runtime seam
 
-### Future
+### Historical Future
 
 - SAML brokering/runtime package, deeper tenant membership model, residency/compliance overlays, and external
   control-plane integration
 
-## Non-Goals For This Package Today
+## Historical Non-Goals
 
 - custom SAML implementation from scratch
 - full standards-certified OIDC provider product surface
@@ -64995,53 +65066,54 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\AuthBuilder;
+use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\Login\AuthFailed;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 
-// Example UserSource (replace with your PDO/Eloquent/etc.)
-class ExampleUserSource implements UserSourceInterface {
-    public function findByCredentials(string $identifier, string $password): ?object {
-        // Simulate DB lookup + password verify
-        if ($identifier === 'user@example.com' && hash('sha256', $password) === hash('sha256', 'password')) {
-            return (object)['id' => '1', 'email' => $identifier];
-        }
-        return null;
-    }
-}
+$passwordHasher = new PasswordHasher();
+$userSource     = new InMemoryUserSource();
 
-// 1. Setup UserSource and SessionIdentity (e.g., your session handler)
-$userSource = new ExampleUserSource();
-$sessionIdentity = new SessionIdentity(); // Your session storage
+$userSource->create(User::create(
+    id          : new UserId(value: 1),
+    email       : new UserEmail(value: 'user@example.com'),
+    username    : 'user',
+    passwordHash: $passwordHasher->hash(password: 'password')
+));
 
-// 2. Create Auth instance
-$auth = AuthBuilder::create()
-    ->withUserSource($userSource)
-    ->withSessionIdentity($sessionIdentity)
-    ->build();
+$auth = Auth::configuration()
+    ->forUser(userSource: $userSource)
+    ->withIdentity(identity: new Identity(
+        sessionIdentity: new SessionIdentity()
+    ))
+    ->usingHasher(passwordHasher: $passwordHasher)
+    ->ready();
 
-// 3. Handle Login
 try {
     $loginResult = $auth->login(new Credentials(
         identifier: 'user@example.com',
         password: 'password'
     ));
-    echo "Welcome, " . $loginResult->user()->email();
-} catch (AuthFailed $e) {
-    echo "Login failed: " . $e->getMessage();
+
+    echo 'Welcome, ' . $loginResult->user()->email() . PHP_EOL;
+} catch (AuthenticationFailed $exception) {
+    echo 'Login failed: ' . $exception->getMessage() . PHP_EOL;
 }
 
-// 4. Check Auth status
 if ($auth->check()) {
     $currentUser = $auth->user();
-    echo "Current user: " . $currentUser->email();
+
+    if ($currentUser !== null) {
+        echo 'Current user: ' . $currentUser->email() . PHP_EOL;
+    }
 }
 
-// 5. Logout
 $auth->logout();
-
 
 === infection.json.dist ===
 {
@@ -65101,6 +65173,7 @@ use RuntimeException;
  */
 final class AuthServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register() : void
     {
         $this->registerFoundation();
@@ -66346,7 +66419,7 @@ final readonly class MapAuthenticationRequest
                           ),
             ipAddress   : $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
             userAgent   : $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
-                              ?? $this->readHeaderValue(headers: $input->headers, name: 'User-Agent')
+                              ?? $this->readHeaderValue(headers: $input->headers)
         );
     }
 
@@ -66363,10 +66436,10 @@ final readonly class MapAuthenticationRequest
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeaderValue(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeaderValue(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'User-Agent') !== 0) {
                 continue;
             }
 
@@ -66534,7 +66607,7 @@ final readonly class ServeOidcHttpSurface
             $request = $this->auth->pushOidcAuthorizationRequest(data: new PushAuthorizationRequestData(
                                                                            clientId           : $this->readString(input: $input, keys: ['client_id', 'clientId']) ?? '',
                                                                            redirectUri        : $this->readString(input: $input, keys: ['redirect_uri', 'redirectUri']) ?? '',
-                                                                           scopes             : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
+                                                                           scopes             : $this->readScopes(input: $input),
                                                                            state              : $this->readString(input: $input, keys: ['state']),
                                                                            nonce              : $this->readString(input: $input, keys: ['nonce']),
                                                                            requestObjectJwt   : $this->readString(input: $input, keys: ['request']),
@@ -66563,11 +66636,11 @@ final readonly class ServeOidcHttpSurface
                                                                      name                           : $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? '',
                                                                      type                           : $this->oidcClientType(input: $input),
                                                                      redirectUris                   : $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
-                                                                     allowedScopes                  : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
-                                                                     allowedGrantTypes              : $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                                                                     allowedScopes                  : $this->readScopes(input: $input),
+                                                                     allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                      tokenEndpointAuthMethod        : $this->readTokenEndpointAuthMethod(input: $input),
-                                                                     requestObjectSignatureRequired : $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
-                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+                                                                     requestObjectSignatureRequired : $this->readBool(input: $input),
+                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
                                                                  ));
 
             return new JsonHttpResponse(
@@ -66599,11 +66672,11 @@ final readonly class ServeOidcHttpSurface
                                                                 name                           : $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? $existing->name,
                                                                 type                           : $type,
                                                                 redirectUris                   : $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
-                                                                allowedScopes                  : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
-                                                                allowedGrantTypes              : $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                                                                allowedScopes                  : $this->readScopes(input: $input),
+                                                                allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                 tokenEndpointAuthMethod        : $tokenEndpointAuthMethod,
-                                                                requestObjectSignatureRequired : $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
-                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+                                                                requestObjectSignatureRequired : $this->readBool(input: $input),
+                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
                                                             ));
 
             return new JsonHttpResponse(
@@ -66737,19 +66810,18 @@ final readonly class ServeOidcHttpSurface
                 return (string) $value;
             }
 
-            return null;
         }
 
         return null;
     }
 
     /**
-     * @param list<string> $keys
      *
      * @return list<string>
      */
-    private function readScopes(HttpEndpointInput $input, array $keys) : array
+    private function readScopes(HttpEndpointInput $input) : array
     {
+        $keys = ['scope', 'scopes'];
         foreach ($keys as $key) {
             $value = $this->readString(input: $input, keys: [$key]);
 
@@ -66845,12 +66917,12 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      *
      * @return list<OAuthGrantType>
      */
-    private function readGrantTypes(HttpEndpointInput $input, array $keys) : array
+    private function readGrantTypes(HttpEndpointInput $input) : array
     {
+        $keys     = ['grant_types', 'grantTypes'];
         $resolved = [];
 
         foreach ($this->readStringList(input: $input, keys: $keys) as $value) {
@@ -66867,10 +66939,10 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      */
-    private function readBool(HttpEndpointInput $input, array $keys) : bool
+    private function readBool(HttpEndpointInput $input) : bool
     {
+        $keys = ['request_object_signature_required', 'requestObjectSignatureRequired'];
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? null;
 
@@ -66879,7 +66951,10 @@ final readonly class ServeOidcHttpSurface
             }
 
             if (is_string($value)) {
-                return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+                return $value
+                        |> trim(...)
+                        |> strtolower(...)
+                        |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
             }
         }
 
@@ -66887,10 +66962,10 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
-     * @param list<string> $keys
      */
-    private function readMultilineString(HttpEndpointInput $input, array $keys) : string|null
+    private function readMultilineString(HttpEndpointInput $input) : string|null
     {
+        $keys = ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'];
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? $input->routeParameters[$key] ?? null;
 
@@ -66959,12 +67034,12 @@ use SensitiveParameter;
  */
 final readonly class ServeScimHttpSurface
 {
-    private const SCIM_CONTENT_TYPE     = 'application/scim+json';
-    private const LIST_RESPONSE_SCHEMA  = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
-    private const ERROR_SCHEMA          = 'urn:ietf:params:scim:api:messages:2.0:Error';
-    private const USER_SCHEMA           = 'urn:ietf:params:scim:schemas:core:2.0:User';
-    private const GROUP_SCHEMA          = 'urn:ietf:params:scim:schemas:core:2.0:Group';
-    private const USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
+    private const string SCIM_CONTENT_TYPE    = 'application/scim+json';
+    private const string LIST_RESPONSE_SCHEMA = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
+    private const string ERROR_SCHEMA         = 'urn:ietf:params:scim:api:messages:2.0:Error';
+    private const string USER_SCHEMA   = 'urn:ietf:params:scim:schemas:core:2.0:User';
+    private const string GROUP_SCHEMA = 'urn:ietf:params:scim:schemas:core:2.0:Group';
+    private const string USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
     private ReadBearerToken $readBearerToken;
     private AuthInterface   $auth;
 
@@ -67051,31 +67126,31 @@ final readonly class ServeScimHttpSurface
 
     private function serviceProviderConfig() : JsonHttpResponse
     {
-        return $this->response(statusCode: 200, body: [
-            'schemas'               => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
-            'patch'                 => ['supported' => true],
-            'bulk'                  => ['supported' => true, 'maxOperations' => 100, 'maxPayloadSize' => 1048576],
-            'filter'                => ['supported' => true, 'maxResults' => 100],
-            'changePassword'        => ['supported' => false],
-            'sort'                  => ['supported' => false],
-            'etag'                  => ['supported' => false],
-            'authenticationSchemes' => [[
-                                            'type'        => 'oauthbearertoken',
-                                            'name'        => 'OAuth Bearer Token',
-                                            'description' => 'Directory-scoped bearer token for SCIM runtime access.',
-                                            'specUri'     => 'https://www.rfc-editor.org/rfc/rfc6750',
-                                            'primary'     => true,
-                                        ]],
-        ]);
+        return $this->response(body: [
+                                         'schemas'               => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
+                                         'patch'                 => ['supported' => true],
+                                         'bulk'                  => ['supported' => true, 'maxOperations' => 100, 'maxPayloadSize' => 1048576],
+                                         'filter'                => ['supported' => true, 'maxResults' => 100],
+                                         'changePassword'        => ['supported' => false],
+                                         'sort'                  => ['supported' => false],
+                                         'etag'                  => ['supported' => false],
+                                         'authenticationSchemes' => [[
+                                                                         'type'        => 'oauthbearertoken',
+                                                                         'name'        => 'OAuth Bearer Token',
+                                                                         'description' => 'Directory-scoped bearer token for SCIM runtime access.',
+                                                                         'specUri'     => 'https://www.rfc-editor.org/rfc/rfc6750',
+                                                                         'primary'     => true,
+                                                                     ]],
+                                     ]);
     }
 
     /**
      * @param array<string, mixed> $body
      */
-    private function response(int $statusCode, array $body) : JsonHttpResponse
+    private function response(array $body) : JsonHttpResponse
     {
         return new JsonHttpResponse(
-            statusCode: $statusCode,
+            statusCode: 200,
             body      : $body,
             headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE]
         );
@@ -67107,13 +67182,13 @@ final readonly class ServeScimHttpSurface
      */
     private function listResponse(array $resources) : JsonHttpResponse
     {
-        return $this->response(statusCode: 200, body: [
-            'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-            'totalResults' => count($resources),
-            'startIndex'   => 1,
-            'itemsPerPage' => count($resources),
-            'Resources'    => $resources,
-        ]);
+        return $this->response(body: [
+                                         'schemas'      => [self::LIST_RESPONSE_SCHEMA],
+                                         'totalResults' => count($resources),
+                                         'startIndex'   => 1,
+                                         'itemsPerPage' => count($resources),
+                                         'Resources'    => $resources,
+                                     ]);
     }
 
     private function schemas() : JsonHttpResponse
@@ -67165,13 +67240,13 @@ final readonly class ServeScimHttpSurface
         $count      = $this->intValue(source: $input->query, field: 'count') ?? count($users);
         $slice      = array_slice($users, $startIndex - 1, $count);
 
-        return $this->response(statusCode: 200, body: [
-            'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-            'totalResults' => count($users),
-            'startIndex'   => $startIndex,
-            'itemsPerPage' => count($slice),
-            'Resources'    => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
-        ]);
+        return $this->response(body: [
+                                         'schemas'      => [self::LIST_RESPONSE_SCHEMA],
+                                         'totalResults' => count($users),
+                                         'startIndex'   => $startIndex,
+                                         'itemsPerPage' => count($slice),
+                                         'Resources'    => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
+                                     ]);
     }
 
     private function directoryId(HttpEndpointInput $input) : string
@@ -67366,12 +67441,8 @@ final readonly class ServeScimHttpSurface
      */
     private function username(array $body, string|null $fallback = null) : string
     {
-        if (is_scalar($body['userName'] ?? null)) {
-            return trim((string) $body['userName']);
-        }
-
-        if (is_scalar($body['username'] ?? null)) {
-            return trim((string) $body['username']);
+        if (is_scalar($body['userName'] ?? null) || is_scalar($body['username'] ?? null)) {
+            return trim((string) ($body['userName'] ?? $body['username']));
         }
 
         if ($fallback !== null && trim($fallback) !== '') {
@@ -67421,7 +67492,9 @@ final readonly class ServeScimHttpSurface
     private function state(array $body, ScimAccountState $fallback) : ScimAccountState
     {
         if (is_scalar($body['state'] ?? null)) {
-            $state = ScimAccountState::tryFrom(value: strtolower(trim((string) $body['state'])));
+            $state = ScimAccountState::tryFrom(
+                value: strtolower(trim((string) $body['state']))
+            );
 
             if ($state !== null) {
                 return $state;
@@ -67476,19 +67549,19 @@ final readonly class ServeScimHttpSurface
         );
         $response = $this->auth->runScimBulk(data: $request);
 
-        return $this->response(statusCode: 200, body: [
-            'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
-            'Operations' => array_map(
-                fn (ScimBulkOperationResult $result) : array => [
-                    'method'   => $result->method,
-                    'path'     => $result->path,
-                    'status'   => (string) $result->status,
-                    'bulkId'   => $result->bulkId,
-                    'response' => $result->response,
-                ],
-                $response->operations
-            ),
-        ]);
+        return $this->response(body: [
+                                         'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
+                                         'Operations' => array_map(
+                                             static fn (ScimBulkOperationResult $result) : array => [
+                                                 'method'   => $result->method,
+                                                 'path'     => $result->path,
+                                                 'status'   => (string) $result->status,
+                                                 'bulkId'   => $result->bulkId,
+                                                 'response' => $result->response,
+                                             ],
+                                             $response->operations
+                                         ),
+                                     ]);
     }
 
     /**
@@ -67538,7 +67611,7 @@ final readonly class ServeScimHttpSurface
             return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM user was not found.');
         }
 
-        return $this->response(statusCode: 200, body: $this->userResource(user: $user));
+        return $this->response(body: $this->userResource(user: $user));
     }
 
     private function error(int $statusCode, string $scimType, string $detail) : JsonHttpResponse
@@ -67560,7 +67633,7 @@ final readonly class ServeScimHttpSurface
         $this->auth->provisionScimUser(data: $this->provisionData(input: $input, forcedExternalId: $externalId));
         $user = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $externalId);
 
-        return $this->response(statusCode: 200, body: $user !== null ? $this->userResource(user: $user) : []);
+        return $this->response(body: $user !== null ? $this->userResource(user: $user) : []);
     }
 
     private function patchUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
@@ -67674,7 +67747,7 @@ final readonly class ServeScimHttpSurface
 
         foreach ($this->auth->readScimGroups(directoryId: $this->directoryId(input: $input)) as $group) {
             if ($group->groupId === $groupId) {
-                return $this->response(statusCode: 200, body: $this->groupResource(group: $group));
+                return $this->response(body: $this->groupResource(group: $group));
             }
         }
 
@@ -67865,15 +67938,15 @@ final readonly class ServeTenantSecurityHttpSurface
                                                                      allowedAudiences               : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
                                                                      allowedGrantTypes              : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
                                                                      audienceScopeBoundaries        : $this->audienceScopeBoundaries(body: $input->body),
-                                                                     tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
-                                                                     requiredSenderConstraint       : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                                                                     tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body),
+                                                                     requiredSenderConstraint       : $this->senderConstraintType(body: $input->body),
                                                                      workloadIdentity               : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                                                                      phishingResistantRequired      : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
                                                                      requestObjectSignatureRequired : $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                                                                      frontChannelLogoutSupported    : $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                                                                      backChannelLogoutSupported     : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                                                                      approvalRequired               : $this->boolValue(body: $input->body, field: 'approvalRequired'),
-                                                                     requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
+                                                                     requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body)
                                                                  ));
 
                 return $this->response(statusCode: 201, body: [
@@ -67902,15 +67975,15 @@ final readonly class ServeTenantSecurityHttpSurface
                                                                    allowedAudiences               : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
                                                                    allowedGrantTypes              : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
                                                                    audienceScopeBoundaries        : $this->audienceScopeBoundaries(body: $input->body),
-                                                                   tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
-                                                                   requiredSenderConstraint       : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                                                                   tokenEndpointAuthMethod        : $this->tokenEndpointAuthMethod(body: $input->body),
+                                                                   requiredSenderConstraint       : $this->senderConstraintType(body: $input->body),
                                                                    workloadIdentity               : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                                                                    phishingResistantRequired      : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
                                                                    requestObjectSignatureRequired : $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                                                                    frontChannelLogoutSupported    : $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                                                                    backChannelLogoutSupported     : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                                                                    approvalRequired               : $this->boolValue(body: $input->body, field: 'approvalRequired'),
-                                                                   requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
+                                                                   requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body)
                                                                ));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
@@ -68077,7 +68150,11 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
             }
         } catch (Throwable $failure) {
-            $status = str_contains(strtolower($failure->getMessage()), 'not found') || str_contains(strtolower($failure->getMessage()), 'unknown')
+            $status = $failure->getMessage()
+                |> strtolower(...)
+                |> (static fn ($x) => str_contains($x, 'not found')) || $failure->getMessage()
+                |> strtolower(...)
+                |> (static fn ($x) => str_contains($x, 'unknown'))
                 ? 404
                 : 422;
 
@@ -68309,9 +68386,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function tokenEndpointAuthMethod(array $body, string $field) : OAuthTokenEndpointAuthMethod|null
+    private function tokenEndpointAuthMethod(array $body) : OAuthTokenEndpointAuthMethod|null
     {
-        $value = $this->nullableString(body: $body, field: $field);
+        $value = $this->nullableString(body: $body, field: 'tokenEndpointAuthMethod');
 
         return $value !== null && $value !== ''
             ? OAuthTokenEndpointAuthMethod::from(value: strtolower($value))
@@ -68321,9 +68398,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function senderConstraintType(array $body, string $field) : OAuthSenderConstraintType|null
+    private function senderConstraintType(array $body) : OAuthSenderConstraintType|null
     {
-        $value = $this->nullableString(body: $body, field: $field);
+        $value = $this->nullableString(body: $body, field: 'requiredSenderConstraint');
 
         return $value !== null && $value !== ''
             ? OAuthSenderConstraintType::from(value: strtolower($value))
@@ -68342,7 +68419,10 @@ final readonly class ServeTenantSecurityHttpSurface
         }
 
         if (is_string($value)) {
-            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+            return $value
+                    |> trim(...)
+                    |> strtolower(...)
+                    |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
         }
 
         return false;
@@ -68351,9 +68431,9 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function nullableMultilineString(array $body, string $field) : string|null
+    private function nullableMultilineString(array $body) : string|null
     {
-        $value = $body[$field] ?? null;
+        $value = $body['requestObjectVerificationKeyPem'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }
@@ -68638,8 +68718,8 @@ final readonly class VerifyDpopProof
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $proof = $this->readHeader(headers: $input->headers, name: 'DPoP')
-            ?? $this->readServerValue(server: $input->server, name: 'HTTP_DPOP');
+        $proof = $this->readHeader(headers: $input->headers)
+            ?? $this->readServerValue(server: $input->server);
 
         if ($proof === null || $proof === '') {
             $this->recordFailure(input: $input, reason: 'missing_proof');
@@ -68691,7 +68771,10 @@ final readonly class VerifyDpopProof
         }
 
         if ($input->accessToken !== null) {
-            $expectedAth = rtrim(strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'), '=');
+            $expectedAth = hash('sha256', $input->accessToken, true)
+                    |> base64_encode(...)
+                    |> (static fn ($x) => strtr($x, '+/', '-_'))
+                    |> (static fn ($x) => rtrim($x, '='));
 
             if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
                 $this->recordFailure(input: $input, reason: 'access_token_mismatch');
@@ -68715,10 +68798,10 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'DPoP') !== 0) {
                 continue;
             }
 
@@ -68735,9 +68818,9 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['HTTP_DPOP'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }
@@ -68795,8 +68878,8 @@ final readonly class VerifyMtlsSenderConstraint
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $thumbprint = $this->readServerValue(server: $input->server, name: 'TLS_CLIENT_CERT_SHA256')
-            ?? $this->readHeader(headers: $input->headers, name: 'x-tls-client-cert-sha256');
+        $thumbprint = $this->readServerValue(server: $input->server)
+            ?? $this->readHeader(headers: $input->headers);
 
         if ($thumbprint === null || $thumbprint === '') {
             $this->recordFailure(reason: 'missing_certificate', input: $input);
@@ -68820,9 +68903,9 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['TLS_CLIENT_CERT_SHA256'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }
@@ -68830,10 +68913,10 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, 'x-tls-client-cert-sha256') !== 0) {
                 continue;
             }
 
@@ -68896,9 +68979,12 @@ final readonly class VerifyOAuthSenderConstraint
     }
 
     /**
-     * @throws DpopProofFailed
-     * @throws MtlsBindingFailed
-     * @throws SenderConstraintVerificationFailed
+     * @param HttpOAuthProofInput            $input
+     * @param OAuthSenderConstraint|null     $expectedSenderConstraint
+     * @param OAuthSenderConstraintType|null $requiredSenderConstraint
+     *
+     * @return OAuthSenderConstraint|null
+     * @throws \DateMalformedStringException
      */
     public function execute(
         HttpOAuthProofInput            $input,
@@ -68986,7 +69072,7 @@ final readonly class VerifyTrustedProxyHeaders
      */
     public function execute(HttpOAuthProofInput $input) : void
     {
-        $remoteAddress = $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR');
+        $remoteAddress = $this->readServerValue(server: $input->server);
 
         if ($remoteAddress !== null && in_array($remoteAddress, $this->trustedProxies, true)) {
             return;
@@ -69012,9 +69098,9 @@ final readonly class VerifyTrustedProxyHeaders
     /**
      * @param array<string, mixed> $server
      */
-    private function readServerValue(array $server, string $name) : string|null
+    private function readServerValue(array $server) : string|null
     {
-        $value = $server[$name] ?? null;
+        $value = $server['REMOTE_ADDR'] ?? null;
 
         return is_scalar($value) ? (string) $value : null;
     }
@@ -69049,6 +69135,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Release;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -69103,7 +69190,7 @@ final readonly class CheckMigrationPath
     {
         $matches  = [];
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: RecursiveDirectoryIterator::SKIP_DOTS)
+            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: FilesystemIterator::SKIP_DOTS)
         );
 
         /** @var SplFileInfo $file */
@@ -69278,7 +69365,9 @@ final readonly class CheckSourceTruth
                 continue;
             }
 
-            $columns = array_map('trim', explode('|', trim($line, '|')));
+            $columns = trim($line, '|')
+                    |> (static fn ($x) => explode('|', $x))
+                    |> (static fn ($x) => array_map('trim', $x));
 
             if (count($columns) < 4) {
                 continue;
@@ -69298,7 +69387,7 @@ final readonly class CheckSourceTruth
             }
 
             foreach ($paths as $path) {
-                if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                if (str_starts_with($path, 'https://') || str_starts_with($path, 'https://')) {
                     continue;
                 }
 
@@ -69369,6 +69458,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Release;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -69441,7 +69531,7 @@ final readonly class CheckSystemShape
         $forbiddenDirectories = [];
 
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(directory: $systemRoot, flags: RecursiveDirectoryIterator::SKIP_DOTS),
+            iterator: new RecursiveDirectoryIterator(directory: $systemRoot, flags: FilesystemIterator::SKIP_DOTS),
             mode    : RecursiveIteratorIterator::SELF_FIRST
         );
 
@@ -69864,7 +69954,6 @@ final readonly class ReadGitOutput
             ['rev-parse', 'HEAD'], ['rev-parse', '--verify', 'HEAD'] => $this->readHeadCommit(gitDirectory: $gitDirectory),
             ['rev-parse', '--verify', 'HEAD^'] => $this->readPreviousHeadCommit(gitDirectory: $gitDirectory),
             ['rev-parse', '--abbrev-ref', 'HEAD'] => $this->readHeadReferenceName(gitDirectory: $gitDirectory),
-            ['status', '--short'] => '',
             default => '',
         };
     }
@@ -69926,7 +70015,7 @@ final readonly class ReadGitOutput
             return $this->readReference(gitDirectory: $gitDirectory, reference: substr($head, 5));
         }
 
-        return $this->isCommitHash($head) ? $head : '';
+        return $this->isCommitHash(value: $head) ? $head : '';
     }
 
     private function readPreviousHeadCommit(string $gitDirectory) : string
@@ -69954,7 +70043,7 @@ final readonly class ReadGitOutput
 
         $isAllZeroHash = preg_match('/^0+$/', $hash) === 1;
 
-        return $this->isCommitHash($hash) && ! $isAllZeroHash ? $hash : '';
+        return $this->isCommitHash(value: $hash) && ! $isAllZeroHash ? $hash : '';
     }
 
     private function readHeadReferenceName(string $gitDirectory) : string
@@ -69994,7 +70083,7 @@ final readonly class ReadGitOutput
         if (is_file($referencePath)) {
             $contents = file_get_contents($referencePath);
 
-            return is_string($contents) && $this->isCommitHash(trim($contents))
+            return is_string($contents) && $this->isCommitHash(value: trim($contents))
                 ? trim($contents)
                 : '';
         }
@@ -70026,7 +70115,7 @@ final readonly class ReadGitOutput
 
             [$hash, $packedReference] = array_pad($parts, 2, '');
 
-            if ($packedReference === $reference && $this->isCommitHash($hash)) {
+            if ($packedReference === $reference && $this->isCommitHash(value: $hash)) {
                 return $hash;
             }
         }
@@ -70374,9 +70463,9 @@ final readonly class RunConformanceHarness
     private function runCommand(array $command, string $workingDirectory) : array
     {
         $descriptor = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
+            ['pipe', 'r'],
+            ['pipe', 'w'],
+            ['pipe', 'w'],
         ];
 
         $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);
@@ -70513,7 +70602,7 @@ final readonly class ScanCommittedSecrets
 
             $lineNumber = 0;
 
-            $lines = @file($path, FILE_IGNORE_NEW_LINES);
+            $lines = file($path, FILE_IGNORE_NEW_LINES);
 
             foreach ($lines !== false ? $lines : [] as $line) {
                 $lineNumber++;
@@ -71816,6 +71905,7 @@ class IdentityTest extends TestCase
         $this->assertSame(expected: $jwt, actual: $identity->jwtIdentity());
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -71841,6 +71931,7 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -71852,7 +71943,7 @@ use Random\RandomException;
 class JwtIdentityTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityIssueResolveAndRevokeCycle() : void
@@ -71888,7 +71979,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
@@ -71914,7 +72005,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityRejectsInactiveUserTokens() : void
@@ -71936,7 +72027,7 @@ class JwtIdentityTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')
-            ->with(Mockery::on(closure: fn ($id) => $id instanceof UserId && $id->value === 9))
+            ->with(Mockery::on(closure: static fn ($id) => $id instanceof UserId && $id->value === 9))
             ->andReturn($inactiveUser);
 
         $jwt = new JwtIdentity(
@@ -71951,7 +72042,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testJwtIdentityIssuesRefreshTokenWhenStoreConfigured() : void
     {
@@ -71977,7 +72068,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityPreservesOAuthClientClaims() : void
@@ -72011,7 +72102,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityPreservesSenderConstraintClaims() : void
@@ -72050,7 +72141,7 @@ class JwtIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
@@ -72091,6 +72182,7 @@ class JwtIdentityTest extends TestCase
         $this->assertNull(actual: $jwt->resolveWorkloadToken(token: $issued->token, expectedAudience: 'orders-api'));
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -72110,6 +72202,7 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -72119,7 +72212,7 @@ use PHPUnit\Framework\TestCase;
 final class SessionIdentityTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testIssueStoresUserAndReturnsRegeneratedSessionId() : void
     {
@@ -72138,7 +72231,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testResolveUserIdExpiresIdleSession() : void
     {
@@ -72161,7 +72254,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testResolveUserIdExpiresAbsoluteSession() : void
     {
@@ -72182,7 +72275,7 @@ final class SessionIdentityTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testIssueRegeneratesExistingSessionIdToPreventFixation() : void
     {
@@ -72753,19 +72846,19 @@ final class PdoSessionRegistryTest extends TestCase
         $record    = $this->buildRecord();
 
         $pdo->expects($this->once())
-            ->method('prepare')
-            ->with($this->callback(static fn (string $query) : bool => str_contains($query, 'INSERT INTO auth_sessions')))
-            ->willReturn($statement);
+            ->method(constraint: 'prepare')
+            ->with($this->callback(callback: static fn (string $query) : bool => str_contains($query, 'INSERT INTO auth_sessions')))
+            ->willReturn(value: $statement);
 
         $statement->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(static function (array $params) use ($record) : bool {
+            ->method(constraint: 'execute')
+            ->with($this->callback(callback: static function (array $params) use ($record) : bool {
                 return $params['session_id'] === $record->sessionId
                     && $params['user_id'] === $record->userId->value
                     && $params['revoked_at'] === null
                     && $params['revoke_reason'] === null;
             }))
-            ->willReturn(true);
+            ->willReturn(value: true);
 
         $registry = new PdoSessionRegistry(pdo: $pdo);
         $registry->track(record: $record);
@@ -72793,28 +72886,28 @@ final class PdoSessionRegistryTest extends TestCase
         $registry      = new PdoSessionRegistry(pdo: $pdo);
 
         $pdo->expects($this->exactly(2))
-            ->method('prepare')
+            ->method(constraint: 'prepare')
             ->willReturnOnConsecutiveCalls($findStatement, $listStatement);
 
         $findStatement->expects($this->once())
-            ->method('execute')
+            ->method(constraint: 'execute')
             ->with(['session_id' => 'session-1'])
-            ->willReturn(true);
+            ->willReturn(value: true);
         $findStatement->expects($this->once())
-            ->method('fetch')
+            ->method(constraint: 'fetch')
             ->with(PDO::FETCH_ASSOC)
-            ->willReturn($this->row(sessionId: 'session-1', userId: 77));
+            ->willReturn(value: $this->row(sessionId: 'session-1'));
 
         $listStatement->expects($this->once())
-            ->method('execute')
+            ->method(constraint: 'execute')
             ->with(['user_id' => 77])
-            ->willReturn(true);
+            ->willReturn(value: true);
         $listStatement->expects($this->once())
-            ->method('fetchAll')
+            ->method(constraint: 'fetchAll')
             ->with(PDO::FETCH_ASSOC)
-            ->willReturn([
-                                    $this->row(sessionId: 'session-2', userId: 77, lastSeenAt: '2026-04-12T11:30:00+00:00'),
-                                    $this->row(sessionId: 'session-1', userId: 77, lastSeenAt: '2026-04-12T12:00:00+00:00'),
+            ->willReturn(value: [
+                                    $this->row(sessionId: 'session-2', lastSeenAt: '2026-04-12T11:30:00+00:00'),
+                                    $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:00:00+00:00'),
                                 ]);
 
         $record   = $registry->find(sessionId: 'session-1');
@@ -72830,11 +72923,11 @@ final class PdoSessionRegistryTest extends TestCase
     /**
      * @return array<string, scalar|null>
      */
-    private function row(#[SensitiveParameter] string $sessionId, int $userId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
+    private function row(#[SensitiveParameter] string $sessionId, string $lastSeenAt = '2026-04-12T12:00:00+00:00') : array
     {
         return [
             'session_id'          => $sessionId,
-            'user_id'             => $userId,
+            'user_id'             => 77,
             'created_at'          => '2026-04-12T11:00:00+00:00',
             'last_seen_at'        => $lastSeenAt,
             'idle_expires_at'     => '2026-04-12T12:15:00+00:00',
@@ -72855,26 +72948,26 @@ final class PdoSessionRegistryTest extends TestCase
         $registry               = new PdoSessionRegistry(pdo: $pdo);
 
         $pdo->expects($this->exactly(3))
-            ->method('prepare')
+            ->method(constraint: 'prepare')
             ->willReturnOnConsecutiveCalls($revokeStatement, $revokeForUserStatement, $pruneStatement);
 
         $revokeStatement->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(static fn (array $params) : bool => $params['session_id'] === 'session-1' && $params['revoke_reason'] === 'logout'))
-            ->willReturn(true);
+            ->method(constraint: 'execute')
+            ->with($this->callback(callback: static fn (array $params) : bool => $params['session_id'] === 'session-1' && $params['revoke_reason'] === 'logout'))
+            ->willReturn(value: true);
 
         $revokeForUserStatement->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(static fn (array $params) : bool => $params['user_id'] === 77 && $params['revoke_reason'] === 'logout_all'))
-            ->willReturn(true);
+            ->method(constraint: 'execute')
+            ->with($this->callback(callback: static fn (array $params) : bool => $params['user_id'] === 77 && $params['revoke_reason'] === 'logout_all'))
+            ->willReturn(value: true);
 
         $pruneStatement->expects($this->once())
-            ->method('execute')
-            ->with($this->callback(static fn (array $params) : bool => isset($params['now']) && is_string($params['now'])))
-            ->willReturn(true);
+            ->method(constraint: 'execute')
+            ->with($this->callback(callback: static fn (array $params) : bool => isset($params['now']) && is_string($params['now'])))
+            ->willReturn(value: true);
         $pruneStatement->expects($this->once())
-            ->method('rowCount')
-            ->willReturn(2);
+            ->method(constraint: 'rowCount')
+            ->willReturn(value: 2);
 
         $registry->revoke(sessionId: 'session-1', revokedAt: new DateTimeImmutable(datetime: '2026-04-12T12:05:00+00:00'), reason: 'logout');
         $registry->revokeForUser(userId: new UserId(value: 77), revokedAt: new DateTimeImmutable(datetime: '2026-04-12T12:06:00+00:00'), reason: 'logout_all');
@@ -72904,28 +72997,28 @@ final class RedisSessionRegistryTest extends TestCase
     public function testTrackPersistsFullSessionRecord() : void
     {
         $redis  = $this->createMock(Redis::class);
-        $record = $this->record(sessionId: 'session-1', userId: 7);
+        $record = $this->record();
 
         $redis->expects($this->once())
-            ->method('hMset')
+            ->method(constraint: 'hMset')
             ->with(
                 'auth:session:session-1',
-                $this->callback(static fn (array $payload) : bool => $payload['ip_created'] === '127.0.0.1'
+                $this->callback(callback: static fn (array $payload) : bool => $payload['ip_created'] === '127.0.0.1'
                     && $payload['user_agent_created'] === 'Browser'
                     && $payload['revoked_at'] === '')
             )
-            ->willReturn(true);
-        $redis->expects($this->once())->method('expire')->with('auth:session:session-1', 86400)->willReturn(true);
-        $redis->expects($this->once())->method('sAdd')->with('auth:user_sessions:7', 'session-1')->willReturn(1);
+            ->willReturn(value: true);
+        $redis->expects($this->once())->method(constraint: 'expire')->with('auth:session:session-1', 86400)->willReturn(value: true);
+        $redis->expects($this->once())->method(constraint: 'sAdd')->with('auth:user_sessions:7', 'session-1')->willReturn(value: 1);
 
         (new RedisSessionRegistry(redis: $redis))->track(record: $record);
     }
 
-    private function record(#[SensitiveParameter] string $sessionId, int $userId) : SessionRecord
+    private function record() : SessionRecord
     {
         return new SessionRecord(
-            sessionId        : $sessionId,
-            userId           : new UserId(value: $userId),
+            sessionId        : 'session-1',
+            userId           : new UserId(value: 7),
             createdAt        : new DateTimeImmutable(datetime: '2026-04-12T11:00:00+00:00'),
             lastSeenAt       : new DateTimeImmutable(datetime: '2026-04-12T12:05:00+00:00'),
             idleExpiresAt    : new DateTimeImmutable(datetime: '2026-04-12T12:30:00+00:00'),
@@ -72941,16 +73034,16 @@ final class RedisSessionRegistryTest extends TestCase
         $registry = new RedisSessionRegistry(redis: $redis);
 
         $redis->expects($this->exactly(3))
-            ->method('hGetAll')
+            ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
-                $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00'),
-                $this->row(sessionId: 'session-2', userId: 7, lastSeenAt: '2026-04-12T12:00:00+00:00'),
-                $this->row(sessionId: 'session-1', userId: 7, lastSeenAt: '2026-04-12T12:10:00+00:00')
+                $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:10:00+00:00'),
+                $this->row(sessionId: 'session-2', lastSeenAt: '2026-04-12T12:00:00+00:00'),
+                $this->row(sessionId: 'session-1', lastSeenAt: '2026-04-12T12:10:00+00:00')
             );
         $redis->expects($this->once())
-            ->method('sMembers')
+            ->method(constraint: 'sMembers')
             ->with('auth:user_sessions:7')
-            ->willReturn(['session-2', 'session-1']);
+            ->willReturn(value: ['session-2', 'session-1']);
 
         $found  = $registry->find(sessionId: 'session-1');
         $listed = $registry->listForUser(userId: new UserId(value: 7));
@@ -72967,20 +73060,20 @@ final class RedisSessionRegistryTest extends TestCase
      */
     private function row(
         #[SensitiveParameter] string $sessionId,
-        int                          $userId,
         string|null                  $lastSeenAt = null,
         string|null                  $idleExpiresAt = null,
         string|null                  $revokedAt = null,
         string                       $revokeReason = ''
     ) : array
     {
+        $userId        = 7;
         $lastSeenAt    ??= '2026-04-12T12:05:00+00:00';
         $idleExpiresAt ??= '2026-04-12T12:30:00+00:00';
         $revokedAt     ??= '';
 
         return [
             'session_id'          => $sessionId,
-            'user_id'             => (string) $userId,
+            'user_id'             => (string) (7),
             'created_at'          => '2026-04-12T11:00:00+00:00',
             'last_seen_at'        => $lastSeenAt,
             'idle_expires_at'     => $idleExpiresAt,
@@ -73001,32 +73094,32 @@ final class RedisSessionRegistryTest extends TestCase
         $sremCalls = [];
 
         $redis->expects($this->exactly(4))
-            ->method('hSet')
-            ->willReturnCallback(static function (string $key, string $field, string $value) use (&$hsetCalls) : int {
+            ->method(constraint: 'hSet')
+            ->willReturnCallback(callback: static function (string $key, string $field, string $value) use (&$hsetCalls) : int {
                 $hsetCalls[] = [$key, $field, $value];
 
                 return 1;
             });
         $redis->expects($this->exactly(2))
-            ->method('hGetAll')
+            ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
                 ['user_id' => '7', 'session_id' => 'session-1'],
-                $this->row(sessionId: 'session-2', userId: 7)
+                $this->row(sessionId: 'session-2')
             );
         $redis->expects($this->exactly(2))
-            ->method('srem')
-            ->willReturnCallback(static function (string $key, string $sessionId) use (&$sremCalls) : int {
+            ->method(constraint: 'srem')
+            ->willReturnCallback(callback: static function (string $key, #[\SensitiveParameter] string $sessionId) use (&$sremCalls) : int {
                 $sremCalls[] = [$key, $sessionId];
 
                 return 1;
             });
         $redis->expects($this->once())
-            ->method('sMembers')
+            ->method(constraint: 'sMembers')
             ->with('auth:user_sessions:7')
-            ->willReturn(['session-2']);
+            ->willReturn(value: ['session-2']);
 
-        $registry->revoke('session-1', $revokedAt, 'logout');
-        $registry->revokeForUser(new UserId(7), $revokedAt, 'logout_all');
+        $registry->revoke(sessionId: 'session-1', revokedAt: $revokedAt, reason: 'logout');
+        $registry->revokeForUser(userId: new UserId(value: 7), revokedAt: $revokedAt, reason: 'logout_all');
 
         $this->assertSame(
             expected: [
@@ -73054,25 +73147,25 @@ final class RedisSessionRegistryTest extends TestCase
         $deletedKeys        = [];
         $removedMemberships = [];
 
-        $redis->expects(invocationRule: $this->once())
+        $redis->expects($this->once())
             ->method(constraint: 'keys')
             ->with('auth:session:*')
             ->willReturn(value: ['auth:session:expired', 'auth:session:revoked', 'auth:session:active']);
-        $redis->expects(invocationRule: $this->exactly(3))
+        $redis->expects($this->exactly(3))
             ->method(constraint: 'hGetAll')
             ->willReturnOnConsecutiveCalls(
-                $this->row(sessionId: 'expired', userId: 7, idleExpiresAt: '2026-04-12T12:00:00+00:00'),
-                $this->row(sessionId: 'revoked', userId: 7, revokedAt: '2026-04-12T12:10:00+00:00', revokeReason: 'logout'),
-                $this->row(sessionId: 'active', userId: 7, idleExpiresAt: '2026-04-12T13:00:00+00:00')
+                $this->row(sessionId: 'expired', lastSeenAt: '2026-04-12T12:00:00+00:00', idleExpiresAt: '2026-04-12T12:00:00+00:00'),
+                $this->row(sessionId: 'revoked', lastSeenAt: '2026-04-12T12:10:00+00:00', idleExpiresAt: 'logout', revokedAt: '2026-04-12T12:10:00+00:00', revokeReason: 'logout'),
+                $this->row(sessionId: 'active', lastSeenAt: '2026-04-12T13:00:00+00:00', idleExpiresAt: '2026-04-12T13:00:00+00:00')
             );
-        $redis->expects(invocationRule: $this->exactly(2))
+        $redis->expects($this->exactly(2))
             ->method(constraint: 'del')
             ->willReturnCallback(callback: static function (string $key) use (&$deletedKeys) : int {
                 $deletedKeys[] = $key;
 
                 return 1;
             });
-        $redis->expects(invocationRule: $this->exactly(2))
+        $redis->expects($this->exactly(2))
             ->method(constraint: 'srem')
             ->willReturnCallback(callback: static function (string $key, #[SensitiveParameter] string $sessionId) use (&$removedMemberships) : int {
                 $removedMemberships[] = [$key, $sessionId];
@@ -73080,7 +73173,7 @@ final class RedisSessionRegistryTest extends TestCase
                 return 1;
             });
 
-        $removed = $registry->pruneExpired($now);
+        $removed = $registry->pruneExpired(now: $now);
 
         $this->assertSame(expected: 2, actual: $removed);
         $this->assertSame(expected: ['auth:session:expired', 'auth:session:revoked'], actual: $deletedKeys);
@@ -73096,7 +73189,7 @@ final class RedisSessionRegistryTest extends TestCase
     protected function setUp(): void
     {
         if (! class_exists('Redis')) {
-            self::markTestSkipped('Redis extension is not installed in this runtime.');
+            self::markTestSkipped(message: 'Redis extension is not installed in this runtime.');
         }
     }
 }
@@ -73577,7 +73670,7 @@ class AuthBuilderTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
-        $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(static fn ($user) => $user);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
@@ -73642,6 +73735,7 @@ class AuthBuilderTest extends TestCase
         $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -73669,13 +73763,14 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class AdminElevationTest extends TestCase
 {
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testAdminElevationLifecycle() : void
     {
@@ -73719,7 +73814,7 @@ final class AdminElevationTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
     {
@@ -73794,6 +73889,7 @@ use DateMalformedStringException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use SensitiveParameter;
 
 final class ChangeEmailTest extends TestCase
@@ -73955,6 +74051,7 @@ final class ChangeEmailTest extends TestCase
 
     /**
      * @throws DateInvalidOperationException
+     * @throws RandomException
      */
     public function testConfirmEmailChangeSuccess() : void
     {
@@ -74113,7 +74210,7 @@ class ChangePasswordTest extends TestCase
             mode: AuthenticationMode::TOKEN
         );
         $currentAuthentication->store(context: $context);
-        $user = $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old_password');
+        $user = $this->userWithPassword(passwordHasher: $passwordHasher, password: 'old_password');
 
         $data = new ChangePasswordData(
             currentPassword: 'old_password',
@@ -74153,14 +74250,14 @@ class ChangePasswordTest extends TestCase
         return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
     }
 
-    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, bool $isActive = true) : User
+    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, #[SensitiveParameter] string $password) : User
     {
         return User::create(
-            id          : new UserId(value: $userId),
-            email       : new UserEmail(value: "user{$userId}@example.com"),
-            username    : "user{$userId}",
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: "user1@example.com"),
+            username    : "user1",
             passwordHash: $passwordHasher->hash(password: $password),
-            isActive    : $isActive
+            isActive    : true
         );
     }
 
@@ -74176,7 +74273,7 @@ class ChangePasswordTest extends TestCase
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::TOKEN
         ));
-        $user = $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old_password');
+        $user = $this->userWithPassword(passwordHasher: $passwordHasher, password: 'old_password');
 
         $data = new ChangePasswordData(
             currentPassword: 'wrong_password',
@@ -74241,7 +74338,7 @@ class ChangePasswordTest extends TestCase
         ));
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')->once()->andReturn(
-            $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old')
+            $this->userWithPassword(passwordHasher: $passwordHasher, password: 'old')
         );
 
         $changePassword = new ChangePassword(
@@ -74261,6 +74358,7 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -74338,7 +74436,10 @@ final class ExportAuditEventsTest extends TestCase
                           /**
                            * @param list<AuditEvent> $events
                            */
-                          public function __construct(stdClass $capture) { $this->capture = $capture; }
+                          public function __construct(stdClass $capture)
+                          {
+                              $this->capture = $capture;
+                          }
 
                           public function export(array $events) : void
                           {
@@ -74598,8 +74699,7 @@ class LoginTest extends TestCase
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
@@ -74655,7 +74755,6 @@ class LoginTest extends TestCase
     private function userWithPassword(
         #[SensitiveParameter] PasswordHasher $passwordHasher,
         UserId                               $userId,
-        #[SensitiveParameter] string         $password,
         bool                                 $isActive = true
     ) : User
     {
@@ -74663,7 +74762,7 @@ class LoginTest extends TestCase
             id          : $userId,
             email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
-            passwordHash: $passwordHasher->hash(password: $password),
+            passwordHash: $passwordHasher->hash(password: 'password'),
             roles       : [],
             permissions : [],
             isActive    : $isActive
@@ -74737,7 +74836,6 @@ class LoginTest extends TestCase
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
             userId        : new UserId(value: 1),
-            password      : 'password',
             isActive      : false
         );
 
@@ -74833,8 +74931,7 @@ class LoginTest extends TestCase
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
@@ -74885,8 +74982,7 @@ class LoginTest extends TestCase
         $legacyHasher  = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
         $user          = $this->userWithPassword(
             passwordHasher: $legacyHasher,
-            userId        : $userId,
-            password      : 'password'
+            userId        : $userId
         );
         $currentHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 12]);
 
@@ -74927,6 +75023,7 @@ class LoginTest extends TestCase
         $this->assertTrue(condition: $result->isAuthenticated());
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -75051,6 +75148,7 @@ class LogoutTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -75099,6 +75197,7 @@ use DateInvalidOperationException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -75309,6 +75408,7 @@ final class VerifyMfaChallengeTest extends TestCase
     /**
      * @return array{0: VerifyMfaChallenge, 1: Totp, 2: FrozenClock, 3: InMemoryMfaChallengeStore, 4:
      *                  CurrentAuthentication, 5: string}
+     * @throws RandomException
      */
     private function makeFlowWithBackupCode() : array
     {
@@ -75318,7 +75418,6 @@ final class VerifyMfaChallengeTest extends TestCase
             clock         : $clock
         ))->execute();
         $mfaStoreProperty = new ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
-        $mfaStoreProperty->setAccessible(accessible: true);
         /** @var InMemoryMfaStore $mfaStore */
         $mfaStore = $mfaStoreProperty->getValue(object: $flow);
         $method   = $mfaStore->findMethod(userId: new UserId(value: 1));
@@ -75441,6 +75540,7 @@ final class MfaEnrollmentTest extends TestCase
 {
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentStartsAndCompletesOnlyAfterValidTotpProof() : void
     {
@@ -75510,6 +75610,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentRejectsInvalidFirstCodeAndDoesNotHalfEnableMfa() : void
     {
@@ -75552,6 +75653,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentCanBeCancelledSafely() : void
     {
@@ -75581,6 +75683,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
+     * @throws \DateMalformedStringException
      */
     public function testEnrollmentExpires() : void
     {
@@ -76077,14 +76180,12 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class OAuthFlowTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testPublicClientRequiresPkceDuringAuthorization() : void
     {
@@ -76138,9 +76239,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOAuthAuthorizationCodeRefreshIntrospectionAndRevokeCycle() : void
     {
@@ -76232,9 +76330,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testPhishingResistantOAuthClientRejectsCompatibilityLoginAsPrimaryPath() : void
     {
@@ -76269,9 +76364,6 @@ final class OAuthFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOAuthRefreshRequiresMatchingSenderConstraint() : void
     {
@@ -76615,13 +76707,12 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class OidcFlowTest extends TestCase
 {
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcDiscoveryJwksIdTokenAndUserInfoFlow() : void
     {
@@ -76737,8 +76828,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcParAuthorizationRequestAndJarmResponseFlow() : void
     {
@@ -76790,8 +76879,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcParAcceptsClientSignedRequestObjects() : void
     {
@@ -76842,8 +76929,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcLogoutRevokesCurrentSession() : void
     {
@@ -76874,8 +76959,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcAuthorizationRejectsUnknownRequestUri() : void
     {
@@ -76911,8 +76994,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testOidcAuthorizationRequiresNonce() : void
     {
@@ -76946,8 +77027,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcAuthorizationFailsWhenProviderIsMissing() : void
     {
@@ -76994,8 +77073,6 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testPairwiseOidcProviderIssuesStablePairwiseSubjects() : void
     {
@@ -77058,7 +77135,7 @@ final class OidcFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testRotatingOidcProviderPublishesOverlapKeysAndVerifiesLegacyTokens() : void
     {
@@ -77114,7 +77191,9 @@ use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Foundation\Clock;
 use BadMethodCallException;
+use DateMalformedStringException;
 use DateTimeImmutable;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use SensitiveParameter;
@@ -77122,9 +77201,9 @@ use SensitiveParameter;
 final class PushAuthorizationRequestTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testPushAuthorizationRequestAcceptsRsaSignedRequestObjectForPublicClient() : void
     {
@@ -77198,6 +77277,10 @@ final class PushAuthorizationRequestTest extends TestCase
 
     /**
      * @param array<string, mixed> $claims
+     * @param string               $privateKeyPem
+     *
+     * @return string
+     * @throws JsonException
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
@@ -77214,13 +77297,16 @@ final class PushAuthorizationRequestTest extends TestCase
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testPushAuthorizationRequestRejectsSignedRequestObjectWhenIssuerDoesNotMatchClient() : void
     {
@@ -77247,7 +77333,7 @@ final class PushAuthorizationRequestTest extends TestCase
             auditLog          : new NullAuditLog(),
             clock             : new Clock(),
             clientRegistry    : $registry,
-            oidcProvider      : $this->oidcProvider(issuer: 'https://auth.example.test')
+            oidcProvider      : $this->oidcProvider()
         );
 
         $this->expectException(OAuthAuthorizationFailed::class);
@@ -77271,9 +77357,9 @@ final class PushAuthorizationRequestTest extends TestCase
                              ));
     }
 
-    private function oidcProvider(string $issuer) : OidcProviderInterface
+    private function oidcProvider() : OidcProviderInterface
     {
-        return new class($issuer) implements OidcProviderInterface {
+        return new class('https://auth.example.test') implements OidcProviderInterface {
             private readonly string $issuer;
 
             public function __construct(
@@ -77363,6 +77449,7 @@ use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
 use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -77370,7 +77457,7 @@ use Random\RandomException;
 final class ValidateRequestObjectTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testValidateRequestObjectNormalizesClaims() : void
     {
@@ -77402,7 +77489,7 @@ final class ValidateRequestObjectTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testValidateRequestObjectRejectsMissingClaims() : void
     {
@@ -77425,7 +77512,7 @@ final class ValidateRequestObjectTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testValidateRequestObjectRejectsUnsignedObjectWhenClientRequiresSignature() : void
@@ -77552,6 +77639,7 @@ use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakePasskeyRuntime;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
@@ -77559,7 +77647,7 @@ final class PasskeyFlowTest extends TestCase
 {
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testPasskeyRegistrationAuthenticationAndRevocation() : void
@@ -77678,7 +77766,7 @@ final class PasskeyFlowTest extends TestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     public function testPasskeyAuthenticationChallengeCannotBeReplayed() : void
@@ -77973,6 +78061,7 @@ use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\Tests\Support\FrozenClock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -77982,7 +78071,7 @@ use PHPUnit\Framework\TestCase;
 final class BeginPasswordResetTest extends TestCase
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testPasswordResetRequestsAreThrottledAfterConfiguredLimit() : void
     {
@@ -78201,7 +78290,7 @@ class RegisterTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
-        $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(static fn ($user) => $user);
 
         $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
 
@@ -78311,6 +78400,7 @@ class RegisterTest extends TestCase
         $register->execute(data: $data);
     }
 
+    #[\Override]
     protected function tearDown() : void
     {
         Mockery::close();
@@ -79279,23 +79369,17 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flow\Token;
 
 use Avax\Auth\System\Flow\Token\FileBackedHmacKeyRingCodec;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 
 final class FileBackedHmacKeyRingCodecTest extends TestCase
 {
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testCodecSupportsRolloverWithoutRedeploy() : void
     {
-        $path = $this->createKeyRingFile(configuration: [
-                                                            'primary'      => [
-                                                                'kid'       => '2026-04',
-                                                                'secret'    => 'secret-a',
-                                                                'algorithm' => 'HS256',
-                                                            ],
-                                                            'verification' => [],
-                                                        ]);
+        $path = $this->createKeyRingFile();
 
         $codec    = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
         $oldToken = $codec->encode(claims: ['sub' => 1, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'old-token']);
@@ -79325,11 +79409,21 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     *
+     * @return string
+     * @throws JsonException
      */
-    private function createKeyRingFile(array $configuration) : string
+    private function createKeyRingFile() : string
     {
-        $path = tempnam(sys_get_temp_dir(), 'auth-keyring-');
+        $configuration = [
+            'primary'      => [
+                'kid'       => '2026-04',
+                'secret'    => 'secret-a',
+                'algorithm' => 'HS256',
+            ],
+            'verification' => [],
+        ];
+        $path          = tempnam(sys_get_temp_dir(), 'auth-keyring-');
         self::assertIsString(actual: $path);
         file_put_contents($path, json_encode($configuration, JSON_THROW_ON_ERROR));
 
@@ -79337,18 +79431,11 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testCodecSupportsCryptoAgilityAcrossAlgorithms() : void
     {
-        $path = $this->createKeyRingFile(configuration: [
-                                                            'primary'      => [
-                                                                'kid'       => '2026-04',
-                                                                'secret'    => 'secret-a',
-                                                                'algorithm' => 'HS256',
-                                                            ],
-                                                            'verification' => [],
-                                                        ]);
+        $path = $this->createKeyRingFile();
 
         $codec    = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
         $oldToken = $codec->encode(claims: ['sub' => 7, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'agility-old']);
@@ -79528,7 +79615,6 @@ use PHPUnit\Framework\TestCase;
 class AuthLifecycleTest extends TestCase
 {
     private Auth               $auth;
-    private InMemoryUserSource $userSource;
 
     /**
      * @throws Exception
@@ -79638,12 +79724,13 @@ class AuthLifecycleTest extends TestCase
         $this->auth->login(credentials: new Credentials(identifier: 'login@fail.com', password: 'WRONG'));
     }
 
+    #[\Override]
     protected function setUp() : void
     {
-        $this->userSource = new InMemoryUserSource();
-        $refreshTokens    = new InMemoryRefreshTokenStore();
-        $jwtIdentity      = new JwtIdentity(
-            userSource       : $this->userSource,
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $jwtIdentity   = new JwtIdentity(
+            userSource       : $userSource,
             codec            : new HmacTokenCodec(secret: 'integration-secret'),
             clock            : new Clock(),
             revocationStore  : new InMemoryTokenRevocationStore(),
@@ -79652,7 +79739,7 @@ class AuthLifecycleTest extends TestCase
         $identity         = new Identity(jwtIdentity: $jwtIdentity);
 
         $this->auth = Auth::configuration()
-            ->forUser(userSource: $this->userSource)
+            ->forUser(userSource: $userSource)
             ->withIdentity(identity: $identity)
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
@@ -79691,6 +79778,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
+            #[\Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
@@ -79732,6 +79820,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
+            #[\Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
@@ -79824,7 +79913,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertArrayHasKey(key: 'record_hash', array: $second);
         $this->assertSame(expected: $first['record_hash'], actual: $second['previous_hash']);
 
-        @unlink($path);
+        unlink($path);
     }
 
     /**
@@ -79922,7 +80011,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertSame(expected: 'admin@example.com', actual: $payload['context']['email']);
         $this->assertSame(expected: '127.0.0.1', actual: $payload['context']['ip_address']);
 
-        @unlink($path);
+        unlink($path);
     }
 
     public function testSecurityNotificationExporterRoutesHighSignalEvents() : void
@@ -80038,7 +80127,10 @@ final class DeploymentTrustBoundaryTest extends TestCase
                                                      'htu' => 'https://api.example.test/me',
                                                      'htm' => 'GET',
                                                      'jkt' => 'thumb-1',
-                                                     'ath' => rtrim(strtr(base64_encode(hash('sha256', 'access-token', true)), '+/', '-_'), '='),
+                                                     'ath' => hash('sha256', 'access-token', true)
+                                                             |> base64_encode(...)
+                                                             |> (static fn ($x) => strtr($x, '+/', '-_'))
+                                                             |> (static fn ($x) => rtrim($x, '=')),
                                                  ]);
         $proxyVerifier  = new VerifyTrustedProxyHeaders(trustedProxies: ['10.0.0.10']);
         $senderVerifier = new VerifyOAuthSenderConstraint(
@@ -80228,14 +80320,13 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 
 final class ServeOidcHttpSurfaceTest extends TestCase
 {
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcHttpSurfaceServesDiscoveryJwksAndUserInfo() : void
     {
@@ -80405,8 +80496,6 @@ final class ServeOidcHttpSurfaceTest extends TestCase
     }
 
     /**
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testOidcHttpSurfaceAcceptsSignedJarParRequest() : void
     {
@@ -80573,7 +80662,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testOidcHttpSurfaceRegistersRequestObjectVerificationKeyForSignedPar() : void
     {
@@ -80623,6 +80712,10 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
     /**
      * @param array<string, mixed> $claims
+     * @param string               $privateKeyPem
+     *
+     * @return string
+     * @throws JsonException
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
@@ -80639,7 +80732,10 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return $value
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 }
 
@@ -81287,6 +81383,7 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 
@@ -81360,11 +81457,14 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
 
     private function hashAccessToken(#[SensitiveParameter] string $token) : string
     {
-        return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
+        return hash('sha256', $token, true)
+                |> base64_encode(...)
+                |> (static fn ($x) => strtr($x, '+/', '-_'))
+                |> (static fn ($x) => rtrim($x, '='));
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testDpopProofMismatchAndKeyRotationAreRejected() : void
     {
@@ -81559,6 +81659,7 @@ use Avax\Auth\Integrations\Release\RunKeyCompromiseDrill;
 use Avax\Auth\Integrations\Release\RunKeyRolloverDrill;
 use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
@@ -81633,7 +81734,7 @@ final class ReleaseToolingTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testDependencyReviewRejectsUnreviewedOrUnapprovedPackages() : void
     {
@@ -81699,7 +81800,7 @@ final class ReleaseToolingTest extends TestCase
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testKeyLifecycleDrillsRunAgainstKeyRingFiles() : void
     {
@@ -81744,6 +81845,9 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @param array<string, mixed> $configuration
+     *
+     * @return string
+     * @throws JsonException
      */
     private function createKeyRingFile(array $configuration) : string
     {
@@ -81780,7 +81884,7 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testEvidenceBundleTracksArtifactPresence() : void
     {
@@ -81806,7 +81910,7 @@ final class ReleaseToolingTest extends TestCase
 
     /**
      * @throws RandomException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testMigrationPathCheckDetectsLegacyReferencesAndMissingGuide() : void
     {
@@ -82082,7 +82186,7 @@ final class Container
             return $this->build(class: $id);
         }
 
-        throw new RuntimeException(message: "Container binding [$id] is missing.");
+        throw new RuntimeException(message: "Container binding [{$id}] is missing.");
     }
 
     /**
@@ -82129,7 +82233,7 @@ final class Container
                 continue;
             }
 
-            throw new RuntimeException(message: "Container cannot resolve parameter [{$parameter->getName()}] for [$class].");
+            throw new RuntimeException(message: "Container cannot resolve parameter [{$parameter->getName()}] for [{$class}].");
         }
 
         return $reflection->newInstanceArgs(args: $arguments);
@@ -82340,11 +82444,13 @@ final class FrozenClock extends Clock
         $this->now = $now;
     }
 
+    #[\Override]
     public function now() : DateTimeImmutable
     {
         return $this->now;
     }
 
+    #[\Override]
     public function timestamp() : int
     {
         return $this->now->getTimestamp();
@@ -82406,8 +82512,6 @@ final class AuthTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testAuthFacadeRunsCorePublicFlowSurface() : void
     {
@@ -82457,8 +82561,6 @@ final class AuthTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws AuthenticationFailed
-     * @throws RegistrationFailed
      */
     public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
     {
@@ -82501,8 +82603,6 @@ final class AuthTest extends TestCase
     }
 
     /**
-     * @throws RegistrationFailed
-     * @throws AuthenticationFailed
      */
     public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
     {
@@ -82537,10 +82637,11 @@ final class AuthTest extends TestCase
         $events = $auditLog->events();
         $this->assertNotSame(expected: [], actual: $events);
         $this->assertContainsOnlyInstancesOf(className: AuditEvent::class, haystack: $events);
-        $this->assertSame(
-            expected: ['corr-auth-1'],
-            actual  : array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
-        );
+        array_map(static fn ($event) => $event->correlationId, $events)
+            |> array_filter(...)
+            |> array_unique(...)
+            |> array_values(...)
+            |> (fn ($x) => $this->assertSame(expected: ['corr-auth-1'], actual: $x));
     }
 
     public function testAuthFacadeReadsWorkloadIdentityInventory() : void
@@ -82643,7 +82744,7 @@ final class ProductBoundaryTest extends TestCase
                 $fullPath = dirname(__DIR__, 2) . '/' . $path;
                 $this->assertFileExists(
                     filename: $fullPath,
-                    message : "Auth kernel capability missing: $capability ($path)"
+                    message : "Auth kernel capability missing: {$capability} ({$path})"
                 );
             }
         }
@@ -82661,19 +82762,19 @@ final class ProductBoundaryTest extends TestCase
             if ($capability === 'Admin UI') {
                 $this->assertFalse(
                     condition: is_dir($uiPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'SIEM') {
                 $this->assertFalse(
                     condition: is_dir($siemPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'Email') {
                 $this->assertFalse(
                     condition: is_dir($emailPath),
-                    message  : "Full platform - $capability should NOT be shipped"
+                    message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
         }
@@ -82694,7 +82795,7 @@ final class ProductBoundaryTest extends TestCase
         foreach ($boundaryDocs as $doc) {
             $this->assertFileExists(
                 filename: $doc,
-                message : "Boundary documentation missing: $doc"
+                message : "Boundary documentation missing: {$doc}"
             );
         }
     }
@@ -83470,9 +83571,9 @@ exit($hasFailure ? 1 : 0);
 function runCommand(array $command, string $workingDirectory) : array
 {
     $descriptor = [
-        0 => ['pipe', 'r'],
-        1 => ['pipe', 'w'],
-        2 => ['pipe', 'w'],
+        ['pipe', 'r'],
+        ['pipe', 'w'],
+        ['pipe', 'w'],
     ];
 
     $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);

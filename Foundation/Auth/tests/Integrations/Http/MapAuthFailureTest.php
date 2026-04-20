@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\Http;
 
 use Avax\Auth\Integrations\Http\MapAuthFailure;
-use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Flow\Login\AuthenticationFailed;
-use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flow\Mfa\Challenge\MfaAttemptLimitReached;
-use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\Challenge\MfaAttemptLimitReached;
+use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

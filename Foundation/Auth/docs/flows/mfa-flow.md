@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Mfa/`
+Primary implementation: `System/Capabilities/Identity/Mfa/`, `System/Capabilities/Identity/Mfa/Runtime/`
 
 Sub-stories:
 

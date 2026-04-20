@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Identity;
+namespace Avax\Auth\Tests\Capabilities\Identity;
 
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\Token\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\Token\IssuedToken;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Mockery;
@@ -85,6 +85,60 @@ class IdentityTest extends TestCase
         $this->assertSame(expected: 'token-10', actual: $issued->accessToken?->token);
     }
 
+    public function testIdentityUsesSessionModeWhenOnlySessionBackendIsConfigured() : void
+    {
+        $user = new User(
+            id          : new UserId(value: 11),
+            email       : new UserEmail(value: 'session-only@example.com'),
+            username    : 'session-only',
+            passwordHash: 'hash'
+        );
+
+        $session = Mockery::mock(SessionIdentityInterface::class);
+        $session->shouldReceive('issue')->once()->with(11, null, false)->andReturn('session-11');
+
+        $identity = new Identity(sessionIdentity: $session);
+
+        $issued = $identity->issue(user: $user);
+
+        $this->assertSame(expected: AuthenticationMode::SESSION, actual: $issued->mode);
+        $this->assertSame(expected: 'session-11', actual: $issued->sessionId);
+        $this->assertNull(actual: $issued->accessToken);
+        $this->assertNull(actual: $issued->refreshToken);
+    }
+
+    public function testIdentityUsesTokenModeWhenOnlyJwtBackendIsConfigured() : void
+    {
+        $user = new User(
+            id          : new UserId(value: 12),
+            email       : new UserEmail(value: 'token-only@example.com'),
+            username    : 'token-only',
+            passwordHash: 'hash'
+        );
+
+        $jwt = Mockery::mock(JwtIdentityInterface::class);
+        $jwt->shouldReceive('issueRefreshToken')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn(null);
+        $jwt->shouldReceive('issue')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn(new IssuedToken(
+                token    : 'token-12',
+                tokenId  : 'token-id-12',
+                expiresAt: new DateTimeImmutable(datetime: '+1 hour')
+            ));
+
+        $identity = new Identity(jwtIdentity: $jwt);
+
+        $issued = $identity->issue(user: $user);
+
+        $this->assertSame(expected: AuthenticationMode::TOKEN, actual: $issued->mode);
+        $this->assertNull(actual: $issued->sessionId);
+        $this->assertSame(expected: 'token-12', actual: $issued->accessToken?->token);
+    }
+
     public function testIdentityClearsAllConfiguredBackends() : void
     {
         $session = Mockery::mock(SessionIdentityInterface::class);
@@ -104,6 +158,24 @@ class IdentityTest extends TestCase
             accessTokenId       : 'token-10',
             accessTokenExpiresAt: new DateTimeImmutable(datetime: '+1 hour')
         ));
+
+        $this->assertTrue(condition: true);
+    }
+
+    public function testIdentityClearsSessionBackendWithoutJwtContext() : void
+    {
+        $session = Mockery::mock(SessionIdentityInterface::class);
+        $session->shouldReceive('clear')->once();
+
+        $jwt = Mockery::mock(JwtIdentityInterface::class);
+        $jwt->shouldNotReceive('revoke');
+
+        $identity = new Identity(
+            sessionIdentity: $session,
+            jwtIdentity    : $jwt
+        );
+
+        $identity->clear();
 
         $this->assertTrue(condition: true);
     }

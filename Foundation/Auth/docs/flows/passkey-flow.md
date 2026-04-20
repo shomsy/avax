@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Passkey/`
+Primary implementation: `System/Capabilities/Identity/Passkey/`, `System/Capabilities/Identity/Passkey/Runtime/`
 
 Sub-stories:
 

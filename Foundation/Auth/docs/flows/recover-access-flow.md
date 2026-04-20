@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Recover/`, `System/Flow/Mfa/Recover/`
+Primary implementation: `System/Flows/RecoverAccess/`, `System/Flows/RecoverAccess/PasswordReset/`, `System/Capabilities/Identity/Mfa/Runtime/Recover/`
 
 Sequence:
 

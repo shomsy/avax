@@ -1,6 +1,6 @@
 # Capability Boundaries
 
-`System/Capability/` owns shared system abilities, not leftover code.
+`System/Capabilities/` owns shared system abilities, not leftover code.
 
 A capability exists only when:
 
@@ -30,6 +30,6 @@ Capability slices must not absorb:
 - temporary migration code
 - unnamed “shared” leftovers
 
-`System/Capability/Access/`, `System/Capability/Identity/`, `System/Capability/ExternalIdentity/`,
-`System/Capability/IdentitySync/`, `System/Capability/Tenant/`, and `System/Capability/Diagnostics/` are owner
-facades, not replacements for the detailed shared capabilities that live alongside them.
+`System/Capabilities/Access/`, `System/Capabilities/Identity/`, `System/Capabilities/ExternalIdentity/`,
+`System/Capabilities/IdentitySync/`, `System/Capabilities/Tenancy/`, and `System/Capabilities/Diagnostics/` are owner
+zones, not replacements for the detailed shared capabilities that live alongside them.

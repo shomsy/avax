@@ -16,7 +16,11 @@ final readonly class CheckSystemShape
      *     approved:bool,
      *     issues:list<string>,
      *     unexpected_top_level:list<string>,
-     *     forbidden_directories:list<string>
+     *     forbidden_directories:list<string>,
+     *     unexpected_flow_top_level:list<string>,
+     *     missing_flow_top_level:list<string>,
+     *     unexpected_capability_top_level:list<string>,
+     *     missing_capability_top_level:list<string>
      * }
      */
     public function execute(string $repositoryRoot) : array
@@ -30,10 +34,14 @@ final readonly class CheckSystemShape
                 'issues'                => ['Missing canonical system root: System/'],
                 'unexpected_top_level'  => [],
                 'forbidden_directories' => [],
+                'unexpected_flow_top_level' => [],
+                'missing_flow_top_level' => [],
+                'unexpected_capability_top_level' => [],
+                'missing_capability_top_level' => [],
             ];
         }
 
-        $allowedTopLevelDirectories = ['Capability', 'Flow', 'Configuration', 'Foundation'];
+        $allowedTopLevelDirectories = ['Capabilities', 'Flows', 'Configuration', 'Foundation'];
         $allowedTopLevelFiles       = ['Auth.php', 'AuthInterface.php'];
         $unexpectedTopLevel         = [];
 
@@ -104,6 +112,50 @@ final readonly class CheckSystemShape
             $issues[] = 'Unexpected System root entries: ' . implode(', ', $unexpectedTopLevel);
         }
 
+        $flowTopLevel = $this->validateCanonicalChildDirectories(
+            root          : $systemRoot . '/Flows',
+            expected       : [
+                'ChangeEmail',
+                'ChangePassword',
+                'CheckAuthentication',
+                'Login',
+                'Logout',
+                'RecoverAccess',
+                'Register',
+                'VerifyIdentity',
+            ],
+            relativePrefix: 'System/Flows/'
+        );
+
+        if ($flowTopLevel['unexpected'] !== []) {
+            $issues[] = 'Unexpected System/Flows root entries: ' . implode(', ', $flowTopLevel['unexpected']);
+        }
+
+        if ($flowTopLevel['missing'] !== []) {
+            $issues[] = 'Missing System/Flows root entries: ' . implode(', ', $flowTopLevel['missing']);
+        }
+
+        $capabilityTopLevel = $this->validateCanonicalChildDirectories(
+            root          : $systemRoot . '/Capabilities',
+            expected       : [
+                'Access',
+                'Diagnostics',
+                'ExternalIdentity',
+                'Identity',
+                'IdentitySync',
+                'Tenancy',
+            ],
+            relativePrefix: 'System/Capabilities/'
+        );
+
+        if ($capabilityTopLevel['unexpected'] !== []) {
+            $issues[] = 'Unexpected System/Capabilities root entries: ' . implode(', ', $capabilityTopLevel['unexpected']);
+        }
+
+        if ($capabilityTopLevel['missing'] !== []) {
+            $issues[] = 'Missing System/Capabilities root entries: ' . implode(', ', $capabilityTopLevel['missing']);
+        }
+
         if ($forbiddenDirectories !== []) {
             $issues[] = 'Forbidden junk-drawer directories present: ' . implode(', ', $forbiddenDirectories);
         }
@@ -113,6 +165,61 @@ final readonly class CheckSystemShape
             'issues'                => $issues,
             'unexpected_top_level'  => $unexpectedTopLevel,
             'forbidden_directories' => $forbiddenDirectories,
+            'unexpected_flow_top_level' => $flowTopLevel['unexpected'],
+            'missing_flow_top_level' => $flowTopLevel['missing'],
+            'unexpected_capability_top_level' => $capabilityTopLevel['unexpected'],
+            'missing_capability_top_level' => $capabilityTopLevel['missing'],
+        ];
+    }
+
+    /**
+     * @param list<string> $expected
+     *
+     * @return array{unexpected:list<string>, missing:list<string>}
+     */
+    private function validateCanonicalChildDirectories(
+        string $root,
+        array $expected,
+        string $relativePrefix
+    ) : array
+    {
+        if (! is_dir($root)) {
+            return [
+                'unexpected' => [],
+                'missing'    => array_map(
+                    static fn (string $directory) : string => $relativePrefix . $directory,
+                    $expected
+                ),
+            ];
+        }
+
+        $entries = scandir($root);
+        $actual  = [];
+
+        foreach ($entries === false ? [] : $entries as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            if (is_dir($root . '/' . $entry)) {
+                $actual[] = $entry;
+            }
+        }
+
+        sort($actual);
+
+        $unexpected = array_values(array_diff($actual, $expected));
+        $missing    = array_values(array_diff($expected, $actual));
+
+        return [
+            'unexpected' => array_map(
+                static fn (string $directory) : string => $relativePrefix . $directory,
+                $unexpected
+            ),
+            'missing'    => array_map(
+                static fn (string $directory) : string => $relativePrefix . $directory,
+                $missing
+            ),
         ];
     }
 }

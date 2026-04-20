@@ -1,5 +1,13 @@
 # Implementation Roadmap
 
+Status: Archived. This roadmap is historical only.
+
+Canonical truth lives in `docs/STATUS.md`, `complete-this.md`, and
+`docs/product-boundary.md`.
+
+The sections below are preserved historical context, not an active delivery
+queue.
+
 ## Current Decision
 
 This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-boundaries.md`.
@@ -36,9 +44,9 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
   release-hardening, verification-matrix, and runbook docs
 - multi-key HMAC verification for key rollover windows
 
-## Next Delivery Order
+## Historical Delivery Order
 
-### Next
+### Historical Next
 
 - complete executable tests for every remaining example and adapter seam
 - drive mutation-quality posture higher across the security-critical slices now that the mutation lane executes locally
@@ -47,12 +55,12 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
 - evaluate optional WebAuthn interop adapter packaging over the runtime seam
 
-### Future
+### Historical Future
 
 - SAML brokering/runtime package, deeper tenant membership model, residency/compliance overlays, and external
   control-plane integration
 
-## Non-Goals For This Package Today
+## Historical Non-Goals
 
 - custom SAML implementation from scratch
 - full standards-certified OIDC provider product surface

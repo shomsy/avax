@@ -46,7 +46,7 @@ final class RequestHeaders
 
     public function getLine(string $name): string
     {
-        return implode(', ', $this->get(name: $name));
+        return implode(',', $this->get(name: $name));
     }
 
     /**

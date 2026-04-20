@@ -6,6 +6,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\BodyAllowancePolicy;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
@@ -13,11 +14,13 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookie
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
+use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use SensitiveParameter;
@@ -31,8 +34,9 @@ final readonly class PrepareRequest
         private ParseBodyByContentType   $bodyParser,
         private NormalizeProtocolVersion $protocolNormalizer,
         private NormalizeUploadedFiles   $filesNormalizer,
-        private TrustedIpv4ProxyPolicy   $trustedProxyPolicy,
+        private TrustedProxyPolicy|TrustedIpv4ProxyPolicy $trustedProxyPolicy,
         private ResolveClientAddress     $clientResolver,
+        private BodyAllowancePolicy      $bodyAllowance = new BodyAllowancePolicy(),
     ) {}
 
     public function fromGlobals(
@@ -40,6 +44,7 @@ final readonly class PrepareRequest
         array|null $query = null,
         array|null $cookie = null,
         array|null $files = null,
+        string|null $rawBody = null,
     ) : RequestInit
     {
         $server = $server ?? $_SERVER ?? [];
@@ -47,13 +52,20 @@ final readonly class PrepareRequest
         $cookie = $cookie ?? $_COOKIE ?? [];
         $files  = $files ?? $_FILES ?? [];
 
-        $method          = $this->stageReadMethod(server: $server);
-        $protocolVersion = $this->stageReadProtocol(server: $server);
-        $uri             = $this->stageReadUri(server: $server);
+        // Use typed ServerEnvironment
+        $env = ServerEnvironment::fromServerParams(serverParams: $server);
+
+        $method          = $this->stageReadMethod(env: $env);
+        $protocolVersion = $this->stageReadProtocol(env: $env);
+        $uri             = $this->stageReadUri(env: $env);
         $requestHeaders  = $this->stageExtractHeaders(server: $server);
 
         // Capture raw body once to avoid multiple IO reads
-        $rawBody = $this->captureRawBody(method: $method);
+        $rawBody = $this->captureRawBody(
+            method : $method,
+            headers: $requestHeaders->all(),
+            rawBody: $rawBody,
+        );
 
         $bodyStream      = $this->stageResolveBodyStream(rawBody: $rawBody);
         $parsedBody      = $this->stageParseBody(rawBody: $rawBody, requestHeaders: $requestHeaders);
@@ -76,9 +88,13 @@ final readonly class PrepareRequest
         );
     }
 
-    private function captureRawBody(string $method) : string
+    private function captureRawBody(string $method, array $headers, string|null $rawBody = null) : string
     {
-        if (! $this->isBodyAllowedMethod(method: $method)) {
+        if ($rawBody !== null) {
+            return $rawBody;
+        }
+
+        if (! $this->bodyAllowance->allowsRead(method: $method, headers: $headers)) {
             return '';
         }
 
@@ -87,25 +103,23 @@ final readonly class PrepareRequest
         return $content !== false ? $content : '';
     }
 
-    private function stageReadMethod(array $server) : string
+    private function stageReadMethod(ServerEnvironment $env) : string
     {
-        return strtoupper($server['REQUEST_METHOD'] ?? 'GET');
+        return strtoupper($env->requestMethod ?? 'GET');
     }
 
-    private function stageReadProtocol(array $server) : string
+    private function stageReadProtocol(ServerEnvironment $env) : string
     {
         return $this->protocolNormalizer->execute(
-            protocol: $server['SERVER_PROTOCOL'] ?? '1.1'
+            protocol: $env->serverProtocol ?? '1.1'
         );
     }
 
-    private function stageReadUri(array $server) : UriBuilder
+    private function stageReadUri(ServerEnvironment $env) : UriBuilder
     {
-        $protocol = empty($server['HTTPS']) || $server['HTTPS'] === 'off'
-            ? 'http'
-            : 'https';
-        $host     = $server['HTTP_HOST'] ?? 'localhost';
-        $uri      = $server['REQUEST_URI'] ?? '/';
+        $protocol = $env->isHttps() ? 'https' : 'http';
+        $host     = $env->httpHost ?? 'localhost';
+        $uri      = $env->requestUri ?? '/';
 
         return UriBuilder::createFromString(uri: "{$protocol}://{$host}{$uri}");
     }
@@ -135,11 +149,6 @@ final readonly class PrepareRequest
         return $this->createBodyStreamFromRaw(rawBody: $rawBody);
     }
 
-    private function isBodyAllowedMethod(string $method) : bool
-    {
-        return in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true);
-    }
-
     private function createEmptyBodyStream() : Stream
     {
         $handle = fopen('php://temp', 'r+');
@@ -167,7 +176,7 @@ final readonly class PrepareRequest
     private function stageParseBody(string $rawBody, #[SensitiveParameter] RequestHeaders $requestHeaders) : ParsedBody
     {
         if ($rawBody === '') {
-            return new ParsedBody;
+            return new ParsedBody();
         }
 
         $contentType = $requestHeaders->getLine(name: 'Content-Type');
@@ -176,9 +185,8 @@ final readonly class PrepareRequest
             content    : $rawBody,
         );
 
-        return $parsedData !== []
-            ? new ParsedBody(data: $parsedData)
-            : new ParsedBody;
+        // Standardized semantics: null = no parser/no content, [] = valid empty content
+        return new ParsedBody(data: $parsedData);
     }
 
     private function stageResolveSession() : RequestSession|null
@@ -199,9 +207,12 @@ final readonly class PrepareRequest
     ) : RequestInit
     {
         $queryParams    ??= [];
-        $parsedBodyData = is_array($parsedBody)
-            ? $parsedBody
-            : (is_object($parsedBody) ? (array) $parsedBody : []);
+        $parsedBodyData = match (true) {
+            is_array($parsedBody)  => $parsedBody,
+            is_object($parsedBody) => (array) $parsedBody,
+            $parsedBody === null   => null,
+            default                => [],
+        };
 
         return $this->defaults()
             ->withMethod(method: $method)

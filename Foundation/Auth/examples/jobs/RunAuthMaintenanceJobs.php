@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Examples\Jobs;
 
-use Avax\Auth\System\Flow\Diagnostics\ExportAuditEvents\ExportAuditEvents;
-use Avax\Auth\System\Flow\Mfa\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
-use Avax\Auth\System\Flow\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
-use Avax\Auth\System\Flow\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
-use Avax\Auth\System\Flow\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
-use Avax\Auth\System\Flow\Session\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Auth\System\Flows\Diagnostics\ExportAuditEvents\ExportAuditEvents;
+use Avax\Auth\System\Flows\Mfa\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
+use Avax\Auth\System\Flows\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Auth\System\Flows\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Auth\System\Flows\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
+use Avax\Auth\System\Flows\Session\CleanupExpiredSessions\CleanupExpiredSessions;
 use SensitiveParameter;
 
 /**

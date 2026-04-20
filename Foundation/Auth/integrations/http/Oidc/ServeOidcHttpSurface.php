@@ -8,15 +8,15 @@ use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
-use Avax\Auth\System\Capability\OAuth\OAuthClient;
-use Avax\Auth\System\Capability\OAuth\OAuthClientType;
-use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
-use Avax\Auth\System\Capability\OAuth\PkceMethod;
-use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
-use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
-use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
-use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClient;
+use Avax\Auth\System\Capabilities\OAuth\OAuthClientType;
+use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
+use Avax\Auth\System\Capabilities\OAuth\OAuthTokenEndpointAuthMethod;
+use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
+use Avax\Auth\System\Flows\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flows\OAuth\UpdateClient\UpdateClientData;
+use Avax\Auth\System\Flows\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flows\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use SensitiveParameter;
 use Throwable;
 
@@ -472,10 +472,7 @@ final readonly class ServeOidcHttpSurface
             }
 
             if (is_string($value)) {
-                return $value
-                        |> trim(...)
-                        |> strtolower(...)
-                        |> (static fn ($x) => in_array($x, ['1', 'true', 'yes', 'on'], true));
+                return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
             }
         }
 

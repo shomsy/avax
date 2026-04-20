@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\OAuth;
+namespace Avax\Auth\Tests\Flows\OAuth;
 
-use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
-use Avax\Auth\System\Capability\OAuth\PkceMethod;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Flow\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Auth\System\Capabilities\OAuth\InMemoryAuthorizationCodeStore;
+use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Flows\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

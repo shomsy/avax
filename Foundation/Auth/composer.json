@@ -40,6 +40,8 @@
   },
   "autoload": {
     "psr-4": {
+      "Avax\\Auth\\System\\Capabilities\\": "System/Capabilities/",
+      "Avax\\Auth\\System\\Flows\\": "System/Flows/",
       "Avax\\Auth\\System\\": "System/",
       "Avax\\Auth\\Integrations\\AvaxContainer\\": "integrations/avax-container/",
       "Avax\\Auth\\Integrations\\Diagnostics\\": "integrations/diagnostics/",
@@ -47,13 +49,17 @@
       "Avax\\Auth\\Integrations\\Headers\\": "integrations/headers/",
       "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/",
       "Avax\\Auth\\Integrations\\Release\\": "integrations/release/"
-    }
+    },
+    "classmap": [
+      "System/",
+      "integrations/"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
-      "Avax\\Auth\\Tests\\Capability\\": "tests/Capabilities/",
+      "Avax\\Auth\\Tests\\Capabilities\\": "tests/Capabilities/",
       "Avax\\Auth\\Tests\\Configuration\\": "tests/Configuration/",
-      "Avax\\Auth\\Tests\\Flow\\": "tests/Flows/",
+      "Avax\\Auth\\Tests\\Flows\\": "tests/Flows/",
       "Avax\\Auth\\Tests\\Foundation\\": "tests/Foundation/",
       "Avax\\Auth\\Tests\\Integration\\": "tests/Integration/",
       "Avax\\Auth\\Tests\\Integrations\\": "tests/Integrations/",

@@ -51,8 +51,13 @@ class UploadedFileTest extends TestCase
         try {
             $file->moveTo(targetPath: $target2);
         } finally {
-            unlink($target1);
-            unlink($target2);
+            if (file_exists($target1)) {
+                unlink($target1);
+            }
+
+            if (file_exists($target2)) {
+                unlink($target2);
+            }
         }
     }
 
@@ -69,7 +74,9 @@ class UploadedFileTest extends TestCase
         try {
             $file->getStream();
         } finally {
-            unlink($target);
+            if (file_exists($target)) {
+                unlink($target);
+            }
         }
     }
 

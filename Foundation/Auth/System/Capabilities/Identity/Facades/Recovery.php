@@ -9,16 +9,15 @@ use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
-use SensitiveParameter;
 
 final readonly class Recovery
 {
     public function __construct(
-        #[SensitiveParameter] private BeginPasswordReset $beginPasswordReset,
-        #[SensitiveParameter] private ResetPassword      $resetPassword
+        private BeginPasswordReset $beginPasswordReset,
+        private ResetPassword      $resetPassword
     ) {}
 
-    public function beginPasswordReset(#[SensitiveParameter] BeginPasswordResetData $data) : PasswordResetChallenge
+    public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute(data: $data);
     }

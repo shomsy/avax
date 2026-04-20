@@ -1246,7 +1246,7 @@ final class AuthBuilder
 
         $identity = new Identity(
             authentication : $authentication,
-            session        : $session,
+            sessions       : $session,
             account        : $account,
             recovery       : $recovery,
             verification   : $verification,

@@ -4,7 +4,32 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\System;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentity;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
+use Avax\Auth\System\Capabilities\Identity\Facades\Account;
+use Avax\Auth\System\Capabilities\Identity\Facades\Authentication;
+use Avax\Auth\System\Capabilities\Identity\Facades\Recovery;
+use Avax\Auth\System\Capabilities\Identity\Facades\Verification;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Mfa;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Passkey;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Sessions;
+use Avax\Auth\System\Capabilities\IdentitySync\IdentitySync;
+use Avax\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
+use Avax\Auth\System\Capabilities\Tenancy\Security\Security;
+use Avax\Auth\System\Capabilities\Tenancy\Tenancy;
+use Avax\Auth\System\Capabilities\Tenancy\Tenants\Tenants;
+use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionParameter;
+use SplFileInfo;
 
 final class ProductBoundaryTest extends TestCase
 {
@@ -244,6 +269,82 @@ final class ProductBoundaryTest extends TestCase
         }
     }
 
+    public function testZoneFacadesAreDecomposedIntoLocalOwnerFacades() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $requiredFiles = [
+            $root . '/System/Capabilities/Identity/Authentication.php',
+            $root . '/System/Capabilities/Identity/Account.php',
+            $root . '/System/Capabilities/Identity/Recovery.php',
+            $root . '/System/Capabilities/Identity/Verification.php',
+            $root . '/System/Capabilities/Identity/Session/Session.php',
+            $root . '/System/Capabilities/Identity/Mfa/Mfa.php',
+            $root . '/System/Capabilities/Identity/Passkey/Passkey.php',
+            $root . '/System/Capabilities/ExternalIdentity/OAuth/OAuth.php',
+            $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/OpenIDConnect.php',
+            $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/SingleSignOn.php',
+            $root . '/System/Capabilities/IdentitySync/SCIM/SCIM.php',
+            $root . '/System/Capabilities/IdentitySync/Provisioning/Provisioning.php',
+            $root . '/System/Capabilities/Tenancy/Tenants/Tenants.php',
+            $root . '/System/Capabilities/Tenancy/Security/Security.php',
+            $root . '/System/Capabilities/Tenancy/TenancyFacade.php',
+        ];
+
+        foreach ($requiredFiles as $file) {
+            $this->assertFileExists(
+                filename: $file,
+                message : "Local owner facade missing: {$file}"
+            );
+        }
+
+        $expectedConstructorTypes = [
+            Identity::class         => [
+                Authentication::class,
+                Sessions::class,
+                Account::class,
+                Recovery::class,
+                Verification::class,
+                Mfa::class,
+                Passkey::class,
+            ],
+            ExternalIdentity::class => [
+                OAuth::class,
+                OpenIDConnect::class,
+                SingleSignOn::class,
+            ],
+            IdentitySync::class     => [
+                SCIM::class,
+                Provisioning::class,
+            ],
+            Tenancy::class          => [
+                Tenants::class,
+                Security::class,
+            ],
+        ];
+
+        foreach ($expectedConstructorTypes as $class => $expectedTypes) {
+            $constructor = (new ReflectionClass($class))->getConstructor();
+
+            self::assertNotNull(actual: $constructor, message: "Facade constructor missing: {$class}");
+
+            $actualTypes = array_map(
+                static function (ReflectionParameter $parameter) : string|null {
+                    $type = $parameter->getType();
+
+                    return $type instanceof ReflectionNamedType ? $type->getName() : null;
+                },
+                $constructor->getParameters()
+            );
+
+            $this->assertSame(
+                expected: $expectedTypes,
+                actual  : $actualTypes,
+                message : "Facade constructor drifted away from local-owner composition: {$class}"
+            );
+        }
+    }
+
     public function testCanonicalRootUnitsDeclareCanonicalNamespaces() : void
     {
         $root = dirname(__DIR__, 2);
@@ -381,11 +482,11 @@ final class ProductBoundaryTest extends TestCase
     public function testNoLegacyCompatibilityShimsRemainInSystemTree() : void
     {
         $root     = dirname(__DIR__, 2);
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($root . '/System', \FilesystemIterator::SKIP_DOTS)
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($root . '/System', FilesystemIterator::SKIP_DOTS)
         );
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             if (! $file->isFile() || $file->getExtension() !== 'php') {
                 continue;
@@ -458,11 +559,11 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($directories as $directory) {
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS)
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
             );
 
-            /** @var \SplFileInfo $file */
+            /** @var SplFileInfo $file */
             foreach ($iterator as $file) {
                 if (! $file->isFile() || $file->getExtension() !== 'php') {
                     continue;

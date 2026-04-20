@@ -4,78 +4,88 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access;
 
-use Avax\Auth\System\Capabilities\Access\Policy\AccessPolicy;
-use Avax\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication as RequireAuthenticationBoundary;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole as RequireRoleBoundary;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
-use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
-use Avax\Auth\System\Capabilities\Identity\User\UserRole;
-use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\AssessCurrentRisk\AssessCurrentRisk;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskSignal;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticateRequest;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
 use SensitiveParameter;
 
-/**
- * Root access façade for the authorization capability.
- */
-final readonly class Access implements AccessInterface
+final readonly class Access
 {
-    private RequireAccessPolicyBoundary   $requireAccessPolicy;
-    private RequirePermissionBoundary     $requirePermission;
-    private RequireRoleBoundary           $requireRole;
-    private RequireAuthenticationBoundary $requireAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] RequireAuthenticationBoundary $requireAuthentication,
-        RequireRoleBoundary                                 $requireRole,
-        RequirePermissionBoundary                           $requirePermission,
-        #[SensitiveParameter] RequireAccessPolicyBoundary   $requireAccessPolicy
-    )
+        private AuthenticateRequest                         $authenticateRequest,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[SensitiveParameter] private CheckAuthentication   $checkAuthentication,
+        private ReadCurrentUser                             $readCurrentUser,
+        #[SensitiveParameter] private AccessInterface       $access,
+        private BeginAdminElevation                         $beginAdminElevation,
+        private EndAdminElevation                           $endAdminElevation,
+        private RequireAdminElevation                       $requireAdminElevation,
+        private AssessCurrentRisk                           $assessCurrentRisk,
+        private ReadRiskSignals                             $readRiskSignals
+    ) {}
+
+    public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext
     {
-        $this->requireAuthentication = $requireAuthentication;
-        $this->requireRole           = $requireRole;
-        $this->requirePermission     = $requirePermission;
-        $this->requireAccessPolicy   = $requireAccessPolicy;
+        return $this->authenticateRequest->execute(request: $request);
+    }
+
+    public function current() : AuthenticationContext
+    {
+        return $this->currentAuthentication->read();
+    }
+
+    public function check() : bool
+    {
+        return $this->checkAuthentication->execute();
+    }
+
+    public function user() : AuthenticatedUser|null
+    {
+        return $this->readCurrentUser->execute();
+    }
+
+    public function access() : AccessInterface
+    {
+        return $this->access;
+    }
+
+    public function beginAdminElevation() : AdminElevation
+    {
+        return $this->beginAdminElevation->execute();
+    }
+
+    public function endAdminElevation() : void
+    {
+        $this->endAdminElevation->execute();
+    }
+
+    public function requireAdminElevation() : void
+    {
+        $this->requireAdminElevation->execute();
+    }
+
+    public function assessCurrentRisk(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    {
+        return $this->assessCurrentRisk->execute(ipAddress: $ipAddress, userAgent: $userAgent);
     }
 
     /**
-     * @throws Unauthenticated
+     * @return list<RiskSignal>
      */
-    public function requireAuthentication() : void
+    public function readRiskSignals(int|null $userId = null) : array
     {
-        $this->requireAuthentication->execute();
-    }
-
-    /**
-     * @throws Unauthenticated
-     * @throws RoleDenied
-     */
-    public function requireRole(UserRole $requiredRole) : void
-    {
-        $this->requireRole->execute(requiredRole: $requiredRole);
-    }
-
-    /**
-     * @throws Unauthenticated
-     * @throws PermissionDenied
-     */
-    public function requirePermission(UserPermission $permission) : void
-    {
-        $this->requirePermission->execute(permission: $permission);
-    }
-
-    /**
-     * @throws AdminElevationFailed
-     * @throws FreshMfaRequired
-     * @throws PermissionDenied
-     * @throws RoleDenied
-     * @throws Unauthenticated
-     */
-    public function requirePolicy(AccessPolicy $policy) : void
-    {
-        $this->requireAccessPolicy->execute(policy: $policy);
+        return $this->readRiskSignals->execute(userId: $userId);
     }
 }

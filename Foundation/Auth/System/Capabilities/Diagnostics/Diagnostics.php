@@ -8,9 +8,9 @@ use Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer;
 use Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
 use SensitiveParameter;
 
-final readonly class DiagnosticsFacade
+final readonly class Diagnostics
 {
-    public function __construct(#[\SensitiveParameter] private AuthIssueExplainer $authIssueExplainer) {}
+    public function __construct(#[SensitiveParameter] private AuthIssueExplainer $authIssueExplainer) {}
 
     public function explainAccessDenied(
         string      $resource,

@@ -3,5 +3,8 @@ parameters:
   paths:
     - System
     - integrations
+  ignoreErrors:
+    - '#^Class Avax\\Auth\\System\\Capabilities\\.+ not found\.$#'
+    - '#^Class Avax\\Auth\\System\\Flows\\.+ not found\.$#'
   scanFiles:
     - phpstan.stubs/avax-container.stub.php

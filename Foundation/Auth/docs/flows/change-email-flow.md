@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/ChangeEmail/`
+Primary implementation: `System/Flows/ChangeEmail/`
 
 Sequence:
 

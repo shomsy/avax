@@ -2,34 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Login;
+namespace Avax\Auth\Tests\Flows\Login;
 
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\Identity\IssuedAuthentication;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Login\AuthenticationFailed;
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\Login\Login;
-use Avax\Auth\System\Flow\Login\RateLimit\InMemoryLoginRateLimitStorage;
-use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
-use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
-use Avax\Auth\System\Flow\Mfa\MfaMethod;
-use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
-use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
-use Avax\Auth\System\Flow\Token\IssuedToken;
-use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\IssuedAuthentication;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Login\Login;
+use Avax\Auth\System\Flows\Login\RateLimit\InMemoryLoginRateLimitStorage;
+use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flows\Mfa\Challenge\StartMfaChallenge;
+use Avax\Auth\System\Flows\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flows\Mfa\MfaMethod;
+use Avax\Auth\System\Flows\Mfa\MfaMethodRecord;
+use Avax\Auth\System\Flows\Token\IssuedRefreshToken;
+use Avax\Auth\System\Flows\Token\IssuedToken;
+use Avax\Auth\System\Flows\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateTimeImmutable;
@@ -93,7 +93,8 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore())
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : new Clock()
         );
         $result = $login->execute(credentials: $credentials);
 
@@ -101,6 +102,63 @@ class LoginTest extends TestCase
         $this->assertSame(expected: 'token-123', actual: $result->accessToken());
         $this->assertSame(expected: 'refresh-123', actual: $result->refreshToken());
         $this->assertSame(expected: 1, actual: $result->user()?->id);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testLoginUsesConfiguredClockForAuditEvents() : void
+    {
+        $credentials    = new Credentials(identifier: 'user@example.com', password: 'password');
+        $userId         = new UserId(value: 1);
+        $passwordHasher = $this->passwordHasher();
+        $user           = $this->userWithPassword(
+            passwordHasher: $passwordHasher,
+            userId        : $userId
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('findByCredentials')
+            ->once()
+            ->with($credentials)
+            ->andReturn($user);
+
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('issue')->once()->with($user)->andReturn(new IssuedAuthentication(
+                                                                              mode       : AuthenticationMode::TOKEN,
+                                                                              accessToken: new IssuedToken(
+                                                                                               token    : 'token-123',
+                                                                                               tokenId  : 'access-123',
+                                                                                               expiresAt: new DateTimeImmutable(datetime: '+1 hour')
+                                                                                           )
+                                                                          ));
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+
+        $auditLog = new InMemoryAuditLog();
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-20T11:00:00+00:00'));
+
+        $login = new Login(
+            userSource              : $userSource,
+            passwordHasher          : $passwordHasher,
+            identity                : $identity,
+            projectAuthenticatedUser: new ProjectAuthenticatedUser(
+                                          emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                                          mfaStore              : new InMemoryMfaStore()
+                                      ),
+            currentAuthentication   : new CurrentAuthentication(),
+            auditLog                : $auditLog,
+            mfaStore                : new InMemoryMfaStore(),
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : $clock
+        );
+
+        $login->execute(credentials: $credentials);
+
+        $events = $auditLog->events();
+
+        $this->assertCount(expectedCount: 1, haystack: $events);
+        $this->assertSame(expected: 'auth.login.succeeded', actual: $events[0]->name);
+        $this->assertEquals(expected: $clock->now(), actual: $events[0]->occurredAt);
     }
 
     private function passwordHasher() : PasswordHasher
@@ -170,6 +228,7 @@ class LoginTest extends TestCase
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
             startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : new Clock(),
             rateLimit               : $rateLimit
         );
 
@@ -222,6 +281,7 @@ class LoginTest extends TestCase
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
             startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : new Clock(),
             rateLimit               : $rateLimit
         );
 
@@ -267,6 +327,7 @@ class LoginTest extends TestCase
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
             startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : new Clock(),
             rateLimit               : $rateLimit
         );
 
@@ -317,7 +378,8 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : $mfaStore,
-            startMfaChallenge       : $startMfaChallenge
+            startMfaChallenge       : $startMfaChallenge,
+            clock                   : new Clock()
         );
 
         $result = $login->execute(credentials: $credentials);
@@ -371,7 +433,8 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore())
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
+            clock                   : new Clock()
         );
 
         $result = $login->execute(credentials: $credentials);

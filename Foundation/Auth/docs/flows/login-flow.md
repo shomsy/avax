@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Login/`
+Primary implementation: `System/Flows/Login/`
 
 Sequence:
 

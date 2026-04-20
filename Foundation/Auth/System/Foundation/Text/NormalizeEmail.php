@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Foundation\Text;
+
+final class NormalizeEmail
+{
+    public function __invoke(string $value) : string
+    {
+        return mb_strtolower(trim($value));
+    }
+}

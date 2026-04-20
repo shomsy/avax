@@ -50,10 +50,28 @@ final class ServerEnvironment extends AbstractDTO
     {
         $normalized = [];
         foreach ($serverParams as $key => $value) {
-            $normalized[camel(value: $key)] = $value;
+            $normalized[self::serverParamKeyToPropertyName(key: $key)] = $value;
         }
 
         return new self(data: $normalized);
+    }
+
+    private static function serverParamKeyToPropertyName(string $key) : string
+    {
+        $parts = explode(separator: '_', string: strtolower(string: $key));
+
+        $first = array_shift(array: $parts);
+        if ($first === null) {
+            return $key;
+        }
+
+        return $first . implode(
+            '',
+            array_map(
+                callback: static fn (string $part): string => ucfirst(string: $part),
+                array: $parts,
+            ),
+        );
     }
 
     /**

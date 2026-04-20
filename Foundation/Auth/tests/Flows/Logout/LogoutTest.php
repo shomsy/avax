@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Logout;
+namespace Avax\Auth\Tests\Flows\Logout;
 
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Logout\Logout;
-use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Logout\Logout;
+use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Mockery;
 use PHPUnit\Framework\TestCase;

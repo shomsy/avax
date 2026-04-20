@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Token;
+namespace Avax\Auth\Tests\Flows\Token;
 
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
 use PHPUnit\Framework\TestCase;
 
 final class HmacTokenCodecTest extends TestCase
@@ -30,5 +30,25 @@ final class HmacTokenCodecTest extends TestCase
 
         $this->assertNull(actual: $otherKeyVersion->decode(token: $token));
         $this->assertNotNull(actual: $encoder->decode(token: $token));
+    }
+
+    public function testCodecRejectsTamperedSignature() : void
+    {
+        $codec = new HmacTokenCodec(secret: 'secret');
+
+        $token = $codec->encode(claims: [
+                                           'sub' => 1,
+                                           'iat' => 1,
+                                           'nbf' => 1,
+                                           'exp' => 2,
+                                           'jti' => 'token-1',
+                                       ]);
+
+        [$header, $claims, $signature] = explode('.', $token);
+        $tamperedSignature             = substr($signature, 0, -1) . (substr($signature, -1) === 'A' ? 'B' : 'A');
+        $tamperedToken                 = "{$header}.{$claims}.{$tamperedSignature}";
+
+        $this->assertNull(actual: $codec->decode(token: $tamperedToken));
+        $this->assertNotNull(actual: $codec->decode(token: $token));
     }
 }

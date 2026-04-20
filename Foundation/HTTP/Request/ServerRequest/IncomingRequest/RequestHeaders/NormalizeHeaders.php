@@ -94,12 +94,42 @@ final class NormalizeHeaders
     private static function normalizeValues(string|array $value): array
     {
         if (is_string($value)) {
-            return [trim($value)];
+            return self::splitHeaderValue(value: $value);
         }
 
-        return array_map(
-            static fn (string $item): string => trim($item),
-            array_values($value),
+        $normalizedValues = [];
+
+        foreach (array_values($value) as $item) {
+            $normalizedValues = [
+                ...$normalizedValues,
+                ...self::splitHeaderValue(value: $item),
+            ];
+        }
+
+        return $normalizedValues;
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function splitHeaderValue(string $value): array
+    {
+        $trimmed = trim($value);
+
+        if ($trimmed === '') {
+            return [''];
+        }
+
+        $segments = array_map(
+            static fn (string $segment): string => trim($segment),
+            explode(',', $trimmed),
+        );
+
+        return array_values(
+            array_filter(
+                $segments,
+                static fn (string $segment): bool => $segment !== '',
+            )
         );
     }
 }

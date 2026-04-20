@@ -6,14 +6,16 @@ namespace Avax\Auth\Integrations\AvaxContainer;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\AuthInterface;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimitStorageInterface;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
@@ -82,11 +84,11 @@ final class AuthServiceProvider extends ServiceProvider
     {
         if (! $this->app->has(id: AuthInterface::class)) {
             $this->app->singleton(id: AuthInterface::class, implementation: function () {
-                $builder = Auth::configuration()
+                $builder = $this->applyOptionalBindings(builder: Auth::configuration()
                     ->forUser(userSource: $this->app->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->app->get(id: IdentityInterface::class))
                     ->usingHasher(passwordHasher: $this->app->get(id: PasswordHasher::class))
-                    ->usingIdGenerator(idGenerator: $this->app->get(id: IdGeneratorInterface::class));
+                    ->usingIdGenerator(idGenerator: $this->app->get(id: IdGeneratorInterface::class)));
 
                 $rateLimit = $this->resolveLoginRateLimit();
 
@@ -103,6 +105,19 @@ final class AuthServiceProvider extends ServiceProvider
                 return $this->app->get(id: AuthInterface::class);
             });
         }
+    }
+
+    private function applyOptionalBindings(AuthBuilder $builder) : AuthBuilder
+    {
+        if ($this->app->has(id: Clock::class)) {
+            $builder->withClock(clock: $this->app->get(id: Clock::class));
+        }
+
+        if ($this->app->has(id: AuditLogInterface::class)) {
+            $builder->withAuditLog(auditLog: $this->app->get(id: AuditLogInterface::class));
+        }
+
+        return $builder;
     }
 
     private function resolveLoginRateLimit() : LoginRateLimit|null

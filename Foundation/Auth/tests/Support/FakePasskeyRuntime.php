@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Support;
 
-use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
-use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
-use Avax\Auth\System\Capability\Passkey\ResolvedPasskeyCredential;
-use Avax\Auth\System\Capability\Passkey\VerifiedPasskeyAuthentication;
+use Avax\Auth\System\Capabilities\Passkey\PasskeyCredential;
+use Avax\Auth\System\Capabilities\Passkey\PasskeyRuntimeInterface;
+use Avax\Auth\System\Capabilities\Passkey\ResolvedPasskeyCredential;
+use Avax\Auth\System\Capabilities\Passkey\VerifiedPasskeyAuthentication;
 use SensitiveParameter;
 
 final class FakePasskeyRuntime implements PasskeyRuntimeInterface

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Token;
+namespace Avax\Auth\Tests\Flows\Token;
 
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\MultiKeyHmacTokenCodec;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\MultiKeyHmacTokenCodec;
 use PHPUnit\Framework\TestCase;
 
 final class MultiKeyHmacTokenCodecTest extends TestCase

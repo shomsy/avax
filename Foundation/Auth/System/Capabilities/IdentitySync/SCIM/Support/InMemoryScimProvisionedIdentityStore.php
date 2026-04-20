@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capabilities\Scim;
+
+final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdentityStoreInterface
+{
+    /** @var array<string, ScimProvisionedIdentity> */
+    private array $identities = [];
+
+    public function save(ScimProvisionedIdentity $identity) : void
+    {
+        $this->identities[$this->key(directoryId: $identity->directoryId, externalId: $identity->externalId)] = $identity;
+    }
+
+    private function key(string $directoryId, string $externalId) : string
+    {
+        return $directoryId . ':' . strtolower(trim($externalId));
+    }
+
+    public function find(string $directoryId, string $externalId) : ScimProvisionedIdentity|null
+    {
+        return $this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)] ?? null;
+    }
+
+    public function allForDirectory(string $directoryId) : array
+    {
+        return array_values(array_filter(
+                                $this->identities,
+                                static fn (ScimProvisionedIdentity $identity) : bool => $identity->directoryId === $directoryId
+                            ));
+    }
+
+    public function remove(string $directoryId, string $externalId) : void
+    {
+        unset($this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)]);
+    }
+}

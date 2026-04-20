@@ -1,15 +1,13 @@
 # ACTIVE Board
 
-Visual live board for currently active work across `TODO.md` and `BUGS.md`.
+No active items remain.
 
 ## Board
 
 ```mermaid
 flowchart LR
     subgraph Ready["Ready"]
-        R1["AUTH-006 | Implementation of missing tests | 2026-04-06 16:30 CET"]
-        R2["AUTH-007 | Docs Audit | 2026-04-06 16:30 CET"]
-        R3["AUTH-008 | Examples Audit | 2026-04-06 16:30 CET"]
+        R0["No active items"]
     end
 
     subgraph InProgress["In Progress"]

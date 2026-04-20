@@ -13,7 +13,7 @@ use SensitiveParameter;
 final readonly class ResolveClientAddress
 {
     public function __construct(
-        private TrustedIpv4ProxyPolicy  $proxyPolicy,
+        private TrustedProxyPolicy|TrustedIpv4ProxyPolicy $proxyPolicy,
         private ParseForwardedAddresses $forwardedParser,
     ) {}
 

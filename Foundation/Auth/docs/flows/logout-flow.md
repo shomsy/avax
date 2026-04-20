@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Logout/`, `System/Flow/Session/LogoutAllSessions/`
+Primary implementation: `System/Flows/Logout/`, `System/Capabilities/Identity/Sessions/Runtime/LogoutAllSessions/`
 
 Sequence:
 

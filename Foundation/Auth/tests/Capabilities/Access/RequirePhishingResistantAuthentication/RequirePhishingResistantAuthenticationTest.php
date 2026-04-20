@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Access\RequirePhishingResistantAuthentication;
+namespace Avax\Auth\Tests\Capabilities\Access\RequirePhishingResistantAuthentication;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
-use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Auth\System\Capabilities\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 final class RequirePhishingResistantAuthenticationTest extends TestCase

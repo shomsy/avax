@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Support;
 
-use Avax\Auth\System\Capability\Federation\FederatedIdentity;
-use Avax\Auth\System\Capability\Federation\FederationConnection;
-use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
-use Avax\Auth\System\Capability\Federation\FederationHealthCheckInterface;
-use Avax\Auth\System\Capability\Federation\FederationMetadata;
-use Avax\Auth\System\Capability\Federation\FederationMetadataRuntimeInterface;
-use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
-use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
+use Avax\Auth\System\Capabilities\Federation\FederatedIdentity;
+use Avax\Auth\System\Capabilities\Federation\FederationConnection;
+use Avax\Auth\System\Capabilities\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capabilities\Federation\FederationHealthCheckInterface;
+use Avax\Auth\System\Capabilities\Federation\FederationMetadata;
+use Avax\Auth\System\Capabilities\Federation\FederationMetadataRuntimeInterface;
+use Avax\Auth\System\Capabilities\Federation\FederationRuntimeInterface;
+use Avax\Auth\System\Capabilities\Federation\StartedFederatedLogin;
 
 final class FakeFederationRuntime implements FederationRuntimeInterface, FederationMetadataRuntimeInterface, FederationHealthCheckInterface
 {

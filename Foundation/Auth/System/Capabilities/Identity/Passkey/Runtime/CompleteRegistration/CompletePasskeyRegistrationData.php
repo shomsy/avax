@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flows\Passkey\CompleteRegistration;
+
+use SensitiveParameter;
+
+final readonly class CompletePasskeyRegistrationData
+{
+    public string|null $userAgent;
+    public string|null $ipAddress;
+    /** @var array<string, mixed> */
+    public array       $response;
+    public string      $challengeId;
+
+    /**
+     * @param array<string, mixed> $response
+     */
+    public function __construct(
+        string                            $challengeId,
+        array                             $response,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
+    )
+    {
+        $this->challengeId = $challengeId;
+        $this->response    = $response;
+        $this->ipAddress   = $ipAddress;
+        $this->userAgent   = $userAgent;
+    }
+}

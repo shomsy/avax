@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Access;
+namespace Avax\Auth\Tests\Capabilities\Access;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
-use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 class AccessBoundaryTest extends TestCase
 {
     /**
-     * @throws \Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated
+     * @throws \Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated
      */
     public function testRequireAuthenticationSuccess() : void
     {
@@ -45,7 +45,7 @@ class AccessBoundaryTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied
+     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
      * @throws Unauthenticated
      */
     public function testRequirePermissionSuccess() : void
@@ -68,7 +68,7 @@ class AccessBoundaryTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied
+     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
      */
     public function testRequirePermissionFailureUserNotLoggedIn() : void
     {

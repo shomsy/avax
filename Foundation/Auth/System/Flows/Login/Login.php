@@ -1,0 +1,172 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flows\Login;
+
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\Challenge\StartMfaChallenge;
+use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
+
+final readonly class Login
+{
+    public function __construct(
+        private UserSourceInterface $userSource,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        #[SensitiveParameter] private IdentityInterface $identity,
+        private ProjectAuthenticatedUser $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface $auditLog,
+        private MfaStoreInterface $mfaStore,
+        private StartMfaChallenge $startMfaChallenge,
+        private Clock $clock,
+        private ?LoginRateLimit $rateLimit = null,
+        private ?DeterministicRiskEngine $riskEngine = null,
+    ) {}
+
+    /**
+     * @throws AuthenticationFailed
+     * @throws RateLimitException
+     */
+    public function execute(#[SensitiveParameter] Credentials $credentials): AuthenticationResult
+    {
+        $this->checkRateLimit($credentials);
+
+        $user = $this->authenticate($credentials);
+
+        $this->rehashPasswordIfNeeded($user, $credentials);
+
+        if ($this->mfaStore->isEnabled(userId: $user->getId())) {
+            return $this->startMfa($user, $credentials);
+        }
+
+        return $this->completeLogin($user, $credentials);
+    }
+
+    private function authenticate(#[SensitiveParameter] Credentials $credentials) : User
+    {
+        $user = $this->userSource->findByCredentials(credentials: $credentials);
+        $hash = $user?->getPasswordHash() ?? $this->passwordHasher->dummyHash();
+
+        $passwordValid = $this->passwordHasher->verify(
+            password: $credentials->password,
+            hash: $hash,
+        );
+
+        if ($user !== null && $passwordValid && $user->isActive()) {
+            return $user;
+        }
+
+        $this->failAuthentication($credentials);
+    }
+
+    private function checkRateLimit(Credentials $credentials): void
+    {
+        $this->rateLimit?->check(identifier: $credentials->identifier);
+    }
+
+    private function failAuthentication(Credentials $credentials): never
+    {
+        $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
+
+        $this->auditLog->record(new AuditEvent(
+            name: 'auth.login.failed',
+            occurredAt: $this->clock->now(),
+            context: [
+                'identifier' => strtolower($credentials->identifier),
+                'ip_address' => $credentials->ipAddress,
+                'user_agent' => $credentials->userAgent,
+            ],
+        ));
+
+        throw AuthenticationFailed::invalidCredentials();
+    }
+
+    private function rehashPasswordIfNeeded(User $user, #[SensitiveParameter] Credentials $credentials) : void
+    {
+        if (! $this->passwordHasher->needsRehash(hash: $user->getPasswordHash())) {
+            return;
+        }
+
+        $this->userSource->updatePassword(
+            id: $user->getId(),
+            passwordHash: $this->passwordHasher->hash(password: $credentials->password),
+        );
+    }
+
+    private function startMfa(User $user, Credentials $credentials) : AuthenticationResult
+    {
+        $challenge = $this->startMfaChallenge->issueForLogin(
+            user: $user,
+            ipAddress: $credentials->ipAddress,
+            userAgent: $credentials->userAgent,
+        );
+
+        return AuthenticationResult::mfaRequired(
+            user: $this->projectAuthenticatedUser->fromUser(user: $user),
+            challenge: $challenge,
+        );
+    }
+
+    private function completeLogin(User $user, Credentials $credentials) : AuthenticationResult
+    {
+        $issued = $this->identity->issue(user: $user);
+
+        $this->identity->sessionIdentity()?->captureCurrentSession(
+            ipAddress: $credentials->ipAddress,
+            userAgent: $credentials->userAgent,
+        );
+
+        $context = AuthenticationContext::authenticated(
+            user: $this->projectAuthenticatedUser->fromUser(user: $user),
+            mode: $issued->mode,
+            sessionId: $issued->sessionId,
+            accessTokenId: $issued->accessToken?->tokenId,
+            accessTokenExpiresAt: $issued->accessToken?->expiresAt,
+            refreshTokenId: $issued->refreshToken?->tokenId,
+            mfaVerifiedAt: $issued->mfaVerifiedAt,
+            phishingResistant: $issued->phishingResistant,
+        );
+
+        $this->currentAuthentication->store(context: $context);
+
+        $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
+            user: $user,
+            ipAddress: $credentials->ipAddress,
+            userAgent: $credentials->userAgent,
+        );
+
+        $this->rateLimit?->reset(identifier: $credentials->identifier);
+
+        $this->auditLog->record(new AuditEvent(
+            name: 'auth.login.succeeded',
+            occurredAt: $this->clock->now(),
+            context: [
+                'user_id' => $user->getId()->value,
+                'mode' => $issued->mode->value,
+                'risk_action' => $riskDecision?->action->value,
+                'ip_address' => $credentials->ipAddress,
+                'user_agent' => $credentials->userAgent,
+            ],
+        ));
+
+        return AuthenticationResult::success(
+            context: $context,
+            accessToken: $issued->accessToken?->token,
+            refreshToken: $issued->refreshToken?->token,
+        );
+    }
+}

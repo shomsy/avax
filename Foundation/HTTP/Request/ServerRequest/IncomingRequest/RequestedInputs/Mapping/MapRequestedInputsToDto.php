@@ -45,6 +45,15 @@ final readonly class MapRequestedInputsToDto
             );
         }
 
+        if (is_a($dtoClass, \Avax\HTTP\Request\Request::class, allow_string: true)) {
+            throw new \LogicException(
+                message: sprintf(
+                    'DTO class "%s" is a Request subclass and cannot be mapped generically from RequestedInputs. Use RequestDtoFactory or controller autowiring instead.',
+                    $dtoClass
+                )
+            );
+        }
+
         return new $dtoClass($inputs->all());
     }
 }

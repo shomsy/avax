@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Flow\ChangePassword\PasswordChangeFailed;
-use Avax\Auth\System\Flow\Login\AuthenticationFailed;
-use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flow\Mfa\Challenge\MfaAttemptLimitReached;
-use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
-use Avax\Auth\System\Flow\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flow\Mfa\MfaEnrollmentFailed;
-use Avax\Auth\System\Flow\Mfa\MfaRecoveryFailed;
-use Avax\Auth\System\Flow\Register\RegistrationFailed;
-use Avax\Auth\System\Flow\Token\RefreshAuthenticationFailed;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\Challenge\MfaAttemptLimitReached;
+use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
+use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
+use Avax\Auth\System\Flows\Mfa\MfaEnrollmentFailed;
+use Avax\Auth\System\Flows\Mfa\MfaRecoveryFailed;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
+use Avax\Auth\System\Flows\Token\RefreshAuthenticationFailed;
 use Throwable;
 
 /**

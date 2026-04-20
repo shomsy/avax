@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Support;
 
-use Avax\Auth\System\Flow\Session\SessionStoreInterface;
+use Avax\Auth\System\Flows\Session\SessionStoreInterface;
 
 /**
  * Deterministic in-memory session store for session identity tests.

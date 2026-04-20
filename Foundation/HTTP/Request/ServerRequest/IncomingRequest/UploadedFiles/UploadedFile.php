@@ -30,7 +30,7 @@ final class UploadedFile implements UploadedFileInterface
     public function getStream() : StreamInterface
     {
         if ($this->moved) {
-            throw new RuntimeException(message: 'Cannot retrieve stream after file has been moved.');
+            throw new RuntimeException(message: 'File already moved.');
         }
 
         if ($this->error !== UPLOAD_ERR_OK) {
@@ -44,7 +44,11 @@ final class UploadedFile implements UploadedFileInterface
     public function moveTo(string $targetPath) : void
     {
         if ($this->moved) {
-            throw new RuntimeException(message: 'File has already been moved.');
+            throw new RuntimeException(message: 'File already moved.');
+        }
+
+        if ($this->error !== UPLOAD_ERR_OK) {
+            throw new RuntimeException(message: 'Cannot move file with upload error.');
         }
 
         if (! is_string($targetPath) || $targetPath === '') {
@@ -58,7 +62,7 @@ final class UploadedFile implements UploadedFileInterface
         }
 
         if (! $success) {
-            throw new RuntimeException(message: 'Failed to move uploaded file.');
+            throw new RuntimeException(message: 'Cannot move file with upload error.');
         }
 
         $this->moved = true;

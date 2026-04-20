@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\Lifecycle;
 
-use Avax\Auth\System\Capability\Lifecycle\InMemoryLifecycleStore;
-use Avax\Auth\System\Capability\Lifecycle\LifecycleFailed;
-use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
-use Avax\Auth\System\Capability\Lifecycle\LifecycleState;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\User\UserRole;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Lifecycle\InMemoryLifecycleStore;
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleFailed;
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\Lifecycle\LifecycleState;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

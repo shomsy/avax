@@ -132,7 +132,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
             ->withHeader(name: 'X-Multi', value: 'v1')
             ->withAddedHeader(name: 'X-Multi', value: 'v2');
 
-        $this->assertEquals(expected: 'v1, v2', actual: $request->getHeaderLine(name: 'X-Multi'));
+        $this->assertEquals(expected: 'v1,v2', actual: $request->getHeaderLine(name: 'X-Multi'));
     }
 
     public function test_getHeaderLine_returns_empty_for_missing(): void

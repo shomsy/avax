@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\UserSource;
+namespace Avax\Auth\Tests\Capabilities\UserSource;
 
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Login\Credentials;
 use PHPUnit\Framework\TestCase;
 
 /**

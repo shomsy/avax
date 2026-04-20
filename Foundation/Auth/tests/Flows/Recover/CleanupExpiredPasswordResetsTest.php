@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Recover;
+namespace Avax\Auth\Tests\Flows\Recover;
 
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Flow\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
-use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Flows\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
+use Avax\Auth\System\Flows\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

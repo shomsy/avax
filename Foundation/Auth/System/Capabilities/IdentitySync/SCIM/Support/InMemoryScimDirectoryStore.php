@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capabilities\Scim;
+
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use SensitiveParameter;
+
+final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
+{
+    /** @var array<string, ScimDirectory> */
+    private array          $directories = [];
+    private PasswordHasher $passwordHasher;
+
+    public function __construct(
+        #[SensitiveParameter] PasswordHasher $passwordHasher
+    )
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+    public function save(ScimDirectory $directory) : void
+    {
+        $this->directories[$directory->directoryId] = $directory;
+    }
+
+    public function all() : array
+    {
+        return array_values($this->directories);
+    }
+
+    public function verifyToken(
+        string                       $directoryId,
+        #[SensitiveParameter] string $plainTextToken
+    ) : bool
+    {
+        $directory = $this->find(directoryId: $directoryId);
+
+        if ($directory === null) {
+            return false;
+        }
+
+        return $this->passwordHasher->verify(password: $plainTextToken, hash: $directory->tokenHash);
+    }
+
+    public function find(string $directoryId) : ScimDirectory|null
+    {
+        return $this->directories[$directoryId] ?? null;
+    }
+}

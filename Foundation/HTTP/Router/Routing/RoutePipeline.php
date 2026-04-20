@@ -6,7 +6,7 @@ namespace Avax\HTTP\Router\Routing;
 
 use Avax\Container\DI\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
 use Laravel\SerializableClosure\SerializableClosure;
@@ -142,7 +142,7 @@ final class RoutePipeline
      * @throws ContainerExceptionInterface If the DI container encounters an issue.
      * @throws NotFoundExceptionInterface If a middleware class cannot be resolved.
      */
-    public function dispatch(Request $request) : ResponseInterface
+    public function dispatch(ServerRequest $request) : ResponseInterface
     {
         try {
             // Inject route authorization into the request if a policy is defined.
@@ -158,7 +158,7 @@ final class RoutePipeline
             }
 
             // Define the core execution logic for the pipeline - dispatching the route's action.
-            $core = fn (Request $request) : ResponseInterface => $this->dispatcher->dispatch(
+            $core = fn (ServerRequest $request) : ResponseInterface => $this->dispatcher->dispatch(
                 action : $route->action,
                 request: $request
             );

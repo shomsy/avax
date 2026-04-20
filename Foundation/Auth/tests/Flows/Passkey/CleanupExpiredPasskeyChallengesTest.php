@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Passkey;
+namespace Avax\Auth\Tests\Flows\Passkey;
 
-use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyChallengeStore;
-use Avax\Auth\System\Capability\Passkey\PasskeyChallengePurpose;
-use Avax\Auth\System\Capability\Passkey\PasskeyChallengeRecord;
-use Avax\Auth\System\Flow\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Auth\System\Capabilities\Passkey\InMemoryPasskeyChallengeStore;
+use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengePurpose;
+use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeRecord;
+use Avax\Auth\System\Flows\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

@@ -199,30 +199,20 @@ Canonical architecture documents now live in:
 
 Runtime ownership lives in auth-flow slices:
 
-- `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
-- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `ChangeEmail/`, `Verify/`, `Mfa/`, `Token/`, `Session/`,
-  `AdminRealm/`, `Passkey/`, `Federation/`, `Oidc/`, `Scim/`, `TenantSecurity/`, `Provisioning/`, and `Risk/` own
-  package behavior.
-- `System/Capability/Access/` owns authorization boundaries and composed access-policy evaluation.
-- `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
-- `System/Flow/OAuth/` owns client registration, authorization-code issuance, workload-token exchange, revoke, and
-  introspection.
-- `System/Capability/Oidc/` and `System/Flow/Oidc/` own provider metadata, JWKS, ID-token issuance seams, and userinfo
-  behavior.
-- `System/Capability/Scim/` and `System/Flow/Scim/` own directory configuration, token rotation, provisioning state,
-  and group-sync orchestration.
-- `System/Capability/TenantSecurity/` and `System/Flow/TenantSecurity/` own tenant security configuration state,
-  approval workflow, config diff, rollout, and rollback.
-- `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
-- `System/Capability/Passkey/` owns credential and challenge contracts; runtime verification stays behind
-  `PasskeyRuntimeInterface`.
-- `System/Capability/Federation/` owns tenant-aware connection and identity-link contracts; protocol execution stays
-  behind `FederationRuntimeInterface`.
-- `System/Flow/*/CleanupExpired*/` and `Flow/Diagnostics/ExportAuditEvents/` own package-local maintenance jobs without
-  creating a global operations bucket.
-- `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
-- `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
-- `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
+- `System/Flows/` now exposes only the eight canonical story roots from `REFAKTOR.md`; supporting ingress,
+  password-reset, and email-verification runtime lives beneath those story roots instead of separate top-level slices.
+- `System/Capabilities/Access/` owns authorization boundaries and composed access-policy evaluation, including
+  `Authentication/`, `Authorization/`, and `RiskBasedAccess/`, plus runtime posture and risk support beneath those
+  owner zones.
+- `System/Capabilities/Identity/` owns MFA, passkey, password hashing, session registry, token runtime, and internal
+  user state without introducing additional top-level capability roots.
+- `System/Capabilities/ExternalIdentity/` owns OAuth, OIDC, federation, sender-constrained runtime, and protocol
+  support beneath `OAuth/`, `OpenIDConnect/`, and `SingleSignOn/`.
+- `System/Capabilities/IdentitySync/` owns SCIM runtime, provisioning support, and lifecycle orchestration.
+- `System/Capabilities/Tenancy/` owns admin realm, tenant model, invitations, membership, ownership transfer, and
+  tenant security runtime.
+- `System/Capabilities/Diagnostics/` owns audit events and explainability surfaces without becoming a second source of
+  truth.
 - `integrations/http/` maps transport input, safe failures, and sender-constrained request verification without leaking
   HTTP concerns into the kernel, including framework-neutral OIDC, SCIM, and tenant-security admin surfaces.
 - `integrations/diagnostics/` owns export and notification adapters for JSON lines, syslog, webhook, queue, and

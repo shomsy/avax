@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Recover;
+namespace Avax\Auth\Tests\Flows\Recover;
 
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capability\Session\SessionRecord;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
-use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
-use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
-use Avax\Auth\System\Flow\Recover\ResetPassword;
-use Avax\Auth\System\Flow\Recover\ResetPasswordData;
-use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\Session\SessionRecord;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flows\Mfa\Challenge\MfaChallengeRecord;
+use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flows\Recover\InMemoryPasswordResetStore;
+use Avax\Auth\System\Flows\Recover\ResetPassword;
+use Avax\Auth\System\Flows\Recover\ResetPasswordData;
+use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
 use DateInvalidOperationException;

@@ -1,30 +1,32 @@
-Refaktor plan:
+Refaktor archive:
 
 ## Status Summary
 
-Updated: 2026-04-16
+Archived: 2026-04-19
 
 Legenda:
 
-- `[x]` done in package scope
-- `[~]` done with an intentional implementation variant
-- `[ ]` not implemented
+- done in package scope
+- historical implementation variant preserved for context
+- not implemented in historical material only
 
 Current truth:
 
 - `[x]` Faza 0, 1, 2: vocabulary, ownership boundaries, ADRs, migration map, and canonical architecture docs are now committed under `docs/architecture/` and `docs/decisions/`
-- `[x]` Faza 3: canonical owner zones exist in code under `System/Capability/Access`, `System/Capability/Identity`, `System/Capability/ExternalIdentity`, `System/Capability/IdentitySync`, `System/Capability/Tenant`, and `System/Capability/Diagnostics`
+- `[x]` Faza 3: canonical owner zones exist in code under `System/Capabilities/Access`, `System/Capabilities/Identity`, `System/Capabilities/ExternalIdentity`, `System/Capabilities/IdentitySync`, `System/Capabilities/Tenancy`, and `System/Capabilities/Diagnostics`
 - `[x]` Faza 4: characterization shield exists in `tests/Characterization/` and runtime behavior remains covered by existing flow/integration suites
-- `[x]` Faza 5: root zones are migrated as explicit owner facades over the detailed `Flow/` and `Capability/` lanes
+- `[x]` Faza 5: root zones are migrated as explicit owner facades over the detailed `Flows/` and `Capabilities/` lanes
 - `[x]` Faza 6: naming is normalized around explicit owner units and action verbs; duplicate root-level responsibility is reduced
 - `[x]` Faza 7: unjustified top-level hallway drift is constrained by root owner facades plus `tooling/check-system-shape.php`
 - `[x]` Faza 8: `Auth.php` remains the package ingress but now delegates to explicit zone owners instead of directly owning the full flow graph
 - `[x]` Faza 9: the canonical docs tree from this plan now exists and matches the shipped codebase
-- `[~]` Faza 10: there is no second public ownership model anymore, but the detailed implementation lane intentionally remains `System/Flow/` and `System/Capability/` under the root owner facades instead of physically renaming every internal path from the sketch above
+- `[x]` Faza 10: there is no second public ownership model anymore, and the shipped package now enforces `System/Flows/` and `System/Capabilities/` as the concrete canonical filesystem lanes under the root owner zones.
+
+The remainder of this file is preserved historical plan text. There are no active implementation items left here.
 
 Practical note:
 
-- The plan sketch says `Flows/`; the shipped package keeps `System/Flow/` as the concrete local use-case lane to avoid gratuitous namespace churn while preserving the same architectural meaning.
+- The plan sketch and the shipped package now agree on plural canonical filesystem roots: `System/Flows/` and `System/Capabilities/`.
 
 Auth/
   README.md

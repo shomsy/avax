@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\DpopProofReplayStoreInterface;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
-use Avax\Auth\System\Flow\Token\TokenCodecInterface;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\DpopProofReplayStoreInterface;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flows\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Flows\Token\TokenCodecInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use SensitiveParameter;
@@ -98,10 +98,10 @@ final readonly class VerifyDpopProof
         }
 
         if ($input->accessToken !== null) {
-            $expectedAth = hash('sha256', $input->accessToken, true)
-                    |> base64_encode(...)
-                    |> (static fn ($x) => strtr($x, '+/', '-_'))
-                    |> (static fn ($x) => rtrim($x, '='));
+            $expectedAth = rtrim(
+                strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'),
+                '='
+            );
 
             if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
                 $this->recordFailure(input: $input, reason: 'access_token_mismatch');

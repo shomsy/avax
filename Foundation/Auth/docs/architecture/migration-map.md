@@ -4,24 +4,24 @@ This map translates the original implementation lanes into the canonical ownersh
 
 | Current location | Canonical owner | Notes |
 | --- | --- | --- |
-| `System/Flow/Login/*` | `Identity` | local login story |
-| `System/Flow/Register/*` | `Identity` | local account creation |
-| `System/Flow/Recover/*` | `Identity` | recover-access story |
-| `System/Flow/Verify/*` | `Identity` | verify-identity story |
-| `System/Flow/Mfa/*` | `Identity` | factor lifecycle |
-| `System/Flow/Passkey/*` | `Identity` | phishing-resistant factor lifecycle |
-| `System/Flow/AuthenticateRequest/*` | `Access` | authentication-context entry |
-| `System/Capability/Access/*` | `Access` | shared access policy |
-| `System/Flow/OAuth/*` | `ExternalIdentity` | OAuth stories |
-| `System/Flow/Oidc/*` | `ExternalIdentity` | OIDC stories |
-| `System/Flow/Federation/*` | `ExternalIdentity` | SSO/federation stories |
-| `System/Capability/OAuth/*`, `Capability/Oidc/*`, `Capability/Federation/*` | `ExternalIdentity` | shared protocol capabilities |
-| `System/Flow/Scim/*` | `IdentitySync` | sync and provisioning stories |
-| `System/Flow/Provisioning/*` | `IdentitySync` | lifecycle bridge into synced identity state |
-| `System/Capability/Scim/*`, `Capability/Lifecycle/*` | `IdentitySync` | shared sync/runtime mechanics |
-| `System/Flow/Tenant/*`, `Flow/TenantSecurity/*` | `Tenancy` | tenant product stories |
-| `System/Capability/Tenant/*`, `Capability/TenantSecurity/*` | `Tenancy` | shared tenant capabilities |
-| `System/Flow/Diagnostics/*`, `Capability/Explainability/*` | `Diagnostics` | operator-facing diagnostics |
+| `System/Flows/Login/*` | `Identity` | local login story |
+| `System/Flows/Register/*` | `Identity` | local account creation |
+| `System/Flows/RecoverAccess/*`, `System/Flows/RecoverAccess/PasswordReset/*` | `Identity` | recover-access story |
+| `System/Flows/VerifyIdentity/*`, `System/Flows/VerifyIdentity/EmailVerification/*` | `Identity` | verify-identity story |
+| `System/Capabilities/Identity/Mfa/Runtime/*` | `Identity` | factor lifecycle |
+| `System/Capabilities/Identity/Passkey/Runtime/*` | `Identity` | phishing-resistant factor lifecycle |
+| `System/Flows/CheckAuthentication/AuthenticateRequest/*`, `System/Flows/CheckAuthentication/ReadCurrentUser/*` | `Access` | authentication-context entry |
+| `System/Capabilities/Access/*` | `Access` | shared access policy |
+| `System/Capabilities/ExternalIdentity/OAuth/Runtime/*` | `ExternalIdentity` | OAuth stories |
+| `System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/*` | `ExternalIdentity` | OIDC stories |
+| `System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/*` | `ExternalIdentity` | SSO/federation stories |
+| `System/Capabilities/ExternalIdentity/*`, `System/Capabilities/ExternalIdentity/OAuth/Support/*`, `System/Capabilities/ExternalIdentity/OpenIDConnect/Support/*`, `System/Capabilities/ExternalIdentity/SingleSignOn/FederationSupport/*` | `ExternalIdentity` | shared protocol capabilities |
+| `System/Capabilities/IdentitySync/SCIM/Runtime/*` | `IdentitySync` | sync and provisioning stories |
+| `System/Capabilities/IdentitySync/SCIM/ProvisioningRuntime/*` | `IdentitySync` | lifecycle bridge into synced identity state |
+| `System/Capabilities/IdentitySync/*`, `System/Capabilities/IdentitySync/SCIM/Support/*`, `System/Capabilities/IdentitySync/Lifecycle/*` | `IdentitySync` | shared sync/runtime mechanics |
+| `System/Capabilities/Tenancy/Runtime/Tenant/*`, `System/Capabilities/Tenancy/Runtime/TenantSecurity/*` | `Tenancy` | tenant product stories |
+| `System/Capabilities/Tenancy/*`, `System/Capabilities/Tenancy/Model/*`, `System/Capabilities/Tenancy/Security/*` | `Tenancy` | shared tenant capabilities |
+| `System/Capabilities/Diagnostics/*`, `System/Capabilities/Diagnostics/Audit/*`, `System/Capabilities/Diagnostics/Explainability/*` | `Diagnostics` | operator-facing diagnostics |
 
 Files that should not introduce a new root zone:
 

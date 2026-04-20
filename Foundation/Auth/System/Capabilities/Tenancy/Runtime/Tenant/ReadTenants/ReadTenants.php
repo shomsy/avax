@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flows\Tenant\ReadTenants;
+
+use Avax\Auth\System\Capabilities\Tenant\Tenant;
+use Avax\Auth\System\Capabilities\Tenant\TenantStoreInterface;
+
+final readonly class ReadTenants
+{
+    private TenantStoreInterface $tenantStore;
+
+    public function __construct(
+        TenantStoreInterface $tenantStore
+    )
+    {
+        $this->tenantStore = $tenantStore;
+    }
+
+    /**
+     * @return list<Tenant>
+     */
+    public function execute() : array
+    {
+        return $this->tenantStore->allTenants();
+    }
+}

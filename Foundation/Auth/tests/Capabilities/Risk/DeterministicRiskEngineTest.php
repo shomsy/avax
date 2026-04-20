@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Risk;
+namespace Avax\Auth\Tests\Capabilities\Risk;
 
-use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capability\Risk\InMemoryKnownAuthenticationEnvironmentStore;
-use Avax\Auth\System\Capability\Risk\InMemoryRiskSignalStore;
-use Avax\Auth\System\Capability\Risk\RiskAction;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\User\UserRole;
+use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Risk\InMemoryKnownAuthenticationEnvironmentStore;
+use Avax\Auth\System\Capabilities\Risk\InMemoryRiskSignalStore;
+use Avax\Auth\System\Capabilities\Risk\RiskAction;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\User\UserRole;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

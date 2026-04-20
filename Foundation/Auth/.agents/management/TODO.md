@@ -1,6 +1,6 @@
 # TODO
 
-Canonical active implementation queue.
+Completed implementation archive. No active items remain.
 
 ## Entry Format
 

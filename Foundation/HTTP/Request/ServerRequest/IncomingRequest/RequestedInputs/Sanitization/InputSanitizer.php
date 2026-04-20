@@ -16,26 +16,36 @@ final readonly class InputSanitizer
 
     public function js(mixed $value) : string
     {
-        return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $encoded = json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+
+        return $encoded !== false ? $encoded : '';
     }
 
     public function path(mixed $value) : string
     {
-        return preg_replace('/[^a-zA-Z0-9\/._-]/', '', (string) $value);
+        $result = preg_replace('/[^a-zA-Z0-9\/._-]/', '', (string) $value);
+
+        return is_string($result) ? $result : '';
     }
 
     public function regex(mixed $value) : string
     {
-        return preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $value);
+        $result = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $value);
+
+        return is_string($result) ? $result : '';
     }
 
     public function withoutControls(mixed $value) : string
     {
-        return preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
+        $result = preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
+
+        return is_string($result) ? $result : '';
     }
 
     public function utf8(mixed $value) : string
     {
-        return mb_convert_encoding((string) $value, 'UTF-8', 'UTF-8');
+        $result = mb_convert_encoding((string) $value, 'UTF-8', 'UTF-8');
+
+        return is_string($result) ? $result : '';
     }
 }

@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Federation;
+namespace Avax\Auth\Tests\Flows\Federation;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
-use Avax\Auth\System\Capability\Federation\FederationProvider;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
-use Avax\Auth\System\Flow\Federation\FederationFailed;
-use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
-use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
-use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capabilities\Federation\FederationProvider;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flows\Federation\FederationFailed;
+use Avax\Auth\System\Flows\Federation\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Auth\System\Flows\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flows\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use PHPUnit\Framework\TestCase;

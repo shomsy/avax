@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Recover;
+namespace Avax\Auth\Tests\Flows\Recover;
 
-use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
-use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
-use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
+use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Throttle\InMemoryAttemptThrottleStore;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Recover\BeginPasswordReset;
+use Avax\Auth\System\Flows\Recover\BeginPasswordResetData;
+use Avax\Auth\System\Flows\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateMalformedStringException;
 use DateTimeImmutable;

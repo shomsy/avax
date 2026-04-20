@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\AdminRealm;
+namespace Avax\Auth\Tests\Flows\AdminRealm;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
-use Avax\Auth\System\Capability\User\UserRole;
-use Avax\Auth\System\Flow\AdminRealm\AdminElevationFailed;
-use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
-use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
-use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
+use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Flows\AdminRealm\AdminElevationFailed;
+use Avax\Auth\System\Flows\AdminRealm\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Flows\AdminRealm\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Flows\AdminRealm\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;

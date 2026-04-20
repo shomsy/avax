@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Diagnostics;
 
-use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
 
 /**
  * Uses an event-context flag to preserve forensic evidence under legal hold.

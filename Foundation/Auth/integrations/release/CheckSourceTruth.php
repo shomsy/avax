@@ -67,6 +67,10 @@ final readonly class CheckSourceTruth
             $issues[] = 'docs/current-state.md still claims canonical status instead of deferring to STATUS.md.';
         }
 
+        foreach ($this->legacySystemRootReferenceIssues(repositoryRoot: $repositoryRoot) as $issue) {
+            $issues[] = $issue;
+        }
+
         foreach ($this->capabilityMatrixEvidenceIssues(repositoryRoot: $repositoryRoot, capabilityMatrix: $capabilityMatrix) as $issue) {
             $issues[] = $issue;
         }
@@ -92,6 +96,41 @@ final readonly class CheckSourceTruth
     /**
      * @return list<string>
      */
+    private function legacySystemRootReferenceIssues(string $repositoryRoot) : array
+    {
+        $issues        = [];
+        $trackedFiles  = [
+            'AGENTS.md',
+            'docs/STATUS.md',
+            'docs/architecture/system-shape.md',
+            'docs/architecture/flow-boundaries.md',
+            'docs/architecture/capability-boundaries.md',
+        ];
+        $legacyMarkers = [
+            'System/Flows/',
+            'System/Capabilities/',
+        ];
+
+        foreach ($trackedFiles as $relativePath) {
+            $contents = $this->read(path: $repositoryRoot . '/' . $relativePath);
+
+            if ($contents === '') {
+                continue;
+            }
+
+            foreach ($legacyMarkers as $marker) {
+                if (str_contains($contents, $marker)) {
+                    $issues[] = "Legacy singular system root reference found in {$relativePath}: {$marker}";
+                }
+            }
+        }
+
+        return $issues;
+    }
+
+    /**
+     * @return list<string>
+     */
     private function capabilityMatrixEvidenceIssues(string $repositoryRoot, string $capabilityMatrix) : array
     {
         if ($capabilityMatrix === '') {
@@ -110,9 +149,7 @@ final readonly class CheckSourceTruth
                 continue;
             }
 
-            $columns = trim($line, '|')
-                    |> (static fn ($x) => explode('|', $x))
-                    |> (static fn ($x) => array_map('trim', $x));
+            $columns = array_map('trim', explode('|', trim($line, '|')));
 
             if (count($columns) < 4) {
                 continue;
@@ -132,7 +169,7 @@ final readonly class CheckSourceTruth
             }
 
             foreach ($paths as $path) {
-                if (str_starts_with($path, 'https://') || str_starts_with($path, 'https://')) {
+                if (str_starts_with($path, 'https://') || str_starts_with($path, 'http://')) {
                     continue;
                 }
 

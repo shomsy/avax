@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Identity\Session;
+namespace Avax\Auth\Tests\Capabilities\Identity\Session;
 
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capability\Identity\Session\SessionLifetime;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionLifetime;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;

@@ -8,15 +8,15 @@ use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
-use Avax\Auth\System\Capability\Scim\ScimAccountState;
-use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
-use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperationResult;
-use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
-use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
-use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
-use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
-use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
-use Avax\Auth\System\Flow\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Scim\ScimAccountState;
+use Avax\Auth\System\Flows\Scim\Bulk\ScimBulkOperation;
+use Avax\Auth\System\Flows\Scim\Bulk\ScimBulkOperationResult;
+use Avax\Auth\System\Flows\Scim\Bulk\ScimBulkRequest;
+use Avax\Auth\System\Flows\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Flows\Scim\ReadGroups\ScimGroupProjection;
+use Avax\Auth\System\Flows\Scim\ReadUsers\ScimUserProjection;
+use Avax\Auth\System\Flows\Scim\ScimFailed;
 use InvalidArgumentException;
 use SensitiveParameter;
 
@@ -433,7 +433,7 @@ final readonly class ServeScimHttpSurface
     private function username(array $body, string|null $fallback = null) : string
     {
         if (is_scalar($body['userName'] ?? null) || is_scalar($body['username'] ?? null)) {
-            return trim((string) $body['username']);
+            return trim((string) ($body['userName'] ?? $body['username']));
         }
 
         if ($fallback !== null && trim($fallback) !== '') {
@@ -483,10 +483,9 @@ final readonly class ServeScimHttpSurface
     private function state(array $body, ScimAccountState $fallback) : ScimAccountState
     {
         if (is_scalar($body['state'] ?? null)) {
-            $state = (string) $body['state']
-                    |> trim(...)
-                    |> strtolower(...)
-                    |> ScimAccountState(...);
+            $state = ScimAccountState::tryFrom(
+                value: strtolower(trim((string) $body['state']))
+            );
 
             if ($state !== null) {
                 return $state;

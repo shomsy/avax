@@ -1,6 +1,6 @@
 # AGENTS.md — Local Project Contract
 
-Version: 1.10.0
+Version: 1.11.0
 Status: Normative / Local
 Scope: `./**`
 
@@ -69,8 +69,8 @@ Agents MUST follow this order:
         - `Auth/tooling/`: Local automation, codegen, dev infra.
     - **Source Root Taxonomy (inside `System/`)**:
         - **Namespace Parent**: `Avax\Auth\System\`
-        - `Flow/`: High-level business use-cases (Verb-Noun).
-        - `Capability/`: Domain enablers (Access, Identity, User, etc.).
+        - `Flows/`: High-level business use-cases (verb-oriented slices and local stories).
+        - `Capabilities/`: Domain enablers and owner zones (Access, Identity, ExternalIdentity, IdentitySync, Tenancy, Diagnostics).
         - `Foundation/`: Low-level primitives (Clock, ID generation).
         - `Configuration/`: Setup and wiring logic.
         - `Auth.php`, `AuthInterface.php`: Root entry points.
@@ -92,6 +92,28 @@ Agents MUST follow this order:
 7. **Project-Specific Exceptions or Forbidden Shortcuts**:
     - No Laravel-specific adapters in core (framework-agnostic)
     - Must maintain PHP 8.3+ minimum
+
+## 2. Strict TDD Discipline
+
+All Auth changes MUST follow strict TDD.
+
+1. Do not write production code before a failing test exists.
+2. Do not fake TDD by coding the solution first and adding tests afterward.
+3. Work in one behavior per iteration. If the change needs multiple behaviors, split it.
+4. For each iteration, report the test name, the behavior it proves, why it fails, the smallest production patch, and the re-run result.
+5. After green, only refactor without changing behavior.
+6. Bug fixes require a regression test that reproduces the bug before the fix.
+7. Refactors require characterization tests for existing behavior before structure changes.
+8. Security, auth, session, token, and permission changes require coverage for:
+   - happy path
+   - invalid input
+   - edge case
+   - abuse case
+   - regression case when history exists
+9. Prefer unit tests first; add integration tests only at boundaries, storage, middleware, adapters, or full flow seams.
+10. If the requirement is unclear, write the test cases first as a behavior specification, then implement against them.
+11. Do not move to the next behavior until the previous test set is green.
+12. End each iteration with a concise RED / GREEN / REFACTOR summary.
 
 ---
 *No offload recommended for this step.*

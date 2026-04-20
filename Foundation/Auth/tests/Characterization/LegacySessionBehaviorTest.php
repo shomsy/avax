@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Characterization;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use PHPUnit\Framework\TestCase;
 

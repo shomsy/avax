@@ -2,7 +2,7 @@
 
 Owner: `Identity`
 
-Primary implementation: `System/Flow/Verify/`
+Primary implementation: `System/Flows/VerifyIdentity/`, `System/Flows/VerifyIdentity/EmailVerification/`
 
 Sequence:
 

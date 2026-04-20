@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Access;
+namespace Avax\Auth\Tests\Capabilities\Access;
 
-use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
-use Avax\Auth\System\Capability\Access\Policy\IdentityActor;
-use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+use Avax\Auth\System\Capabilities\Access\Policy\AuthenticationFactor;
+use Avax\Auth\System\Capabilities\Access\Policy\IdentityActor;
+use Avax\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
 use PHPUnit\Framework\TestCase;
 
 final class IdentityPolicyCatalogTest extends TestCase

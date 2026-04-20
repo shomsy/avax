@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Examples\Policies;
 
-use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
-use Avax\Auth\System\Capability\Access\Policy\AssuranceTier;
-use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
-use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Capabilities\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capabilities\Access\Policy\AssuranceTier;
+use Avax\Auth\System\Capabilities\Access\Policy\AuthenticationFactor;
+use Avax\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
 use SensitiveParameter;
 
 /**

@@ -51,9 +51,9 @@ This is the canonical state document. All other status documents should referenc
   evidence
 - [x] **Local Certification Posture**: certification profile, evidence bundle, provenance, rollback evidence, SBOM, and
   conformance harness exist as package-owned release rigor
-- [x] **Root Ownership Contract**: `System/Capability/Access`, `System/Capability/Identity`,
-  `System/Capability/ExternalIdentity`, `System/Capability/IdentitySync`, `System/Capability/Tenant`, and
-  `System/Capability/Diagnostics` now act as explicit owner facades above the local `Flow/` lanes, with canonical
+- [x] **Root Ownership Contract**: `System/Capabilities/Access`, `System/Capabilities/Identity`,
+  `System/Capabilities/ExternalIdentity`, `System/Capabilities/IdentitySync`, `System/Capabilities/Tenancy`, and
+  `System/Capabilities/Diagnostics` now act as explicit owner zones above the local `Flows/` lanes, with canonical
   architecture docs, ADRs, migration map, and characterization tests
 
 ---
@@ -94,8 +94,8 @@ These are explicitly NOT part of the shipped product:
 ```
 System/           → kernel (authentication/authorization)
 integrations/     → optional integration surface
-Capability/       → shared domain enablers
-Flow/             → business use cases
+Capabilities/     → shared domain enablers and owner zones
+Flows/            → business use cases
 Foundation/       → tiny primitives only
 ```
 
@@ -141,4 +141,4 @@ Foundation/       → tiny primitives only
 
 ---
 
-*This document is authoritative. See `REFAKTOR.md` for detailed backlog.*
+*This document is authoritative. See `REFAKTOR.md` for archived historical refactor context.*

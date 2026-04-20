@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Scim;
+namespace Avax\Auth\Tests\Flows\Scim;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\Identity;
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\Scim\ScimAccountState;
-use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
-use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
-use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
-use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
-use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
-use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
-use Avax\Auth\System\Flow\Scim\ScimFailed;
-use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Scim\ScimAccountState;
+use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Throttle\InMemoryAttemptThrottleStore;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Scim\Bulk\ScimBulkOperation;
+use Avax\Auth\System\Flows\Scim\Bulk\ScimBulkRequest;
+use Avax\Auth\System\Flows\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flows\Scim\MarkOutage\MarkScimDirectoryOutageData;
+use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Flows\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Flows\Scim\SyncGroups\SyncScimGroupsData;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

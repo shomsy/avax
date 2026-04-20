@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Identity\Jwt;
+namespace Avax\Auth\Tests\Capabilities\Identity\Jwt;
 
-use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\Token\HmacTokenCodec;
-use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use InvalidArgumentException;
@@ -223,6 +223,36 @@ class JwtIdentityTest extends TestCase
         $this->assertNotNull(actual: $resolved?->senderConstraint);
         $this->assertSame(expected: OAuthSenderConstraintType::DPOP, actual: $resolved?->senderConstraint?->type);
         $this->assertSame(expected: 'thumb-123', actual: $resolved?->senderConstraint?->thumbprint);
+    }
+
+    public function testJwtIdentityRejectsTokensWithUnexpectedIssuer() : void
+    {
+        $user = new User(
+            id          : new UserId(value: 14),
+            email       : new UserEmail(value: 'issuer-check@example.com'),
+            username    : 'issuer-check',
+            passwordHash: 'hash'
+        );
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create(user: $user);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
+        );
+
+        $token = (new HmacTokenCodec(secret: 'super-secret-key'))->encode(claims: [
+            'iss' => 'different-issuer',
+            'sub' => $user->getId()->value,
+            'iat' => 1,
+            'nbf' => 1,
+            'exp' => 2,
+            'jti' => 'token-issuer-check',
+        ]);
+
+        $this->assertNull(actual: $jwt->resolve(token: $token));
     }
 
     /**

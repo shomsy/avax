@@ -2,7 +2,7 @@
 
 Owner: `IdentitySync`
 
-Primary implementation: `System/Flow/Scim/`, `System/Flow/Provisioning/`
+Primary implementation: `System/Capabilities/IdentitySync/SCIM/Runtime/`, `System/Capabilities/IdentitySync/SCIM/ProvisioningRuntime/`
 
 Sequence:
 

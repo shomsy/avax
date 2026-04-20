@@ -11,7 +11,7 @@ Legenda:
 ## P0
 
 - [x] Session registry is a first-class enterprise runtime requirement.
-  Evidence: `System/Capability/Session/`, `tests/Flows/Session/`, `tests/Capabilities/Session/`
+  Evidence: `System/Capabilities/Identity/Sessions/Registry/`, `tests/Flows/Session/`, `tests/Capabilities/Session/`
 - [x] Source-of-truth cleanup is closed.
   Evidence: `docs/STATUS.md`, `docs/capability-matrix.md`, `docs/product-boundary.md`, `tooling/check-source-truth.php`
 
@@ -26,7 +26,7 @@ Legenda:
   Evidence: `tests/Integrations/Http/DeploymentTrustBoundaryTest.php`,
   `tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php`
 - [x] Explainability surfaces are in runtime, not only docs.
-  Evidence: `System/Capability/Explainability/AuthIssueExplainer.php`, `System/Auth.php`, `tests/System/AuthTest.php`
+  Evidence: `System/Capabilities/Diagnostics/Explainability/AuthIssueExplainer.php`, `System/Auth.php`, `tests/System/AuthTest.php`
 - [x] Trusted-device decision is permanently closed as a non-goal.
   Evidence: `docs/trusted-device-policy.md`, `docs/STATUS.md`, `docs/product-boundary.md`
 - [x] Compatibility migration is closed for package scope.
@@ -37,8 +37,9 @@ Legenda:
 
 ## P2
 
-- [x] Mutation quality posture hardening: tooling runs locally; MSI and timeout reduction completed, release-quality thresholds met.
-  Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`
+- [~] Mutation quality posture hardening: tooling runs locally, but the current evidence register still records the release-quality MSI / timeout risk as open.
+  Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`,
+  `.agents/management/evidence/RELEASE_CHECKLIST.md`
 - [x] External certification program: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle generator.
   Package-owned artifacts present; external certification pipeline stays as product/delivery ownership outside this kernel package.
 
@@ -47,10 +48,10 @@ Legenda:
 - [x] Root ownership model from `REFAKTOR.md` is now closed in package scope.
   Includes: canonical architecture docs tree, ADR set, migration map, capability-owned root facades, and
   characterization tests protecting legacy facade behavior during refactor.
-  Evidence: `docs/architecture/`, `docs/decisions/`, `System/Capability/Access/AccessFacade.php`,
-  `System/Capability/Identity/IdentityFacade.php`, `System/Capability/ExternalIdentity/ExternalIdentityFacade.php`,
-  `System/Capability/IdentitySync/IdentitySyncFacade.php`, `System/Capability/Tenant/TenancyFacade.php`,
-  `System/Capability/Diagnostics/DiagnosticsFacade.php`, `tests/Characterization/`
+  Evidence: `docs/architecture/`, `docs/decisions/`, `System/Capabilities/Access/AccessFacade.php`,
+  `System/Capabilities/Identity/IdentityFacade.php`, `System/Capabilities/ExternalIdentity/ExternalIdentityFacade.php`,
+  `System/Capabilities/IdentitySync/IdentitySyncFacade.php`, `System/Capabilities/Tenancy/Model/TenancyFacade.php`,
+  `System/Capabilities/Diagnostics/DiagnosticsFacade.php`, `tests/Characterization/`
 
 ## Final Package Truth
 

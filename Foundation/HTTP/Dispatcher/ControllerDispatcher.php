@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Dispatcher;
 
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\Request as RequestDto;
+use Avax\HTTP\Request\RequestDtoFactory;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
@@ -41,23 +43,13 @@ final readonly class ControllerDispatcher
      * Dispatches a controller action or callable based on the route action definition.
      *
      * @param callable|array|string $action  The route's target action (controller, method, or callable).
-     * @param Request               $request The PSR-7 compatible HTTP request instance.
+     * @param ServerRequest         $request The PSR-7 compatible HTTP request instance.
      *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    /**
-     * Dispatches a controller action or callable based on the route action definition.
-     *
-     * @param callable|array|string $action  The route's target action (controller, method, or callable).
-     * @param Request               $request The PSR-7 compatible HTTP request instance.
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
-     */
-    public function dispatch(callable|array|string $action, Request $request) : ResponseInterface
+    public function dispatch(callable|array|string $action, ServerRequest $request) : ResponseInterface
     {
         // Delegate to the appropriate handler based on action type
         // Evaluate the expression based on the provided $action input using the `match` expression.
@@ -86,7 +78,7 @@ final readonly class ControllerDispatcher
      * @param callable $callable The callable to invoke.
      * @param Request  $request  The PSR-7 compatible HTTP request instance.
      */
-    private function dispatchCallable(callable $callable, Request $request) : ResponseInterface
+    private function dispatchCallable(callable $callable, ServerRequest $request) : ResponseInterface
     {
         // Passes the $request object to the provided callable function and
         // immediately returns the resulting ResponseInterface instance.
@@ -117,7 +109,7 @@ final readonly class ControllerDispatcher
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    private function dispatchControllerAndMethod(array $action, Request $request) : ResponseInterface
+    private function dispatchControllerAndMethod(array $action, ServerRequest $request) : ResponseInterface
     {
         // Check if the `$action` array has exactly 2 elements ([Class, "method"] format).
         if (count(value: $action) !== 2) {
@@ -161,11 +153,20 @@ final readonly class ControllerDispatcher
                 // Get the name of the type (e.g., class or scalar type).
                 $typeName = $paramType->getName();
 
-                // If the type corresponds to a class that is a `ServerRequest` (or extends it).
-                if (is_a(object_or_class: $typeName, class: Request::class, allow_string: true)) {
-                    // Inject the `$request` instance as the value for this parameter.
+                // If the type corresponds to the incoming ServerRequest itself.
+                if (is_a(object_or_class: $typeName, class: ServerRequest::class, allow_string: true)) {
                     $arguments[] = $request;
+                    continue;
+                }
 
+                // If the type is a Request-backed DTO (FormRequest).
+                if (is_a(object_or_class: $typeName, class: RequestDto::class, allow_string: true)) {
+                    /** @var RequestDtoFactory $factory */
+                    $factory = $this->container->has(RequestDtoFactory::class)
+                        ? $this->container->get(RequestDtoFactory::class)
+                        : new RequestDtoFactory();
+
+                    $arguments[] = $factory->create($request, $typeName);
                     continue;
                 }
 
@@ -250,7 +251,7 @@ final readonly class ControllerDispatcher
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function dispatchInvokableController(string $controller, Request $request) : ResponseInterface
+    private function dispatchInvokableController(string $controller, ServerRequest $request) : ResponseInterface
     {
         // Check if the specified controller class exists.
         // If the class is not found, throw a RuntimeException with a descriptive error message.

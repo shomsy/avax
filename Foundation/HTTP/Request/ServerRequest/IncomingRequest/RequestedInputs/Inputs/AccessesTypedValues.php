@@ -146,11 +146,15 @@ trait AccessesTypedValues
             return $default;
         }
 
-        $lower = strtolower($value);
-        if (in_array($lower, ['true', '1', 'on'], true)) {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        $normalized = strtolower((string) $value);
+        if (in_array($normalized, ['true', '1', 'on', 'yes'], true)) {
             return true;
         }
-        if (in_array($lower, ['false', '0', 'off'], true)) {
+        if (in_array($normalized, ['false', '0', 'off', 'no'], true)) {
             return false;
         }
 
@@ -183,6 +187,11 @@ trait AccessesTypedValues
         $value = $this->get(key: $key);
 
         if ($value === null || ! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
+            return $default;
+        }
+
+        // tryFrom only accepts string or int
+        if (! is_string($value) && ! is_int($value)) {
             return $default;
         }
 

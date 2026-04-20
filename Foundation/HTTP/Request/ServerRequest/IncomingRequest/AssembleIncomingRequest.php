@@ -24,6 +24,7 @@ final readonly class AssembleIncomingRequest
         array|null $query = null,
         array|null $cookie = null,
         array|null $files = null,
+        string|null $rawBody = null,
     ) : ServerRequest
     {
         $init = $this->preparer->fromGlobals(
@@ -31,6 +32,7 @@ final readonly class AssembleIncomingRequest
             query : $query,
             cookie: $cookie,
             files : $files,
+            rawBody: $rawBody,
         );
 
         return $this->create(init: $init);

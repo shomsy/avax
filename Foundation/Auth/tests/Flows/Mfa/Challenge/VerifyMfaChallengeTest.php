@@ -2,37 +2,37 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Mfa\Challenge;
+namespace Avax\Auth\Tests\Flows\Mfa\Challenge;
 
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\Identity\IssuedAuthentication;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Mfa\Backup\GenerateBackupCodes;
-use Avax\Auth\System\Flow\Mfa\Backup\VerifyBackupCode;
-use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryAttemptLimitStorage;
-use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Flow\Mfa\Challenge\LimitMfaAttempts;
-use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
-use Avax\Auth\System\Flow\Mfa\Challenge\VerifyMfaChallenge;
-use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flow\Mfa\MfaChallengeFailure;
-use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
-use Avax\Auth\System\Flow\Mfa\MfaMethod;
-use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
-use Avax\Auth\System\Flow\Mfa\Totp;
-use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
-use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
-use Avax\Auth\System\Flow\Token\IssuedToken;
-use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\IssuedAuthentication;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Mfa\Backup\GenerateBackupCodes;
+use Avax\Auth\System\Flows\Mfa\Backup\VerifyBackupCode;
+use Avax\Auth\System\Flows\Mfa\Challenge\InMemoryAttemptLimitStorage;
+use Avax\Auth\System\Flows\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flows\Mfa\Challenge\LimitMfaAttempts;
+use Avax\Auth\System\Flows\Mfa\Challenge\MfaChallengeRecord;
+use Avax\Auth\System\Flows\Mfa\Challenge\VerifyMfaChallenge;
+use Avax\Auth\System\Flows\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
+use Avax\Auth\System\Flows\Mfa\MfaChallengeFailure;
+use Avax\Auth\System\Flows\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flows\Mfa\MfaMethod;
+use Avax\Auth\System\Flows\Mfa\MfaMethodRecord;
+use Avax\Auth\System\Flows\Mfa\Totp;
+use Avax\Auth\System\Flows\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Flows\Token\IssuedRefreshToken;
+use Avax\Auth\System\Flows\Token\IssuedToken;
+use Avax\Auth\System\Flows\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
 use DateInvalidOperationException;
@@ -260,7 +260,6 @@ final class VerifyMfaChallengeTest extends TestCase
             clock         : $clock
         ))->execute();
         $mfaStoreProperty = new ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
-        $mfaStoreProperty->setAccessible(accessible: true);
         /** @var InMemoryMfaStore $mfaStore */
         $mfaStore = $mfaStoreProperty->getValue(object: $flow);
         $method   = $mfaStore->findMethod(userId: new UserId(value: 1));

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Diagnostics;
 
-use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flows\Diagnostics\AuditExporterInterface;
 
 /**
  * Routes selected high-signal audit events to a notification adapter.

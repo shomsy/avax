@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capability\Access\RequireRole;
+namespace Avax\Auth\Tests\Capabilities\Access\RequireRole;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
-use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capability\User\UserRole;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class RequireRoleTest extends TestCase
 {
     /**
-     * @throws \Avax\Auth\System\Capability\Access\RequireRole\RoleDenied
+     * @throws \Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied
      * @throws Unauthenticated
      */
     public function testRequireRoleSuccess() : void

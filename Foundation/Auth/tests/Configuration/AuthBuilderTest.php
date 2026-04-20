@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Configuration;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
-use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Auth\Tests\Support\FrozenClock;
+use DateTimeImmutable;
 use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -98,6 +101,52 @@ class AuthBuilderTest extends TestCase
         $user = $auth->register(data: $data);
 
         $this->assertSame(expected: 987654, actual: $user->user()->id);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testAuthBuilderUsesConfiguredClockForRegistrationAuditEvents() : void
+    {
+        $data = new RegistrationData(
+            email   : 'clocked@example.com',
+            username: 'clocked',
+            password: 'password'
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
+        $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(static fn ($user) => $user);
+
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+        $identity->shouldReceive('jwtIdentity')->andReturn(null);
+
+        $auditLog = new InMemoryAuditLog();
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-20T10:00:00+00:00'));
+
+        $auth = (new AuthBuilder())
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: $identity)
+            ->usingHasher(passwordHasher: new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]))
+            ->usingIdGenerator(idGenerator: new class implements IdGeneratorInterface {
+                public function generate() : int
+                {
+                    return 123456;
+                }
+            })
+            ->withAuditLog(auditLog: $auditLog)
+            ->withClock(clock: $clock)
+            ->ready();
+
+        $auth->register(data: $data);
+
+        $events = $auditLog->events();
+
+        $this->assertCount(expectedCount: 1, haystack: $events);
+        $this->assertSame(expected: 'auth.register.succeeded', actual: $events[0]->name);
+        $this->assertEquals(expected: $clock->now(), actual: $events[0]->occurredAt);
     }
 
     public function testEnterpriseModeRequiresSessionRegistry() : void

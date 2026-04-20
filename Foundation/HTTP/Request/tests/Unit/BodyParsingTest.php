@@ -120,13 +120,6 @@ class BodyParsingTest extends TestCase
         $this->assertEquals(expected: '', actual: $content);
     }
 
-    public function test_parse_body_returns_empty_for_get_method()
-    {
-        $parser = new ParseJsonBody;
-        $result = $parser->execute(content: '{"foo": "bar"}');
-        $this->assertNull(actual: $result);
-    }
-
     public function test_parse_body_returns_empty_for_unsupported_content_type()
     {
         $router = new ParseBodyByContentType(

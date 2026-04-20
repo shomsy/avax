@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\ChangePassword;
+namespace Avax\Auth\Tests\Flows\ChangePassword;
 
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Flow\ChangePassword\PasswordChangeFailed;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
-use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
-use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserEmail;
+use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
+use Avax\Auth\System\Flows\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Exception;
 use Mockery;
@@ -191,6 +191,34 @@ class ChangePasswordTest extends TestCase
         );
 
         $this->expectException(FreshMfaRequired::class);
+        $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
+    }
+
+    public function testChangePasswordRejectsStaleAuthenticatedUserSnapshot() : void
+    {
+        $passwordHasher        = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(id: 1, email: 'stale@example.com', username: 'stale'),
+            mode: AuthenticationMode::TOKEN
+        ));
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('findById')->once()->andReturnNull();
+
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldNotReceive('clear');
+
+        $changePassword = new ChangePassword(
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            identity             : $identity,
+            currentAuthentication: $currentAuthentication,
+            auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock()
+        );
+
+        $this->expectException(exception: Unauthenticated::class);
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 

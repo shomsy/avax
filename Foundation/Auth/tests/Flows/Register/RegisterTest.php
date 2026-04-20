@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flow\Register;
+namespace Avax\Auth\Tests\Flows\Register;
 
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Register\Register;
-use Avax\Auth\System\Flow\Register\RegistrationData;
-use Avax\Auth\System\Flow\Register\RegistrationFailed;
-use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flows\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flows\Register\Register;
+use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
+use Avax\Auth\System\Flows\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Exception;
 use Mockery;
@@ -57,7 +58,8 @@ class RegisterTest extends TestCase
                                           emailVerificationState: new InMemoryEmailVerificationStateStore(),
                                           mfaStore              : new InMemoryMfaStore()
                                       ),
-            auditLog                : new InMemoryAuditLog()
+            auditLog                : new InMemoryAuditLog(),
+            clock                   : new Clock()
         );
 
         $result = $register->execute(data: $data);
@@ -97,7 +99,8 @@ class RegisterTest extends TestCase
                                           emailVerificationState: new InMemoryEmailVerificationStateStore(),
                                           mfaStore              : new InMemoryMfaStore()
                                       ),
-            auditLog                : new InMemoryAuditLog()
+            auditLog                : new InMemoryAuditLog(),
+            clock                   : new Clock()
         );
 
         $this->expectException(exception: RegistrationFailed::class);
@@ -138,7 +141,8 @@ class RegisterTest extends TestCase
                                           emailVerificationState: new InMemoryEmailVerificationStateStore(),
                                           mfaStore              : new InMemoryMfaStore()
                                       ),
-            auditLog                : new InMemoryAuditLog()
+            auditLog                : new InMemoryAuditLog(),
+            clock                   : new Clock()
         );
 
         $this->expectException(exception: RegistrationFailed::class);

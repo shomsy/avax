@@ -6,9 +6,9 @@ namespace Avax\Auth\System\Capabilities\Identity;
 
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use SensitiveParameter;

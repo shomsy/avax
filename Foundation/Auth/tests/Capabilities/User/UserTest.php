@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\User;
 
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

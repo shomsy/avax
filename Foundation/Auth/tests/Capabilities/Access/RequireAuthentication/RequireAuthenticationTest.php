@@ -6,10 +6,10 @@ namespace Avax\Auth\Tests\Capabilities\Access\RequireAuthentication;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**

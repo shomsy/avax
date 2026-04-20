@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Token;
+namespace Avax\Auth\System\Capabilities\Identity\Tokens\Runtime;
 
-use Avax\Auth\System\Capabilities\OAuth\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 
 /**

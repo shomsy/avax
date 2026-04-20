@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ValidateRequestObject;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
-use Avax\Auth\System\Capabilities\Oidc\OidcRequestObjectStoreInterface;
-use Avax\Auth\System\Flows\OAuth\OAuthAuthorizationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcRequestObjectStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
 
 final readonly class ValidateRequestObject
 {

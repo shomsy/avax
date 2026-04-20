@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Recover;
+namespace Avax\Auth\System\Flows\RecoverAccess\PasswordReset;
 
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottleExceeded;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Provisioning\DeprovisionUser;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\DeprovisionUser;
 
-use Avax\Auth\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
-use Avax\Auth\System\Capabilities\Session\SessionRegistryInterface;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\ProvisionableUserSourceInterface;
-use Avax\Auth\System\Flows\AdminRealm\RequireAdminElevation\RequireAdminElevation;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

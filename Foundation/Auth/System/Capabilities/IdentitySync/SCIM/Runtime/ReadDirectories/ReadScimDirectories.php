@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ReadDirectories;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadDirectories;
 
-use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 
 final readonly class ReadScimDirectories
 {

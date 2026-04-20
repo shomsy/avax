@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Characterization;
 
 use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\Tests\Support\ArraySessionStore;

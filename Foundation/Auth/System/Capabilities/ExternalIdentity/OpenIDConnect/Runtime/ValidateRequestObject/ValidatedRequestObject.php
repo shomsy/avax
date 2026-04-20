@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ValidateRequestObject;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject;
 
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use SensitiveParameter;
 
 final readonly class ValidatedRequestObject

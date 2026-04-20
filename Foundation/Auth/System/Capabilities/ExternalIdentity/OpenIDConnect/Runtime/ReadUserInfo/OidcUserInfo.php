@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ReadUserInfo;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo;
 
 final readonly class OidcUserInfo
 {

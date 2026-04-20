@@ -13,7 +13,7 @@ This document provides human-readable explanations for common access/authorizati
 These explanations are not docs-only. The package publishes a runtime-safe
 operator surface through:
 
-- `Avax\Auth\System\Capability\Explainability\AuthIssueExplainer`
+- `Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer`
 - `Avax\Auth\System\Auth::explainAccessDenied()`
 - `Avax\Auth\System\Auth::explainStepUpRequired()`
 - `Avax\Auth\System\Auth::explainSenderConstraintFailure()`

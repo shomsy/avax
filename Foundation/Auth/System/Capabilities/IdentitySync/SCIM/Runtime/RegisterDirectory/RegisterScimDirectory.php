@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\RegisterDirectory;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory;
 
-use Avax\Auth\System\Capabilities\Federation\GroupRoleMappingValidator;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Scim\RegisteredScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\GroupRoleMappingValidator;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Random\RandomException;
 use SensitiveParameter;

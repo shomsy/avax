@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\AuthenticateRequest;
+namespace Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
-use Avax\Auth\System\Flows\Verify\EmailVerificationStateStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
 use SensitiveParameter;
 
 /**

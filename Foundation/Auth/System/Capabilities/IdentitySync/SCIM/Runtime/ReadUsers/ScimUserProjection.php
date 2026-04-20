@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ReadUsers;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers;
 
-use Avax\Auth\System\Capabilities\Scim\ScimAccountState;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
 use SensitiveParameter;
 
 final readonly class ScimUserProjection

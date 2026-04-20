@@ -6,12 +6,12 @@ namespace Avax\Auth\Tests\Integrations\AvaxContainer;
 
 use Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider;
 use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;

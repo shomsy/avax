@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ReadJsonWebKeySet;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadJsonWebKeySet;
 
-use Avax\Auth\System\Capabilities\Oidc\OidcJsonWebKeySet;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 
 final readonly class ReadOidcJsonWebKeySet
 {

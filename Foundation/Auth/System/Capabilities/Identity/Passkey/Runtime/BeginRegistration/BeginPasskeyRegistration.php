@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\BeginRegistration;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginRegistration;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengePurpose;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeRecord;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredentialStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyRuntimeInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\StepUp\RequireFreshMfa;
-use Avax\Auth\System\Flows\Passkey\PasskeyOperationFailed;
-use Avax\Auth\System\Flows\Passkey\PasskeyRegistration;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;

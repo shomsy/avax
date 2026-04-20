@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Throttle;
+namespace Avax\Auth\System\Capabilities\Access\Authentication\Throttle;
 
 /**
  * In-memory throttling store for tests and lightweight compositions.

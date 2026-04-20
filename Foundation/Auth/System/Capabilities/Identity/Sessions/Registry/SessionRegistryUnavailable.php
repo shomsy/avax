@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Session;
+namespace Avax\Auth\System\Capabilities\Identity\Sessions\Registry;
 
 use RuntimeException;
 

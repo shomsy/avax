@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Recover;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover;
 
 use SensitiveParameter;
 

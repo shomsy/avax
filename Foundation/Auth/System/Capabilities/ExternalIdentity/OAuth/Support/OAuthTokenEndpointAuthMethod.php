@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\OAuth;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
 enum OAuthTokenEndpointAuthMethod: string
 {

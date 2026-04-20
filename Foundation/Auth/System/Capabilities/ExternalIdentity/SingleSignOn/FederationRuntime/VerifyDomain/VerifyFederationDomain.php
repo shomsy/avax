@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation\VerifyDomain;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\VerifyDomain;
 
-use Avax\Auth\System\Capabilities\Federation\FederationConnection;
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Federation\FederationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\FederationFailed;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class VerifyFederationDomain

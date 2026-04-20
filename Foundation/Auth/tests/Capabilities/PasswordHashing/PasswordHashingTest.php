@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\PasswordHashing;
 
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use PHPUnit\Framework\TestCase;
 
 /**

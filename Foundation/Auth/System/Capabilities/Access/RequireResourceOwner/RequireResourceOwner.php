@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capabilities\Access\RequireResourceOwner;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 /**

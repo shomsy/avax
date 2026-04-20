@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Configuration;
 
 use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Auth\Tests\Support\FrozenClock;

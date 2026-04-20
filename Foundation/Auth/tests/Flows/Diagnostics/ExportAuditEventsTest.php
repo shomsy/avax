@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Diagnostics;
 
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditExporterInterface;
-use Avax\Auth\System\Flows\Diagnostics\ExportAuditEvents\ExportAuditEvents;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use stdClass;

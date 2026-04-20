@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Scim;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 
 final readonly class ScimProvisionedIdentity

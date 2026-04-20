@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Diagnostics;
+namespace Avax\Auth\System\Capabilities\Diagnostics\Audit;
 
 /**
  * Sink for auth audit events.

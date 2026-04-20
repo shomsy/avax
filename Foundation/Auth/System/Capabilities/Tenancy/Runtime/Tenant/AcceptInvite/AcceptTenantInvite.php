@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Tenant\AcceptInvite;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite;
 
-use Avax\Auth\System\Capabilities\Tenant\TenantMember;
-use Avax\Auth\System\Capabilities\Tenant\TenantMemberState;
-use Avax\Auth\System\Capabilities\Tenant\TenantStoreInterface;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Tenant\TenantFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantMemberState;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class AcceptTenantInvite

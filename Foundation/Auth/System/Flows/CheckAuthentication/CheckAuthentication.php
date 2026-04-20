@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\CheckAuthentication;
 
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 /**

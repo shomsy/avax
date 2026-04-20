@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Lifecycle;
+namespace Avax\Auth\System\Capabilities\IdentitySync\Lifecycle;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 
 final class InMemoryLifecycleStore implements LifecycleStoreInterface
 {

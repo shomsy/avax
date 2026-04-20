@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\CleanupExpiredAuthorizationCodes;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes;
 
-use Avax\Auth\System\Capabilities\OAuth\PruneExpiredAuthorizationCodesInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PruneExpiredAuthorizationCodesInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

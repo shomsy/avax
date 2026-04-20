@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\ExchangeAuthorizationCode;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode;
 
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\OAuth\AuthorizationCodeStoreInterface;
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Capabilities\OAuth\OAuthGrantType;
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\OAuth\OAuthTokenExchangeFailed;
-use Avax\Auth\System\Flows\OAuth\OAuthTokenGrant;
-use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Challenge;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge;
 
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
-use Avax\Auth\System\Flows\Mfa\Backup\VerifyBackupCode;
-use Avax\Auth\System\Flows\Mfa\MfaChallengeFailed;
-use Avax\Auth\System\Flows\Mfa\MfaMethod;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
-use Avax\Auth\System\Flows\Mfa\MfaVerificationAttempt;
-use Avax\Auth\System\Flows\Mfa\TotpInterface;
-use Avax\Auth\System\Flows\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\VerifyBackupCode;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethod;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaVerificationAttempt;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\TotpInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\VerifyMfaChallengeData;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

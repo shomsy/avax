@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation\CompleteFederatedLogin;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin;
 
-use Avax\Auth\System\Capabilities\Federation\FederatedIdentityLink;
-use Avax\Auth\System\Capabilities\Federation\FederatedIdentityLinkStoreInterface;
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionStoreInterface;
-use Avax\Auth\System\Capabilities\Federation\FederationRuntimeInterface;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\FederationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederatedIdentityLink;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederatedIdentityLinkStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationRuntimeInterface;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Capabilities\UserSource\ProvisionableUserSourceInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Federation\FederationFailed;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;

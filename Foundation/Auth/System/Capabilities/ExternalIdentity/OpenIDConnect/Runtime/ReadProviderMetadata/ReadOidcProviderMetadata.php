@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\ReadProviderMetadata;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadProviderMetadata;
 
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderMetadata;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
 
 final readonly class ReadOidcProviderMetadata
 {

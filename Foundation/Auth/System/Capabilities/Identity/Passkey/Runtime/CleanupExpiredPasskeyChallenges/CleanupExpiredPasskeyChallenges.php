@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\CleanupExpiredPasskeyChallenges;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges;
 
-use Avax\Auth\System\Capabilities\Passkey\PruneExpiredPasskeyChallengesInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PruneExpiredPasskeyChallengesInterface;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredPasskeyChallenges

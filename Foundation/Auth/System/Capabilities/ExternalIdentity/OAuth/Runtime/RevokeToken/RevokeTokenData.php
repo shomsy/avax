@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\RevokeToken;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RevokeToken;
 
 use SensitiveParameter;
 

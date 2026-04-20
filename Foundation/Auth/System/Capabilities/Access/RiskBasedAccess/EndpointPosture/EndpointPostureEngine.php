@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\EndpointPosture;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\EndpointPosture;
 
 /**
  * Endpoint posture engine for risk-based access decisions.

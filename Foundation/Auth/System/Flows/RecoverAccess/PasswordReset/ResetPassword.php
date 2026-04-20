@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Recover;
+namespace Avax\Auth\System\Flows\RecoverAccess\PasswordReset;
 
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Session\SessionRegistryInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\Challenge\MfaChallengeStoreInterface;
-use Avax\Auth\System\Flows\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaChallengeStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use SensitiveParameter;
 
 /**

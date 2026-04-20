@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capabilities\Access\RequireRole;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 /**

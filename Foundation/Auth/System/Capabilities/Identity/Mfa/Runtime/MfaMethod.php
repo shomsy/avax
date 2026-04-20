@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime;
 
 /**
  * MFA proof types supported by the package.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation\StartFederatedLogin;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\StartFederatedLogin;
 
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionHealth;
-use Avax\Auth\System\Capabilities\Federation\FederationConnectionStoreInterface;
-use Avax\Auth\System\Capabilities\Federation\FederationRuntimeInterface;
-use Avax\Auth\System\Capabilities\Federation\StartedFederatedLogin;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Federation\FederationFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\FederationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationRuntimeInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class StartFederatedLogin

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Lifecycle;
+namespace Avax\Auth\System\Capabilities\IdentitySync\Lifecycle;
 
 use RuntimeException;
 

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Passkey\CompleteRegistration;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration;
 
-use Avax\Auth\System\Capabilities\Passkey\PasskeyChallengeStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredential;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyCredentialStoreInterface;
-use Avax\Auth\System\Capabilities\Passkey\PasskeyRuntimeInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Passkey\PasskeyOperationFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

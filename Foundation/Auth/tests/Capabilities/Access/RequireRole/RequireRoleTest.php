@@ -7,11 +7,11 @@ namespace Avax\Auth\Tests\Capabilities\Access\RequireRole;
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**

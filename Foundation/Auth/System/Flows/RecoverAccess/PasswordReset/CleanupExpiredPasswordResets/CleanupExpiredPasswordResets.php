@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Recover\CleanupExpiredPasswordResets;
+namespace Avax\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets;
 
-use Avax\Auth\System\Flows\Recover\PruneExpiredPasswordResetsInterface;
+use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\PruneExpiredPasswordResetsInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

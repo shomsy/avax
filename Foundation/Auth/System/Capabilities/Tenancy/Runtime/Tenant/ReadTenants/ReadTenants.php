@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Tenant\ReadTenants;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\ReadTenants;
 
-use Avax\Auth\System\Capabilities\Tenant\Tenant;
-use Avax\Auth\System\Capabilities\Tenant\TenantStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Model\Tenant;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantStoreInterface;
 
 final readonly class ReadTenants
 {

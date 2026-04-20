@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\DeleteUser;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser;
 
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectory;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryHealth;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentityStoreInterface;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capabilities\Throttle\AttemptThrottleExceeded;
-use Avax\Auth\System\Capabilities\UserSource\ProvisionableUserSourceInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

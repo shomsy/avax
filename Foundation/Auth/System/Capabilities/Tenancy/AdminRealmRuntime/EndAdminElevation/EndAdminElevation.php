@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\AdminRealm\EndAdminElevation;
+namespace Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation;
 
-use Avax\Auth\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
-use Avax\Auth\System\Flows\AdminRealm\AdminElevationFailed;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

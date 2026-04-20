@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Challenge\CleanupExpiredMfaChallenges;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\CleanupExpiredMfaChallenges;
 
-use Avax\Auth\System\Flows\Mfa\Challenge\PruneExpiredMfaChallengesInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\PruneExpiredMfaChallengesInterface;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredMfaChallenges

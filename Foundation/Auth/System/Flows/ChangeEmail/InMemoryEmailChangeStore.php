@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\ChangeEmail;
 
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Random\RandomException;

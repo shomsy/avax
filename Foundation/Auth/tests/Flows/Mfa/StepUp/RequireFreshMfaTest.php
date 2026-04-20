@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\Mfa\StepUp;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Mfa\FreshMfaRequired;
-use Avax\Auth\System\Flows\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

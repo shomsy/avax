@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Tenant\RemoveMember;
+namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\RemoveMember;
 
-use Avax\Auth\System\Capabilities\Tenant\TenantMemberRole;
-use Avax\Auth\System\Capabilities\Tenant\TenantStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Tenant\TenantFailed;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantMemberRole;
+use Avax\Auth\System\Capabilities\Tenancy\Model\TenantStoreInterface;
+use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class RemoveTenantMember

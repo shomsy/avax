@@ -244,6 +244,78 @@ final class ProductBoundaryTest extends TestCase
         }
     }
 
+    public function testCanonicalRootUnitsDeclareCanonicalNamespaces() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $expectedNamespaces = [
+            $root . '/System/Auth.php'                            => 'namespace Avax\\Auth\\System;',
+            $root . '/System/AuthInterface.php'                   => 'namespace Avax\\Auth\\System;',
+            $root . '/System/Configuration/AuthBuilder.php'       => 'namespace Avax\\Auth\\System\\Configuration;',
+            $root . '/System/Foundation/Clock.php'                => 'namespace Avax\\Auth\\System\\Foundation;',
+            $root . '/System/Foundation/IdGenerator.php'          => 'namespace Avax\\Auth\\System\\Foundation;',
+            $root . '/System/Foundation/IdGeneratorInterface.php' => 'namespace Avax\\Auth\\System\\Foundation;',
+        ];
+
+        foreach ($expectedNamespaces as $file => $namespace) {
+            $contents = file_get_contents($file);
+
+            self::assertIsString(actual: $contents);
+            $declaredNamespace = preg_match('/^namespace\s+([^;]+);$/m', $contents, $matches) === 1
+                ? 'namespace ' . $matches[1] . ';'
+                : null;
+
+            $this->assertSame(
+                expected: $namespace,
+                actual  : $declaredNamespace,
+                message : "Canonical root unit must declare canonical namespace: {$file}"
+            );
+        }
+    }
+
+    public function testFoundationSubtreeUnitsDeclareCanonicalNamespaces() : void
+    {
+        $root = dirname(__DIR__, 2);
+
+        $expectedNamespaces = [
+            $root . '/System/Foundation/Exceptions/AuthException.php'             => 'namespace Avax\\Auth\\System\\Foundation\\Exceptions;',
+            $root . '/System/Foundation/Exceptions/ConfigurationException.php'    => 'namespace Avax\\Auth\\System\\Foundation\\Exceptions;',
+            $root . '/System/Foundation/Exceptions/ExternalIdentityException.php' => 'namespace Avax\\Auth\\System\\Foundation\\Exceptions;',
+            $root . '/System/Foundation/Exceptions/IdentitySyncException.php'     => 'namespace Avax\\Auth\\System\\Foundation\\Exceptions;',
+            $root . '/System/Foundation/Ids/ChallengeId.php'                      => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/ClientId.php'                         => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/DirectoryId.php'                      => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/PasskeyId.php'                        => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/SessionId.php'                        => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/TenantId.php'                         => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/TokenId.php'                          => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Ids/UserId.php'                           => 'namespace Avax\\Auth\\System\\Foundation\\Ids;',
+            $root . '/System/Foundation/Text/MaskSecret.php'                      => 'namespace Avax\\Auth\\System\\Foundation\\Text;',
+            $root . '/System/Foundation/Text/NormalizeEmail.php'                  => 'namespace Avax\\Auth\\System\\Foundation\\Text;',
+            $root . '/System/Foundation/Text/NormalizeScope.php'                  => 'namespace Avax\\Auth\\System\\Foundation\\Text;',
+            $root . '/System/Foundation/Text/NormalizeUsername.php'               => 'namespace Avax\\Auth\\System\\Foundation\\Text;',
+            $root . '/System/Foundation/Time/Clock.php'                           => 'namespace Avax\\Auth\\System\\Foundation\\Time;',
+            $root . '/System/Foundation/Time/Expiry.php'                          => 'namespace Avax\\Auth\\System\\Foundation\\Time;',
+            $root . '/System/Foundation/Time/SystemClock.php'                     => 'namespace Avax\\Auth\\System\\Foundation\\Time;',
+            $root . '/System/Foundation/Time/TimeWindow.php'                      => 'namespace Avax\\Auth\\System\\Foundation\\Time;',
+        ];
+
+        foreach ($expectedNamespaces as $file => $namespace) {
+            $contents = file_get_contents($file);
+
+            self::assertIsString(actual: $contents);
+            $declaredNamespace = preg_match('/^namespace\s+([^;]+);$/m', $contents, $matches) === 1
+                ? 'namespace ' . $matches[1] . ';'
+                : null;
+
+            $this->assertSame(
+                expected: $namespace,
+                actual  : $declaredNamespace,
+                message : "Foundation subtree unit must declare canonical namespace: {$file}"
+            );
+        }
+    }
+
     public function testCanonicalContractsUsePluralSystemRoots() : void
     {
         $root  = dirname(__DIR__, 2);
@@ -266,12 +338,12 @@ final class ProductBoundaryTest extends TestCase
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
-                needle  : 'System/Flows/',
+                needle  : 'System/Flow/',
                 haystack: $contents,
                 message : "Legacy singular flow root documented in {$file}"
             );
             $this->assertStringNotContainsString(
-                needle  : 'System/Capabilities/',
+                needle  : 'System/Capability/',
                 haystack: $contents,
                 message : "Legacy singular capability root documented in {$file}"
             );
@@ -340,6 +412,77 @@ final class ProductBoundaryTest extends TestCase
         }
     }
 
+    public function testMigratedNamespaceRootsAreFullyCutOverInSourceAndTests() : void
+    {
+        $root        = dirname(__DIR__, 2);
+        $bannedRoots = [
+            'Avax\\Auth\\System\\Capabilities\\AdminRealm\\',
+            'Avax\\Auth\\System\\Capabilities\\Explainability\\',
+            'Avax\\Auth\\System\\Capabilities\\Federation\\',
+            'Avax\\Auth\\System\\Capabilities\\Lifecycle\\',
+            'Avax\\Auth\\System\\Capabilities\\OAuth\\',
+            'Avax\\Auth\\System\\Capabilities\\Oidc\\',
+            'Avax\\Auth\\System\\Capabilities\\Passkey\\',
+            'Avax\\Auth\\System\\Capabilities\\PasswordHashing\\',
+            'Avax\\Auth\\System\\Capabilities\\Risk\\',
+            'Avax\\Auth\\System\\Capabilities\\Scim\\',
+            'Avax\\Auth\\System\\Capabilities\\Session\\',
+            'Avax\\Auth\\System\\Capabilities\\Tenant\\',
+            'Avax\\Auth\\System\\Capabilities\\TenantSecurity\\',
+            'Avax\\Auth\\System\\Capabilities\\Throttle\\',
+            'Avax\\Auth\\System\\Capabilities\\User\\',
+            'Avax\\Auth\\System\\Capabilities\\UserSource\\',
+            'Avax\\Auth\\System\\Flows\\AdminRealm\\',
+            'Avax\\Auth\\System\\Flows\\AuthenticateRequest\\',
+            'Avax\\Auth\\System\\Flows\\Diagnostics\\',
+            'Avax\\Auth\\System\\Flows\\Federation\\',
+            'Avax\\Auth\\System\\Flows\\Mfa\\',
+            'Avax\\Auth\\System\\Flows\\OAuth\\',
+            'Avax\\Auth\\System\\Flows\\Oidc\\',
+            'Avax\\Auth\\System\\Flows\\Passkey\\',
+            'Avax\\Auth\\System\\Flows\\Provisioning\\',
+            'Avax\\Auth\\System\\Flows\\ReadCurrentUser\\',
+            'Avax\\Auth\\System\\Flows\\Recover\\',
+            'Avax\\Auth\\System\\Flows\\Risk\\',
+            'Avax\\Auth\\System\\Flows\\Scim\\',
+            'Avax\\Auth\\System\\Flows\\Session\\',
+            'Avax\\Auth\\System\\Flows\\Tenant\\',
+            'Avax\\Auth\\System\\Flows\\TenantSecurity\\',
+            'Avax\\Auth\\System\\Flows\\Token\\',
+            'Avax\\Auth\\System\\Flows\\Verify\\',
+        ];
+        $directories = [
+            $root . '/System',
+            $root . '/tests',
+            $root . '/integrations',
+        ];
+
+        foreach ($directories as $directory) {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS)
+            );
+
+            /** @var \SplFileInfo $file */
+            foreach ($iterator as $file) {
+                if (! $file->isFile() || $file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $contents = file_get_contents($file->getPathname());
+
+                self::assertIsString(actual: $contents);
+
+                foreach ($bannedRoots as $rootPrefix) {
+                    $this->assertStringNotContainsString(
+                        needle  : $rootPrefix,
+                        haystack: $contents,
+                        message : "Stale migrated namespace root still referenced in {$file->getPathname()}: {$rootPrefix}"
+                    );
+                }
+            }
+        }
+    }
+
     public function testRefactorAndClosureDocsReflectPluralCanonicalRoots() : void
     {
         $root  = dirname(__DIR__, 2);
@@ -353,12 +496,12 @@ final class ProductBoundaryTest extends TestCase
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
-                needle  : 'System/Flows/',
+                needle  : 'System/Flow/',
                 haystack: $contents,
                 message : "Legacy singular flow root still documented in {$file}"
             );
             $this->assertStringNotContainsString(
-                needle  : 'System/Capabilities/',
+                needle  : 'System/Capability/',
                 haystack: $contents,
                 message : "Legacy singular capability root still documented in {$file}"
             );
@@ -371,8 +514,8 @@ final class ProductBoundaryTest extends TestCase
         $contents = file_get_contents($root . '/infection.json.dist');
 
         self::assertIsString(actual: $contents);
-        $this->assertStringNotContainsString(needle: 'System/Flows/', haystack: $contents);
-        $this->assertStringNotContainsString(needle: 'System/Capabilities/', haystack: $contents);
+        $this->assertStringNotContainsString(needle: 'System/Flow/', haystack: $contents);
+        $this->assertStringNotContainsString(needle: 'System/Capability/', haystack: $contents);
         $this->assertStringContainsString(needle: 'System/Flows/', haystack: $contents);
         $this->assertStringContainsString(needle: 'System/Capabilities/', haystack: $contents);
     }
@@ -475,8 +618,8 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/ConfirmMfaEnrollment.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/StartMfaChallenge.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/VerifyMfaChallenge.php',
-            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recovery/StartMfaRecovery.php',
-            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recovery/ConfirmMfaRecovery.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recover/StartMfaRecovery.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Recover/ConfirmMfaRecovery.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Backup/RegenerateBackupCodes.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Disable/DisableMfa.php',
             $root . '/System/Capabilities/Identity/Passkey/Runtime/BeginRegistration/BeginPasskeyRegistration.php',

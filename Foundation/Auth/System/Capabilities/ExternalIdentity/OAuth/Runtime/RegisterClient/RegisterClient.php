@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\OAuth\RegisterClient;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Capabilities\OAuth\RegisteredOAuthClient;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class RegisterClient

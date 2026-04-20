@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\Register;
 
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;

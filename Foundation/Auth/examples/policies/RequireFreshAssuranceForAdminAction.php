@@ -6,7 +6,7 @@ namespace Avax\Auth\Examples\Policies;
 
 use Avax\Auth\System\Capabilities\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
-use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
 
 /**
  * Example: high-impact admin action requires fresh assurance.

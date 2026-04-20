@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access\Policy;
 
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 
 /**
  * Declarative authorization policy evaluated inside the access capability.

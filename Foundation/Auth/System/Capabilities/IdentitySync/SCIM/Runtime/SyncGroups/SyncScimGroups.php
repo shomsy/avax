@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\SyncGroups;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups;
 
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryHealth;
-use Avax\Auth\System\Capabilities\Scim\ScimDirectoryStoreInterface;
-use Avax\Auth\System\Capabilities\Scim\ScimProvisionedIdentityStoreInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUser;
-use Avax\Auth\System\Flows\Scim\ProvisionUser\ProvisionScimUserData;
-use Avax\Auth\System\Flows\Scim\ProvisionUser\ScimProvisioningResult;
-use Avax\Auth\System\Flows\Scim\ScimFailed;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUser;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Random\RandomException;
 
 final readonly class SyncScimGroups

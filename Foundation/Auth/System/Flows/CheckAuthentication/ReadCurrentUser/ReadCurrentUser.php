@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\ReadCurrentUser;
+namespace Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser;
 
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 /**

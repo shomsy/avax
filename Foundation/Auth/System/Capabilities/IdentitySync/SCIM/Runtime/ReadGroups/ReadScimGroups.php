@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Scim\ReadGroups;
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadGroups;
 
-use Avax\Auth\System\Flows\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers\ReadScimUsers;
 
 final readonly class ReadScimGroups
 {

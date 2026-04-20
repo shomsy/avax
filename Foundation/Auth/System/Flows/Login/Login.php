@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\Login;
 
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\AuthenticateRequest\ProjectAuthenticatedUser;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\StartMfaChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use Avax\Auth\System\Flows\Mfa\Challenge\StartMfaChallenge;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

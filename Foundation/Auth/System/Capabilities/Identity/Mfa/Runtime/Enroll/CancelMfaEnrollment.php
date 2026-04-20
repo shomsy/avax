@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Enroll;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

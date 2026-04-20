@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\PushAuthorizationRequest;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest;
 
-use Avax\Auth\System\Capabilities\OAuth\OAuthClientRegistryInterface;
-use Avax\Auth\System\Capabilities\OAuth\PkceMethod;
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
-use Avax\Auth\System\Capabilities\Oidc\OidcRequestObjectStoreInterface;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\OAuth\OAuthAuthorizationFailed;
-use Avax\Auth\System\Flows\Token\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcRequestObjectStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use DateTimeImmutable;

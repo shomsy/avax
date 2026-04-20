@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\Identity\Session;
 
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionLifetime;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;

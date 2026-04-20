@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Oidc;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
 
-use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 use SensitiveParameter;
 

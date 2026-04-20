@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Session\ReadActiveSessions;
+namespace Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\ReadActiveSessions;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Session\SessionRecord;
-use Avax\Auth\System\Capabilities\Session\SessionRegistryInterface;
-use Avax\Auth\System\Capabilities\Session\SessionRegistryUnavailable;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Session\ActiveSession;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\ActiveSession;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 

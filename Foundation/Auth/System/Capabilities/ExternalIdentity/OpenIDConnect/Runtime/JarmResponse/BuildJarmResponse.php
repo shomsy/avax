@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Oidc\JarmResponse;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse;
 
-use Avax\Auth\System\Capabilities\Oidc\OidcProviderInterface;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;

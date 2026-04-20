@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Federation;
+namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime;
 
 use RuntimeException;
 

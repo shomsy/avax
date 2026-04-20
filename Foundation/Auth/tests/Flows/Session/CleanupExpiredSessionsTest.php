@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Session;
 
-use Avax\Auth\System\Capabilities\Session\InMemorySessionRegistry;
-use Avax\Auth\System\Capabilities\Session\SessionRecord;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\Session\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use DateTimeImmutable;

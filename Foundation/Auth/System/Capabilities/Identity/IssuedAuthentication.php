@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity;
 
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationMode;
-use Avax\Auth\System\Flows\Token\IssuedRefreshToken;
-use Avax\Auth\System\Flows\Token\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use DateTimeImmutable;
 use SensitiveParameter;
 

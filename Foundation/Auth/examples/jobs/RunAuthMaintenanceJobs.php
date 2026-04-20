@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Examples\Jobs;
 
-use Avax\Auth\System\Flows\Diagnostics\ExportAuditEvents\ExportAuditEvents;
-use Avax\Auth\System\Flows\Mfa\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
-use Avax\Auth\System\Flows\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
-use Avax\Auth\System\Flows\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
-use Avax\Auth\System\Flows\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
-use Avax\Auth\System\Flows\Session\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
 use SensitiveParameter;
 
 /**

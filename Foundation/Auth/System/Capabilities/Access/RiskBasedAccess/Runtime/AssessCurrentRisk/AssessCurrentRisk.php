@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Risk\AssessCurrentRisk;
+namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\AssessCurrentRisk;
 
-use Avax\Auth\System\Capabilities\Risk\DeterministicRiskEngine;
-use Avax\Auth\System\Capabilities\Risk\RiskDecision;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 final readonly class AssessCurrentRisk

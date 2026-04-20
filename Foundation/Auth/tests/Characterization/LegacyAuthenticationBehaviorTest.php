@@ -7,13 +7,13 @@ namespace Avax\Auth\Tests\Characterization;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
-use Avax\Auth\System\Flows\Token\HmacTokenCodec;
-use Avax\Auth\System\Flows\Token\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Flows\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

@@ -6,7 +6,7 @@ namespace Avax\Auth\Integrations\Http;
 
 use Avax\Auth\Integrations\Cookies\ResolveSessionAllowance;
 use Avax\Auth\Integrations\Headers\ReadBearerToken;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
 use SensitiveParameter;
 
 /**

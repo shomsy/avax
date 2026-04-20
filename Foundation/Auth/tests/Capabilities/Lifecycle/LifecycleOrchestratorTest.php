@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capabilities\Lifecycle;
 
-use Avax\Auth\System\Capabilities\Lifecycle\InMemoryLifecycleStore;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleFailed;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleOrchestrator;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleSource;
-use Avax\Auth\System\Capabilities\Lifecycle\LifecycleState;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Flows\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\User\User;
+use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleFailed;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleState;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 

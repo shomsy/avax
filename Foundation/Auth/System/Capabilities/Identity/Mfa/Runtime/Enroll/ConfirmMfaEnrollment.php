@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Flows\Mfa\Enroll;
+namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\AuthenticateRequest\CurrentAuthentication;
-use Avax\Auth\System\Flows\Diagnostics\AuditEvent;
-use Avax\Auth\System\Flows\Diagnostics\AuditLogInterface;
-use Avax\Auth\System\Flows\Mfa\Backup\GenerateBackupCodes;
-use Avax\Auth\System\Flows\Mfa\BackupCodeSet;
-use Avax\Auth\System\Flows\Mfa\MfaEnrollmentFailed;
-use Avax\Auth\System\Flows\Mfa\MfaMethodRecord;
-use Avax\Auth\System\Flows\Mfa\MfaStoreInterface;
-use Avax\Auth\System\Flows\Mfa\TotpInterface;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeSet;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethodRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\TotpInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
 use Random\RandomException;
 use SensitiveParameter;

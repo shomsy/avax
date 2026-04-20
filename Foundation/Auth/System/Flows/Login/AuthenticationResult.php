@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\Login;
 
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticatedUser;
-use Avax\Auth\System\Flows\AuthenticateRequest\AuthenticationContext;
-use Avax\Auth\System\Flows\Mfa\MfaChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use SensitiveParameter;
 
 /**

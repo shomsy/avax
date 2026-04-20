@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Capabilities\Passkey;
+namespace Avax\Auth\System\Capabilities\Identity\Passkey\Support;
 
 use DateTimeImmutable;
 use SensitiveParameter;

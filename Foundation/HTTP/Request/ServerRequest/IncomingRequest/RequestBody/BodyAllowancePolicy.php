@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
+use SensitiveParameter;
+
 /**
  * BodyAllowancePolicy
  *
@@ -22,7 +24,7 @@ final readonly class BodyAllowancePolicy
         private array $allowedMethods = ['POST', 'PUT', 'PATCH', 'DELETE']
     ) {}
 
-    public function allowsRead(string $method, array $headers): bool
+    public function allowsRead(string $method, #[SensitiveParameter] array $headers) : bool
     {
         // Always allowed if method is in the list
         if (in_array(strtoupper($method), $this->allowedMethods, true)) {

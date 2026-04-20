@@ -17,7 +17,6 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSessio
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
-
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
@@ -88,7 +87,7 @@ final readonly class PrepareRequest
         );
     }
 
-    private function captureRawBody(string $method, array $headers, string|null $rawBody = null) : string
+    private function captureRawBody(string $method, #[SensitiveParameter] array $headers, string|null $rawBody = null) : string
     {
         if ($rawBody !== null) {
             return $rawBody;

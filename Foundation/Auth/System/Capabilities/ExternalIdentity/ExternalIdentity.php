@@ -43,9 +43,9 @@ use SensitiveParameter;
 final readonly class ExternalIdentity
 {
     public function __construct(
-        private OAuth\OAuth                 $oauth,
-        private OpenIDConnect\OpenIDConnect $oidc,
-        private SingleSignOn\SingleSignOn   $sso
+        #[SensitiveParameter] private OAuth\OAuth $oauth,
+        private OpenIDConnect\OpenIDConnect       $oidc,
+        private SingleSignOn\SingleSignOn         $sso
     ) {}
 
     public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient

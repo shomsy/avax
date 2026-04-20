@@ -73,12 +73,12 @@ final readonly class Login
         $this->failAuthentication($credentials);
     }
 
-    private function checkRateLimit(Credentials $credentials): void
+    private function checkRateLimit(#[SensitiveParameter] Credentials $credentials) : void
     {
         $this->rateLimit?->check(identifier: $credentials->identifier);
     }
 
-    private function failAuthentication(Credentials $credentials): never
+    private function failAuthentication(#[SensitiveParameter] Credentials $credentials) : never
     {
         $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
 
@@ -107,7 +107,7 @@ final readonly class Login
         );
     }
 
-    private function startMfa(User $user, Credentials $credentials) : AuthenticationResult
+    private function startMfa(User $user, #[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         $challenge = $this->startMfaChallenge->issueForLogin(
             user: $user,
@@ -121,7 +121,7 @@ final readonly class Login
         );
     }
 
-    private function completeLogin(User $user, Credentials $credentials) : AuthenticationResult
+    private function completeLogin(User $user, #[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         $issued = $this->identity->issue(user: $user);
 

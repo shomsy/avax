@@ -62,15 +62,15 @@ use SensitiveParameter;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        private Authentication                $authentication,
-        private Sessions                      $session,
-        private Account                       $account,
-        private Recovery                      $recovery,
-        private Verification                  $verification,
-        private Mfa                           $mfa,
-        private Passkey                       $passkey,
-        private SessionIdentityInterface|null $sessionIdentity = null,
-        private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] private Authentication                $authentication,
+        #[SensitiveParameter] private Sessions                      $session,
+        #[SensitiveParameter] private Account                       $account,
+        private Recovery                                            $recovery,
+        private Verification                                        $verification,
+        private Mfa                                                 $mfa,
+        private Passkey                                             $passkey,
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {}
 
     public function issue(

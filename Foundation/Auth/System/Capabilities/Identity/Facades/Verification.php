@@ -9,12 +9,13 @@ use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificati
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmail;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
+use SensitiveParameter;
 
 final readonly class Verification
 {
     public function __construct(
-        private BeginEmailVerification $beginEmailVerification,
-        private VerifyEmail            $verifyEmail
+        #[SensitiveParameter] private BeginEmailVerification $beginEmailVerification,
+        #[SensitiveParameter] private VerifyEmail            $verifyEmail
     ) {}
 
     public function beginEmailVerification(BeginEmailVerificationData $data) : EmailVerificationChallenge

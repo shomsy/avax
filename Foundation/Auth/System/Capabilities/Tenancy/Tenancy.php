@@ -16,13 +16,12 @@ use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TransferOwnership\Trans
 use Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
 use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
-use SensitiveParameter;
 
 final readonly class Tenancy
 {
     public function __construct(
-        private Tenants\Tenants                         $tenants,
-        #[SensitiveParameter] private Security\Security $security
+        private Tenants\Tenants   $tenants,
+        private Security\Security $security
     ) {}
 
     public function createTenant(CreateTenantData $data) : Tenant

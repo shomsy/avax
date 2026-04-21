@@ -377,7 +377,7 @@ final readonly class PushAuthorizationRequest
     private function normalizeScopeValue(string|array|null $value) : array
     {
         if (is_array($value)) {
-            return $value;
+            return array_values($value);
         }
 
         if (! is_string($value) || trim($value) === '') {

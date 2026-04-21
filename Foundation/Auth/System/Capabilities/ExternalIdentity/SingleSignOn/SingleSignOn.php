@@ -23,6 +23,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSuppor
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use JsonException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class SingleSignOn
@@ -52,6 +53,9 @@ final readonly class SingleSignOn
             && $this->completeFederatedLogin !== null;
     }
 
+    /**
+     * @throws RandomException
+     */
     public function registerConnection(RegisterFederationConnectionData $data) : FederationConnection
     {
         return $this->registerConnectionOrFail()->execute(data: $data);
@@ -138,6 +142,9 @@ final readonly class SingleSignOn
         return $this->startFederatedLogin ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'start_federated_login');
     }
 
+    /**
+     * @throws RandomException
+     */
     public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
     {
         return $this->completeFederatedLoginOrFail()->execute(data: $data);

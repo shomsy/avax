@@ -19,6 +19,8 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthen
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class Login
@@ -56,6 +58,9 @@ final readonly class Login
         return $this->completeLogin($user, $credentials);
     }
 
+    /**
+     * @throws AuthenticationFailed
+     */
     private function authenticate(#[SensitiveParameter] Credentials $credentials) : User
     {
         $user = $this->userSource->findByCredentials(credentials: $credentials);
@@ -73,11 +78,17 @@ final readonly class Login
         $this->failAuthentication($credentials);
     }
 
+    /**
+     * @throws RateLimitException
+     */
     private function checkRateLimit(#[SensitiveParameter] Credentials $credentials) : void
     {
         $this->rateLimit?->check(identifier: $credentials->identifier);
     }
 
+    /**
+     * @throws AuthenticationFailed
+     */
     private function failAuthentication(#[SensitiveParameter] Credentials $credentials) : never
     {
         $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
@@ -107,6 +118,10 @@ final readonly class Login
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     private function startMfa(User $user, #[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         $challenge = $this->startMfaChallenge->issueForLogin(

@@ -8,15 +8,15 @@ use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle
 use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaRecoveryFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\BeginMfaRecoveryData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\ConfirmMfaRecovery;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\StartMfaRecovery;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -27,15 +27,21 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticatio
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\Tests\Support\FrozenClock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 /**
  * Unit tests for MFA recovery.
  */
 final class MfaRecoveryTest extends TestCase
 {
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testRecoveryResetsMfaAndClearsCurrentSession() : void
     {
         $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
@@ -97,6 +103,10 @@ final class MfaRecoveryTest extends TestCase
         $this->assertFalse(condition: $currentAuthentication->read()->isAuthenticated());
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testRecoveryUsesAntiEnumerationForMissingUser() : void
     {
         $start = new StartMfaRecovery(
@@ -126,6 +136,10 @@ final class MfaRecoveryTest extends TestCase
         $confirm->execute(data: new ConfirmMfaRecoveryData(token: 'missing-token'));
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testRecoveryStartIsThrottledAfterConfiguredLimit() : void
     {
         $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));

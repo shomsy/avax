@@ -204,7 +204,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         ];
 
         if ($scopes !== []) {
-            $payload['scope'] = implode(' ', array_values($scopes));
+            $payload['scope'] = implode(' ', $scopes);
         }
 
         if ($audience !== null && trim($audience) !== '') {
@@ -388,7 +388,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         if ($scopes !== []) {
-            $payload['scope'] = implode(' ', array_values($scopes));
+            $payload['scope'] = implode(' ', $scopes);
         }
 
         if ($senderConstraint !== null) {

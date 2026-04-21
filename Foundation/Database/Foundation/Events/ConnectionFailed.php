@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\Events;
 
+use Override;
 use Throwable;
 
 /**
@@ -22,7 +23,7 @@ final readonly class ConnectionFailed extends Event
      * @param string    $correlationId  The technical trace identifier used for correlating this failure with a
      *                                  specific execution scope.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string    $connectionName,
         Throwable $exception,

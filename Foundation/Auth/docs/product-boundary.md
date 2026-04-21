@@ -157,7 +157,7 @@ and full identity platform.
 ## Version
 
 - Auth: 1.0.0+
-- PHP: 8.3+
+- PHP: 8.5+
 - Boundary: 1.0.0
 
 ---

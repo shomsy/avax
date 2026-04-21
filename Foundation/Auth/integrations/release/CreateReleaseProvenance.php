@@ -25,7 +25,7 @@ final readonly class CreateReleaseProvenance
             'git_dirty'           => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['status', '--short']) !== '',
             'generated_at'        => gmdate(DATE_ATOM),
             'php_version'         => PHP_VERSION,
-            'validation_commands' => array_values($validationCommands),
+            'validation_commands' => $validationCommands,
         ];
     }
 

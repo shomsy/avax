@@ -5,6 +5,7 @@ declare(strict_types=1); // Strict type declarations to enforce type safety and 
 namespace Avax\DataHandling\ObjectHandling\DTO;
 
 use InvalidArgumentException;
+use Override;
 
 /**
  * DTOValidationException
@@ -48,7 +49,7 @@ final class DTOValidationException extends InvalidArgumentException
      * @param array<string, string> $errors    Associative array of validation errors, with keys as field names
      *                                         and values as corresponding messages explaining the validation failure.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string $message,
         array  $errors,

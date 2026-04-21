@@ -1,6 +1,6 @@
 # Avax Auth
 
-Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, separate web-session and API-token lanes,
+Pure PHP 8.5+ auth kernel with one obvious ingress, immutable auth context, separate web-session and API-token lanes,
 first-class MFA, package-owned OAuth, OIDC, SCIM, and tenant-security flows, workload identity, adapter-first passkeys
 and federation, deterministic risk, admin elevation, and a thin optional integration surface.
 

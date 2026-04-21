@@ -7,13 +7,6 @@ use Rector\Set\ValueObject\SetList;
 use Rector\ValueObject\PhpVersion;
 
 return static function (RectorConfig $rectorConfig) : void {
-    $rectorPhpVersion = defined(PhpVersion::class . '::PHP_85')
-        ? constant(PhpVersion::class . '::PHP_85')
-        : PhpVersion::PHP_84;
-    $rectorPhpSet     = defined(SetList::class . '::PHP_85')
-        ? constant(SetList::class . '::PHP_85')
-        : SetList::PHP_84;
-
     $rectorConfig->paths([
                              __DIR__ . '/System',
                              __DIR__ . '/integrations',
@@ -26,8 +19,8 @@ return static function (RectorConfig $rectorConfig) : void {
                             __DIR__ . '/vendor',
                         ]);
 
-    $rectorConfig->phpVersion($rectorPhpVersion);
+    $rectorConfig->phpVersion(PhpVersion::PHP_85);
     $rectorConfig->sets([
-                            $rectorPhpSet,
+                            SetList::PHP_85,
                         ]);
 };

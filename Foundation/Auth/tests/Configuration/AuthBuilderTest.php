@@ -14,11 +14,10 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJso
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\InMemoryFederatedIdentityLinkStore;
-use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Support\InMemoryPasskeyCredentialStore;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
@@ -399,7 +398,7 @@ class AuthBuilderTest extends TestCase
 
     private function jwtIdentity(
         InMemoryUserSource        $userSource,
-        InMemoryRefreshTokenStore $refreshTokens
+        #[SensitiveParameter] InMemoryRefreshTokenStore $refreshTokens
     ) : JwtIdentity
     {
         return new JwtIdentity(

@@ -546,7 +546,7 @@ final readonly class ServeTenantSecurityHttpSurface
             }
         }
 
-        return array_values($resolved);
+        return $resolved;
     }
 
     /**

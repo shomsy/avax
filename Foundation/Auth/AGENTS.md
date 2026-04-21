@@ -75,11 +75,11 @@ Agents MUST follow this order:
         - `Configuration/`: Setup and wiring logic.
         - `Auth.php`, `AuthInterface.php`: Root entry points.
 5. **Applied Governance Stack**:
-    - **Delivery Kind**: `framework` (pure PHP 8.3+ authentication/authorization framework)
+    - **Delivery Kind**: `framework` (pure PHP 8.5+ authentication/authorization framework)
     - **Applied Repository Profiles**: `php-framework`
     - **Languages**: `PHP`
-    - **Frameworks Or Runtimes**: `pure PHP 8.3+` (no framework dependency)
-    - **Applied Coding Profiles**: `php-modern` (PHP 8.3+ idioms)
+    - **Frameworks Or Runtimes**: `pure PHP 8.5+` (no framework dependency)
+    - **Applied Coding Profiles**: `php-modern` (PHP 8.5+ idioms)
     - **Applied Architecture Profiles**: `vertical-slice` (feature-sliced architecture)
     - **Security Lanes Required**: `governance/security/**`
     - **Operations Lanes Required**: `delivery/operations/**` (library distribution)
@@ -91,7 +91,7 @@ Agents MUST follow this order:
     - `.agents/review/` - Code review archives
 7. **Project-Specific Exceptions or Forbidden Shortcuts**:
     - No Laravel-specific adapters in core (framework-agnostic)
-    - Must maintain PHP 8.3+ minimum
+   - Must maintain PHP 8.5+ minimum
 
 ## 2. Strict TDD Discipline
 

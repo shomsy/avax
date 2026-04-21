@@ -20,12 +20,18 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthen
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class RefreshAuthenticationTest extends TestCase
 {
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function testRefreshAuthenticationRejectsRotatedTokenReuseAndRevokesFamily() : void
     {
         $user = new User(
@@ -78,6 +84,9 @@ final class RefreshAuthenticationTest extends TestCase
         $refreshAuthentication->execute(request: new RefreshAuthenticationRequest(refreshToken: $issued->token));
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testRefreshAuthenticationRejectsUnknownRefreshToken() : void
     {
         $userSource = Mockery::mock(UserSourceInterface::class);

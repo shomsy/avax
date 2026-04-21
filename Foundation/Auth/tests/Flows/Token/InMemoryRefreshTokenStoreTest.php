@@ -8,9 +8,13 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshT
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class InMemoryRefreshTokenStoreTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testIssueFindAndRotateRefreshTokenRecords() : void
     {
         $store = new InMemoryRefreshTokenStore();
@@ -37,6 +41,9 @@ final class InMemoryRefreshTokenStoreTest extends TestCase
         $this->assertTrue(condition: $rotated?->wasRotated() ?? false);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testRevokeFamilyAndUserAffectOnlyMatchingRecords() : void
     {
         $store = new InMemoryRefreshTokenStore();

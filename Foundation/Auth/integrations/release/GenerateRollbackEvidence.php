@@ -34,7 +34,7 @@ final readonly class GenerateRollbackEvidence
             'rollback_ready'      => $resolvedTarget !== null,
             'rollback_command'    => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
             'generated_at'        => gmdate(DATE_ATOM),
-            'validation_commands' => array_values($validationCommands),
+            'validation_commands' => $validationCommands,
             'artifacts'           => $this->artifactEvidence(artifacts: $artifacts),
         ];
     }

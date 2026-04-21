@@ -6,6 +6,7 @@ namespace Avax\DataHandling\Validation\Attributes\Rules\Database\Query;
 
 use Attribute;
 use Avax\DataHandling\Validation\Attributes\AbstractRule;
+use Override;
 
 /**
  * Validates that a value is a valid SQL column identifier.
@@ -27,7 +28,7 @@ class IsValidColumnName extends AbstractRule
         $this->message = $message;
     }
 
-    #[\Override]
+    #[Override]
     public function validate(mixed $value, array $data, string $property) : void
     {
         if (! is_string(value: $value)) {

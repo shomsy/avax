@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Exceptions;
 
+use Override;
 use RuntimeException;
 use Throwable;
 
@@ -17,7 +18,7 @@ class ValidationException extends RuntimeException
     /**
      * Constructor for the ValidationException.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string         $message,
         int            $code = 422,

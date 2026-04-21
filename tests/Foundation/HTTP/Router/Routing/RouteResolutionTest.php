@@ -11,8 +11,10 @@ use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\URI\UriBuilder;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use ReflectionException;
 
 /**
  * Test suite for route matching and compilation.
@@ -23,7 +25,7 @@ final class RouteResolutionTest extends TestCase
 
     /**
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_compile_optional_parameter() : void
     {
@@ -53,7 +55,7 @@ final class RouteResolutionTest extends TestCase
 
     /**
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_compile_wildcard_parameter() : void
     {
@@ -81,7 +83,7 @@ final class RouteResolutionTest extends TestCase
         $this->assertEquals(expected: 'a/b/c', actual: $matches['path']);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->matcher = new RouteMatcher(logger: new NullLogger);

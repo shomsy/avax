@@ -385,8 +385,8 @@ final readonly class ServeScimHttpSurface
             externalId    : $externalId,
             email         : $this->email(body: $body, fallback: $existing?->email),
             username      : $this->username(body: $body, fallback: $existing?->username),
-            groups        : $this->groups(body: $body, fallback: $existing?->groups ?? []),
-            state         : $this->state(body: $body, fallback: $existing?->state ?? ScimAccountState::ACTIVE)
+            groups        : $this->groups(body: $body, fallback: $existing !== null ? $existing->groups : []),
+            state         : $this->state(body: $body, fallback: $existing !== null ? $existing->state : ScimAccountState::ACTIVE)
         );
     }
 

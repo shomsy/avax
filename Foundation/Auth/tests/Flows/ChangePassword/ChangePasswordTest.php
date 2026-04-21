@@ -195,6 +195,10 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
+    /**
+     * @throws RateLimitException
+     * @throws PasswordChangeFailed
+     */
     public function testChangePasswordRejectsStaleAuthenticatedUserSnapshot() : void
     {
         $passwordHasher        = $this->passwordHasher();

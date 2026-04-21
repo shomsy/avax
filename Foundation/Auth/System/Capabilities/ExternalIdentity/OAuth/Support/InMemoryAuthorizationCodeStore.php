@@ -45,7 +45,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             clientId           : $clientId,
             userId             : $userId,
             redirectUri        : $redirectUri,
-            scopes             : array_values($scopes),
+            scopes             : $scopes,
             expiresAt          : $expiresAt,
             nonce              : $nonce,
             codeChallenge      : $codeChallenge,

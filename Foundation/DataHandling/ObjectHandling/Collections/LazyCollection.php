@@ -6,6 +6,7 @@ namespace Avax\DataHandling\ObjectHandling\Collections;
 
 use Avax\DataHandling\ArrayHandling\Traits\LazyEvaluationTrait;
 use Closure;
+use Override;
 use Traversable;
 
 /**
@@ -25,7 +26,7 @@ class LazyCollection extends Collection
      *
      * @param Closure $generator A generator function to build the collection lazily.
      */
-    #[\Override]
+    #[Override]
     public function __construct(Closure $generator)
     {
         $this->generator = $generator;
@@ -39,7 +40,7 @@ class LazyCollection extends Collection
      *
      * @return array The entire collection as an array.
      */
-    #[\Override]
+    #[Override]
     public function all() : array
     {
         return iterator_to_array(iterator: $this->getIterator());
@@ -52,7 +53,7 @@ class LazyCollection extends Collection
      *
      * @return Traversable The generator yielding items of the collection.
      */
-    #[\Override]
+    #[Override]
     public function getIterator() : Traversable
     {
         return ($this->generator)();
@@ -67,7 +68,7 @@ class LazyCollection extends Collection
      *
      * @return static A new lazy collection containing every nth item.
      */
-    #[\Override]
+    #[Override]
     public function nth(int $step) : static
     {
         parent::nth($step);
@@ -90,7 +91,7 @@ class LazyCollection extends Collection
      *
      * @return static A new lazy collection containing items while the callback returns true.
      */
-    #[\Override]
+    #[Override]
     public function takeWhile(Closure $callback) : static
     {
         return new static(generator: function () use ($callback) {

@@ -25,19 +25,20 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\VerifyMfaChallenge
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use DateMalformedStringException;
 use Random\RandomException;
+use SensitiveParameter;
 
 final readonly class Mfa
 {
     public function __construct(
-        private StartMfaEnrollment    $startMfaEnrollment,
-        private ConfirmMfaEnrollment  $confirmMfaEnrollment,
-        private CancelMfaEnrollment   $cancelMfaEnrollment,
-        private StartMfaChallenge     $startMfaChallenge,
-        private VerifyMfaChallenge    $verifyMfaChallenge,
-        private RegenerateBackupCodes $regenerateBackupCodes,
-        private DisableMfa            $disableMfa,
-        private StartMfaRecovery      $startMfaRecovery,
-        private ConfirmMfaRecovery    $confirmMfaRecovery
+        private StartMfaEnrollment                          $startMfaEnrollment,
+        private ConfirmMfaEnrollment                        $confirmMfaEnrollment,
+        private CancelMfaEnrollment                         $cancelMfaEnrollment,
+        private StartMfaChallenge                           $startMfaChallenge,
+        private VerifyMfaChallenge                          $verifyMfaChallenge,
+        #[SensitiveParameter] private RegenerateBackupCodes $regenerateBackupCodes,
+        private DisableMfa                                  $disableMfa,
+        private StartMfaRecovery                            $startMfaRecovery,
+        private ConfirmMfaRecovery                          $confirmMfaRecovery
     ) {}
 
     /**
@@ -98,6 +99,10 @@ final readonly class Mfa
         $this->disableMfa->execute();
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function beginMfaRecovery(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
         return $this->startMfaRecovery->execute(data: $data);

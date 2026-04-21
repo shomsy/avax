@@ -7,13 +7,14 @@ declare(strict_types=1);
 namespace Avax\View;
 
 use Jenssegers\Blade\Blade;
+use Override;
 use Throwable;
 
 class BladeTemplateEngine extends Blade
 {
     public string $baseAssetPath;
 
-    #[\Override]
+    #[Override]
     public function __construct(string $viewsPath, string $cachePath)
     {
         parent::__construct(viewPaths: $viewsPath, cachePath: $cachePath);

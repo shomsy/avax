@@ -3,9 +3,14 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\HTTP\Router\RouterDsl;
+use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Routing\RouterRegistrar;
+use Avax\HTTP\Router\Support\FallbackManager;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\HTTP\Router\RouterDsl::class,
+                                                'class'              => RouterDsl::class,
                                                 'constructor'        =>
                                                     MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
@@ -13,7 +18,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                 [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'registrar',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Routing\RouterRegistrar::class,
+                                                                                                                                               'type' => RouterRegistrar::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -22,7 +27,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'router',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Routing\HttpRequestRouter::class,
+                                                                                                                                               'type' => HttpRequestRouter::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -31,7 +36,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'controllerDispatcher',
-                                                                                                                                               'type'       => \Avax\HTTP\Dispatcher\ControllerDispatcher::class,
+                                                                                                                                               'type' => ControllerDispatcher::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -40,7 +45,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'fallbackManager',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Support\FallbackManager::class,
+                                                                                                                                               'type' => FallbackManager::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,

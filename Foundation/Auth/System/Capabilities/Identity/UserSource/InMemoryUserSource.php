@@ -136,7 +136,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 email       : $user->email,
                 username    : $user->username,
                 passwordHash: $user->passwordHash,
-                roles       : array_values($roles),
+                roles       : $roles,
                 permissions : $user->permissions,
                 isActive    : $user->isActive
             )
@@ -153,7 +153,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 username    : $user->username,
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
-                permissions : array_values($permissions),
+                permissions : $permissions,
                 isActive    : $user->isActive
             )
         );

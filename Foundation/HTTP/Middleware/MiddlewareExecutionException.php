@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Middleware;
 
 use Exception;
+use Override;
 
 /**
  * Class MiddlewareExecutionException
@@ -20,7 +21,7 @@ final class MiddlewareExecutionException extends Exception
      * @param int            $code     The Exception code.
      * @param Exception|null $previous The previous throwable used for exception chaining.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string         $message = '',
         int            $code = 0,

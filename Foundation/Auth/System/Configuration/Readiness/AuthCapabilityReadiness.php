@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use SensitiveParameter;
 
 final readonly class AuthCapabilityReadiness
 {
@@ -20,11 +21,11 @@ final readonly class AuthCapabilityReadiness
     ) {}
 
     public static function from(
-        JwtIdentityInterface|null             $jwtIdentity,
-        RefreshTokenStoreInterface|null       $refreshTokenStore,
-        PasskeyRuntimeInterface|null          $passkeyRuntime,
-        FederationRuntimeInterface|null       $federationRuntime,
-        ProvisionableUserSourceInterface|null $provisionableUserSource
+        #[SensitiveParameter] JwtIdentityInterface|null       $jwtIdentity,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore,
+        PasskeyRuntimeInterface|null                          $passkeyRuntime,
+        FederationRuntimeInterface|null                       $federationRuntime,
+        ProvisionableUserSourceInterface|null                 $provisionableUserSource
     ) : self
     {
         return new self(

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Validation\Exceptions;
 
 use Exception;
+use Override;
 
 /**
  * Exception thrown when a route constraint pattern is invalid.
  */
 class InvalidConstraintException extends Exception
 {
-    #[\Override]
+    #[Override]
     public function __construct(string $pattern, string $reason = '')
     {
         $message = "Invalid route constraint pattern: {$pattern}";

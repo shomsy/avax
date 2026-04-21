@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\Connection\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
+use Override;
 use Throwable;
 
 /**
@@ -38,7 +39,7 @@ class ConnectionFailure extends DatabaseException
      * @param string         $message  The detailed explanation of the failure.
      * @param Throwable|null $previous The raw technical error from the network or driver.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string         $name,
         string         $message = '',

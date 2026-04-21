@@ -22,6 +22,7 @@ use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Providers\ServiceProvider;
 use Override;
+use ReflectionException;
 
 /**
  * Optional Avax Container adapter for assembling the auth kernel.
@@ -109,6 +110,9 @@ final class AuthServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function applyOptionalBindings(AuthBuilder $builder) : AuthBuilder
     {
         if ($this->app->has(id: Clock::class)) {
@@ -122,6 +126,9 @@ final class AuthServiceProvider extends ServiceProvider
         return $builder;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function resolveLoginRateLimit() : LoginRateLimit|null
     {
         if ($this->app->has(id: LoginRateLimit::class)) {

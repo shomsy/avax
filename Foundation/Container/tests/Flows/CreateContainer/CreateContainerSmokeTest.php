@@ -41,6 +41,8 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws Throwable
  */ expectedClass: ServiceNotFoundException::class,
     callback     : static fn () => $container->get(id: 'Missing\\Service'),
     message      : 'Missing services must use the not-found contract.'

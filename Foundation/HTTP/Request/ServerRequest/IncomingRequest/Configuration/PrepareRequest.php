@@ -22,6 +22,7 @@ use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
+use ReflectionException;
 use SensitiveParameter;
 
 /**
@@ -38,6 +39,9 @@ final readonly class PrepareRequest
         private BodyAllowancePolicy      $bodyAllowance = new BodyAllowancePolicy(),
     ) {}
 
+    /**
+     * @throws ReflectionException
+     */
     public function fromGlobals(
         array|null $server = null,
         array|null $query = null,

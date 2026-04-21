@@ -77,11 +77,11 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSuppor
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Account;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Mfa;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\RegenerateBackupCodes;
@@ -181,8 +181,8 @@ use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfigurationSt
 use Avax\Auth\System\Capabilities\Tenancy\Tenancy;
 use Avax\Auth\System\Capabilities\Tenancy\Tenants\Tenants;
 use Avax\Auth\System\Configuration\Readiness\AuthBootstrapValidator;
-use Avax\Auth\System\Configuration\Readiness\AuthCapabilityRequests;
 use Avax\Auth\System\Configuration\Readiness\AuthCapabilityReadiness;
+use Avax\Auth\System\Configuration\Readiness\AuthCapabilityRequests;
 use Avax\Auth\System\Flows\ChangeEmail\BeginEmailChange;
 use Avax\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;
 use Avax\Auth\System\Flows\ChangeEmail\EmailChangeStoreInterface;
@@ -208,9 +208,9 @@ use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerific
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStore;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmail;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
-use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
 use SensitiveParameter;
 
 /**
@@ -298,8 +298,8 @@ final class AuthBuilder
     }
 
     public function withIdentityBackends(
-        SessionIdentityInterface|null $sessionIdentity = null,
-        JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] JwtIdentityInterface|null     $jwtIdentity = null
     ) : self
     {
         $this->identity = Identity::fromBackends(

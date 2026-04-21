@@ -29,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionNamedType;
 use ReflectionParameter;
 use SplFileInfo;
@@ -271,6 +272,9 @@ final class ProductBoundaryTest extends TestCase
         }
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testZoneFacadesAreDecomposedIntoLocalOwnerFacades() : void
     {
         $root = dirname(__DIR__, 2);

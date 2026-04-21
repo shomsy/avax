@@ -13,8 +13,8 @@ use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteAuthenticatio
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistration;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistrationData;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\ListPasskeys\ListPasskeys;
-use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyAuthenticationChallenge;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey\RenamePasskeyData;
@@ -28,13 +28,13 @@ use SensitiveParameter;
 final readonly class Passkey
 {
     public function __construct(
-        private BeginPasskeyRegistration|null            $beginPasskeyRegistration,
-        private CompletePasskeyRegistration|null         $completePasskeyRegistration,
-        private BeginPasskeyAuthentication|null          $beginPasskeyAuthentication,
-        private CompletePasskeyAuthentication|null       $completePasskeyAuthentication,
-        private ListPasskeys|null                        $readPasskeys,
-        private RenamePasskey|null                       $renamePasskey,
-        #[SensitiveParameter] private RevokePasskey|null $revokePasskey
+        private BeginPasskeyRegistration|null                            $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null                         $completePasskeyRegistration,
+        #[SensitiveParameter] private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
+        #[SensitiveParameter] private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        private ListPasskeys|null                                        $readPasskeys,
+        private RenamePasskey|null                                       $renamePasskey,
+        #[SensitiveParameter] private RevokePasskey|null                 $revokePasskey
     ) {}
 
     public function isConfigured() : bool

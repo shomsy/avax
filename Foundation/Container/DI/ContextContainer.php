@@ -99,6 +99,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->base->canInject(target: $target);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function inspectInjection(object $target) : InjectionReport
     {
         return $this->base->inspectInjection(target: $target);
@@ -287,6 +290,9 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->closeScope(kind: $kind);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function compileContainer(array $serviceIds = []) : void
     {
         $this->base->compileContainer(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
@@ -328,6 +334,9 @@ readonly class ContextContainer implements ContainerInterface
         return $filtered;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function warmCompiled(array $serviceIds = []) : void
     {
         $this->base->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
@@ -433,11 +442,17 @@ readonly class ContextContainer implements ContainerInterface
         return $this->exportGraphFlow()->why(id: $id, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function whoUses(string $id) : array
     {
         return $this->exportGraphFlow()->whoUses(id: $id, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function whatBreaksIf(string $id) : array
     {
         return $this->exportGraphFlow()->whatBreaksIf(id: $id, context: $this->context);

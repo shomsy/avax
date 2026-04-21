@@ -20,6 +20,9 @@ use ReflectionException;
  */
 class RequestRegressionTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function test_headers_must_be_strictly_list_of_strings() : void
     {
         $request = $this->createBlankOldRequest();
@@ -47,6 +50,9 @@ class RequestRegressionTest extends TestCase
         );
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_header_lookup_must_be_case_insensitive() : void
     {
         $request = $this->createBlankOldRequest();
@@ -56,6 +62,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: ['Alpha'], actual: $request->getHeader(name: 'X-CUSTOM'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_server_protocol_http_1_1_must_normalize_to_1_1() : void
     {
         $request = $this->createBlankOldRequest(serverParams: ['SERVER_PROTOCOL' => 'HTTP/1.1']);
@@ -63,6 +72,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: '1.1', actual: $request->getProtocolVersion());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_request_target_must_not_blindly_follow_uri_path_mutation() : void
     {
         $request = $this->createBlankOldRequest()->withRequestTarget(requestTarget: '/explicit-target');
@@ -74,6 +86,9 @@ class RequestRegressionTest extends TestCase
         $this->assertSame(expected: '/explicit-target', actual: $requestWithNewUri->getRequestTarget());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_must_not_blindly_trust_forwarded_metadata_as_true_client_ip() : void
     {
         $request = $this->createBlankOldRequest(serverParams: [

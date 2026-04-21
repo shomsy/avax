@@ -174,6 +174,8 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: InternalAuditTrail::class);
@@ -188,6 +190,8 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: BillingFlowUsesInternalAudit::class);

@@ -3,9 +3,11 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\HTTP\Router\Routing\HttpRequestRouter::class,
+                                                'class'              => HttpRequestRouter::class,
                                                 'constructor'        =>
                                                     MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
@@ -13,7 +15,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                 [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'constraintValidator',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Validation\RouteConstraintValidator::class,
+                                                                                                                                               'type' => RouteConstraintValidator::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,

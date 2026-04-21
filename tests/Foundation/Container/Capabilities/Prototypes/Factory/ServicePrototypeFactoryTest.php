@@ -9,6 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionT
 use Avax\Container\DependencyInjection\Capability\Prototypes\Cache\PrototypeCache;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
@@ -65,7 +66,7 @@ final class ServicePrototypeFactoryTest extends TestCase
         $this->factory->createFor(class: 'Iterator');
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->cache   = $this->createMock(PrototypeCache::class);

@@ -23,8 +23,8 @@ final readonly class User implements UserInterface, Stringable
     public UserId    $id;
 
     /**
-     * @param array<UserRole>       $roles
-     * @param array<UserPermission> $permissions
+     * @param array<UserRole>|null       $roles
+     * @param array<UserPermission>|null $permissions
      */
     public function __construct(
         UserId                          $id,
@@ -42,8 +42,8 @@ final readonly class User implements UserInterface, Stringable
         $this->email        = $email;
         $this->username     = $username;
         $this->passwordHash = $passwordHash;
-        $this->roles        = $roles;
-        $this->permissions  = $permissions;
+        $this->roles = array_values($roles);
+        $this->permissions = array_values($permissions);
         $this->isActive     = $isActive;
     }
 

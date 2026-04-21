@@ -30,7 +30,7 @@ readonly class NotIn
     public function __construct(array $values) { $this->values = $values; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

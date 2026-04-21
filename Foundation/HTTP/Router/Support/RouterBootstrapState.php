@@ -28,7 +28,7 @@ final class RouterBootstrapState
     /**
      * Ensure the bootstrapper has not already been booted.
      *
-     * @throws \RuntimeException If already bootstrapped
+     * @throws RuntimeException If already bootstrapped
      */
     public function ensureNotBooted() : void
     {

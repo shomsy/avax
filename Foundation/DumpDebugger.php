@@ -22,7 +22,7 @@ final class DumpDebugger
      *
      * @return never Method terminates execution
      *
-     * @throws \RuntimeException If headers have already been sent
+     * @throws RuntimeException If headers have already been sent
      *
      * @api
      *
@@ -342,7 +342,7 @@ final class DumpDebugger
      *
      * @param mixed ...$args The variables to dump for inspection
      *
-     * @throws \RuntimeException If output buffering has already started
+     * @throws RuntimeException If output buffering has already started
      */
     public static function dumpx(mixed ...$args) : void
     {

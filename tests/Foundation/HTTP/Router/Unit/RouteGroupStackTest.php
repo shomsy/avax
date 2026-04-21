@@ -144,7 +144,7 @@ class RouteGroupStackTest extends TestCase
         $this->assertEquals(expected: 1, actual: $stack2->depth());
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->stack = new RouteGroupStack;

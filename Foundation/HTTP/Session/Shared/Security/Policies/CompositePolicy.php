@@ -151,7 +151,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @throws \RuntimeException If any policy fails.
+     * @throws RuntimeException If any policy fails.
      */
     private function enforceAll(array $data) : void
     {
@@ -193,7 +193,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @throws \RuntimeException If all policies fail.
+     * @throws RuntimeException If all policies fail.
      */
     private function enforceAny(array $data) : void
     {
@@ -228,7 +228,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @throws \RuntimeException If any policy passes.
+     * @throws RuntimeException If any policy passes.
      */
     private function enforceNone(array $data) : void
     {

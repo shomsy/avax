@@ -278,8 +278,8 @@ class InMemoryCache implements CacheInterface
      *
      * @return bool True on success.
      *
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function clearNamespace(string $namespace) : bool
     {

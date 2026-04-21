@@ -193,7 +193,7 @@ trait Serialization
      * @return stdClass The DTO represented as a standard class object.
      *
      * @throws JsonException If the DTO cannot be encoded into JSON.
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function toStdClass() : stdClass
     {
@@ -215,7 +215,7 @@ trait Serialization
      *
      * @return Collection Immutable collection containing the object's data
      *
-     * @throws \ReflectionException When reflection fails to analyze the object structure
+     * @throws ReflectionException When reflection fails to analyze the object structure
      *
      * @api
      *
@@ -239,7 +239,7 @@ trait Serialization
      *
      * @return array<string, array<string, mixed>> The JSON:API formatted response
      *
-     * @throws \ReflectionException When reflection fails during property inspection
+     * @throws ReflectionException When reflection fails during property inspection
      *
      * @see https://jsonapi.org/format/ JSON:API Specification
      */

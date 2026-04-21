@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
-use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
@@ -23,10 +24,10 @@ final readonly class VerifyBackupCode
     private MfaStoreInterface $mfaStore;
 
     public function __construct(
-        MfaStoreInterface                     $mfaStore,
-        #[\SensitiveParameter] PasswordHasher $passwordHasher,
-        AuditLogInterface                     $auditLog,
-        Clock                                 $clock
+        MfaStoreInterface                    $mfaStore,
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        AuditLogInterface                    $auditLog,
+        Clock                                $clock
     )
     {
         $this->mfaStore       = $mfaStore;

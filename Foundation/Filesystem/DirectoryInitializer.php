@@ -29,8 +29,8 @@ readonly class DirectoryInitializer
      * @param string               $directoryPath The path to the directory to be initialized.
      * @param FileServiceInterface $fileService   The file service to handle directory operations.
      *
-     * @throws \Exception
-     * @throws \Exception
+     * @throws Exception
+     * @throws Exception
      */
     public function __construct(
         string               $directoryPath,

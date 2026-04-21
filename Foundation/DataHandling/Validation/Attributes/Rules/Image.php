@@ -26,13 +26,13 @@ use Avax\Exceptions\ValidationException;
  * invalid data from entering the system, which could cause errors downstream.
  * This method throws an exception if validation fails to enforce strict conformity.
  *
- * @throws \Avax\Exceptions\ValidationException If the file extension is not permitted.
+ * @throws ValidationException If the file extension is not permitted.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Image
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

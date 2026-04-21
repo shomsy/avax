@@ -17,7 +17,7 @@ use DateTimeZone;
 /**
  * Validates whether the provided value is a valid timezone identifier.
  *
- * @throws \Avax\Exceptions\ValidationException If the value is not a valid timezone identifier.
+ * @throws ValidationException If the value is not a valid timezone identifier.
  *
  * The method leverages the DateTimeZone::listIdentifiers() method to ensure
  * the value conforms to one of the recognized timezone identifiers. This is
@@ -29,7 +29,7 @@ use DateTimeZone;
 class Timezone
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

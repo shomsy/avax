@@ -119,28 +119,28 @@ final class RouteCollector
             // This replaces the global state approach
             $dslFunctions = [
                 'get'      => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
                 ),
                 'post'     => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
                 ),
                 'put'      => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
                 ),
                 'patch'    => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
                 ),
                 'delete'   => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
                 ),
                 'options'  => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
                 ),
                 'head'     => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
                 ),
                 'any'      => fn ($path, $action) => $collector->addRouteBuilder(
-                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
+                    routeBuilder: RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
                 ),
                 'fallback' => fn ($handler) => $collector->setFallback(fallback: $handler),
             ];

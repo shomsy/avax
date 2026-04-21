@@ -21,7 +21,7 @@ trait HasOrders
      *
      * @param string $column The technical field name to target for descending sort.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasOrders|QueryBuilder A
+     * @return HasOrders|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -44,7 +44,7 @@ trait HasOrders
      * @param string $column    The technical field name to target for sorting.
      * @param string $direction The sorting orientation ('ASC' or 'DESC').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasOrders|QueryBuilder A
+     * @return HasOrders|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -70,7 +70,7 @@ trait HasOrders
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Ordering.md#inrandomorder
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasOrders|QueryBuilder A
+     * @return HasOrders|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -98,7 +98,7 @@ trait HasOrders
      *
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasOrders|QueryBuilder A
+     * @return HasOrders|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -120,7 +120,7 @@ trait HasOrders
      *
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasOrders|QueryBuilder A
+     * @return HasOrders|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder

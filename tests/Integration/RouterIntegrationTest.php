@@ -18,6 +18,9 @@ use Avax\Container\Providers\HTTP\ViewServiceProvider;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\URI\UriBuilder;
+use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\View\ViewServiceProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -210,7 +213,7 @@ class RouterIntegrationTest extends TestCase
         }
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $providers = [

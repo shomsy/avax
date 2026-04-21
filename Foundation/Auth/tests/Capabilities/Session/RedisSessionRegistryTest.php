@@ -128,7 +128,7 @@ final class RedisSessionRegistryTest extends TestCase
             );
         $redis->expects($this->exactly(2))
             ->method(constraint: 'srem')
-            ->willReturnCallback(callback: static function (string $key, #[\SensitiveParameter] string $sessionId) use (&$sremCalls) : int {
+            ->willReturnCallback(callback: static function (string $key, #[SensitiveParameter] string $sessionId) use (&$sremCalls) : int {
                 $sremCalls[] = [$key, $sessionId];
 
                 return 1;

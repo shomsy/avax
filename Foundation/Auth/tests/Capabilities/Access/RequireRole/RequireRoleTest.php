@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class RequireRoleTest extends TestCase
 {
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied
+     * @throws RoleDenied
      * @throws Unauthenticated
      */
     public function testRequireRoleSuccess() : void

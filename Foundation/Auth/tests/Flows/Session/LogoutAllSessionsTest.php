@@ -12,6 +12,7 @@ use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;

@@ -25,7 +25,7 @@ trait HasConditions
      * @param mixed          $operator Comparison operator.
      * @param mixed          $value    Comparison value.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder
+     * @return HasConditions|QueryBuilder
      *
      * @throws ReflectionException
      */
@@ -42,7 +42,7 @@ trait HasConditions
      * @param mixed          $value    Comparison value.
      * @param string         $boolean  Logical joiner ('AND' or 'OR').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder
+     * @return HasConditions|QueryBuilder
      *
      * @throws ReflectionException
      */
@@ -87,7 +87,7 @@ trait HasConditions
      * @param Closure $callback A configuration closure receiving a fresh builder instance.
      * @param string  $boolean  The logical joiner for the entire nested group.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
+     * @return HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -127,7 +127,7 @@ trait HasConditions
      * @param string $column The technical field name to check.
      * @param array  $values The collection of allowed data tokens.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
+     * @return HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -155,7 +155,7 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
+     * @return HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -195,7 +195,7 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
+     * @return HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder

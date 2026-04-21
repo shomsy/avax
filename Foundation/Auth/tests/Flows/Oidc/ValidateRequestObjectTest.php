@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Oidc;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\InMemoryOidcRequestObjectStore;
-use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObject;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObjectData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\InMemoryOidcRequestObjectStore;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

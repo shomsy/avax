@@ -31,13 +31,13 @@ use Avax\Exceptions\ValidationException;
  * ensuring data consistency and avoiding potential bugs arising from loosely
  * validated values.
  *
- * @throws \Avax\Exceptions\ValidationException if the value is not a boolean.
+ * @throws ValidationException if the value is not a boolean.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Boolean
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

@@ -55,7 +55,7 @@ final class ConnectionManager
      * @param callable    $callback Task to run.
      * @param string|null $name     Specific connection name.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function pool(callable $callback, string|null $name = null) : mixed
     {
@@ -82,7 +82,7 @@ final class ConnectionManager
      *
      * @return PDO The raw technical engine.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function getPdo(string|null $name = null) : PDO
     {

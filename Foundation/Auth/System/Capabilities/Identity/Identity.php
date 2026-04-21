@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity;
 
-use Avax\Auth\System\Capabilities\Identity\Facades\Account;
-use Avax\Auth\System\Capabilities\Identity\Facades\Authentication;
-use Avax\Auth\System\Capabilities\Identity\Facades\Recovery;
-use Avax\Auth\System\Capabilities\Identity\Facades\Verification;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Account;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Mfa;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Passkey;
@@ -35,15 +35,15 @@ use SensitiveParameter;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        private Authentication                $authentication,
-        private Sessions                      $sessions,
-        private Account                       $account,
-        private Recovery                      $recovery,
-        private Verification                  $verification,
-        private Mfa                           $mfa,
-        private Passkey                       $passkey,
-        private SessionIdentityInterface|null $sessionIdentity = null,
-        private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] private Authentication                $authentication,
+        #[SensitiveParameter] private Sessions                      $sessions,
+        #[SensitiveParameter] private Account                       $account,
+        private Recovery                                            $recovery,
+        private Verification                                        $verification,
+        private Mfa                                                 $mfa,
+        private Passkey                                             $passkey,
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {}
 
     // ── Owned behavior (cross-cutting identity lifecycle) ──

@@ -12,6 +12,7 @@ use Avax\HTTP\HttpClient\Traits\HandlesHttpErrorsTrait;
 use Avax\HTTP\HttpClient\Traits\HandlesHttpResponseTrait;
 use Avax\HTTP\HttpClient\Traits\SendsHttpRequestsTrait;
 use Avax\HTTP\Response\ResponseFactory;
+use Override;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -39,7 +40,7 @@ final class GuzzleClient extends AbstractHttpClient
      * @param LoggerInterface $dataLogger      Logger to capture and record data-related events.
      * @param ResponseFactory $responseFactory Factory to create response objects.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         HttpClient      $httpClient,
         LoggerInterface $dataLogger,
@@ -61,10 +62,10 @@ final class GuzzleClient extends AbstractHttpClient
      *
      * @return AsyncOperationInterface A promise-like interface that resolves with structured response data.
      *
-     * @throws \Throwable
-     * @throws \Throwable
+     * @throws Throwable
+     * @throws Throwable
      */
-    #[\Override]
+    #[Override]
     public function sendAsyncRequest(string $method, string $endpoint, array $options = []) : AsyncOperationInterface
     {
         try {

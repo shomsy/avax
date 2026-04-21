@@ -78,7 +78,7 @@ interface SessionContract
     /**
      * Access flash messages.
      *
-     * @return \Avax\HTTP\Session\Features\Flash Flash instance.
+     * @return Flash Flash instance.
      */
     public function flash() : Flash;
 

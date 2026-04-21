@@ -6,8 +6,10 @@ namespace Avax\Auth\Tests\Flows\CheckAuthentication;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -21,6 +23,7 @@ use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerific
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateTimeImmutable;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class AuthenticateRequestTest extends TestCase
@@ -93,7 +96,7 @@ final class AuthenticateRequestTest extends TestCase
         $this->assertEquals(expected: $clock->now(), actual: $events[0]->occurredAt);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

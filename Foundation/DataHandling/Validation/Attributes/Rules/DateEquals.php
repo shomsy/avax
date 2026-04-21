@@ -25,7 +25,7 @@ use DateTime;
  * The validation checks for strict equality between the input date
  * and the configured date. The date format used is 'Y-m-d'.
  *
- * @throws \Avax\Exceptions\ValidationException if the dates do not match or if either date is invalid.
+ * @throws ValidationException if the dates do not match or if either date is invalid.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class DateEquals
@@ -35,7 +35,7 @@ readonly class DateEquals
     public function __construct(string $date) { $this->date = $date; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

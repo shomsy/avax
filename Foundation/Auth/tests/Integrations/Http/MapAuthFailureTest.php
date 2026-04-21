@@ -8,6 +8,7 @@ use Avax\Auth\Integrations\Http\MapAuthFailure;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaAttemptLimitReached;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaAttemptLimitReached;
 use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;

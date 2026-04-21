@@ -18,6 +18,9 @@ use Avax\Container\Providers\HTTP\MiddlewareServiceProvider;
 use Avax\Container\Providers\HTTP\RouterServiceProvider;
 use Avax\Container\Providers\HTTP\SessionServiceProvider;
 use Avax\Container\Providers\HTTP\ViewServiceProvider;
+use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\View\ViewServiceProvider;
 
 $providers = [
     ConfigurationServiceProvider::class,

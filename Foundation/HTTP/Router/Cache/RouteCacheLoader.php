@@ -45,7 +45,7 @@ final readonly class RouteCacheLoader
      * @param string $routesPath
      *
      * @throws ReservedRouteNameException
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      * @throws DuplicateRouteException
      */
     public function load(string $cachePath, string $routesPath) : void
@@ -102,7 +102,7 @@ final readonly class RouteCacheLoader
      * @param string $cachePath
      * @param string $routesPath
      *
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     public function write(string $cachePath, string $routesPath) : void
     {

@@ -41,7 +41,7 @@ final readonly class LoginRateLimit
     }
 
     /**
-     * @throws \Avax\Auth\System\Flows\Login\RateLimit\RateLimitException
+     * @throws RateLimitException
      */
     public function check(string $identifier) : void
     {

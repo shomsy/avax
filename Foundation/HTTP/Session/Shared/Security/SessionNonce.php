@@ -59,7 +59,7 @@ final class SessionNonce
      *
      * @param string $providedNonce Nonce to verify.
      *
-     * @throws \RuntimeException If nonce invalid.
+     * @throws RuntimeException If nonce invalid.
      */
     public function verifyOrFail(string $providedNonce) : void
     {
@@ -143,7 +143,7 @@ final class SessionNonce
      * @param string $providedNonce Nonce to verify.
      * @param int    $maxAge        Maximum age in seconds.
      *
-     * @throws \RuntimeException If nonce invalid or expired.
+     * @throws RuntimeException If nonce invalid or expired.
      */
     public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300) : void
     {

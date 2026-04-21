@@ -45,7 +45,7 @@ trait HasSoftDeletes
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#including-deleted-records
      *      domain records.
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     * @return QueryBuilder|HasSoftDeletes A
      *                                                                                                                                fresh,
      *                                                                                                                                cloned
      *                                                                                                                                builder
@@ -65,7 +65,7 @@ trait HasSoftDeletes
     /**
      * Filter the results     *
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes|QueryBuilder \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
+     * @return HasSoftDeletes|QueryBuilder \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
      *                                                                                                                                \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
      *                                                                                                                                A
      *                                                                                                                                fresh,
@@ -123,7 +123,7 @@ trait HasSoftDeletes
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     * @return QueryBuilder|HasSoftDeletes A
      *                                                                                                                                fresh,
      *                                                                                                                                cloned
      *                                                                                                                                builder
@@ -158,7 +158,7 @@ trait HasSoftDeletes
      * @param string $column  The technical field name to target for the non-null check.
      * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     * @return QueryBuilder|HasSoftDeletes A
      *                                                                                                                                fresh,
      *                                                                                                                                cloned
      *                                                                                                                                builder
@@ -184,7 +184,7 @@ trait HasSoftDeletes
      * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     * @return QueryBuilder|HasSoftDeletes A
      *                                                                                                                                fresh,
      *                                                                                                                                cloned
      *                                                                                                                                builder

@@ -8,6 +8,7 @@ use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
@@ -17,6 +18,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticatio
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -191,7 +193,7 @@ class IdentityTest extends TestCase
         $this->assertSame(expected: $jwt, actual: $identity->jwtIdentity());
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

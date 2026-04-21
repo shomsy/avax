@@ -25,6 +25,8 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\RuntimeConta
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use Avax\Container\DependencyInjection\Configuration\KernelConfig;
+use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Override;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -52,7 +54,7 @@ final class ContainerKernelTest extends TestCase
         $this->assertTrue(condition: $this->kernel->has(id: 'service'));
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->definitions = new DefinitionStore;

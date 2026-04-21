@@ -103,7 +103,7 @@ class RouterBootstrapConcurrencyTest extends TestCase
         $this->assertTrue(condition: $state2->booted);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->bootstrapState = new RouterBootstrapState;

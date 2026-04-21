@@ -65,7 +65,7 @@ final class EncrypterFactory
      *
      * @return mixed Decrypted value.
      *
-     * @throws \RuntimeException If decryption fails with all keys.
+     * @throws RuntimeException If decryption fails with all keys.
      */
     public function decrypt(string $payload) : mixed
     {

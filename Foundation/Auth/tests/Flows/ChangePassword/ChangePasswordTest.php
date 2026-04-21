@@ -11,6 +11,7 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
@@ -26,6 +27,7 @@ use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;
 use Exception;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 
@@ -222,7 +224,7 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

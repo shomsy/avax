@@ -19,6 +19,7 @@ use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\ServiceProvider;
 use DateTimeImmutable;
+use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -34,7 +35,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
-            #[\Override]
+            #[Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
@@ -76,7 +77,7 @@ class AuthServiceProviderTest extends TestCase
         }
 
         $dependencies = new class extends ServiceProvider {
-            #[\Override]
+            #[Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
@@ -120,7 +121,7 @@ class AuthServiceProviderTest extends TestCase
                 private FrozenClock $clock
             ) {}
 
-            #[\Override]
+            #[Override]
             public function register() : void
             {
                 $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);

@@ -8,9 +8,8 @@ use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle
 use Avax\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryChallenge;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaRecoveryRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
@@ -94,7 +93,7 @@ final readonly class StartMfaRecovery
         return $this->issue(userId: $user->getId()->value, data: $data);
     }
 
-    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
+    private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] string|null $ipAddress) : string
     {
         $normalizedEmail = strtolower(trim($email));
 

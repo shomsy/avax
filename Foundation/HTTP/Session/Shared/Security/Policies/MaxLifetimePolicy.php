@@ -33,7 +33,7 @@ final readonly class MaxLifetimePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Current session data.
      *
-     * @throws \RuntimeException If session exceeded max lifetime.
+     * @throws RuntimeException If session exceeded max lifetime.
      */
     public function enforce(array $data) : void
     {

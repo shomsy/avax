@@ -20,7 +20,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
     public function validates_correct_constraints() : void
@@ -42,7 +42,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
     public function rejects_constraint_validation_failure() : void
@@ -108,7 +108,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
     public function escapes_special_regex_characters() : void
@@ -131,7 +131,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
     public function skips_non_string_non_numeric_attributes() : void
@@ -153,7 +153,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
     public function validates_multiple_constraints() : void
@@ -206,7 +206,7 @@ class RegexConstraintTest extends TestCase
         $this->validator->validate(route: $route, request: $request);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->validator = new RouteConstraintValidator;

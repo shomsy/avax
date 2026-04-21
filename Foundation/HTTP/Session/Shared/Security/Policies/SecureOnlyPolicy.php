@@ -19,7 +19,7 @@ final class SecureOnlyPolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Current session data.
      *
-     * @throws \RuntimeException If connection is not HTTPS.
+     * @throws RuntimeException If connection is not HTTPS.
      */
     public function enforce(array $data) : void
     {

@@ -13,7 +13,7 @@ use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole as RequireRoleBoundary;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;

@@ -11,8 +11,8 @@ class test_dto extends AbstractDTO
     /**
      * @throws Throwable
      */
-    #[\Override]
-    protected function hydrateField(string $name, \ReflectionProperty $property, array $attributes, array $data): void
+    #[Override]
+    protected function hydrateField(string $name, ReflectionProperty $property, array $attributes, array $data) : void
     {
 
         foreach ($attributes as $attr) {

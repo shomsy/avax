@@ -27,7 +27,7 @@ final class StoryRuntimeInputConsumer
 {
     public string $token;
 
-    public function __construct(#[\SensitiveParameter] #[RuntimeInput(name: 'token')] string $token) { $this->token = $token; }
+    public function __construct(#[SensitiveParameter] #[RuntimeInput(name: 'token')] string $token) { $this->token = $token; }
 }
 
 final class StoryLocatorDrift

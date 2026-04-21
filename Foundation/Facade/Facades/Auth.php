@@ -7,6 +7,9 @@ namespace Avax\Facade\Facades;
 use Avax\Auth\Contracts\AuthInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\Credentials;
+use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capabilities\Identity\User\UserInterface;
+use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Facade\BaseFacade;
 
 /**

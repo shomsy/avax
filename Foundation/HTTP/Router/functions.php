@@ -547,7 +547,7 @@ if (! function_exists('route_any')) {
                 'delete'  => delete(path: $path, action: $handler),
                 'options' => options(path: $path, action: $handler),
                 'head'    => head(path: $path, action: $handler),
-                default   => throw new \InvalidArgumentException(message: "Unsupported HTTP method: {$method}")
+                default => throw new InvalidArgumentException(message: "Unsupported HTTP method: {$method}")
             };
         }
 

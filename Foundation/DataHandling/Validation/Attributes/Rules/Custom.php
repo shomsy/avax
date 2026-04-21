@@ -27,7 +27,7 @@ readonly class Custom
     public function __construct(Closure $callback) { $this->callback = $callback; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

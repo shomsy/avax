@@ -6,14 +6,13 @@ namespace Avax\HTTP\Router;
 
 /**
  * @phpstan-type RouterConfig array{
- *     httpRouter: \Avax\HTTP\Router\Routing\HttpRequestRouter,
- *     kernel: \Avax\HTTP\Router\Kernel\RouterKernel,
- *     fallbackManager: \Avax\HTTP\Router\Support\FallbackManager,
- *     errorFactory: \Avax\HTTP\Router\Routing\ErrorResponseFactory,
- *     dslRouter?: \Avax\HTTP\Router\RouterInterface,
- *     groupStack?: \Avax\HTTP\Router\Routing\RouteGroupStack,
- *     routeRegistry?: \Avax\HTTP\Router\Support\RouteRegistry
- * }
+ *     httpRouter: HttpRequestRouter,
+ *     kernel: RouterKernel,
+ *     fallbackManager: FallbackManager,
+ *     errorFactory: ErrorResponseFactory,
+ *     dslRouter?: RouterInterface,
+ *     groupStack?: RouteGroupStack,
+ *     routeRegistry?: RouteRegistry }
  */
 
 use Avax\HTTP\Request\Request;
@@ -35,6 +34,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
+use Throwable;
 
 /**
  * Public API Contract: Runtime Router
@@ -84,7 +84,7 @@ final readonly class Router implements RouterRuntimeInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      * @throws ReservedRouteNameException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function resolve(Request $request) : ResponseInterface
     {
@@ -159,7 +159,7 @@ final readonly class Router implements RouterRuntimeInterface
      * @param string $cacheDir   Cache directory for compiled routes (optional)
      *
      * @return void
-     * @throws \LogicException|ReservedRouteNameException If DSL router or group
+     * @throws LogicException|ReservedRouteNameException If DSL router or group
      * @throws DuplicateRouteException
      *                                                                                         stack dependencies are
      *                                                                                         missing

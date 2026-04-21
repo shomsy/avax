@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
 use SensitiveParameter;

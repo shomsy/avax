@@ -33,7 +33,7 @@ readonly class EndsWith
     public function __construct(array $suffixes) { $this->suffixes = $suffixes; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

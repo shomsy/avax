@@ -31,7 +31,7 @@ readonly class Mimes
     public function __construct(array $mimes) { $this->mimes = $mimes; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

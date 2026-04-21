@@ -19,7 +19,7 @@ final class HintRuntimeInputConsumer
 
     public function __construct(
         HintIdentityService                                          $identity,
-        #[\SensitiveParameter] #[RuntimeInput(name: 'token')] string $token
+        #[SensitiveParameter] #[RuntimeInput(name: 'token')] string $token
     )
     {
         $this->identity = $identity;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Release;
 
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\FileBackedHmacKeyRingCodec;
 use RuntimeException;
 

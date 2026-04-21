@@ -15,7 +15,7 @@ use Avax\Exceptions\ValidationException;
 /**
  * Validates if the provided value is a valid JSON string.
  *
- * @throws \Avax\Exceptions\ValidationException If the value is not a valid JSON string.
+ * @throws ValidationException If the value is not a valid JSON string.
  *
  * The rationale for this function is to ensure that properties using this attribute
  * always contain valid JSON data. This helps maintain data integrity within the application.
@@ -24,7 +24,7 @@ use Avax\Exceptions\ValidationException;
 class JSON
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

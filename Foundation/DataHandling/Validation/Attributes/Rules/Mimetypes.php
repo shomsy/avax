@@ -27,7 +27,7 @@ readonly class Mimetypes
     public function __construct(array $mimetypes) { $this->mimetypes = $mimetypes; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

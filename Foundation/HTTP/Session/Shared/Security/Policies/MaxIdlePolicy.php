@@ -33,7 +33,7 @@ final readonly class MaxIdlePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Current session data.
      *
-     * @throws \RuntimeException If session is idle too long.
+     * @throws RuntimeException If session is idle too long.
      */
     public function enforce(array $data) : void
     {

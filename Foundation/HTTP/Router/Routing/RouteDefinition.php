@@ -77,7 +77,7 @@ final readonly class RouteDefinition
      * @param array       $parameters    An array of parameters to be passed to the route, optional.
      * @param array       $metadata      Rich metadata annotations (API versioning, policies, etc.)
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function __construct(
         string  $method,
@@ -188,7 +188,7 @@ final readonly class RouteDefinition
      * Reserves internal route name prefixes to prevent conflicts between user-defined
      * routes and framework-generated routes, avoiding naming collisions and debugging confusion.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function validateRouteName(string $name) : void
     {
@@ -276,7 +276,7 @@ final readonly class RouteDefinition
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public static function __set_state(array $properties) : self
     {
@@ -304,7 +304,7 @@ final readonly class RouteDefinition
      *
      * @param array<string, mixed> $payload
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public static function fromArray(array $payload) : self
     {
@@ -339,7 +339,7 @@ final readonly class RouteDefinition
      * Returns a copy of the route with the action wrapped in a SerializableClosure (if needed).
      *
      * @throws PhpVersionNotSupportedException
-     * @throws PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws PhpVersionNotSupportedException|ReservedRouteNameException
      */
     public function withSerializedAction() : self
     {
@@ -365,7 +365,7 @@ final readonly class RouteDefinition
      * Returns a copy of the route with the action unwrapped (if it's a SerializableClosure).
      *
      * @throws PhpVersionNotSupportedException
-     * @throws PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws PhpVersionNotSupportedException|ReservedRouteNameException
      */
     public function withUnserializedAction() : self
     {
@@ -412,7 +412,7 @@ final readonly class RouteDefinition
      * - Feature flags: ['feature' => 'beta']
      * - Authorization: ['roles' => ['admin', 'moderator']]
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function withMetadata(string $key, mixed $value) : self
     {

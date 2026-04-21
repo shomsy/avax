@@ -32,7 +32,7 @@ readonly class RequiredWith
     public function __construct(array $fields) { $this->fields = $fields; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, array $data, string $property) : void
     {

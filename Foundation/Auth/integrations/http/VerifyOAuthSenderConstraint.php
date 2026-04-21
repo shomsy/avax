@@ -46,7 +46,7 @@ final readonly class VerifyOAuthSenderConstraint
         OAuthSenderConstraintType|null $requiredSenderConstraint = null
     ) : OAuthSenderConstraint|null
     {
-        $requiredType = $expectedSenderConstraint?->type ?? $requiredSenderConstraint;
+        $requiredType = $expectedSenderConstraint !== null ? $expectedSenderConstraint->type : $requiredSenderConstraint;
 
         if ($requiredType === null) {
             return null;

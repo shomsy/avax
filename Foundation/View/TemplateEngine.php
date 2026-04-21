@@ -13,6 +13,7 @@ namespace Avax\View;
 
 use Avax\Container\Core\Exceptions\FoundationContainerException;
 use eftec\bladeone\BladeOne;
+use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -34,7 +35,7 @@ class TemplateEngine extends BladeOne
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string $templatePath,
         string $compiledPath,
@@ -78,7 +79,7 @@ class TemplateEngine extends BladeOne
      *
      * This method dynamically constructs the base URL making it flexible for different environments and protocols.
      */
-    #[\Override]
+    #[Override]
     public function getBaseUrl() : string
     {
         $context = function_exists('http_context') ? http_context() : null;

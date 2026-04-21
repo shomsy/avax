@@ -3,9 +3,10 @@
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use Avax\Logging\ErrorLogger;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\Logging\ErrorLogger::class,
+                                                'class' => ErrorLogger::class,
                                                 'constructor'        => MethodPrototype::__set_state(array: [
                                                                                                                 'name'       => '__construct',
                                                                                                                 'parameters' => [

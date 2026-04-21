@@ -172,6 +172,9 @@ final readonly class SCIM
         return $this->readScimGroups ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'read_groups');
     }
 
+    /**
+     * @throws RandomException
+     */
     public function syncGroups(SyncScimGroupsData $data) : ScimProvisioningResult
     {
         return $this->syncScimGroupsOrFail()->execute(data: $data);

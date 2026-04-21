@@ -19,6 +19,7 @@ use Avax\Auth\System\Flows\Register\Register;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Flows\Register\RegistrationResult;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class Account
@@ -40,6 +41,10 @@ final readonly class Account
         $this->changePassword->execute(data: $data);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge
     {
         return $this->beginEmailChange->execute(data: $data);

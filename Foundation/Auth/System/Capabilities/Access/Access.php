@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access;
 
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\AssessCurrentRisk\AssessCurrentRisk;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\ReadRiskSignals\ReadRiskSignals;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
@@ -19,6 +20,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticatio
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class Access
@@ -61,6 +63,10 @@ final readonly class Access
         return $this->access;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function beginAdminElevation() : AdminElevation
     {
         return $this->beginAdminElevation->execute();

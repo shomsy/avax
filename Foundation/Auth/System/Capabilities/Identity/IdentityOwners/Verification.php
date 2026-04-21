@@ -9,6 +9,7 @@ use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificati
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmail;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class Verification
@@ -18,6 +19,9 @@ final readonly class Verification
         #[SensitiveParameter] private VerifyEmail            $verifyEmail
     ) {}
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function beginEmailVerification(BeginEmailVerificationData $data) : EmailVerificationChallenge
     {
         return $this->beginEmailVerification->execute(data: $data);

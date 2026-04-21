@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\Connection\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
+use Override;
 
 /**
  * A "No More Room" report for a connection pool.
@@ -39,7 +40,7 @@ final class PoolLimitReachedException extends DatabaseException
      * @param string $name  The nickname of the pool that is full.
      * @param int    $limit The maximum number of people allowed in at once.
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string $name,
         int    $limit

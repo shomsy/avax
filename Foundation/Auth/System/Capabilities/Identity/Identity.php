@@ -16,8 +16,10 @@ use Avax\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use SensitiveParameter;
@@ -35,8 +37,8 @@ use SensitiveParameter;
 final readonly class Identity implements IdentityInterface
 {
     public static function fromBackends(
-        SessionIdentityInterface|null $sessionIdentity = null,
-        JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] JwtIdentityInterface|null     $jwtIdentity = null
     ) : self
     {
         return new self(
@@ -130,6 +132,10 @@ final readonly class Identity implements IdentityInterface
 
     // ── Fast-path convenience (high-frequency auth operations) ──
 
+    /**
+     * @throws AuthenticationFailed
+     * @throws RateLimitException
+     */
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         return $this->authentication()->login(credentials: $credentials);

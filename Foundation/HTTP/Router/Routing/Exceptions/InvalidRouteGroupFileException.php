@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use Override;
 use RuntimeException;
 use Throwable;
 
@@ -12,7 +13,7 @@ use Throwable;
  */
 final class InvalidRouteGroupFileException extends RuntimeException
 {
-    #[\Override]
+    #[Override]
     public function __construct(string $message, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);

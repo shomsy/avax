@@ -13,19 +13,20 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStor
 use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
+use SensitiveParameter;
 
 final readonly class AuthBootstrapValidator
 {
     public static function validate(
-        UserSourceInterface|null        $userSource,
-        IdentityInterface|null          $identity,
-        AuthCapabilityRequests          $requests,
-        SessionRegistryInterface|null   $sessionRegistry,
-        RefreshTokenStoreInterface|null $refreshTokenStore,
-        PasskeyRuntimeInterface|null    $passkeyRuntime,
-        FederationRuntimeInterface|null $federationRuntime,
-        OidcProviderInterface|null      $oidcProvider,
-        string                          $buildPath = 'AuthBuilder::ready()'
+        UserSourceInterface|null                              $userSource,
+        IdentityInterface|null                                $identity,
+        AuthCapabilityRequests                                $requests,
+        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore,
+        PasskeyRuntimeInterface|null                          $passkeyRuntime,
+        FederationRuntimeInterface|null                       $federationRuntime,
+        OidcProviderInterface|null                            $oidcProvider,
+        string                                                $buildPath = 'AuthBuilder::ready()'
     ) : void
     {
         if ($userSource === null) {

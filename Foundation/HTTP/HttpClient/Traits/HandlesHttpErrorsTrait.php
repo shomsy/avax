@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Traits;
 
+use Override;
 use Throwable;
 
 trait HandlesHttpErrorsTrait
@@ -16,7 +17,7 @@ trait HandlesHttpErrorsTrait
      *
      * @return array A structured response with error information.
      */
-    #[\Override]
+    #[Override]
     public function handleFailure(string $endpoint, mixed $reason) : array
     {
         $errorMessage = $reason instanceof Throwable ? $reason->getMessage() : 'Unknown error';

@@ -9,6 +9,7 @@ use Avax\HTTP\Router\Routing\DomainAwareMatcher;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -208,7 +209,7 @@ final class RouterIntegrationTest extends TestCase
         }
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->cacheDir = sys_get_temp_dir() . '/router-cache-' . uniqid();
@@ -247,7 +248,7 @@ final class RouterIntegrationTest extends TestCase
         $this->cacheLoader = null;
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         // Clean up cache directory

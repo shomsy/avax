@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use Override;
 use RuntimeException;
 
 /**
@@ -17,7 +18,7 @@ final class MethodNotAllowedException extends RuntimeException
         }
     }
 
-    #[\Override]
+    #[Override]
     public function __construct(string $method, string $path, array $allowedMethods)
     {
         parent::__construct(message: "Method {$method} not allowed for {$path}");

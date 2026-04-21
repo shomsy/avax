@@ -9,6 +9,7 @@ use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use ReflectionParameter;
+use Throwable;
 
 final readonly class ResolveCallArguments
 {
@@ -48,7 +49,7 @@ final readonly class ResolveCallArguments
      * @param ResolveRequest|null  $request
      *
      * @return array<int, mixed>
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function resolvePlan(
         ResolvePlan         $plan,

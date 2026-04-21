@@ -135,7 +135,7 @@ final readonly class ProvisionScimUser
                                                  externalId    : $data->externalId,
                                                  userId        : $user->getId(),
                                                  fingerprint   : $fingerprint,
-                                                 groups        : array_values($data->groups),
+                                                 groups        : $data->groups,
                                                  state         : $data->state,
                                                  synchronizedAt: $this->clock->now()
                                              ));
@@ -243,7 +243,7 @@ final readonly class ProvisionScimUser
             return hash('sha256', json_encode([
                                                   'email' => strtolower(trim($data->email)),
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'username' => trim($data->username),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'groups' => array_values($data->groups),
+                                                  'groups' => $data->groups,
                                                   'roles' => array_map(static fn (UserRole $role) : string => $role->value, $roles),
                                                   'state' => $data->state->value,
                                               ], JSON_THROW_ON_ERROR));

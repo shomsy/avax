@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
 use Exception;
+use Override;
 
 /**
  * Thrown when attempting to register a duplicate route.
  */
 final class DuplicateRouteException extends Exception
 {
-    #[\Override]
+    #[Override]
     public function __construct(string $method, string $path, string|null $domain = null, string|null $name = null)
     {
         $key = $this->buildKey(method: $method, path: $path, domain: $domain, name: $name);

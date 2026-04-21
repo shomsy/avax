@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use Override;
 use RuntimeException;
 use Throwable;
 
@@ -25,7 +26,7 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
         }
     }
 
-    #[\Override]
+    #[Override]
     public function __construct(
         string         $message,
         int            $httpStatusCode,

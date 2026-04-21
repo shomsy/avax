@@ -144,12 +144,12 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         $statement->execute(params: ['user_id' => $userId->value]);
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
-        return array_map(
+        return array_values(array_map(
         /**
          * @throws DateMalformedStringException
          */ callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
             array   : $rows
-        );
+                            ));
     }
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void

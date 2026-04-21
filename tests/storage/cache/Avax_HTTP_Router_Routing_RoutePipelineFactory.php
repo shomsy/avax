@@ -3,10 +3,14 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\HTTP\Middleware\MiddlewareResolver;
+use Avax\HTTP\Router\Routing\RoutePipelineFactory;
+use Avax\HTTP\Router\Routing\StageChain;
 use Psr\Log\NullLogger;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\HTTP\Router\Routing\RoutePipelineFactory::class,
+                                                'class'              => RoutePipelineFactory::class,
                                                 'constructor'        =>
                                                     MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
@@ -23,7 +27,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'dispatcher',
-                                                                                                                                               'type'       => \Avax\HTTP\Dispatcher\ControllerDispatcher::class,
+                                                                                                                                               'type' => ControllerDispatcher::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -32,7 +36,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'middlewareResolver',
-                                                                                                                                               'type'       => \Avax\HTTP\Middleware\MiddlewareResolver::class,
+                                                                                                                                               'type' => MiddlewareResolver::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -41,7 +45,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'stageChain',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Routing\StageChain::class,
+                                                                                                                                               'type' => StageChain::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,

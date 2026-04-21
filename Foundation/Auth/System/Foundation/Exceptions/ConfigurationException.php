@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Foundation\Exceptions;
 
+use SensitiveParameter;
 use Throwable;
 
 class ConfigurationException extends AuthException
@@ -12,11 +13,11 @@ class ConfigurationException extends AuthException
      * @param array<string, scalar|list<string>|null> $context
      */
     public function __construct(
-        string                  $message,
-        private readonly string $errorCode = 'auth.configuration.invalid',
-        private readonly array  $context = [],
-        int                     $code = 0,
-        Throwable|null          $previous = null
+        string                                        $message,
+        #[SensitiveParameter] private readonly string $errorCode = 'auth.configuration.invalid',
+        private readonly array                        $context = [],
+        int                                           $code = 0,
+        Throwable|null                                $previous = null
     )
     {
         parent::__construct(message: $message, code: $code, previous: $previous);

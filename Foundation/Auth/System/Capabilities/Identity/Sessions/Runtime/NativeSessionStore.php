@@ -66,7 +66,7 @@ final class NativeSessionStore implements SessionStoreInterface
             session_set_cookie_params([
                                           'secure'   => $this->cookieSettings->secure,
                                           'httponly' => $this->cookieSettings->httpOnly,
-                                          'samesite' => $this->cookieSettings->sameSite,
+                                          'samesite' => $this->normalizeSameSite(sameSite: $this->cookieSettings->sameSite),
                                           'path'     => $this->cookieSettings->path,
                                           'domain'   => $this->cookieSettings->domain,
                                       ]);

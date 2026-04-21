@@ -15,7 +15,7 @@ certification claim.
 ### Prerequisites
 
 ```bash
-# PHP 8.3+ with extensions:
+# PHP 8.5+ with extensions:
 - openssl
 - pdo
 - json
@@ -23,8 +23,8 @@ certification claim.
 
 # Required tools:
 - phpunit ^11.0
-- phpstan ^1.10
-- rector ^1.0
+- phpstan ^2.1
+- rector ^2.4
 ```
 
 ### Certification Commands
@@ -96,7 +96,7 @@ Before each release, verify:
 ## Version Information
 
 - Auth: 1.0.0+
-- PHP: 8.3+
+- PHP: 8.5+
 - Profile: 1.0.0
 
 ---

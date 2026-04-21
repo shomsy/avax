@@ -3,9 +3,12 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\HTTP\Router\Kernel\RouterKernel;
+use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\Routing\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\HTTP\Router\Router::class,
+                                                'class'              => Router::class,
                                                 'constructor'        =>
                                                     MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
@@ -13,7 +16,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                 [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'httpRequestRouter',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Routing\HttpRequestRouter::class,
+                                                                                                                                               'type' => HttpRequestRouter::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,
@@ -22,7 +25,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'kernel',
-                                                                                                                                               'type'       => \Avax\HTTP\Router\Kernel\RouterKernel::class,
+                                                                                                                                               'type' => RouterKernel::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,

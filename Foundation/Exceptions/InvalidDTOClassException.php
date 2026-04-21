@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Exceptions;
 
 use InvalidArgumentException;
+use Override;
 
 /**
  * Class InvalidDTOClassException
@@ -18,7 +19,7 @@ class InvalidDTOClassException extends InvalidArgumentException
      *
      * @param string $className The name of the invalid DTO class.
      */
-    #[\Override]
+    #[Override]
     public function __construct(string $className)
     {
         $message = sprintf("The class '%s' is not a valid DTO class.", $className);

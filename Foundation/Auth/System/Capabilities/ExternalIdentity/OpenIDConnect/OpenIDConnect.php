@@ -20,6 +20,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUse
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo\ReadOidcUserInfo;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
+use DateMalformedStringException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class OpenIDConnect
@@ -85,6 +87,10 @@ final readonly class OpenIDConnect
         return $this->readUserInfo ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_user_info');
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function pushAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
     {
         return $this->pushAuthorizationRequestOrFail()->execute(data: $data);
@@ -105,6 +111,10 @@ final readonly class OpenIDConnect
         return $this->logout ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'logout');
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function buildJarmResponse(BuildJarmResponseData $data) : JarmResponse
     {
         return $this->buildJarmResponseOrFail()->execute(data: $data);

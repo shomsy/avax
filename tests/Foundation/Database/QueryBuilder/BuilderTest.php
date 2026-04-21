@@ -8,6 +8,7 @@ use Avax\Database\Database;
 use Avax\Database\Modules\Query\Builder\QueryBuilder;
 use Avax\Database\Modules\Query\Query;
 use Avax\Tests\TestCase;
+use Override;
 use Throwable;
 
 class BuilderTest extends TestCase
@@ -46,7 +47,7 @@ class BuilderTest extends TestCase
     /**
      * @throws Throwable
      */
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         parent::setUp();

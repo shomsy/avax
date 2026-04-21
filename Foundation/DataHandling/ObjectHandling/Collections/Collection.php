@@ -23,6 +23,7 @@ use Avax\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
 use Avax\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
 use Avax\DataHandling\ArrayHandling\Traits\TransformationTrait;
 use Closure;
+use Override;
 use Traversable;
 
 /**
@@ -61,7 +62,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @param iterable $items Initial set of items to populate the collection.
      */
-    #[\Override]
+    #[Override]
     public function __construct(iterable $items = [])
     {
         parent::__construct(items: $items);
@@ -75,7 +76,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static This collection instance.
      */
-    #[\Override]
+    #[Override]
     public function setItems(iterable $items) : static
     {
         $this->elements = $items;
@@ -92,7 +93,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
-    #[\Override]
+    #[Override]
     public function tap(Closure $callback) : static
     {
         $callback($this);
@@ -108,7 +109,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed|null The first matching item or null if not found.
      */
-    #[\Override]
+    #[Override]
     public function firstWhere(string $key, mixed $value) : mixed
     {
         foreach ($this->getItems() as $item) {
@@ -125,7 +126,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return array The elements in the collection.
      */
-    #[\Override]
+    #[Override]
     public function getItems() : array
     {
         return $this->elements;
@@ -138,7 +139,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed The maximum value or null if the collection is empty.
      */
-    #[\Override]
+    #[Override]
     public function max(string|null $key = null) : mixed
     {
         return max(
@@ -156,7 +157,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed The minimum value or null if the collection is empty.
      */
-    #[\Override]
+    #[Override]
     public function min(string|null $key = null) : mixed
     {
         return min(
@@ -174,7 +175,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return string|int|null The mode or null if the collection is empty.
      */
-    #[\Override]
+    #[Override]
     public function mode(string|null $key = null) : string|int|null
     {
         $counts = array_count_values(
@@ -195,7 +196,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static A new collection containing count values.
      */
-    #[\Override]
+    #[Override]
     public function countBy(Closure $callback) : static
     {
         $counts = [];
@@ -214,7 +215,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
-    #[\Override]
+    #[Override]
     public function append(mixed $value) : static
     {
         $this->elements[] = $value;
@@ -229,7 +230,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
-    #[\Override]
+    #[Override]
     public function prepend(mixed $value) : static
     {
         array_unshift($this->elements, $value);
@@ -246,7 +247,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
-    #[\Override]
+    #[Override]
     public function merge(CollectionInterface|array $items) : static
     {
         $mergedItems = array_merge($this->getItems(), is_array(value: $items) ? $items : $items->all());
@@ -260,7 +261,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return int The number of items in the collection.
      */
-    #[\Override]
+    #[Override]
     public function count() : int
     {
         return count(value: $this->getItems());
@@ -271,7 +272,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return Traversable An iterator for the items.
      */
-    #[\Override]
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->getItems());

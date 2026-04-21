@@ -106,7 +106,7 @@ final readonly class ReadGitOutput
         }
 
         $parts = preg_split('/\s+/', $line);
-        $hash  = is_array($parts) ? ($parts[0] ?? '') : '';
+        $hash = is_array($parts) ? $parts[0] : '';
 
         $isAllZeroHash = preg_match('/^0+$/', $hash) === 1;
 

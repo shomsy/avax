@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DI\Flows\CallFunction;
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use ReflectionException;
 
 /**
  * Public invocation flow for executing callables through the container.
@@ -27,7 +26,7 @@ final readonly class CallFunction
      * @param array<string, mixed> $parameters
      *
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function call(callable|string $target, array $parameters = []) : mixed
     {

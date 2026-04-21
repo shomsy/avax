@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
 
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use InvalidArgumentException;
+use LogicException;
 use RuntimeException;
 
 /**
@@ -45,8 +47,8 @@ final readonly class MapRequestedInputsToDto
             );
         }
 
-        if (is_a($dtoClass, \Avax\HTTP\Request\Request::class, allow_string: true)) {
-            throw new \LogicException(
+        if (is_a($dtoClass, Request::class, allow_string: true)) {
+            throw new LogicException(
                 message: sprintf(
                     'DTO class "%s" is a Request subclass and cannot be mapped generically from RequestedInputs. Use RequestDtoFactory or controller autowiring instead.',
                     $dtoClass

@@ -13,6 +13,7 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Engine\Instantiator
 use Avax\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +32,7 @@ final class ResolutionEngineWiringTest extends TestCase
         $this->engine->setContainer(container: $container);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $resolver     = new DependencyResolver;

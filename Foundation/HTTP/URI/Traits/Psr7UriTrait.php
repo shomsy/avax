@@ -8,6 +8,7 @@ use Avax\HTTP\URI\Components\Host;
 use Avax\HTTP\URI\Components\Path;
 use Avax\HTTP\URI\Components\Scheme;
 use Avax\HTTP\URI\QueryParams;
+use Override;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
 
@@ -139,7 +140,7 @@ trait Psr7UriTrait
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getAuthority() : string
     {
         $authority = $this->host;

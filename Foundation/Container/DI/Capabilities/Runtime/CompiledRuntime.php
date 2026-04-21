@@ -105,6 +105,9 @@ final class CompiledRuntime
             || ($this->compiler?->contains(serviceId: $serviceId) ?? false);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function refresh(ServiceRegistry $registrations, string|null $serviceId = null) : void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {

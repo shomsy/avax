@@ -7,6 +7,7 @@ namespace Avax\Config\Service;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Config\Configurator\AppConfigurator;
 use Avax\Config\Configurator\ConfiguratorInterface;
+use Override;
 
 final class Config extends AppConfigurator implements ConfiguratorInterface
 {
@@ -19,7 +20,7 @@ final class Config extends AppConfigurator implements ConfiguratorInterface
      * @return array<string, string> Associative array where the key is the configuration namespace
      *                               and the value is the path to the configuration file.
      */
-    #[\Override]
+    #[Override]
     public function configurationFilePaths() : array
     {
         return $this->getConfigurationPaths();
@@ -34,7 +35,7 @@ final class Config extends AppConfigurator implements ConfiguratorInterface
      *
      * @return array<string, string> Associative array of configuration namespaces to their file paths.
      */
-    #[\Override]
+    #[Override]
     protected function getConfigurationPaths() : array
     {
         return [

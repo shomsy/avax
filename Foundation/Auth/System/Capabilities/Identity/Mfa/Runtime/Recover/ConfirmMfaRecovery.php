@@ -78,9 +78,9 @@ final readonly class ConfirmMfaRecovery
 
         $context = $this->currentAuthentication?->read();
 
-        if ($context?->user()?->id === $record->userId->value) {
+        if ($context !== null && $context->user()?->id === $record->userId->value) {
             $this->identity?->clear(context: $context);
-            $this->currentAuthentication?->clear();
+            $this->currentAuthentication->clear();
         }
 
         $this->auditLog->record(event: new AuditEvent(

@@ -9,6 +9,7 @@ use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
+use DateMalformedStringException;
 use SensitiveParameter;
 
 final readonly class Recovery
@@ -18,6 +19,9 @@ final readonly class Recovery
         #[SensitiveParameter] private ResetPassword      $resetPassword
     ) {}
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute(data: $data);

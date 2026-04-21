@@ -13,6 +13,7 @@ use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteSourceLoaderInterface;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Exception;
+use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
@@ -379,7 +380,7 @@ final class RouterChaosTest extends TestCase
         );
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->router = new HttpRequestRouter(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Contracts;
 
 use Exception;
+use Override;
 use Throwable;
 
 /**
@@ -12,7 +13,7 @@ use Throwable;
  */
 class FilesystemException extends Exception
 {
-    #[\Override]
+    #[Override]
     public function __construct(string $message, string $path = '', int $code = 0, Throwable|null $previous = null)
     {
         $fullMessage = $message;

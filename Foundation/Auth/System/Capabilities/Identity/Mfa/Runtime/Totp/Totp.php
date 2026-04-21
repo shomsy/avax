@@ -64,11 +64,14 @@ final readonly class Totp implements TotpInterface
         $encoded = '';
 
         foreach ($chunks as $chunk) {
-            if ($chunk === '') {
-                continue;
+            $characterIndex = (int) bindec(str_pad($chunk, 5, '0', STR_PAD_RIGHT));
+            $character      = substr($alphabet, $characterIndex, 1);
+
+            if ($character === '') {
+                throw new InvalidArgumentException(message: 'TOTP base32 encoding failed.');
             }
 
-            $encoded .= $alphabet[bindec(str_pad($chunk, 5, '0', STR_PAD_RIGHT))];
+            $encoded .= $character;
         }
 
         return $encoded;
@@ -167,7 +170,13 @@ final readonly class Totp implements TotpInterface
                 continue;
             }
 
-            $bytes .= chr((int) bindec($chunk));
+            $codePoint = (int) bindec($chunk);
+
+            if ($codePoint < 0 || $codePoint > 255) {
+                throw new InvalidArgumentException(message: 'TOTP base32 decoding failed.');
+            }
+
+            $bytes .= chr($codePoint);
         }
 
         return $bytes;

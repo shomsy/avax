@@ -20,6 +20,7 @@ use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 final class RequestAttachedDto extends Request {}
 
@@ -27,6 +28,9 @@ class RequestAttachedDtoTest extends TestCase
 {
     private AssembleIncomingRequest $assembler;
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_from_request_exposes_attached_server_request_accessors(): void
     {
         $serverRequest = $this->createServerRequest();

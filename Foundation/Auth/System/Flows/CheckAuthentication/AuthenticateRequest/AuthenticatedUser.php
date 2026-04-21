@@ -71,8 +71,8 @@ final readonly class AuthenticatedUser
             id           : $user->getId()->value,
             email        : $user->getEmail()->value,
             username     : $user->getUsername(),
-            roles        : array_values($roles),
-            permissions  : array_values($permissions),
+            roles        : $roles,
+            permissions  : $permissions,
             emailVerified: $emailVerified,
             mfaEnabled   : $mfaEnabled
         );

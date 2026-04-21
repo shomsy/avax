@@ -22,12 +22,16 @@ use Avax\Container\Providers\ServiceProvider;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Integration test for the optional Avax container adapter.
  */
 class AuthServiceProviderTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     */
     public function testAuthServiceProviderResolvesAuthFacade() : void
     {
         if (! class_exists(AppFactory::class)) {
@@ -70,6 +74,9 @@ class AuthServiceProviderTest extends TestCase
         $this->assertSame(expected: 424242, actual: $result->user()->id);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testAuthServiceProviderFailsWithoutIdentityBackend() : void
     {
         if (! class_exists(AppFactory::class)) {
@@ -106,6 +113,9 @@ class AuthServiceProviderTest extends TestCase
         $container->get(id: AuthInterface::class);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testAuthServiceProviderUsesBoundClockAndAuditLog() : void
     {
         if (! class_exists(AppFactory::class)) {

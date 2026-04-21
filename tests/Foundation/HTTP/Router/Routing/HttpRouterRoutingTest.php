@@ -14,8 +14,10 @@ use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Avax\HTTP\URI\UriBuilder;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use ReflectionException;
 use RuntimeException;
 
 final class HttpRouterRoutingTest extends TestCase
@@ -26,7 +28,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_optional_segment_with_value_is_captured() : void
     {
@@ -50,7 +52,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_optional_segment_is_accepted() : void
     {
@@ -77,7 +79,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_optional_segment_without_value_falls_back_to_defaults() : void
     {
@@ -102,7 +104,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_wildcard_segment_captures_remainder() : void
     {
@@ -126,7 +128,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_wildcard_segment_captures_single_segment_too() : void
     {
@@ -149,7 +151,7 @@ final class HttpRouterRoutingTest extends TestCase
     /**
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_fallback_route_is_returned_when_no_match() : void
     {
@@ -169,7 +171,7 @@ final class HttpRouterRoutingTest extends TestCase
     /**
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_fallback_handles_different_http_method() : void
     {
@@ -190,7 +192,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_domain_route_matches_only_when_host_matches() : void
     {
@@ -266,7 +268,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_constraint_failure_throws() : void
     {
@@ -345,7 +347,7 @@ final class HttpRouterRoutingTest extends TestCase
         );
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);

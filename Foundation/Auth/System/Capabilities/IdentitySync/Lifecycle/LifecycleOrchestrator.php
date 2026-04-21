@@ -43,7 +43,8 @@ final readonly class LifecycleOrchestrator
             throw LifecycleFailed::userNotFound(userId: $userId->value);
         }
 
-        $current = $this->store->find(userId: $userId)?->state ?? ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
+        $currentRecord = $this->store->find(userId: $userId);
+        $current       = $currentRecord !== null ? $currentRecord->state : ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
 
         if (! $this->isAllowedTransition(from: $current, to: $target)) {
             throw LifecycleFailed::transitionNotAllowed(from: $current, to: $target);

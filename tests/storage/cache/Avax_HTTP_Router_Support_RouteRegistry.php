@@ -1,9 +1,10 @@
 <?php
 
 use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\HTTP\Router\Support\RouteRegistry;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => \Avax\HTTP\Router\Support\RouteRegistry::class,
+                                                'class' => RouteRegistry::class,
                                                 'constructor'        => null,
                                                 'injectedProperties' =>
                                                     [

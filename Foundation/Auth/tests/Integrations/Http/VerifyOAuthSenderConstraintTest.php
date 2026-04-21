@@ -22,6 +22,9 @@ use SensitiveParameter;
 
 final class VerifyOAuthSenderConstraintTest extends TestCase
 {
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testBearerPolicyDoesNotRequireConstraintProof() : void
     {
         $auditLog = new InMemoryAuditLog();
@@ -44,6 +47,9 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         $this->assertSame(expected: [], actual: $auditLog->events());
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testDpopReplayIsRejectedAndAudited() : void
     {
         $auditLog = new InMemoryAuditLog();
@@ -196,6 +202,9 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
                                          ));
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testSenderConstraintMismatchAndMtlsPolicyAreRejected() : void
     {
         $auditLog = new InMemoryAuditLog();

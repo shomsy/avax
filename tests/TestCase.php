@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Avax\Tests;
 
 use Avax\Database\Kernel;
+use Override;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
     protected Kernel $kernel;
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         parent::setUp();
@@ -35,7 +36,7 @@ abstract class TestCase extends BaseTestCase
                                  ]);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         $this->kernel->shutdown();

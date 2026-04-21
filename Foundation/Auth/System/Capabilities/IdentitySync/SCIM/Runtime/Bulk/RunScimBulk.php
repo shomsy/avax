@@ -49,6 +49,9 @@ final readonly class RunScimBulk
         return new ScimBulkResponse(operations: $results);
     }
 
+    /**
+     * @throws RandomException
+     */
     private function executeOperation(ScimBulkRequest $request, ScimBulkOperation $operation) : ScimBulkOperationResult
     {
         $method = strtoupper(trim($operation->method));

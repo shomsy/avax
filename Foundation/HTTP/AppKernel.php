@@ -15,6 +15,7 @@ use Avax\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -133,7 +134,7 @@ final readonly class AppKernel implements Kernel
     private function createOfficeIpRestriction(ResponseFactory $responseFactory) : MiddlewareInterface
     {
         return new class($responseFactory) extends IpRestrictionMiddleware {
-            #[\Override]
+            #[Override]
             protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
                 // Example: Allow local development and office IPs

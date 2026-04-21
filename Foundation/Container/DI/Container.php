@@ -77,6 +77,9 @@ final readonly class Container implements ContainerInterface
         return $this->resolveService()->make(abstract: $abstract, parameters: $parameters);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->callFunction()->call(target: $callable, parameters: $parameters);
@@ -315,6 +318,10 @@ final readonly class Container implements ContainerInterface
         $this->resolver->flushCompiled();
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function rebuildCompiled(array $serviceIds = []) : void
     {
         $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
@@ -355,6 +362,9 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->isWarmedUp();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function canInject(object $target) : bool
     {
         $report = $this->inspectInjection(target: $target);
@@ -398,11 +408,17 @@ final readonly class Container implements ContainerInterface
         return $this->exportGraphFlow()->why(id: $id);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function whoUses(string $id) : array
     {
         return $this->exportGraphFlow()->whoUses(id: $id);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function whatBreaksIf(string $id) : array
     {
         return $this->exportGraphFlow()->whatBreaksIf(id: $id);

@@ -90,6 +90,9 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         return $records;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $key  = self::KEY_PREFIX . $sessionId;
@@ -138,6 +141,9 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         }
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function pruneExpired(DateTimeImmutable $now) : int
     {
         $removed = 0;

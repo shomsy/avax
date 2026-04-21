@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
+use Override;
 use SensitiveParameter;
 use Throwable;
 
@@ -31,7 +32,7 @@ class QueryException extends DatabaseException
      * @param string         $sql      The dialect-specific SQL string that failed
      * @param Throwable|null $previous The underlying driver exception
      */
-    #[\Override]
+    #[Override]
     public function __construct(
         string                      $message,
         string                      $sql,

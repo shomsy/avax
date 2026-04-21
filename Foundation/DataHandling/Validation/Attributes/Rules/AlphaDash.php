@@ -20,7 +20,7 @@ use Avax\Exceptions\ValidationException;
  *
  * Ensures the value only contains letters, numbers, dashes, and underscores.
  *
- * @throws \Avax\Exceptions\ValidationException if the value does not match the allowed pattern.
+ * @throws ValidationException if the value does not match the allowed pattern.
  *
  * Rationale: This validation is necessary for sanitizing inputs where only alphanumeric characters,
  * dashes, and underscores are allowed. It helps prevent potential security risks
@@ -30,7 +30,7 @@ use Avax\Exceptions\ValidationException;
 class AlphaDash
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

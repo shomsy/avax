@@ -27,13 +27,13 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     }
 
     public function issueIdToken(
-        User                               $user,
-        string                             $clientId,
-        array                              $scopes,
-        string|null                        $nonce = null,
-        DateTimeImmutable|null             $authenticatedAt = null,
-        #[\SensitiveParameter] string|null $sessionId = null,
-        bool                               $phishingResistant = false
+        User                              $user,
+        string                            $clientId,
+        array                             $scopes,
+        string|null                       $nonce = null,
+        DateTimeImmutable|null            $authenticatedAt = null,
+        #[SensitiveParameter] string|null $sessionId = null,
+        bool                              $phishingResistant = false
     ) : OidcIdToken
     {
         return $this->activeProvider->issueIdToken(

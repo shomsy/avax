@@ -31,7 +31,7 @@ use Avax\Exceptions\ValidationException;
 class ArrayType
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

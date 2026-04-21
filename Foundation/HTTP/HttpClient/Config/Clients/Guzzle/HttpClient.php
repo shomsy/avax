@@ -91,7 +91,7 @@ final readonly class HttpClient implements ClientInterface
 
     /**
      * @throws GuzzleException
-     * @throws \Exception
+     * @throws Exception
      */
     private function performRequest(
         string              $method,

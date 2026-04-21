@@ -34,7 +34,7 @@ readonly class Same
     public function __construct(string $field) { $this->field = $field; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, array $data, string $property) : void
     {

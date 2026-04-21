@@ -40,7 +40,7 @@ trait HasControlStructures
      * @param callable      $callback The logic to execute if the condition evaluates to false.
      * @param callable|null $default  Optional alternative logic to execute if the condition is true.
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|HasControlStructures The
      *                                                                                                                                      resulting
      *                                                                                                                                      builder
      *                                                                                                                                      instance
@@ -71,7 +71,7 @@ trait HasControlStructures
      * @param callable      $callback  The logic to execute if the condition evaluates to true.
      * @param callable|null $default   Optional alternative logic to execute if the condition is false.
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|HasControlStructures The
      *                                                                                                                                      resulting
      *                                                                                                                                      builder
      *                                                                                                                                      instance
@@ -103,7 +103,7 @@ trait HasControlStructures
      *
      * @param Closure $callback A logic hook receiving the current builder instance.
      *
-     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|HasControlStructures The
      *                                                                                                                                      current
      *                                                                                                                                      builder
      *                                                                                                                                      instance.

@@ -9,6 +9,8 @@ use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
 use Avax\Container\DependencyInjection\Configuration\Settings;
 use Avax\View\BladeTemplateEngine;
+use Illuminate\View\ViewServiceProvider;
+use JakubOnderka\PhpParallelLint\Settings;
 use PHPUnit\Framework\TestCase;
 
 final class ViewServiceProviderTest extends TestCase

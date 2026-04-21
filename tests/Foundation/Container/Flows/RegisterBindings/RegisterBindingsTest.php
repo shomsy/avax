@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Flow\RegisterBindings;
 
+use Avax\Container\Core\AppFactory;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
@@ -12,6 +13,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
 use LogicException;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -68,7 +70,7 @@ final class RegisterBindingsTest extends TestCase
         $this->app->getContainer()->endScope();
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->app = AppFactory::http(

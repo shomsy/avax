@@ -23,13 +23,13 @@ use Avax\Exceptions\ValidationException;
  * @param mixed  $value    The value to be validated as an active URL.
  * @param string $property The name of the property being validated, used in the exception message.
  *
- * @throws \Avax\Exceptions\ValidationException if the value is not a valid or active URL.
+ * @throws ValidationException if the value is not a valid or active URL.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class ActiveURL
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

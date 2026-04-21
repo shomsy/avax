@@ -8,11 +8,11 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentity;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
-use Avax\Auth\System\Capabilities\Identity\Facades\Account;
-use Avax\Auth\System\Capabilities\Identity\Facades\Authentication;
-use Avax\Auth\System\Capabilities\Identity\Facades\Recovery;
-use Avax\Auth\System\Capabilities\Identity\Facades\Verification;
 use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Account;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
+use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Mfa;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Passkey;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Sessions;
@@ -250,7 +250,7 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/Access/RequireRole/RequireRole.php',
             $root . '/System/Capabilities/Access/RiskBasedAccess/Runtime/AssessCurrentRisk/AssessCurrentRisk.php',
             $root . '/System/Capabilities/Identity/Sessions/Runtime/ReadActiveSessions/ReadActiveSessions.php',
-            $root . '/System/Capabilities/Identity/Tokens/Runtime/RefreshAuthentication.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/Flow/RefreshAuthentication.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/StartMfaEnrollment.php',
             $root . '/System/Capabilities/Identity/Passkey/Runtime/ListPasskeys/ListPasskeys.php',
             $root . '/System/Capabilities/ExternalIdentity/SingleSignOn/FederationRuntime/StartFederatedLogin/StartFederatedLogin.php',
@@ -258,7 +258,7 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/ExternalIdentity/OpenIDConnect/Runtime/ReadProviderMetadata/ReadOidcProviderMetadata.php',
             $root . '/System/Capabilities/IdentitySync/SCIM/Runtime/Bulk/RunScimBulk.php',
             $root . '/System/Capabilities/Tenancy/Runtime/Tenant/CreateTenant/CreateTenant.php',
-            $root . '/System/Capabilities/Diagnostics/DiagnosticsFacade.php',
+            $root . '/System/Capabilities/Diagnostics/Diagnostics.php',
         ];
 
         foreach ($requiredFiles as $file) {
@@ -274,11 +274,11 @@ final class ProductBoundaryTest extends TestCase
         $root = dirname(__DIR__, 2);
 
         $requiredFiles = [
-            $root . '/System/Capabilities/Identity/Authentication.php',
-            $root . '/System/Capabilities/Identity/Account.php',
-            $root . '/System/Capabilities/Identity/Recovery.php',
-            $root . '/System/Capabilities/Identity/Verification.php',
-            $root . '/System/Capabilities/Identity/Session/Session.php',
+            $root . '/System/Capabilities/Identity/IdentityOwners/Authentication.php',
+            $root . '/System/Capabilities/Identity/IdentityOwners/Account.php',
+            $root . '/System/Capabilities/Identity/IdentityOwners/Recovery.php',
+            $root . '/System/Capabilities/Identity/IdentityOwners/Verification.php',
+            $root . '/System/Capabilities/Identity/Sessions/Sessions.php',
             $root . '/System/Capabilities/Identity/Mfa/Mfa.php',
             $root . '/System/Capabilities/Identity/Passkey/Passkey.php',
             $root . '/System/Capabilities/ExternalIdentity/OAuth/OAuth.php',
@@ -288,7 +288,7 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/IdentitySync/Provisioning/Provisioning.php',
             $root . '/System/Capabilities/Tenancy/Tenants/Tenants.php',
             $root . '/System/Capabilities/Tenancy/Security/Security.php',
-            $root . '/System/Capabilities/Tenancy/TenancyFacade.php',
+            $root . '/System/Capabilities/Tenancy/Tenancy.php',
         ];
 
         foreach ($requiredFiles as $file) {
@@ -713,12 +713,12 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/Identity/Sessions/Runtime/LogoutAllSessions/LogoutAllSessions.php',
             $root . '/System/Capabilities/Identity/Tokens/TokenState.php',
             $root . '/System/Capabilities/Identity/Tokens/ReadToken.php',
-            $root . '/System/Capabilities/Identity/Tokens/Runtime/RefreshAuthentication.php',
-            $root . '/System/Capabilities/Identity/Tokens/Runtime/IssuedToken.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/Flow/RefreshAuthentication.php',
+            $root . '/System/Capabilities/Identity/Tokens/Runtime/Record/IssuedToken.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/StartMfaEnrollment.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Enroll/ConfirmMfaEnrollment.php',
-            $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/StartMfaChallenge.php',
-            $root . '/System/Capabilities/Identity/Mfa/Runtime/Challenge/VerifyMfaChallenge.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Verify/StartMfaChallenge.php',
+            $root . '/System/Capabilities/Identity/Mfa/Runtime/Verify/VerifyMfaChallenge.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Recover/StartMfaRecovery.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Recover/ConfirmMfaRecovery.php',
             $root . '/System/Capabilities/Identity/Mfa/Runtime/Backup/RegenerateBackupCodes.php',
@@ -769,7 +769,7 @@ final class ProductBoundaryTest extends TestCase
             $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ApplyChange/ApplyTenantSecurityChange.php',
             $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/ApproveChange/ApproveTenantSecurityChange.php',
             $root . '/System/Capabilities/Tenancy/Runtime/TenantSecurity/RollbackChange/RollbackTenantSecurityChange.php',
-            $root . '/System/Capabilities/Diagnostics/DiagnosticsFacade.php',
+            $root . '/System/Capabilities/Diagnostics/Diagnostics.php',
             $root . '/System/Capabilities/Diagnostics/DiagnosticReport.php',
         ];
 

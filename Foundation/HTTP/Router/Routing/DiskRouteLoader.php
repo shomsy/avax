@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Router\Support\RouteCollector;
 use RuntimeException;
 use Throwable;
 

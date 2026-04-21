@@ -7,7 +7,7 @@ namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\De
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;

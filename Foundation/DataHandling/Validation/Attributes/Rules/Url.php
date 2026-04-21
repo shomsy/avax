@@ -23,7 +23,7 @@ use Avax\Exceptions\ValidationException;
 class Url
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

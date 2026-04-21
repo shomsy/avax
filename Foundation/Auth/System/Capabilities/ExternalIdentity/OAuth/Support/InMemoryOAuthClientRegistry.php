@@ -31,23 +31,23 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
      * @throws RandomException
      */
     public function register(
-        string                                                   $name,
-        OAuthClientType                                          $type,
-        array                                                    $redirectUris,
-        string|null                                              $tenantSlug = null,
-        array                                                    $allowedScopes = [],
-        array                                                    $allowedAudiences = [],
-        array                                                    $allowedGrantTypes = [],
-        array                                                    $audienceScopeBoundaries = [],
-        #[\SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType|null                           $requiredSenderConstraint = null,
-        bool                                                     $workloadIdentity = false,
-        bool                                                     $phishingResistantRequired = false,
-        bool                                                     $requestObjectSignatureRequired = false,
-        bool                                                     $frontChannelLogoutSupported = false,
-        bool                                                     $backChannelLogoutSupported = false,
-        bool|null                                                $approvalRequired = null,
-        #[SensitiveParameter] string|null                        $requestObjectVerificationKeyPem = null
+        string                                                  $name,
+        OAuthClientType                                         $type,
+        array                                                   $redirectUris,
+        string|null                                             $tenantSlug = null,
+        array                                                   $allowedScopes = [],
+        array                                                   $allowedAudiences = [],
+        array                                                   $allowedGrantTypes = [],
+        array                                                   $audienceScopeBoundaries = [],
+        #[SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
+        OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
+        bool                                                    $workloadIdentity = false,
+        bool                                                    $phishingResistantRequired = false,
+        bool                                                    $requestObjectSignatureRequired = false,
+        bool                                                    $frontChannelLogoutSupported = false,
+        bool                                                    $backChannelLogoutSupported = false,
+        bool|null                                               $approvalRequired = null,
+        #[SensitiveParameter] string|null                       $requestObjectVerificationKeyPem = null
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris            = $this->normalizeRedirectUris(redirectUris: $redirectUris);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capabilities\Identity\Sessions\Registry;
 
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Redis;
@@ -105,7 +106,7 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
      * @param array<string, string> $data
      *
      * @return SessionRecord
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     private function hydrate(array $data) : SessionRecord
     {

@@ -26,7 +26,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator (defaults to '=' if second is provided).
      * @param string|null    $second   The right-hand field name belonging to the target table.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|QueryBuilder A
+     * @return HasJoins|QueryBuilder A
      *                                                                                                                          fresh,
      *                                                                                                                          cloned
      *                                                                                                                          builder
@@ -60,7 +60,7 @@ trait HasJoins
      * @param string|null    $second   The target comparison field label.
      * @param string         $type     The join strategy type (inner/left/right/cross).
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|QueryBuilder A
+     * @return HasJoins|QueryBuilder A
      *                                                                                                                          fresh,
      *                                                                                                                          cloned
      *                                                                                                                          builder
@@ -113,7 +113,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|QueryBuilder A
+     * @return HasJoins|QueryBuilder A
      *                                                                                                                          fresh,
      *                                                                                                                          cloned
      *                                                                                                                          builder
@@ -144,7 +144,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|QueryBuilder A
+     * @return HasJoins|QueryBuilder A
      *                                                                                                                          fresh,
      *                                                                                                                          cloned
      *                                                                                                                          builder
@@ -172,7 +172,7 @@ trait HasJoins
      *
      * @param string $table The technical name of the target database table to cross-link.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|QueryBuilder A
+     * @return HasJoins|QueryBuilder A
      *                                                                                                                          fresh,
      *                                                                                                                          cloned
      *                                                                                                                          builder

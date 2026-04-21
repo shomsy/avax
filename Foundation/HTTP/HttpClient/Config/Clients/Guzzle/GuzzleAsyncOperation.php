@@ -34,8 +34,8 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
      *
      * @return mixed The result of the promise.
      *
-     * @throws \Throwable
-     * @throws \Throwable
+     * @throws Throwable
+     * @throws Throwable
      */
     public function resolve() : mixed
     {
@@ -55,7 +55,7 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
      *
      * @return mixed The rejection reason.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function reject() : mixed
     {

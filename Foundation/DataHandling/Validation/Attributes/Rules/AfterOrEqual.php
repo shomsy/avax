@@ -29,7 +29,7 @@ readonly class AfterOrEqual
     public function __construct(string $date) { $this->date = $date; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

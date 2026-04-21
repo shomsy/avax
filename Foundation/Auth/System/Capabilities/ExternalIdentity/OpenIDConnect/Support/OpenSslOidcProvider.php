@@ -33,7 +33,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         #[SensitiveParameter] string      $privateKeyPem,
         string                            $keyId,
         string                            $authorizationEndpoint,
-        #[\SensitiveParameter] string     $tokenEndpoint,
+        #[SensitiveParameter] string $tokenEndpoint,
         string                            $userInfoEndpoint,
         string                            $jsonWebKeySetUri,
         SubjectIdentifierStrategy|null    $subjectIdentifierStrategy = null,
@@ -92,13 +92,13 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
      * @throws DateMalformedStringException
      */
     public function issueIdToken(
-        User                               $user,
-        string                             $clientId,
-        array                              $scopes,
-        string|null                        $nonce = null,
-        DateTimeImmutable|null             $authenticatedAt = null,
-        #[\SensitiveParameter] string|null $sessionId = null,
-        bool                               $phishingResistant = false
+        User                              $user,
+        string                            $clientId,
+        array                             $scopes,
+        string|null                       $nonce = null,
+        DateTimeImmutable|null            $authenticatedAt = null,
+        #[SensitiveParameter] string|null $sessionId = null,
+        bool                              $phishingResistant = false
     ) : OidcIdToken
     {
         $issuedAt  = new DateTimeImmutable();

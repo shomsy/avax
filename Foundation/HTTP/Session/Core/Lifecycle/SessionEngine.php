@@ -7,7 +7,6 @@ namespace Avax\HTTP\Session\Core\Lifecycle;
 use Avax\HTTP\Context\HttpContextInterface;
 use Avax\HTTP\Session\Audit\Audit;
 use Avax\HTTP\Session\Core\Config;
-use Avax\HTTP\Session\Core\Lifecycle;
 use Avax\HTTP\Session\Events\Events;
 use Avax\HTTP\Session\Recovery\Recovery;
 use Avax\HTTP\Session\Shared\Contracts\Security\Encrypter;
@@ -214,11 +213,11 @@ final readonly class SessionEngine
      *
      * @param string $context The context identifier.
      *
-     * @return \Avax\HTTP\Session\Core\Lifecycle\SessionScope A scoped session consumer.
+     * @return SessionScope A scoped session consumer.
      */
-    public function for(string $context) : Lifecycle\SessionScope
+    public function for(string $context) : SessionScope
     {
-        return new Lifecycle\SessionScope(namespace: $context, engine: $this);
+        return new SessionScope(namespace: $context, engine: $this);
     }
 
     /**
@@ -228,11 +227,11 @@ final readonly class SessionEngine
      *
      * @param string $namespace The namespace identifier.
      *
-     * @return \Avax\HTTP\Session\Core\Lifecycle\SessionScope A namespaced session consumer.
+     * @return SessionScope A namespaced session consumer.
      */
-    public function scope(string $namespace) : Lifecycle\SessionScope
+    public function scope(string $namespace) : SessionScope
     {
-        return new Lifecycle\SessionScope(namespace: $namespace, engine: $this);
+        return new SessionScope(namespace: $namespace, engine: $this);
     }
 
     // ---------------------------------------------------------------------

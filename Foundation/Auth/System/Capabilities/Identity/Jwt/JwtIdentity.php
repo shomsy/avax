@@ -6,13 +6,13 @@ namespace Avax\Auth\System\Capabilities\Identity\Jwt;
 
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedWorkloadToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenCodecInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenRevocationStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\TokenCodecInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
@@ -40,15 +40,15 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     private UserSourceInterface                $userSource;
 
     public function __construct(
-        UserSourceInterface                                    $userSource,
-        TokenCodecInterface                                    $codec,
-        Clock                                                  $clock,
-        TokenRevocationStoreInterface|null                     $revocationStore = null,
-        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        int|null                                               $tokenExpiry = null,
-        int|null                                               $refreshTokenExpiry = null,
-        string|null                                            $issuer = null,
-        int                                                    $leeway = 60
+        UserSourceInterface                                   $userSource,
+        TokenCodecInterface                                   $codec,
+        Clock                                                 $clock,
+        TokenRevocationStoreInterface|null                    $revocationStore = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        int|null                                              $tokenExpiry = null,
+        int|null                                              $refreshTokenExpiry = null,
+        string|null                                           $issuer = null,
+        int                                                   $leeway = 60
     )
     {
         $tokenExpiry              ??= 3600;
@@ -63,6 +63,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         $this->refreshTokenExpiry = $refreshTokenExpiry;
         $this->issuer             = $issuer;
         $this->leeway             = $leeway;
+    }
+
+    public function verify(#[SensitiveParameter] string $token) : bool
+    {
+        return $this->resolve(token: $token) !== null;
     }
 
     public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
@@ -341,13 +346,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issue(
-        User                               $user,
-        DateTimeImmutable|null             $mfaVerifiedAt = null,
-        bool                               $phishingResistant = false,
-        string|null                        $clientId = null,
-        array                              $scopes = [],
-        OAuthSenderConstraint|null         $senderConstraint = null,
-        #[\SensitiveParameter] string|null $refreshTokenFamilyId = null
+        User                              $user,
+        DateTimeImmutable|null            $mfaVerifiedAt = null,
+        bool                              $phishingResistant = false,
+        string|null                       $clientId = null,
+        array                             $scopes = [],
+        #[SensitiveParameter] string|null $refreshTokenFamilyId = null,
+        OAuthSenderConstraint|null        $senderConstraint = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -398,7 +403,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         );
     }
 
-    public function revoke(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
+    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
     {
         $this->revocationStore?->revoke(tokenId: $tokenId, expiresAt: $expiresAt);
     }

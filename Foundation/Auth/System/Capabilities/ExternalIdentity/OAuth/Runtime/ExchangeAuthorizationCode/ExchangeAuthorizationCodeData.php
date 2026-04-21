@@ -19,14 +19,14 @@ final readonly class ExchangeAuthorizationCodeData
     public string                     $clientId;
 
     public function __construct(
-        string                             $clientId,
-        #[SensitiveParameter] string       $code,
-        string                             $redirectUri,
-        #[SensitiveParameter] string|null  $clientSecret = null,
-        #[SensitiveParameter] string|null  $codeVerifier = null,
-        #[\SensitiveParameter] string|null $ipAddress = null,
-        string|null                        $userAgent = null,
-        OAuthSenderConstraint|null         $senderConstraint = null
+        string                            $clientId,
+        #[SensitiveParameter] string      $code,
+        string                            $redirectUri,
+        #[SensitiveParameter] string|null $clientSecret = null,
+        #[SensitiveParameter] string|null $codeVerifier = null,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null,
+        OAuthSenderConstraint|null        $senderConstraint = null
     )
     {
         $this->clientId         = $clientId;

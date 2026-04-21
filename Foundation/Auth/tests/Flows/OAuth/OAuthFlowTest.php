@@ -21,9 +21,12 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstrain
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;

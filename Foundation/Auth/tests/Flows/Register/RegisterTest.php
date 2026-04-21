@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\Register;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
@@ -18,6 +19,7 @@ use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Exception;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -152,7 +154,7 @@ class RegisterTest extends TestCase
         $register->execute(data: $data);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

@@ -9,6 +9,7 @@ use Avax\Container\Container;
 use Avax\Container\ContainerInterface;
 use Avax\Container\ContextBuilderInterface;
 use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Container\InjectionReport;
 use Avax\Container\ScopeManagerInterface;
 use PHPUnit\Framework\TestCase;

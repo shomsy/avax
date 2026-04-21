@@ -12,10 +12,14 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\BeginMfaRecoveryD
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\VerifyMfaChallengeData;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshAuthenticationRequest;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
@@ -30,6 +34,7 @@ use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use Exception;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -149,7 +154,7 @@ class AuthLifecycleTest extends TestCase
         $this->auth->login(credentials: new Credentials(identifier: 'login@fail.com', password: 'WRONG'));
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $userSource    = new InMemoryUserSource();

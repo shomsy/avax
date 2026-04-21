@@ -12,6 +12,8 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaRecoveryFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaAttemptLimitReached;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationFailed;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshAuthenticationFailed;
 use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flows\Login\AuthenticationFailed;

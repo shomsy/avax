@@ -29,7 +29,7 @@ readonly class NotRegex
     public function __construct(string $pattern) { $this->pattern = $pattern; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

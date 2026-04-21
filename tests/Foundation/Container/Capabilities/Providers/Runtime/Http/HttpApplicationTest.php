@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capability\Providers\Runtime\Http;
 
+use Avax\Container\Core\AppFactory;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
 use Avax\Container\DependencyInjection\Configuration\AppFactory;

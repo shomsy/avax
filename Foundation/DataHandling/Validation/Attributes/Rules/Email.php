@@ -22,7 +22,7 @@ use Avax\Exceptions\ValidationException;
 /**
  * Validates whether the provided value is a valid email address.
  *
- * @throws \Avax\Exceptions\ValidationException if the value is not a valid email address.
+ * @throws ValidationException if the value is not a valid email address.
  *
  * The rationale for this approach is to ensure that only valid email addresses are accepted and
  * stored within the system. By enforcing this validation at the point where the attribute is used,
@@ -33,7 +33,7 @@ use Avax\Exceptions\ValidationException;
 class Email
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

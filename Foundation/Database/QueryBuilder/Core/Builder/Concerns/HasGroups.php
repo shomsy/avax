@@ -24,7 +24,7 @@ trait HasGroups
      *
      * @param string|array ...$columns A variable list of field names or arrays of names to group by.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|QueryBuilder A
+     * @return HasGroups|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -59,7 +59,7 @@ trait HasGroups
      * @param mixed  $value    The comparison target value, which will be safely parameterized.
      * @param string $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|QueryBuilder A
+     * @return HasGroups|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder

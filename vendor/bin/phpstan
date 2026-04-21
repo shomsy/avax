@@ -16,7 +16,7 @@ $GLOBALS['_composer_bin_dir'] = __DIR__;
 $GLOBALS['_composer_autoload_path'] = __DIR__ . '/..'.'/autoload.php';
 
 if (PHP_VERSION_ID < 80000) {
-    if (!class_exists(\Composer\BinProxyWrapper::class)) {
+    if (! class_exists(BinProxyWrapper::class)) {
         /**
          * @internal
          */
@@ -109,7 +109,7 @@ if (PHP_VERSION_ID < 80000) {
 
     if (
         (function_exists('stream_get_wrappers') && in_array('phpvfscomposer', stream_get_wrappers(), true))
-        || (function_exists('stream_wrapper_register') && stream_wrapper_register('phpvfscomposer', \Composer\BinProxyWrapper::class))
+        || (function_exists('stream_wrapper_register') && stream_wrapper_register('phpvfscomposer', BinProxyWrapper::class))
     ) {
         return include("phpvfscomposer://" . __DIR__ . '/..'.'/phpstan/phpstan/phpstan');
     }

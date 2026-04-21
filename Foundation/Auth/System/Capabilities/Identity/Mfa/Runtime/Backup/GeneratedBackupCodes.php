@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeSet;
 use SensitiveParameter;
 
 /**

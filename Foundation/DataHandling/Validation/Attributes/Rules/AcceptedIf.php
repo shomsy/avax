@@ -25,7 +25,7 @@ use Avax\Exceptions\ValidationException;
  * by conditionField and conditionValue is met and the value is not one of these acceptable values,
  * a ValidationException is thrown.
  *
- * @throws \Avax\Exceptions\ValidationException
+ * @throws ValidationException
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class AcceptedIf
@@ -40,7 +40,7 @@ readonly class AcceptedIf
     }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, array $data, string $property) : void
     {

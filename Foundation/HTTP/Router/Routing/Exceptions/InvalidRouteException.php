@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
 use InvalidArgumentException;
+use Override;
 use Throwable;
 
 /**
@@ -17,11 +18,11 @@ final class InvalidRouteException extends InvalidArgumentException
     /**
      * Default constructor for direct string messages.
      *
-     * @param string          $message  Error message.
-     * @param int             $code     Error code (optional).
-     * @param \Throwable|null $previous Chained exception (optional).
+     * @param string         $message  Error message.
+     * @param int            $code     Error code (optional).
+     * @param Throwable|null $previous Chained exception (optional).
      */
-    #[\Override]
+    #[Override]
     public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, code: $code, previous: $previous);

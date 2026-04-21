@@ -29,7 +29,7 @@ readonly class Digits
     public function __construct(int $digits) { $this->digits = $digits; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

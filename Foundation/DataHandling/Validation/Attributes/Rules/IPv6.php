@@ -18,7 +18,7 @@ use Avax\Exceptions\ValidationException;
  * @param mixed  $value    The value to be validated as an IPv6 address.
  * @param string $property The name of the property being validated.
  *
- * @throws \Avax\Exceptions\ValidationException If the value is not a valid IPv6 address.
+ * @throws ValidationException If the value is not a valid IPv6 address.
  *
  * The use of filter_var function with FILTER_VALIDATE_IP and FILTER_FLAG_IPV6 ensures that only valid IPv6 formats are
  * accepted, reinforcing data integrity especially where IP addresses are critical.
@@ -27,7 +27,7 @@ use Avax\Exceptions\ValidationException;
 class IPv6
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Support;
 use Avax\Auth\System\Foundation\Clock;
 use DateInterval;
 use DateTimeImmutable;
+use Override;
 
 /**
  * Deterministic clock for time-sensitive auth tests.
@@ -22,13 +23,13 @@ final class FrozenClock extends Clock
         $this->now = $now;
     }
 
-    #[\Override]
+    #[Override]
     public function now() : DateTimeImmutable
     {
         return $this->now;
     }
 
-    #[\Override]
+    #[Override]
     public function timestamp() : int
     {
         return $this->now->getTimestamp();

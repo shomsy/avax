@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/app_instance.php';
 
 use Avax\Auth\Contracts\AuthInterface;
+use Avax\Auth\System\AuthInterface;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Config\Service\Config;
 use Avax\Database\Connection\ConnectionManager;
@@ -93,7 +94,7 @@ if (! function_exists(function: 'response')) {
 
 if (! function_exists(function: 'csrf_token')) {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     function csrf_token() : string
     {
@@ -272,7 +273,7 @@ if (! function_exists(function: 'asset')) {
  * @param array  $parameters  Parameters for dynamic route segments (if using route names).
  * @param int    $status      HTTP status code for the redirection (default: 302).
  *
- * @return \Psr\Http\Message\ResponseInterface
+ * @return ResponseInterface
  */
 if (! function_exists(function: 'redirect') && ! function_exists(function: 'redirect')) {
     /**
@@ -298,7 +299,7 @@ if (! function_exists(function: 'redirect') && ! function_exists(function: 'redi
  * @param array  $parameters  Parameters for dynamic route segments (if using route names).
  * @param int    $status      HTTP status code for the redirection (default: 302).
  *
- * @return \Psr\Http\Message\ResponseInterface
+ * @return ResponseInterface
  */
 if (! function_exists(function: 'arrhae') && ! function_exists(function: 'arrhae')) {
     function arrhae(array $array) : Arrhae
@@ -313,10 +314,10 @@ if (! function_exists(function: 'connection')) {
      *
      * @param string|null $connectionName The name of the database connection to retrieve. Defaults to null for the default connection.
      *
-     * @return \PDO The PDO database connection instance.
+     * @return PDO The PDO database connection instance.
      *
      * @throws RuntimeException If the database connection service is not available in the dependency injection container.
-     * @throws \Throwable
+     * @throws Throwable
      */
     function connection(string|null $connectionName = null) : PDO
     {

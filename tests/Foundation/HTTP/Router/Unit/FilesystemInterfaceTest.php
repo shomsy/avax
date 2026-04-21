@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Avax\Contracts\FilesystemException;
 use Avax\Contracts\FilesystemInterface;
+use Avax\Filesystem\Contracts\FilesystemInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -183,7 +184,7 @@ class FilesystemInterfaceTest extends TestCase
         $this->filesystem->delete(path: '/protected/file.txt');
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         // This would be a concrete implementation in real usage

@@ -220,7 +220,7 @@ final readonly class AsyncRouteCacheLoader
      * @param string $routesPath Path to routes directory for manifest creation
      *
      * @return mixed Promise resolving to void
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      * @throws JsonException
      */
     public function writeAsync(string $cachePath, string $routesPath) : mixed
@@ -236,10 +236,10 @@ final readonly class AsyncRouteCacheLoader
     /**
      * Internal async write implementation.
      *
-     * @throws \Avax\Contracts\FilesystemException
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
+     * @throws FilesystemException
      * @throws JsonException
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     private function writeAsyncInternal(string $cachePath, string $routesPath) : mixed
     {

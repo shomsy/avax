@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\OAuth;
 
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClient;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

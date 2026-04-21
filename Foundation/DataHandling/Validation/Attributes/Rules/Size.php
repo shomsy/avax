@@ -26,7 +26,7 @@ readonly class Size
     public function __construct(int $size) { $this->size = $size; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

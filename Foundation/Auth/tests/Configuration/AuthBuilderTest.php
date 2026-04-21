@@ -17,6 +17,7 @@ use Avax\Auth\Tests\Support\FrozenClock;
 use DateTimeImmutable;
 use Exception;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -186,7 +187,7 @@ class AuthBuilderTest extends TestCase
         $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

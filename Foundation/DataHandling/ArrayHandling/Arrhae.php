@@ -435,7 +435,7 @@ class Arrhae implements ArrayAccess, Countable, IteratorAggregate
      * If a Closure is provided instead of a key, it applies the Closure to each item and returns the results.
      * If a value doesn't exist or isn't an array when using a key, `null` is returned for that item.
      *
-     * @param string|\Closure $key The key to pluck from each item or a Closure to apply to each item.
+     * @param string|Closure $key The key to pluck from each item or a Closure to apply to each item.
      *
      * @return array An array containing the plucked values or the results of the Closure for each item.
      *
@@ -598,9 +598,9 @@ class Arrhae implements ArrayAccess, Countable, IteratorAggregate
      * This helper method is used internally to extract a value from a single array item using a dot-notated key
      * or apply a Closure to it.
      *
-     * @param mixed               $item    The array item to extract the value from.
-     * @param string|int|\Closure $key     The key to retrieve, supports dot notation or a Closure.
-     * @param mixed               $default The default value to return if the key does not exist.
+     * @param mixed              $item    The array item to extract the value from.
+     * @param string|int|Closure $key     The key to retrieve, supports dot notation or a Closure.
+     * @param mixed              $default The default value to return if the key does not exist.
      *
      * @return mixed The value associated with the key, the result of the Closure, or the default value if the key does
      *               not exist.
@@ -690,7 +690,7 @@ class Arrhae implements ArrayAccess, Countable, IteratorAggregate
      *
      * @api
      *
-     * @see   \Avax\DataHandling\ArrayHandling\Arrhae::setItems() For setting batch mode
+     * @see   Arrhae::setItems For setting batch mode
      */
     public function isBatch() : bool
     {

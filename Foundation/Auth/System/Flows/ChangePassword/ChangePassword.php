@@ -8,12 +8,12 @@ use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaChallengeStoreInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
@@ -42,17 +42,17 @@ final readonly class ChangePassword
     private UserSourceInterface             $userSource;
 
     public function __construct(
-        UserSourceInterface                                    $userSource,
-        #[SensitiveParameter] PasswordHasher                   $passwordHasher,
-        #[SensitiveParameter] IdentityInterface                $identity,
-        #[\SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        AuditLogInterface                                      $auditLog,
-        Clock                                                  $clock,
-        #[\SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
-        MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
-        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        LoginRateLimit|null                                    $rateLimit = null,
-        RequireFreshMfa|null                                   $requireFreshMfa = null
+        UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] PasswordHasher                  $passwordHasher,
+        #[SensitiveParameter] IdentityInterface               $identity,
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        LoginRateLimit|null                                   $rateLimit = null,
+        RequireFreshMfa|null                                  $requireFreshMfa = null
     )
     {
         $this->userSource            = $userSource;

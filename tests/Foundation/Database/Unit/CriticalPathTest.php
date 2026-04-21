@@ -14,6 +14,7 @@ use Avax\Database\QueryBuilder\Exceptions\QueryException;
 use Avax\Database\Transaction\Transaction;
 use Avax\Database\Transaction\TransactionManager;
 use Exception;
+use Override;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -32,7 +33,7 @@ final class CriticalPathTest extends TestCase
      *
      * @throws RandomException
      * @throws ReflectionException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function test_transaction_rollback_on_failure() : void
     {
@@ -124,7 +125,7 @@ final class CriticalPathTest extends TestCase
      *
      * @throws RandomException
      * @throws ReflectionException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function test_query_exception_redacts_bindings_by_default() : void
     {
@@ -162,7 +163,7 @@ final class CriticalPathTest extends TestCase
         }
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->pdo = new PDO(dsn: 'sqlite::memory:');

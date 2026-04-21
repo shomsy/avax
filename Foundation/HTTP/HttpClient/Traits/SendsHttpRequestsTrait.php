@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Traits;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use SensitiveParameter;
@@ -21,9 +22,9 @@ trait SendsHttpRequestsTrait
      *
      * @return ResponseInterface The raw HTTP response.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    #[\Override]
+    #[Override]
     public function sendRequest(
         string                           $method,
         string                           $url,

@@ -16,8 +16,8 @@ final readonly class ReadOidcUserInfo
     private JwtIdentityInterface       $jwtIdentity;
 
     public function __construct(
-        #[\SensitiveParameter] JwtIdentityInterface $jwtIdentity,
-        OidcProviderInterface|null                  $oidcProvider = null
+        #[SensitiveParameter] JwtIdentityInterface $jwtIdentity,
+        OidcProviderInterface|null                 $oidcProvider = null
     )
     {
         $this->jwtIdentity  = $jwtIdentity;

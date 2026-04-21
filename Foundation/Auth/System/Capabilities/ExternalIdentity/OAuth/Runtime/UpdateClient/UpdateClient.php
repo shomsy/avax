@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient;
 
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientApprovalStatus;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethodPolicy;
-use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
 use RuntimeException;
 

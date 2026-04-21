@@ -14,7 +14,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\RefreshTokenStoreInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;

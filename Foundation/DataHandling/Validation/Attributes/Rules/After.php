@@ -19,7 +19,7 @@ use DateTime;
 /**
  * Validates that the provided date is after the date specified during instantiation.
  *
- * @throws \Avax\Exceptions\ValidationException if the input date is not after the comparison date.
+ * @throws ValidationException if the input date is not after the comparison date.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class After
@@ -29,7 +29,7 @@ readonly class After
     public function __construct(string $date) { $this->date = $date; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

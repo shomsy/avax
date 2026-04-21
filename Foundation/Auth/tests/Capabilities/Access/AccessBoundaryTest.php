@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 class AccessBoundaryTest extends TestCase
 {
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated
+     * @throws Unauthenticated
      */
     public function testRequireAuthenticationSuccess() : void
     {
@@ -45,7 +45,7 @@ class AccessBoundaryTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
+     * @throws PermissionDenied
      * @throws Unauthenticated
      */
     public function testRequirePermissionSuccess() : void
@@ -68,7 +68,7 @@ class AccessBoundaryTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
+     * @throws PermissionDenied
      */
     public function testRequirePermissionFailureUserNotLoggedIn() : void
     {

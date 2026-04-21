@@ -245,7 +245,7 @@ class DomainAwareMatcherTest extends TestCase
         $this->assertEquals(expected: '/api', actual: $result[0]->path);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $this->baseMatcher = $this->createMock(RouteMatcher::class);

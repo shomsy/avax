@@ -246,7 +246,7 @@ final class Reflector
      *
      * @return array An array representing the schema of the object's public fields.
      *
-     * @throws \ReflectionException If reflection operations encounter an error.
+     * @throws ReflectionException If reflection operations encounter an error.
      */
     public function toSchema() : array
     {

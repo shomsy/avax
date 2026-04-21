@@ -11,6 +11,8 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\CancelMfaEnrollmen
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollment;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\StartMfaEnrollment;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStatus;
@@ -23,6 +25,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticatio
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\Tests\Support\FrozenClock;
 use DateInterval;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -33,7 +36,7 @@ final class MfaEnrollmentTest extends TestCase
 {
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testEnrollmentStartsAndCompletesOnlyAfterValidTotpProof() : void
     {
@@ -103,7 +106,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testEnrollmentRejectsInvalidFirstCodeAndDoesNotHalfEnableMfa() : void
     {
@@ -146,7 +149,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testEnrollmentCanBeCancelledSafely() : void
     {
@@ -176,7 +179,7 @@ final class MfaEnrollmentTest extends TestCase
 
     /**
      * @throws Unauthenticated
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function testEnrollmentExpires() : void
     {

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCode;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\BackupCodeSet;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Foundation\Clock;
 use Random\RandomException;

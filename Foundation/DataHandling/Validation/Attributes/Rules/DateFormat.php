@@ -33,7 +33,7 @@ readonly class DateFormat
     public function __construct(string $format) { $this->format = $format; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

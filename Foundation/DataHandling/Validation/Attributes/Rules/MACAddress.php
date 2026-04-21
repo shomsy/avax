@@ -21,13 +21,13 @@ use Avax\Exceptions\ValidationException;
  * This method uses PHP's built-in `filter_var` function to check if the input value
  * is a valid MAC address. If it's not, a `ValidationException` is thrown.
  *
- * @throws \Avax\Exceptions\ValidationException If the given value is not a valid MAC address.
+ * @throws ValidationException If the given value is not a valid MAC address.
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class MACAddress
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

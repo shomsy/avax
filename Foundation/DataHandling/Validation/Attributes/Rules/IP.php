@@ -21,13 +21,13 @@ use Avax\Exceptions\ValidationException;
  * Validate if the given value is a valid IP address.
  * Throws an exception if validation fails.
  *
- * @throws \Avax\Exceptions\ValidationException
+ * @throws ValidationException
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class IP
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

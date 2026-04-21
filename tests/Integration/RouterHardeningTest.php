@@ -18,6 +18,9 @@ use Avax\Container\Providers\HTTP\ViewServiceProvider;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\URI\UriBuilder;
+use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\View\ViewServiceProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -111,9 +114,9 @@ class RouterHardeningTest extends TestCase
             // If we get here, check it's a proper error response
             $this->assertEquals(expected: 500, actual: $response->getStatusCode());
             $this->assertStringContainsString(needle: 'Internal Server Error', haystack: (string) $response->getBody());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Exception is acceptable as long as it's caught by our error handling
-            $this->assertInstanceOf(expected: \Throwable::class, actual: $e);
+            $this->assertInstanceOf(expected: Throwable::class, actual: $e);
         }
     }
 
@@ -242,7 +245,7 @@ class RouterHardeningTest extends TestCase
         $this->assertEquals(expected: 200, actual: $response->statusCode);
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp() : void
     {
         $providers = [

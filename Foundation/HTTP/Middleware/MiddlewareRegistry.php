@@ -146,7 +146,7 @@ final class MiddlewareRegistry
      *
      * @return class-string<MiddlewareInterface> The middleware class name
      *
-     * @throws \InvalidArgumentException If middleware identifier is not registered
+     * @throws InvalidArgumentException If middleware identifier is not registered
      */
     public static function get(string $identifier) : string
     {
@@ -167,7 +167,7 @@ final class MiddlewareRegistry
      *
      * @return bool True if valid middleware class
      *
-     * @throws \InvalidArgumentException If class doesn't implement MiddlewareInterface
+     * @throws InvalidArgumentException If class doesn't implement MiddlewareInterface
      */
     public static function validateMiddlewareClass(string $className) : bool
     {

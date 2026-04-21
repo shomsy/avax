@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capabilities\Identity\Jwt;
 
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedWorkloadToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenIssuerInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenVerifierInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Issuer\TokenIssuerInterface;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Verify\TokenVerifierInterface;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 
@@ -28,8 +28,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         bool                       $phishingResistant = false,
         string|null                $clientId = null,
         array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null,
-        string|null                $refreshTokenFamilyId = null
+        string|null                $refreshTokenFamilyId = null,
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;

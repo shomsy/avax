@@ -24,7 +24,7 @@ use Avax\Exceptions\ValidationException;
 class Filled
 {
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

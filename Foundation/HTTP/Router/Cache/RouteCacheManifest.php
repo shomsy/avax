@@ -253,8 +253,8 @@ final readonly class RouteCacheManifest
 
         try {
             return hash('sha256', json_encode($routeData, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
-        } catch (\JsonException $exception) {
-            throw new \RuntimeException(message: 'Unable to generate route hash.', code: 0, previous: $exception);
+        } catch (JsonException $exception) {
+            throw new RuntimeException(message: 'Unable to generate route hash.', code: 0, previous: $exception);
         }
     }
 }

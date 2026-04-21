@@ -399,7 +399,7 @@ class QueryBuilder
      * @param string      $value Target column name.
      * @param string|null $key   Optional column to use for array keys.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function pluck(string $value, string|null $key = null) : array
     {
@@ -459,7 +459,7 @@ class QueryBuilder
      * @param string $column  Target column name.
      * @param mixed  $default Fallback value if no record exists.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function value(string $column, mixed $default = null) : mixed
     {
@@ -474,7 +474,7 @@ class QueryBuilder
      * @param string|callable|null $key     Optional column or transform callback.
      * @param mixed                $default Fallback value if no record exists.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function first(string|callable|null $key = null, mixed $default = null) : mixed
     {
@@ -518,7 +518,7 @@ class QueryBuilder
      *
      * @param string $column Column to count (defaults to '*').
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function count(string $column = '*') : int
     {
@@ -535,7 +535,7 @@ class QueryBuilder
      * @param mixed  $id     Identity value.
      * @param string $column Field name for the identity (defaults to 'id').
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function find(mixed $id, string $column = 'id') : mixed
     {

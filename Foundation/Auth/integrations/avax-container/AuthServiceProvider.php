@@ -20,6 +20,7 @@ use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Providers\ServiceProvider;
+use Override;
 use RuntimeException;
 
 /**
@@ -27,7 +28,7 @@ use RuntimeException;
  */
 final class AuthServiceProvider extends ServiceProvider
 {
-    #[\Override]
+    #[Override]
     public function register() : void
     {
         $this->registerFoundation();

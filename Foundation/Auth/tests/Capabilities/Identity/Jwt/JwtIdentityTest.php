@@ -7,9 +7,12 @@ namespace Avax\Auth\Tests\Capabilities\Identity\Jwt;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
@@ -19,6 +22,7 @@ use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use InvalidArgumentException;
 use Mockery;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
@@ -297,7 +301,7 @@ class JwtIdentityTest extends TestCase
         $this->assertNull(actual: $jwt->resolveWorkloadToken(token: $issued->token, expectedAudience: 'orders-api'));
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown() : void
     {
         Mockery::close();

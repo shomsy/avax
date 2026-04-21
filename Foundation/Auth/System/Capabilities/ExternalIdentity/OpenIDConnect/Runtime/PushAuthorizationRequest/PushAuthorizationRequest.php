@@ -11,7 +11,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegi
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcRequestObjectStoreInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use DateTimeImmutable;

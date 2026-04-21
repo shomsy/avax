@@ -257,7 +257,7 @@ final readonly class Session
      *
      * @return self Fluent interface.
      *
-     * @throws \LogicException Always throws - policies are immutable.
+     * @throws LogicException Always throws - policies are immutable.
      */
     public function registerPolicy(PolicyInterface $policy) : self
     {

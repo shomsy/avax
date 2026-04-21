@@ -27,7 +27,7 @@ readonly class StartsWith
     public function __construct(array $prefixes) { $this->prefixes = $prefixes; }
 
     /**
-     * @throws \Avax\Exceptions\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $value, string $property) : void
     {

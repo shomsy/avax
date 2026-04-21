@@ -1,6 +1,6 @@
 # TODO
 
-Completed implementation archive. No active items remain.
+Active implementation queue and completed implementation archive.
 
 ## Entry Format
 
@@ -13,6 +13,99 @@ Completed implementation archive. No active items remain.
 - `links`:
 
 ## Current Items
+
+- `id`: AUTH-038
+- `created_at`: 2026-04-21 20:26 CEST
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: done
+- `estimate`: 4h
+- `outcome`: P2 final production lock, dead-code/stale-branch cleanup, review closure completion, and version-lock
+  evidence
+- `acceptance`: `review-closure.md` shows only `verified fixed`, `disproven`, or `intentionally retained` items;
+  stale compatibility hacks and dead readiness wrappers are removed where safe; final release evidence remains green
+- `links`: .agents/management/review-closure.md, build/evidence-bundle.json, build/conformance-report.json,
+  build/quality-gates-report.json
+
+- `id`: AUTH-037
+- `created_at`: 2026-04-21 20:26 CEST
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: done
+- `estimate`: 5h
+- `outcome`: P1 finish documentation governance, mirrored ownership explanations, and executable example/doc sync
+- `acceptance`: README and mirrored docs remain ownership-driven and truthful; adapter/minimal/optional bootstrap
+  examples
+  are clear and current; source-truth checks stay green
+- `links`: README.md, docs/System/, docs/integrations/, .agents/management/review-closure.md,
+  .agents/management/evidence/recheck-2026-04-21/source-truth.json
+
+- `id`: AUTH-036
+- `created_at`: 2026-04-21 20:26 CEST
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: done
+- `estimate`: 8h
+- `outcome`: P1 finalize the AuthBuilder readiness split and close the remaining composition review item with an
+  explicit
+  retained-decision record for the still-large public orchestrator
+- `acceptance`: readiness and validation live in `System/Configuration/Readiness/`; invalid combinations fail before
+  public facade assembly; the remaining large `AuthBuilder` shape is documented in `review-closure.md` as an
+  intentional retention, not an open blocker
+- `links`: System/Configuration/AuthBuilder.php, System/Configuration/Readiness/,
+  tests/Configuration/AuthBuilderTest.php,
+  .agents/management/review-closure.md
+
+- `id`: AUTH-035
+- `created_at`: 2026-04-21 20:26 CEST
+- `updated_at`: 2026-04-22 00:00 CEST
+- `started_at`: 2026-04-21 20:27 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: done
+- `estimate`: 6h
+- `outcome`: P0 finish runtime-correctness closure for bootstrap integrity, adapter drift, optional capability exposure,
+  typed failures, and fail-fast readiness
+- `acceptance`: supported bootstrap paths build a usable kernel; unsupported combinations fail fast with typed errors;
+  adapter seams and README bootstrap examples remain valid under the current contracts
+- `links`: integrations/avax-container/AuthServiceProvider.php, System/Configuration/AuthBuilder.php,
+  tests/Integrations/AvaxContainer/AuthServiceProviderTest.php, tests/Configuration/AuthBuilderTest.php,
+  .agents/management/review-closure.md
+
+- `id`: AUTH-034
+- `created_at`: 2026-04-21 20:26 CEST
+- `updated_at`: 2026-04-21 20:27 CEST
+- `started_at`: 2026-04-21 20:26 CEST
+- `completed_at`: 2026-04-21 20:27 CEST
+- `status`: done
+- `estimate`: 3h
+- `actual`: 1m
+- `outcome`: P0 establish the canonical review-closure register and freeze diffable re-check baseline evidence before
+  deeper
+  cleanup continues
+- `acceptance`: `.agents/management/review-closure.md` exists and tracks review findings with closure fields; the
+  re-check evidence snapshot contains current `conformance`, `quality-gates`, `system-shape`, `source-truth`, and
+  public API surface artifacts
+- `links`: .agents/management/review-closure.md,
+  .agents/management/evidence/recheck-2026-04-21/,
+  Code-Review-And-ToDo/review.md
+
+- `id`: AUTH-033
+- `created_at`: 2026-04-21 20:25 CEST
+- `updated_at`: 2026-04-21 20:26 CEST
+- `completed_at`: 2026-04-21 20:26 CEST
+- `status`: done
+- `estimate`: 6h
+- `actual`: 1m
+- `outcome`: Verify the review hypotheses against repository source truth and close the remaining auth-kernel
+  production-readiness work across bootstrap integrity, optional capability modeling, integration repair,
+  documentation alignment, and release evidence
+- `acceptance`: Avax container adapter and bootstrap paths build a usable kernel; optional capabilities expose explicit
+  readiness/unavailability semantics; AuthBuilder composition is split by readiness responsibilities; docs match the
+  shipped code; `phpunit`, `phpstan`, strict `phpstan`, `conformance`, `quality-gates`, and `release:gate` pass; the
+  evidence bundle has no missing artifacts
+- `links`: Code-Review-And-ToDo/review.md, System/Configuration/AuthBuilder.php,
+  integrations/avax-container/AuthServiceProvider.php, README.md, docs/STATUS.md,
+  build/conformance-report.json, build/quality-gates-report.json, build/evidence-bundle.json
 
 - `id`: AUTH-032
 - `created_at`: 2026-04-16 11:20 CEST
@@ -364,24 +457,27 @@ Completed implementation archive. No active items remain.
 
 - `id`: AUTH-008
 - `created_at`: 2026-04-06 16:30 CET
-- `updated_at`: 2026-04-06 16:30 CET
-- `status`: todo
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: cancelled
 - `outcome`: Fix outdated Examples
 - `acceptance`: `examples/session-login.php` using new `AuthBuilder` and `Capability` namespaces
 - `links`: examples/
 
 - `id`: AUTH-007
 - `created_at`: 2026-04-06 16:30 CET
-- `updated_at`: 2026-04-06 16:30 CET
-- `status`: todo
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: cancelled
 - `outcome`: Audit and fix documentation
 - `acceptance`: All `.md` files in `docs/` reflect new taxonomy and `Verb-Noun` flow names
 - `links`: docs/
 
 - `id`: AUTH-006
 - `created_at`: 2026-04-06 16:30 CET
-- `updated_at`: 2026-04-06 16:30 CET
-- `status`: in_progress
+- `updated_at`: 2026-04-22 00:00 CEST
+- `completed_at`: 2026-04-22 00:00 CEST
+- `status`: cancelled
 - `outcome`: Implement missing tests for Flow, Capability, and Foundation
 - `acceptance`: 100% logic coverage for all files in src/
 - `links`: tests/

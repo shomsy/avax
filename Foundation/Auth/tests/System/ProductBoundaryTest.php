@@ -13,8 +13,10 @@ use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Account;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
 use Avax\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
+use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Mfa;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Passkey;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Auth\System\Capabilities\IdentitySync\IdentitySync;
 use Avax\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
@@ -307,6 +309,8 @@ final class ProductBoundaryTest extends TestCase
                 Verification::class,
                 Mfa::class,
                 Passkey::class,
+                SessionIdentityInterface::class,
+                JwtIdentityInterface::class,
             ],
             ExternalIdentity::class => [
                 OAuth::class,

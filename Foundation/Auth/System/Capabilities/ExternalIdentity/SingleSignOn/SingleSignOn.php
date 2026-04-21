@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLogin;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData;
@@ -22,7 +23,6 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSuppor
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use JsonException;
-use RuntimeException;
 use SensitiveParameter;
 
 final readonly class SingleSignOn
@@ -39,6 +39,19 @@ final readonly class SingleSignOn
         private CompleteFederatedLogin|null             $completeFederatedLogin
     ) {}
 
+    public function isConfigured() : bool
+    {
+        return $this->registerConnection !== null
+            && $this->readConnections !== null
+            && $this->verifyDomain !== null
+            && $this->syncMetadata !== null
+            && $this->checkConnectionHealth !== null
+            && $this->evaluateBreakGlassBypass !== null
+            && $this->discoverConnection !== null
+            && $this->startFederatedLogin !== null
+            && $this->completeFederatedLogin !== null;
+    }
+
     public function registerConnection(RegisterFederationConnectionData $data) : FederationConnection
     {
         return $this->registerConnectionOrFail()->execute(data: $data);
@@ -46,7 +59,7 @@ final readonly class SingleSignOn
 
     private function registerConnectionOrFail() : RegisterFederationConnection
     {
-        return $this->registerConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->registerConnection ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'register_connection');
     }
 
     /**
@@ -59,7 +72,7 @@ final readonly class SingleSignOn
 
     private function readConnectionsOrFail() : ReadFederationConnections
     {
-        return $this->readConnections ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->readConnections ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'read_connections');
     }
 
     public function verifyDomain(VerifyFederationDomainData $data) : FederationConnection
@@ -69,7 +82,7 @@ final readonly class SingleSignOn
 
     private function verifyDomainOrFail() : VerifyFederationDomain
     {
-        return $this->verifyDomain ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->verifyDomain ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'verify_domain');
     }
 
     /**
@@ -82,7 +95,7 @@ final readonly class SingleSignOn
 
     private function syncMetadataOrFail() : SyncFederationMetadata
     {
-        return $this->syncMetadata ?? throw new RuntimeException(message: 'Federation metadata runtime is not configured.');
+        return $this->syncMetadata ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'sync_metadata');
     }
 
     public function checkConnectionHealth(string $connectionId) : FederationConnectionHealth
@@ -92,7 +105,7 @@ final readonly class SingleSignOn
 
     private function checkConnectionHealthOrFail() : CheckFederationConnectionHealth
     {
-        return $this->checkConnectionHealth ?? throw new RuntimeException(message: 'Federation health checks are not configured.');
+        return $this->checkConnectionHealth ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'check_connection_health');
     }
 
     public function evaluateBreakGlassBypass(string $connectionId) : bool
@@ -102,7 +115,7 @@ final readonly class SingleSignOn
 
     private function evaluateBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
     {
-        return $this->evaluateBreakGlassBypass ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->evaluateBreakGlassBypass ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'evaluate_break_glass_bypass');
     }
 
     public function discoverConnection(#[SensitiveParameter] string $email) : FederationConnection|null
@@ -112,7 +125,7 @@ final readonly class SingleSignOn
 
     private function discoverConnectionOrFail() : DiscoverFederationConnection
     {
-        return $this->discoverConnection ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->discoverConnection ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'discover_connection');
     }
 
     public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin
@@ -122,7 +135,7 @@ final readonly class SingleSignOn
 
     private function startFederatedLoginOrFail() : StartFederatedLogin
     {
-        return $this->startFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->startFederatedLogin ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'start_federated_login');
     }
 
     public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
@@ -132,6 +145,6 @@ final readonly class SingleSignOn
 
     private function completeFederatedLoginOrFail() : CompleteFederatedLogin
     {
-        return $this->completeFederatedLogin ?? throw new RuntimeException(message: 'Federation runtime is not configured.');
+        return $this->completeFederatedLogin ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'complete_federated_login');
     }
 }

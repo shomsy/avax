@@ -7,7 +7,6 @@ namespace Avax\Auth\Tests\Flows\Provisioning;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -124,7 +123,7 @@ final class ProvisioningTest extends TestCase
         $this->assertSame(expected: LifecycleSource::ADMIN, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->source);
         $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-suspend')?->isRevoked() ?? false);
         $this->assertSame(expected: 'suspended', actual: $sessionRegistry->find(sessionId: 'session-target-suspend')?->revokeReason);
-        $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);
+        $this->assertNull(actual: $refreshTokens->find(plainToken: $issuedRefresh->token));
 
         $reactivate->execute(userId: 2);
         $this->assertTrue(condition: $userSource->findById(id: new UserId(value: 2))?->isActive() ?? false);
@@ -152,7 +151,7 @@ final class ProvisioningTest extends TestCase
         $this->assertSame(expected: LifecycleState::DEPROVISIONED, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->state);
         $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->isRevoked() ?? false);
         $this->assertSame(expected: 'deprovisioned', actual: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->revokeReason);
-        $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);
+        $this->assertNull(actual: $refreshTokens->find(plainToken: $issuedRefresh->token));
         $this->assertNull(actual: $elevations->find(bindingId: 'session-target-deprovision'));
     }
 }

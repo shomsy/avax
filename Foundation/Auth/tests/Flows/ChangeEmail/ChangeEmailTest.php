@@ -7,17 +7,13 @@ namespace Avax\Auth\Tests\Flows\ChangeEmail;
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaChallengeRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -282,7 +278,7 @@ final class ChangeEmailTest extends TestCase
         $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-1')?->isRevoked() ?? false);
         $this->assertSame(expected: 'email_change', actual: $sessionRegistry->find(sessionId: 'session-1')?->revokeReason);
         $this->assertNull(actual: $challengeStore->find(challengeId: 'challenge-1'));
-        $this->assertTrue(condition: $refreshTokenStore->find(plainToken: $refreshToken->token)?->revoked ?? false);
+        $this->assertNull(actual: $refreshTokenStore->find(plainToken: $refreshToken->token));
         $this->assertNull(actual: $currentAuthentication->read()->user());
         $this->assertSame(expected: 'auth.email_change.completed', actual: $auditLog->events()[0]->name);
     }

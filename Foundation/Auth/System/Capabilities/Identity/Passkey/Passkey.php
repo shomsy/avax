@@ -13,6 +13,7 @@ use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteAuthenticatio
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistration;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistrationData;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\ListPasskeys\ListPasskeys;
+use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyAuthenticationChallenge;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey\RenamePasskey;
@@ -27,14 +28,25 @@ use SensitiveParameter;
 final readonly class Passkey
 {
     public function __construct(
-        private BeginPasskeyRegistration                            $beginPasskeyRegistration,
-        private CompletePasskeyRegistration                         $completePasskeyRegistration,
-        private BeginPasskeyAuthentication    $beginPasskeyAuthentication,
-        private CompletePasskeyAuthentication $completePasskeyAuthentication,
-        private ListPasskeys                                        $readPasskeys,
-        private RenamePasskey                                       $renamePasskey,
-        #[SensitiveParameter] private RevokePasskey                 $revokePasskey
+        private BeginPasskeyRegistration|null            $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null         $completePasskeyRegistration,
+        private BeginPasskeyAuthentication|null          $beginPasskeyAuthentication,
+        private CompletePasskeyAuthentication|null       $completePasskeyAuthentication,
+        private ListPasskeys|null                        $readPasskeys,
+        private RenamePasskey|null                       $renamePasskey,
+        #[SensitiveParameter] private RevokePasskey|null $revokePasskey
     ) {}
+
+    public function isConfigured() : bool
+    {
+        return $this->beginPasskeyRegistration !== null
+            && $this->completePasskeyRegistration !== null
+            && $this->beginPasskeyAuthentication !== null
+            && $this->completePasskeyAuthentication !== null
+            && $this->readPasskeys !== null
+            && $this->renamePasskey !== null
+            && $this->revokePasskey !== null;
+    }
 
     /**
      * @throws RandomException
@@ -43,12 +55,12 @@ final readonly class Passkey
      */
     public function beginPasskeyRegistration() : PasskeyRegistration
     {
-        return $this->beginPasskeyRegistration->execute();
+        return $this->beginPasskeyRegistrationOrFail()->execute();
     }
 
     public function completePasskeyRegistration(CompletePasskeyRegistrationData $data) : PasskeyCredential
     {
-        return $this->completePasskeyRegistration->execute(data: $data);
+        return $this->completePasskeyRegistrationOrFail()->execute(data: $data);
     }
 
     /**
@@ -57,12 +69,12 @@ final readonly class Passkey
      */
     public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {
-        return $this->beginPasskeyAuthentication->execute(data: $data);
+        return $this->beginPasskeyAuthenticationOrFail()->execute(data: $data);
     }
 
     public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data) : AuthenticationResult
     {
-        return $this->completePasskeyAuthentication->execute(data: $data);
+        return $this->completePasskeyAuthenticationOrFail()->execute(data: $data);
     }
 
     /**
@@ -70,12 +82,12 @@ final readonly class Passkey
      */
     public function readPasskeys() : array
     {
-        return $this->readPasskeys->execute();
+        return $this->readPasskeysOrFail()->execute();
     }
 
     public function renamePasskey(RenamePasskeyData $data) : PasskeyCredential
     {
-        return $this->renamePasskey->execute(data: $data);
+        return $this->renamePasskeyOrFail()->execute(data: $data);
     }
 
     /**
@@ -83,6 +95,41 @@ final readonly class Passkey
      */
     public function revokePasskey(#[SensitiveParameter] string $credentialId) : void
     {
-        $this->revokePasskey->execute(credentialId: $credentialId);
+        $this->revokePasskeyOrFail()->execute(credentialId: $credentialId);
+    }
+
+    private function beginPasskeyRegistrationOrFail() : BeginPasskeyRegistration
+    {
+        return $this->beginPasskeyRegistration ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function completePasskeyRegistrationOrFail() : CompletePasskeyRegistration
+    {
+        return $this->completePasskeyRegistration ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function beginPasskeyAuthenticationOrFail() : BeginPasskeyAuthentication
+    {
+        return $this->beginPasskeyAuthentication ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function completePasskeyAuthenticationOrFail() : CompletePasskeyAuthentication
+    {
+        return $this->completePasskeyAuthentication ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function readPasskeysOrFail() : ListPasskeys
+    {
+        return $this->readPasskeys ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function renamePasskeyOrFail() : RenamePasskey
+    {
+        return $this->renamePasskey ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+    }
+
+    private function revokePasskeyOrFail() : RevokePasskey
+    {
+        return $this->revokePasskey ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 }

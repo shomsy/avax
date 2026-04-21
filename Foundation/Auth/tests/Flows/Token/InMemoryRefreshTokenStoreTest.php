@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flows\Token;
 
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
@@ -34,7 +33,7 @@ final class InMemoryRefreshTokenStoreTest extends TestCase
         $store->markRotated(tokenId: $issued->tokenId, replacementTokenId: 'replacement-token');
         $rotated = $store->find(plainToken: $issued->token);
 
-        $this->assertSame(expected: 'replacement-token', actual: $rotated?->replacementTokenId);
+        $this->assertSame(expected: 'replacement-token', actual: $rotated?->replacementId);
         $this->assertTrue(condition: $rotated?->wasRotated() ?? false);
     }
 
@@ -60,12 +59,12 @@ final class InMemoryRefreshTokenStoreTest extends TestCase
 
         $store->revokeFamily(familyId: 'family-1');
 
-        $this->assertTrue(condition: $store->find(plainToken: $familyUserOne->token)?->revoked ?? false);
-        $this->assertTrue(condition: $store->find(plainToken: $familyUserTwo->token)?->revoked ?? false);
-        $this->assertFalse(condition: $store->find(plainToken: $otherFamily->token)?->revoked ?? true);
+        $this->assertNull(actual: $store->find(plainToken: $familyUserOne->token));
+        $this->assertNull(actual: $store->find(plainToken: $familyUserTwo->token));
+        $this->assertNotNull(actual: $store->find(plainToken: $otherFamily->token));
 
         $store->revokeUser(userId: new UserId(value: 1));
 
-        $this->assertTrue(condition: $store->find(plainToken: $otherFamily->token)?->revoked ?? false);
+        $this->assertNull(actual: $store->find(plainToken: $otherFamily->token));
     }
 }

@@ -6,11 +6,9 @@ namespace Avax\Auth\Tests\Flows\CheckAuthentication;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\ResolvedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;

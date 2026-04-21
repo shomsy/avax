@@ -9,30 +9,20 @@ use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\IssuedAuthentication;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\VerifyBackupCode;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\InMemoryAttemptLimitStorage;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\LimitMfaAttempts;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\MfaChallengeRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\VerifyMfaChallenge;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailed;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengeFailure;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethod;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethodRecord;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryAttemptLimitStorage;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\InMemoryAttemptLimitStorage;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\LimitMfaAttempts;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\LimitMfaAttempts;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeRecord;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\VerifyMfaChallenge;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\VerifyMfaChallengeData;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaChallengeFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaChallengeFailure;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\Totp;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
@@ -116,9 +106,8 @@ final class VerifyMfaChallengeTest extends TestCase
                     refreshToken : new IssuedRefreshToken(
                                        token        : 'refresh-token',
                                        tokenId      : 'refresh-id',
-                                       familyId     : 'family-id',
-                                       userId       : $issuedUser->getId(),
                                        expiresAt    : $verifiedAt->modify(modifier: '+30 days'),
+                                       familyId     : 'family-id',
                                        mfaVerifiedAt: $verifiedAt
                                    ),
                     mfaVerifiedAt: $verifiedAt

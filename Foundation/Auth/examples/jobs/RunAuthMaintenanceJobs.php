@@ -6,8 +6,7 @@ namespace Avax\Auth\Examples\Jobs;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;

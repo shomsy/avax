@@ -18,7 +18,7 @@ interface TokenIssuerInterface
      * @param DateTimeImmutable|null $mfaVerifiedAt
      * @param bool                   $phishingResistant
      * @param string|null            $clientId
-     * @param array<string>          $scopes
+     * @param list<string> $scopes
      * @param string|null            $refreshTokenFamilyId
      *
      * @return IssuedToken

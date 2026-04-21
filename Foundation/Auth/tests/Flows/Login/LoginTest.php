@@ -7,20 +7,13 @@ namespace Avax\Auth\Tests\Flows\Login;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\IssuedAuthentication;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\InMemoryMfaChallengeStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Challenge\StartMfaChallenge;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallengePurpose;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethod;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaMethodRecord;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\StartMfaChallenge;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedRefreshToken;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
@@ -84,7 +77,6 @@ class LoginTest extends TestCase
                                                                                                 token    : 'refresh-123',
                                                                                                 tokenId  : 'refresh-123',
                                                                                                 familyId : 'family-123',
-                                                                                                userId   : $userId,
                                                                                                 expiresAt: new DateTimeImmutable(datetime: '+30 days')
                                                                                             )
                                                                           ));

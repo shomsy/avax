@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\Register;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;

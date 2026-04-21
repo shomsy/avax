@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistration;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCode;
@@ -33,7 +34,6 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthoriza
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient;
 use DateMalformedStringException;
-use RuntimeException;
 use SensitiveParameter;
 
 final readonly class OAuth
@@ -54,6 +54,23 @@ final readonly class OAuth
         #[SensitiveParameter] private IntrospectToken|null           $introspectToken
     ) {}
 
+    public function isConfigured() : bool
+    {
+        return $this->registerClient !== null
+            && $this->approveClientRegistration !== null
+            && $this->updateClient !== null
+            && $this->disableClient !== null
+            && $this->rotateClientSecret !== null
+            && $this->readClients !== null
+            && $this->readWorkloadIdentities !== null
+            && $this->authorizeCode !== null
+            && $this->exchangeAuthorizationCode !== null
+            && $this->exchangeClientCredentials !== null
+            && $this->exchangeRefreshToken !== null
+            && $this->revokeToken !== null
+            && $this->introspectToken !== null;
+    }
+
     public function registerClient(RegisterClientData $data) : RegisteredOAuthClient
     {
         return $this->registerClientOrFail()->execute(data: $data);
@@ -61,7 +78,7 @@ final readonly class OAuth
 
     private function registerClientOrFail() : RegisterClient
     {
-        return $this->registerClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->registerClient ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'register_client');
     }
 
     public function approveClientRegistration(ApproveClientRegistrationData $data) : OAuthClient
@@ -71,7 +88,7 @@ final readonly class OAuth
 
     private function approveClientRegistrationOrFail() : ApproveClientRegistration
     {
-        return $this->approveClientRegistration ?? throw new RuntimeException(message: 'OAuth client approval is not configured.');
+        return $this->approveClientRegistration ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'approve_client_registration');
     }
 
     public function updateClient(UpdateClientData $data) : OAuthClient
@@ -81,7 +98,7 @@ final readonly class OAuth
 
     private function updateClientOrFail() : UpdateClient
     {
-        return $this->updateClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->updateClient ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'update_client');
     }
 
     public function disableClient(string $clientId) : OAuthClient
@@ -91,7 +108,7 @@ final readonly class OAuth
 
     private function disableClientOrFail() : DisableClient
     {
-        return $this->disableClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->disableClient ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'disable_client');
     }
 
     public function rotateClientSecret(string $clientId) : RegisteredOAuthClient
@@ -101,7 +118,7 @@ final readonly class OAuth
 
     private function rotateClientSecretOrFail() : RotateClientSecret
     {
-        return $this->rotateClientSecret ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->rotateClientSecret ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'rotate_client_secret');
     }
 
     /**
@@ -114,7 +131,7 @@ final readonly class OAuth
 
     private function readClientsOrFail() : ReadClients
     {
-        return $this->readClients ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->readClients ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'read_clients');
     }
 
     /**
@@ -127,7 +144,7 @@ final readonly class OAuth
 
     private function readWorkloadIdentitiesOrFail() : ReadWorkloadIdentities
     {
-        return $this->readWorkloadIdentities ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+        return $this->readWorkloadIdentities ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'read_workload_identities');
     }
 
     /**
@@ -140,7 +157,7 @@ final readonly class OAuth
 
     private function authorizeCodeOrFail() : AuthorizeCode
     {
-        return $this->authorizeCode ?? throw new RuntimeException(message: 'OAuth authorization code flow is not configured.');
+        return $this->authorizeCode ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'authorize_code');
     }
 
     /**
@@ -153,7 +170,7 @@ final readonly class OAuth
 
     private function exchangeAuthorizationCodeOrFail() : ExchangeAuthorizationCode
     {
-        return $this->exchangeAuthorizationCode ?? throw new RuntimeException(message: 'OAuth token exchange is not configured.');
+        return $this->exchangeAuthorizationCode ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_authorization_code');
     }
 
     public function exchangeClientCredentials(ExchangeClientCredentialsData $data) : OAuthTokenGrant
@@ -163,7 +180,7 @@ final readonly class OAuth
 
     private function exchangeClientCredentialsOrFail() : ExchangeClientCredentials
     {
-        return $this->exchangeClientCredentials ?? throw new RuntimeException(message: 'OAuth client credentials flow is not configured.');
+        return $this->exchangeClientCredentials ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_client_credentials');
     }
 
     /**
@@ -176,7 +193,7 @@ final readonly class OAuth
 
     private function exchangeRefreshTokenOrFail() : ExchangeRefreshToken
     {
-        return $this->exchangeRefreshToken ?? throw new RuntimeException(message: 'OAuth refresh flow is not configured.');
+        return $this->exchangeRefreshToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_refresh_token');
     }
 
     public function revokeToken(RevokeTokenData $data) : void
@@ -186,7 +203,7 @@ final readonly class OAuth
 
     private function revokeTokenOrFail() : RevokeToken
     {
-        return $this->revokeToken ?? throw new RuntimeException(message: 'OAuth revoke flow is not configured.');
+        return $this->revokeToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'revoke_token');
     }
 
     public function introspectToken(IntrospectTokenData $data) : TokenIntrospection
@@ -196,6 +213,6 @@ final readonly class OAuth
 
     private function introspectTokenOrFail() : IntrospectToken
     {
-        return $this->introspectToken ?? throw new RuntimeException(message: 'OAuth introspection is not configured.');
+        return $this->introspectToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'introspect_token');
     }
 }

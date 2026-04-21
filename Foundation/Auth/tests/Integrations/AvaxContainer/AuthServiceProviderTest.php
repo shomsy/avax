@@ -14,6 +14,7 @@ use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Container\Core\AppFactory;
@@ -21,7 +22,6 @@ use Avax\Container\Providers\ServiceProvider;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 /**
  * Integration test for the optional Avax container adapter.
@@ -98,9 +98,9 @@ class AuthServiceProviderTest extends TestCase
             cacheDir : sys_get_temp_dir()
         );
 
-        $this->expectException(exception: RuntimeException::class);
+        $this->expectException(exception: ConfigurationException::class);
         $this->expectExceptionMessage(
-            message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
+            message: 'AuthServiceProvider::registerIdentity() requires at least one identity backend'
         );
 
         $container->get(id: AuthInterface::class);

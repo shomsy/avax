@@ -240,6 +240,27 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 1, actual: $report['summary']['failed']);
     }
 
+    public function testConformanceHarnessDoesNotDeadlockOnHighOutputCommands() : void
+    {
+        $root   = dirname(__DIR__, 3);
+        $report = (new RunConformanceHarness())->execute(
+            repositoryRoot: $root,
+            checks        : [[
+                                 'name'        => 'noisy-pass',
+                                 'description' => 'Passing command with enough output to fill pipe buffers',
+                                 'command'     => [
+                                     PHP_BINARY,
+                                     '-r',
+                                     'fwrite(STDOUT, str_repeat("out\n", 30000)); fwrite(STDERR, str_repeat("err\n", 30000)); exit(0);',
+                                 ],
+                             ]]
+        );
+
+        $this->assertSame(expected: 'PASSED', actual: $report['overall']);
+        $this->assertSame(expected: 1, actual: $report['summary']['passed']);
+        $this->assertSame(expected: 0, actual: $report['summary']['failed']);
+    }
+
     public function testPhpUnitConfigurationDoesNotReferenceRemovedLegacyTestRoots() : void
     {
         $root     = dirname(__DIR__, 3);
@@ -335,6 +356,31 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 0, actual: $report['summary']['failed']);
     }
 
+    public function testRectorConfigurationExistsForDeterministicReleaseChecks() : void
+    {
+        $root     = dirname(__DIR__, 3);
+        $contents = file_get_contents($root . '/rector.php');
+
+        self::assertIsString(actual: $contents);
+        self::assertStringContainsString(needle: "__DIR__ . '/System'", haystack: $contents);
+        self::assertStringContainsString(needle: "__DIR__ . '/integrations'", haystack: $contents);
+        self::assertStringContainsString(needle: "__DIR__ . '/examples'", haystack: $contents);
+        self::assertStringContainsString(needle: "__DIR__ . '/tooling'", haystack: $contents);
+        self::assertStringNotContainsString(needle: "__DIR__ . '/tests'", haystack: $contents);
+    }
+
+    public function testReadmeQuickStartTracksStableBootstrapSeams() : void
+    {
+        $root     = dirname(__DIR__, 3);
+        $contents = file_get_contents($root . '/README.md');
+
+        self::assertIsString(actual: $contents);
+        self::assertStringContainsString(needle: '->withIdentityBackends(', haystack: $contents);
+        self::assertStringContainsString(needle: '->withOidcProvider(', haystack: $contents);
+        self::assertStringContainsString(needle: 'AuthServiceProvider::class', haystack: $contents);
+        self::assertStringNotContainsString(needle: '->withIdentity(new Identity(', haystack: $contents);
+    }
+
     /**
      * @throws RandomException
      * @throws JsonException
@@ -428,6 +474,7 @@ final class ReleaseToolingTest extends TestCase
         );
         file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
         file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        $this->writeOwnershipHowThisWorksDocs(root: $root);
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
@@ -466,6 +513,7 @@ final class ReleaseToolingTest extends TestCase
         );
         file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
         file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        $this->writeOwnershipHowThisWorksDocs(root: $root);
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
@@ -500,6 +548,32 @@ final class ReleaseToolingTest extends TestCase
         );
         $this->assertContains(
             needle  : 'Legacy singular system root reference found in docs/architecture/system-shape.md: System/Flow/',
+            haystack: $result['issues']
+        );
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testSourceTruthCheckRejectsMissingOwnershipHowThisWorksPages() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-source-truth-docs-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/docs', 0777, true);
+        mkdir($root . '/.agents/management/evidence', 0777, true);
+        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
+        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
+        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
+        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        file_put_contents($root . '/docs/capability-matrix.md', "# Capability Matrix\n");
+        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
+        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertContains(
+            needle  : 'Missing ownership how-this-works doc: docs/System/how-this-works.md',
             haystack: $result['issues']
         );
     }
@@ -659,5 +733,42 @@ final class ReleaseToolingTest extends TestCase
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(needle: 'System/Capability', haystack: $result['unexpected_top_level']);
         $this->assertContains(needle: 'System/Flow', haystack: $result['unexpected_top_level']);
+    }
+
+    private function writeOwnershipHowThisWorksDocs(string $root) : void
+    {
+        foreach ([
+                     'docs/System/how-this-works.md',
+                     'docs/System/Capabilities/how-this-works.md',
+                     'docs/System/Capabilities/Access/how-this-works.md',
+                     'docs/System/Capabilities/Diagnostics/how-this-works.md',
+                     'docs/System/Capabilities/ExternalIdentity/how-this-works.md',
+                     'docs/System/Capabilities/Identity/how-this-works.md',
+                     'docs/System/Capabilities/IdentitySync/how-this-works.md',
+                     'docs/System/Capabilities/Tenancy/how-this-works.md',
+                     'docs/System/Configuration/how-this-works.md',
+                     'docs/System/Flows/how-this-works.md',
+                     'docs/System/Foundation/how-this-works.md',
+                     'docs/integrations/how-this-works.md',
+                     'docs/integrations/avax-container/how-this-works.md',
+                     'docs/integrations/cookies/how-this-works.md',
+                     'docs/integrations/diagnostics/how-this-works.md',
+                     'docs/integrations/headers/how-this-works.md',
+                     'docs/integrations/http/how-this-works.md',
+                     'docs/integrations/release/how-this-works.md',
+                 ] as $relativePath) {
+            $fullPath = $root . '/' . $relativePath;
+            mkdir(dirname($fullPath), 0777, true);
+            file_put_contents(
+                $fullPath,
+                "---\n"
+                . "title: test-how-this-works\n"
+                . "owner: tests\n"
+                . "last_reviewed: 2026-04-21\n"
+                . "classification: internal\n"
+                . "---\n\n"
+                . "# Test Doc\n"
+            );
+        }
     }
 }

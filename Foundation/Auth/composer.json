@@ -50,6 +50,9 @@
       "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/",
       "Avax\\Auth\\Integrations\\Release\\": "integrations/release/"
     },
+    "files": [
+      "legacy-class-aliases.php"
+    ],
     "classmap": [
       "System/",
       "integrations/"
@@ -109,8 +112,8 @@
       "@rollback:proof",
       "@evidence:bundle"
     ],
-    "rector": "rector process --dry-run",
-    "rector:apply": "rector process",
+    "rector": "rector process --dry-run --no-progress-bar --config rector.php",
+    "rector:apply": "rector process --no-progress-bar --config rector.php",
     "mutation": [
       "Composer\\Config::disableProcessTimeout",
       "tooling/run-with-coverage-driver vendor/bin/infection --configuration=infection.json.dist"

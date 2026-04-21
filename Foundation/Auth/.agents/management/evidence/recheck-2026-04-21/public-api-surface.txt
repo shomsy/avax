@@ -1,0 +1,218 @@
+Auth.php
+34:    public function __construct(
+50:    public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
+55:    public function logout() : void
+60:    public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext
+65:    public function current() : AuthenticationContext
+70:    public function check() : bool
+75:    public function user() : AuthenticatedUser|null
+80:    public function refresh(\Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest $request) : AuthenticationResult
+85:    public function logoutAllSessions() : void
+93:    public function readActiveSessions() : array
+98:    public function revokeSession(string $sessionId) : void
+103:    public function register(\Avax\Auth\System\Flows\Register\RegistrationData $data) : \Avax\Auth\System\Flows\Register\RegistrationResult
+108:    public function changePassword(\Avax\Auth\System\Flows\ChangePassword\ChangePasswordData $data) : void
+113:    public function beginEmailChange(\Avax\Auth\System\Flows\ChangeEmail\BeginEmailChangeData $data) : \Avax\Auth\System\Flows\ChangeEmail\EmailChangeChallenge
+118:    public function confirmEmailChange(\Avax\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData $data) : bool
+123:    public function beginPasswordReset(\Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData $data) : \Avax\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge
+128:    public function resetPassword(\Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData $data) : bool
+133:    public function beginEmailVerification(\Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificationData $data) : \Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge
+138:    public function verifyEmail(\Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData $data) : bool
+143:    public function startMfaEnrollment() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\MfaEnrollment
+148:    public function confirmMfaEnrollment(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData $data) : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet
+153:    public function cancelMfaEnrollment() : void
+158:    public function beginMfaChallenge() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge
+163:    public function verifyMfaChallenge(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData $data) : AuthenticationResult
+168:    public function regenerateBackupCodes() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet
+173:    public function disableMfa() : void
+178:    public function beginMfaRecovery(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\BeginMfaRecoveryData $data) : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\MfaRecoveryChallenge
+183:    public function confirmMfaRecovery(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\ConfirmMfaRecoveryData $data) : void
+188:    public function beginPasskeyRegistration() : \Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration
+193:    public function completePasskeyRegistration(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistrationData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential
+198:    public function beginPasskeyAuthentication(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthenticationData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyAuthenticationChallenge
+203:    public function completePasskeyAuthentication(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteAuthentication\CompletePasskeyAuthenticationData $data) : AuthenticationResult
+211:    public function readPasskeys() : array
+216:    public function renamePasskey(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey\RenamePasskeyData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential
+221:    public function revokePasskey(string $credentialId) : void
+226:    public function registerOAuthClient(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient
+231:    public function approveOAuthClientRegistration(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient
+236:    public function updateOAuthClient(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient
+241:    public function disableOAuthClient(string $clientId) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient
+246:    public function rotateOAuthClientSecret(string $clientId) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient
+254:    public function readOAuthClients() : array
+262:    public function readWorkloadIdentities() : array
+267:    public function authorizeOAuthCode(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCodeData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthorizationCode
+272:    public function exchangeOAuthCode(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant
+277:    public function exchangeOAuthClientCredentials(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials\ExchangeClientCredentialsData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant
+282:    public function exchangeOAuthRefreshToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeRefreshToken\ExchangeRefreshTokenData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant
+287:    public function revokeOAuthToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RevokeToken\RevokeTokenData $data) : void
+292:    public function introspectOAuthToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\IntrospectTokenData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\TokenIntrospection
+297:    public function readOidcProviderMetadata() : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata
+302:    public function readOidcJsonWebKeySet() : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet
+307:    public function readOidcUserInfo(string $accessToken) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo\OidcUserInfo
+312:    public function pushOidcAuthorizationRequest(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushedAuthorizationRequest
+317:    public function oidcLogout(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutResult
+322:    public function buildOidcJarmResponse(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\BuildJarmResponseData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\JarmResponse
+327:    public function registerFederationConnection(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnectionData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection
+335:    public function readFederationConnections() : array
+340:    public function verifyFederationDomain(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\VerifyDomain\VerifyFederationDomainData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection
+345:    public function syncFederationMetadata(string $connectionId) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection
+350:    public function checkFederationConnectionHealth(string $connectionId) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth
+355:    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool
+360:    public function discoverFederationConnection(string $email) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection|null
+365:    public function startFederatedLogin(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\StartFederatedLogin\StartFederatedLoginData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin
+370:    public function completeFederatedLogin(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData $data) : AuthenticationResult
+375:    public function registerScimDirectory(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory
+383:    public function readScimDirectories(string|null $tenantSlug = null) : array
+388:    public function rotateScimToken(string $directoryId) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken
+393:    public function markScimDirectoryOutage(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage\MarkScimDirectoryOutageData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory
+398:    public function recoverScimDirectoryOutage(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage\RecoverScimDirectoryOutageData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory
+403:    public function provisionScimUser(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUserData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult
+408:    public function deleteScimUser(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUserData $data) : void
+416:    public function readScimUsers(string $directoryId) : array
+424:    public function readScimGroups(string $directoryId) : array
+429:    public function syncScimGroups(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult
+434:    public function runScimBulk(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkResponse
+439:    public function suspendUser(int $userId) : void
+444:    public function reactivateUser(int $userId) : void
+449:    public function deprovisionUser(int $userId) : void
+454:    public function createTenant(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\CreateTenant\CreateTenantData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\Tenant
+462:    public function readTenants() : array
+467:    public function inviteTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember\InviteTenantMemberData $data) : \Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember\IssuedTenantInvite
+472:    public function acceptTenantInvite(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite\AcceptTenantInviteData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember
+480:    public function readTenantMembers(string $tenantSlug) : array
+485:    public function removeTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\RemoveMember\RemoveTenantMemberData $data) : void
+490:    public function suspendTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\SuspendMember\SuspendTenantMemberData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember
+495:    public function transferTenantOwnership(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TransferOwnership\TransferTenantOwnershipData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\Tenant
+500:    public function readTenantSecurityConfiguration(string $tenantSlug) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration|null
+505:    public function readTenantSecurityChangeRequest(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest|null
+513:    public function readTenantSecurityChangeRequests(string $tenantSlug) : array
+518:    public function beginTenantSecurityChange(\Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange\BeginTenantSecurityChangeData $data) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest
+523:    public function approveTenantSecurityChange(string $changeId, string $approvedBy) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest
+528:    public function applyTenantSecurityChange(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration
+533:    public function rollbackTenantSecurityChange(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration
+538:    public function beginAdminElevation() : \Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation
+543:    public function endAdminElevation() : void
+548:    public function requireAdminElevation() : void
+553:    public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : \Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision|null
+561:    public function readRiskSignals(int|null $userId = null) : array
+566:    public function explainAccessDenied(string $resource, string|null $requiredPermission = null, string|null $tenant = null, string|null $resourceTenant = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation
+576:    public function explainStepUpRequired(string $action, bool|null $phishingResistantRequired = null, int|null $freshAfterSeconds = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation
+585:    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation
+593:    public function explainSessionRevocation(string $status, string|null $sessionId = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation
+598:    public function explainTrustedDeviceDecision(string|null $deviceId = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation
+605:    public function access() : AccessInterface
+610:    public function identity() : Identity
+615:    public function externalIdentity() : ExternalIdentity
+620:    public function identitySync() : IdentitySync
+625:    public function tenancy() : Tenancy
+630:    public function diagnostics() : Diagnostics
+
+AuthInterface.php
+29:    public function login(Credentials $credentials) : AuthenticationResult;
+31:    public function logout() : void;
+33:    public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext;
+35:    public function current() : AuthenticationContext;
+37:    public function check() : bool;
+39:    public function user() : AuthenticatedUser|null;
+41:    public function refresh(\Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest $request) : AuthenticationResult;
+43:    public function logoutAllSessions() : void;
+48:    public function readActiveSessions() : array;
+50:    public function revokeSession(string $sessionId) : void;
+52:    public function register(\Avax\Auth\System\Flows\Register\RegistrationData $data) : \Avax\Auth\System\Flows\Register\RegistrationResult;
+54:    public function changePassword(\Avax\Auth\System\Flows\ChangePassword\ChangePasswordData $data) : void;
+56:    public function beginEmailChange(\Avax\Auth\System\Flows\ChangeEmail\BeginEmailChangeData $data) : \Avax\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
+58:    public function confirmEmailChange(\Avax\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData $data) : bool;
+60:    public function beginPasswordReset(\Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData $data) : \Avax\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge;
+62:    public function resetPassword(\Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData $data) : bool;
+64:    public function beginEmailVerification(\Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificationData $data) : \Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge;
+66:    public function verifyEmail(\Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData $data) : bool;
+68:    public function startMfaEnrollment() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\MfaEnrollment;
+70:    public function confirmMfaEnrollment(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData $data) : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet;
+72:    public function cancelMfaEnrollment() : void;
+74:    public function beginMfaChallenge() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge;
+76:    public function verifyMfaChallenge(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData $data) : AuthenticationResult;
+78:    public function regenerateBackupCodes() : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet;
+80:    public function disableMfa() : void;
+82:    public function beginMfaRecovery(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\BeginMfaRecoveryData $data) : \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\MfaRecoveryChallenge;
+84:    public function confirmMfaRecovery(\Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover\ConfirmMfaRecoveryData $data) : void;
+86:    public function beginPasskeyRegistration() : \Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
+88:    public function completePasskeyRegistration(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistrationData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential;
+90:    public function beginPasskeyAuthentication(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthenticationData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyAuthenticationChallenge;
+92:    public function completePasskeyAuthentication(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CompleteAuthentication\CompletePasskeyAuthenticationData $data) : AuthenticationResult;
+97:    public function readPasskeys() : array;
+99:    public function renamePasskey(\Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\RenamePasskey\RenamePasskeyData $data) : \Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredential;
+101:    public function revokePasskey(string $credentialId) : void;
+103:    public function registerOAuthClient(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient;
+105:    public function approveOAuthClientRegistration(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+107:    public function updateOAuthClient(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+109:    public function disableOAuthClient(string $clientId) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+111:    public function rotateOAuthClientSecret(string $clientId) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\RegisteredOAuthClient;
+116:    public function readOAuthClients() : array;
+121:    public function readWorkloadIdentities() : array;
+123:    public function authorizeOAuthCode(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCodeData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthorizationCode;
+125:    public function exchangeOAuthCode(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant;
+127:    public function exchangeOAuthClientCredentials(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials\ExchangeClientCredentialsData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant;
+129:    public function exchangeOAuthRefreshToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeRefreshToken\ExchangeRefreshTokenData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenGrant;
+131:    public function revokeOAuthToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RevokeToken\RevokeTokenData $data) : void;
+133:    public function introspectOAuthToken(\Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\IntrospectTokenData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\TokenIntrospection;
+135:    public function readOidcProviderMetadata() : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
+137:    public function readOidcJsonWebKeySet() : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
+139:    public function readOidcUserInfo(string $accessToken) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo\OidcUserInfo;
+141:    public function pushOidcAuthorizationRequest(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushedAuthorizationRequest;
+143:    public function oidcLogout(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutResult;
+145:    public function buildOidcJarmResponse(\Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\BuildJarmResponseData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\JarmResponse;
+147:    public function registerFederationConnection(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnectionData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+152:    public function readFederationConnections() : array;
+154:    public function verifyFederationDomain(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\VerifyDomain\VerifyFederationDomainData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+156:    public function syncFederationMetadata(string $connectionId) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+158:    public function checkFederationConnectionHealth(string $connectionId) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth;
+160:    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool;
+162:    public function discoverFederationConnection(string $email) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection|null;
+164:    public function startFederatedLogin(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\StartFederatedLogin\StartFederatedLoginData $data) : \Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\StartedFederatedLogin;
+166:    public function completeFederatedLogin(\Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData $data) : AuthenticationResult;
+168:    public function registerScimDirectory(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory;
+173:    public function readScimDirectories(string|null $tenantSlug = null) : array;
+175:    public function rotateScimToken(string $directoryId) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
+177:    public function markScimDirectoryOutage(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage\MarkScimDirectoryOutageData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+179:    public function recoverScimDirectoryOutage(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage\RecoverScimDirectoryOutageData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+181:    public function provisionScimUser(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUserData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult;
+183:    public function deleteScimUser(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUserData $data) : void;
+188:    public function readScimUsers(string $directoryId) : array;
+193:    public function readScimGroups(string $directoryId) : array;
+195:    public function syncScimGroups(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult;
+197:    public function runScimBulk(\Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest $data) : \Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkResponse;
+199:    public function suspendUser(int $userId) : void;
+201:    public function reactivateUser(int $userId) : void;
+203:    public function deprovisionUser(int $userId) : void;
+205:    public function createTenant(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\CreateTenant\CreateTenantData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\Tenant;
+210:    public function readTenants() : array;
+212:    public function inviteTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember\InviteTenantMemberData $data) : \Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember\IssuedTenantInvite;
+214:    public function acceptTenantInvite(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite\AcceptTenantInviteData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember;
+219:    public function readTenantMembers(string $tenantSlug) : array;
+221:    public function removeTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\RemoveMember\RemoveTenantMemberData $data) : void;
+223:    public function suspendTenantMember(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\SuspendMember\SuspendTenantMemberData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember;
+225:    public function transferTenantOwnership(\Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TransferOwnership\TransferTenantOwnershipData $data) : \Avax\Auth\System\Capabilities\Tenancy\Model\Tenant;
+227:    public function readTenantSecurityConfiguration(string $tenantSlug) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration|null;
+229:    public function readTenantSecurityChangeRequest(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest|null;
+234:    public function readTenantSecurityChangeRequests(string $tenantSlug) : array;
+236:    public function beginTenantSecurityChange(\Avax\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange\BeginTenantSecurityChangeData $data) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+238:    public function approveTenantSecurityChange(string $changeId, string $approvedBy) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+240:    public function applyTenantSecurityChange(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
+242:    public function rollbackTenantSecurityChange(string $changeId) : \Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
+244:    public function beginAdminElevation() : \Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+246:    public function endAdminElevation() : void;
+248:    public function requireAdminElevation() : void;
+250:    public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : \Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision|null;
+255:    public function readRiskSignals(int|null $userId = null) : array;
+257:    public function explainAccessDenied(string $resource, string|null $requiredPermission = null, string|null $tenant = null, string|null $resourceTenant = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+259:    public function explainStepUpRequired(string $action, bool|null $phishingResistantRequired = null, int|null $freshAfterSeconds = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+261:    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+263:    public function explainSessionRevocation(string $status, string|null $sessionId = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+265:    public function explainTrustedDeviceDecision(string|null $deviceId = null) : \Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+269:    public function access() : AccessInterface;
+271:    public function identity() : Identity;
+273:    public function externalIdentity() : ExternalIdentity;
+275:    public function identitySync() : IdentitySync;
+277:    public function tenancy() : Tenancy;
+279:    public function diagnostics() : Diagnostics;

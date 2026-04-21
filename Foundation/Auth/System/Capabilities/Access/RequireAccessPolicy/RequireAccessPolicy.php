@@ -15,7 +15,7 @@ use Avax\Auth\System\Capabilities\Access\RequireResourceOwner\RequireResourceOwn
 use Avax\Auth\System\Capabilities\Access\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;

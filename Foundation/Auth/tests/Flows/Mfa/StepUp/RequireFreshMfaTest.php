@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\Mfa\StepUp;
 
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\FreshMfaRequired;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;

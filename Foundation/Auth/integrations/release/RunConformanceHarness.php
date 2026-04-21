@@ -95,7 +95,7 @@ final readonly class RunConformanceHarness
             [
                 'name'        => 'rector',
                 'description' => 'Code style compliance',
-                'command'     => [$php, $bin . '/rector', 'process', '--dry-run'],
+                'command' => [$php, $bin . '/rector', 'process', '--dry-run', '--no-progress-bar', '--config', 'rector.php'],
             ],
             [
                 'name'        => 'secret-scan',
@@ -156,17 +156,76 @@ final readonly class RunConformanceHarness
         }
 
         fclose($pipes[0]);
-        $stdout = stream_get_contents($pipes[1]);
-        $stderr = stream_get_contents($pipes[2]);
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        $stdout = '';
+        $stderr = '';
+        $status = ['exitcode' => 1, 'running' => true];
+
+        do {
+            $status  = proc_get_status($process);
+            $running = $status['running'];
+            $read    = [];
+
+            if (! feof($pipes[1])) {
+                $read[] = $pipes[1];
+            }
+
+            if (! feof($pipes[2])) {
+                $read[] = $pipes[2];
+            }
+
+            if ($read === []) {
+                if (! $running) {
+                    break;
+                }
+
+                usleep(10_000);
+                continue;
+            }
+
+            $write  = null;
+            $except = null;
+            $ready  = @stream_select($read, $write, $except, 0, 200_000);
+
+            if ($ready === false) {
+                break;
+            }
+
+            foreach ($read as $stream) {
+                $chunk = stream_get_contents($stream);
+
+                if ($chunk === false || $chunk === '') {
+                    continue;
+                }
+
+                if ($stream === $pipes[1]) {
+                    $stdout .= $chunk;
+                    continue;
+                }
+
+                $stderr .= $chunk;
+            }
+        } while ( $running || ! feof($pipes[1]) || ! feof($pipes[2]) );
+
         fclose($pipes[1]);
         fclose($pipes[2]);
 
         $exitCode = proc_close($process);
 
+        if ($exitCode < 0) {
+            $exitCode = $status['exitcode'];
+
+            if ($exitCode < 0) {
+                $exitCode = 1;
+            }
+        }
+
         return [
             'exit_code' => $exitCode,
-            'stdout'    => $stdout === false ? '' : $stdout,
-            'stderr'    => $stderr === false ? '' : $stderr,
+            'stdout' => $stdout,
+            'stderr' => $stderr,
         ];
     }
 }

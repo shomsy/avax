@@ -108,15 +108,15 @@ Foundation/       → tiny primitives only
 | 1. Trust              | ✅ PASSED  | phpstan + phpunit                    |
 | 2. Operator Clarity   | ✅ PASSED  | phpstan table                        |
 | 3. Rollback Posture   | ✅ PASSED  | rollback evidence                    |
-| 4. Contract Stability | ✅ PASSED  | phpstan + rector                     |
+| 4. Contract Stability | ✅ PASSED  | migration-check + phpstan + rector   |
 | 5. State Ownership    | ✅ PASSED  | integration tests                    |
 | 6. Async Containment  | ✅ PASSED  | integration tests                    |
-| 7. Deterministic CI   | ✅ PASSED  | phpstan + phpunit                    |
+| 7. Deterministic CI   | ✅ PASSED  | conformance harness                  |
 | 8. Observability      | ⚠️ MANUAL | human review                         |
 | 9. Runtime Hardening  | ✅ PASSED  | secret scan                          |
 | 10. Performance       | ✅ PASSED  | optional mutation diagnostics        |
 | 11. Source Truth      | ✅ PASSED  | source-truth + system-shape checkers |
-| 12. Evidence          | ✅ PASSED  | SBOM                                 |
+| 12. Evidence          | ✅ PASSED  | SBOM + evidence bundle               |
 | 13. Self-Healing      | ⚠️ MANUAL | human review                         |
 
 **Automation Rate: 84.6%** (11/13 automated)
@@ -141,4 +141,5 @@ Foundation/       → tiny primitives only
 
 ---
 
-*This document is authoritative. See `REFAKTOR.md` for archived historical refactor context.*
+*This document is authoritative. See `docs/archive/refaktor-closure-2026-04-21.md` for archived refactor closure context
+and `.agents/management/review-closure.md` for the canonical review-finding register.*

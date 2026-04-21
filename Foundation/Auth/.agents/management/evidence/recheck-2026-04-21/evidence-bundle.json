@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-04-21T21:59:55+00:00",
+  "version": "1.0.0",
+  "package": "avax/auth",
+  "repository_root": "/home/shomsy/projects/components/Foundation/Auth",
+  "artifacts": {
+    "conformance": {
+      "path": "build/conformance-report.json",
+      "exists": true,
+      "size": 2330,
+      "modified_at": "2026-04-21T21:59:54+00:00"
+    },
+    "quality_gates": {
+      "path": "build/quality-gates-report.json",
+      "exists": true,
+      "size": 8188,
+      "modified_at": "2026-04-21T21:59:54+00:00"
+    },
+    "mutation": {
+      "path": "build/infection-summary.log",
+      "exists": true,
+      "size": 119,
+      "modified_at": "2026-04-19T22:05:15+00:00"
+    },
+    "sbom": {
+      "path": "build/sbom.json",
+      "exists": true,
+      "size": 11678,
+      "modified_at": "2026-04-21T21:59:54+00:00"
+    },
+    "rollback": {
+      "path": "build/rollback-evidence.json",
+      "exists": true,
+      "size": 1698,
+      "modified_at": "2026-04-21T21:59:09+00:00"
+    },
+    "provenance": {
+      "path": "build/release-provenance.json",
+      "exists": true,
+      "size": 444,
+      "modified_at": "2026-04-21T18:24:37+00:00"
+    }
+  },
+  "canonical_docs": {
+    "status": "docs/STATUS.md",
+    "product_boundary": "docs/product-boundary.md",
+    "capability_matrix": "docs/capability-matrix.md",
+    "migration_guide": "docs/upgrade-migration-guide.md",
+    "deployment_profiles": "docs/supported-deployment-profiles.md"
+  },
+  "missing_artifacts": []
+}

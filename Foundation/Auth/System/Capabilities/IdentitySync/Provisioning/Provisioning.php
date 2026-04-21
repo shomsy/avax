@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\IdentitySync\Provisioning;
 
+use Avax\Auth\System\Capabilities\IdentitySync\IdentitySyncCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\DeprovisionUser\DeprovisionUser;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\ReactivateUser\ReactivateUser;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\SuspendUser\SuspendUser;
-use RuntimeException;
 
 final readonly class Provisioning
 {
@@ -17,6 +17,13 @@ final readonly class Provisioning
         private DeprovisionUser|null $deprovisionUser
     ) {}
 
+    public function isConfigured() : bool
+    {
+        return $this->suspendUser !== null
+            && $this->reactivateUser !== null
+            && $this->deprovisionUser !== null;
+    }
+
     public function suspendUser(int $userId) : void
     {
         $this->suspendUserOrFail()->execute(userId: $userId);
@@ -24,7 +31,7 @@ final readonly class Provisioning
 
     private function suspendUserOrFail() : SuspendUser
     {
-        return $this->suspendUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
+        return $this->suspendUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'suspend_user');
     }
 
     public function reactivateUser(int $userId) : void
@@ -34,7 +41,7 @@ final readonly class Provisioning
 
     private function reactivateUserOrFail() : ReactivateUser
     {
-        return $this->reactivateUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
+        return $this->reactivateUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'reactivate_user');
     }
 
     public function deprovisionUser(int $userId) : void
@@ -44,6 +51,6 @@ final readonly class Provisioning
 
     private function deprovisionUserOrFail() : DeprovisionUser
     {
-        return $this->deprovisionUser ?? throw new RuntimeException(message: 'Provisioning lifecycle is not configured.');
+        return $this->deprovisionUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'deprovision_user');
     }
 }

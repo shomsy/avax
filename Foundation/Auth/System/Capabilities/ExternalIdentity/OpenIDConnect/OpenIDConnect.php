@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect;
 
+use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\BuildJarmResponse;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\BuildJarmResponseData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\JarmResponse\JarmResponse;
@@ -19,7 +20,6 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUse
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ReadUserInfo\ReadOidcUserInfo;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
-use RuntimeException;
 use SensitiveParameter;
 
 final readonly class OpenIDConnect
@@ -33,6 +33,28 @@ final readonly class OpenIDConnect
         private BuildJarmResponse|null        $buildJarmResponse
     ) {}
 
+    public function isConfigured() : bool
+    {
+        return $this->readProviderMetadata !== null
+            && $this->readJsonWebKeySet !== null
+            && $this->readUserInfo !== null;
+    }
+
+    public function supportsPushedAuthorizationRequests() : bool
+    {
+        return $this->pushAuthorizationRequest !== null;
+    }
+
+    public function supportsLogout() : bool
+    {
+        return $this->logout !== null;
+    }
+
+    public function supportsJarmResponse() : bool
+    {
+        return $this->buildJarmResponse !== null;
+    }
+
     public function readProviderMetadata() : OidcProviderMetadata
     {
         return $this->readProviderMetadataOrFail()->execute();
@@ -40,7 +62,7 @@ final readonly class OpenIDConnect
 
     private function readProviderMetadataOrFail() : ReadOidcProviderMetadata
     {
-        return $this->readProviderMetadata ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
+        return $this->readProviderMetadata ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_provider_metadata');
     }
 
     public function readJsonWebKeySet() : OidcJsonWebKeySet
@@ -50,7 +72,7 @@ final readonly class OpenIDConnect
 
     private function readJsonWebKeySetOrFail() : ReadOidcJsonWebKeySet
     {
-        return $this->readJsonWebKeySet ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
+        return $this->readJsonWebKeySet ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_json_web_key_set');
     }
 
     public function readUserInfo(#[SensitiveParameter] string $accessToken) : OidcUserInfo
@@ -60,7 +82,7 @@ final readonly class OpenIDConnect
 
     private function readUserInfoOrFail() : ReadOidcUserInfo
     {
-        return $this->readUserInfo ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
+        return $this->readUserInfo ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_user_info');
     }
 
     public function pushAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
@@ -70,7 +92,7 @@ final readonly class OpenIDConnect
 
     private function pushAuthorizationRequestOrFail() : PushAuthorizationRequest
     {
-        return $this->pushAuthorizationRequest ?? throw new RuntimeException(message: 'OIDC PAR support is not configured.');
+        return $this->pushAuthorizationRequest ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'push_authorization_request');
     }
 
     public function logout(LogoutData $data) : LogoutResult
@@ -80,7 +102,7 @@ final readonly class OpenIDConnect
 
     private function logoutOrFail() : Logout
     {
-        return $this->logout ?? throw new RuntimeException(message: 'OIDC logout support is not configured.');
+        return $this->logout ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'logout');
     }
 
     public function buildJarmResponse(BuildJarmResponseData $data) : JarmResponse
@@ -90,6 +112,6 @@ final readonly class OpenIDConnect
 
     private function buildJarmResponseOrFail() : BuildJarmResponse
     {
-        return $this->buildJarmResponse ?? throw new RuntimeException(message: 'OIDC JARM support is not configured.');
+        return $this->buildJarmResponse ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'build_jarm_response');
     }
 }

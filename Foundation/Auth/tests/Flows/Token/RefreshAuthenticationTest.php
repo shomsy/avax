@@ -73,7 +73,7 @@ final class RefreshAuthenticationTest extends TestCase
         );
 
         $this->expectException(RefreshAuthenticationFailed::class);
-        $this->expectExceptionMessage('Refresh token is invalid.');
+        $this->expectExceptionMessage('The provided refresh token is invalid, expired, or already used.');
 
         $refreshAuthentication->execute(request: new RefreshAuthenticationRequest(refreshToken: $issued->token));
     }
@@ -103,7 +103,7 @@ final class RefreshAuthenticationTest extends TestCase
         );
 
         $this->expectException(RefreshAuthenticationFailed::class);
-        $this->expectExceptionMessage('Refresh token is invalid.');
+        $this->expectExceptionMessage('The provided refresh token is invalid, expired, or already used.');
 
         $refreshAuthentication->execute(request: new RefreshAuthenticationRequest(refreshToken: 'unknown-token'));
     }

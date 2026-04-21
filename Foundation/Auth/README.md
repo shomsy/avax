@@ -39,14 +39,14 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
 
 ```php
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\Totp;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
@@ -56,7 +56,7 @@ $totp = new Totp();
 
 $auth = Auth::configuration()
     ->forUser($userSource)
-    ->withIdentity(new Identity(
+    ->withIdentityBackends(
         sessionIdentity: new SessionIdentity(),
         jwtIdentity: new JwtIdentity(
             userSource: $userSource,
@@ -65,7 +65,7 @@ $auth = Auth::configuration()
             revocationStore: new InMemoryTokenRevocationStore(),
             refreshTokenStore: $refreshTokens,
         ),
-    ))
+    )
     ->withRefreshTokenStore($refreshTokens)
     ->usingTotp($totp)
     ->ready();
@@ -77,7 +77,7 @@ $login = $auth->login(new Credentials(
 
 if ($login->requiresMfa()) {
     $login = $auth->verifyMfaChallenge(
-        new \Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\VerifyMfaChallengeData(
+        new VerifyMfaChallengeData(
             challengeId: $login->mfaChallengeId() ?? '',
             code: $backupCodeOrTotp
         )
@@ -91,6 +91,49 @@ $backupCodes = $auth->confirmMfaEnrollment(
     )
 );
 ```
+
+### Optional Capability Example
+
+```php
+$auth = Auth::configuration()
+    ->forUser($userSource)
+    ->withIdentityBackends(jwtIdentity: $jwtIdentity)
+    ->withRefreshTokenStore($refreshTokens)
+    ->withOidcProvider($oidcProvider)
+    ->withPasskeyRuntime($passkeyRuntime)
+    ->ready();
+
+if ($auth->externalIdentity()->oidc()->isConfigured()) {
+    $metadata = $auth->readOidcProviderMetadata();
+}
+```
+
+### Avax Container Adapter
+
+```php
+use Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider;
+use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Container\Core\AppFactory;
+
+$app = AppFactory::cli(
+    providers: [AppDependencies::class, AuthServiceProvider::class],
+    cacheDir: __DIR__ . '/var/cache'
+);
+
+$auth = $app->get(AuthInterface::class);
+```
+
+## Optional Capability Readiness
+
+- OAuth requires a JWT identity backend plus a refresh token store.
+- OIDC metadata, JWKS, and userinfo require an OIDC provider; PAR, logout, and JARM stay optional within that surface.
+- Federation/SSO requires a federation runtime and related stores.
+- SCIM requires a provisionable user source; provisioning lifecycle rides the same capability family.
+- Passkeys require a passkey runtime plus credential and challenge stores.
+- Optional capability owners expose readiness methods such as `isConfigured()` and fail with explicit
+  capability-unavailable exceptions instead of generic late `RuntimeException` errors.
 
 ## Public API
 
@@ -199,8 +242,8 @@ Canonical architecture documents now live in:
 
 Runtime ownership lives in auth-flow slices:
 
-- `System/Flows/` now exposes only the eight canonical story roots from `REFAKTOR.md`; supporting ingress,
-  password-reset, and email-verification runtime lives beneath those story roots instead of separate top-level slices.
+- `System/Flows/` exposes the canonical shared auth story roots; supporting ingress, password-reset, and
+  email-verification runtime lives beneath those story roots instead of separate top-level slices.
 - `System/Capabilities/Access/` owns authorization boundaries and composed access-policy evaluation, including
   `Authentication/`, `Authorization/`, and `RiskBasedAccess/`, plus runtime posture and risk support beneath those
   owner zones.

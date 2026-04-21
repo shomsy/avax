@@ -11,7 +11,6 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstrain
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\TokenCodecInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\TokenCodecInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use SensitiveParameter;

@@ -40,7 +40,7 @@ This runs:
 1. Static analysis
 2. Strict static analysis
 3. PHPUnit
-4. Rector dry run
+4. Rector dry run against shipped package sources (`System/`, `integrations/`, `examples/`, `tooling/`)
 5. Secret scanning
 6. Migration boundary check
 7. Source-truth check

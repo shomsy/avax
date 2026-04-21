@@ -1,6 +1,6 @@
 # ACTIVE Board
 
-No active items remain.
+Current board mirrors the canonical re-check queue in `TODO.md`.
 
 ## Board
 
@@ -18,12 +18,14 @@ flowchart LR
         B0["No blocked items"]
     end
 
-    subgraph Verify["Verify / Review"]
-        V0["No verify items"]
+    subgraph Done["Done"]
+        D1["AUTH-035 bootstrap/adapter/readiness closure"]
+        D2["AUTH-036 AuthBuilder readiness split closure"]
+        D3["AUTH-037 docs governance closure"]
+        D4["AUTH-038 final production lock"]
     end
 
-    Ready --> InProgress
-    InProgress --> Verify
-    InProgress --> Blocked
-    Blocked --> InProgress
+    Ready --> Done
+    InProgress --> Done
+    Blocked --> Done
 ```

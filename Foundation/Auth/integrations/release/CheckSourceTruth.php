@@ -75,6 +75,10 @@ final readonly class CheckSourceTruth
             $issues[] = $issue;
         }
 
+        foreach ($this->ownershipHowThisWorksIssues(repositoryRoot: $repositoryRoot) as $issue) {
+            $issues[] = $issue;
+        }
+
         return [
             'approved' => $issues === [],
             'issues'   => $issues,
@@ -230,5 +234,67 @@ final readonly class CheckSourceTruth
         }
 
         return false;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function ownershipHowThisWorksIssues(string $repositoryRoot) : array
+    {
+        $issues        = [];
+        $requiredPages = [
+            'docs/System/how-this-works.md',
+            'docs/System/Capabilities/how-this-works.md',
+            'docs/System/Capabilities/Access/how-this-works.md',
+            'docs/System/Capabilities/Diagnostics/how-this-works.md',
+            'docs/System/Capabilities/ExternalIdentity/how-this-works.md',
+            'docs/System/Capabilities/Identity/how-this-works.md',
+            'docs/System/Capabilities/IdentitySync/how-this-works.md',
+            'docs/System/Capabilities/Tenancy/how-this-works.md',
+            'docs/System/Configuration/how-this-works.md',
+            'docs/System/Flows/how-this-works.md',
+            'docs/System/Foundation/how-this-works.md',
+            'docs/integrations/how-this-works.md',
+            'docs/integrations/avax-container/how-this-works.md',
+            'docs/integrations/cookies/how-this-works.md',
+            'docs/integrations/diagnostics/how-this-works.md',
+            'docs/integrations/headers/how-this-works.md',
+            'docs/integrations/http/how-this-works.md',
+            'docs/integrations/release/how-this-works.md',
+        ];
+
+        foreach ($requiredPages as $relativePath) {
+            $contents = $this->read(path: $repositoryRoot . '/' . $relativePath);
+
+            if ($contents === '') {
+                $issues[] = "Missing ownership how-this-works doc: {$relativePath}";
+                continue;
+            }
+
+            foreach (['title:', 'owner:', 'last_reviewed:', 'classification:'] as $field) {
+                if (! $this->hasFrontmatterField(contents: $contents, field: $field)) {
+                    $issues[] = "Ownership doc is missing required frontmatter field '{$field}' in {$relativePath}";
+                }
+            }
+        }
+
+        return $issues;
+    }
+
+    private function hasFrontmatterField(string $contents, string $field) : bool
+    {
+        if (! str_starts_with($contents, "---\n") && ! str_starts_with($contents, "---\r\n")) {
+            return false;
+        }
+
+        $delimiterPosition = strpos($contents, "\n---", 4);
+
+        if ($delimiterPosition === false) {
+            return false;
+        }
+
+        $frontmatter = substr($contents, 0, $delimiterPosition);
+
+        return str_contains($frontmatter, $field);
     }
 }

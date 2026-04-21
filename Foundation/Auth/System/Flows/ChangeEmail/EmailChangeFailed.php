@@ -32,4 +32,9 @@ final class EmailChangeFailed extends RuntimeException
     {
         return new self(message: 'Email change token is invalid.', code: 410);
     }
+
+    public static function unsupported() : self
+    {
+        return new self(message: 'Email change confirmation is not configured.', code: 501);
+    }
 }

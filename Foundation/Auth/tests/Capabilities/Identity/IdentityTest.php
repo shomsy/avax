@@ -7,7 +7,6 @@ namespace Avax\Auth\Tests\Capabilities\Identity;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -68,7 +67,7 @@ class IdentityTest extends TestCase
         $session->shouldReceive('issue')->once()->with(10, null, false)->andReturn('session-10');
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('issue')->once()->with($user, null, false, null, [], null, null)->andReturn(new IssuedToken(
+        $jwt->shouldReceive('issue')->once()->with($user, null, false, null, [], null)->andReturn(new IssuedToken(
                                                                                                             token    : 'token-10',
                                                                                                             tokenId  : 'token-id',
                                                                                                             expiresAt: new DateTimeImmutable(datetime: '+1 hour')

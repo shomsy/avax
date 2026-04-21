@@ -48,6 +48,7 @@ $definitions = [
         'commands' => [
             [$php, 'tooling/check-migration-path.php', '--json'],
             [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G'],
+            [$php, $binDir . '/rector', 'process', '--dry-run', '--no-progress-bar', '--config', 'rector.php'],
         ],
         'category' => 'bc',
     ],
@@ -58,23 +59,6 @@ $definitions = [
             [$php, $binDir . '/phpunit', '--testsuite=integration', '--testdox'],
         ],
         'category' => 'testing',
-    ],
-    6  => [
-        'name'     => 'Evidence Bundle',
-        'question' => 'Was the evidence bundle generated and linked to the release?',
-        'commands' => [
-            [$php, 'tooling/generate-evidence-bundle.php'],
-        ],
-        'category' => 'evidence',
-    ],
-    7  => [
-        'name'     => 'Release Quality',
-        'question' => 'Was the release quality gate passed with mutation testing and integration tests?',
-        'commands' => [
-            [$php, $binDir . '/phpunit', '--testsuite=mutation', '--no-coverage'],
-            [$php, $binDir . '/infection', '--no-coverage'],
-        ],
-        'category' => 'quality',
     ],
     6  => [
         'name'     => 'Async Containment',
@@ -282,16 +266,75 @@ function runCommand(array $command, string $workingDirectory) : array
     }
 
     fclose($pipes[0]);
-    $stdout = stream_get_contents($pipes[1]);
-    $stderr = stream_get_contents($pipes[2]);
+    stream_set_blocking($pipes[1], false);
+    stream_set_blocking($pipes[2], false);
+
+    $stdout = '';
+    $stderr = '';
+    $status = ['exitcode' => 1, 'running' => true];
+
+    do {
+        $status  = proc_get_status($process);
+        $running = $status['running'];
+        $read    = [];
+
+        if (! feof($pipes[1])) {
+            $read[] = $pipes[1];
+        }
+
+        if (! feof($pipes[2])) {
+            $read[] = $pipes[2];
+        }
+
+        if ($read === []) {
+            if (! $running) {
+                break;
+            }
+
+            usleep(10_000);
+            continue;
+        }
+
+        $write  = null;
+        $except = null;
+        $ready  = @stream_select($read, $write, $except, 0, 200_000);
+
+        if ($ready === false) {
+            break;
+        }
+
+        foreach ($read as $stream) {
+            $chunk = stream_get_contents($stream);
+
+            if ($chunk === false || $chunk === '') {
+                continue;
+            }
+
+            if ($stream === $pipes[1]) {
+                $stdout .= $chunk;
+                continue;
+            }
+
+            $stderr .= $chunk;
+        }
+    } while ( $running || ! feof($pipes[1]) || ! feof($pipes[2]) );
+
     fclose($pipes[1]);
     fclose($pipes[2]);
 
     $exitCode = proc_close($process);
 
+    if ($exitCode < 0) {
+        $exitCode = $status['exitcode'];
+
+        if ($exitCode < 0) {
+            $exitCode = 1;
+        }
+    }
+
     return [
-        'exit_code' => is_int($exitCode) ? $exitCode : 1,
-        'stdout'    => is_string($stdout) ? $stdout : '',
-        'stderr'    => is_string($stderr) ? $stderr : '',
+        'exit_code' => $exitCode,
+        'stdout'    => $stdout,
+        'stderr'    => $stderr,
     ];
 }

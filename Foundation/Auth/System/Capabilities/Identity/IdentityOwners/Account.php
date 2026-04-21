@@ -10,6 +10,7 @@ use Avax\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;
 use Avax\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
+use Avax\Auth\System\Flows\ChangeEmail\EmailChangeFailed;
 use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
@@ -18,7 +19,6 @@ use Avax\Auth\System\Flows\Register\Register;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Flows\Register\RegistrationResult;
-use RuntimeException;
 use SensitiveParameter;
 
 final readonly class Account
@@ -52,7 +52,7 @@ final readonly class Account
 
     private function confirmEmailChangeOrFail() : ConfirmEmailChange
     {
-        return $this->confirmEmailChange ?? throw new RuntimeException(message: 'Email change flow is not configured.');
+        return $this->confirmEmailChange ?? throw EmailChangeFailed::unsupported();
     }
 
     /**

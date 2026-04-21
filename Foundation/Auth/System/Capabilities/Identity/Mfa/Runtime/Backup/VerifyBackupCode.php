@@ -7,7 +7,6 @@ namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;

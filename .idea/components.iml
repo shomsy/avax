@@ -13,10 +13,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/cookies" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Cookies\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/headers" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Headers\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/http" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Http\" />
-      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Capabilities" isTestSource="true" packagePrefix="Avax\Auth\Tests\Capability\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Capabilities" isTestSource="true" packagePrefix="Avax\Auth\Tests\Capabilities\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Configuration" isTestSource="true" packagePrefix="Avax\Auth\Tests\Configuration\" />
-      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Flows" isTestSource="true" packagePrefix="Avax\Auth\Tests\Flow\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Flows" isTestSource="true" packagePrefix="Avax\Auth\Tests\Flows\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Foundation" isTestSource="true" packagePrefix="Avax\Auth\Tests\Foundation\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Integration" isTestSource="true" packagePrefix="Avax\Auth\Tests\Integration\" />

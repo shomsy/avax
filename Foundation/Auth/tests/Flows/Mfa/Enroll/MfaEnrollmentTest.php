@@ -11,12 +11,10 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\CancelMfaEnrollmen
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollment;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll\StartMfaEnrollment;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\InMemoryMfaStore;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\InMemoryMfaStore;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaEnrollmentFailed;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaStatus;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaEnrollmentFailed;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\Totp;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;

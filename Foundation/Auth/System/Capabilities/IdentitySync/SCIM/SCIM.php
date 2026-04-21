@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM;
 
+use Avax\Auth\System\Capabilities\IdentitySync\IdentitySyncCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\RunScimBulk;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkResponse;
@@ -30,7 +31,6 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimG
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Random\RandomException;
-use RuntimeException;
 use SensitiveParameter;
 
 final readonly class SCIM
@@ -49,6 +49,21 @@ final readonly class SCIM
         private RunScimBulk|null                           $runScimBulk
     ) {}
 
+    public function isConfigured() : bool
+    {
+        return $this->registerScimDirectory !== null
+            && $this->readScimDirectories !== null
+            && $this->rotateScimToken !== null
+            && $this->markScimDirectoryOutage !== null
+            && $this->recoverScimDirectoryOutage !== null
+            && $this->provisionScimUser !== null
+            && $this->deleteScimUser !== null
+            && $this->readScimUsers !== null
+            && $this->readScimGroups !== null
+            && $this->syncScimGroups !== null
+            && $this->runScimBulk !== null;
+    }
+
     /**
      * @throws RandomException
      */
@@ -59,7 +74,7 @@ final readonly class SCIM
 
     private function registerScimDirectoryOrFail() : RegisterScimDirectory
     {
-        return $this->registerScimDirectory ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->registerScimDirectory ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'register_directory');
     }
 
     /**
@@ -72,7 +87,7 @@ final readonly class SCIM
 
     private function readScimDirectoriesOrFail() : ReadScimDirectories
     {
-        return $this->readScimDirectories ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->readScimDirectories ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'read_directories');
     }
 
     /**
@@ -85,7 +100,7 @@ final readonly class SCIM
 
     private function rotateScimTokenOrFail() : RotateScimToken
     {
-        return $this->rotateScimToken ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->rotateScimToken ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'rotate_token');
     }
 
     public function markDirectoryOutage(MarkScimDirectoryOutageData $data) : ScimDirectory
@@ -95,7 +110,7 @@ final readonly class SCIM
 
     private function markScimDirectoryOutageOrFail() : MarkScimDirectoryOutage
     {
-        return $this->markScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->markScimDirectoryOutage ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'mark_directory_outage');
     }
 
     public function recoverDirectoryOutage(RecoverScimDirectoryOutageData $data) : ScimDirectory
@@ -105,7 +120,7 @@ final readonly class SCIM
 
     private function recoverScimDirectoryOutageOrFail() : RecoverScimDirectoryOutage
     {
-        return $this->recoverScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->recoverScimDirectoryOutage ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'recover_directory_outage');
     }
 
     /**
@@ -118,7 +133,7 @@ final readonly class SCIM
 
     private function provisionScimUserOrFail() : ProvisionScimUser
     {
-        return $this->provisionScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->provisionScimUser ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'provision_user');
     }
 
     public function deleteUser(DeleteScimUserData $data) : void
@@ -128,7 +143,7 @@ final readonly class SCIM
 
     private function deleteScimUserOrFail() : DeleteScimUser
     {
-        return $this->deleteScimUser ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->deleteScimUser ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'delete_user');
     }
 
     /**
@@ -141,7 +156,7 @@ final readonly class SCIM
 
     private function readScimUsersOrFail() : ReadScimUsers
     {
-        return $this->readScimUsers ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->readScimUsers ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'read_users');
     }
 
     /**
@@ -154,7 +169,7 @@ final readonly class SCIM
 
     private function readScimGroupsOrFail() : ReadScimGroups
     {
-        return $this->readScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->readScimGroups ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'read_groups');
     }
 
     public function syncGroups(SyncScimGroupsData $data) : ScimProvisioningResult
@@ -164,7 +179,7 @@ final readonly class SCIM
 
     private function syncScimGroupsOrFail() : SyncScimGroups
     {
-        return $this->syncScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->syncScimGroups ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'sync_groups');
     }
 
     public function runBulk(ScimBulkRequest $data) : ScimBulkResponse
@@ -174,6 +189,6 @@ final readonly class SCIM
 
     private function runScimBulkOrFail() : RunScimBulk
     {
-        return $this->runScimBulk ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+        return $this->runScimBulk ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'run_bulk');
     }
 }

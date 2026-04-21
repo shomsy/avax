@@ -34,17 +34,33 @@ use SensitiveParameter;
  */
 final readonly class Identity implements IdentityInterface
 {
+    public static function fromBackends(
+        SessionIdentityInterface|null $sessionIdentity = null,
+        JwtIdentityInterface|null     $jwtIdentity = null
+    ) : self
+    {
+        return new self(
+            sessionIdentity: $sessionIdentity,
+            jwtIdentity    : $jwtIdentity
+        );
+    }
+
     public function __construct(
-        #[SensitiveParameter] private Authentication                $authentication,
-        #[SensitiveParameter] private Sessions                      $sessions,
-        #[SensitiveParameter] private Account                       $account,
-        private Recovery                                            $recovery,
-        private Verification                                        $verification,
-        private Mfa                                                 $mfa,
-        private Passkey                                             $passkey,
+        #[SensitiveParameter] private Authentication|null $authentication = null,
+        #[SensitiveParameter] private Sessions|null       $sessions = null,
+        #[SensitiveParameter] private Account|null        $account = null,
+        private Recovery|null                             $recovery = null,
+        private Verification|null                         $verification = null,
+        private Mfa|null                                  $mfa = null,
+        private Passkey|null                              $passkey = null,
         #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
-    ) {}
+    )
+    {
+        if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
+            throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
+        }
+    }
 
     // ── Owned behavior (cross-cutting identity lifecycle) ──
 
@@ -116,49 +132,49 @@ final readonly class Identity implements IdentityInterface
 
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
-        return $this->authentication->login(credentials: $credentials);
+        return $this->authentication()->login(credentials: $credentials);
     }
 
     public function logout() : void
     {
-        $this->authentication->logout();
+        $this->authentication()->logout();
     }
 
     // ── Sub-capability accessors ──
 
     public function authentication() : Authentication
     {
-        return $this->authentication;
+        return $this->authentication ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'authentication');
     }
 
     public function sessions() : Sessions
     {
-        return $this->sessions;
+        return $this->sessions ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'sessions');
     }
 
     public function account() : Account
     {
-        return $this->account;
+        return $this->account ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'account');
     }
 
     public function recovery() : Recovery
     {
-        return $this->recovery;
+        return $this->recovery ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'recovery');
     }
 
     public function verification() : Verification
     {
-        return $this->verification;
+        return $this->verification ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'verification');
     }
 
     public function mfa() : Mfa
     {
-        return $this->mfa;
+        return $this->mfa ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'mfa');
     }
 
     public function passkey() : Passkey
     {
-        return $this->passkey;
+        return $this->passkey ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'passkey');
     }
 
     private function resolveMode() : AuthenticationMode

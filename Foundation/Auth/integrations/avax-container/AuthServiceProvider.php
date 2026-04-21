@@ -17,11 +17,11 @@ use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Providers\ServiceProvider;
 use Override;
-use RuntimeException;
 
 /**
  * Optional Avax Container adapter for assembling the auth kernel.
@@ -68,12 +68,13 @@ final class AuthServiceProvider extends ServiceProvider
                     : null;
 
                 if ($sessionIdentity === null && $jwtIdentity === null) {
-                    throw new RuntimeException(
-                        message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
+                    throw ConfigurationException::missingIdentityBackend(
+                        buildPath: 'AuthServiceProvider::registerIdentity()',
+                        hint     : 'Provide a SessionIdentityInterface or JwtIdentityInterface binding.'
                     );
                 }
 
-                return new Identity(
+                return Identity::fromBackends(
                     sessionIdentity: $sessionIdentity,
                     jwtIdentity    : $jwtIdentity
                 );

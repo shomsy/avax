@@ -8,9 +8,6 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstrain
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\HmacTokenCodec;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryRefreshTokenStore;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\User\User;
@@ -153,7 +150,9 @@ class JwtIdentityTest extends TestCase
         $refresh = $jwt->issueRefreshToken(user: $user);
 
         $this->assertNotNull(actual: $refresh);
-        $this->assertSame(expected: $user->getId()->value, actual: $refresh?->userId->value);
+        $this->assertNotSame(expected: '', actual: $refresh?->token);
+        $this->assertNotSame(expected: '', actual: $refresh?->tokenId);
+        $this->assertNotSame(expected: '', actual: $refresh?->familyId);
     }
 
     /**

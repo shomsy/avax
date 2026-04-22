@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Recovery;
 
 use Avax\HTTP\Session\Audit\Audit;
-use Avax\HTTP\Session\Exceptions\RecoveryException;
 use Avax\HTTP\Session\Shared\Exceptions\RecoveryException;
 use Throwable;
 

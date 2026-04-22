@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Querying\ValueObjects;
 
 /**
  * Immutable value object representing a pre-quoted SQL identifier.

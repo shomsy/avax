@@ -64,13 +64,13 @@ final readonly class QueryState
         ?array     $joins = null,
         ?array     $wheres = null,
         ?array     $groups = null,
-        array      $havings = null,
+        ?array $havings = null,
         ?array     $orders = null,
         ?int       $limit = null,
         ?int       $offset = null,
-        array      $values = null,
+        ?array $values = null,
         ?array     $updateColumns = null,
-        bool       $distinct = null,
+        ?bool  $distinct = null,
         BindingBag $bindings = new BindingBag
     )
     {

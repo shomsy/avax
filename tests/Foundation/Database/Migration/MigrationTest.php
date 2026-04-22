@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Migration;
+namespace Avax\Tests\Foundation\Database\Migration;
 
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
 use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
@@ -22,6 +22,7 @@ class MigrationTest extends TestCase
         $sql = $blueprint->toSql(grammar: new MySQLGrammar());
 
         $this->assertCount(expectedCount: 1, haystack: $sql);
+        // noinspection SqlNoDataSourceInspection
         $this->assertStringContainsString(needle: 'CREATE TABLE `users`', haystack: $sql[0]);
         $this->assertStringContainsString(needle: '`id` BIGINT', haystack: $sql[0]);
         $this->assertStringContainsString(needle: '`email` VARCHAR(255)', haystack: $sql[0]);

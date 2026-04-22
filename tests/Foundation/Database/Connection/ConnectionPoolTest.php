@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Connection;
+namespace Avax\Tests\Foundation\Database\Connection;
 
 use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use PHPUnit\Framework\TestCase;

@@ -28,7 +28,7 @@ final readonly class WhereNode
         string $column,
         string $operator,
         mixed  $value = null,
-        string $boolean = null,
+        ?string $boolean = null,
         string $type = 'Basic'
     )
     {

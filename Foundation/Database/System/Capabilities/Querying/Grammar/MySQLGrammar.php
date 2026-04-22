@@ -144,6 +144,7 @@ final class MySQLGrammar extends BaseGrammar
     #[Override]
     public function compileDropIfExists(string $table) : string
     {
+        // noinspection SqlNoDataSourceInspection
         return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 }

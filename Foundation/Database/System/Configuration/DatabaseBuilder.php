@@ -139,8 +139,8 @@ final class DatabaseBuilder
         );
 
         $migrations = new Migrations(
-            querying    : $querying,
-            transactions: $transactions
+            querying   : $querying,
+            connections: $connections
         );
 
         $telemetry = new Telemetry(

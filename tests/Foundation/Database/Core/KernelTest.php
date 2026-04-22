@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Core;
+namespace Avax\Tests\Foundation\Database\Core;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;

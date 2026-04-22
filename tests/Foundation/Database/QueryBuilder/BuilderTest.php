@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Query;
+namespace Avax\Tests\Foundation\Database\QueryBuilder;
 
 use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
 use Avax\Tests\TestCase;
@@ -54,6 +54,7 @@ class BuilderTest extends TestCase
 
         $pdo = $this->database->connections()->pdo();
 
+        // noinspection SqlNoDataSourceInspection
         $pdo->exec(
             statement: 'CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,6 +65,7 @@ class BuilderTest extends TestCase
             )'
         );
 
+        // noinspection SqlNoDataSourceInspection
         $pdo->exec(
             statement: 'CREATE TABLE posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

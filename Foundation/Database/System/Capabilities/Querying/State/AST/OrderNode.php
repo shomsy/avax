@@ -24,7 +24,7 @@ final readonly class OrderNode
      */
     public function __construct(
         ?string $column = null,
-        string  $direction = null,
+        ?string $direction = null,
         ?string $sql = null,
         string  $type = 'Basic'
     )

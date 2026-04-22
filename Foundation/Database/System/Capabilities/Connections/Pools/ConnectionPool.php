@@ -245,11 +245,11 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         return new ConnectionPoolMetrics(
             data: [
-                      'spawnedConnections' => $this->state,
+                      'spawnedConnections' => $this->state->spawnedCount,
                       'idleConnections'    => $this->pool->count(),
-                      'activeConnections'  => $this->state - $this->pool->count(),
+                      'activeConnections'  => max(0, $this->state->spawnedCount - $this->pool->count()),
                       'maxConnections'     => (int) ($this->config['pool']['max_connections'] ?? 10),
-                      'totalAcquisitions'  => $this->state,
+                      'totalAcquisitions'  => $this->state->totalAcquisitions,
                       'maxIdleTime'        => $maxIdleTime,
                   ]
         );

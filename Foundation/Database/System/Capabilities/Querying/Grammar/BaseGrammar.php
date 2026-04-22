@@ -358,6 +358,7 @@ abstract class BaseGrammar implements GrammarInterface
             array   : $rows
         );
 
+        // noinspection SqlNoDataSourceInspection
         return "INSERT INTO {$table} ({$columns}) VALUES " . implode(separator: ', ', array: $valueGroups);
     }
 
@@ -394,6 +395,7 @@ abstract class BaseGrammar implements GrammarInterface
         $setClause = 'SET ' . implode(separator: ', ', array: $sets);
         $wheres    = $this->compileWheres(state: $state);
 
+        // noinspection SqlNoDataSourceInspection
         return trim(string: "UPDATE {$table} {$setClause} {$wheres}");
     }
 
@@ -405,6 +407,7 @@ abstract class BaseGrammar implements GrammarInterface
         $table  = $this->wrap(value: $state->from);
         $wheres = $this->compileWheres(state: $state);
 
+        // noinspection SqlNoDataSourceInspection
         return trim(string: "DELETE FROM {$table} {$wheres}");
     }
 
@@ -434,6 +437,7 @@ abstract class BaseGrammar implements GrammarInterface
      */
     public function compileDropIfExists(string $table) : string
     {
+        // noinspection SqlNoDataSourceInspection
         return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 

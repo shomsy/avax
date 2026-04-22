@@ -32,7 +32,12 @@ final class NativeSessionStore implements SessionStoreInterface
             return $this->cliSessionId;
         }
 
-        if (! $this->nativeSessionActive() || ! session_regenerate_id(delete_old_session: true)) {
+        if (! $this->nativeSessionActive()) {
+            throw new RuntimeException(message: 'Session regeneration requires an active native session.');
+        }
+
+        if (! session_regenerate_id(delete_old_session: true)) {
+            throw new RuntimeException(message: 'Session regeneration failed.');
         }
 
         return $this->readNativeSessionId();

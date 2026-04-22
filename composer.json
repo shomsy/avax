@@ -76,5 +76,6 @@
     "fix-pint": "php vendor/bin/pint",
     "pint": "php vendor/bin/pint",
     "check:superglobals": "php scripts/check-superglobals.php"
-  }
+  },
+  "suggest": {}
 }

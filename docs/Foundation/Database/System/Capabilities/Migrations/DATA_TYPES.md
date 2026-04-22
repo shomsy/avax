@@ -249,10 +249,10 @@ $table->bigInteger('category_id')->unsigned()
 ## 📋 Complete Example
 
 ```php
-use Avax\Migrations\Design\Table\Blueprint;
-use Avax\Migrations\Migration;
+use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Database\System\Capabilities\Migrations\Design\BaseMigration;
 
-return new class extends Migration
+return new class extends BaseMigration
 {
     public function up() : void
     {

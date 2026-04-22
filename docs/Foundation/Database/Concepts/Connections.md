@@ -10,10 +10,10 @@ established, pooled, and managed.
 ### Core Connections
 
 - [PdoConnection](#pdoconnection)
-- [ConnectionFactory](#connectionfactory)
-- [ConnectionManager](#connectionmanager)
-- [DirectConnectionFlow](#directconnectionflow)
-- [DatabaseFlow](#databaseflow)
+- [BuildPhysicalConnection](#connectionfactory)
+- [ReadConnection](#connectionmanager)
+- [OpenConnection](#directconnectionflow)
+- [RunWithConnection](#databaseflow)
 
 ### Connection Pooling
 
@@ -60,7 +60,7 @@ if ($connection->ping()) {
 
 ---
 
-## ConnectionFactory
+## BuildPhysicalConnection
 
 **Creates PDO connections from configuration arrays.**
 
@@ -74,7 +74,7 @@ Handles:
 - Connection attribute configuration
 
 ```php
-$factory = new ConnectionFactory();
+$factory = new BuildPhysicalConnection();
 $connection = $factory->create([
     'driver' => 'mysql',
     'host' => '127.0.0.1',
@@ -86,7 +86,7 @@ $connection = $factory->create([
 
 ---
 
-## ConnectionManager
+## ReadConnection
 
 **Manages multiple named database connections.**
 
@@ -100,7 +100,7 @@ Supports:
 - Connection retrieval by name
 
 ```php
-$manager = new ConnectionManager($config);
+$manager = new ReadConnection($config);
 
 // Get the default connection
 $primary = $manager->connection();
@@ -111,7 +111,7 @@ $analytics = $manager->connection('analytics');
 
 ---
 
-## DirectConnectionFlow
+## OpenConnection
 
 **Fluent builder for establishing a single direct connection.**
 
@@ -121,7 +121,7 @@ array, you chain method calls.
 Think of it as planning a road trip: "I'll start → use this map → bring these supplies → then go."
 
 ```php
-$connection = DirectConnectionFlow::begin()
+$connection = OpenConnection::begin()
     ->using([
         'driver' => 'mysql',
         'host' => '127.0.0.1',
@@ -146,11 +146,11 @@ $connection = DirectConnectionFlow::begin()
 
 ---
 
-## DatabaseFlow
+## RunWithConnection
 
 **Base fluent interface for all connection flows.**
 
-The abstract foundation that both `DirectConnectionFlow` and `ConnectionPoolFlow` extend. Provides common configuration
+The abstract foundation that both `OpenConnection` and `ConnectionPoolFlow` extend. Provides common configuration
 methods.
 
 ---
@@ -206,7 +206,7 @@ $pool = new ConnectionPool([
 
 **Fluent builder for creating connection pools.**
 
-Like `DirectConnectionFlow`, but creates a pool instead of a single connection.
+Like `OpenConnection`, but creates a pool instead of a single connection.
 
 ```php
 $pool = ConnectionPoolFlow::begin()

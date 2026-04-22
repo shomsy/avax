@@ -10,7 +10,7 @@ classification: internal
 ## What this folder is
 
 This folder owns the cohesive Laravel-style migration capability: blueprint DSL, migration loading and generation,
-runner logic, repository state, console-facing operations, and export support.
+runner logic, repository state, schema operations, rollback/status helpers, and export support.
 
 ## Real commands or triggers that reach this folder
 
@@ -21,14 +21,15 @@ runner logic, repository state, console-facing operations, and export support.
 ## Exact upstream handoffs
 
 - `Migrations.php` is the public capability owner
-- `Execution/Repository/MigrationRepository.php` owns migration history persistence
-- `Execution/Runner/MigrationRunner.php` coordinates apply and rollback
-- `Generate/*` discovers or creates migration files
+- `RunMigrations/MigrationRepository.php` owns migration history persistence
+- `RunMigrations/MigrationRunner.php` coordinates apply and rollback
+- `LoadMigrations/*` discovers migration files
+- `CreateMigration/*` creates new migration files
 
 ## Main decision point
 
-- `Migrations.php` decides whether the caller needs a builder-backed schema helper, a repository, a runner, a loader, a
-  generator, or an exporter
+- `Migrations.php` decides whether the caller needs a schema operation, repository, runner, loader, generator,
+  rollback/status helper, or exporter
 
 ## Writes and side effects
 
@@ -44,6 +45,6 @@ runner logic, repository state, console-facing operations, and export support.
 
 ## Debug first
 
-- `Execution/Runner/MigrationRunner.php`
-- `Execution/Repository/MigrationRepository.php`
+- `RunMigrations/MigrationRunner.php`
+- `RunMigrations/MigrationRepository.php`
 - `Design/Table/Blueprint.php`

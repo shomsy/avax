@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations;
 
-use Avax\Database\System\Capabilities\Migrations\Execution\Repository\MigrationRepository;
-use Avax\Database\System\Capabilities\Migrations\Execution\Runner\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\Export\DatabaseExporter;
-use Avax\Database\System\Capabilities\Migrations\Generate\MigrationGenerator;
-use Avax\Database\System\Capabilities\Migrations\Generate\MigrationLoader;
-use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Database\System\Capabilities\Migrations\SchemaOperations\CreateDatabase;
+use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropDatabase;
+use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropTable;
+use Avax\Database\System\Capabilities\Migrations\SchemaOperations\TruncateTable;
+use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Querying\Querying;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use ReflectionException;
 use Throwable;
@@ -21,7 +27,7 @@ use Throwable;
 final readonly class Migrations
 {
     public function __construct(
-        private QueryBuilderRuntime $queryBuilder,
+        private Querying $querying,
         private Transactions        $transactions
     ) {}
 
@@ -31,7 +37,7 @@ final readonly class Migrations
      */
     public function builder(string|null $connectionName = null) : QueryBuilder
     {
-        return $this->queryBuilder->builder(connectionName: $connectionName);
+        return $this->querying->builder(connectionName: $connectionName);
     }
 
     /**
@@ -49,7 +55,7 @@ final readonly class Migrations
      */
     public function dropIfExists(string $table, string|null $connectionName = null) : void
     {
-        $this->builder(connectionName: $connectionName)->dropIfExists(table: $table);
+        $this->dropTable(connectionName: $connectionName)->named(table: $table);
     }
 
     /**
@@ -58,7 +64,7 @@ final readonly class Migrations
      */
     public function truncate(string $table, string|null $connectionName = null) : void
     {
-        $this->builder(connectionName: $connectionName)->truncate(table: $table);
+        $this->truncateTable(connectionName: $connectionName)->named(table: $table);
     }
 
     /**
@@ -67,7 +73,7 @@ final readonly class Migrations
      */
     public function createDatabase(string $name, string|null $connectionName = null) : void
     {
-        $this->builder(connectionName: $connectionName)->createDatabase(name: $name);
+        $this->createDatabaseOperation(connectionName: $connectionName)->named(name: $name);
     }
 
     /**
@@ -76,7 +82,7 @@ final readonly class Migrations
      */
     public function dropDatabase(string $name, string|null $connectionName = null) : void
     {
-        $this->builder(connectionName: $connectionName)->dropDatabase(name: $name);
+        $this->dropDatabaseOperation(connectionName: $connectionName)->named(name: $name);
     }
 
     /**
@@ -117,5 +123,66 @@ final readonly class Migrations
     public function exporter(string|null $connectionName = null) : DatabaseExporter
     {
         return new DatabaseExporter(builder: $this->builder(connectionName: $connectionName));
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function rollbacker(string|null $connectionName = null) : RollbackMigrations
+    {
+        return new RollbackMigrations(
+            repository: $this->repository(connectionName: $connectionName),
+            runner    : $this->runner(connectionName: $connectionName),
+            loader    : $this->loader()
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function status(string|null $connectionName = null) : ReadMigrationStatus
+    {
+        return new ReadMigrationStatus(
+            repository: $this->repository(connectionName: $connectionName),
+            loader    : $this->loader()
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function createDatabaseOperation(string|null $connectionName = null) : CreateDatabase
+    {
+        return new CreateDatabase(builder: $this->builder(connectionName: $connectionName));
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function dropDatabaseOperation(string|null $connectionName = null) : DropDatabase
+    {
+        return new DropDatabase(builder: $this->builder(connectionName: $connectionName));
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function dropTable(string|null $connectionName = null) : DropTable
+    {
+        return new DropTable(builder: $this->builder(connectionName: $connectionName));
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function truncateTable(string|null $connectionName = null) : TruncateTable
+    {
+        return new TruncateTable(builder: $this->builder(connectionName: $connectionName));
     }
 }

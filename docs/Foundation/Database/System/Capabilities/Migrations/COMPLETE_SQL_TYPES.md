@@ -327,7 +327,7 @@ $table->bit('feature_flags', 32);
 ### Using the Type Mapper
 
 ```php
-use Avax\Migrations\TypeMapping\SQLToPHPTypeMapper;
+use Avax\Database\System\Capabilities\Migrations\Design\TypeMapping\SQLToPHPTypeMapper;
 
 $mapper = new SQLToPHPTypeMapper();
 
@@ -496,10 +496,10 @@ $table->rowVersion();
 ## 🚀 Migration Example: E-Commerce Product
 
 ```php
-use Avax\Migrations\Design\Table\Blueprint;
-use Avax\Migrations\Migration;
+use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Database\System\Capabilities\Migrations\Design\BaseMigration;
 
-return new class extends Migration
+return new class extends BaseMigration
 {
     public function up() : void
     {

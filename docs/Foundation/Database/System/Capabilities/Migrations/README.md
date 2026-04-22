@@ -41,10 +41,10 @@ SQLite.
 ### Basic Migration
 
 ```php
-use Avax\Migrations\Design\Table\Blueprint;
-use Avax\Migrations\Migration;
+use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Database\System\Capabilities\Migrations\Design\BaseMigration;
 
-return new class extends Migration
+return new class extends BaseMigration
 {
     public function up() : void
     {
@@ -89,7 +89,7 @@ return new class extends Migration
 ### Using the PHP Type Mapper
 
 ```php
-use Avax\Migrations\TypeMapping\SQLToPHPTypeMapper;
+use Avax\Database\System\Capabilities\Migrations\Design\TypeMapping\SQLToPHPTypeMapper;
 
 $mapper = new SQLToPHPTypeMapper();
 

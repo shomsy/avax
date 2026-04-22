@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Transactions;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\Database\System\Capabilities\Transactions\OnConnection\OnConnection;
+use Avax\Database\System\Capabilities\Transactions\RunTransaction\RunTransaction;
+use Avax\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
 use Throwable;
 
 /**
@@ -12,14 +15,25 @@ use Throwable;
  */
 final readonly class Transactions
 {
-    public function __construct(private Connections $connections) {}
+    private OnConnection   $onConnection;
+    private RunTransaction $runTransaction;
+
+    public function __construct(
+        private Connections $connections,
+        OnConnection|null   $onConnection = null,
+        RunTransaction|null $runTransaction = null
+    )
+    {
+        $this->onConnection   = $onConnection ?? new OnConnection(connections: $this->connections);
+        $this->runTransaction = $runTransaction ?? new RunTransaction(onConnection: $this->onConnection);
+    }
 
     /**
      * @throws Throwable
      */
     public function on(string|null $connectionName = null) : Transaction
     {
-        return Transaction::on(connection: $this->connections->connection(name: $connectionName));
+        return $this->onConnection->for(connectionName: $connectionName);
     }
 
     /**
@@ -27,6 +41,6 @@ final readonly class Transactions
      */
     public function run(callable $callback, string|null $connectionName = null) : mixed
     {
-        return $this->on(connectionName: $connectionName)->transaction(callback: $callback);
+        return $this->runTransaction->run(callback: $callback, connectionName: $connectionName);
     }
 }

@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Avax\Database\Tests\Unit;
 
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\QueryBuilder\Exceptions\QueryException;
-use Avax\Database\System\Capabilities\QueryBuilder\Execution\PDOExecutor;
-use Avax\Database\System\Capabilities\QueryBuilder\Execution\QueryOrchestrator;
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\MySQLGrammar;
-use Avax\Database\System\Capabilities\Transactions\Identity\IdentityMap;
-use Avax\Database\System\Capabilities\Transactions\Transaction;
+use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Querying\Exceptions\QueryException;
+use Avax\Database\System\Capabilities\Querying\Execution\PDOExecutor;
+use Avax\Database\System\Capabilities\Querying\Execution\QueryOrchestrator;
+use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Querying\Identity\IdentityMap;
+use Avax\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
 use Exception;
 use Override;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Random\RandomException;
 use ReflectionException;
 use Throwable;
 

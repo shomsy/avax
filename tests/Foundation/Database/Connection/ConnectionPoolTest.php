@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Connection;
 
-use Avax\Database\System\Capabilities\Connections\Pool\ConnectionPool;
+use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use PHPUnit\Framework\TestCase;
 
 class ConnectionPoolTest extends TestCase

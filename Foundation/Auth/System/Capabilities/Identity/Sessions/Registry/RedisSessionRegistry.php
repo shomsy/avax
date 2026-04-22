@@ -29,7 +29,9 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
     {
         $key = self::KEY_PREFIX . $record->sessionId;
 
-        $this->redis->hMset(key: $key, fieldvals: [
+        $this->redis->hMset(
+            key      : $key,
+            fieldvals: [
             'session_id'          => $record->sessionId,
             'user_id'             => $record->userId->value,
             'created_at'          => $record->createdAt->format(format: DateTimeInterface::ATOM),
@@ -40,7 +42,8 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
             'user_agent_created'  => $record->userAgentCreated ?? '',
             'revoked_at'          => $record->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
             'revoke_reason'       => $record->revokeReason ?? '',
-        ]);
+                       ]
+        );
 
         $this->redis->expire(key: $key, timeout: $this->ttlSeconds);
 

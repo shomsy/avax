@@ -6,8 +6,8 @@ namespace Avax\HTTP\Request;
 
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Psr\Http\Message\UriInterface;
 use LogicException;
+use Psr\Http\Message\UriInterface;
 use ReflectionException;
 
 /**

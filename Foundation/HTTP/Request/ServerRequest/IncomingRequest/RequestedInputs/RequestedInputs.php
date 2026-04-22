@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\InputValue;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\InputValue;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\SanitizedRequestedInputs;

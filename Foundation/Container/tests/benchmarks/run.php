@@ -7,7 +7,6 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
-use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Container\DI\Container;
 use Avax\Container\DI\ContainerInterface;

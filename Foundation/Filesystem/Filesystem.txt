@@ -1,9 +1,166 @@
+=== Contracts/AsyncFilesystemInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Filesystem\Contracts;
+
+use Avax\Contracts\FilesystemException;
+
+/**
+ * Asynchronous filesystem interface for modern PHP runtimes.
+ *
+ * Provides async I/O operations for compatibility with Swoole, ReactPHP,
+ * and other event-loop based frameworks. Falls back to sync operations
+ * when async runtime is not available.
+ *
+ * All methods return promises/futures that resolve to the same values
+ * as their synchronous counterparts.
+ */
+interface AsyncFilesystemInterface
+{
+    /**
+     * Asynchronously checks if a file exists.
+     *
+     * @param string $path File path to check
+     *
+     * @return mixed Promise resolving to bool
+     */
+    public function existsAsync(string $path) : mixed;
+
+    /**
+     * Asynchronously reads file contents.
+     *
+     * @param string $path File path to read
+     *
+     * @return mixed Promise resolving to string
+     * @throws FilesystemException
+     */
+    public function getAsync(string $path) : mixed;
+
+    /**
+     * Asynchronously writes content to file.
+     *
+     * @param string $path    File path to write
+     * @param string $content Content to write
+     *
+     * @return mixed Promise resolving to bool
+     * @throws FilesystemException
+     */
+    public function putAsync(string $path, string $content) : mixed;
+
+    /**
+     * Asynchronously deletes a file.
+     *
+     * @param string $path File path to delete
+     *
+     * @return mixed Promise resolving to bool
+     * @throws FilesystemException
+     */
+    public function deleteAsync(string $path) : mixed;
+
+    /**
+     * Asynchronously ensures directory exists.
+     *
+     * @param string $path Directory path to create
+     *
+     * @return mixed Promise resolving to bool
+     * @throws FilesystemException
+     */
+    public function ensureDirectoryAsync(string $path) : mixed;
+
+    /**
+     * Checks if async operations are supported in current runtime.
+     */
+    public function supportsAsync() : bool;
+
+    /**
+     * Gets async runtime identifier (e.g., 'swoole', 'reactphp', 'amp').
+     */
+    public function getAsyncRuntime() : string|null;
+}
+
+=== Contracts/FilesystemInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Filesystem\Contracts;
+
+use Avax\Contracts\FilesystemException;
+
+/**
+ * Filesystem abstraction for clean architecture.
+ *
+ * Replaces framework-specific Storage facades with proper dependency injection.
+ * Enables testability and framework-agnostic file operations.
+ */
+interface FilesystemInterface
+{
+    /**
+     * Get the contents of a file.
+     *
+     * @param string $path The file path
+     *
+     * @return string The file contents
+     *
+     * @throws FilesystemException If file cannot be read
+     */
+    public function get(string $path) : string;
+
+    /**
+     * Write contents to a file.
+     *
+     * @param string $path    The file path
+     * @param string $content The content to write
+     *
+     * @throws FilesystemException If file cannot be written
+     */
+    public function put(string $path, string $content) : void;
+
+    /**
+     * Check if a file exists.
+     *
+     * @param string $path The file path
+     *
+     * @return bool True if file exists and is readable
+     */
+    public function exists(string $path) : bool;
+
+    /**
+     * Delete a file.
+     *
+     * @param string $path The file path
+     *
+     * @throws FilesystemException If file cannot be deleted
+     */
+    public function delete(string $path) : void;
+
+    /**
+     * Get file modification time.
+     *
+     * @param string $path The file path
+     *
+     * @return int|null Unix timestamp or null if file doesn't exist
+     */
+    public function lastModified(string $path) : int|null;
+
+    /**
+     * Ensure directory exists, creating it if necessary.
+     *
+     * @param string $path Directory path
+     *
+     * @throws FilesystemException If directory cannot be created
+     */
+    public function ensureDirectory(string $path) : void;
+}
+
 === DirectoryInitializer.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem;
+namespace Avax\Filesystem;
 
 use Exception;
 
@@ -19,6 +176,8 @@ readonly class DirectoryInitializer
 
     // Delay between retry attempts in microseconds
     private const int RETRY_DELAY = 100000;
+    private FileServiceInterface $fileService;
+    private string               $directoryPath;
 
     /**
      * DirectoryInitializer constructor.
@@ -28,13 +187,16 @@ readonly class DirectoryInitializer
      * @param string               $directoryPath The path to the directory to be initialized.
      * @param FileServiceInterface $fileService   The file service to handle directory operations.
      *
-     * @throws \Exception
-     * @throws \Exception
+     * @throws Exception
+     * @throws Exception
      */
     public function __construct(
-        private string               $directoryPath,
-        private FileServiceInterface $fileService
-    ) {
+        string               $directoryPath,
+        FileServiceInterface $fileService
+    )
+    {
+        $this->directoryPath = $directoryPath;
+        $this->fileService   = $fileService;
         $this->initializeDirectory();
     }
 
@@ -65,13 +227,13 @@ readonly class DirectoryInitializer
      */
     private function ensureWritable() : void
     {
-        for ($attempt = 1; $attempt <= self::RETRY_ATTEMPTS; ++$attempt) {
+        for ($attempt = 1; $attempt <= self::RETRY_ATTEMPTS; $attempt++) {
             // Attempt to write to the directory or retry after a delay
             if ($this->fileService->isWritable(path: $this->directoryPath) || $this->attemptFileCreation()) {
                 return;
             }
 
-            usleep(self::RETRY_DELAY);
+            usleep(microseconds: self::RETRY_DELAY);
         }
 
         throw new Exception(
@@ -103,48 +265,52 @@ readonly class DirectoryInitializer
         // Check if the test file is writable
         $isWritable = $this->fileService->isWritable(path: $testFilePath);
         if ($isWritable) {
-            unlink($testFilePath); // Clean up the test file if everything is functioning correctly
+            unlink(filename: $testFilePath); // Clean up the test file if everything is functioning correctly
         }
 
         return $isWritable;
     }
 }
+
 === Exceptions/DirectoryCreationException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Exceptions;
+namespace Avax\Filesystem\Exceptions;
 
 use RuntimeException;
 
 class DirectoryCreationException extends RuntimeException {}
+
 === Exceptions/DirectoryDeletionException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Exceptions;
+namespace Avax\Filesystem\Exceptions;
 
 use RuntimeException;
 
 class DirectoryDeletionException extends RuntimeException {}
+
 === Exceptions/FileDeleteException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Exceptions;
+namespace Avax\Filesystem\Exceptions;
 
 use RuntimeException;
 
 class FileDeleteException extends RuntimeException {}
+
 === Exceptions/FileNotFoundException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Exceptions;
+namespace Avax\Filesystem\Exceptions;
 
 use RuntimeException;
 
@@ -155,67 +321,18 @@ class FileNotFoundException extends RuntimeException {}
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Exceptions;
+namespace Avax\Filesystem\Exceptions;
 
 use RuntimeException;
 
 class FileWriteException extends RuntimeException {}
-=== FileLogWriterTest.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Tests\Unit;
-
-use Gemini\Logging\FileLogWriter;
-use Gemini\Logging\FileServiceInterface;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-
-final class FileLogWriterTest extends TestCase
-{
-    private readonly MockObject $mockObject;
-
-    public function testInitializeLogFileSetsFallbackPathWhenDirectoryCreationFails() : void
-    {
-        $this->mockObject->method('isDirectory')->willReturn(false);
-        $this->mockObject->method('createDirectory')->willReturn(false);
-
-        $fileLogWriter = new FileLogWriter('/invalid/path/to/log.log', $this->mockObject);
-
-        $this->assertFilePathEquals('/tmp/fallback-log.log', $fileLogWriter);
-    }
-
-    public function testEnsureWritableCreatesFileWhenNotWritable() : void
-    {
-        $this->mockObject->method('isWritable')->willReturn(false);
-        $this->mockObject->method('fileExists')->willReturn(false);
-        $this->mockObject->method('createFile')->willReturn(true);
-
-        $this->mockObject->expects($this->once())->method('createFile');
-
-        new FileLogWriter('/path/to/log.log', $this->mockObject);
-    }
-
-    public function testWriteAttemptsToAppendToProvidedFilePath() : void
-    {
-        $this->mockObject->method('appendToFile')->willReturn(true);
-
-        $fileLogWriter = new FileLogWriter('/path/to/log.log', $this->mockObject);
-        $fileLogWriter->write('Test log entry');
-
-        $this->mockObject->expects($this->once())->method('appendToFile')->with('/path/to/log.log', 'Test log entry');
-    }
-
-    // Additional tests...
-}
 
 === FileServiceInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem;
+namespace Avax\Filesystem;
 
 /**
  * Interface for file services, outlining methods for directory and file operations.
@@ -291,12 +408,13 @@ interface FileServiceInterface
      */
     public function appendToFile(string $path, string $content) : bool;
 }
+
 === FilesystemService.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem;
+namespace Avax\Filesystem;
 
 /**
  * Logging to handle file system operations.
@@ -346,7 +464,7 @@ class FilesystemService
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem;
+namespace Avax\Filesystem;
 
 /**
  * Implementation of FileServiceInterface for local filesystem operations.
@@ -354,34 +472,6 @@ namespace Gemini\Filesystem;
  */
 class LocalFileService implements FileServiceInterface
 {
-    /**
-     * Checks if the given path is a directory.
-     *
-     * @param string $path The path to check.
-     *
-     * @return bool True if the path is a directory, false otherwise.
-     */
-    public function isDirectory(string $path) : bool
-    {
-        return is_dir($path);
-    }
-
-    /**
-     * Creates a directory with the specified permissions.
-     *
-     * @param string $path        The directory path to create.
-     * @param int    $permissions The permissions to set for the directory.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * Note: The third argument for mkdir() is set to true to ensure recursive directory creation.
-     */
-    public function createDirectory(string $path, int $permissions) : bool
-    {
-        return ! (! is_dir($path) && ! @mkdir($path, $permissions, true));
-    }
-
-
     /**
      * Sets the permissions for the given path.
      *
@@ -392,7 +482,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function setPermissions(string $path, int $permissions) : bool
     {
-        return chmod($path, $permissions);
+        return chmod(filename: $path, permissions: $permissions);
     }
 
     /**
@@ -404,19 +494,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function isWritable(string $path) : bool
     {
-        return is_writable($path);
-    }
-
-    /**
-     * Checks if a file exists at the given path.
-     *
-     * @param string $path The path to check.
-     *
-     * @return bool True if the file exists, false otherwise.
-     */
-    public function fileExists(string $path) : bool
-    {
-        return file_exists($path);
+        return is_writable(filename: $path);
     }
 
     /**
@@ -431,10 +509,22 @@ class LocalFileService implements FileServiceInterface
     public function createFile(string $path) : bool
     {
         if (! $this->fileExists(path: $path)) {
-            return touch($path);
+            return touch(filename: $path);
         }
 
         return true;
+    }
+
+    /**
+     * Checks if a file exists at the given path.
+     *
+     * @param string $path The path to check.
+     *
+     * @return bool True if the file exists, false otherwise.
+     */
+    public function fileExists(string $path) : bool
+    {
+        return file_exists(filename: $path);
     }
 
     /**
@@ -450,12 +540,39 @@ class LocalFileService implements FileServiceInterface
     public function appendToFile(string $path, string $content) : bool
     {
         // Ensure directory exists
-        $directory = dirname($path);
+        $directory = dirname(path: $path);
         if (! $this->isDirectory(path: $directory) && ! $this->createDirectory(path: $directory, permissions: 0755)) {
             return false;
         }
 
-        return file_put_contents($path, $content . PHP_EOL, FILE_APPEND | LOCK_EX) !== false;
+        return file_put_contents(filename: $path, data: $content . PHP_EOL, flags: FILE_APPEND | LOCK_EX) !== false;
+    }
+
+    /**
+     * Checks if the given path is a directory.
+     *
+     * @param string $path The path to check.
+     *
+     * @return bool True if the path is a directory, false otherwise.
+     */
+    public function isDirectory(string $path) : bool
+    {
+        return is_dir(filename: $path);
+    }
+
+    /**
+     * Creates a directory with the specified permissions.
+     *
+     * @param string $path        The directory path to create.
+     * @param int    $permissions The permissions to set for the directory.
+     *
+     * @return bool True on success, false on failure.
+     *
+     * Note: The third argument for mkdir() is set to true to ensure recursive directory creation.
+     */
+    public function createDirectory(string $path, int $permissions) : bool
+    {
+        return ! (! is_dir(filename: $path) && ! mkdir(directory: $path, permissions: $permissions, recursive: true));
     }
 }
 
@@ -464,23 +581,26 @@ class LocalFileService implements FileServiceInterface
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Storage;
+namespace Avax\Filesystem\Storage;
 
 use Exception;
+use Override;
 
 class FileNotFoundException extends Exception
 {
+    #[Override]
     public function __construct(string $string)
     {
-        parent::__construct($string);
+        parent::__construct(message: $string);
     }
 }
+
 === Storage/FileStorageInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Storage;
+namespace Avax\Filesystem\Storage;
 
 /**
  * Interface for file storage operations.
@@ -491,6 +611,14 @@ namespace Gemini\Filesystem\Storage;
  */
 interface FileStorageInterface
 {
+    /**
+     * Lists all files within a given directory.
+     *
+     *
+     * @return array<int, string> List of file paths.
+     */
+    public function listFiles(string $directory) : array;
+
     /**
      * Reads the content of a file at the specified path.
      *
@@ -584,13 +712,34 @@ interface FileStorageInterface
      */
     public function clear(string $directory) : bool;
 }
+
+=== Storage/FileWriteException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Filesystem\Storage;
+
+use Exception;
+use Override;
+
+class FileWriteException extends Exception
+{
+    #[Override]
+    public function __construct(string $string)
+    {
+        parent::__construct(message: $string);
+    }
+}
+
 === Storage/Filesystem.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Storage;
+namespace Avax\Filesystem\Storage;
 
+use Avax\Container\Core\Exceptions\FoundationContainerException;
 use Exception;
 
 /**
@@ -602,12 +751,14 @@ use Exception;
  */
 readonly class Filesystem
 {
+    private FileStorageInterface $fileStorage;
+
     /**
      * Filesystem constructor. Initializes the class with a specific file storage implementation.
      *
      * @param FileStorageInterface $fileStorage The file storage implementation to use.
      */
-    public function __construct(private FileStorageInterface $fileStorage) {}
+    public function __construct(FileStorageInterface $fileStorage) { $this->fileStorage = $fileStorage; }
 
     /**
      * Retrieves the disk storage instance based on the given disk name.
@@ -615,18 +766,16 @@ readonly class Filesystem
      * This method checks the configuration for the given disk name and returns the appropriate
      * file storage implementation. If the disk driver is not supported, an exception is thrown.
      *
-     * @param string|null $name The name of the disk configuration to retrieve. If null, the default configuration will
-     *                          be used.
+     * @param string|null $name    The name of the disk configuration to retrieve. If null, the default configuration
+     *                             will be used.
      *
      * @return FileStorageInterface The instance of the file storage based on the disk configuration.
-     * @throws \Gemini\Container\Exceptions\FrameworkContainerException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public function disk(string|null $name = null) : FileStorageInterface
     {
-        $diskConfig = config(key: "filesystems.disks." . $name, default: config(key: "filesystems.default"));
+        $diskConfig = config(key: 'filesystems.disks.' . $name, default: config(key: 'filesystems.default'));
 
         if ($diskConfig['driver'] === 'local') {
             return app(abstract: LocalFileStorage::class);
@@ -762,37 +911,32 @@ readonly class Filesystem
         return $this->fileStorage->isWritable(path: $path);
     }
 
-
-}
-
-=== Storage/FileWriteException.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Gemini\Filesystem\Storage;
-
-use Exception;
-
-class FileWriteException extends Exception
-{
-    public function __construct(string $string)
+    /**
+     * Lists all files within a given directory.
+     *
+     *
+     * @return array<int, string> List of file paths.
+     */
+    public function listFiles(string $directory) : array
     {
-        parent::__construct($string);
+        return $this->fileStorage->listFiles(directory: $directory);
     }
 }
+
 === Storage/LocalFileStorage.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Filesystem\Storage;
+namespace Avax\Filesystem\Storage;
 
+use Avax\Filesystem\Exceptions\DirectoryCreationException;
+use Avax\Filesystem\Exceptions\DirectoryDeletionException;
+use Avax\Filesystem\Exceptions\FileDeleteException;
 use FilesystemIterator;
-use Gemini\Filesystem\Exceptions\DirectoryCreationException;
-use Gemini\Filesystem\Exceptions\DirectoryDeletionException;
-use Gemini\Filesystem\Exceptions\FileDeleteException;
 use RuntimeException;
+use SplFileInfo;
+use Throwable;
 
 /**
  * Class LocalFileStorage
@@ -802,24 +946,66 @@ use RuntimeException;
 class LocalFileStorage implements FileStorageInterface
 {
     /**
+     * Lists all files within a given directory.
+     *
+     * @param string $directory Absolute or relative path to the directory.
+     *
+     * @return array<int, string> Full file paths.
+     *
+     * 🧠 Theory:
+     * This is a non-recursive file listing helper.
+     * It scans a directory and returns absolute paths for every file inside it.
+     * It ignores `.` and `..` entries, and silently skips invalid directories.
+     *
+     * 💬 Think of it like:
+     * “Show me all the files that live directly inside this folder.”
+     *
+     * 🚧 Notes:
+     * - This does *not* descend into subdirectories (non-recursive).
+     * - To make it recursive later, wrap it in a `RecursiveDirectoryIterator`.
+     */
+    public function listFiles(string $directory) : array
+    {
+        if (! is_dir(filename: $directory) || ! is_readable(filename: $directory)) {
+            return [];
+        }
+
+        try {
+            $iterator = new FilesystemIterator(
+                directory: $directory,
+                flags    : FilesystemIterator::SKIP_DOTS
+            );
+
+            return array_map(
+                callback: static fn (SplFileInfo $file) => $file->getPathname(),
+                array   : iterator_to_array(iterator: $iterator, preserve_keys: false)
+            );
+        } catch (Throwable $e) {
+            // Fail silently — listing files is optional, not critical
+            return [];
+        }
+    }
+
+    /**
      * Reads the content of a file.
      *
      * @param string $path Path to the file.
      *
      * @return string The file contents.
+     *
      * @throws FileNotFoundException If the file does not exist or cannot be read.
      */
     public function read(string $path) : string
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             throw new FileNotFoundException(string: sprintf('File not found: %s', $path));
         }
 
-        if (! is_readable($path)) {
+        if (! is_readable(filename: $path)) {
             throw new FileNotFoundException(string: sprintf('File is not readable: %s', $path));
         }
 
-        $content = file_get_contents($path);
+        $content = file_get_contents(filename: $path);
         if ($content === false) {
             throw new RuntimeException(message: sprintf('Failed to read file: %s', $path));
         }
@@ -834,17 +1020,18 @@ class LocalFileStorage implements FileStorageInterface
      * @param string $content Content to write.
      *
      * @return bool True on success.
+     *
      * @throws FileWriteException If writing fails.
      */
     public function write(string $path, string $content, bool $append = false) : bool
     {
-        $directory = dirname($path);
-        if (! is_dir($directory) && ! $this->createDirectory(directory: $directory)) {
+        $directory = dirname(path: $path);
+        if (! is_dir(filename: $directory) && ! $this->createDirectory(directory: $directory)) {
             throw new FileWriteException(string: sprintf('Failed to create directory: %s', $directory));
         }
 
         $flags = $append ? FILE_APPEND | LOCK_EX : 0;
-        if (file_put_contents($path, $content . PHP_EOL, $flags) === false) {
+        if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: $flags) === false) {
             throw new FileWriteException(string: "Failed to write to file: {$path}");
         }
 
@@ -858,15 +1045,16 @@ class LocalFileStorage implements FileStorageInterface
      * @param int    $permissions Permissions to set (default: 0755).
      *
      * @return bool True on success.
+     *
      * @throws DirectoryCreationException If creation fails.
      */
     public function createDirectory(string $directory, int $permissions = 0755) : bool
     {
-        if (is_dir($directory)) {
+        if (is_dir(filename: $directory)) {
             return true; // Directory already exists.
         }
 
-        if (! mkdir($directory, $permissions, true) && ! is_dir($directory)) {
+        if (! mkdir(directory: $directory, permissions: $permissions, recursive: true) && ! is_dir(filename: $directory)) {
             throw new DirectoryCreationException(message: sprintf('Failed to create directory: %s', $directory));
         }
 
@@ -882,7 +1070,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function exists(string $path) : bool
     {
-        return file_exists($path);
+        return file_exists(filename: $path);
     }
 
     /**
@@ -891,17 +1079,18 @@ class LocalFileStorage implements FileStorageInterface
      * @param string $directory Path to the directory.
      *
      * @return bool True on success.
+     *
      * @throws DirectoryDeletionException If deletion fails.
      */
     public function deleteDirectory(string $directory) : bool
     {
-        if (! is_dir($directory)) {
+        if (! is_dir(filename: $directory)) {
             return true; // Non-existent directories are considered "deleted".
         }
 
         $this->clear(directory: $directory);
 
-        if (! rmdir($directory)) {
+        if (! rmdir(directory: $directory)) {
             throw new DirectoryDeletionException(message: sprintf('Failed to delete directory: %s', $directory));
         }
 
@@ -914,11 +1103,12 @@ class LocalFileStorage implements FileStorageInterface
      * @param string $directory Path to the directory.
      *
      * @return bool True on success.
+     *
      * @throws RuntimeException If unable to clear the directory.
      */
     public function clear(string $directory) : bool
     {
-        if (! is_dir($directory)) {
+        if (! is_dir(filename: $directory)) {
             throw new RuntimeException(message: sprintf('Not a directory: %s', $directory));
         }
 
@@ -941,15 +1131,16 @@ class LocalFileStorage implements FileStorageInterface
      * @param string $path Path to the file.
      *
      * @return bool True on success.
+     *
      * @throws FileDeleteException If deletion fails.
      */
     public function delete(string $path) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             return true; // Consider non-existent files as "deleted".
         }
 
-        if (! unlink($path)) {
+        if (! unlink(filename: $path)) {
             throw new FileDeleteException(message: sprintf('Failed to delete file: %s', $path));
         }
 
@@ -965,7 +1156,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function isWritable(string $path) : bool
     {
-        return is_writable($path);
+        return is_writable(filename: $path);
     }
 
     /**
@@ -975,23 +1166,23 @@ class LocalFileStorage implements FileStorageInterface
      * @param int    $permissions Permissions to set.
      *
      * @return bool True on success.
+     *
      * @throws RuntimeException If chmod fails.
      */
     public function setPermissions(string $path, int $permissions) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             throw new RuntimeException(message: sprintf('Path does not exist: %s', $path));
         }
 
-        if (! @chmod($path, $permissions)) { // Suppress warning to handle it manually
-            error_log(sprintf('Failed to set permissions on: %s', $path));
+        if (! chmod(filename: $path, permissions: $permissions)) { // Suppress warning to handle it manually
+            error_log(message: sprintf('Failed to set permissions on: %s', $path));
 
             return false;
         }
 
         return true;
     }
-
 
     /**
      * Checks if the given path has the specified permissions.
@@ -1003,13 +1194,273 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function hasPermission(string $path, int $permissions) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             return false; // Path does not exist, so it cannot have the specified permissions.
         }
 
-        $actualPermissions = fileperms($path) & 0777; // Get permissions and mask to relevant bits.
+        $actualPermissions = fileperms(filename: $path) & 0777; // Get permissions and mask to relevant bits.
 
         return $actualPermissions === $permissions;
     }
 }
+
+=== merge-files.sh ===
+#!/usr/bin/env bash
+set -euo pipefail
+
+node --input-type=module - "$@" <<'EOF'
+import fs from 'node:fs';
+import path from 'node:path';
+
+const scriptName = 'merge-files.sh';
+const args = process.argv.slice(2);
+
+function usage() {
+  console.error(`Usage: ${scriptName} <target-dir> [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
+}
+
+function parseCsv(value) {
+  if (!value) return new Set();
+  return new Set(
+    value
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean),
+  );
+}
+
+function compareStrings(left, right) {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
+function extensionKey(filePath) {
+  const base = path.basename(filePath);
+  if (base.includes('.')) {
+    return path.extname(base).slice(1);
+  }
+  return base;
+}
+
+function readPackageName(rootDir) {
+  const packageJsonPath = path.join(rootDir, 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    return '';
+  }
+
+  try {
+    const raw = fs.readFileSync(packageJsonPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    return typeof parsed.name === 'string' ? parsed.name.trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+function isSafePackageOutputName(value) {
+  return value !== '' && !value.includes('/') && !value.includes('\\');
+}
+
+if (args.length < 1) {
+  usage();
+  process.exit(1);
+}
+
+const targetArg = args[0];
+const optionArgs = args.slice(1);
+const includeExts = new Set();
+const excludeExts = new Set();
+let dryRun = false;
+
+for (const arg of optionArgs) {
+  if (arg.startsWith('--include=')) {
+    for (const ext of parseCsv(arg.slice('--include='.length))) {
+      includeExts.add(ext);
+    }
+    continue;
+  }
+
+  if (arg.startsWith('--exclude=')) {
+    for (const ext of parseCsv(arg.slice('--exclude='.length))) {
+      excludeExts.add(ext);
+    }
+    continue;
+  }
+
+  if (arg === '--dry-run') {
+    dryRun = true;
+    continue;
+  }
+
+  console.error(`Unknown option: ${arg}`);
+  usage();
+  process.exit(2);
+}
+
+if (includeExts.size > 0 && excludeExts.size > 0) {
+  console.error('you cannot use --exclude and --include at the same time');
+  process.exit(2);
+}
+
+const rootDir = path.resolve(targetArg);
+let rootStat;
+
+try {
+  rootStat = fs.statSync(rootDir);
+} catch {
+  console.error(`directory '${targetArg}' does not exist`);
+  process.exit(1);
+}
+
+if (!rootStat.isDirectory()) {
+  console.error(`directory '${targetArg}' does not exist`);
+  process.exit(1);
+}
+
+const targetBasename = path.basename(rootDir);
+const outputFile = path.join(rootDir, `${targetBasename}.txt`);
+// The merged .txt dump is a portable repo snapshot and can serve as a working backup during refactors.
+const packageName = readPackageName(rootDir);
+
+const ignoredDirs = new Set([
+  '.cache',
+  '.git',
+  '.idea',
+  '.phpunit.cache',
+  '__pycache__',
+  'artifacts',
+  'build',
+  'coverage',
+  'dist',
+  'node_modules',
+  'storage',
+  'tmp',
+  'vendor',
+]);
+
+console.log(`Scanning directory: ${rootDir}`);
+console.log(`Output file: ${outputFile}`);
+console.log('Ignoring directories:');
+
+for (const dir of [...ignoredDirs].sort(compareStrings)) {
+  console.log(`- ${dir}`);
+}
+
+console.log('----------------------------------------');
+
+const files = [];
+
+function walk(currentDir) {
+  const entries = fs
+    .readdirSync(currentDir, { withFileTypes: true })
+    .sort((a, b) => compareStrings(a.name, b.name));
+
+  for (const entry of entries) {
+    const currentPath = path.join(currentDir, entry.name);
+    if (entry.isDirectory()) {
+      if (ignoredDirs.has(entry.name) && currentPath !== rootDir) {
+        continue;
+      }
+      walk(currentPath);
+      continue;
+    }
+
+    files.push(currentPath);
+  }
+}
+
+walk(rootDir);
+files.sort(compareStrings);
+
+let merged = 0;
+let skipped = 0;
+const chunks = [];
+
+for (const absPath of files) {
+  const rel = path.relative(rootDir, absPath).split(path.sep).join('/');
+
+  let fileStat;
+
+  try {
+    fileStat = fs.statSync(absPath);
+  } catch {
+    console.log(`Skipping (missing target or broken link): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (!fileStat.isFile()) {
+    console.log(`Skipping (not a regular file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (absPath === outputFile) {
+    console.log(`Skipping (generated output file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (rel === 'agents.md') {
+    console.log(`Skipping (ignored mirror file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  const ext = extensionKey(absPath);
+  if (includeExts.size > 0 && !includeExts.has(ext)) {
+    console.log(`Skipping (not in include list): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+  if (includeExts.size === 0 && excludeExts.has(ext)) {
+    console.log(`Skipping (excluded by default or option): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  const data = fs.readFileSync(absPath);
+  if (data.length > 0 && data.includes(0)) {
+    console.log(`Skipping (binary or non-text): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  merged += 1;
+  if (dryRun) {
+    console.log(`[DRY-RUN] Would merge: ${rel}`);
+    continue;
+  }
+
+  console.log(`Merging: ${rel}`);
+  const text = data.toString('utf8');
+  const normalizedText = text.replace(/[^\S\r\n]+$/gm, '');
+  chunks.push(`=== ${rel} ===\n`);
+  chunks.push(normalizedText);
+  if (!normalizedText.endsWith('\n')) {
+    chunks.push('\n');
+  }
+  chunks.push('\n');
+}
+
+if (!dryRun) {
+  fs.writeFileSync(outputFile, chunks.join(''), 'utf8');
+
+  if (isSafePackageOutputName(packageName) && packageName !== targetBasename) {
+    const renamedOutput = path.join(rootDir, `${packageName}.txt`);
+    fs.renameSync(outputFile, renamedOutput);
+  }
+}
+
+const finalOutputFile = isSafePackageOutputName(packageName) && packageName !== targetBasename
+  ? path.join(rootDir, `${packageName}.txt`)
+  : outputFile;
+
+console.log('----------------------------------------');
+console.log('Done!');
+console.log(`Merged files : ${merged}`);
+console.log(`Skipped files: ${skipped}`);
+console.log(`Output file  : ${finalOutputFile}`);
+EOF
 

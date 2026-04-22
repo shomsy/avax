@@ -200,3 +200,40 @@ A review should list:
 3. short change summary only after findings
 
 If no findings are discovered, say that explicitly and still mention residual risks or testing gaps.
+
+---
+
+## Documentation Gates (Mandatory)
+
+This section is **non-negotiable** for any code review that touches documentation files.
+All rules are defined in `how-to-document.md` - these are explicit enforcement checks.
+
+### For all `how-this-works.md` files:
+
+- [ ] File contains **valid frontmatter** (title, owner, last_reviewed, classification)
+- [ ] Contains **mermaid diagram block** (```mermaid``` fence)
+- [ ] Mermaid uses **`sequenceDiagram`** or **`flowchart`** type
+- [ ] Uses `autonetumber` where flow order matters
+- [ ] All participant names are **real** (file/function names, NOT "Upstream", "Main Handler", etc.)
+
+### Ship Check (from how-to-document.md):
+
+- [ ] Reader can retell **one exact path** from command to result WITHOUT opening code
+- [ ] Uses **real** participant names (not generic placeholders)
+- [ ] Uses **real command or trigger** at the start
+- [ ] Explains **what gets written to disk** or left as evidence
+- [ ] Explains **what user sees** on screen
+- [ ] Contains **where to debug first** section
+
+### Quality Anti-Patterns (Explicitly Forbidden)
+
+DO NOT APPROVE if documentation contains:
+
+- [ ] Generic placeholders like "Upstream Flow", "Main Handler", "Data Handler"
+- [ ] "handles", "works with", "supports" without concrete behavior
+- [ ] No mermaid diagram when flow is sequential
+- [ ] No flowchart when topology is more important than sequence
+- [ ] Missing "what gets written" explanation
+- [ ] Missing failure/shutdown path
+
+**If documentation fails any gate, the review FAILS.**

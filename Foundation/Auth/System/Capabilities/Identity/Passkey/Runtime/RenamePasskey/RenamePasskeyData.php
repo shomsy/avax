@@ -8,15 +8,10 @@ use SensitiveParameter;
 
 final readonly class RenamePasskeyData
 {
-    public string $label;
-    public string $credentialId;
-
     public function __construct(
-        #[SensitiveParameter] string $credentialId,
-        string                       $label
+        #[SensitiveParameter] public string $credentialId,
+        public string                       $label
     )
     {
-        $this->credentialId = $credentialId;
-        $this->label        = $label;
     }
 }

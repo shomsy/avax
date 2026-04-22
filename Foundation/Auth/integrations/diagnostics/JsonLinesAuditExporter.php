@@ -14,20 +14,16 @@ use RuntimeException;
 final class JsonLinesAuditExporter implements AuditExporterInterface
 {
     private string|null                  $previousHash = null;
-    private readonly bool                $tamperEvident;
     private readonly NormalizeAuditEvent $normalizeAuditEvent;
-    private readonly string              $path;
 
     public function __construct(
-        string                   $path,
+        private readonly string $path,
         NormalizeAuditEvent|null $normalizeAuditEvent = null,
-        bool                     $tamperEvident = true
+        private readonly bool   $tamperEvident = true
     )
     {
         $normalizeAuditEvent       ??= new NormalizeAuditEvent();
-        $this->path                = $path;
         $this->normalizeAuditEvent = $normalizeAuditEvent;
-        $this->tamperEvident       = $tamperEvident;
     }
 
     public function export(array $events) : void

@@ -11,27 +11,21 @@ use DateTimeImmutable;
  */
 final readonly class AuditEvent
 {
-    public string|null       $correlationId;
     /** @var array<string, scalar|null> */
     public array             $context;
-    public DateTimeImmutable $occurredAt;
-    public string            $name;
 
     /**
      * @param array<string, scalar|null> $context
      */
     public function __construct(
-        string            $name,
-        DateTimeImmutable $occurredAt,
+        public string            $name,
+        public DateTimeImmutable $occurredAt,
         array|null        $context = null,
-        string|null       $correlationId = null
+        public string|null       $correlationId = null
     )
     {
         $context             ??= [];
-        $this->name          = $name;
-        $this->occurredAt    = $occurredAt;
         $this->context       = $context;
-        $this->correlationId = $correlationId;
     }
 
     public function withCorrelationId(string $correlationId) : self

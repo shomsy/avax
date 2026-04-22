@@ -9,13 +9,8 @@ namespace Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
  */
 final readonly class BackupCode
 {
-    private string $value;
-
-    public function __construct(
-        string $value
-    )
+    public function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
     public function value() : string

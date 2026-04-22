@@ -16,19 +16,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class TransferTenantOwnership
 {
-    private Clock                $clock;
-    private AuditLogInterface    $auditLog;
-    private TenantStoreInterface $tenantStore;
-
-    public function __construct(
-        TenantStoreInterface $tenantStore,
-        AuditLogInterface    $auditLog,
-        Clock                $clock
-    )
+    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->tenantStore = $tenantStore;
-        $this->auditLog    = $auditLog;
-        $this->clock       = $clock;
     }
 
     public function execute(TransferTenantOwnershipData $data) : Tenant

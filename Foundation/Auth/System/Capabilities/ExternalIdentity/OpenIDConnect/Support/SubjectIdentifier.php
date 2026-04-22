@@ -11,13 +11,8 @@ namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
  */
 final readonly class SubjectIdentifier
 {
-    private SubjectIdentifierStrategy $strategy;
-
-    public function __construct(
-        SubjectIdentifierStrategy $strategy = SubjectIdentifierStrategy::PUBLIC
-    )
+    public function __construct(private SubjectIdentifierStrategy $strategy = SubjectIdentifierStrategy::PUBLIC)
     {
-        $this->strategy = $strategy;
     }
 
     /**

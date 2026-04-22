@@ -20,25 +20,14 @@ use SensitiveParameter;
  */
 final readonly class RevokeSession
 {
-    private SessionRegistryInterface|null $sessionRegistry;
-    private Clock                         $clock;
-    private AuditLogInterface             $auditLog;
-    private CurrentAuthentication         $currentAuthentication;
-    private IdentityInterface             $identity;
-
     public function __construct(
-        IdentityInterface                                   $identity,
-        #[SensitiveParameter] CurrentAuthentication         $currentAuthentication,
-        AuditLogInterface                                   $auditLog,
-        Clock                                               $clock,
-        #[SensitiveParameter] SessionRegistryInterface|null $sessionRegistry = null
+        private IdentityInterface                                   $identity,
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private AuditLogInterface                                   $auditLog,
+        private Clock                                               $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     )
     {
-        $this->identity              = $identity;
-        $this->currentAuthentication = $currentAuthentication;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->sessionRegistry       = $sessionRegistry;
     }
 
     /**

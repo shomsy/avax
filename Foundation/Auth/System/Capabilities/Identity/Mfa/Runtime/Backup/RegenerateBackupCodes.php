@@ -22,28 +22,15 @@ use SensitiveParameter;
  */
 final readonly class RegenerateBackupCodes
 {
-    private Clock                 $clock;
-    private AuditLogInterface     $auditLog;
-    private GenerateBackupCodes   $generateBackupCodes;
-    private MfaStoreInterface     $mfaStore;
-    private RequireFreshMfa       $requireFreshMfa;
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        RequireFreshMfa                             $requireFreshMfa,
-        MfaStoreInterface                           $mfaStore,
-        #[SensitiveParameter] GenerateBackupCodes   $generateBackupCodes,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                             $requireFreshMfa,
+        private MfaStoreInterface                           $mfaStore,
+        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->requireFreshMfa       = $requireFreshMfa;
-        $this->mfaStore              = $mfaStore;
-        $this->generateBackupCodes   = $generateBackupCodes;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
     }
 
     /**

@@ -6,15 +6,7 @@ namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\Federation
 
 final readonly class StartedFederatedLogin
 {
-    public string|null $state;
-    public string      $redirectUrl;
-
-    public function __construct(
-        string      $redirectUrl,
-        string|null $state = null
-    )
+    public function __construct(public string $redirectUrl, public string|null $state = null)
     {
-        $this->redirectUrl = $redirectUrl;
-        $this->state       = $state;
     }
 }

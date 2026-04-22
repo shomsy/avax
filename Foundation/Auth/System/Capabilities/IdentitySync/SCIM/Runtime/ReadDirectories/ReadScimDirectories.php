@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreIn
 
 final readonly class ReadScimDirectories
 {
-    private ScimDirectoryStoreInterface $directoryStore;
-
-    public function __construct(
-        ScimDirectoryStoreInterface $directoryStore
-    )
+    public function __construct(private ScimDirectoryStoreInterface $directoryStore)
     {
-        $this->directoryStore = $directoryStore;
     }
 
     /**

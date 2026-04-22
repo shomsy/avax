@@ -11,16 +11,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\FrontCh
 
 final readonly class Logout
 {
-    private BackChannelLogout  $backChannelLogout;
-    private FrontChannelLogout $frontChannelLogout;
-
-    public function __construct(
-        FrontChannelLogout $frontChannelLogout,
-        BackChannelLogout  $backChannelLogout
-    )
+    public function __construct(private FrontChannelLogout $frontChannelLogout, private BackChannelLogout $backChannelLogout)
     {
-        $this->frontChannelLogout = $frontChannelLogout;
-        $this->backChannelLogout  = $backChannelLogout;
     }
 
     public function execute(LogoutData $data) : LogoutResult

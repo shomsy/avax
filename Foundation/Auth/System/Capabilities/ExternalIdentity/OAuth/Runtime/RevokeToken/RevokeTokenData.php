@@ -8,27 +8,14 @@ use SensitiveParameter;
 
 final readonly class RevokeTokenData
 {
-    public string|null $userAgent;
-    public string|null $ipAddress;
-    public string|null $tokenTypeHint;
-    public string|null $clientSecret;
-    public string      $token;
-    public string      $clientId;
-
     public function __construct(
-        string                            $clientId,
-        #[SensitiveParameter] string      $token,
-        #[SensitiveParameter] string|null $clientSecret = null,
-        #[SensitiveParameter] string|null $tokenTypeHint = null,
-        #[SensitiveParameter] string|null $ipAddress = null,
-        string|null                       $userAgent = null
+        public string                            $clientId,
+        #[SensitiveParameter] public string      $token,
+        #[SensitiveParameter] public string|null $clientSecret = null,
+        #[SensitiveParameter] public string|null $tokenTypeHint = null,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     )
     {
-        $this->clientId      = $clientId;
-        $this->token         = $token;
-        $this->clientSecret  = $clientSecret;
-        $this->tokenTypeHint = $tokenTypeHint;
-        $this->ipAddress     = $ipAddress;
-        $this->userAgent     = $userAgent;
     }
 }

@@ -15,19 +15,8 @@ use Random\RandomException;
 
 final readonly class RunScimBulk
 {
-    private int               $maximumOperations;
-    private DeleteScimUser    $deleteScimUser;
-    private ProvisionScimUser $provisionScimUser;
-
-    public function __construct(
-        ProvisionScimUser $provisionScimUser,
-        DeleteScimUser    $deleteScimUser,
-        int               $maximumOperations = 100
-    )
+    public function __construct(private ProvisionScimUser $provisionScimUser, private DeleteScimUser $deleteScimUser, private int $maximumOperations = 100)
     {
-        $this->provisionScimUser = $provisionScimUser;
-        $this->deleteScimUser    = $deleteScimUser;
-        $this->maximumOperations = $maximumOperations;
     }
 
     public function execute(ScimBulkRequest $request) : ScimBulkResponse

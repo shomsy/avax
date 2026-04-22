@@ -9,15 +9,10 @@ use SensitiveParameter;
 
 final readonly class OidcIdToken
 {
-    public DateTimeImmutable $expiresAt;
-    public string            $token;
-
     public function __construct(
-        #[SensitiveParameter] string $token,
-        DateTimeImmutable            $expiresAt
+        #[SensitiveParameter] public string $token,
+        public DateTimeImmutable            $expiresAt
     )
     {
-        $this->token     = $token;
-        $this->expiresAt = $expiresAt;
     }
 }

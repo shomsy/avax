@@ -10,13 +10,10 @@ use SensitiveParameter;
 
 final readonly class RequirePhishingResistantAuthentication
 {
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
     }
 
     /**

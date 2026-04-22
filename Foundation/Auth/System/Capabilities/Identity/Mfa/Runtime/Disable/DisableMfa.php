@@ -24,31 +24,16 @@ use SensitiveParameter;
  */
 final readonly class DisableMfa
 {
-    private RefreshTokenStoreInterface|null $refreshTokenStore;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private MfaChallengeStoreInterface      $mfaChallengeStore;
-    private MfaStoreInterface               $mfaStore;
-    private RequireFreshMfa                 $requireFreshMfa;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        RequireFreshMfa                                       $requireFreshMfa,
-        MfaStoreInterface                                     $mfaStore,
-        MfaChallengeStoreInterface                            $mfaChallengeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        private MfaStoreInterface                                     $mfaStore,
+        private MfaChallengeStoreInterface                            $mfaChallengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->requireFreshMfa       = $requireFreshMfa;
-        $this->mfaStore              = $mfaStore;
-        $this->mfaChallengeStore     = $mfaChallengeStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->refreshTokenStore     = $refreshTokenStore;
     }
 
     /**

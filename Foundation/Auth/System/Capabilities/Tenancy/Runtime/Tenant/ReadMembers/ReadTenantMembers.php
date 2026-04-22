@@ -10,13 +10,8 @@ use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
 
 final readonly class ReadTenantMembers
 {
-    private TenantStoreInterface $tenantStore;
-
-    public function __construct(
-        TenantStoreInterface $tenantStore
-    )
+    public function __construct(private TenantStoreInterface $tenantStore)
     {
-        $this->tenantStore = $tenantStore;
     }
 
     /**

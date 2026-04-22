@@ -153,7 +153,7 @@ final readonly class CheckSourceTruth
                 continue;
             }
 
-            $columns = array_map('trim', explode('|', trim($line, '|')));
+            $columns = array_map(trim(...), explode('|', trim($line, '|')));
 
             if (count($columns) < 4) {
                 continue;
@@ -209,13 +209,7 @@ final readonly class CheckSourceTruth
      */
     private function isSeparatorRow(array $columns) : bool
     {
-        foreach ($columns as $column) {
-            if ($column === '' || preg_match('/^[-:]+$/', $column) !== 1) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($columns, fn ($column) => ! ($column === '' || preg_match('/^[-:]+$/', $column) !== 1));
     }
 
     /**
@@ -223,17 +217,9 @@ final readonly class CheckSourceTruth
      */
     private function hasExecutableEvidence(array $paths) : bool
     {
-        foreach ($paths as $path) {
-            if (
-                str_starts_with($path, 'tests/')
-                || str_starts_with($path, 'build/')
-                || str_contains($path, '/tests/')
-            ) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($paths, fn ($path) => str_starts_with($path, 'tests/')
+            || str_starts_with($path, 'build/')
+            || str_contains($path, '/tests/'));
     }
 
     /**

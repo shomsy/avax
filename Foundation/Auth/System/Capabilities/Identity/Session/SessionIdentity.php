@@ -23,28 +23,26 @@ use SensitiveParameter;
  */
 final class SessionIdentity implements SessionIdentityInterface
 {
-    private string                        $lastSeenAtKey        = 'auth_session_last_seen_at';
     private string                        $issuedAtKey          = 'auth_session_issued_at';
     private string                        $phishingResistantKey = 'auth_phishing_resistant';
     private string                        $mfaVerifiedAtKey     = 'auth_mfa_verified_at';
     private string                        $sessionKey           = 'auth_user_id';
-    private SessionRegistryInterface|null $sessionRegistry      = null;
-    private SessionLifetime               $lifetime;
-    private AuditLogInterface             $auditLog;
-    private Clock                         $clock;
-    private SessionStoreInterface         $store;
+    private readonly SessionLifetime       $lifetime;
+    private readonly AuditLogInterface     $auditLog;
+    private readonly Clock                 $clock;
+    private readonly SessionStoreInterface $store;
 
     public function __construct(
         SessionStoreInterface|null                          $store = null,
         Clock|null                                          $clock = null,
         AuditLogInterface|null                              $auditLog = null,
         SessionLifetime|null                                $lifetime = null,
-        #[SensitiveParameter] SessionRegistryInterface|null $sessionRegistry = null,
+        #[SensitiveParameter] private readonly SessionRegistryInterface|null $sessionRegistry = null,
         #[SensitiveParameter] string|null                   $sessionKey = null,
         string|null                                         $mfaVerifiedAtKey = null,
         string|null                                         $phishingResistantKey = null,
         string|null                                         $issuedAtKey = null,
-        string                                              $lastSeenAtKey = 'auth_session_last_seen_at'
+        private readonly string                                              $lastSeenAtKey = 'auth_session_last_seen_at'
     )
     {
         $store                      ??= new NativeSessionStore();
@@ -59,12 +57,10 @@ final class SessionIdentity implements SessionIdentityInterface
         $this->clock                = $clock;
         $this->auditLog             = $auditLog;
         $this->lifetime             = $lifetime;
-        $this->sessionRegistry      = $sessionRegistry;
         $this->sessionKey           = $sessionKey;
         $this->mfaVerifiedAtKey     = $mfaVerifiedAtKey;
         $this->phishingResistantKey = $phishingResistantKey;
         $this->issuedAtKey          = $issuedAtKey;
-        $this->lastSeenAtKey        = $lastSeenAtKey;
     }
 
     /**

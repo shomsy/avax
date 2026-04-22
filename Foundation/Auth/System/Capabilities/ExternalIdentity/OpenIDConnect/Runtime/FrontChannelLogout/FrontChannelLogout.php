@@ -19,34 +19,17 @@ use SensitiveParameter;
 
 final readonly class FrontChannelLogout
 {
-    private OAuthClientRegistryInterface|null $clientRegistry;
-    private OidcProviderInterface|null        $oidcProvider;
-    private RefreshTokenStoreInterface|null   $refreshTokenStore;
-    private SessionRegistryInterface|null     $sessionRegistry;
-    private Clock                             $clock;
-    private AuditLogInterface                 $auditLog;
-    private IdentityInterface                 $identity;
-    private CurrentAuthentication             $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        IdentityInterface                                     $identity,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        OidcProviderInterface|null                            $oidcProvider = null,
-        OAuthClientRegistryInterface|null                     $clientRegistry = null
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private IdentityInterface                                     $identity,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private OidcProviderInterface|null                            $oidcProvider = null,
+        private OAuthClientRegistryInterface|null                     $clientRegistry = null
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->identity              = $identity;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->sessionRegistry       = $sessionRegistry;
-        $this->refreshTokenStore     = $refreshTokenStore;
-        $this->oidcProvider          = $oidcProvider;
-        $this->clientRegistry        = $clientRegistry;
     }
 
     public function execute(FrontChannelLogoutData $data) : LogoutResult

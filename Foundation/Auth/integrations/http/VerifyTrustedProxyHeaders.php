@@ -9,8 +9,6 @@ use SensitiveParameter;
 final readonly class VerifyTrustedProxyHeaders
 {
     /** @var list<string> */
-    private array $proxyOnlyClientCertificateHeaders;
-    /** @var list<string> */
     private array $forwardedHeaders;
     /** @var list<string> */
     private array $trustedProxies;
@@ -23,14 +21,13 @@ final readonly class VerifyTrustedProxyHeaders
     public function __construct(
         array|null                       $trustedProxies = null,
         #[SensitiveParameter] array|null $forwardedHeaders = null,
-        #[SensitiveParameter] array      $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256']
+        #[SensitiveParameter] private array $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256']
     )
     {
         $trustedProxies                          ??= [];
         $forwardedHeaders                        ??= ['X-Forwarded-For', 'X-Forwarded-Proto', 'X-Forwarded-Host'];
         $this->trustedProxies                    = $trustedProxies;
         $this->forwardedHeaders                  = $forwardedHeaders;
-        $this->proxyOnlyClientCertificateHeaders = $proxyOnlyClientCertificateHeaders;
     }
 
     /**
@@ -82,14 +79,10 @@ final readonly class VerifyTrustedProxyHeaders
         return str_starts_with(strtolower($header), 'x-tls-client-');
     }
 
-    private function matchesForwardedHeader(#[SensitiveParameter] string $header) : bool
+    private function matchesForwardedHeader(
+        #[SensitiveParameter] string $header
+    ) : bool
     {
-        foreach ($this->forwardedHeaders as $candidate) {
-            if (strcasecmp($header, $candidate) === 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->forwardedHeaders, fn ($candidate) => strcasecmp($header, $candidate) === 0);
     }
 }

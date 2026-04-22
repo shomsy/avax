@@ -29,40 +29,28 @@ use Throwable;
  */
 final readonly class JwtIdentity implements JwtIdentityInterface
 {
-    private int                                $leeway;
     private string                             $issuer;
     private int                                $refreshTokenExpiry;
     private int                                $tokenExpiry;
-    private RefreshTokenStoreInterface|null    $refreshTokenStore;
-    private TokenRevocationStoreInterface|null $revocationStore;
-    private Clock                              $clock;
-    private TokenCodecInterface                $codec;
-    private UserSourceInterface                $userSource;
 
     public function __construct(
-        UserSourceInterface                                   $userSource,
-        TokenCodecInterface                                   $codec,
-        Clock                                                 $clock,
-        TokenRevocationStoreInterface|null                    $revocationStore = null,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private UserSourceInterface                                   $userSource,
+        private TokenCodecInterface                                   $codec,
+        private Clock                                                 $clock,
+        private TokenRevocationStoreInterface|null                    $revocationStore = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         int|null                                              $tokenExpiry = null,
         int|null                                              $refreshTokenExpiry = null,
         string|null                                           $issuer = null,
-        int                                                   $leeway = 60
+        private int                                                   $leeway = 60
     )
     {
         $tokenExpiry              ??= 3600;
         $refreshTokenExpiry       ??= 2_592_000;
         $issuer                   ??= 'avax-auth-system';
-        $this->userSource         = $userSource;
-        $this->codec              = $codec;
-        $this->clock              = $clock;
-        $this->revocationStore    = $revocationStore;
-        $this->refreshTokenStore  = $refreshTokenStore;
         $this->tokenExpiry        = $tokenExpiry;
         $this->refreshTokenExpiry = $refreshTokenExpiry;
         $this->issuer             = $issuer;
-        $this->leeway             = $leeway;
     }
 
     public function verify(#[SensitiveParameter] string $token) : bool

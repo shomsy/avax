@@ -17,31 +17,16 @@ use SensitiveParameter;
 
 final readonly class CompletePasskeyRegistration
 {
-    private string                          $rpId;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private PasskeyChallengeStoreInterface  $challengeStore;
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private PasskeyRuntimeInterface         $runtime;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
-        PasskeyChallengeStoreInterface                        $challengeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        string                                                $rpId
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->runtime               = $runtime;
-        $this->credentialStore       = $credentialStore;
-        $this->challengeStore        = $challengeStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->rpId                  = $rpId;
     }
 
     /**

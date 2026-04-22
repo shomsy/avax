@@ -10,16 +10,11 @@ use SensitiveParameter;
 
 final readonly class CleanupExpiredAuthorizationCodes
 {
-    private Clock                                        $clock;
-    private PruneExpiredAuthorizationCodesInterface|null $codeStore;
-
     public function __construct(
-        #[SensitiveParameter] PruneExpiredAuthorizationCodesInterface|null $codeStore,
-        Clock                                                              $clock
+        #[SensitiveParameter] private PruneExpiredAuthorizationCodesInterface|null $codeStore,
+        private Clock                                                              $clock
     )
     {
-        $this->codeStore = $codeStore;
-        $this->clock     = $clock;
     }
 
     public function execute() : int

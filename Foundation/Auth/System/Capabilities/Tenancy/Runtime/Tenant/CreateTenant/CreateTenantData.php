@@ -6,18 +6,7 @@ namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\CreateTenant;
 
 final readonly class CreateTenantData
 {
-    public int    $ownerUserId;
-    public string $name;
-    public string $slug;
-
-    public function __construct(
-        string $slug,
-        string $name,
-        int    $ownerUserId
-    )
+    public function __construct(public string $slug, public string $name, public int $ownerUserId)
     {
-        $this->slug        = $slug;
-        $this->name        = $name;
-        $this->ownerUserId = $ownerUserId;
     }
 }

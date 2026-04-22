@@ -9,11 +9,8 @@ use DateTimeImmutable;
 
 final readonly class Expiry
 {
-    public DateTimeImmutable $at;
-
-    public function __construct(DateTimeImmutable $at)
+    public function __construct(public DateTimeImmutable $at)
     {
-        $this->at = $at;
     }
 
     public static function after(DateInterval $interval, ?Clock $clock = null) : self

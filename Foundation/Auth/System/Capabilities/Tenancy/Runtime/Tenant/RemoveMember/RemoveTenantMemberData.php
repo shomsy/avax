@@ -6,15 +6,7 @@ namespace Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\RemoveMember;
 
 final readonly class RemoveTenantMemberData
 {
-    public int    $userId;
-    public string $tenantSlug;
-
-    public function __construct(
-        string $tenantSlug,
-        int    $userId
-    )
+    public function __construct(public string $tenantSlug, public int $userId)
     {
-        $this->tenantSlug = $tenantSlug;
-        $this->userId     = $userId;
     }
 }

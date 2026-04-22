@@ -14,13 +14,8 @@ use Throwable;
  */
 final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
 {
-    private string $keyRingPath;
-
-    public function __construct(
-        string $keyRingPath
-    )
+    public function __construct(private string $keyRingPath)
     {
-        $this->keyRingPath = $keyRingPath;
     }
 
     /**

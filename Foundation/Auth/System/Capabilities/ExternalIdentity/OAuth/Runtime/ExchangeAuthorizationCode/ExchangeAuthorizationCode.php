@@ -23,37 +23,18 @@ use SensitiveParameter;
 
 final readonly class ExchangeAuthorizationCode
 {
-    private OidcProviderInterface|null      $oidcProvider;
-    private CurrentAuthentication|null      $currentAuthentication;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private RefreshTokenStoreInterface      $refreshTokenStore;
-    private JwtIdentityInterface            $jwtIdentity;
-    private UserSourceInterface             $userSource;
-    private AuthorizationCodeStoreInterface $codeStore;
-    private OAuthClientRegistryInterface    $clientRegistry;
-
     public function __construct(
-        OAuthClientRegistryInterface                          $clientRegistry,
-        #[SensitiveParameter] AuthorizationCodeStoreInterface $codeStore,
-        UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] JwtIdentityInterface            $jwtIdentity,
-        #[SensitiveParameter] RefreshTokenStoreInterface      $refreshTokenStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] CurrentAuthentication|null      $currentAuthentication = null,
-        OidcProviderInterface|null                            $oidcProvider = null
+        private OAuthClientRegistryInterface                          $clientRegistry,
+        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
+        private UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] private JwtIdentityInterface            $jwtIdentity,
+        #[SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
+        private OidcProviderInterface|null                            $oidcProvider = null
     )
     {
-        $this->clientRegistry        = $clientRegistry;
-        $this->codeStore             = $codeStore;
-        $this->userSource            = $userSource;
-        $this->jwtIdentity           = $jwtIdentity;
-        $this->refreshTokenStore     = $refreshTokenStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->currentAuthentication = $currentAuthentication;
-        $this->oidcProvider          = $oidcProvider;
     }
 
     /**

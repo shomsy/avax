@@ -15,19 +15,12 @@ use SensitiveParameter;
  */
 final readonly class RequireFreshMfa
 {
-    private int                   $maxAgeSeconds;
-    private Clock                 $clock;
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        Clock                                       $clock,
-        int                                         $maxAgeSeconds = 300
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private Clock                                       $clock,
+        private int                                         $maxAgeSeconds = 300
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->clock                 = $clock;
-        $this->maxAgeSeconds         = $maxAgeSeconds;
     }
 
     /**

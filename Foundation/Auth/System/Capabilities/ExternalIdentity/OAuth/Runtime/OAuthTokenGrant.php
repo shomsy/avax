@@ -13,52 +13,32 @@ use SensitiveParameter;
  */
 final readonly class OAuthTokenGrant
 {
-    public bool                       $workloadIdentity;
-    public string|null                $audience;
-    public string|null                $subject;
-    public OAuthSenderConstraint|null $senderConstraint;
     public string                     $tokenType;
     /** @var list<string> */
     public array                      $scopes;
-    public int|null                   $userId;
-    public string                     $clientId;
-    public string|null                $idToken;
-    public string|null                $refreshToken;
-    public DateTimeImmutable          $accessTokenExpiresAt;
-    public string                     $accessToken;
 
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] string            $accessToken,
-        #[SensitiveParameter] DateTimeImmutable $accessTokenExpiresAt,
-        #[SensitiveParameter] string|null       $refreshToken,
-        #[SensitiveParameter] string|null       $idToken,
-        string                                  $clientId,
-        int|null                                $userId,
+        #[SensitiveParameter] public string            $accessToken,
+        #[SensitiveParameter] public DateTimeImmutable $accessTokenExpiresAt,
+        #[SensitiveParameter] public string|null       $refreshToken,
+        #[SensitiveParameter] public string|null       $idToken,
+        public string                                  $clientId,
+        public int|null                                $userId,
         array|null                              $scopes = null,
         #[SensitiveParameter] string|null       $tokenType = null,
-        OAuthSenderConstraint|null              $senderConstraint = null,
-        string|null                             $subject = null,
-        string|null                             $audience = null,
-        bool                                    $workloadIdentity = false
+        public OAuthSenderConstraint|null              $senderConstraint = null,
+        public string|null                             $subject = null,
+        public string|null                             $audience = null,
+        public bool                                    $workloadIdentity = false
     )
     {
         $scopes                     ??= [];
         $tokenType                  ??= 'Bearer';
-        $this->accessToken          = $accessToken;
-        $this->accessTokenExpiresAt = $accessTokenExpiresAt;
-        $this->refreshToken         = $refreshToken;
-        $this->idToken              = $idToken;
-        $this->clientId             = $clientId;
-        $this->userId               = $userId;
         $this->scopes               = $scopes;
         $this->tokenType            = $tokenType;
-        $this->senderConstraint     = $senderConstraint;
-        $this->subject              = $subject;
-        $this->audience             = $audience;
-        $this->workloadIdentity     = $workloadIdentity;
     }
 
     public function expiresIn(DateTimeImmutable $moment) : int

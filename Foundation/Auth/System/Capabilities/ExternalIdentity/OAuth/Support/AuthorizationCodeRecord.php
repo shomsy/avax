@@ -13,50 +13,24 @@ use SensitiveParameter;
  */
 final readonly class AuthorizationCodeRecord
 {
-    public bool                   $phishingResistant;
-    public DateTimeImmutable|null $mfaVerifiedAt;
-    public DateTimeImmutable|null $usedAt;
-    public PkceMethod|null        $codeChallengeMethod;
-    public string|null            $codeChallenge;
-    public string|null            $nonce;
-    public DateTimeImmutable      $expiresAt;
-    /** @var list<string> */
-    public array                  $scopes;
-    public string                 $redirectUri;
-    public UserId                 $userId;
-    public string                 $clientId;
-    public string                 $codeId;
-
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] string          $codeId,
-        string                                $clientId,
-        UserId                                $userId,
-        string                                $redirectUri,
-        array                                 $scopes,
-        DateTimeImmutable                     $expiresAt,
-        string|null                           $nonce = null,
-        #[SensitiveParameter] string|null     $codeChallenge = null,
-        #[SensitiveParameter] PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null                $usedAt = null,
-        DateTimeImmutable|null                $mfaVerifiedAt = null,
-        bool                                  $phishingResistant = false
+        #[SensitiveParameter] public string          $codeId,
+        public string                                $clientId,
+        public UserId                                $userId,
+        public string                                $redirectUri,
+        public array                                 $scopes,
+        public DateTimeImmutable                     $expiresAt,
+        public string|null                           $nonce = null,
+        #[SensitiveParameter] public string|null     $codeChallenge = null,
+        #[SensitiveParameter] public PkceMethod|null $codeChallengeMethod = null,
+        public DateTimeImmutable|null                $usedAt = null,
+        public DateTimeImmutable|null                $mfaVerifiedAt = null,
+        public bool                                  $phishingResistant = false
     )
     {
-        $this->codeId              = $codeId;
-        $this->clientId            = $clientId;
-        $this->userId              = $userId;
-        $this->redirectUri         = $redirectUri;
-        $this->scopes              = $scopes;
-        $this->expiresAt           = $expiresAt;
-        $this->nonce               = $nonce;
-        $this->codeChallenge       = $codeChallenge;
-        $this->codeChallengeMethod = $codeChallengeMethod;
-        $this->usedAt              = $usedAt;
-        $this->mfaVerifiedAt       = $mfaVerifiedAt;
-        $this->phishingResistant   = $phishingResistant;
     }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

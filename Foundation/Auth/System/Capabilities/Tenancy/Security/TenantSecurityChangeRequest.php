@@ -8,52 +8,10 @@ use DateTimeImmutable;
 
 final readonly class TenantSecurityChangeRequest
 {
-    public DateTimeImmutable|null            $rolledBackAt;
-    public DateTimeImmutable|null            $appliedAt;
-    public DateTimeImmutable|null            $approvedAt;
-    public string|null                       $approvedBy;
-    public DateTimeImmutable                 $requestedAt;
-    public TenantSecurityChangeRequestStatus $status;
-    /** @var array<string, string> */
-    public array                             $diff;
-    public TenantSecurityConfiguration       $after;
-    public TenantSecurityConfiguration|null  $before;
-    public string                            $reason;
-    public string                            $requestedBy;
-    public string                            $tenantSlug;
-    public string                            $changeId;
-
     /**
      * @param array<string, string> $diff
      */
-    public function __construct(
-        string                            $changeId,
-        string                            $tenantSlug,
-        string                            $requestedBy,
-        string                            $reason,
-        TenantSecurityConfiguration|null  $before,
-        TenantSecurityConfiguration       $after,
-        array                             $diff,
-        TenantSecurityChangeRequestStatus $status,
-        DateTimeImmutable                 $requestedAt,
-        string|null                       $approvedBy = null,
-        DateTimeImmutable|null            $approvedAt = null,
-        DateTimeImmutable|null            $appliedAt = null,
-        DateTimeImmutable|null            $rolledBackAt = null
-    )
+    public function __construct(public string $changeId, public string $tenantSlug, public string $requestedBy, public string $reason, public TenantSecurityConfiguration|null $before, public TenantSecurityConfiguration $after, public array $diff, public TenantSecurityChangeRequestStatus $status, public DateTimeImmutable $requestedAt, public string|null $approvedBy = null, public DateTimeImmutable|null $approvedAt = null, public DateTimeImmutable|null $appliedAt = null, public DateTimeImmutable|null $rolledBackAt = null)
     {
-        $this->changeId     = $changeId;
-        $this->tenantSlug   = $tenantSlug;
-        $this->requestedBy  = $requestedBy;
-        $this->reason       = $reason;
-        $this->before       = $before;
-        $this->after        = $after;
-        $this->diff         = $diff;
-        $this->status       = $status;
-        $this->requestedAt  = $requestedAt;
-        $this->approvedBy   = $approvedBy;
-        $this->approvedAt   = $approvedAt;
-        $this->appliedAt    = $appliedAt;
-        $this->rolledBackAt = $rolledBackAt;
     }
 }

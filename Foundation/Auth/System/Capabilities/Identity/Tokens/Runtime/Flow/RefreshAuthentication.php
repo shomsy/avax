@@ -24,34 +24,17 @@ use SensitiveParameter;
  */
 final readonly class RefreshAuthentication
 {
-    private DeterministicRiskEngine|null    $riskEngine;
-    private JwtIdentityInterface|null       $jwtIdentity;
-    private RefreshTokenStoreInterface|null $refreshTokenStore;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private CurrentAuthentication           $currentAuthentication;
-    private ProjectAuthenticatedUser        $projectAuthenticatedUser;
-    private UserSourceInterface             $userSource;
-
     public function __construct(
-        UserSourceInterface                                   $userSource,
-        ProjectAuthenticatedUser                              $projectAuthenticatedUser,
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        #[SensitiveParameter] JwtIdentityInterface|null       $jwtIdentity = null,
-        DeterministicRiskEngine|null                          $riskEngine = null
+        private UserSourceInterface                                   $userSource,
+        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null       $jwtIdentity = null,
+        private DeterministicRiskEngine|null                          $riskEngine = null
     )
     {
-        $this->userSource               = $userSource;
-        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
-        $this->currentAuthentication    = $currentAuthentication;
-        $this->auditLog                 = $auditLog;
-        $this->clock                    = $clock;
-        $this->refreshTokenStore        = $refreshTokenStore;
-        $this->jwtIdentity              = $jwtIdentity;
-        $this->riskEngine               = $riskEngine;
     }
 
     /**

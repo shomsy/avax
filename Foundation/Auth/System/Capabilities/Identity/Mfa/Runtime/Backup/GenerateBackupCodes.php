@@ -14,19 +14,12 @@ use SensitiveParameter;
  */
 final readonly class GenerateBackupCodes
 {
-    private int            $count;
-    private Clock          $clock;
-    private PasswordHasher $passwordHasher;
-
     public function __construct(
-        #[SensitiveParameter] PasswordHasher $passwordHasher,
-        Clock                                $clock,
-        int                                  $count = 10
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private Clock                                $clock,
+        private int                                  $count = 10
     )
     {
-        $this->passwordHasher = $passwordHasher;
-        $this->clock          = $clock;
-        $this->count          = $count;
     }
 
     /**

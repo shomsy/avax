@@ -26,28 +26,15 @@ use SensitiveParameter;
  */
 final readonly class ConfirmMfaEnrollment
 {
-    private Clock                 $clock;
-    private AuditLogInterface     $auditLog;
-    private GenerateBackupCodes   $generateBackupCodes;
-    private TotpInterface         $totp;
-    private MfaStoreInterface     $mfaStore;
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        MfaStoreInterface                           $mfaStore,
-        TotpInterface                               $totp,
-        #[SensitiveParameter] GenerateBackupCodes   $generateBackupCodes,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private TotpInterface                               $totp,
+        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->mfaStore              = $mfaStore;
-        $this->totp                  = $totp;
-        $this->generateBackupCodes   = $generateBackupCodes;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
     }
 
     /**

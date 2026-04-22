@@ -8,21 +8,7 @@ use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
 
 final readonly class BeginTenantSecurityChangeData
 {
-    public TenantSecurityConfiguration $after;
-    public string                      $reason;
-    public string                      $requestedBy;
-    public string                      $tenantSlug;
-
-    public function __construct(
-        string                      $tenantSlug,
-        string                      $requestedBy,
-        string                      $reason,
-        TenantSecurityConfiguration $after
-    )
+    public function __construct(public string $tenantSlug, public string $requestedBy, public string $reason, public TenantSecurityConfiguration $after)
     {
-        $this->tenantSlug  = $tenantSlug;
-        $this->requestedBy = $requestedBy;
-        $this->reason      = $reason;
-        $this->after       = $after;
     }
 }

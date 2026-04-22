@@ -20,28 +20,8 @@ use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
-    private Clock                                     $clock;
-    private AuditLogInterface                         $auditLog;
-    private ScimDirectoryStoreInterface|null          $scimDirectoryStore;
-    private FederationConnectionStoreInterface|null   $federationConnectionStore;
-    private TenantSecurityChangeRequestStoreInterface $changeRequestStore;
-    private TenantSecurityConfigurationStoreInterface $configurationStore;
-
-    public function __construct(
-        TenantSecurityConfigurationStoreInterface $configurationStore,
-        TenantSecurityChangeRequestStoreInterface $changeRequestStore,
-        FederationConnectionStoreInterface|null   $federationConnectionStore,
-        ScimDirectoryStoreInterface|null          $scimDirectoryStore,
-        AuditLogInterface                         $auditLog,
-        Clock                                     $clock
-    )
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private FederationConnectionStoreInterface|null $federationConnectionStore, private ScimDirectoryStoreInterface|null $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->configurationStore        = $configurationStore;
-        $this->changeRequestStore        = $changeRequestStore;
-        $this->federationConnectionStore = $federationConnectionStore;
-        $this->scimDirectoryStore        = $scimDirectoryStore;
-        $this->auditLog                  = $auditLog;
-        $this->clock                     = $clock;
     }
 
     /**

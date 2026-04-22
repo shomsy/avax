@@ -30,46 +30,21 @@ use SensitiveParameter;
  */
 final readonly class VerifyMfaChallenge
 {
-    private DeterministicRiskEngine|null $riskEngine;
-    private LimitMfaAttempts|null        $attemptLimit;
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private CurrentAuthentication        $currentAuthentication;
-    private ProjectAuthenticatedUser     $projectAuthenticatedUser;
-    private IdentityInterface            $identity;
-    private UserSourceInterface          $userSource;
-    private VerifyBackupCode             $verifyBackupCode;
-    private TotpInterface                $totp;
-    private MfaStoreInterface            $mfaStore;
-    private MfaChallengeStoreInterface   $challengeStore;
-
     public function __construct(
-        MfaChallengeStoreInterface                  $challengeStore,
-        MfaStoreInterface                           $mfaStore,
-        TotpInterface                               $totp,
-        #[SensitiveParameter] VerifyBackupCode      $verifyBackupCode,
-        UserSourceInterface                         $userSource,
-        IdentityInterface                           $identity,
-        ProjectAuthenticatedUser                    $projectAuthenticatedUser,
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock,
-        LimitMfaAttempts|null                       $attemptLimit = null,
-        DeterministicRiskEngine|null                $riskEngine = null
+        private MfaChallengeStoreInterface                  $challengeStore,
+        private MfaStoreInterface                           $mfaStore,
+        private TotpInterface                               $totp,
+        #[SensitiveParameter] private VerifyBackupCode      $verifyBackupCode,
+        private UserSourceInterface                         $userSource,
+        private IdentityInterface                           $identity,
+        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private LimitMfaAttempts|null                       $attemptLimit = null,
+        private DeterministicRiskEngine|null                $riskEngine = null
     )
     {
-        $this->challengeStore           = $challengeStore;
-        $this->mfaStore                 = $mfaStore;
-        $this->totp                     = $totp;
-        $this->verifyBackupCode         = $verifyBackupCode;
-        $this->userSource               = $userSource;
-        $this->identity                 = $identity;
-        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
-        $this->currentAuthentication    = $currentAuthentication;
-        $this->auditLog                 = $auditLog;
-        $this->clock                    = $clock;
-        $this->attemptLimit             = $attemptLimit;
-        $this->riskEngine               = $riskEngine;
     }
 
     /**

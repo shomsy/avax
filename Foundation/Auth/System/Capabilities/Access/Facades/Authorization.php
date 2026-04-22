@@ -11,6 +11,7 @@ use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentica
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
+use Avax\Auth\System\Capabilities\Access\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole as RequireRoleBoundary;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
 use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
@@ -24,22 +25,13 @@ use SensitiveParameter;
  */
 final readonly class Authorization implements AccessInterface
 {
-    private RequireAccessPolicyBoundary   $requireAccessPolicy;
-    private RequirePermissionBoundary     $requirePermission;
-    private RequireRoleBoundary           $requireRole;
-    private RequireAuthenticationBoundary $requireAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] RequireAuthenticationBoundary $requireAuthentication,
-        RequireRoleBoundary                                 $requireRole,
-        RequirePermissionBoundary                           $requirePermission,
-        #[SensitiveParameter] RequireAccessPolicyBoundary   $requireAccessPolicy
+        #[SensitiveParameter] private RequireAuthenticationBoundary $requireAuthentication,
+        private RequireRoleBoundary                                 $requireRole,
+        private RequirePermissionBoundary                           $requirePermission,
+        #[SensitiveParameter] private RequireAccessPolicyBoundary   $requireAccessPolicy
     )
     {
-        $this->requireAuthentication = $requireAuthentication;
-        $this->requireRole           = $requireRole;
-        $this->requirePermission     = $requirePermission;
-        $this->requireAccessPolicy   = $requireAccessPolicy;
     }
 
     /**
@@ -72,6 +64,7 @@ final readonly class Authorization implements AccessInterface
      * @throws AdminElevationFailed
      * @throws FreshMfaRequired
      * @throws PermissionDenied
+     * @throws ResourceOwnerDenied
      * @throws RoleDenied
      * @throws Unauthenticated
      */

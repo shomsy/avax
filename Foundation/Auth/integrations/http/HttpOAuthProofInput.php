@@ -11,35 +11,27 @@ use SensitiveParameter;
  */
 final readonly class HttpOAuthProofInput
 {
-    public string|null $expectedTokenThumbprint;
-    public string|null $accessToken;
     /** @var array<string, mixed> */
     public array       $server;
     /** @var array<string, mixed> */
     public array       $headers;
-    public string      $uri;
-    public string      $method;
 
     /**
      * @param array<string, mixed> $headers
      * @param array<string, mixed> $server
      */
     public function __construct(
-        string                            $method,
-        string                            $uri,
+        public string                            $method,
+        public string                            $uri,
         #[SensitiveParameter] array|null  $headers = null,
         array|null                        $server = null,
-        #[SensitiveParameter] string|null $accessToken = null,
-        #[SensitiveParameter] string|null $expectedTokenThumbprint = null
+        #[SensitiveParameter] public string|null $accessToken = null,
+        #[SensitiveParameter] public string|null $expectedTokenThumbprint = null
     )
     {
         $headers                       ??= [];
         $server                        ??= [];
-        $this->method                  = $method;
-        $this->uri                     = $uri;
         $this->headers                 = $headers;
         $this->server                  = $server;
-        $this->accessToken             = $accessToken;
-        $this->expectedTokenThumbprint = $expectedTokenThumbprint;
     }
 }

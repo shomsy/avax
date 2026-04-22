@@ -12,19 +12,12 @@ use SensitiveParameter;
  */
 final readonly class BackupCodeRecord
 {
-    public DateTimeImmutable|null $usedAt;
-    public string                 $codeHash;
-    public string                 $backupCodeId;
-
     public function __construct(
-        #[SensitiveParameter] string $backupCodeId,
-        #[SensitiveParameter] string $codeHash,
-        DateTimeImmutable|null       $usedAt = null
+        #[SensitiveParameter] public string $backupCodeId,
+        #[SensitiveParameter] public string $codeHash,
+        public DateTimeImmutable|null       $usedAt = null
     )
     {
-        $this->backupCodeId = $backupCodeId;
-        $this->codeHash     = $codeHash;
-        $this->usedAt       = $usedAt;
     }
 
     public function isUsed() : bool

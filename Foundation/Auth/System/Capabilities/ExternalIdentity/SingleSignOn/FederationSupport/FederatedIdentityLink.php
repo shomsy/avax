@@ -6,18 +6,7 @@ namespace Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\Federation
 
 final readonly class FederatedIdentityLink
 {
-    public int    $userId;
-    public string $subject;
-    public string $connectionId;
-
-    public function __construct(
-        string $connectionId,
-        string $subject,
-        int    $userId
-    )
+    public function __construct(public string $connectionId, public string $subject, public int $userId)
     {
-        $this->connectionId = $connectionId;
-        $this->subject      = $subject;
-        $this->userId       = $userId;
     }
 }

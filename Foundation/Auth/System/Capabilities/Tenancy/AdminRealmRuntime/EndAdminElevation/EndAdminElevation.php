@@ -15,22 +15,13 @@ use SensitiveParameter;
 
 final readonly class EndAdminElevation
 {
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private AdminElevationStoreInterface $elevationStore;
-    private CurrentAuthentication        $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        AdminElevationStoreInterface                $elevationStore,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AdminElevationStoreInterface                $elevationStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->elevationStore        = $elevationStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
     }
 
     /**

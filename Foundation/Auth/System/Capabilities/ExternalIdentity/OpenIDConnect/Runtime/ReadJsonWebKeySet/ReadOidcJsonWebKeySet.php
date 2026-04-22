@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcPro
 
 final readonly class ReadOidcJsonWebKeySet
 {
-    private OidcProviderInterface $oidcProvider;
-
-    public function __construct(
-        OidcProviderInterface $oidcProvider
-    )
+    public function __construct(private OidcProviderInterface $oidcProvider)
     {
-        $this->oidcProvider = $oidcProvider;
     }
 
     public function execute() : OidcJsonWebKeySet

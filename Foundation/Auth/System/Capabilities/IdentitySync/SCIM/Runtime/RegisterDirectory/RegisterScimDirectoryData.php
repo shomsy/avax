@@ -6,22 +6,10 @@ namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirect
 
 final readonly class RegisterScimDirectoryData
 {
-    /** @var array<string, list<string>> */
-    public array  $groupRoleMap;
-    public string $name;
-    public string $tenantSlug;
-
     /**
      * @param array<string, list<string>> $groupRoleMap
      */
-    public function __construct(
-        string $tenantSlug,
-        string $name,
-        array  $groupRoleMap = []
-    )
+    public function __construct(public string $tenantSlug, public string $name, public array $groupRoleMap = [])
     {
-        $this->tenantSlug   = $tenantSlug;
-        $this->name         = $name;
-        $this->groupRoleMap = $groupRoleMap;
     }
 }

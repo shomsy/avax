@@ -12,23 +12,17 @@ use InvalidArgumentException;
  */
 final readonly class LimitMfaAttempts
 {
-    private int                          $decaySeconds;
     private int                          $maxAttempts;
-    private Clock                        $clock;
-    private AttemptLimitStorageInterface $storage;
 
     public function __construct(
-        AttemptLimitStorageInterface $storage,
-        Clock                        $clock,
+        private AttemptLimitStorageInterface $storage,
+        private Clock                        $clock,
         int|null                     $maxAttempts = null,
-        int                          $decaySeconds = 300
+        private int                          $decaySeconds = 300
     )
     {
         $maxAttempts        ??= 5;
-        $this->storage      = $storage;
-        $this->clock        = $clock;
         $this->maxAttempts  = $maxAttempts;
-        $this->decaySeconds = $decaySeconds;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
         }

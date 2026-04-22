@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSuppor
 
 final readonly class ReadFederationConnections
 {
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore)
     {
-        $this->connectionStore = $connectionStore;
     }
 
     /**

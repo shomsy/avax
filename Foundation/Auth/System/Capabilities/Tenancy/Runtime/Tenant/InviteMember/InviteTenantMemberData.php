@@ -9,21 +9,12 @@ use SensitiveParameter;
 
 final readonly class InviteTenantMemberData
 {
-    public string           $invitedBy;
-    public TenantMemberRole $role;
-    public string           $email;
-    public string           $tenantSlug;
-
     public function __construct(
-        string                       $tenantSlug,
-        #[SensitiveParameter] string $email,
-        TenantMemberRole             $role,
-        string                       $invitedBy
+        public string                       $tenantSlug,
+        #[SensitiveParameter] public string $email,
+        public TenantMemberRole             $role,
+        public string                       $invitedBy
     )
     {
-        $this->tenantSlug = $tenantSlug;
-        $this->email      = $email;
-        $this->role       = $role;
-        $this->invitedBy  = $invitedBy;
     }
 }

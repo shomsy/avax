@@ -11,14 +11,11 @@ use Exception;
  */
 class RateLimitException extends Exception
 {
-    private readonly int $retryAfter;
-
     public function __construct(
         string $message,
-        int    $retryAfter
+        private readonly int $retryAfter
     )
     {
-        $this->retryAfter = $retryAfter;
         parent::__construct(message: $message, code: 429);
     }
 

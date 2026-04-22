@@ -41,15 +41,11 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         return null;
     }
 
-    public function emailExists(#[SensitiveParameter] string $email) : bool
+    public function emailExists(
+        #[SensitiveParameter] string $email
+    ) : bool
     {
-        foreach ($this->users as $user) {
-            if (strtolower($user->getEmail()->value) === strtolower($email)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->users, fn ($user) => strtolower($user->getEmail()->value) === strtolower($email));
     }
 
     public function findByEmail(#[SensitiveParameter] string $email) : User|null
@@ -65,13 +61,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
 
     public function usernameExists(string $username) : bool
     {
-        foreach ($this->users as $user) {
-            if (strtolower($user->getUsername()) === strtolower($username)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->users, fn ($user) => strtolower($user->getUsername()) === strtolower($username));
     }
 
     public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash) : void

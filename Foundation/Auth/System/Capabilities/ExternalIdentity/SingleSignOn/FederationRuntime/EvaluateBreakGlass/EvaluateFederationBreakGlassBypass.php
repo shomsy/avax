@@ -13,19 +13,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class EvaluateFederationBreakGlassBypass
 {
-    private Clock                              $clock;
-    private AuditLogInterface                  $auditLog;
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore,
-        AuditLogInterface                  $auditLog,
-        Clock                              $clock
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->connectionStore = $connectionStore;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
     }
 
     /**

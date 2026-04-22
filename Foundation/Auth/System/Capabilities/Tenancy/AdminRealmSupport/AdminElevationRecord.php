@@ -8,19 +8,8 @@ use DateTimeImmutable;
 
 final readonly class AdminElevationRecord
 {
-    public DateTimeImmutable $expiresAt;
-    public string            $bindingId;
-    public int               $userId;
-
-    public function __construct(
-        int               $userId,
-        string            $bindingId,
-        DateTimeImmutable $expiresAt
-    )
+    public function __construct(public int $userId, public string $bindingId, public DateTimeImmutable $expiresAt)
     {
-        $this->userId    = $userId;
-        $this->bindingId = $bindingId;
-        $this->expiresAt = $expiresAt;
     }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

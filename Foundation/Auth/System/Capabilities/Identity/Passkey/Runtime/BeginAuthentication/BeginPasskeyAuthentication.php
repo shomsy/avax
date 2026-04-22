@@ -20,31 +20,16 @@ use SensitiveParameter;
 
 final readonly class BeginPasskeyAuthentication
 {
-    private string                          $rpId;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private PasskeyChallengeStoreInterface  $challengeStore;
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private PasskeyRuntimeInterface         $runtime;
-    private UserSourceInterface             $userSource;
-
     public function __construct(
-        UserSourceInterface                                   $userSource,
-        PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
-        PasskeyChallengeStoreInterface                        $challengeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        string                                                $rpId
+        private UserSourceInterface                                   $userSource,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     )
     {
-        $this->userSource      = $userSource;
-        $this->runtime         = $runtime;
-        $this->credentialStore = $credentialStore;
-        $this->challengeStore  = $challengeStore;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
-        $this->rpId            = $rpId;
     }
 
     /**

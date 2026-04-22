@@ -14,20 +14,14 @@ use SensitiveParameter;
  */
 final readonly class BackupCodeSet
 {
-    public DateTimeImmutable $generatedAt;
-    /** @var list<BackupCode> */
-    public array $codes;
-
     /**
      * @param list<BackupCode> $codes
      */
     public function __construct(
-        #[SensitiveParameter] array $codes,
-        DateTimeImmutable           $generatedAt
+        #[SensitiveParameter] public array $codes,
+        public DateTimeImmutable           $generatedAt
     )
     {
-        $this->codes       = $codes;
-        $this->generatedAt = $generatedAt;
     }
 
     /**

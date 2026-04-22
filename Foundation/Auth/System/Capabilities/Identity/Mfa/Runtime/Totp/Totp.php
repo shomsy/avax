@@ -14,21 +14,19 @@ use SensitiveParameter;
  */
 final readonly class Totp implements TotpInterface
 {
-    private int $allowedSkewSteps;
     private int $periodSeconds;
     private int $digits;
 
     public function __construct(
         int|null $digits = null,
         int|null $periodSeconds = null,
-        int      $allowedSkewSteps = 1
+        private int $allowedSkewSteps = 1
     )
     {
         $digits                 ??= 6;
         $periodSeconds          ??= 30;
         $this->digits           = $digits;
         $this->periodSeconds    = $periodSeconds;
-        $this->allowedSkewSteps = $allowedSkewSteps;
         if ($this->digits < 6) {
             throw new InvalidArgumentException(message: 'TOTP digits must be at least 6.');
         }

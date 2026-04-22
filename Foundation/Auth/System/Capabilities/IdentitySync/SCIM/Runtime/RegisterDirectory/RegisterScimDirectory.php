@@ -18,30 +18,18 @@ use SensitiveParameter;
 
 final readonly class RegisterScimDirectory
 {
-    private Clock                       $clock;
-    private AuditLogInterface           $auditLog;
-    private GroupRoleMappingValidator   $groupRoleMappingValidator;
-    private PasswordHasher              $passwordHasher;
-    private ScimDirectoryStoreInterface $directoryStore;
-
     public function __construct(
-        ScimDirectoryStoreInterface          $directoryStore,
-        #[SensitiveParameter] PasswordHasher $passwordHasher,
-        GroupRoleMappingValidator            $groupRoleMappingValidator,
-        AuditLogInterface                    $auditLog,
-        Clock                                $clock
+        private ScimDirectoryStoreInterface          $directoryStore,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private GroupRoleMappingValidator            $groupRoleMappingValidator,
+        private AuditLogInterface                    $auditLog,
+        private Clock                                $clock
     )
     {
-        $this->directoryStore            = $directoryStore;
-        $this->passwordHasher            = $passwordHasher;
-        $this->groupRoleMappingValidator = $groupRoleMappingValidator;
-        $this->auditLog                  = $auditLog;
-        $this->clock                     = $clock;
     }
 
     /**
      * @throws ScimFailed
-     * @throws RandomException
      * @throws RandomException
      */
     public function execute(RegisterScimDirectoryData $data) : RegisteredScimDirectory

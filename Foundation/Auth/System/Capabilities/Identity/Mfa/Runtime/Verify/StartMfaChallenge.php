@@ -24,32 +24,20 @@ use SensitiveParameter;
  */
 final readonly class StartMfaChallenge
 {
-    private int                        $maxAttempts;
     private int                        $expiresAfterSeconds;
-    private Clock                      $clock;
-    private AuditLogInterface          $auditLog;
-    private MfaChallengeStoreInterface $challengeStore;
-    private GeneralMfaStoreInterface   $mfaStore;
-    private CurrentAuthentication      $currentAuthentication;
 
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        GeneralMfaStoreInterface                    $mfaStore,
-        MfaChallengeStoreInterface                  $challengeStore,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private GeneralMfaStoreInterface                    $mfaStore,
+        private MfaChallengeStoreInterface                  $challengeStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
         int|null                                    $expiresAfterSeconds = null,
-        int                                         $maxAttempts = 5
+        private int                                         $maxAttempts = 5
     )
     {
         $expiresAfterSeconds         ??= 300;
-        $this->currentAuthentication = $currentAuthentication;
-        $this->mfaStore              = $mfaStore;
-        $this->challengeStore        = $challengeStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
         $this->expiresAfterSeconds   = $expiresAfterSeconds;
-        $this->maxAttempts           = $maxAttempts;
     }
 
     /**

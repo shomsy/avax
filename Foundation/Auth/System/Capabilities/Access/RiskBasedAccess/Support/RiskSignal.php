@@ -11,25 +11,10 @@ use DateTimeImmutable;
  */
 final readonly class RiskSignal
 {
-    /** @var array<string, scalar|null> */
-    public array             $context;
-    public DateTimeImmutable $occurredAt;
-    public string            $name;
-    public int               $userId;
-
     /**
      * @param array<string, scalar|null> $context
      */
-    public function __construct(
-        int               $userId,
-        string            $name,
-        DateTimeImmutable $occurredAt,
-        array             $context = []
-    )
+    public function __construct(public int $userId, public string $name, public DateTimeImmutable $occurredAt, public array $context = [])
     {
-        $this->userId     = $userId;
-        $this->name       = $name;
-        $this->occurredAt = $occurredAt;
-        $this->context    = $context;
     }
 }

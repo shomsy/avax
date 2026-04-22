@@ -14,31 +14,16 @@ use SensitiveParameter;
  */
 final readonly class MfaEnrollmentRecord
 {
-    public DateTimeImmutable $expiresAt;
-    public DateTimeImmutable $startedAt;
-    public string            $secret;
-    public string            $issuer;
-    public string            $accountLabel;
-    public MfaMethod         $method;
-    public UserId            $userId;
-
     public function __construct(
-        UserId                       $userId,
-        MfaMethod                    $method,
-        #[SensitiveParameter] string $accountLabel,
-        string                       $issuer,
-        #[SensitiveParameter] string $secret,
-        DateTimeImmutable            $startedAt,
-        DateTimeImmutable            $expiresAt
+        public UserId                       $userId,
+        public MfaMethod                    $method,
+        #[SensitiveParameter] public string $accountLabel,
+        public string                       $issuer,
+        #[SensitiveParameter] public string $secret,
+        public DateTimeImmutable            $startedAt,
+        public DateTimeImmutable            $expiresAt
     )
     {
-        $this->userId       = $userId;
-        $this->method       = $method;
-        $this->accountLabel = $accountLabel;
-        $this->issuer       = $issuer;
-        $this->secret       = $secret;
-        $this->startedAt    = $startedAt;
-        $this->expiresAt    = $expiresAt;
     }
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

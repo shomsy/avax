@@ -12,39 +12,29 @@ use Stringable;
  */
 final readonly class User implements UserInterface, Stringable
 {
-    public bool      $isActive;
     /** @var list<UserPermission> */
     public array     $permissions;
     /** @var list<UserRole> */
     public array     $roles;
-    public string    $passwordHash;
-    public string    $username;
-    public UserEmail $email;
-    public UserId    $id;
 
     /**
      * @param array<UserRole>|null       $roles
      * @param array<UserPermission>|null $permissions
      */
     public function __construct(
-        UserId                          $id,
-        #[SensitiveParameter] UserEmail $email,
-        string                          $username,
-        #[SensitiveParameter] string    $passwordHash,
+        public UserId                          $id,
+        #[SensitiveParameter] public UserEmail $email,
+        public string                          $username,
+        #[SensitiveParameter] public string    $passwordHash,
         array|null                      $roles = null,
         array|null                      $permissions = null,
-        bool                            $isActive = true
+        public bool                            $isActive = true
     )
     {
         $roles              ??= [];
         $permissions        ??= [];
-        $this->id           = $id;
-        $this->email        = $email;
-        $this->username     = $username;
-        $this->passwordHash = $passwordHash;
         $this->roles = array_values($roles);
         $this->permissions = array_values($permissions);
-        $this->isActive     = $isActive;
     }
 
     /**
@@ -78,24 +68,12 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        foreach ($this->permissions as $userPermission) {
-            if ($userPermission->equals(other: $permission)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->permissions, fn ($userPermission) => $userPermission->equals(other: $permission));
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        foreach ($this->roles as $role) {
-            if ($role->canAccess(required: $requiredRole)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->roles, fn ($role) => $role->canAccess(required: $requiredRole));
     }
 
     public function isActive() : bool

@@ -95,13 +95,7 @@ final readonly class CheckMigrationPath
 
     private function shouldIgnore(string $path) : bool
     {
-        foreach (['vendor/', '.git/', 'build/'] as $ignoredPrefix) {
-            if (str_starts_with($path, $ignoredPrefix)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(['vendor/', '.git/', 'build/'], fn ($ignoredPrefix) => str_starts_with($path, $ignoredPrefix));
     }
 
     private function detectPackageName(string $repositoryRoot) : string

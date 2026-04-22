@@ -6,15 +6,7 @@ namespace Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveCl
 
 final readonly class ApproveClientRegistrationData
 {
-    public string $approvedBy;
-    public string $clientId;
-
-    public function __construct(
-        string $clientId,
-        string $approvedBy
-    )
+    public function __construct(public string $clientId, public string $approvedBy)
     {
-        $this->clientId   = $clientId;
-        $this->approvedBy = $approvedBy;
     }
 }

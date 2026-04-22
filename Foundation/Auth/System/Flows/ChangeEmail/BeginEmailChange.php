@@ -18,34 +18,17 @@ use SensitiveParameter;
 
 final readonly class BeginEmailChange
 {
-    private int                       $expiresAfterSeconds;
-    private Clock                     $clock;
-    private AuditLogInterface         $auditLog;
-    private RequireFreshMfa           $requireFreshMfa;
-    private EmailChangeStoreInterface $emailChangeStore;
-    private PasswordHasher            $passwordHasher;
-    private UserSourceInterface       $userSource;
-    private CurrentAuthentication     $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication     $currentAuthentication,
-        UserSourceInterface                             $userSource,
-        #[SensitiveParameter] PasswordHasher            $passwordHasher,
-        #[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore,
-        RequireFreshMfa                                 $requireFreshMfa,
-        AuditLogInterface                               $auditLog,
-        Clock                                           $clock,
-        int                                             $expiresAfterSeconds = 1800
+        #[SensitiveParameter] private CurrentAuthentication     $currentAuthentication,
+        private UserSourceInterface                             $userSource,
+        #[SensitiveParameter] private PasswordHasher            $passwordHasher,
+        #[SensitiveParameter] private EmailChangeStoreInterface $emailChangeStore,
+        private RequireFreshMfa                                 $requireFreshMfa,
+        private AuditLogInterface                               $auditLog,
+        private Clock                                           $clock,
+        private int                                             $expiresAfterSeconds = 1800
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->userSource            = $userSource;
-        $this->passwordHasher        = $passwordHasher;
-        $this->emailChangeStore      = $emailChangeStore;
-        $this->requireFreshMfa       = $requireFreshMfa;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->expiresAfterSeconds   = $expiresAfterSeconds;
     }
 
     /**

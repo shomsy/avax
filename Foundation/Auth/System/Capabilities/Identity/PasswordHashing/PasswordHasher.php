@@ -9,7 +9,7 @@ use SensitiveParameter;
 /**
  * Standard utility for password hashing and verification within the Auth System.
  */
-final class PasswordHasher
+final readonly class PasswordHasher
 {
     /**
      * @param array<string, int|string|bool> $options

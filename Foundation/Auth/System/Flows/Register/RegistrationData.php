@@ -13,24 +13,13 @@ use SensitiveParameter;
  */
 final readonly class RegistrationData
 {
-    public string|null $userAgent;
-    public string|null $ipAddress;
-    public string      $password;
-    public string      $username;
-    public string      $email;
-
     public function __construct(
-        #[SensitiveParameter] string      $email,
-        string                            $username,
-        #[SensitiveParameter] string      $password,
-        #[SensitiveParameter] string|null $ipAddress = null,
-        string|null                       $userAgent = null
+        #[SensitiveParameter] public string      $email,
+        public string                            $username,
+        #[SensitiveParameter] public string      $password,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     )
     {
-        $this->email     = $email;
-        $this->username  = $username;
-        $this->password  = $password;
-        $this->ipAddress = $ipAddress;
-        $this->userAgent = $userAgent;
     }
 }

@@ -17,13 +17,9 @@ final class NativeSessionStore implements SessionStoreInterface
     private array $cliSession = [];
     private string $cliSessionId = '';
     private bool $cliFallbackActive = false;
-    private SessionCookieSettings $cookieSettings;
 
-    public function __construct(
-        SessionCookieSettings $cookieSettings = new SessionCookieSettings()
-    )
+    public function __construct(private readonly SessionCookieSettings $cookieSettings = new SessionCookieSettings())
     {
-        $this->cookieSettings = $cookieSettings;
     }
 
     public function regenerate() : string

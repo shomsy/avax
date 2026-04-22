@@ -13,7 +13,7 @@ if (! is_dir($buildDirectory)) {
     mkdir($buildDirectory, 0777, true);
 }
 
-$report     = (new RunConformanceHarness())->execute(repositoryRoot: $root);
+$report = new RunConformanceHarness()->execute(repositoryRoot: $root);
 $outputFile = $buildDirectory . '/conformance-report.json';
 file_put_contents($outputFile, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 

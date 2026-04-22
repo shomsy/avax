@@ -12,19 +12,12 @@ use SensitiveParameter;
  */
 final readonly class PasswordResetChallenge
 {
-    public DateTimeImmutable|null $expiresAt;
-    public string|null            $token;
-    public bool                   $dispatched;
-
     public function __construct(
-        bool                              $dispatched,
-        #[SensitiveParameter] string|null $token = null,
-        DateTimeImmutable|null            $expiresAt = null
+        public bool                              $dispatched,
+        #[SensitiveParameter] public string|null $token = null,
+        public DateTimeImmutable|null            $expiresAt = null
     )
     {
-        $this->dispatched = $dispatched;
-        $this->token      = $token;
-        $this->expiresAt  = $expiresAt;
     }
 
     public static function hidden() : self

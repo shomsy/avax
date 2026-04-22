@@ -32,55 +32,29 @@ use SensitiveParameter;
 
 final readonly class CompleteFederatedLogin
 {
-    private LifecycleOrchestrator|null          $lifecycle;
-    private DeterministicRiskEngine|null        $riskEngine;
-    private Clock                               $clock;
-    private AuditLogInterface                   $auditLog;
-    private IdGeneratorInterface                $idGenerator;
-    private PasswordHasher                      $passwordHasher;
-    private CurrentAuthentication               $currentAuthentication;
-    private ProjectAuthenticatedUser            $projectAuthenticatedUser;
-    private IdentityInterface                   $identity;
-    private UserSourceInterface                 $userSource;
-    private FederatedIdentityLinkStoreInterface $linkStore;
-    private FederationRuntimeInterface          $runtime;
-    private FederationConnectionStoreInterface  $connectionStore;
-
     public function __construct(
-        FederationConnectionStoreInterface          $connectionStore,
-        FederationRuntimeInterface                  $runtime,
-        FederatedIdentityLinkStoreInterface         $linkStore,
-        UserSourceInterface                         $userSource,
-        IdentityInterface                           $identity,
-        ProjectAuthenticatedUser                    $projectAuthenticatedUser,
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        #[SensitiveParameter] PasswordHasher        $passwordHasher,
-        IdGeneratorInterface                        $idGenerator,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock,
-        DeterministicRiskEngine|null                $riskEngine = null,
-        LifecycleOrchestrator|null                  $lifecycle = null
+        private FederationConnectionStoreInterface          $connectionStore,
+        private FederationRuntimeInterface                  $runtime,
+        private FederatedIdentityLinkStoreInterface         $linkStore,
+        private UserSourceInterface                         $userSource,
+        private IdentityInterface                           $identity,
+        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[SensitiveParameter] private PasswordHasher        $passwordHasher,
+        private IdGeneratorInterface                        $idGenerator,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private DeterministicRiskEngine|null                $riskEngine = null,
+        private LifecycleOrchestrator|null                  $lifecycle = null
     )
     {
-        $this->connectionStore          = $connectionStore;
-        $this->runtime                  = $runtime;
-        $this->linkStore                = $linkStore;
-        $this->userSource               = $userSource;
-        $this->identity                 = $identity;
-        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
-        $this->currentAuthentication    = $currentAuthentication;
-        $this->passwordHasher           = $passwordHasher;
-        $this->idGenerator              = $idGenerator;
-        $this->auditLog                 = $auditLog;
-        $this->clock                    = $clock;
-        $this->riskEngine               = $riskEngine;
-        $this->lifecycle                = $lifecycle;
     }
 
     /**
      * @param CompleteFederatedLoginData $data
      *
      * @return AuthenticationResult
+     * @throws FederationFailed
      * @throws RandomException
      */
     public function execute(CompleteFederatedLoginData $data) : AuthenticationResult
@@ -172,6 +146,7 @@ final readonly class CompleteFederatedLogin
      * @param string $displayName
      *
      * @return User
+     * @throws RandomException
      */
     private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
     {

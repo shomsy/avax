@@ -9,20 +9,11 @@ namespace Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support;
  */
 final readonly class RiskDecision
 {
-    /** @var list<string> */
-    public array      $reasons;
-    public RiskAction $action;
-
     /**
      * @param list<string> $reasons
      */
-    public function __construct(
-        RiskAction $action,
-        array      $reasons = []
-    )
+    public function __construct(public RiskAction $action, public array $reasons = [])
     {
-        $this->action  = $action;
-        $this->reasons = $reasons;
     }
 
     public static function allow(string ...$reasons) : self

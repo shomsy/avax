@@ -14,34 +14,17 @@ use SensitiveParameter;
  */
 final readonly class MfaEnrollment
 {
-    public DateTimeImmutable $expiresAt;
-    public DateTimeImmutable $startedAt;
-    public string            $otpauthUri;
-    public string            $issuer;
-    public string            $accountLabel;
-    public MfaStatus         $status;
-    public MfaMethod         $method;
-    private string           $secret;
-
     public function __construct(
-        MfaMethod                    $method,
-        MfaStatus                    $status,
-        #[SensitiveParameter] string $accountLabel,
-        string                       $issuer,
-        #[SensitiveParameter] string $secret,
-        string                       $otpauthUri,
-        DateTimeImmutable            $startedAt,
-        DateTimeImmutable            $expiresAt
+        public MfaMethod                     $method,
+        public MfaStatus                     $status,
+        #[SensitiveParameter] public string  $accountLabel,
+        public string                        $issuer,
+        #[SensitiveParameter] private string $secret,
+        public string                        $otpauthUri,
+        public DateTimeImmutable             $startedAt,
+        public DateTimeImmutable             $expiresAt
     )
     {
-        $this->method       = $method;
-        $this->status       = $status;
-        $this->accountLabel = $accountLabel;
-        $this->issuer       = $issuer;
-        $this->secret       = $secret;
-        $this->otpauthUri   = $otpauthUri;
-        $this->startedAt    = $startedAt;
-        $this->expiresAt    = $expiresAt;
     }
 
     public function secret() : string

@@ -15,13 +15,10 @@ use SensitiveParameter;
  */
 final readonly class ReadCurrentUser
 {
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
     }
 
     public function execute() : AuthenticatedUser|null

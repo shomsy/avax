@@ -17,22 +17,13 @@ use SensitiveParameter;
  */
 final readonly class VerifyBackupCode
 {
-    private Clock             $clock;
-    private AuditLogInterface $auditLog;
-    private PasswordHasher    $passwordHasher;
-    private MfaStoreInterface $mfaStore;
-
     public function __construct(
-        MfaStoreInterface                    $mfaStore,
-        #[SensitiveParameter] PasswordHasher $passwordHasher,
-        AuditLogInterface                    $auditLog,
-        Clock                                $clock
+        private MfaStoreInterface                    $mfaStore,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private AuditLogInterface                    $auditLog,
+        private Clock                                $clock
     )
     {
-        $this->mfaStore       = $mfaStore;
-        $this->passwordHasher = $passwordHasher;
-        $this->auditLog       = $auditLog;
-        $this->clock          = $clock;
     }
 
     public function execute(UserId $userId, #[SensitiveParameter] string $code) : bool

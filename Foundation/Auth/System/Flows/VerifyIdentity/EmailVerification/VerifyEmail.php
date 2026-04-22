@@ -14,22 +14,13 @@ use SensitiveParameter;
  */
 final readonly class VerifyEmail
 {
-    private Clock                                $clock;
-    private AuditLogInterface                    $auditLog;
-    private EmailVerificationStateStoreInterface $emailVerificationState;
-    private EmailVerificationStoreInterface      $emailVerificationStore;
-
     public function __construct(
-        #[SensitiveParameter] EmailVerificationStoreInterface      $emailVerificationStore,
-        #[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState,
-        AuditLogInterface                                          $auditLog,
-        Clock                                                      $clock
+        #[SensitiveParameter] private EmailVerificationStoreInterface      $emailVerificationStore,
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                          $auditLog,
+        private Clock                                                      $clock
     )
     {
-        $this->emailVerificationStore = $emailVerificationStore;
-        $this->emailVerificationState = $emailVerificationState;
-        $this->auditLog               = $auditLog;
-        $this->clock                  = $clock;
     }
 
     public function execute(VerifyEmailData $data) : bool

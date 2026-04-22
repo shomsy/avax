@@ -21,31 +21,8 @@ use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
-    private AttemptThrottle|null                  $attemptThrottle;
-    private LifecycleOrchestrator|null            $lifecycle;
-    private Clock                                 $clock;
-    private AuditLogInterface                     $auditLog;
-    private ScimProvisionedIdentityStoreInterface $identityStore;
-    private ScimDirectoryStoreInterface           $directoryStore;
-    private ProvisionableUserSourceInterface      $userSource;
-
-    public function __construct(
-        ProvisionableUserSourceInterface      $userSource,
-        ScimDirectoryStoreInterface           $directoryStore,
-        ScimProvisionedIdentityStoreInterface $identityStore,
-        AuditLogInterface                     $auditLog,
-        Clock                                 $clock,
-        LifecycleOrchestrator|null            $lifecycle = null,
-        AttemptThrottle|null                  $attemptThrottle = null
-    )
+    public function __construct(private ProvisionableUserSourceInterface $userSource, private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private AuditLogInterface $auditLog, private Clock $clock, private LifecycleOrchestrator|null $lifecycle = null, private AttemptThrottle|null $attemptThrottle = null)
     {
-        $this->userSource      = $userSource;
-        $this->directoryStore  = $directoryStore;
-        $this->identityStore   = $identityStore;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
-        $this->lifecycle       = $lifecycle;
-        $this->attemptThrottle = $attemptThrottle;
     }
 
     /**

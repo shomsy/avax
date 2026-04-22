@@ -11,13 +11,11 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
 {
     /** @var array<string, ScimDirectory> */
     private array          $directories = [];
-    private PasswordHasher $passwordHasher;
 
     public function __construct(
-        #[SensitiveParameter] PasswordHasher $passwordHasher
+        #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
     )
     {
-        $this->passwordHasher = $passwordHasher;
     }
 
     public function save(ScimDirectory $directory) : void

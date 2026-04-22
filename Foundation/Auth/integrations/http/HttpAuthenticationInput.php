@@ -11,7 +11,6 @@ use SensitiveParameter;
  */
 final readonly class HttpAuthenticationInput
 {
-    public string|null $sessionCookieName;
     public bool        $allowSession;
     /** @var array<string, mixed> */
     public array       $server;
@@ -30,7 +29,7 @@ final readonly class HttpAuthenticationInput
         array|null                        $cookies = null,
         array|null                        $server = null,
         bool|null                         $allowSession = null,
-        #[SensitiveParameter] string|null $sessionCookieName = null
+        #[SensitiveParameter] public string|null $sessionCookieName = null
     )
     {
         $headers                 ??= [];
@@ -41,6 +40,5 @@ final readonly class HttpAuthenticationInput
         $this->cookies           = $cookies;
         $this->server            = $server;
         $this->allowSession      = $allowSession;
-        $this->sessionCookieName = $sessionCookieName;
     }
 }

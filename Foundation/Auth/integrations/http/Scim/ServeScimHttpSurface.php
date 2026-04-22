@@ -31,16 +31,12 @@ final readonly class ServeScimHttpSurface
     private const string USER_SCHEMA   = 'urn:ietf:params:scim:schemas:core:2.0:User';
     private const string GROUP_SCHEMA = 'urn:ietf:params:scim:schemas:core:2.0:Group';
     private const string USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
-    private ReadBearerToken $readBearerToken;
-    private AuthInterface   $auth;
 
     public function __construct(
-        #[SensitiveParameter] AuthInterface   $auth,
-        #[SensitiveParameter] ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     )
     {
-        $this->auth            = $auth;
-        $this->readBearerToken = $readBearerToken;
     }
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse

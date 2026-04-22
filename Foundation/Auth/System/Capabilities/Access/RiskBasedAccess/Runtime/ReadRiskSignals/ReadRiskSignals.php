@@ -11,16 +11,11 @@ use SensitiveParameter;
 
 final readonly class ReadRiskSignals
 {
-    private DeterministicRiskEngine $riskEngine;
-    private CurrentAuthentication   $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        DeterministicRiskEngine                     $riskEngine
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private DeterministicRiskEngine                     $riskEngine
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->riskEngine            = $riskEngine;
     }
 
     /**

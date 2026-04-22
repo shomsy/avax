@@ -11,21 +11,19 @@ use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
  */
 final readonly class NormalizeAuditEvent
 {
-    private AuditLegalHoldPolicyInterface|null $legalHoldPolicy;
     private bool                               $maskSensitiveContext;
     private MaskAuditContext                   $maskAuditContext;
 
     public function __construct(
         MaskAuditContext|null              $maskAuditContext = null,
         bool|null                          $maskSensitiveContext = null,
-        AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
+        private AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
     )
     {
         $maskAuditContext           ??= new MaskAuditContext();
         $maskSensitiveContext       ??= true;
         $this->maskAuditContext     = $maskAuditContext;
         $this->maskSensitiveContext = $maskSensitiveContext;
-        $this->legalHoldPolicy      = $legalHoldPolicy;
     }
 
     /**

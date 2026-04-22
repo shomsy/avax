@@ -45,13 +45,10 @@ use Throwable;
  */
 final readonly class ServeTenantSecurityHttpSurface
 {
-    private AuthInterface $auth;
-
     public function __construct(
-        #[SensitiveParameter] AuthInterface $auth
+        #[SensitiveParameter] private AuthInterface $auth
     )
     {
-        $this->auth = $auth;
     }
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse

@@ -12,23 +12,17 @@ use InvalidArgumentException;
  */
 final readonly class AttemptThrottle
 {
-    private int                           $decaySeconds;
     private int                           $maxAttempts;
-    private Clock                         $clock;
-    private AttemptThrottleStoreInterface $store;
 
     public function __construct(
-        AttemptThrottleStoreInterface $store,
-        Clock                         $clock,
+        private AttemptThrottleStoreInterface $store,
+        private Clock                         $clock,
         int|null                      $maxAttempts = null,
-        int                           $decaySeconds = 900
+        private int                           $decaySeconds = 900
     )
     {
         $maxAttempts        ??= 5;
-        $this->store        = $store;
-        $this->clock        = $clock;
         $this->maxAttempts  = $maxAttempts;
-        $this->decaySeconds = $decaySeconds;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
         }

@@ -77,6 +77,7 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimG
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use Avax\Auth\System\Capabilities\Tenancy\Model\Tenant;
 use Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember;
 use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite\AcceptTenantInviteData;
@@ -715,6 +716,10 @@ final readonly class Auth implements AuthInterface
         return $this->tenancy->security()->rollbackChange(changeId: $changeId);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function beginAdminElevation() : AdminElevation
     {
         return $this->access->beginAdminElevation();
@@ -725,6 +730,9 @@ final readonly class Auth implements AuthInterface
         $this->access->endAdminElevation();
     }
 
+    /**
+     * @throws AdminElevationFailed
+     */
     public function requireAdminElevation() : void
     {
         $this->access->requireAdminElevation();

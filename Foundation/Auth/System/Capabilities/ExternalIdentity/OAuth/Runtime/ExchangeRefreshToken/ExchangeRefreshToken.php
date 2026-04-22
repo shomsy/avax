@@ -20,31 +20,16 @@ use SensitiveParameter;
 
 final readonly class ExchangeRefreshToken
 {
-    private DeterministicRiskEngine|null $riskEngine;
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private JwtIdentityInterface         $jwtIdentity;
-    private UserSourceInterface          $userSource;
-    private RefreshTokenStoreInterface   $refreshTokenStore;
-    private OAuthClientRegistryInterface $clientRegistry;
-
     public function __construct(
-        OAuthClientRegistryInterface                     $clientRegistry,
-        #[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore,
-        UserSourceInterface                              $userSource,
-        #[SensitiveParameter] JwtIdentityInterface       $jwtIdentity,
-        AuditLogInterface                                $auditLog,
-        Clock                                            $clock,
-        DeterministicRiskEngine|null                     $riskEngine = null
+        private OAuthClientRegistryInterface                     $clientRegistry,
+        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
+        private UserSourceInterface                              $userSource,
+        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
+        private AuditLogInterface                                $auditLog,
+        private Clock                                            $clock,
+        private DeterministicRiskEngine|null                     $riskEngine = null
     )
     {
-        $this->clientRegistry    = $clientRegistry;
-        $this->refreshTokenStore = $refreshTokenStore;
-        $this->userSource        = $userSource;
-        $this->jwtIdentity       = $jwtIdentity;
-        $this->auditLog          = $auditLog;
-        $this->clock             = $clock;
-        $this->riskEngine        = $riskEngine;
     }
 
     /**

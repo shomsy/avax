@@ -18,13 +18,10 @@ use SensitiveParameter;
  */
 final readonly class RequireFreshPasskeyForAdminAction
 {
-    private RequireAccessPolicy $requireAccessPolicy;
-
     public function __construct(
-        #[SensitiveParameter] RequireAccessPolicy $requireAccessPolicy
+        #[SensitiveParameter] private RequireAccessPolicy $requireAccessPolicy
     )
     {
-        $this->requireAccessPolicy = $requireAccessPolicy;
     }
 
     /**

@@ -6,12 +6,7 @@ namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage;
 
 final readonly class RecoverScimDirectoryOutageData
 {
-    public string $directoryId;
-
-    public function __construct(
-        string $directoryId
-    )
+    public function __construct(public string $directoryId)
     {
-        $this->directoryId = $directoryId;
     }
 }

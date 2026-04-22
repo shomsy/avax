@@ -20,23 +20,17 @@ use SensitiveParameter;
  */
 final readonly class VerifyDpopProof
 {
-    private int                           $maxAgeSeconds;
     private AuditLogInterface             $auditLog;
-    private DpopProofReplayStoreInterface $replayStore;
-    private TokenCodecInterface           $codec;
 
     public function __construct(
-        TokenCodecInterface           $codec,
-        DpopProofReplayStoreInterface $replayStore,
+        private TokenCodecInterface           $codec,
+        private DpopProofReplayStoreInterface $replayStore,
         AuditLogInterface|null        $auditLog = null,
-        int                           $maxAgeSeconds = 300
+        private int                           $maxAgeSeconds = 300
     )
     {
         $auditLog            ??= new NullAuditLog();
-        $this->codec         = $codec;
-        $this->replayStore   = $replayStore;
         $this->auditLog      = $auditLog;
-        $this->maxAgeSeconds = $maxAgeSeconds;
     }
 
     /**

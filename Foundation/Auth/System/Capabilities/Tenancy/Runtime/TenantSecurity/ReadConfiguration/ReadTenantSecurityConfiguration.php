@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfigurationSt
 
 final readonly class ReadTenantSecurityConfiguration
 {
-    private TenantSecurityConfigurationStoreInterface $configurationStore;
-
-    public function __construct(
-        TenantSecurityConfigurationStoreInterface $configurationStore
-    )
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore)
     {
-        $this->configurationStore = $configurationStore;
     }
 
     public function execute(string $tenantSlug) : TenantSecurityConfiguration|null

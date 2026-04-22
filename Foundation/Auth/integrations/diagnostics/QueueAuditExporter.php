@@ -11,20 +11,16 @@ use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
  */
 final readonly class QueueAuditExporter implements AuditExporterInterface
 {
-    private NormalizeAuditEvent          $normalizeAuditEvent;
     private string                       $topic;
-    private PublishAuditMessageInterface $publisher;
 
     public function __construct(
-        PublishAuditMessageInterface $publisher,
+        private PublishAuditMessageInterface $publisher,
         string|null                  $topic = null,
-        NormalizeAuditEvent          $normalizeAuditEvent = new NormalizeAuditEvent()
+        private NormalizeAuditEvent          $normalizeAuditEvent = new NormalizeAuditEvent()
     )
     {
         $topic                     ??= 'auth.audit';
-        $this->publisher           = $publisher;
         $this->topic               = $topic;
-        $this->normalizeAuditEvent = $normalizeAuditEvent;
     }
 
     public function export(array $events) : void

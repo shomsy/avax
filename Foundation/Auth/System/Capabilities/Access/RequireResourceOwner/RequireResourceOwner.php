@@ -13,13 +13,10 @@ use SensitiveParameter;
  */
 final readonly class RequireResourceOwner
 {
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
     }
 
     /**

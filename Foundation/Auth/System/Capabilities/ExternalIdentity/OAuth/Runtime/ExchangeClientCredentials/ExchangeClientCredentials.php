@@ -16,22 +16,13 @@ use SensitiveParameter;
 
 final readonly class ExchangeClientCredentials
 {
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private JwtIdentityInterface         $jwtIdentity;
-    private OAuthClientRegistryInterface $clientRegistry;
-
     public function __construct(
-        OAuthClientRegistryInterface               $clientRegistry,
-        #[SensitiveParameter] JwtIdentityInterface $jwtIdentity,
-        AuditLogInterface                          $auditLog,
-        Clock                                      $clock
+        private OAuthClientRegistryInterface               $clientRegistry,
+        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface                          $auditLog,
+        private Clock                                      $clock
     )
     {
-        $this->clientRegistry = $clientRegistry;
-        $this->jwtIdentity    = $jwtIdentity;
-        $this->auditLog       = $auditLog;
-        $this->clock          = $clock;
     }
 
     /**

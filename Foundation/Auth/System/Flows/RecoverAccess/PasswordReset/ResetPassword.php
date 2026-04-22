@@ -19,34 +19,17 @@ use SensitiveParameter;
  */
 final readonly class ResetPassword
 {
-    private RefreshTokenStoreInterface|null $refreshTokenStore;
-    private MfaChallengeStoreInterface|null $mfaChallengeStore;
-    private SessionRegistryInterface|null   $sessionRegistry;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private PasswordResetStoreInterface     $passwordResetStore;
-    private PasswordHasher                  $passwordHasher;
-    private UserSourceInterface             $userSource;
-
     public function __construct(
-        UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] PasswordHasher                  $passwordHasher,
-        #[SensitiveParameter] PasswordResetStoreInterface     $passwordResetStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
-        MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] private PasswordHasher                  $passwordHasher,
+        #[SensitiveParameter] private PasswordResetStoreInterface     $passwordResetStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     )
     {
-        $this->userSource         = $userSource;
-        $this->passwordHasher     = $passwordHasher;
-        $this->passwordResetStore = $passwordResetStore;
-        $this->auditLog           = $auditLog;
-        $this->clock              = $clock;
-        $this->sessionRegistry    = $sessionRegistry;
-        $this->mfaChallengeStore  = $mfaChallengeStore;
-        $this->refreshTokenStore  = $refreshTokenStore;
     }
 
     public function execute(ResetPasswordData $data) : bool

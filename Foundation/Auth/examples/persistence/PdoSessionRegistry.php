@@ -17,13 +17,8 @@ use SensitiveParameter;
  */
 final readonly class PdoSessionRegistry implements SessionRegistryInterface
 {
-    private PDO $pdo;
-
-    public function __construct(
-        PDO $pdo
-    )
+    public function __construct(private PDO $pdo)
     {
-        $this->pdo = $pdo;
     }
 
     /**
@@ -41,10 +36,6 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @param array<string, mixed> $row
      *
-     * @throws DateMalformedStringException
-     * @throws DateMalformedStringException
-     * @throws DateMalformedStringException
-     * @throws DateMalformedStringException
      * @throws DateMalformedStringException
      */
     private function hydrate(array $row) : SessionRecord
@@ -120,9 +111,10 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $statement->execute(params: ['user_id' => $userId->value]);
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
-        return array_map(/**
-         * @throws DateMalformedStringException
-         */ fn (array $row) : SessionRecord => $this->hydrate(row: $row), $rows);
+        return array_map(
+            fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+            $rows
+        );
     }
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void

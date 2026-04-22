@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Foundation\Time;
 
-final class Clock extends \Avax\Auth\System\Foundation\Clock
+use Avax\Auth\System\Foundation\Clock as BaseClock;
+
+final class Clock extends BaseClock
 {
 }

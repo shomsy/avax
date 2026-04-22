@@ -7,7 +7,7 @@ use Avax\Auth\Integrations\Release\ReviewComposerDependencies;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $root   = dirname(__DIR__);
-$review = (new ReviewComposerDependencies())->execute(
+$review = new ReviewComposerDependencies()->execute(
     composerLockPath: $root . '/composer.lock',
     policyPath      : $root . '/tooling/dependency-review-policy.json'
 );

@@ -15,16 +15,9 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
 {
     private const string KEY_PREFIX      = 'auth:session:';
     private const string USER_KEY_PREFIX = 'auth:user_sessions:';
-    private readonly int   $ttlSeconds;
-    private readonly Redis $redis;
 
-    public function __construct(
-        Redis $redis,
-        int   $ttlSeconds = 86400,
-    )
+    public function __construct(private readonly Redis $redis, private readonly int $ttlSeconds = 86400)
     {
-        $this->redis      = $redis;
-        $this->ttlSeconds = $ttlSeconds;
     }
 
     public function save(SessionRecord $record) : void

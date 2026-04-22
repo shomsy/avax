@@ -25,16 +25,11 @@ use Throwable;
  */
 final readonly class ServeOidcHttpSurface
 {
-    private ReadBearerToken $readBearerToken;
-    private AuthInterface   $auth;
-
     public function __construct(
-        #[SensitiveParameter] AuthInterface   $auth,
-        #[SensitiveParameter] ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     )
     {
-        $this->auth            = $auth;
-        $this->readBearerToken = $readBearerToken;
     }
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capabilities\Access\AccessInterface;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskSignal;
 use Avax\Auth\System\Capabilities\Diagnostics\Diagnostics;
@@ -75,6 +76,7 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimG
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use Avax\Auth\System\Capabilities\Tenancy\Model\Tenant;
 use Avax\Auth\System\Capabilities\Tenancy\Model\TenantMember;
 use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite\AcceptTenantInviteData;
@@ -105,6 +107,7 @@ use Avax\Auth\System\Flows\Register\RegistrationResult;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificationData;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
+use DateMalformedStringException;
 
 /**
  * Contract for the core authentication system.
@@ -331,10 +334,17 @@ interface AuthInterface
 
     public function rollbackTenantSecurityChange(string $changeId) : TenantSecurityConfiguration;
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function beginAdminElevation() : AdminElevation;
 
     public function endAdminElevation() : void;
 
+    /**
+     * @throws AdminElevationFailed
+     */
     public function requireAdminElevation() : void;
 
     public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null;

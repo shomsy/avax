@@ -22,25 +22,8 @@ use SensitiveParameter;
 
 final readonly class PushAuthorizationRequest
 {
-    private OidcProviderInterface|null        $oidcProvider;
-    private OAuthClientRegistryInterface|null $clientRegistry;
-    private Clock                             $clock;
-    private AuditLogInterface                 $auditLog;
-    private OidcRequestObjectStoreInterface   $requestObjectStore;
-
-    public function __construct(
-        OidcRequestObjectStoreInterface   $requestObjectStore,
-        AuditLogInterface                 $auditLog,
-        Clock                             $clock,
-        OAuthClientRegistryInterface|null $clientRegistry = null,
-        OidcProviderInterface|null        $oidcProvider = null
-    )
+    public function __construct(private OidcRequestObjectStoreInterface $requestObjectStore, private AuditLogInterface $auditLog, private Clock $clock, private OAuthClientRegistryInterface|null $clientRegistry = null, private OidcProviderInterface|null $oidcProvider = null)
     {
-        $this->requestObjectStore = $requestObjectStore;
-        $this->auditLog           = $auditLog;
-        $this->clock              = $clock;
-        $this->clientRegistry     = $clientRegistry;
-        $this->oidcProvider       = $oidcProvider;
     }
 
     /**
@@ -250,7 +233,7 @@ final readonly class PushAuthorizationRequest
             return null;
         }
 
-        $claims = (new HmacTokenCodec(secret: $clientSecret, algorithm: $algorithm))->decode(token: $jwt);
+        $claims = new HmacTokenCodec(secret: $clientSecret, algorithm: $algorithm)->decode(token: $jwt);
 
         return is_array($claims) ? $claims : null;
     }
@@ -314,13 +297,7 @@ final readonly class PushAuthorizationRequest
             return false;
         }
 
-        foreach ($audience as $candidate) {
-            if (is_string($candidate) && trim($candidate) === $expectedAudience) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($audience, fn ($candidate) => is_string($candidate) && trim($candidate) === $expectedAudience);
     }
 
     /**

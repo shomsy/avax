@@ -18,22 +18,13 @@ use SensitiveParameter;
  */
 final readonly class CancelMfaEnrollment
 {
-    private Clock                 $clock;
-    private AuditLogInterface     $auditLog;
-    private MfaStoreInterface     $mfaStore;
-    private CurrentAuthentication $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        MfaStoreInterface                           $mfaStore,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->mfaStore              = $mfaStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
     }
 
     /**

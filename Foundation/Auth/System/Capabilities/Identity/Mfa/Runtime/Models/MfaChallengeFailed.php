@@ -11,18 +11,13 @@ use RuntimeException;
  */
 final class MfaChallengeFailed extends RuntimeException
 {
-    private readonly int|null            $retryAfter;
-    private readonly MfaChallengeFailure $reason;
-
     public function __construct(
-        MfaChallengeFailure $reason,
-        int|null            $retryAfter = null,
+        private readonly MfaChallengeFailure $reason,
+        private readonly int|null            $retryAfter = null,
         string              $message = 'MFA verification failed.',
         int                 $code = 401
     )
     {
-        $this->reason     = $reason;
-        $this->retryAfter = $retryAfter;
         parent::__construct(message: $message, code: $code);
     }
 

@@ -14,28 +14,15 @@ use SensitiveParameter;
  */
 final readonly class AuthenticationResult
 {
-    private MfaChallenge|null      $mfaChallenge;
-    private string|null            $refreshToken;
-    private string|null            $accessToken;
-    private AuthenticatedUser|null $user;
-    private AuthenticationContext  $context;
-    private AuthenticationState    $state;
-
     public function __construct(
-        AuthenticationState               $state,
-        AuthenticationContext             $context,
-        AuthenticatedUser|null            $user = null,
-        #[SensitiveParameter] string|null $accessToken = null,
-        #[SensitiveParameter] string|null $refreshToken = null,
-        MfaChallenge|null                 $mfaChallenge = null
+        private AuthenticationState               $state,
+        private AuthenticationContext             $context,
+        private AuthenticatedUser|null            $user = null,
+        #[SensitiveParameter] private string|null $accessToken = null,
+        #[SensitiveParameter] private string|null $refreshToken = null,
+        private MfaChallenge|null                 $mfaChallenge = null
     )
     {
-        $this->state        = $state;
-        $this->context      = $context;
-        $this->user         = $user;
-        $this->accessToken  = $accessToken;
-        $this->refreshToken = $refreshToken;
-        $this->mfaChallenge = $mfaChallenge;
     }
 
     public static function success(

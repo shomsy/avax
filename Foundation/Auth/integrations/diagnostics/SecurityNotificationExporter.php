@@ -12,16 +12,8 @@ use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
  */
 final readonly class SecurityNotificationExporter implements AuditExporterInterface
 {
-    private NormalizeAuditEvent               $normalizeAuditEvent;
-    private SendSecurityNotificationInterface $sender;
-
-    public function __construct(
-        SendSecurityNotificationInterface $sender,
-        NormalizeAuditEvent               $normalizeAuditEvent = new NormalizeAuditEvent()
-    )
+    public function __construct(private SendSecurityNotificationInterface $sender, private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent())
     {
-        $this->sender              = $sender;
-        $this->normalizeAuditEvent = $normalizeAuditEvent;
     }
 
     public function export(array $events) : void

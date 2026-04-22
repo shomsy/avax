@@ -12,15 +12,12 @@ use SensitiveParameter;
 
 final readonly class RegisterClientData
 {
-    public string|null                       $requestObjectVerificationKeyPem;
     public bool                              $approvalRequired;
     public bool                              $backChannelLogoutSupported;
     public bool                              $frontChannelLogoutSupported;
     public bool                              $requestObjectSignatureRequired;
     public bool                              $phishingResistantRequired;
     public bool                              $workloadIdentity;
-    public OAuthSenderConstraintType|null    $requiredSenderConstraint;
-    public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod;
     /** @var array<string, list<string>> */
     public array                             $audienceScopeBoundaries;
     /** @var list<OAuthGrantType> */
@@ -29,11 +26,6 @@ final readonly class RegisterClientData
     public array                             $allowedAudiences;
     /** @var list<string> */
     public array                             $allowedScopes;
-    public string|null                       $tenantSlug;
-    /** @var list<string> */
-    public array                             $redirectUris;
-    public OAuthClientType                   $type;
-    public string                            $name;
 
     /**
      * @param list<string>                $redirectUris
@@ -43,23 +35,23 @@ final readonly class RegisterClientData
      * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
-        string                                                  $name,
-        OAuthClientType                                         $type,
-        array                                                   $redirectUris,
-        string|null                                             $tenantSlug = null,
+        public string                                                  $name,
+        public OAuthClientType                                         $type,
+        public array                                                   $redirectUris,
+        public string|null                                             $tenantSlug = null,
         array|null                                              $allowedScopes = null,
         array|null                                              $allowedAudiences = null,
         array|null                                              $allowedGrantTypes = null,
         array|null                                              $audienceScopeBoundaries = null,
-        #[SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
+        #[SensitiveParameter] public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
+        public OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
         bool|null                                               $workloadIdentity = null,
         bool|null                                               $phishingResistantRequired = null,
         bool|null                                               $requestObjectSignatureRequired = null,
         bool|null                                               $frontChannelLogoutSupported = null,
         bool|null                                               $backChannelLogoutSupported = null,
         bool|null                                               $approvalRequired = null,
-        #[SensitiveParameter] string|null                       $requestObjectVerificationKeyPem = null
+        #[SensitiveParameter] public string|null                       $requestObjectVerificationKeyPem = null
     )
     {
         $allowedScopes                         ??= [];
@@ -72,22 +64,15 @@ final readonly class RegisterClientData
         $frontChannelLogoutSupported           ??= false;
         $backChannelLogoutSupported            ??= false;
         $approvalRequired                      ??= false;
-        $this->name                            = $name;
-        $this->type                            = $type;
-        $this->redirectUris                    = $redirectUris;
-        $this->tenantSlug                      = $tenantSlug;
         $this->allowedScopes                   = $allowedScopes;
         $this->allowedAudiences                = $allowedAudiences;
         $this->allowedGrantTypes               = $allowedGrantTypes;
         $this->audienceScopeBoundaries         = $audienceScopeBoundaries;
-        $this->tokenEndpointAuthMethod         = $tokenEndpointAuthMethod;
-        $this->requiredSenderConstraint        = $requiredSenderConstraint;
         $this->workloadIdentity                = $workloadIdentity;
         $this->phishingResistantRequired       = $phishingResistantRequired;
         $this->requestObjectSignatureRequired  = $requestObjectSignatureRequired;
         $this->frontChannelLogoutSupported     = $frontChannelLogoutSupported;
         $this->backChannelLogoutSupported      = $backChannelLogoutSupported;
         $this->approvalRequired                = $approvalRequired;
-        $this->requestObjectVerificationKeyPem = $requestObjectVerificationKeyPem;
     }
 }

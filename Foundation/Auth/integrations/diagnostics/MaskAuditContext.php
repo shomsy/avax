@@ -9,32 +9,26 @@ namespace Avax\Auth\Integrations\Diagnostics;
  */
 final readonly class MaskAuditContext
 {
-    /** @var list<string> */
-    private array $sensitiveKeys;
-
     /**
      * @param list<string> $sensitiveKeys
      */
-    public function __construct(
-        array $sensitiveKeys
-        = [
-            'email',
-            'ip_address',
-            'user_agent',
-            'access_token',
-            'refresh_token',
-            'token',
-            'client_secret',
-            'secret',
-            'authorization',
-            'cookie',
-            'password',
-            'password_hash',
-            'code',
-        ]
-    )
+    public function __construct(private array $sensitiveKeys
+                                = [
+        'email',
+        'ip_address',
+        'user_agent',
+        'access_token',
+        'refresh_token',
+        'token',
+        'client_secret',
+        'secret',
+        'authorization',
+        'cookie',
+        'password',
+        'password_hash',
+        'code',
+    ])
     {
-        $this->sensitiveKeys = $sensitiveKeys;
     }
 
     /**
@@ -67,13 +61,7 @@ final readonly class MaskAuditContext
     {
         $normalized = strtolower(trim($key));
 
-        foreach ($this->sensitiveKeys as $candidate) {
-            if ($normalized === strtolower($candidate)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->sensitiveKeys, fn ($candidate) => $normalized === strtolower($candidate));
     }
 
     /**

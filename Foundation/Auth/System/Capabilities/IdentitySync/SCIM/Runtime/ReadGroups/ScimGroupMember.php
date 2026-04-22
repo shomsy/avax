@@ -8,21 +8,12 @@ use SensitiveParameter;
 
 final readonly class ScimGroupMember
 {
-    public string $email;
-    public string $username;
-    public int    $userId;
-    public string $externalId;
-
     public function __construct(
-        string                       $externalId,
-        int                          $userId,
-        string                       $username,
-        #[SensitiveParameter] string $email
+        public string                       $externalId,
+        public int                          $userId,
+        public string                       $username,
+        #[SensitiveParameter] public string $email
     )
     {
-        $this->externalId = $externalId;
-        $this->userId     = $userId;
-        $this->username   = $username;
-        $this->email      = $email;
     }
 }

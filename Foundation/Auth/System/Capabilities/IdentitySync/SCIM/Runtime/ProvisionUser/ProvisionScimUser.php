@@ -26,47 +26,31 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdent
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use JsonException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class ProvisionScimUser
 {
-    private AttemptThrottle|null                  $attemptThrottle;
-    private LifecycleOrchestrator|null            $lifecycle;
-    private Clock                                 $clock;
-    private AuditLogInterface                     $auditLog;
-    private IdGeneratorInterface                  $idGenerator;
-    private PasswordHasher                        $passwordHasher;
-    private ScimProvisionedIdentityStoreInterface $identityStore;
-    private ScimDirectoryStoreInterface           $directoryStore;
-    private ProvisionableUserSourceInterface      $userSource;
-
     public function __construct(
-        ProvisionableUserSourceInterface      $userSource,
-        ScimDirectoryStoreInterface           $directoryStore,
-        ScimProvisionedIdentityStoreInterface $identityStore,
-        #[SensitiveParameter] PasswordHasher  $passwordHasher,
-        IdGeneratorInterface                  $idGenerator,
-        AuditLogInterface                     $auditLog,
-        Clock                                 $clock,
-        LifecycleOrchestrator|null            $lifecycle = null,
-        AttemptThrottle|null                  $attemptThrottle = null
+        private ProvisionableUserSourceInterface      $userSource,
+        private ScimDirectoryStoreInterface           $directoryStore,
+        private ScimProvisionedIdentityStoreInterface $identityStore,
+        #[SensitiveParameter] private PasswordHasher  $passwordHasher,
+        private IdGeneratorInterface                  $idGenerator,
+        private AuditLogInterface                     $auditLog,
+        private Clock                                 $clock,
+        private LifecycleOrchestrator|null            $lifecycle = null,
+        private AttemptThrottle|null                  $attemptThrottle = null
     )
     {
-        $this->userSource      = $userSource;
-        $this->directoryStore  = $directoryStore;
-        $this->identityStore   = $identityStore;
-        $this->passwordHasher  = $passwordHasher;
-        $this->idGenerator     = $idGenerator;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
-        $this->lifecycle       = $lifecycle;
-        $this->attemptThrottle = $attemptThrottle;
     }
 
     /**
      * @param ProvisionScimUserData $data
      *
      * @return ScimProvisioningResult
+     * @throws RandomException
+     * @throws ScimFailed
      */
     public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
     {

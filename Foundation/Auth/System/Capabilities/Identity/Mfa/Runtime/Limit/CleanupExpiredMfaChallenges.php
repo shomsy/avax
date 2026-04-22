@@ -8,16 +8,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredMfaChallenges
 {
-    private Clock                                   $clock;
-    private PruneExpiredMfaChallengesInterface|null $challengeStore;
-
-    public function __construct(
-        PruneExpiredMfaChallengesInterface|null $challengeStore,
-        Clock                                   $clock
-    )
+    public function __construct(private PruneExpiredMfaChallengesInterface|null $challengeStore, private Clock $clock)
     {
-        $this->challengeStore = $challengeStore;
-        $this->clock          = $clock;
     }
 
     public function execute() : int

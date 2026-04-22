@@ -21,28 +21,15 @@ use SensitiveParameter;
 
 final readonly class BeginAdminElevation
 {
-    private bool                         $phishingResistantRequired;
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private AdminElevationStoreInterface $elevationStore;
-    private RequireFreshMfa              $requireFreshMfa;
-    private CurrentAuthentication        $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        RequireFreshMfa                             $requireFreshMfa,
-        AdminElevationStoreInterface                $elevationStore,
-        AuditLogInterface                           $auditLog,
-        Clock                                       $clock,
-        bool                                        $phishingResistantRequired = false
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                             $requireFreshMfa,
+        private AdminElevationStoreInterface                $elevationStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private bool                                        $phishingResistantRequired = false
     )
     {
-        $this->currentAuthentication     = $currentAuthentication;
-        $this->requireFreshMfa           = $requireFreshMfa;
-        $this->elevationStore            = $elevationStore;
-        $this->auditLog                  = $auditLog;
-        $this->clock                     = $clock;
-        $this->phishingResistantRequired = $phishingResistantRequired;
     }
 
     /**

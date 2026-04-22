@@ -9,15 +9,10 @@ use SensitiveParameter;
 
 final readonly class IssuedTenantInvite
 {
-    public string       $plainTextToken;
-    public TenantInvite $invite;
-
     public function __construct(
-        TenantInvite                 $invite,
-        #[SensitiveParameter] string $plainTextToken
+        public TenantInvite                 $invite,
+        #[SensitiveParameter] public string $plainTextToken
     )
     {
-        $this->invite         = $invite;
-        $this->plainTextToken = $plainTextToken;
     }
 }

@@ -19,19 +19,12 @@ use SensitiveParameter;
  */
 final readonly class ReadActiveSessions
 {
-    private SessionRegistryInterface|null $sessionRegistry;
-    private Clock                         $clock;
-    private CurrentAuthentication         $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication         $currentAuthentication,
-        Clock                                               $clock,
-        #[SensitiveParameter] SessionRegistryInterface|null $sessionRegistry = null
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private Clock                                               $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->clock                 = $clock;
-        $this->sessionRegistry       = $sessionRegistry;
     }
 
     /**

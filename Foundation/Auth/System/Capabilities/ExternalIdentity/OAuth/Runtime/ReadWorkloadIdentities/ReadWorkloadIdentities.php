@@ -8,13 +8,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegi
 
 final readonly class ReadWorkloadIdentities
 {
-    private OAuthClientRegistryInterface $clientRegistry;
-
-    public function __construct(
-        OAuthClientRegistryInterface $clientRegistry
-    )
+    public function __construct(private OAuthClientRegistryInterface $clientRegistry)
     {
-        $this->clientRegistry = $clientRegistry;
     }
 
     /**

@@ -16,27 +16,12 @@ use Random\RandomException;
 
 final readonly class RegisterFederationConnection
 {
-    private Clock                              $clock;
-    private AuditLogInterface                  $auditLog;
-    private GroupRoleMappingValidator          $groupRoleMappingValidator;
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore,
-        GroupRoleMappingValidator          $groupRoleMappingValidator,
-        AuditLogInterface                  $auditLog,
-        Clock                              $clock
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore, private GroupRoleMappingValidator $groupRoleMappingValidator, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->connectionStore           = $connectionStore;
-        $this->groupRoleMappingValidator = $groupRoleMappingValidator;
-        $this->auditLog                  = $auditLog;
-        $this->clock                     = $clock;
     }
 
     /**
      * @throws FederationFailed
-     * @throws RandomException
      * @throws RandomException
      */
     public function execute(RegisterFederationConnectionData $data) : FederationConnection

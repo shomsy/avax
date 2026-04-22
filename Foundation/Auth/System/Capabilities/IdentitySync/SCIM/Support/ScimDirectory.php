@@ -9,51 +9,28 @@ use SensitiveParameter;
 
 final readonly class ScimDirectory
 {
-    public DateTimeImmutable|null $outageRecoveredAt;
-    public DateTimeImmutable|null $outageStartedAt;
-    public string|null            $outageReason;
-    public DateTimeImmutable|null $healthCheckedAt;
     public ScimDirectoryHealth    $health;
-    public DateTimeImmutable|null $rotatedAt;
-    public DateTimeImmutable      $createdAt;
-    /** @var array<string, list<string>> */
-    public array                  $groupRoleMap;
-    public string                 $tokenHash;
-    public string                 $name;
-    public string                 $tenantSlug;
-    public string                 $directoryId;
 
     /**
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        string                       $directoryId,
-        string                       $tenantSlug,
-        string                       $name,
-        #[SensitiveParameter] string $tokenHash,
-        array                        $groupRoleMap,
-        DateTimeImmutable            $createdAt,
-        DateTimeImmutable|null       $rotatedAt = null,
+        public string                       $directoryId,
+        public string                       $tenantSlug,
+        public string                       $name,
+        #[SensitiveParameter] public string $tokenHash,
+        public array                        $groupRoleMap,
+        public DateTimeImmutable            $createdAt,
+        public DateTimeImmutable|null       $rotatedAt = null,
         ScimDirectoryHealth|null     $health = null,
-        DateTimeImmutable|null       $healthCheckedAt = null,
-        string|null                  $outageReason = null,
-        DateTimeImmutable|null       $outageStartedAt = null,
-        DateTimeImmutable|null       $outageRecoveredAt = null
+        public DateTimeImmutable|null       $healthCheckedAt = null,
+        public string|null                  $outageReason = null,
+        public DateTimeImmutable|null       $outageStartedAt = null,
+        public DateTimeImmutable|null       $outageRecoveredAt = null
     )
     {
         $health                  ??= ScimDirectoryHealth::HEALTHY;
-        $this->directoryId       = $directoryId;
-        $this->tenantSlug        = $tenantSlug;
-        $this->name              = $name;
-        $this->tokenHash         = $tokenHash;
-        $this->groupRoleMap      = $groupRoleMap;
-        $this->createdAt         = $createdAt;
-        $this->rotatedAt         = $rotatedAt;
         $this->health            = $health;
-        $this->healthCheckedAt   = $healthCheckedAt;
-        $this->outageReason      = $outageReason;
-        $this->outageStartedAt   = $outageStartedAt;
-        $this->outageRecoveredAt = $outageRecoveredAt;
     }
 
     public function isHealthy() : bool

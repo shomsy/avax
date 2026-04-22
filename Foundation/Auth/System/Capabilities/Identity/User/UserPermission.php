@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Identity\User;
 
+use Stringable;
+
 /**
  * Value object representing a permission within the Auth System.
  */
-final readonly class UserPermission
+final readonly class UserPermission implements Stringable
 {
-    public string $value;
-
-    public function __construct(
-        string $value
-    )
+    public function __construct(public string $value)
     {
-        $this->value = $value;
     }
 
     public function equals(self $other) : bool

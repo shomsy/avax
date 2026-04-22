@@ -8,7 +8,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $root   = dirname(__DIR__);
 $json   = in_array('--json', $argv, true) || in_array('-j', $argv, true);
-$result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+$result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
 if ($json) {
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;

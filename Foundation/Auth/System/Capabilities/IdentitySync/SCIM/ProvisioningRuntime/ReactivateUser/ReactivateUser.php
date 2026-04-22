@@ -15,25 +15,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class ReactivateUser
 {
-    private LifecycleOrchestrator|null       $lifecycle;
-    private Clock                            $clock;
-    private AuditLogInterface                $auditLog;
-    private RequireAdminElevation            $requireAdminElevation;
-    private ProvisionableUserSourceInterface $userSource;
-
-    public function __construct(
-        ProvisionableUserSourceInterface $userSource,
-        RequireAdminElevation            $requireAdminElevation,
-        AuditLogInterface                $auditLog,
-        Clock                            $clock,
-        LifecycleOrchestrator|null       $lifecycle = null
-    )
+    public function __construct(private ProvisionableUserSourceInterface $userSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private LifecycleOrchestrator|null $lifecycle = null)
     {
-        $this->userSource            = $userSource;
-        $this->requireAdminElevation = $requireAdminElevation;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->lifecycle             = $lifecycle;
     }
 
     public function execute(int $userId) : void

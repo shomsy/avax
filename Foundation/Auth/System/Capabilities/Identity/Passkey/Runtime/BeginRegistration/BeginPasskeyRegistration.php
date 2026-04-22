@@ -23,43 +23,23 @@ use SensitiveParameter;
 
 final readonly class BeginPasskeyRegistration
 {
-    private string                          $rpName;
-    private string                          $rpId;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private PasskeyChallengeStoreInterface  $challengeStore;
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private PasskeyRuntimeInterface         $runtime;
-    private RequireFreshMfa                 $requireFreshMfa;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        RequireFreshMfa                                       $requireFreshMfa,
-        PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
-        PasskeyChallengeStoreInterface                        $challengeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        string                                                $rpId,
-        string                                                $rpName
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId,
+        private string                                                $rpName
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->requireFreshMfa       = $requireFreshMfa;
-        $this->runtime               = $runtime;
-        $this->credentialStore       = $credentialStore;
-        $this->challengeStore        = $challengeStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->rpId                  = $rpId;
-        $this->rpName                = $rpName;
     }
 
     /**
      * @throws PasskeyOperationFailed
      * @throws DateMalformedStringException
-     * @throws RandomException
      * @throws RandomException
      * @throws Unauthenticated
      */

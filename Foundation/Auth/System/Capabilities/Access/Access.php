@@ -10,6 +10,7 @@ use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Runtime\ReadRiskSignals
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskDecision;
 use Avax\Auth\System\Capabilities\Access\RiskBasedAccess\Support\RiskSignal;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevation;
+use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\BeginAdminElevation\BeginAdminElevation;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation\EndAdminElevation;
 use Avax\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
@@ -77,6 +78,9 @@ final readonly class Access
         $this->endAdminElevation->execute();
     }
 
+    /**
+     * @throws AdminElevationFailed
+     */
     public function requireAdminElevation() : void
     {
         $this->requireAdminElevation->execute();

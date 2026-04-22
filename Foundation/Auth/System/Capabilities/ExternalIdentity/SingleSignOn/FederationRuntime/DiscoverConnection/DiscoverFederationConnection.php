@@ -10,13 +10,8 @@ use SensitiveParameter;
 
 final readonly class DiscoverFederationConnection
 {
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore)
     {
-        $this->connectionStore = $connectionStore;
     }
 
     public function execute(#[SensitiveParameter] string $email) : FederationConnection|null

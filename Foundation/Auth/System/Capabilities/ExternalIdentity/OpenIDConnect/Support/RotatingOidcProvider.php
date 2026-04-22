@@ -10,20 +10,11 @@ use SensitiveParameter;
 
 final readonly class RotatingOidcProvider implements OidcProviderInterface
 {
-    /** @var list<OidcProviderInterface> */
-    private array                 $verificationProviders;
-    private OidcProviderInterface $activeProvider;
-
     /**
      * @param list<OidcProviderInterface> $verificationProviders
      */
-    public function __construct(
-        OidcProviderInterface $activeProvider,
-        array                 $verificationProviders = []
-    )
+    public function __construct(private OidcProviderInterface $activeProvider, private array $verificationProviders = [])
     {
-        $this->activeProvider        = $activeProvider;
-        $this->verificationProviders = $verificationProviders;
     }
 
     public function issueIdToken(

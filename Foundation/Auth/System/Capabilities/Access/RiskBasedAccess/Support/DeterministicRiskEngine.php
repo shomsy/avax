@@ -14,19 +14,8 @@ use SensitiveParameter;
  */
 final readonly class DeterministicRiskEngine
 {
-    private Clock                                        $clock;
-    private RiskSignalStoreInterface                     $signals;
-    private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments;
-
-    public function __construct(
-        KnownAuthenticationEnvironmentStoreInterface $knownEnvironments,
-        RiskSignalStoreInterface                     $signals,
-        Clock                                        $clock
-    )
+    public function __construct(private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments, private RiskSignalStoreInterface $signals, private Clock $clock)
     {
-        $this->knownEnvironments = $knownEnvironments;
-        $this->signals           = $signals;
-        $this->clock             = $clock;
     }
 
     public function assessSuccessfulAuthentication(

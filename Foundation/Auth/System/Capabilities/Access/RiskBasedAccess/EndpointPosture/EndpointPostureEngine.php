@@ -64,21 +64,19 @@ final readonly class EndpointPostureEngine
  */
 final readonly class EndpointPosturePolicy
 {
-    public float $quarantineThreshold;
     public float $stepUpThreshold;
     public float $denyThreshold;
 
     public function __construct(
         float|null $denyThreshold = null,
         float|null $stepUpThreshold = null,
-        float      $quarantineThreshold = 0.3
+        public float $quarantineThreshold = 0.3
     )
     {
         $denyThreshold             ??= 0.8;
         $stepUpThreshold           ??= 0.5;
         $this->denyThreshold       = $denyThreshold;
         $this->stepUpThreshold     = $stepUpThreshold;
-        $this->quarantineThreshold = $quarantineThreshold;
     }
 }
 

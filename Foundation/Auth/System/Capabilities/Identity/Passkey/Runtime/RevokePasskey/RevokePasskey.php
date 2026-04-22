@@ -16,25 +16,14 @@ use SensitiveParameter;
 
 final readonly class RevokePasskey
 {
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private RequireFreshMfa                 $requireFreshMfa;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        RequireFreshMfa                                       $requireFreshMfa,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->requireFreshMfa       = $requireFreshMfa;
-        $this->credentialStore       = $credentialStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
     }
 
     /**

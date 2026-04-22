@@ -6,19 +6,10 @@ namespace Avax\Auth\System\Capabilities\Identity\Passkey\Runtime;
 
 final readonly class PasskeyAuthenticationChallenge
 {
-    /** @var array<string, mixed> */
-    public array  $options;
-    public string $challengeId;
-
     /**
      * @param array<string, mixed> $options
      */
-    public function __construct(
-        string $challengeId,
-        array  $options
-    )
+    public function __construct(public string $challengeId, public array $options)
     {
-        $this->challengeId = $challengeId;
-        $this->options     = $options;
     }
 }

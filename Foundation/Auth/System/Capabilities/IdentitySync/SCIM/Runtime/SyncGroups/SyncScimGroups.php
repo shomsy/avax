@@ -16,22 +16,8 @@ use Random\RandomException;
 
 final readonly class SyncScimGroups
 {
-    private ProvisionScimUser                     $provisionScimUser;
-    private UserSourceInterface                   $userSource;
-    private ScimProvisionedIdentityStoreInterface $identityStore;
-    private ScimDirectoryStoreInterface           $directoryStore;
-
-    public function __construct(
-        ScimDirectoryStoreInterface           $directoryStore,
-        ScimProvisionedIdentityStoreInterface $identityStore,
-        UserSourceInterface                   $userSource,
-        ProvisionScimUser                     $provisionScimUser
-    )
+    public function __construct(private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private UserSourceInterface $userSource, private ProvisionScimUser $provisionScimUser)
     {
-        $this->directoryStore    = $directoryStore;
-        $this->identityStore     = $identityStore;
-        $this->userSource        = $userSource;
-        $this->provisionScimUser = $provisionScimUser;
     }
 
     /**

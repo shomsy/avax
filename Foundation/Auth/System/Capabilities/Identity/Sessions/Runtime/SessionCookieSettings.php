@@ -11,7 +11,6 @@ use InvalidArgumentException;
  */
 final readonly class SessionCookieSettings
 {
-    public string $domain;
     public string $path;
     public string $sameSite;
     public bool   $httpOnly;
@@ -25,7 +24,7 @@ final readonly class SessionCookieSettings
         bool|null   $httpOnly = null,
         string|null $sameSite = null,
         string|null $path = null,
-        string      $domain = ''
+        public string $domain = ''
     )
     {
         $secure         ??= true;
@@ -36,7 +35,6 @@ final readonly class SessionCookieSettings
         $this->httpOnly = $httpOnly;
         $this->sameSite = $sameSite;
         $this->path     = $path;
-        $this->domain   = $domain;
         if (! in_array($this->sameSite, ['Lax', 'Strict', 'None'], true)) {
             throw new InvalidArgumentException(message: 'Cookie sameSite must be Lax, Strict, or None.');
         }

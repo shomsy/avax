@@ -29,6 +29,6 @@ final readonly class SignReleaseArtifact
             throw new RuntimeException(message: 'Artifact signing failed.');
         }
 
-        return base64_encode($signature);
+        return base64_encode((string) $signature);
     }
 }

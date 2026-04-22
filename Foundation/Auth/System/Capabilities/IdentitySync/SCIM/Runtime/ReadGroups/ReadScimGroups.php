@@ -8,13 +8,8 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers\ReadScimUs
 
 final readonly class ReadScimGroups
 {
-    private ReadScimUsers $readScimUsers;
-
-    public function __construct(
-        ReadScimUsers $readScimUsers
-    )
+    public function __construct(private ReadScimUsers $readScimUsers)
     {
-        $this->readScimUsers = $readScimUsers;
     }
 
     /**

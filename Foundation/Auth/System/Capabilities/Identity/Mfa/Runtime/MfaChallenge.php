@@ -12,22 +12,8 @@ use DateTimeImmutable;
  */
 final readonly class MfaChallenge
 {
-    public int                 $remainingAttempts;
-    public DateTimeImmutable   $expiresAt;
-    public MfaChallengePurpose $purpose;
-    public string              $challengeId;
-
-    public function __construct(
-        string              $challengeId,
-        MfaChallengePurpose $purpose,
-        DateTimeImmutable   $expiresAt,
-        int                 $remainingAttempts
-    )
+    public function __construct(public string $challengeId, public MfaChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public int $remainingAttempts)
     {
-        $this->challengeId       = $challengeId;
-        $this->purpose           = $purpose;
-        $this->expiresAt         = $expiresAt;
-        $this->remainingAttempts = $remainingAttempts;
     }
 
     /**

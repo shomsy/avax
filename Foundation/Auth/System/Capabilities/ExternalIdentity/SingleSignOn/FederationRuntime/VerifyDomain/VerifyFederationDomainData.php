@@ -8,15 +8,10 @@ use SensitiveParameter;
 
 final readonly class VerifyFederationDomainData
 {
-    public string $verificationToken;
-    public string $connectionId;
-
     public function __construct(
-        string                       $connectionId,
-        #[SensitiveParameter] string $verificationToken
+        public string                       $connectionId,
+        #[SensitiveParameter] public string $verificationToken
     )
     {
-        $this->connectionId      = $connectionId;
-        $this->verificationToken = $verificationToken;
     }
 }

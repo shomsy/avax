@@ -17,48 +17,32 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 {
     private OpenSSLAsymmetricKey      $privateKey;
     private OpenSSLAsymmetricKey      $publicKey;
-    private string                    $algorithm;
     private int                       $idTokenLifetime;
-    private string|null               $pairwiseSalt;
     private SubjectIdentifierStrategy $subjectIdentifierStrategy;
-    private string                    $jsonWebKeySetUri;
-    private string                    $userInfoEndpoint;
-    private string                    $tokenEndpoint;
-    private string                    $authorizationEndpoint;
-    private string                    $keyId;
-    private string                    $issuer;
 
     public function __construct(
-        string                            $issuer,
+        private string                            $issuer,
         #[SensitiveParameter] string      $privateKeyPem,
-        string                            $keyId,
-        string                            $authorizationEndpoint,
-        #[SensitiveParameter] string $tokenEndpoint,
-        string                            $userInfoEndpoint,
-        string                            $jsonWebKeySetUri,
+        private string                            $keyId,
+        private string                            $authorizationEndpoint,
+        #[SensitiveParameter] private string      $tokenEndpoint,
+        private string                            $userInfoEndpoint,
+        private string                            $jsonWebKeySetUri,
         SubjectIdentifierStrategy|null    $subjectIdentifierStrategy = null,
-        #[SensitiveParameter] string|null $pairwiseSalt = null,
+        #[SensitiveParameter] private string|null $pairwiseSalt = null,
         int|null                          $idTokenLifetime = null,
-        string                            $algorithm = 'RS256'
+        private string                            $algorithm = 'RS256'
     )
     {
         $subjectIdentifierStrategy       ??= SubjectIdentifierStrategy::PUBLIC;
         $idTokenLifetime                 ??= 600;
-        $this->issuer                    = $issuer;
-        $this->keyId                     = $keyId;
-        $this->authorizationEndpoint     = $authorizationEndpoint;
-        $this->tokenEndpoint             = $tokenEndpoint;
-        $this->userInfoEndpoint          = $userInfoEndpoint;
-        $this->jsonWebKeySetUri          = $jsonWebKeySetUri;
         $this->subjectIdentifierStrategy = $subjectIdentifierStrategy;
-        $this->pairwiseSalt              = $pairwiseSalt;
         $this->idTokenLifetime           = $idTokenLifetime;
-        $this->algorithm                 = $algorithm;
-        if (trim($issuer) === '') {
+        if (trim($this->issuer) === '') {
             throw new InvalidArgumentException(message: 'OIDC issuer cannot be empty.');
         }
 
-        if ($algorithm !== 'RS256') {
+        if ($this->algorithm !== 'RS256') {
             throw new InvalidArgumentException(message: 'Only RS256 is currently supported for OIDC ID tokens.');
         }
 
@@ -143,7 +127,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     {
         return match ($this->subjectIdentifierStrategy) {
             SubjectIdentifierStrategy::PUBLIC   => (string) $user->getId()->value,
-            SubjectIdentifierStrategy::PAIRWISE => (new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE))->generate(
+            SubjectIdentifierStrategy::PAIRWISE => new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE)->generate(
                 localSubject    : (string) $user->getId()->value,
                 sectorIdentifier: $clientId,
                 pairwiseSalt    : (string) $this->pairwiseSalt

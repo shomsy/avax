@@ -10,41 +10,25 @@ use SensitiveParameter;
 
 final readonly class PushedAuthorizationRequest
 {
-    public PkceMethod|null   $codeChallengeMethod;
-    public string|null       $codeChallenge;
-    public string|null       $nonce;
-    public string|null       $state;
     /** @var list<string> */
     public array             $scopes;
-    public string            $redirectUri;
-    public string            $clientId;
-    public DateTimeImmutable $expiresAt;
-    public string            $requestUri;
 
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] string          $requestUri,
-        DateTimeImmutable                     $expiresAt,
-        string                                $clientId,
-        string                                $redirectUri,
+        #[SensitiveParameter] public string          $requestUri,
+        public DateTimeImmutable                     $expiresAt,
+        public string                                $clientId,
+        public string                                $redirectUri,
         array|null                            $scopes = null,
-        string|null                           $state = null,
-        string|null                           $nonce = null,
-        #[SensitiveParameter] string|null     $codeChallenge = null,
-        #[SensitiveParameter] PkceMethod|null $codeChallengeMethod = null
+        public string|null                           $state = null,
+        public string|null                           $nonce = null,
+        #[SensitiveParameter] public string|null     $codeChallenge = null,
+        #[SensitiveParameter] public PkceMethod|null $codeChallengeMethod = null
     )
     {
         $scopes                    ??= [];
-        $this->requestUri          = $requestUri;
-        $this->expiresAt           = $expiresAt;
-        $this->clientId            = $clientId;
-        $this->redirectUri         = $redirectUri;
         $this->scopes              = $scopes;
-        $this->state               = $state;
-        $this->nonce               = $nonce;
-        $this->codeChallenge       = $codeChallenge;
-        $this->codeChallengeMethod = $codeChallengeMethod;
     }
 }

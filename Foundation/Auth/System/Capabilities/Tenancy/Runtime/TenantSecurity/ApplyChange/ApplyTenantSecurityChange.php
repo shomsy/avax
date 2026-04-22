@@ -16,22 +16,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class ApplyTenantSecurityChange
 {
-    private Clock                                     $clock;
-    private AuditLogInterface                         $auditLog;
-    private TenantSecurityChangeRequestStoreInterface $changeRequestStore;
-    private TenantSecurityConfigurationStoreInterface $configurationStore;
-
-    public function __construct(
-        TenantSecurityConfigurationStoreInterface $configurationStore,
-        TenantSecurityChangeRequestStoreInterface $changeRequestStore,
-        AuditLogInterface                         $auditLog,
-        Clock                                     $clock
-    )
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->configurationStore = $configurationStore;
-        $this->changeRequestStore = $changeRequestStore;
-        $this->auditLog           = $auditLog;
-        $this->clock              = $clock;
     }
 
     /**

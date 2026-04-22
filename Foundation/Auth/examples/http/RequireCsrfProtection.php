@@ -11,17 +11,15 @@ use SensitiveParameter;
  */
 final readonly class RequireCsrfProtection
 {
-    private string $headerName;
     private string $cookieName;
 
     public function __construct(
         string|null                  $cookieName = null,
-        #[SensitiveParameter] string $headerName = 'x-csrf-token'
+        #[SensitiveParameter] private string $headerName = 'x-csrf-token'
     )
     {
         $cookieName       ??= 'csrf_token';
         $this->cookieName = $cookieName;
-        $this->headerName = $headerName;
     }
 
     /**

@@ -18,13 +18,11 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 {
     /** @var array<string, OAuthClient> */
     private array                   $clients = [];
-    private readonly PasswordHasher $passwordHasher;
 
     public function __construct(
-        #[SensitiveParameter] PasswordHasher $passwordHasher
+        #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
     )
     {
-        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -72,7 +70,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             throw new InvalidArgumentException(message: 'Workload identity clients require at least one allowed audience.');
         }
 
-        $normalizedTokenEndpointAuthMethod = (new OAuthTokenEndpointAuthMethodPolicy())->resolve(
+        $normalizedTokenEndpointAuthMethod = new OAuthTokenEndpointAuthMethodPolicy()->resolve(
             type            : $type,
             requested       : $tokenEndpointAuthMethod,
             workloadIdentity: $workloadIdentity

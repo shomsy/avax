@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegi
 
 final readonly class ReadClients
 {
-    private OAuthClientRegistryInterface $clientRegistry;
-
-    public function __construct(
-        OAuthClientRegistryInterface $clientRegistry
-    )
+    public function __construct(private OAuthClientRegistryInterface $clientRegistry)
     {
-        $this->clientRegistry = $clientRegistry;
     }
 
     /**

@@ -8,18 +8,11 @@ use SensitiveParameter;
 
 final readonly class BeginPasskeyAuthenticationData
 {
-    public string|null $userAgent;
-    public string|null $ipAddress;
-    public string|null $identifier;
-
     public function __construct(
-        string|null                       $identifier = null,
-        #[SensitiveParameter] string|null $ipAddress = null,
-        string|null                       $userAgent = null
+        public string|null                       $identifier = null,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     )
     {
-        $this->identifier = $identifier;
-        $this->ipAddress  = $ipAddress;
-        $this->userAgent  = $userAgent;
     }
 }

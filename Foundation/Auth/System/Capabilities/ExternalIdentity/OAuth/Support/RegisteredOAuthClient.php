@@ -11,15 +11,10 @@ use SensitiveParameter;
  */
 final readonly class RegisteredOAuthClient
 {
-    public string|null $plainTextSecret;
-    public OAuthClient $client;
-
     public function __construct(
-        OAuthClient                       $client,
-        #[SensitiveParameter] string|null $plainTextSecret = null
+        public OAuthClient                       $client,
+        #[SensitiveParameter] public string|null $plainTextSecret = null
     )
     {
-        $this->client          = $client;
-        $this->plainTextSecret = $plainTextSecret;
     }
 }

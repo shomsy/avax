@@ -24,21 +24,7 @@ enum EndpointPostureSignal: string
  */
 final readonly class EndpointPostureSignalData
 {
-    public string                $detail;
-    public bool                  $anomalous;
-    public float                 $score;
-    public EndpointPostureSignal $type;
-
-    public function __construct(
-        EndpointPostureSignal $type,
-        float                 $score,
-        bool                  $anomalous,
-        string                $detail
-    )
+    public function __construct(public EndpointPostureSignal $type, public float $score, public bool $anomalous, public string $detail)
     {
-        $this->type      = $type;
-        $this->score     = $score;
-        $this->anomalous = $anomalous;
-        $this->detail    = $detail;
     }
 }

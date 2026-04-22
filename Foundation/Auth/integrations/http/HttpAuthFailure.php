@@ -11,21 +11,12 @@ use SensitiveParameter;
  */
 final readonly class HttpAuthFailure
 {
-    public int|null $retryAfterSeconds;
-    public string   $message;
-    public string   $errorCode;
-    public int      $statusCode;
-
     public function __construct(
-        int                          $statusCode,
-        #[SensitiveParameter] string $errorCode,
-        string                       $message,
-        int|null                     $retryAfterSeconds = null
+        public int                          $statusCode,
+        #[SensitiveParameter] public string $errorCode,
+        public string                       $message,
+        public int|null                     $retryAfterSeconds = null
     )
     {
-        $this->statusCode        = $statusCode;
-        $this->errorCode         = $errorCode;
-        $this->message           = $message;
-        $this->retryAfterSeconds = $retryAfterSeconds;
     }
 }

@@ -10,18 +10,11 @@ use SensitiveParameter;
 
 final readonly class EmailChangeRecord
 {
-    public DateTimeImmutable $expiresAt;
-    public string            $newEmail;
-    public UserId            $userId;
-
     public function __construct(
-        UserId                       $userId,
-        #[SensitiveParameter] string $newEmail,
-        DateTimeImmutable            $expiresAt
+        public UserId                       $userId,
+        #[SensitiveParameter] public string $newEmail,
+        public DateTimeImmutable            $expiresAt
     )
     {
-        $this->userId    = $userId;
-        $this->newEmail  = $newEmail;
-        $this->expiresAt = $expiresAt;
     }
 }

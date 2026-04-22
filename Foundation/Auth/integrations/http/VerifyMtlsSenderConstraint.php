@@ -17,13 +17,8 @@ use SensitiveParameter;
  */
 final readonly class VerifyMtlsSenderConstraint
 {
-    private AuditLogInterface $auditLog;
-
-    public function __construct(
-        AuditLogInterface $auditLog = new NullAuditLog()
-    )
+    public function __construct(private AuditLogInterface $auditLog = new NullAuditLog())
     {
-        $this->auditLog = $auditLog;
     }
 
     /**

@@ -11,16 +11,8 @@ use Random\RandomException;
 
 final readonly class BuildJarmResponse
 {
-    private Clock                 $clock;
-    private OidcProviderInterface $oidcProvider;
-
-    public function __construct(
-        OidcProviderInterface $oidcProvider,
-        Clock                 $clock
-    )
+    public function __construct(private OidcProviderInterface $oidcProvider, private Clock $clock)
     {
-        $this->oidcProvider = $oidcProvider;
-        $this->clock        = $clock;
     }
 
     /**

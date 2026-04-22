@@ -13,15 +13,10 @@ use SensitiveParameter;
  */
 final readonly class ChangePasswordData
 {
-    public string $newPassword;
-    public string $currentPassword;
-
     public function __construct(
-        #[SensitiveParameter] string $currentPassword,
-        #[SensitiveParameter] string $newPassword
+        #[SensitiveParameter] public string $currentPassword,
+        #[SensitiveParameter] public string $newPassword
     )
     {
-        $this->currentPassword = $currentPassword;
-        $this->newPassword     = $newPassword;
     }
 }

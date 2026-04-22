@@ -12,8 +12,6 @@ use SensitiveParameter;
 final readonly class HttpEndpointInput
 {
     /** @var array<string, mixed> */
-    public array  $server;
-    /** @var array<string, mixed> */
     public array  $body;
     /** @var array<string, mixed> */
     public array  $routeParameters;
@@ -21,8 +19,6 @@ final readonly class HttpEndpointInput
     public array  $query;
     /** @var array<string, mixed> */
     public array  $headers;
-    public string $path;
-    public string $method;
 
     /**
      * @param array<string, mixed> $headers
@@ -32,25 +28,22 @@ final readonly class HttpEndpointInput
      * @param array<string, mixed> $server
      */
     public function __construct(
-        string                           $method,
-        string                           $path,
+        public string $method,
+        public string $path,
         #[SensitiveParameter] array|null $headers = null,
         array|null                       $query = null,
         array|null                       $routeParameters = null,
         array|null                       $body = null,
-        array                            $server = []
+        public array  $server = []
     )
     {
         $headers               ??= [];
         $query                 ??= [];
         $routeParameters       ??= [];
         $body                  ??= [];
-        $this->method          = $method;
-        $this->path            = $path;
         $this->headers         = $headers;
         $this->query           = $query;
         $this->routeParameters = $routeParameters;
         $this->body            = $body;
-        $this->server          = $server;
     }
 }

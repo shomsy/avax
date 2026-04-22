@@ -22,7 +22,7 @@ $artifacts = array_values(array_filter([
                                            is_file($root . '/Auth.txt') ? $root . '/Auth.txt' : null,
                                        ]));
 
-$evidence = (new GenerateRollbackEvidence())->execute(
+$evidence = new GenerateRollbackEvidence()->execute(
     repositoryRoot    : $root,
     rollbackTarget    : is_string($rollbackTarget) && $rollbackTarget !== '' ? $rollbackTarget : 'HEAD^',
     artifacts         : $artifacts,

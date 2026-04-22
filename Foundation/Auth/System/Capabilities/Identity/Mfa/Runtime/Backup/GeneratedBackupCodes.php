@@ -13,19 +13,13 @@ use SensitiveParameter;
  */
 final readonly class GeneratedBackupCodes
 {
-    /** @var list<BackupCodeRecord> */
-    public array         $records;
-    public BackupCodeSet $backupCodeSet;
-
     /**
      * @param list<BackupCodeRecord> $records
      */
     public function __construct(
-        #[SensitiveParameter] BackupCodeSet $backupCodeSet,
-        array                               $records
+        #[SensitiveParameter] public BackupCodeSet $backupCodeSet,
+        public array                               $records
     )
     {
-        $this->backupCodeSet = $backupCodeSet;
-        $this->records       = $records;
     }
 }

@@ -11,13 +11,8 @@ use Stringable;
  */
 final readonly class UserId implements Stringable
 {
-    public int $value;
-
-    public function __construct(
-        int $value
-    )
+    public function __construct(public int $value)
     {
-        $this->value = $value;
     }
 
     public function __toString() : string

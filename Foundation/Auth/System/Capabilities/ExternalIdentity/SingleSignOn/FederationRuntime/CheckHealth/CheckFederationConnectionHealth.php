@@ -14,22 +14,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CheckFederationConnectionHealth
 {
-    private Clock                              $clock;
-    private AuditLogInterface                  $auditLog;
-    private FederationHealthCheckInterface     $runtime;
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore,
-        FederationHealthCheckInterface     $runtime,
-        AuditLogInterface                  $auditLog,
-        Clock                              $clock
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore, private FederationHealthCheckInterface $runtime, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->connectionStore = $connectionStore;
-        $this->runtime         = $runtime;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
     }
 
     /**

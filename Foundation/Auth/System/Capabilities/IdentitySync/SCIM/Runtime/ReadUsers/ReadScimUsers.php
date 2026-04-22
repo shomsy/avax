@@ -9,16 +9,8 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdent
 
 final readonly class ReadScimUsers
 {
-    private UserSourceInterface                   $userSource;
-    private ScimProvisionedIdentityStoreInterface $identityStore;
-
-    public function __construct(
-        ScimProvisionedIdentityStoreInterface $identityStore,
-        UserSourceInterface                   $userSource
-    )
+    public function __construct(private ScimProvisionedIdentityStoreInterface $identityStore, private UserSourceInterface $userSource)
     {
-        $this->identityStore = $identityStore;
-        $this->userSource    = $userSource;
     }
 
     /**

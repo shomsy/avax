@@ -8,21 +8,12 @@ use SensitiveParameter;
 
 final readonly class LogoutResult
 {
-    public string|null $state;
-    public string|null $postLogoutRedirectUri;
-    public string|null $sessionId;
-    public bool        $revoked;
-
     public function __construct(
-        bool                              $revoked,
-        #[SensitiveParameter] string|null $sessionId = null,
-        string|null                       $postLogoutRedirectUri = null,
-        string|null                       $state = null
+        public bool                              $revoked,
+        #[SensitiveParameter] public string|null $sessionId = null,
+        public string|null                       $postLogoutRedirectUri = null,
+        public string|null                       $state = null
     )
     {
-        $this->revoked               = $revoked;
-        $this->sessionId             = $sessionId;
-        $this->postLogoutRedirectUri = $postLogoutRedirectUri;
-        $this->state                 = $state;
     }
 }

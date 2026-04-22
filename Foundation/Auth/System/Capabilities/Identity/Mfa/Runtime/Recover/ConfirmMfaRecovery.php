@@ -21,34 +21,17 @@ use SensitiveParameter;
  */
 final readonly class ConfirmMfaRecovery
 {
-    private IdentityInterface|null          $identity;
-    private CurrentAuthentication|null      $currentAuthentication;
-    private RefreshTokenStoreInterface|null $refreshTokenStore;
-    private SessionRegistryInterface|null   $sessionRegistry;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private MfaChallengeStoreInterface      $mfaChallengeStore;
-    private MfaStoreInterface               $mfaStore;
-
     public function __construct(
-        MfaStoreInterface                                     $mfaStore,
-        MfaChallengeStoreInterface                            $mfaChallengeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        #[SensitiveParameter] CurrentAuthentication|null      $currentAuthentication = null,
-        IdentityInterface|null                                $identity = null
+        private MfaStoreInterface                                     $mfaStore,
+        private MfaChallengeStoreInterface                            $mfaChallengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
+        private IdentityInterface|null                                $identity = null
     )
     {
-        $this->mfaStore              = $mfaStore;
-        $this->mfaChallengeStore     = $mfaChallengeStore;
-        $this->auditLog              = $auditLog;
-        $this->clock                 = $clock;
-        $this->sessionRegistry       = $sessionRegistry;
-        $this->refreshTokenStore     = $refreshTokenStore;
-        $this->currentAuthentication = $currentAuthentication;
-        $this->identity              = $identity;
     }
 
     /**

@@ -17,19 +17,8 @@ use DateTimeImmutable;
  */
 final readonly class VerifyOAuthSenderConstraint
 {
-    private AuditLogInterface          $auditLog;
-    private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint;
-    private VerifyDpopProof            $verifyDpopProof;
-
-    public function __construct(
-        VerifyDpopProof            $verifyDpopProof,
-        VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint,
-        AuditLogInterface          $auditLog = new NullAuditLog()
-    )
+    public function __construct(private VerifyDpopProof $verifyDpopProof, private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint, private AuditLogInterface $auditLog = new NullAuditLog())
     {
-        $this->verifyDpopProof            = $verifyDpopProof;
-        $this->verifyMtlsSenderConstraint = $verifyMtlsSenderConstraint;
-        $this->auditLog                   = $auditLog;
     }
 
     /**

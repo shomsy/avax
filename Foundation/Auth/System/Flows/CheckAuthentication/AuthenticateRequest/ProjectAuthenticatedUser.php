@@ -14,16 +14,11 @@ use SensitiveParameter;
  */
 final readonly class ProjectAuthenticatedUser
 {
-    private MfaStoreInterface                    $mfaStore;
-    private EmailVerificationStateStoreInterface $emailVerificationState;
-
     public function __construct(
-        #[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState,
-        MfaStoreInterface                                          $mfaStore
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private MfaStoreInterface                                          $mfaStore
     )
     {
-        $this->emailVerificationState = $emailVerificationState;
-        $this->mfaStore               = $mfaStore;
     }
 
     public function fromUser(User $user) : AuthenticatedUser

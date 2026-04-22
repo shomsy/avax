@@ -12,16 +12,11 @@ use SensitiveParameter;
 
 final readonly class ListPasskeys
 {
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->credentialStore       = $credentialStore;
     }
 
     /**

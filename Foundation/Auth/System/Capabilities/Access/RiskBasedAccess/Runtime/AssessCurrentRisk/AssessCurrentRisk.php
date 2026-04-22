@@ -13,19 +13,12 @@ use SensitiveParameter;
 
 final readonly class AssessCurrentRisk
 {
-    private DeterministicRiskEngine $riskEngine;
-    private UserSourceInterface     $userSource;
-    private CurrentAuthentication   $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
-        UserSourceInterface                         $userSource,
-        DeterministicRiskEngine                     $riskEngine
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface                         $userSource,
+        private DeterministicRiskEngine                     $riskEngine
     )
     {
-        $this->currentAuthentication = $currentAuthentication;
-        $this->userSource            = $userSource;
-        $this->riskEngine            = $riskEngine;
     }
 
     public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null

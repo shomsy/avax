@@ -8,35 +8,22 @@ use DateTimeImmutable;
 
 final readonly class OidcRequestObject
 {
-    public string|null       $signingClientId;
-    public string|null       $signingAlgorithm;
     public bool              $signatureVerified;
-    public DateTimeImmutable $expiresAt;
-    public DateTimeImmutable $createdAt;
-    /** @var array<string, mixed> */
-    public array             $claims;
-    public string            $requestUri;
 
     /**
      * @param array<string, mixed> $claims
      */
     public function __construct(
-        string            $requestUri,
-        array             $claims,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $expiresAt,
+        public string            $requestUri,
+        public array             $claims,
+        public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $expiresAt,
         bool|null         $signatureVerified = null,
-        string|null       $signingAlgorithm = null,
-        string|null       $signingClientId = null
+        public string|null       $signingAlgorithm = null,
+        public string|null       $signingClientId = null
     )
     {
         $signatureVerified       ??= false;
-        $this->requestUri        = $requestUri;
-        $this->claims            = $claims;
-        $this->createdAt         = $createdAt;
-        $this->expiresAt         = $expiresAt;
         $this->signatureVerified = $signatureVerified;
-        $this->signingAlgorithm  = $signingAlgorithm;
-        $this->signingClientId   = $signingClientId;
     }
 }

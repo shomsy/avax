@@ -6,16 +6,10 @@ namespace Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\R
 
 final readonly class OidcUserInfo
 {
-    /** @var array<string, bool|int|string> */
-    public array $claims;
-
     /**
      * @param array<string, bool|int|string> $claims
      */
-    public function __construct(
-        array $claims
-    )
+    public function __construct(public array $claims)
     {
-        $this->claims = $claims;
     }
 }

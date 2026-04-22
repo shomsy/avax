@@ -26,31 +26,16 @@ use SensitiveParameter;
  */
 final readonly class RequireAccessPolicy
 {
-    private RequireAdminElevation                  $requireAdminElevation;
-    private RequireFreshMfa                        $requireFreshMfa;
-    private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication;
-    private RequireResourceOwner                   $requireResourceOwner;
-    private RequirePermission                      $requirePermission;
-    private RequireRole                            $requireRole;
-    private RequireAuthentication                  $requireAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] RequireAuthentication                  $requireAuthentication,
-        RequireRole                                                  $requireRole,
-        RequirePermission                                            $requirePermission,
-        RequireResourceOwner                                         $requireResourceOwner,
-        #[SensitiveParameter] RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        RequireFreshMfa                                              $requireFreshMfa,
-        RequireAdminElevation                                        $requireAdminElevation
+        #[SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
+        private RequireRole                                                  $requireRole,
+        private RequirePermission                                            $requirePermission,
+        private RequireResourceOwner                                         $requireResourceOwner,
+        #[SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
+        private RequireFreshMfa                                              $requireFreshMfa,
+        private RequireAdminElevation                                        $requireAdminElevation
     )
     {
-        $this->requireAuthentication                  = $requireAuthentication;
-        $this->requireRole                            = $requireRole;
-        $this->requirePermission                      = $requirePermission;
-        $this->requireResourceOwner                   = $requireResourceOwner;
-        $this->requirePhishingResistantAuthentication = $requirePhishingResistantAuthentication;
-        $this->requireFreshMfa                        = $requireFreshMfa;
-        $this->requireAdminElevation                  = $requireAdminElevation;
     }
 
     /**

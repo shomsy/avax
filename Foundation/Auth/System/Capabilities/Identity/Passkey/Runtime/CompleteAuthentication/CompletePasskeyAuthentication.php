@@ -22,40 +22,19 @@ use SensitiveParameter;
 
 final readonly class CompletePasskeyAuthentication
 {
-    private string                          $rpId;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private CurrentAuthentication           $currentAuthentication;
-    private ProjectAuthenticatedUser        $projectAuthenticatedUser;
-    private IdentityInterface               $identity;
-    private UserSourceInterface             $userSource;
-    private PasskeyCredentialStoreInterface $credentialStore;
-    private PasskeyChallengeStoreInterface  $challengeStore;
-    private PasskeyRuntimeInterface         $runtime;
-
     public function __construct(
-        PasskeyRuntimeInterface                               $runtime,
-        PasskeyChallengeStoreInterface                        $challengeStore,
-        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
-        UserSourceInterface                                   $userSource,
-        IdentityInterface                                     $identity,
-        ProjectAuthenticatedUser                              $projectAuthenticatedUser,
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        string                                                $rpId
+        private PasskeyRuntimeInterface                               $runtime,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private UserSourceInterface                                   $userSource,
+        private IdentityInterface                                     $identity,
+        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     )
     {
-        $this->runtime                  = $runtime;
-        $this->challengeStore           = $challengeStore;
-        $this->credentialStore          = $credentialStore;
-        $this->userSource               = $userSource;
-        $this->identity                 = $identity;
-        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
-        $this->currentAuthentication    = $currentAuthentication;
-        $this->auditLog                 = $auditLog;
-        $this->clock                    = $clock;
-        $this->rpId                     = $rpId;
     }
 
     /**

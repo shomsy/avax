@@ -11,16 +11,8 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcReq
 
 final readonly class ValidateRequestObject
 {
-    private OAuthClientRegistryInterface|null    $clientRegistry;
-    private OidcRequestObjectStoreInterface|null $requestObjectStore;
-
-    public function __construct(
-        OidcRequestObjectStoreInterface|null $requestObjectStore = null,
-        OAuthClientRegistryInterface|null    $clientRegistry = null
-    )
+    public function __construct(private OidcRequestObjectStoreInterface|null $requestObjectStore = null, private OAuthClientRegistryInterface|null $clientRegistry = null)
     {
-        $this->requestObjectStore = $requestObjectStore;
-        $this->clientRegistry     = $clientRegistry;
     }
 
     public function execute(ValidateRequestObjectData $data) : ValidatedRequestObject

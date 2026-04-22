@@ -13,7 +13,7 @@ if (! is_dir($buildDirectory)) {
     mkdir($buildDirectory, 0777, true);
 }
 
-$bundle     = (new GenerateEvidenceBundle())->execute(repositoryRoot: $root);
+$bundle = new GenerateEvidenceBundle()->execute(repositoryRoot: $root);
 $outputFile = $buildDirectory . '/evidence-bundle.json';
 file_put_contents($outputFile, json_encode($bundle, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 

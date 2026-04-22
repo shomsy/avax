@@ -14,23 +14,17 @@ use InvalidArgumentException;
  */
 final readonly class LoginRateLimit
 {
-    private int                            $decaySeconds;
     private int                            $maxAttempts;
-    private Clock                          $clock;
-    private LoginRateLimitStorageInterface $storage;
 
     public function __construct(
-        LoginRateLimitStorageInterface $storage,
-        Clock                          $clock,
+        private LoginRateLimitStorageInterface $storage,
+        private Clock                          $clock,
         int|null                       $maxAttempts = null,
-        int                            $decaySeconds = 60
+        private int                            $decaySeconds = 60
     )
     {
         $maxAttempts        ??= 5;
-        $this->storage      = $storage;
-        $this->clock        = $clock;
         $this->maxAttempts  = $maxAttempts;
-        $this->decaySeconds = $decaySeconds;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
         }

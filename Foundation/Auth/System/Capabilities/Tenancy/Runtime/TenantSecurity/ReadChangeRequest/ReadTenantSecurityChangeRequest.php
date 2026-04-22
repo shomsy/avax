@@ -9,13 +9,8 @@ use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestSt
 
 final readonly class ReadTenantSecurityChangeRequest
 {
-    private TenantSecurityChangeRequestStoreInterface $changeRequestStore;
-
-    public function __construct(
-        TenantSecurityChangeRequestStoreInterface $changeRequestStore
-    )
+    public function __construct(private TenantSecurityChangeRequestStoreInterface $changeRequestStore)
     {
-        $this->changeRequestStore = $changeRequestStore;
     }
 
     public function execute(string $changeId) : TenantSecurityChangeRequest|null

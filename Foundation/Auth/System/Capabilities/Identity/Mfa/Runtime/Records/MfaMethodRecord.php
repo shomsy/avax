@@ -17,33 +17,23 @@ use SensitiveParameter;
  */
 final readonly class MfaMethodRecord
 {
-    public int|null $lastAcceptedTimeStep;
     /** @var list<BackupCodeRecord> */
     public array             $backupCodes;
-    public DateTimeImmutable $enabledAt;
-    public string            $secret;
-    public MfaMethod         $method;
-    public UserId            $userId;
 
     /**
      * @param list<BackupCodeRecord> $backupCodes
      */
     public function __construct(
-        UserId                           $userId,
-        MfaMethod                        $method,
-        #[SensitiveParameter] string     $secret,
-        DateTimeImmutable                $enabledAt,
+        public UserId                       $userId,
+        public MfaMethod                    $method,
+        #[SensitiveParameter] public string $secret,
+        public DateTimeImmutable            $enabledAt,
         #[SensitiveParameter] array|null $backupCodes = null,
-        int|null                         $lastAcceptedTimeStep = null
+        public int|null                     $lastAcceptedTimeStep = null
     )
     {
         $backupCodes                ??= [];
-        $this->userId               = $userId;
-        $this->method               = $method;
-        $this->secret               = $secret;
-        $this->enabledAt            = $enabledAt;
         $this->backupCodes          = $backupCodes;
-        $this->lastAcceptedTimeStep = $lastAcceptedTimeStep;
     }
 
     /**

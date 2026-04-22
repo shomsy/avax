@@ -12,40 +12,22 @@ use SensitiveParameter;
  */
 final readonly class ActiveSession
 {
-    public string|null            $revokeReason;
-    public DateTimeImmutable|null $revokedAt;
     public bool                   $current;
-    public string|null            $userAgent;
-    public string|null            $ipAddress;
-    public DateTimeImmutable      $absoluteExpiresAt;
-    public DateTimeImmutable      $idleExpiresAt;
-    public DateTimeImmutable      $lastSeenAt;
-    public DateTimeImmutable      $createdAt;
-    public string                 $sessionId;
 
     public function __construct(
-        #[SensitiveParameter] string      $sessionId,
-        DateTimeImmutable                 $createdAt,
-        DateTimeImmutable                 $lastSeenAt,
-        DateTimeImmutable                 $idleExpiresAt,
-        DateTimeImmutable                 $absoluteExpiresAt,
-        #[SensitiveParameter] string|null $ipAddress = null,
-        string|null                       $userAgent = null,
+        #[SensitiveParameter] public string      $sessionId,
+        public DateTimeImmutable                 $createdAt,
+        public DateTimeImmutable                 $lastSeenAt,
+        public DateTimeImmutable                 $idleExpiresAt,
+        public DateTimeImmutable                 $absoluteExpiresAt,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null,
         bool|null                         $current = null,
-        DateTimeImmutable|null            $revokedAt = null,
-        string|null                       $revokeReason = null
+        public DateTimeImmutable|null            $revokedAt = null,
+        public string|null                       $revokeReason = null
     )
     {
         $current                 ??= false;
-        $this->sessionId         = $sessionId;
-        $this->createdAt         = $createdAt;
-        $this->lastSeenAt        = $lastSeenAt;
-        $this->idleExpiresAt     = $idleExpiresAt;
-        $this->absoluteExpiresAt = $absoluteExpiresAt;
-        $this->ipAddress         = $ipAddress;
-        $this->userAgent         = $userAgent;
         $this->current           = $current;
-        $this->revokedAt         = $revokedAt;
-        $this->revokeReason      = $revokeReason;
     }
 }

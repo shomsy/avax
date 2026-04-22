@@ -18,40 +18,19 @@ use SensitiveParameter;
 
 final readonly class ConfirmEmailChange
 {
-    private RefreshTokenStoreInterface|null      $refreshTokenStore;
-    private MfaChallengeStoreInterface|null      $mfaChallengeStore;
-    private SessionRegistryInterface|null        $sessionRegistry;
-    private IdentityInterface                    $identity;
-    private CurrentAuthentication                $currentAuthentication;
-    private Clock                                $clock;
-    private AuditLogInterface                    $auditLog;
-    private EmailVerificationStateStoreInterface $emailVerificationState;
-    private EmailChangeStoreInterface            $emailChangeStore;
-    private ProvisionableUserSourceInterface     $userSource;
-
     public function __construct(
-        ProvisionableUserSourceInterface                           $userSource,
-        #[SensitiveParameter] EmailChangeStoreInterface            $emailChangeStore,
-        #[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState,
-        AuditLogInterface                                          $auditLog,
-        Clock                                                      $clock,
-        #[SensitiveParameter] CurrentAuthentication                $currentAuthentication,
-        IdentityInterface                                          $identity,
-        #[SensitiveParameter] SessionRegistryInterface|null        $sessionRegistry = null,
-        MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null      $refreshTokenStore = null
+        private ProvisionableUserSourceInterface                           $userSource,
+        #[SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                          $auditLog,
+        private Clock                                                      $clock,
+        #[SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
+        private IdentityInterface                                          $identity,
+        #[SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
     )
     {
-        $this->userSource             = $userSource;
-        $this->emailChangeStore       = $emailChangeStore;
-        $this->emailVerificationState = $emailVerificationState;
-        $this->auditLog               = $auditLog;
-        $this->clock                  = $clock;
-        $this->currentAuthentication  = $currentAuthentication;
-        $this->identity               = $identity;
-        $this->sessionRegistry        = $sessionRegistry;
-        $this->mfaChallengeStore      = $mfaChallengeStore;
-        $this->refreshTokenStore      = $refreshTokenStore;
     }
 
     /**

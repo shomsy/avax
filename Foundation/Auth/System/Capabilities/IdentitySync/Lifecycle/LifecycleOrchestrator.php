@@ -12,22 +12,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class LifecycleOrchestrator
 {
-    private Clock                            $clock;
-    private AuditLogInterface                $auditLog;
-    private LifecycleStoreInterface          $store;
-    private ProvisionableUserSourceInterface $userSource;
-
-    public function __construct(
-        ProvisionableUserSourceInterface $userSource,
-        LifecycleStoreInterface          $store,
-        AuditLogInterface                $auditLog,
-        Clock                            $clock
-    )
+    public function __construct(private ProvisionableUserSourceInterface $userSource, private LifecycleStoreInterface $store, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->userSource = $userSource;
-        $this->store      = $store;
-        $this->auditLog   = $auditLog;
-        $this->clock      = $clock;
     }
 
     public function activate(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord

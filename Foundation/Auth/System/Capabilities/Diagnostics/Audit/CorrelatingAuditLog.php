@@ -9,16 +9,8 @@ namespace Avax\Auth\System\Capabilities\Diagnostics\Audit;
  */
 final readonly class CorrelatingAuditLog implements AuditLogInterface
 {
-    private string            $correlationId;
-    private AuditLogInterface $inner;
-
-    public function __construct(
-        AuditLogInterface $inner,
-        string            $correlationId
-    )
+    public function __construct(private AuditLogInterface $inner, private string $correlationId)
     {
-        $this->inner         = $inner;
-        $this->correlationId = $correlationId;
     }
 
     public function record(AuditEvent $event) : void

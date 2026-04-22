@@ -19,25 +19,14 @@ use SensitiveParameter;
 
 final readonly class RotateScimToken
 {
-    private AttemptThrottle|null        $attemptThrottle;
-    private Clock                       $clock;
-    private AuditLogInterface           $auditLog;
-    private PasswordHasher              $passwordHasher;
-    private ScimDirectoryStoreInterface $directoryStore;
-
     public function __construct(
-        ScimDirectoryStoreInterface          $directoryStore,
-        #[SensitiveParameter] PasswordHasher $passwordHasher,
-        AuditLogInterface                    $auditLog,
-        Clock                                $clock,
-        AttemptThrottle|null                 $attemptThrottle = null
+        private ScimDirectoryStoreInterface          $directoryStore,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private AuditLogInterface                    $auditLog,
+        private Clock                                $clock,
+        private AttemptThrottle|null                 $attemptThrottle = null
     )
     {
-        $this->directoryStore  = $directoryStore;
-        $this->passwordHasher  = $passwordHasher;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
-        $this->attemptThrottle = $attemptThrottle;
     }
 
     /**

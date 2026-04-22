@@ -15,22 +15,8 @@ use JsonException;
 
 final readonly class SyncFederationMetadata
 {
-    private Clock                              $clock;
-    private AuditLogInterface                  $auditLog;
-    private FederationMetadataRuntimeInterface $runtime;
-    private FederationConnectionStoreInterface $connectionStore;
-
-    public function __construct(
-        FederationConnectionStoreInterface $connectionStore,
-        FederationMetadataRuntimeInterface $runtime,
-        AuditLogInterface                  $auditLog,
-        Clock                              $clock
-    )
+    public function __construct(private FederationConnectionStoreInterface $connectionStore, private FederationMetadataRuntimeInterface $runtime, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->connectionStore = $connectionStore;
-        $this->runtime         = $runtime;
-        $this->auditLog        = $auditLog;
-        $this->clock           = $clock;
     }
 
     /**

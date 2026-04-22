@@ -24,34 +24,17 @@ use SensitiveParameter;
 
 final readonly class AuthorizeCode
 {
-    private ValidateRequestObject|null      $requestObjectValidator;
-    private OidcProviderInterface|null      $oidcProvider;
-    private Clock                           $clock;
-    private AuditLogInterface               $auditLog;
-    private AuthorizationCodeStoreInterface $codeStore;
-    private OAuthClientRegistryInterface    $clientRegistry;
-    private UserSourceInterface             $userSource;
-    private CurrentAuthentication           $currentAuthentication;
-
     public function __construct(
-        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
-        UserSourceInterface                                   $userSource,
-        OAuthClientRegistryInterface                          $clientRegistry,
-        #[SensitiveParameter] AuthorizationCodeStoreInterface $codeStore,
-        AuditLogInterface                                     $auditLog,
-        Clock                                                 $clock,
-        OidcProviderInterface|null                            $oidcProvider = null,
-        ValidateRequestObject|null                            $requestObjectValidator = null
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private UserSourceInterface                                   $userSource,
+        private OAuthClientRegistryInterface                          $clientRegistry,
+        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private OidcProviderInterface|null                            $oidcProvider = null,
+        private ValidateRequestObject|null                            $requestObjectValidator = null
     )
     {
-        $this->currentAuthentication  = $currentAuthentication;
-        $this->userSource             = $userSource;
-        $this->clientRegistry         = $clientRegistry;
-        $this->codeStore              = $codeStore;
-        $this->auditLog               = $auditLog;
-        $this->clock                  = $clock;
-        $this->oidcProvider           = $oidcProvider;
-        $this->requestObjectValidator = $requestObjectValidator;
     }
 
     /**

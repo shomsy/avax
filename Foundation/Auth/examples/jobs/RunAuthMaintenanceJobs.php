@@ -17,28 +17,18 @@ use SensitiveParameter;
  */
 final readonly class RunAuthMaintenanceJobs
 {
-    private ExportAuditEvents                $exportAuditEvents;
-    private CleanupExpiredPasskeyChallenges  $cleanupExpiredPasskeyChallenges;
-    private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes;
     private CleanupExpiredMfaChallenges      $cleanupExpiredMfaChallenges;
-    private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets;
-    private CleanupExpiredSessions           $cleanupExpiredSessions;
 
     public function __construct(
-        #[SensitiveParameter] CleanupExpiredSessions           $cleanupExpiredSessions,
-        #[SensitiveParameter] CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
+        #[SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
+        #[SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
         CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
-        #[SensitiveParameter] CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
-        CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
-        ExportAuditEvents                                      $exportAuditEvents
+        #[SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
+        private CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
+        private ExportAuditEvents                                      $exportAuditEvents
     )
     {
-        $this->cleanupExpiredSessions           = $cleanupExpiredSessions;
-        $this->cleanupExpiredPasswordResets     = $cleanupExpiredPasswordResets;
         $this->cleanupExpiredMfaChallenges      = $cleanupExpiredMfaChallenges;
-        $this->cleanupExpiredAuthorizationCodes = $cleanupExpiredAuthorizationCodes;
-        $this->cleanupExpiredPasskeyChallenges  = $cleanupExpiredPasskeyChallenges;
-        $this->exportAuditEvents                = $exportAuditEvents;
     }
 
     /**

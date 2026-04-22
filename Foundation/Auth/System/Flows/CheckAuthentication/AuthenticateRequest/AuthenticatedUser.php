@@ -14,40 +14,32 @@ use SensitiveParameter;
  */
 final readonly class AuthenticatedUser
 {
-    public bool   $mfaEnabled;
     public bool   $emailVerified;
     /** @var list<string> */
     public array  $permissions;
     /** @var list<string> */
     public array  $roles;
-    public string $username;
-    public string $email;
-    public int    $id;
 
     /**
      * @param list<string> $roles
      * @param list<string> $permissions
      */
     public function __construct(
-        int                          $id,
-        #[SensitiveParameter] string $email,
-        string                       $username,
+        public int                          $id,
+        #[SensitiveParameter] public string $email,
+        public string                       $username,
         array|null                   $roles = null,
         array|null                   $permissions = null,
         bool|null                    $emailVerified = null,
-        bool                         $mfaEnabled = false
+        public bool                         $mfaEnabled = false
     )
     {
         $roles               ??= [];
         $permissions         ??= [];
         $emailVerified       ??= false;
-        $this->id            = $id;
-        $this->email         = $email;
-        $this->username      = $username;
         $this->roles         = $roles;
         $this->permissions   = $permissions;
         $this->emailVerified = $emailVerified;
-        $this->mfaEnabled    = $mfaEnabled;
     }
 
     public static function fromUser(
@@ -85,13 +77,7 @@ final readonly class AuthenticatedUser
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        foreach ($this->roles as $storedRole) {
-            if (UserRole::from(value: $storedRole)->canAccess(required: $requiredRole)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->roles, fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
     }
 
     public function hasPermission(UserPermission $permission) : bool

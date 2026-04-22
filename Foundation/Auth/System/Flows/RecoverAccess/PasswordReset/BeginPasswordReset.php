@@ -18,29 +18,19 @@ use SensitiveParameter;
  */
 final readonly class BeginPasswordReset
 {
-    private AttemptThrottle|null        $attemptThrottle;
     private int                         $expiresAfterSeconds;
-    private Clock                       $clock;
-    private AuditLogInterface           $auditLog;
-    private PasswordResetStoreInterface $passwordResetStore;
-    private UserSourceInterface         $userSource;
 
     public function __construct(
-        UserSourceInterface                               $userSource,
-        #[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore,
-        AuditLogInterface                                 $auditLog,
-        Clock                                             $clock,
+        private UserSourceInterface                               $userSource,
+        #[SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
+        private AuditLogInterface                                 $auditLog,
+        private Clock                                             $clock,
         int|null                                          $expiresAfterSeconds = null,
-        AttemptThrottle|null                              $attemptThrottle = null
+        private AttemptThrottle|null                              $attemptThrottle = null
     )
     {
         $expiresAfterSeconds       ??= 3600;
-        $this->userSource          = $userSource;
-        $this->passwordResetStore  = $passwordResetStore;
-        $this->auditLog            = $auditLog;
-        $this->clock               = $clock;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
-        $this->attemptThrottle     = $attemptThrottle;
     }
 
     /**

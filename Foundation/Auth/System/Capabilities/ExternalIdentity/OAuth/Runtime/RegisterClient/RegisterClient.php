@@ -12,19 +12,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class RegisterClient
 {
-    private Clock                        $clock;
-    private AuditLogInterface            $auditLog;
-    private OAuthClientRegistryInterface $clientRegistry;
-
-    public function __construct(
-        OAuthClientRegistryInterface $clientRegistry,
-        AuditLogInterface            $auditLog,
-        Clock                        $clock
-    )
+    public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->clientRegistry = $clientRegistry;
-        $this->auditLog       = $auditLog;
-        $this->clock          = $clock;
     }
 
     public function execute(RegisterClientData $data) : RegisteredOAuthClient

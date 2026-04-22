@@ -22,29 +22,19 @@ use SensitiveParameter;
  */
 final readonly class StartMfaRecovery
 {
-    private AttemptThrottle|null $attemptThrottle;
     private int                  $expiresAfterSeconds;
-    private Clock                $clock;
-    private AuditLogInterface    $auditLog;
-    private MfaStoreInterface    $mfaStore;
-    private UserSourceInterface  $userSource;
 
     public function __construct(
-        UserSourceInterface  $userSource,
-        MfaStoreInterface    $mfaStore,
-        AuditLogInterface    $auditLog,
-        Clock                $clock,
+        private UserSourceInterface  $userSource,
+        private MfaStoreInterface    $mfaStore,
+        private AuditLogInterface    $auditLog,
+        private Clock                $clock,
         int|null             $expiresAfterSeconds = null,
-        AttemptThrottle|null $attemptThrottle = null
+        private AttemptThrottle|null $attemptThrottle = null
     )
     {
         $expiresAfterSeconds       ??= 900;
-        $this->userSource          = $userSource;
-        $this->mfaStore            = $mfaStore;
-        $this->auditLog            = $auditLog;
-        $this->clock               = $clock;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
-        $this->attemptThrottle     = $attemptThrottle;
     }
 
     /**

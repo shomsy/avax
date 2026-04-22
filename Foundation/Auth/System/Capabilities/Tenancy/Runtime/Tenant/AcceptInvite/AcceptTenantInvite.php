@@ -16,22 +16,8 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class AcceptTenantInvite
 {
-    private Clock                $clock;
-    private AuditLogInterface    $auditLog;
-    private UserSourceInterface  $userSource;
-    private TenantStoreInterface $tenantStore;
-
-    public function __construct(
-        TenantStoreInterface $tenantStore,
-        UserSourceInterface  $userSource,
-        AuditLogInterface    $auditLog,
-        Clock                $clock
-    )
+    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $this->tenantStore = $tenantStore;
-        $this->userSource  = $userSource;
-        $this->auditLog    = $auditLog;
-        $this->clock       = $clock;
     }
 
     public function execute(AcceptTenantInviteData $data) : TenantMember

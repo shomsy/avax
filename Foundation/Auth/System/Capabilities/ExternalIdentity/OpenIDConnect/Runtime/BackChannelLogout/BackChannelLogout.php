@@ -37,12 +37,12 @@ final readonly class BackChannelLogout
         $context          = $this->currentAuthentication->read();
         $now              = $this->clock->now();
         $claims           = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
-        $sessionId        = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
+        $sessionId        = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
         $events           = $claims['events'] ?? null;
         $backChannelEvent = 'https://schemas.openid.net/event/backchannel-logout';
         $client           = $this->resolveClientFromClaims(claims: $claims);
 
-        if (! is_array($events) || ! array_key_exists($backChannelEvent, $events)) {
+        if (! is_array(value: $events) || ! array_key_exists(key: $backChannelEvent, array: $events)) {
             return new LogoutResult(revoked: false);
         }
 
@@ -93,7 +93,7 @@ final readonly class BackChannelLogout
         }
 
         $audience = $claims['aud'] ?? null;
-        $clientId = is_string($audience) ? trim($audience) : null;
+        $clientId = is_string(value: $audience) ? trim(string: $audience) : null;
 
         if ($clientId === null || $clientId === '') {
             return null;

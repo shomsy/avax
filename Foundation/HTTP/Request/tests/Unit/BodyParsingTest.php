@@ -46,8 +46,8 @@ class BodyParsingTest extends TestCase
 
     public function test_content_preserves_position_for_seekable_stream()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'sample content');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'sample content');
         $stream = new Stream(stream: $handle);
         $stream->seek(offset: 7);
 
@@ -70,7 +70,7 @@ class BodyParsingTest extends TestCase
 
     public function test_content_reads_nonseekable_stream_directly()
     {
-        $stream = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream = new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
         $stream->write(string: 'nonseekable content');
         $stream->rewind();
 
@@ -82,8 +82,8 @@ class BodyParsingTest extends TestCase
 
     public function test_content_handles_repeated_reads()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'repeatable content');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'repeatable content');
         $stream = new Stream(stream: $handle);
 
         $body = new RequestBody(stream: $stream);
@@ -97,8 +97,8 @@ class BodyParsingTest extends TestCase
 
     public function test_content_restores_cursor_position_after_read()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'cursor test content');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'cursor test content');
         $stream = new Stream(stream: $handle);
         $stream->seek(offset: 7);
 
@@ -111,7 +111,7 @@ class BodyParsingTest extends TestCase
 
     public function test_content_returns_empty_for_empty_stream()
     {
-        $handle = fopen('php://temp', 'r+');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
         $stream = new Stream(stream: $handle);
 
         $body    = new RequestBody(stream: $stream);

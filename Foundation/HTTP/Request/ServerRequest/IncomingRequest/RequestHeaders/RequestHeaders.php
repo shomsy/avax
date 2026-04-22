@@ -41,12 +41,12 @@ final class RequestHeaders
 
     public function has(string $name): bool
     {
-        return isset($this->nameMap[strtolower($name)]);
+        return isset($this->nameMap[strtolower(string: $name)]);
     }
 
     public function getLine(string $name): string
     {
-        return implode(',', $this->get(name: $name));
+        return implode(separator: ',', array: $this->get(name: $name));
     }
 
     /**
@@ -54,7 +54,7 @@ final class RequestHeaders
      */
     public function get(string $name): array
     {
-        $canonicalName = $this->nameMap[strtolower($name)] ?? null;
+        $canonicalName = $this->nameMap[strtolower(string: $name)] ?? null;
 
         return $canonicalName === null
             ? []
@@ -76,7 +76,7 @@ final class RequestHeaders
     public function put(string $name, string|array $value): self
     {
         $headers = $this->headers;
-        $existingName = $this->nameMap[strtolower($name)] ?? null;
+        $existingName = $this->nameMap[strtolower(string: $name)] ?? null;
 
         if ($existingName !== null) {
             unset($headers[$existingName]);
@@ -95,7 +95,7 @@ final class RequestHeaders
     #[NoDiscard(message: 'RequestHeaders is immutable; use the returned instance.')]
     public function drop(string $name): self
     {
-        $existingName = $this->nameMap[strtolower($name)] ?? null;
+        $existingName = $this->nameMap[strtolower(string: $name)] ?? null;
 
         if ($existingName === null) {
             return $this;
@@ -143,7 +143,7 @@ final class RequestHeaders
     private static function normalizeSingleHeader(string $name, string|array $value): array
     {
         $normalized = self::normalizeHeaders(headers: [$name => $value]);
-        $canonicalName = array_key_first($normalized);
+        $canonicalName = array_key_first(array: $normalized);
 
         return $canonicalName === null
             ? [$name, []]

@@ -26,11 +26,11 @@ final class ContainerSettings
             return;
         }
 
-        $segments = explode('.', $key);
+        $segments = explode(separator: '.', string: $key);
         $target   = &$this->items;
 
         foreach ($segments as $segment) {
-            if (! isset($target[$segment]) || ! is_array($target[$segment])) {
+            if (! isset($target[$segment]) || ! is_array(value: $target[$segment])) {
                 $target[$segment] = [];
             }
 
@@ -46,7 +46,7 @@ final class ContainerSettings
             return $default;
         }
 
-        $value = getenv($key);
+        $value = getenv(name: $key);
         if ($value !== false) {
             return $value;
         }
@@ -64,11 +64,11 @@ final class ContainerSettings
             return false;
         }
 
-        $segments = explode('.', $key);
+        $segments = explode(separator: '.', string: $key);
         $value    = $this->items;
 
         foreach ($segments as $segment) {
-            if (! is_array($value) || ! array_key_exists($segment, $value)) {
+            if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
                 return false;
             }
 
@@ -84,11 +84,11 @@ final class ContainerSettings
             return $default;
         }
 
-        $segments = explode('.', $key);
+        $segments = explode(separator: '.', string: $key);
         $value    = $this->items;
 
         foreach ($segments as $segment) {
-            if (! is_array($value) || ! array_key_exists($segment, $value)) {
+            if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
                 return $default;
             }
 

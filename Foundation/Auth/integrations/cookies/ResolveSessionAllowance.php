@@ -29,6 +29,6 @@ final class ResolveSessionAllowance
             return true;
         }
 
-        return array_key_exists($sessionCookieName, $cookies);
+        return array_key_exists(key: $sessionCookieName, array: $cookies);
     }
 }

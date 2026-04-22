@@ -17,27 +17,27 @@ $allGood = true;
 foreach ($files as $file) {
     echo "Checking: {$file}\n";
     
-    if (!file_exists($file)) {
+    if (!file_exists(filename: $file)) {
         echo "  ❌ File not found\n";
         $allGood = false;
         continue;
     }
     
-    $content = file_get_contents($file);
+    $content = file_get_contents(filename: $file);
     
     // Check for deprecated session_regenerate_id calls without delete_old_session parameter
-    if (preg_match('/session_regenerate_id\(\)/', $content)) {
+    if (preg_match(pattern: '/session_regenerate_id\(\)/', subject: $content)) {
         echo "  ❌ Found deprecated session_regenerate_id() without parameters\n";
         $allGood = false;
-    } elseif (preg_match('/session_regenerate_id\([^)]*delete_old_session:\s*true[^)]*\)/', $content)) {
+    } elseif (preg_match(pattern: '/session_regenerate_id\([^)]*delete_old_session:\s*true[^)]*\)/', subject: $content)) {
         echo "  ✓ Uses session_regenerate_id(delete_old_session: true)\n";
     } else {
         echo "  ✓ No deprecated session_regenerate_id calls\n";
     }
     
     // Verify proper type hints for nullable parameters
-    if (strpos($content, 'SessionRegistryInterface|null') !== false || 
-        strpos($content, '?SessionRegistryInterface') !== false) {
+    if (strpos(haystack: $content, needle: 'SessionRegistryInterface|null') !== false ||
+        strpos(haystack: $content, needle: '?SessionRegistryInterface') !== false) {
         echo "  ✓ Has proper nullable type hints\n";
     }
 }
@@ -63,11 +63,11 @@ $testFiles = [
 
 foreach ($testFiles as $name => $path) {
     echo "Testing {$name}... ";
-    $content = file_get_contents($path);
+    $content = file_get_contents(filename: $path);
     
     // Basic syntax check - look for class definition
-    if (strpos($content, 'class ') !== false && 
-        strpos($content, 'final readonly class') !== false) {
+    if (strpos(haystack: $content, needle: 'class ') !== false &&
+        strpos(haystack: $content, needle: 'final readonly class') !== false) {
         echo "OK\n";
     } else {
         echo "ISSUE\n";

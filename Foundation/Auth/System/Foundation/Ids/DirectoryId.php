@@ -13,10 +13,10 @@ final readonly class DirectoryId implements Stringable
 
     public function __construct(string $value)
     {
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('DirectoryId cannot be empty.');
+            throw new InvalidArgumentException(message: 'DirectoryId cannot be empty.');
         }
 
         $this->value = $normalized;

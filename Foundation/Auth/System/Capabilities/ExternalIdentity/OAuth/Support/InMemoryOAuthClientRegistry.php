@@ -77,24 +77,24 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         );
         $requiresApproval                  = $approvalRequired ?? false;
 
-        foreach (array_keys($normalizedAudienceScopeBoundaries) as $audience) {
-            if (! in_array($audience, $normalizedAudiences, true)) {
+        foreach (array_keys(array: $normalizedAudienceScopeBoundaries) as $audience) {
+            if (! in_array(needle: $audience, haystack: $normalizedAudiences, strict: true)) {
                 throw new InvalidArgumentException(message: 'Audience scope boundaries must target a declared allowed audience.');
             }
         }
 
-        $clientId    = 'oauth_' . bin2hex(random_bytes(12));
+        $clientId    = 'oauth_' . bin2hex(string: random_bytes(length: 12));
         $plainSecret = null;
         $secretHash  = null;
 
         if ($type === OAuthClientType::CONFIDENTIAL) {
-            $plainSecret = bin2hex(random_bytes(24));
+            $plainSecret = bin2hex(string: random_bytes(length: 24));
             $secretHash  = $this->passwordHasher->hash(password: $plainSecret);
         }
 
         $client = new OAuthClient(
             clientId                       : $clientId,
-            name                           : trim($name),
+            name                           : trim(string: $name),
             type                           : $type,
             redirectUris                   : $normalizedRedirectUris,
             allowedScopes                  : $normalizedScopes,
@@ -137,9 +137,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $normalized = [];
 
         foreach ($redirectUris as $redirectUri) {
-            $value = trim($redirectUri);
+            $value = trim(string: $redirectUri);
 
-            if ($value === '' || in_array($value, $normalized, true)) {
+            if ($value === '' || in_array(needle: $value, haystack: $normalized, strict: true)) {
                 continue;
             }
 
@@ -169,16 +169,16 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $normalized = [];
 
         foreach ($values as $value) {
-            $value = trim($value);
+            $value = trim(string: $value);
 
-            if ($value === '' || in_array($value, $normalized, true)) {
+            if ($value === '' || in_array(needle: $value, haystack: $normalized, strict: true)) {
                 continue;
             }
 
             $normalized[] = $value;
         }
 
-        sort($normalized);
+        sort(array: $normalized);
 
         return $normalized;
     }
@@ -200,7 +200,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $normalized = [];
 
         foreach ($allowedGrantTypes as $grantType) {
-            if (in_array($grantType, $normalized, true)) {
+            if (in_array(needle: $grantType, haystack: $normalized, strict: true)) {
                 continue;
             }
 
@@ -224,7 +224,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $normalized = [];
 
         foreach ($audienceScopeBoundaries as $audience => $scopes) {
-            $normalizedAudience = trim($audience);
+            $normalizedAudience = trim(string: $audience);
 
             if ($normalizedAudience === '') {
                 continue;
@@ -233,16 +233,16 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             $normalized[$normalizedAudience] = $this->normalizeStrings(values: $scopes);
         }
 
-        ksort($normalized);
+        ksort(array: $normalized);
 
         return $normalized;
     }
 
     private function normalizeTenantSlug(string|null $tenantSlug) : string|null
     {
-        $normalized = trim((string) $tenantSlug);
+        $normalized = trim(string: (string) $tenantSlug);
 
-        return $normalized !== '' ? strtolower($normalized) : null;
+        return $normalized !== '' ? strtolower(string: $normalized) : null;
     }
 
     public function replace(OAuthClient $client) : void
@@ -318,7 +318,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             backChannelLogoutSupported    : $client->backChannelLogoutSupported,
             approvalStatus                : OAuthClientApprovalStatus::APPROVED,
             approvedAt                    : new DateTimeImmutable(),
-            approvedBy                    : trim($approvedBy),
+            approvedBy                    : trim(string: $approvedBy),
             active                        : true,
             secretHash                    : $client->secretHash
         );
@@ -342,7 +342,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return new RegisteredOAuthClient(client: $client, plainTextSecret: null);
         }
 
-        $plainSecret              = bin2hex(random_bytes(24));
+        $plainSecret              = bin2hex(string: random_bytes(length: 24));
         $rotated                  = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
@@ -373,7 +373,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 
     public function all() : array
     {
-        return array_values($this->clients);
+        return array_values(array: $this->clients);
     }
 
     public function verifySecret(

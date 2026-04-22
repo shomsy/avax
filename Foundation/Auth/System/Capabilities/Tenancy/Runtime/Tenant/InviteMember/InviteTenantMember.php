@@ -29,14 +29,14 @@ final readonly class InviteTenantMember
             throw TenantFailed::tenantNotFound(tenantSlug: $data->tenantSlug);
         }
 
-        $plainTextToken = bin2hex(random_bytes(32));
+        $plainTextToken = bin2hex(string: random_bytes(length: 32));
         $invite         = new TenantInvite(
-            inviteId : 'invite_' . bin2hex(random_bytes(12)),
+            inviteId : 'invite_' . bin2hex(string: random_bytes(length: 12)),
             tenantId : $tenant->tenantId,
-            email    : strtolower(trim($data->email)),
+            email    : strtolower(string: trim(string: $data->email)),
             role     : $data->role,
-            tokenHash: hash('sha256', $plainTextToken),
-            invitedBy: trim($data->invitedBy),
+            tokenHash: hash(algo: 'sha256', data: $plainTextToken),
+            invitedBy: trim(string: $data->invitedBy),
             createdAt: $this->clock->now()
         );
         $this->tenantStore->saveInvite(invite: $invite);

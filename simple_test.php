@@ -15,7 +15,7 @@ $text2 = Avax\Text\Text::of(value: '123abc');
 echo "Alphanumeric: " . ($text2->containsOnlyAlphanumeric() ? "PASS" : "FAIL") . "\n";
 
 $text3 = Avax\Text\Text::of(value: '/users/{id}/posts/{slug}');
-echo "Route params: " . json_encode($text3->extractRouteParameters()) . "\n";
+echo "Route params: " . json_encode(value: $text3->extractRouteParameters()) . "\n";
 echo "Valid route path: " . ($text3->validateRoutePath() ? "PASS" : "FAIL") . "\n";
 
 echo "All tests completed!\n";

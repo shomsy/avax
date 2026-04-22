@@ -31,22 +31,22 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
      */
     public function load() : array
     {
-        if (! is_file($this->path)) {
+        if (! is_file(filename: $this->path)) {
             throw new RuntimeException(message: "Benchmark artifact [{$this->path}] does not exist.");
         }
 
-        $json = file_get_contents($this->path);
-        if (! is_string($json) || $json === '') {
+        $json = file_get_contents(filename: $this->path);
+        if (! is_string(value: $json) || $json === '') {
             throw new RuntimeException(message: "Benchmark artifact [{$this->path}] could not be read.");
         }
 
-        $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        if (! is_array($decoded) || ! is_array($decoded['results'] ?? null)) {
+        $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+        if (! is_array(value: $decoded) || ! is_array(value: $decoded['results'] ?? null)) {
             throw new RuntimeException(message: "Benchmark artifact [{$this->path}] is invalid.");
         }
 
         $meta = $decoded['meta'] ?? [];
-        if (! is_array($meta)) {
+        if (! is_array(value: $meta)) {
             $meta = [];
         }
 

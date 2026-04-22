@@ -41,8 +41,8 @@ final class QuerySpan
 
     public function getFingerprint() : string
     {
-        $normalized = preg_replace('/\?/', ':param', $this->query);
+        $normalized = preg_replace(pattern: '/\?/', replacement: ':param', subject: $this->query);
 
-        return md5($normalized);
+        return md5(string: $normalized);
     }
 }

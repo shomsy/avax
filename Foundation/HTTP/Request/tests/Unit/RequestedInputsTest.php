@@ -387,7 +387,7 @@ class RequestedInputsTest extends TestCase
 
     public function test_enum_hydration()
     {
-        if (!enum_exists('TestRoleEnum')) {
+        if (!enum_exists(enum: 'TestRoleEnum')) {
             eval('enum TestRoleEnum: string { case Admin = "admin"; case User = "user"; }');
         }
 
@@ -408,7 +408,7 @@ class RequestedInputsTest extends TestCase
     public function test_dto_mapping_throws_when_class_missing()
     {
         $inputs = new RequestedInputs(
-            inputs: Inputs::fromQueryAndBody([], []),
+            inputs: Inputs::fromQueryAndBody(queryParams: [], parsedBody: []),
             sanitizer: $this->sanitizer,
             mapper: clone $this->mapper,
         );
@@ -421,12 +421,12 @@ class RequestedInputsTest extends TestCase
 
     public function test_dto_mapping_throws_when_not_abstract_dto()
     {
-        if (!class_exists('NotADtoClass')) {
+        if (!class_exists(class: 'NotADtoClass')) {
             eval('class NotADtoClass {}');
         }
 
         $inputs = new RequestedInputs(
-            inputs: Inputs::fromQueryAndBody([], []),
+            inputs: Inputs::fromQueryAndBody(queryParams: [], parsedBody: []),
             sanitizer: $this->sanitizer,
             mapper: clone $this->mapper,
         );
@@ -439,7 +439,7 @@ class RequestedInputsTest extends TestCase
 
     public function test_dto_mapping_path()
     {
-        if (!class_exists('Avax\HTTP\Request\Tests\Unit\TestDtoClass')) {
+        if (!class_exists(class: 'Avax\HTTP\Request\Tests\Unit\TestDtoClass')) {
             eval('
                 namespace Avax\HTTP\Request\tests\Unit;
                 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
@@ -455,11 +455,11 @@ class RequestedInputsTest extends TestCase
             ');
         }
 
-        if (!class_exists('NotADtoClass')) {
+        if (!class_exists(class: 'NotADtoClass')) {
             eval('class NotADtoClass {}');
         }
 
-        if (!enum_exists('TestRoleEnum')) {
+        if (!enum_exists(enum: 'TestRoleEnum')) {
             eval('enum TestRoleEnum: string { case Admin = "admin"; case User = "user"; }');
         }
 

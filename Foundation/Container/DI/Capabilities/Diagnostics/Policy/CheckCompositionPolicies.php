@@ -50,13 +50,13 @@ final readonly class CheckCompositionPolicies
             $metadata             = $registration?->metadata ?? RegistrationMetadata::for(unitId: $serviceId);
             $candidate            = $registration?->concrete;
 
-            if ($candidate === null && class_exists($serviceId)) {
+            if ($candidate === null && class_exists(class: $serviceId)) {
                 $candidate = $serviceId;
             }
 
-            if (is_string($candidate) && class_exists($candidate)) {
+            if (is_string(value: $candidate) && class_exists(class: $candidate)) {
                 $blueprint        = $blueprints->createFor(class: $candidate);
-                $constructorArity = count($blueprint->constructor?->parameters ?? []);
+                $constructorArity = count(value: $blueprint->constructor?->parameters ?? []);
                 if ($constructorArity >= 6) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,
@@ -70,7 +70,7 @@ final readonly class CheckCompositionPolicies
 
             if (
                 $metadata->visibility === RegistrationVisibility::SHARED
-                && count($dependents[$serviceId] ?? []) <= 1
+                && count(value: $dependents[$serviceId] ?? []) <= 1
             ) {
                 $findings[$serviceId][] = $this->finding(
                     policy  : $policy,
@@ -81,7 +81,7 @@ final readonly class CheckCompositionPolicies
                 );
             }
 
-            if ($metadata->category === RegistrationCategory::FOUNDATION && count($dependencies) >= 5) {
+            if ($metadata->category === RegistrationCategory::FOUNDATION && count(value: $dependencies) >= 5) {
                 $findings[$serviceId][] = $this->finding(
                     policy  : $policy,
                     code    : 'POL-003',
@@ -109,13 +109,13 @@ final readonly class CheckCompositionPolicies
                     );
                 }
 
-                if (in_array($dependency, [
+                if (in_array(needle: $dependency, haystack: [
                     PsrContainerInterface::class,
                     ContainerInterface::class,
                     Container::class,
                     ServiceResolver::class,
                     ServiceRegistryInterface::class,
-                ],           true)) {
+                ],           strict: true)) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,
                         code    : 'POL-008',
@@ -125,10 +125,10 @@ final readonly class CheckCompositionPolicies
                     );
                 }
 
-                if (in_array($dependency, [
+                if (in_array(needle: $dependency, haystack: [
                         ContainerSettings::class,
                         CreateContainerConfig::class,
-                    ],       true) && $metadata->category !== RegistrationCategory::CONFIGURATION) {
+                    ],       strict: true) && $metadata->category !== RegistrationCategory::CONFIGURATION) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,
                         code    : 'POL-009',
@@ -139,7 +139,7 @@ final readonly class CheckCompositionPolicies
                 }
             }
 
-            if (in_array($metadata->concept, ['service', 'manager', 'helper', 'util', 'common', 'misc', 'core', 'base', 'shared'], true)) {
+            if (in_array(needle: $metadata->concept, haystack: ['service', 'manager', 'helper', 'util', 'common', 'misc', 'core', 'base', 'shared'], strict: true)) {
                 $findings[$serviceId][] = $this->finding(
                     policy  : $policy,
                     code    : 'POL-005',
@@ -149,10 +149,10 @@ final readonly class CheckCompositionPolicies
                 );
             }
 
-            $sliceTail = strtolower((string) basename(str_replace('.', '/', $metadata->ownerSlice)));
+            $sliceTail = strtolower(string: (string) basename(path: str_replace(search: '.', replace: '/', subject: $metadata->ownerSlice)));
             if (
                 $metadata->category === RegistrationCategory::CAPABILITY
-                && in_array($sliceTail, ['misc', 'common', 'shared', 'core', 'helpers', 'utils'], true)
+                && in_array(needle: $sliceTail, haystack: ['misc', 'common', 'shared', 'core', 'helpers', 'utils'], strict: true)
             ) {
                 $findings[$serviceId][] = $this->finding(
                     policy  : $policy,
@@ -165,7 +165,7 @@ final readonly class CheckCompositionPolicies
 
             if (
                 $metadata->category === RegistrationCategory::FLOW
-                && in_array($metadata->visibility, [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED], true)
+                && in_array(needle: $metadata->visibility, haystack: [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED], strict: true)
                 && $metadata->intent !== 'entry'
             ) {
                 $findings[$serviceId][] = $this->finding(
@@ -206,7 +206,7 @@ final readonly class CheckCompositionPolicies
 
             $lifetime = LifetimePlan::fromRegistration(serviceId: $serviceId, registration: $registration);
             if ($lifetime->isPooled()) {
-                if (! is_string($candidate) || ! class_exists($candidate)) {
+                if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,
                         code    : 'POL-007',
@@ -214,7 +214,7 @@ final readonly class CheckCompositionPolicies
                         category: 'runtime',
                         message : 'pooled lifetime requires a class-backed container-owned object'
                     );
-                } elseif ($lifetime->poolResetBeforeReuse && ! is_subclass_of($candidate, ResettableInterface::class)) {
+                } elseif ($lifetime->poolResetBeforeReuse && ! is_subclass_of(object_or_class: $candidate, class: ResettableInterface::class)) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,
                         code    : 'POL-007',
@@ -225,7 +225,7 @@ final readonly class CheckCompositionPolicies
                 }
             }
 
-            if (count($registrations->decorationChain(abstract: $serviceId)) >= 4) {
+            if (count(value: $registrations->decorationChain(abstract: $serviceId)) >= 4) {
                 $findings[$serviceId][] = $this->finding(
                     policy  : $policy,
                     code    : 'POL-012',
@@ -236,13 +236,13 @@ final readonly class CheckCompositionPolicies
             }
 
             usort(
-                $findings[$serviceId],
-                static fn (array $left, array $right) : int => [$left['severity'], $left['code']]
+                array   : $findings[$serviceId],
+                callback: static fn (array $left, array $right) : int => [$left['severity'], $left['code']]
                     <=> [$right['severity'], $right['code']]
             );
         }
 
-        ksort($findings);
+        ksort(array: $findings);
 
         return $findings;
     }

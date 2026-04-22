@@ -79,16 +79,16 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     public function hasActiveCredential(int $userId) : bool
     {
         return array_any(
-            $this->forUser(userId: $userId),
-            static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord) : bool => ! $passkeyRecord->isRevoked()
+            array   : $this->forUser(userId: $userId),
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord) : bool => ! $passkeyRecord->isRevoked()
         );
     }
 
     public function forUser(int $userId) : array
     {
-        return array_values(array_filter(
-                                $this->credentials,
-                                static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
+        return array_values(array: array_filter(
+                                array   : $this->credentials,
+                                callback: static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
                             ));
     }
 }

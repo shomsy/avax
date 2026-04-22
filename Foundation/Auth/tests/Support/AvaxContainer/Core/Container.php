@@ -22,8 +22,8 @@ final class Container
 
     public function has(string $id) : bool
     {
-        return array_key_exists($id, $this->instances)
-            || array_key_exists($id, $this->bindings);
+        return array_key_exists(key: $id, array: $this->instances)
+            || array_key_exists(key: $id, array: $this->bindings);
     }
 
     /**
@@ -31,11 +31,11 @@ final class Container
      */
     public function get(string $id) : mixed
     {
-        if (array_key_exists($id, $this->instances)) {
+        if (array_key_exists(key: $id, array: $this->instances)) {
             return $this->instances[$id];
         }
 
-        if (array_key_exists($id, $this->bindings)) {
+        if (array_key_exists(key: $id, array: $this->bindings)) {
             $binding  = $this->bindings[$id];
             $resolved = $this->resolve(implementation: $binding['implementation']);
 
@@ -46,7 +46,7 @@ final class Container
             return $resolved;
         }
 
-        if (class_exists($id)) {
+        if (class_exists(class: $id)) {
             return $this->build(class: $id);
         }
 
@@ -60,7 +60,7 @@ final class Container
     {
         return match (true) {
             $implementation instanceof Closure => $implementation(),
-            is_string($implementation)         => $this->build(class: $implementation),
+            is_string(value: $implementation)  => $this->build(class: $implementation),
             default                            => $implementation,
         };
     }

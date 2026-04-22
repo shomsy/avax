@@ -50,13 +50,13 @@ final readonly class AuthenticatedUser
     {
         $emailVerified ??= false;
         $roles         = array_map(
-            static fn (UserRole $role) : string => $role->value,
-            $user->getRoles()
+            callback: static fn (UserRole $role) : string => $role->value,
+            array   : $user->getRoles()
         );
 
         $permissions = array_map(
-            static fn (UserPermission $permission) : string => $permission->value,
-            $user->getPermissions()
+            callback: static fn (UserPermission $permission) : string => $permission->value,
+            array   : $user->getPermissions()
         );
 
         return new self(
@@ -72,16 +72,16 @@ final readonly class AuthenticatedUser
 
     public function hasRole(UserRole $role) : bool
     {
-        return in_array($role->value, $this->roles, true);
+        return in_array(needle: $role->value, haystack: $this->roles, strict: true);
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        return array_any($this->roles, fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
+        return array_any(array: $this->roles, callback: fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
     }
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        return in_array($permission->value, $this->permissions, true);
+        return in_array(needle: $permission->value, haystack: $this->permissions, strict: true);
     }
 }

@@ -66,8 +66,8 @@ final class ServerEnvironment extends AbstractDTO
         }
 
         return $first . implode(
-            '',
-            array_map(
+                separator: '',
+                array    : array_map(
                 callback: static fn (string $part): string => ucfirst(string: $part),
                 array: $parts,
             ),
@@ -79,7 +79,7 @@ final class ServerEnvironment extends AbstractDTO
      */
     public function isHttps() : bool
     {
-        if ($this->https !== null && strtolower($this->https) !== 'off') {
+        if ($this->https !== null && strtolower(string: $this->https) !== 'off') {
             return true;
         }
 

@@ -30,7 +30,7 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      */
     public function handleQueryExecuted(QueryExecuted $event) : void
     {
-        $this->logger->info('Query executed', [
+        $this->logger->info(message: 'Query executed', context: [
             'sql'         => $event->sql,
             'bindings'    => $event->bindings,
             'duration_ms' => $event->timeMs,

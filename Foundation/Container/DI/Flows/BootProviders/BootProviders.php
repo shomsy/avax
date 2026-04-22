@@ -44,10 +44,10 @@ final readonly class BootProviders
         $resolver       = $this->resolver();
 
         $metrics?->increment(name: 'container_provider_plan_total');
-        $metrics?->increment(name: 'container_provider_plan_entries_total', by: count($plan->order));
+        $metrics?->increment(name: 'container_provider_plan_entries_total', by: count(value: $plan->order));
 
         foreach ($ordered as $provider) {
-            if (! in_array($provider::class, $eagerProviders, true)) {
+            if (! in_array(needle: $provider::class, haystack: $eagerProviders, strict: true)) {
                 if (! $resolver instanceof ServiceResolver) {
                     throw new InvalidArgumentException(message: 'Deferred providers require an available ServiceResolver.');
                 }
@@ -64,7 +64,7 @@ final readonly class BootProviders
         }
 
         foreach ($ordered as $provider) {
-            if (! in_array($provider::class, $eagerProviders, true)) {
+            if (! in_array(needle: $provider::class, haystack: $eagerProviders, strict: true)) {
                 continue;
             }
 
@@ -89,9 +89,9 @@ final readonly class BootProviders
             $instances[$instance::class] = $instance;
         }
 
-        $queue = array_values($instances);
+        $queue = array_values(array: $instances);
         while ( $queue !== [] ) {
-            $provider = array_shift($queue);
+            $provider = array_shift(array: $queue);
             foreach ($provider->dependsOn() as $dependencyClass) {
                 if (isset($instances[$dependencyClass])) {
                     continue;
@@ -115,8 +115,8 @@ final readonly class BootProviders
      */
     private function instanceFor(string|ServiceProviderInterface $provider) : ServiceProviderInterface
     {
-        if (is_string($provider)) {
-            if (! class_exists($provider)) {
+        if (is_string(value: $provider)) {
+            if (! class_exists(class: $provider)) {
                 throw new InvalidArgumentException(message: "Provider class [{$provider}] does not exist.");
             }
 
@@ -154,8 +154,8 @@ final readonly class BootProviders
             );
         }
 
-        $classes = array_keys($eager);
-        sort($classes);
+        $classes = array_keys(array: $eager);
+        sort(array: $classes);
 
         return $classes;
     }
@@ -226,8 +226,8 @@ final readonly class BootProviders
         }
 
         $services = $provider->provides();
-        sort($services);
+        sort(array: $services);
 
-        return array_values(array_unique($services));
+        return array_values(array: array_unique(array: $services));
     }
 }

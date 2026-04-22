@@ -26,6 +26,6 @@ final readonly class RequestDtoFactory
     public function create(ServerRequest $serverRequest, string $requestClass): Request
     {
         /** @var T $instance */
-        return $requestClass::fromRequest($serverRequest);
+        return $requestClass::fromRequest(request: $serverRequest);
     }
 }

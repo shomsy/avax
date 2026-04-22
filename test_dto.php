@@ -17,7 +17,7 @@ class test_dto extends AbstractDTO
 
         foreach ($attributes as $attr) {
             $instance = $attr->newInstance();
-            if (method_exists($instance, 'validate')) {
+            if (method_exists(object_or_class: $instance, method: 'validate')) {
                 try {
                     $instance->validate($data[$name] ?? null, $name);
                 } catch (Throwable $e) {

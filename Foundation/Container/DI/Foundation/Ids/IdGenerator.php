@@ -18,6 +18,6 @@ final class IdGenerator
      */
     public function next(string $prefix = '') : string
     {
-        return $prefix . bin2hex(random_bytes(8));
+        return $prefix . bin2hex(string: random_bytes(length: 8));
     }
 }

@@ -37,9 +37,9 @@ final class CTEBuilder
 
         foreach ($this->ctes as $name => $cte) {
             if ($cte['type'] === 'recursive') {
-                $sql[] = "WITH RECURSIVE {$name} AS ({$this->buildCTE($cte['initial'])} UNION ALL {$this->buildCTE($cte['recursive'])})";
+                $sql[] = "WITH RECURSIVE {$name} AS ({$this->buildCTE(query:$cte['initial'])} UNION ALL {$this->buildCTE(query:$cte['recursive'])})";
             } else {
-                $sql[] = "WITH {$name} AS ({$this->buildCTE($cte['query'])})";
+                $sql[] = "WITH {$name} AS ({$this->buildCTE(query:$cte['query'])})";
             }
         }
 

@@ -208,7 +208,7 @@ final class RedisSessionRegistryTest extends TestCase
 
     protected function setUp(): void
     {
-        if (! class_exists('Redis')) {
+        if (! class_exists(class: 'Redis')) {
             self::markTestSkipped(message: 'Redis extension is not installed in this runtime.');
         }
     }

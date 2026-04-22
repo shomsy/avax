@@ -10,6 +10,6 @@ final class ChangePasswordFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/ChangePassword/ChangePasswordTest.php';
+        return dirname(path: __DIR__) . '/Flows/ChangePassword/ChangePasswordTest.php';
     }
 }

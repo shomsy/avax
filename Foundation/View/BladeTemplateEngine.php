@@ -30,7 +30,7 @@ class BladeTemplateEngine extends Blade
 
     private function getBaseUrl() : string
     {
-        $context = function_exists('http_context') ? http_context() : null;
+        $context = function_exists(function: 'http_context') ? http_context() : null;
         if ($context !== null) {
             return $context->baseUrl();
         }

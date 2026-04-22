@@ -35,7 +35,7 @@ final class DomainAwareMatcher implements RouteMatcherInterface
      */
     public function match(array $routes, Request $request) : array|null
     {
-        $method  = strtoupper($request->getMethod());
+        $method  = strtoupper(string: $request->getMethod());
         $uriPath = $request->getUri()->getPath();
 
         // Sort routes by specificity (most specific first) for proper precedence
@@ -86,7 +86,7 @@ final class DomainAwareMatcher implements RouteMatcherInterface
             $sorted[$method] = [];
             foreach ($pathsForMethod as $path => $routesForPath) {
                 // Sort routes by specificity (descending: higher specificity first)
-                usort($routesForPath, static fn (RouteDefinition $a, RouteDefinition $b) => $b->specificity <=> $a->specificity);
+                usort(array: $routesForPath, callback: static fn (RouteDefinition $a, RouteDefinition $b) => $b->specificity <=> $a->specificity);
                 $sorted[$method][$path] = $routesForPath;
             }
         }
@@ -119,10 +119,10 @@ final class DomainAwareMatcher implements RouteMatcherInterface
         }
 
         // Support wildcard subdomains (e.g., *.example.com)
-        if (str_starts_with($routeDomain, '*.')) {
-            $baseDomain = substr($routeDomain, 2); // Remove *. prefix
+        if (str_starts_with(haystack: $routeDomain, needle: '*.')) {
+            $baseDomain = substr(string: $routeDomain, offset: 2); // Remove *. prefix
 
-            return str_ends_with($requestHost, $baseDomain);
+            return str_ends_with(haystack: $requestHost, needle: $baseDomain);
         }
 
         return false;
@@ -138,11 +138,11 @@ final class DomainAwareMatcher implements RouteMatcherInterface
         $host = $request->getUri()->getHost();
 
         // Handle port number (e.g., example.com:8080 -> example.com)
-        if (str_contains($host, ':')) {
-            $host = explode(':', $host, 2)[0];
+        if (str_contains(haystack: $host, needle: ':')) {
+            $host = explode(separator: ':', string: $host, limit: 2)[0];
         }
 
-        return strtolower($host);
+        return strtolower(string: $host);
     }
 
     /**

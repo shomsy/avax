@@ -31,14 +31,14 @@ abstract class CompiledContainer
      */
     public function entryIds() : array
     {
-        $ids = array_keys($this->entries);
-        sort($ids);
+        $ids = array_keys(array: $this->entries);
+        sort(array: $ids);
 
         return $ids;
     }
 
     public function entryCount() : int
     {
-        return count($this->entries);
+        return count(value: $this->entries);
     }
 }

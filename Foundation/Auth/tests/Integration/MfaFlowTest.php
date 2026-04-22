@@ -10,6 +10,6 @@ final class MfaFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/Mfa/Enroll/MfaEnrollmentTest.php';
+        return dirname(path: __DIR__) . '/Flows/Mfa/Enroll/MfaEnrollmentTest.php';
     }
 }

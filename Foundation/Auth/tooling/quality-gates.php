@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(path: __DIR__) . '/vendor/autoload.php';
 
-$root           = dirname(__DIR__);
-$quiet          = in_array('--quiet', $argv, true) || in_array('-q', $argv, true);
-$verbose        = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
-$json           = in_array('--json', $argv, true) || in_array('-j', $argv, true);
+$root           = dirname(path: __DIR__);
+$quiet          = in_array(needle: '--quiet', haystack: $argv, strict: true) || in_array(needle: '-q', haystack: $argv, strict: true);
+$verbose        = in_array(needle: '--verbose', haystack: $argv, strict: true) || in_array(needle: '-v', haystack: $argv, strict: true);
+$json           = in_array(needle: '--json', haystack: $argv, strict: true) || in_array(needle: '-j', haystack: $argv, strict: true);
 $buildDirectory = $root . '/build';
 
-if (! is_dir($buildDirectory)) {
-    mkdir($buildDirectory, 0777, true);
+if (! is_dir(filename: $buildDirectory)) {
+    mkdir(directory: $buildDirectory, permissions: 0777, recursive: true);
 }
 
 $php         = PHP_BINARY;
@@ -128,10 +128,10 @@ $definitions = [
 ];
 
 $results = [
-    'timestamp' => gmdate(DATE_ATOM, time()),
+    'timestamp' => gmdate(format: DATE_ATOM, timestamp: time()),
     'version'   => '2.0.0',
     'summary'   => [
-        'total'  => count($definitions),
+        'total'  => count(value: $definitions),
         'passed' => 0,
         'failed' => 0,
         'manual' => 0,
@@ -171,7 +171,7 @@ foreach ($definitions as $gateId => $gate) {
         }
 
         $commandResult = [
-            'command'   => implode(' ', $command),
+            'command'   => implode(separator: ' ', array: $command),
             'exit_code' => $execution['exit_code'],
             'passed'    => $passed,
         ];
@@ -196,16 +196,16 @@ foreach ($definitions as $gateId => $gate) {
     $results['gates'][] = $gateResult;
 }
 
-$results['summary']['pass_rate'] = round(($results['summary']['passed'] / count($definitions)) * 100, 1) . '%';
+$results['summary']['pass_rate'] = round(num: ($results['summary']['passed'] / count(value: $definitions)) * 100, precision: 1) . '%';
 $results['overall']              = $hasFailure ? 'FAILED' : 'PASSED';
 
 file_put_contents(
-    $buildDirectory . '/quality-gates-report.json',
-    json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+    filename: $buildDirectory . '/quality-gates-report.json',
+    data    : json_encode(value: $results, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
 );
 
 if ($json) {
-    echo json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+    echo json_encode(value: $results, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
     exit($hasFailure ? 1 : 0);
 }
 
@@ -257,7 +257,7 @@ function runCommand(array $command, string $workingDirectory) : array
 
     $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);
 
-    if (! is_resource($process)) {
+    if (! is_resource(value: $process)) {
         return [
             'exit_code' => 1,
             'stdout'    => '',
@@ -265,24 +265,24 @@ function runCommand(array $command, string $workingDirectory) : array
         ];
     }
 
-    fclose($pipes[0]);
-    stream_set_blocking($pipes[1], false);
-    stream_set_blocking($pipes[2], false);
+    fclose(stream: $pipes[0]);
+    stream_set_blocking(stream: $pipes[1], enable: false);
+    stream_set_blocking(stream: $pipes[2], enable: false);
 
     $stdout = '';
     $stderr = '';
     $status = ['exitcode' => 1, 'running' => true];
 
     do {
-        $status  = proc_get_status($process);
+        $status  = proc_get_status(process: $process);
         $running = $status['running'];
         $read    = [];
 
-        if (! feof($pipes[1])) {
+        if (! feof(stream: $pipes[1])) {
             $read[] = $pipes[1];
         }
 
-        if (! feof($pipes[2])) {
+        if (! feof(stream: $pipes[2])) {
             $read[] = $pipes[2];
         }
 
@@ -291,20 +291,20 @@ function runCommand(array $command, string $workingDirectory) : array
                 break;
             }
 
-            usleep(10_000);
+            usleep(microseconds: 10_000);
             continue;
         }
 
         $write  = null;
         $except = null;
-        $ready  = @stream_select($read, $write, $except, 0, 200_000);
+        $ready  = @stream_select(read: $read, write: $write, except: $except, seconds: 0, microseconds: 200_000);
 
         if ($ready === false) {
             break;
         }
 
         foreach ($read as $stream) {
-            $chunk = stream_get_contents($stream);
+            $chunk = stream_get_contents(stream: $stream);
 
             if ($chunk === false || $chunk === '') {
                 continue;
@@ -317,12 +317,12 @@ function runCommand(array $command, string $workingDirectory) : array
 
             $stderr .= $chunk;
         }
-    } while ( $running || ! feof($pipes[1]) || ! feof($pipes[2]) );
+    } while ( $running || ! feof(stream: $pipes[1]) || ! feof(stream: $pipes[2]) );
 
-    fclose($pipes[1]);
-    fclose($pipes[2]);
+    fclose(stream: $pipes[1]);
+    fclose(stream: $pipes[2]);
 
-    $exitCode = proc_close($process);
+    $exitCode = proc_close(process: $process);
 
     if ($exitCode < 0) {
         $exitCode = $status['exitcode'];

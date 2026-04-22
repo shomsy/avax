@@ -64,7 +64,7 @@ final class MiddlewareRegistry
      */
     public static function getAllIdentifiers() : array
     {
-        return array_keys(self::MIDDLEWARE_MAP);
+        return array_keys(array: self::MIDDLEWARE_MAP);
     }
 
     /**
@@ -153,7 +153,7 @@ final class MiddlewareRegistry
         if (! isset(self::MIDDLEWARE_MAP[$identifier])) {
             throw new InvalidArgumentException(
                 message: "Middleware '{$identifier}' is not registered. Available: " .
-                         implode(', ', array_keys(self::MIDDLEWARE_MAP))
+                         implode(separator: ', ', array: array_keys(array: self::MIDDLEWARE_MAP))
             );
         }
 
@@ -171,11 +171,11 @@ final class MiddlewareRegistry
      */
     public static function validateMiddlewareClass(string $className) : bool
     {
-        if (! class_exists($className)) {
+        if (! class_exists(class: $className)) {
             throw new InvalidArgumentException(message: "Middleware class '{$className}' does not exist.");
         }
 
-        if (! is_subclass_of($className, MiddlewareInterface::class)) {
+        if (! is_subclass_of(object_or_class: $className, class: MiddlewareInterface::class)) {
             throw new InvalidArgumentException(
                 message: "Class '{$className}' must implement " . MiddlewareInterface::class
             );

@@ -198,7 +198,7 @@ final readonly class CookieManager
         if (is_callable(value: $this->cookieSource)) {
             $cookies = ($this->cookieSource)();
 
-            return is_array($cookies) ? $cookies : [];
+            return is_array(value: $cookies) ? $cookies : [];
         }
 
         return [];

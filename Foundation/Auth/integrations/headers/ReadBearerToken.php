@@ -29,11 +29,11 @@ final class ReadBearerToken
                 continue;
             }
 
-            if (preg_match('/^\s*Bearer\s+(.+)\s*$/i', $authorization, $matches) !== 1) {
+            if (preg_match(pattern: '/^\s*Bearer\s+(.+)\s*$/i', subject: $authorization, matches: $matches) !== 1) {
                 continue;
             }
 
-            $token = trim($matches[1]);
+            $token = trim(string: $matches[1]);
 
             if ($token !== '') {
                 return $token;
@@ -49,15 +49,15 @@ final class ReadBearerToken
     private function readValue(array $values, string $key) : string|null
     {
         foreach ($values as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $key) !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: $key) !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;

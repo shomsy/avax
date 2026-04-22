@@ -58,9 +58,9 @@ final readonly class ReadMigrationStatus
         return [
             'rows'    => $rows,
             'summary' => [
-                'total'   => count($all),
-                'ran'     => count($ran),
-                'pending' => count($all) - count($ran),
+                'total'   => count(value: $all),
+                'ran'     => count(value: $ran),
+                'pending' => count(value: $all) - count(value: $ran),
             ],
         ];
     }

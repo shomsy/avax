@@ -62,7 +62,7 @@ final readonly class VerifyOAuthSenderConstraint
                                                                'expected_thumbprint' => $expectedSenderConstraint->thumbprint,
                                                                'actual_type'         => $binding->type->value,
                                                                'actual_thumbprint'   => $binding->thumbprint,
-                                                               'method'              => strtoupper($input->method),
+                                                               'method'              => strtoupper(string: $input->method),
                                                                'uri'                 => $input->uri,
                                                            ]
                                            ));

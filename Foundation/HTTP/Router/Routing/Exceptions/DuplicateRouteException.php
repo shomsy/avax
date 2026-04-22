@@ -26,6 +26,6 @@ final class DuplicateRouteException extends Exception
             $parts[] = "name:{$name}";
         }
 
-        return implode('|', $parts);
+        return implode(separator: '|', array: $parts);
     }
 }

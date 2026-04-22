@@ -32,11 +32,11 @@ final readonly class ReadOidcUserInfo
             'preferred_username' => $resolved->user->getUsername(),
         ];
 
-        if (in_array('email', $resolved->scopes, true)) {
+        if (in_array(needle: 'email', haystack: $resolved->scopes, strict: true)) {
             $claims['email'] = $resolved->user->getEmail()->value;
         }
 
-        if (in_array('profile', $resolved->scopes, true)) {
+        if (in_array(needle: 'profile', haystack: $resolved->scopes, strict: true)) {
             $claims['name'] = $resolved->user->getUsername();
         }
 
@@ -49,7 +49,7 @@ final readonly class ReadOidcUserInfo
 
     private function subjectIdentifier(User $user, string|null $clientId) : string
     {
-        if ($this->oidcProvider !== null && $clientId !== null && trim($clientId) !== '') {
+        if ($this->oidcProvider !== null && $clientId !== null && trim(string: $clientId) !== '') {
             return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);
         }
 

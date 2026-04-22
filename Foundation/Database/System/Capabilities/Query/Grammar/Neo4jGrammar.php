@@ -42,9 +42,9 @@ final class Neo4jGrammar extends BaseGrammar
         $table = $state->from ?: 'n';
         $alias = 'n';
 
-        if (str_contains($table, '_')) {
-            $parts = explode('_', $table);
-            $label = ucfirst($parts[0]);
+        if (str_contains(haystack: $table, needle: '_')) {
+            $parts = explode(separator: '_', string: $table);
+            $label = ucfirst(string: $parts[0]);
             $alias = $parts[1] ?? 'n';
 
             return "{$alias}:{$label}";
@@ -59,7 +59,7 @@ final class Neo4jGrammar extends BaseGrammar
         foreach ($state->wheres as $where) {
             $col = $where->column;
             $op  = $where->operator;
-            $val = is_string($where->value) ? "'{$where->value}'" : $where->value;
+            $val = is_string(value: $where->value) ? "'{$where->value}'" : $where->value;
 
             $conditions[] = "{$col} {$op} {$val}";
         }
@@ -90,7 +90,7 @@ final class Neo4jGrammar extends BaseGrammar
     {
         $props = [];
         foreach ($values as $key => $value) {
-            $val     = is_string($value) ? "'{$value}'" : $value;
+            $val     = is_string(value: $value) ? "'{$value}'" : $value;
             $props[] = "{$key}: {$val}";
         }
 
@@ -143,7 +143,7 @@ final class Neo4jGrammar extends BaseGrammar
     {
         $path = '(' . $nodes[0] . ')';
 
-        for ($i = 0; $i < count($relations); $i++) {
+        for ($i = 0; $i < count(value: $relations); $i++) {
             $path .= "-[r:{$relations[$i]}]->(" . $nodes[$i + 1] . ')';
         }
 

@@ -17,8 +17,8 @@ final class StageOrderException extends RuntimeException
         $message = sprintf(
             'Duplicate pipeline component detected: %s. Pipeline: [%s]. Expected order: %s.',
             $stage,
-            implode(', ', $pipeline),
-            implode(' -> ', $expectedOrder)
+            implode(separator: ', ', array: $pipeline),
+            implode(separator: ' -> ', array: $expectedOrder)
         );
 
         return new self(message: $message);
@@ -33,8 +33,8 @@ final class StageOrderException extends RuntimeException
         $message = sprintf(
             'Pipeline component is misordered: %s. Pipeline: [%s]. Expected order: %s.',
             $stage,
-            implode(', ', $pipeline),
-            implode(' -> ', $expectedOrder)
+            implode(separator: ', ', array: $pipeline),
+            implode(separator: ' -> ', array: $expectedOrder)
         );
 
         if ($reason !== '') {

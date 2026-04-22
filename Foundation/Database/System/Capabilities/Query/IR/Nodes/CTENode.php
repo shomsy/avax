@@ -25,7 +25,7 @@ final class CTENode
     {
         $columns = empty($this->columns)
             ? ''
-            : '(' . implode(separator: ', ', array_map(
+            : '(' . implode(separator: ', ', array: array_map(
                 callback: fn ($col) => $grammar->wrap(value: $col),
                 array   : $this->columns
             )) . ')';

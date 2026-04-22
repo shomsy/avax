@@ -72,7 +72,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $request = $this->createMock(Request::class);
 
         // When: Dispatching the controller method
-        $response = $this->dispatcher->dispatch(action: [get_class($controller), 'testMethod'], request: $request);
+        $response = $this->dispatcher->dispatch(action: [get_class(object: $controller), 'testMethod'], request: $request);
 
         // Then: Returns a Response with "Controller returned null" message
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
@@ -117,7 +117,7 @@ class ControllerDispatcherUnitTest extends TestCase
                 $this->assertEquals('example.com', $request->uri()->getHost());
 
                 return new Response(
-                    stream: Stream::fromString('success')
+                    stream: Stream::fromString(content: 'success')
                 );
             }
         };
@@ -145,24 +145,24 @@ class ControllerDispatcherUnitTest extends TestCase
             queryParams: ['q' => 'test'],
             parsedBody : ['data' => 'value'],
             method     : 'POST'
-        )->withUri(UriBuilder::createFromString('https://example.com/api'));
+        )->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com/api'));
 
         // Mock container to return RequestDtoFactory
         $factory = new RequestDtoFactory();
         $this->container->method('has')->willReturnCallback(
-            fn ($id) => $id === RequestDtoFactory::class || $id === get_class($controller)
+            fn ($id) => $id === RequestDtoFactory::class || $id === get_class(object: $controller)
         );
         $this->container->method('get')->willReturnCallback(
             fn ($id) => match ($id) {
-                RequestDtoFactory::class => $factory,
-                get_class($controller)   => $controller,
-                default                  => null
+                RequestDtoFactory::class       => $factory,
+                get_class(object: $controller) => $controller,
+                default                        => null
             }
         );
 
         // When: Dispatching the controller method with ServerRequest
         $response = $this->dispatcher->dispatch(
-            action : [get_class($controller), 'handle'],
+            action : [get_class(object: $controller), 'handle'],
             request: $serverRequest
         );
 

@@ -34,7 +34,7 @@ class RequestCharacterizationTest extends TestCase
     {
         $uri     = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
         $request = new ServerRequest(
-            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            body: new RequestBody(stream: new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'))),
             method: 'GET',
             uri: $uri,
             requestHeaders: null,
@@ -75,7 +75,7 @@ class RequestCharacterizationTest extends TestCase
     private function createBlankRequest(array $serverParams = []) : ServerRequest
     {
         return new ServerRequest(
-            body: new RequestBody(stream: new Stream(stream: fopen('php://temp', 'r+'))),
+            body: new RequestBody(stream: new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'))),
             method: 'GET',
             uri: UriBuilder::createFromString(uri: 'http://localhost'),
             requestHeaders: null,

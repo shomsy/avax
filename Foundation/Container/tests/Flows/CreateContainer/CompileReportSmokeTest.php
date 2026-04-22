@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -63,7 +63,7 @@ assertTrue(condition: $report->compatible, message: 'Compile report should expos
 assertSame(expected: 'fresh', actual: $report->freshnessState, message: 'Healthy compile reports should expose a fresh artifact state.');
 assertSame(expected: [], actual: $report->compatibilityIssues, message: 'Healthy compile reports should have no compatibility issues.');
 assertSame(expected: [], actual: $report->warnings, message: 'Healthy compile reports should avoid warnings.');
-assertTrue(condition: in_array(CompileReportContract::class, $report->entries, true), message: 'Compile report should expose compiled service ids.');
+assertTrue(condition: in_array(needle: CompileReportContract::class, haystack: $report->entries, strict: true), message: 'Compile report should expose compiled service ids.');
 assertSame(expected: 2, actual: $report->compiledServicesCount, message: 'Compile report should expose the compiled service count.');
 assertSame(expected: 2, actual: $report->totalServices, message: 'Compile report should expose the total compiled service set.');
 assertSame(expected: 1, actual: $report->deferredServicesCount, message: 'Compile report should expose deferred service counts from metadata statistics.');
@@ -138,7 +138,7 @@ assertSame(
     message : 'Compile metadata should expose the compiled artifact path.'
 );
 assertTrue(
-    condition: array_key_exists('reusedServices', $report->statistics),
+    condition: array_key_exists(key: 'reusedServices', array: $report->statistics),
     message  : 'Compile reports should expose incremental compilation statistics.'
 );
 assertTrue(
@@ -156,4 +156,4 @@ assertSame(
     message : 'Compile reports and artifact metadata should agree on invalidated services.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

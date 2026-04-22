@@ -36,13 +36,13 @@ final class PushAuthorizationRequestTest extends TestCase
      */
     public function testPushAuthorizationRequestAcceptsRsaSignedRequestObjectForPublicClient() : void
     {
-        $key = openssl_pkey_new([
+        $key = openssl_pkey_new(options: [
                                     'private_key_bits' => 2048,
                                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                 ]);
         self::assertNotFalse(condition: $key);
-        openssl_pkey_export($key, $privateKeyPem);
-        $publicKeyPem = (string) openssl_pkey_get_details($key)['key'];
+        openssl_pkey_export(key: $key, output: $privateKeyPem);
+        $publicKeyPem = (string) openssl_pkey_get_details(key: $key)['key'];
 
         $registry   = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
         $registered = $registry->register(
@@ -113,12 +113,12 @@ final class PushAuthorizationRequestTest extends TestCase
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
-        $header       = $this->base64UrlEncode(value: json_encode(['typ' => 'JWT', 'alg' => 'RS256'], JSON_THROW_ON_ERROR));
-        $payload      = $this->base64UrlEncode(value: json_encode($claims, JSON_THROW_ON_ERROR));
+        $header       = $this->base64UrlEncode(value: json_encode(value: ['typ' => 'JWT', 'alg' => 'RS256'], flags: JSON_THROW_ON_ERROR));
+        $payload      = $this->base64UrlEncode(value: json_encode(value: $claims, flags: JSON_THROW_ON_ERROR));
         $signingInput = $header . '.' . $payload;
         $signature    = '';
 
-        $signed = openssl_sign($signingInput, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
+        $signed = openssl_sign(data: $signingInput, signature: $signature, private_key: $privateKeyPem, algorithm: OPENSSL_ALGO_SHA256);
         self::assertTrue(condition: $signed);
 
         return $signingInput . '.' . $this->base64UrlEncode(value: $signature);
@@ -129,7 +129,7 @@ final class PushAuthorizationRequestTest extends TestCase
         return $value
                 |> base64_encode(...)
                 |> (static fn ($x) => strtr($x, '+/', '-_'))
-                |> (static fn ($x) => rtrim($x, '='));
+                |> (static fn ($x) => rtrim(string: $x, characters: '='));
     }
 
     /**
@@ -139,13 +139,13 @@ final class PushAuthorizationRequestTest extends TestCase
      */
     public function testPushAuthorizationRequestRejectsSignedRequestObjectWhenIssuerDoesNotMatchClient() : void
     {
-        $key = openssl_pkey_new([
+        $key = openssl_pkey_new(options: [
                                     'private_key_bits' => 2048,
                                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                 ]);
         self::assertNotFalse(condition: $key);
-        openssl_pkey_export($key, $privateKeyPem);
-        $publicKeyPem = (string) openssl_pkey_get_details($key)['key'];
+        openssl_pkey_export(key: $key, output: $privateKeyPem);
+        $publicKeyPem = (string) openssl_pkey_get_details(key: $key)['key'];
 
         $registry   = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
         $registered = $registry->register(

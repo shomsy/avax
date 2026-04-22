@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
@@ -50,4 +50,4 @@ $inliner->detach();
 assertTrue(condition: ! $inliner->isAttached(), message: 'HotPathInliner should detach the compiled runtime.');
 assertSame(expected: 'no compiled runtime is attached', actual: $inliner->state(serviceId: 'inline.service')['reason'], message: 'Detached hot path should explain the missing compiled runtime.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

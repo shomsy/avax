@@ -45,25 +45,25 @@ final readonly class Totp implements TotpInterface
      */
     public function generateSecret() : string
     {
-        return $this->base32Encode(bytes: random_bytes(20));
+        return $this->base32Encode(bytes: random_bytes(length: 20));
     }
 
     private function base32Encode(string $bytes) : string
     {
         $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
         $binary   = '';
-        $length   = strlen($bytes);
+        $length   = strlen(string: $bytes);
 
         for ($index = 0; $index < $length; $index++) {
-            $binary .= str_pad(decbin(ord($bytes[$index])), 8, '0', STR_PAD_LEFT);
+            $binary .= str_pad(string: decbin(num: ord(character: $bytes[$index])), length: 8, pad_string: '0', pad_type: STR_PAD_LEFT);
         }
 
-        $chunks  = str_split($binary, 5);
+        $chunks  = str_split(string: $binary, length: 5);
         $encoded = '';
 
         foreach ($chunks as $chunk) {
-            $characterIndex = (int) bindec(str_pad($chunk, 5, '0', STR_PAD_RIGHT));
-            $character      = substr($alphabet, $characterIndex, 1);
+            $characterIndex = (int) bindec(binary_string: str_pad(string: $chunk, length: 5, pad_string: '0', pad_type: STR_PAD_RIGHT));
+            $character      = substr(string: $alphabet, offset: $characterIndex, length: 1);
 
             if ($character === '') {
                 throw new InvalidArgumentException(message: 'TOTP base32 encoding failed.');
@@ -77,16 +77,16 @@ final readonly class Totp implements TotpInterface
 
     public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret) : string
     {
-        $issuer       = trim($issuer);
-        $accountLabel = trim($accountLabel);
+        $issuer       = trim(string: $issuer);
+        $accountLabel = trim(string: $accountLabel);
 
         if ($issuer === '' || $accountLabel === '') {
             throw new InvalidArgumentException(message: 'Issuer and account label are required for MFA enrollment.');
         }
 
-        $label       = rawurlencode("{$issuer}:{$accountLabel}");
-        $issuerQuery = rawurlencode($issuer);
-        $secretQuery = rawurlencode($secret);
+        $label       = rawurlencode(string: "{$issuer}:{$accountLabel}");
+        $issuerQuery = rawurlencode(string: $issuer);
+        $secretQuery = rawurlencode(string: $secret);
 
         return "otpauth://totp/{$label}?secret={$secretQuery}&issuer={$issuerQuery}&algorithm=SHA1&digits={$this->digits}&period={$this->periodSeconds}";
     }
@@ -98,7 +98,7 @@ final readonly class Totp implements TotpInterface
         int|null                     $lastAcceptedTimeStep = null
     ) : TotpVerification
     {
-        if (preg_match('/^\d{6,8}$/', $code) !== 1) {
+        if (preg_match(pattern: '/^\d{6,8}$/', subject: $code) !== 1) {
             return TotpVerification::invalid(reason: 'format_invalid');
         }
 
@@ -108,7 +108,7 @@ final readonly class Totp implements TotpInterface
             return TotpVerification::invalid(reason: 'secret_invalid');
         }
 
-        $currentTimeStep = intdiv($moment->getTimestamp(), $this->periodSeconds);
+        $currentTimeStep = intdiv(num1: $moment->getTimestamp(), num2: $this->periodSeconds);
 
         for ($offset = -1 * $this->allowedSkewSteps; $offset <= $this->allowedSkewSteps; $offset++) {
             $timeStep = $currentTimeStep + $offset;
@@ -123,7 +123,7 @@ final readonly class Totp implements TotpInterface
 
             $expected = $this->hotp(secret: $secretBytes, counter: $timeStep);
 
-            if (hash_equals($expected, $code)) {
+            if (hash_equals(known_string: $expected, user_string: $code)) {
                 return TotpVerification::accepted(timeStep: $timeStep);
             }
         }
@@ -131,7 +131,7 @@ final readonly class Totp implements TotpInterface
         if ($lastAcceptedTimeStep !== null) {
             $currentCode = $this->hotp(secret: $secretBytes, counter: $currentTimeStep);
 
-            if (hash_equals($currentCode, $code) && $currentTimeStep <= $lastAcceptedTimeStep) {
+            if (hash_equals(known_string: $currentCode, user_string: $code) && $currentTimeStep <= $lastAcceptedTimeStep) {
                 return TotpVerification::invalid(reason: 'replayed');
             }
         }
@@ -141,15 +141,15 @@ final readonly class Totp implements TotpInterface
 
     private function base32Decode(#[SensitiveParameter] string $secret) : string|null
     {
-        $alphabet   = array_flip(str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
-        $normalized = strtoupper(preg_replace('/[^A-Z2-7]/', '', $secret) ?? '');
+        $alphabet   = array_flip(array: str_split(string: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
+        $normalized = strtoupper(string: preg_replace(pattern: '/[^A-Z2-7]/', replacement: '', subject: $secret) ?? '');
 
         if ($normalized === '') {
             return null;
         }
 
         $bits   = '';
-        $length = strlen($normalized);
+        $length = strlen(string: $normalized);
 
         for ($index = 0; $index < $length; $index++) {
             $character = $normalized[$index];
@@ -158,23 +158,23 @@ final readonly class Totp implements TotpInterface
                 return null;
             }
 
-            $bits .= str_pad(decbin($alphabet[$character]), 5, '0', STR_PAD_LEFT);
+            $bits .= str_pad(string: decbin(num: $alphabet[$character]), length: 5, pad_string: '0', pad_type: STR_PAD_LEFT);
         }
 
         $bytes = '';
 
-        foreach (str_split($bits, 8) as $chunk) {
-            if (strlen($chunk) < 8) {
+        foreach (str_split(string: $bits, length: 8) as $chunk) {
+            if (strlen(string: $chunk) < 8) {
                 continue;
             }
 
-            $codePoint = (int) bindec($chunk);
+            $codePoint = (int) bindec(binary_string: $chunk);
 
             if ($codePoint < 0 || $codePoint > 255) {
                 throw new InvalidArgumentException(message: 'TOTP base32 decoding failed.');
             }
 
-            $bytes .= chr($codePoint);
+            $bytes .= chr(codepoint: $codePoint);
         }
 
         return $bytes;
@@ -183,10 +183,10 @@ final readonly class Totp implements TotpInterface
     private function hotp(#[SensitiveParameter] string $secret, int $counter) : string
     {
         $binaryCounter = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
-        $hash          = hash_hmac('sha1', $binaryCounter, $secret, true);
-        $offset        = ord($hash[19]) & 0x0F;
-        $chunk         = substr($hash, $offset, 4);
-        $unpacked      = unpack('N', $chunk);
+        $hash          = hash_hmac(algo: 'sha1', data: $binaryCounter, key: $secret, binary: true);
+        $offset        = ord(character: $hash[19]) & 0x0F;
+        $chunk         = substr(string: $hash, offset: $offset, length: 4);
+        $unpacked      = unpack(format: 'N', string: $chunk);
 
         if ($unpacked === false || ! isset($unpacked[1])) {
             throw new InvalidArgumentException(message: 'TOTP hash unpack failed.');
@@ -195,7 +195,7 @@ final readonly class Totp implements TotpInterface
         $value  = $unpacked[1] & 0x7FFFFFFF;
         $modulo = 10 ** $this->digits;
 
-        return str_pad((string) ($value % $modulo), $this->digits, '0', STR_PAD_LEFT);
+        return str_pad(string: (string) ($value % $modulo), length: $this->digits, pad_string: '0', pad_type: STR_PAD_LEFT);
     }
 
     public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
@@ -206,7 +206,7 @@ final readonly class Totp implements TotpInterface
             throw new InvalidArgumentException(message: 'TOTP secret is invalid.');
         }
 
-        $timeStep = intdiv($moment->getTimestamp(), $this->periodSeconds);
+        $timeStep = intdiv(num1: $moment->getTimestamp(), num2: $this->periodSeconds);
 
         return $this->hotp(secret: $secretBytes, counter: $timeStep);
     }

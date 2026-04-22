@@ -25,12 +25,12 @@ final readonly class RequestAttributes
 
     public function has(string $name): bool
     {
-        return array_key_exists($name, $this->attributes);
+        return array_key_exists(key: $name, array: $this->attributes);
     }
 
     public function get(string $name, mixed $default = null): mixed
     {
-        return array_key_exists($name, $this->attributes) 
+        return array_key_exists(key: $name, array: $this->attributes)
             ? $this->attributes[$name] 
             : $default;
     }

@@ -55,12 +55,12 @@ final readonly class RequireCsrfProtection
             return false;
         }
 
-        return hash_equals($cookieToken, $headerToken);
+        return hash_equals(known_string: $cookieToken, user_string: $headerToken);
     }
 
     private function isSafeMethod(string $method) : bool
     {
-        return in_array(strtoupper($method), ['GET', 'HEAD', 'OPTIONS'], true);
+        return in_array(needle: strtoupper(string: $method), haystack: ['GET', 'HEAD', 'OPTIONS'], strict: true);
     }
 
     /**
@@ -69,15 +69,15 @@ final readonly class RequireCsrfProtection
     private function readValue(array $values, string $key) : string|null
     {
         foreach ($values as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $key) !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: $key) !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;
@@ -89,12 +89,12 @@ final readonly class RequireCsrfProtection
             return false;
         }
 
-        $parts = parse_url($originLikeValue);
+        $parts = parse_url(url: $originLikeValue);
 
-        if (! is_array($parts)) {
+        if (! is_array(value: $parts)) {
             return false;
         }
 
-        return strcasecmp((string) ($parts['host'] ?? ''), $host) === 0;
+        return strcasecmp(string1: (string) ($parts['host'] ?? ''), string2: $host) === 0;
     }
 }

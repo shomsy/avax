@@ -35,7 +35,7 @@ final class RedisGrammar extends BaseGrammar
     public function compileInsert(QueryState $state) : string
     {
         $key   = $this->wrap(value: $state->from);
-        $value = json_encode($state->values);
+        $value = json_encode(value: $state->values);
 
         return "SET {$key} {$value}";
     }
@@ -44,7 +44,7 @@ final class RedisGrammar extends BaseGrammar
     public function compileUpdate(QueryState $state) : string
     {
         $key   = $this->wrap(value: $state->from);
-        $value = json_encode($state->values);
+        $value = json_encode(value: $state->values);
 
         return "SET {$key} {$value}";
     }
@@ -61,7 +61,7 @@ final class RedisGrammar extends BaseGrammar
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
     {
         $key   = $this->wrap(value: $state->from);
-        $value = json_encode($state->values);
+        $value = json_encode(value: $state->values);
 
         return "SET {$key} {$value}";
     }

@@ -31,18 +31,18 @@ final readonly class SyncFederationMetadata
             throw FederationFailed::notFound();
         }
 
-        if ($connection->metadataUrl === null || trim($connection->metadataUrl) === '') {
+        if ($connection->metadataUrl === null || trim(string: $connection->metadataUrl) === '') {
             throw FederationFailed::metadataUrlMissing();
         }
 
         $metadata = $this->runtime->readMetadata(connection: $connection);
         $synced   = $connection->withMetadata(
             metadataIssuer: $metadata->issuer,
-            metadataHash  : hash('sha256', json_encode([
+            metadataHash  : hash(algo: 'sha256', data: json_encode(value: [
                                                            'issuer' => $metadata->issuer,
                                                                                                                                                                           'single_sign_on_url' => $metadata->singleSignOnUrl,
                                                            'claims' => $metadata->claims,
-                                                       ], JSON_THROW_ON_ERROR)),
+                                                       ],          flags: JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now()
         );
         $this->connectionStore->save(connection: $synced);

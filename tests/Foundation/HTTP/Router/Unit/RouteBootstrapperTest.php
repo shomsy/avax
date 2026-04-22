@@ -73,7 +73,7 @@ final class RouteBootstrapperTest extends TestCase
         // The actual guard is tested through integration with RouteBootstrapper
 
         $this->assertTrue(
-            condition: method_exists(RouteCollector::class, 'flush'),
+            condition: method_exists(object_or_class: RouteCollector::class, method: 'flush'),
             message  : 'RouteCollector should have flush method with security guard'
         );
     }

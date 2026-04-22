@@ -33,7 +33,7 @@ final readonly class RouteKey
     public static function fromRoute(RouteDefinition $route) : self
     {
         return new self(
-            method: strtoupper($route->method),
+            method: strtoupper(string: $route->method),
             domain: $route->domain ?? '',
             path  : $route->path
         );

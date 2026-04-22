@@ -24,9 +24,9 @@ final readonly class ReadScimDirectories
             return $directories;
         }
 
-        return array_values(array_filter(
-                                $directories,
-                                static fn (ScimDirectory $directory) : bool => $directory->tenantSlug === trim($tenantSlug)
+        return array_values(array: array_filter(
+                                array   : $directories,
+                                callback: static fn (ScimDirectory $directory) : bool => $directory->tenantSlug === trim(string: $tenantSlug)
                             ));
     }
 }

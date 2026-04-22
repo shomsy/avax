@@ -26,7 +26,7 @@ final readonly class CheckSourceTruth
 
         foreach ($requiredDocuments as $name => $relativePath) {
             $fullPath       = $repositoryRoot . '/' . $relativePath;
-            $exists         = is_file($fullPath);
+            $exists         = is_file(filename: $fullPath);
             $checked[$name] = $exists;
 
             if (! $exists) {
@@ -40,30 +40,30 @@ final readonly class CheckSourceTruth
         $capabilityMatrix = $this->read(path: $repositoryRoot . '/docs/capability-matrix.md');
         $currentState     = $this->read(path: $repositoryRoot . '/docs/current-state.md');
 
-        if ($status !== '' && ! str_contains($status, 'This document is authoritative.')) {
+        if ($status !== '' && ! str_contains(haystack: $status, needle: 'This document is authoritative.')) {
             $issues[] = 'STATUS.md does not assert authoritative ownership.';
         }
 
         if (
             $riskRegister !== ''
-            && str_contains($riskRegister, 'still does not ship OIDC provider behavior, client-credentials, SCIM runtime')
+            && str_contains(haystack: $riskRegister, needle: 'still does not ship OIDC provider behavior, client-credentials, SCIM runtime')
         ) {
             $issues[] = 'Risk register still contains stale platform-scope language for AUTH-RISK-006.';
         }
 
-        if ($authMerged !== '' && ! str_contains($authMerged, 'non-canonical merged artifact')) {
+        if ($authMerged !== '' && ! str_contains(haystack: $authMerged, needle: 'non-canonical merged artifact')) {
             $issues[] = 'Auth.txt still reads like current-state truth instead of an archive/index.';
         }
 
         if (
             $capabilityMatrix !== ''
-            && str_contains($capabilityMatrix, '| device trust assessment | ⚠️ partial | boundary |')
-            && str_contains($status, 'Trusted device / remembered device support (permanently rejected')
+            && str_contains(haystack: $capabilityMatrix, needle: '| device trust assessment | ⚠️ partial | boundary |')
+            && str_contains(haystack: $status, needle: 'Trusted device / remembered device support (permanently rejected')
         ) {
             $issues[] = 'Capability matrix still claims partial device trust while STATUS marks it as a non-goal.';
         }
 
-        if ($currentState !== '' && str_contains($currentState, 'canonical current-state summary')) {
+        if ($currentState !== '' && str_contains(haystack: $currentState, needle: 'canonical current-state summary')) {
             $issues[] = 'docs/current-state.md still claims canonical status instead of deferring to STATUS.md.';
         }
 
@@ -88,13 +88,13 @@ final readonly class CheckSourceTruth
 
     private function read(string $path) : string
     {
-        if (! is_file($path)) {
+        if (! is_file(filename: $path)) {
             return '';
         }
 
-        $contents = file_get_contents($path);
+        $contents = file_get_contents(filename: $path);
 
-        return is_string($contents) ? $contents : '';
+        return is_string(value: $contents) ? $contents : '';
     }
 
     /**
@@ -123,7 +123,7 @@ final readonly class CheckSourceTruth
             }
 
             foreach ($legacyMarkers as $marker) {
-                if (str_contains($contents, $marker)) {
+                if (str_contains(haystack: $contents, needle: $marker)) {
                     $issues[] = "Legacy singular system root reference found in {$relativePath}: {$marker}";
                 }
             }
@@ -142,20 +142,20 @@ final readonly class CheckSourceTruth
         }
 
         $issues = [];
-        $lines  = preg_split("/\r\n|\r|\n/", $capabilityMatrix);
+        $lines  = preg_split(pattern: "/\r\n|\r|\n/", subject: $capabilityMatrix);
 
         if ($lines === false) {
             return ['Capability matrix could not be parsed.'];
         }
 
         foreach ($lines as $line) {
-            if (! str_starts_with($line, '|')) {
+            if (! str_starts_with(haystack: $line, needle: '|')) {
                 continue;
             }
 
-            $columns = array_map(trim(...), explode('|', trim($line, '|')));
+            $columns = array_map(callback: trim(...), array: explode(separator: '|', string: trim(string: $line, characters: '|')));
 
-            if (count($columns) < 4) {
+            if (count(value: $columns) < 4) {
                 continue;
             }
 
@@ -164,7 +164,7 @@ final readonly class CheckSourceTruth
             }
 
             [$capability, $status, , $evidenceColumn] = $columns;
-            preg_match_all('/`([^`]+)`/', $evidenceColumn, $matches);
+            preg_match_all(pattern: '/`([^`]+)`/', subject: $evidenceColumn, matches: $matches);
             $paths = $matches[1];
 
             if ($paths === []) {
@@ -173,18 +173,18 @@ final readonly class CheckSourceTruth
             }
 
             foreach ($paths as $path) {
-                if (str_starts_with($path, 'https://') || str_starts_with($path, 'http://')) {
+                if (str_starts_with(haystack: $path, needle: 'https://') || str_starts_with(haystack: $path, needle: 'http://')) {
                     continue;
                 }
 
-                $fullPath = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/' . $path;
+                $fullPath = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/' . $path;
 
-                if (! is_file($fullPath) && ! is_dir($fullPath)) {
+                if (! is_file(filename: $fullPath) && ! is_dir(filename: $fullPath)) {
                     $issues[] = "Capability matrix evidence path missing for '{$capability}': {$path}";
                 }
             }
 
-            if (str_contains($status, 'supported') && ! $this->hasExecutableEvidence(paths: $paths)) {
+            if (str_contains(haystack: $status, needle: 'supported') && ! $this->hasExecutableEvidence(paths: $paths)) {
                 $issues[] = "Supported capability '{$capability}' is missing executable evidence in tests/ or build artifacts.";
             }
         }
@@ -209,7 +209,7 @@ final readonly class CheckSourceTruth
      */
     private function isSeparatorRow(array $columns) : bool
     {
-        return array_all($columns, fn ($column) => ! ($column === '' || preg_match('/^[-:]+$/', $column) !== 1));
+        return array_all(array: $columns, callback: fn ($column) => ! ($column === '' || preg_match(pattern: '/^[-:]+$/', subject: $column) !== 1));
     }
 
     /**
@@ -217,9 +217,9 @@ final readonly class CheckSourceTruth
      */
     private function hasExecutableEvidence(array $paths) : bool
     {
-        return array_any($paths, fn ($path) => str_starts_with($path, 'tests/')
-            || str_starts_with($path, 'build/')
-            || str_contains($path, '/tests/'));
+        return array_any(array: $paths, callback: fn ($path) => str_starts_with(haystack: $path, needle: 'tests/')
+            || str_starts_with(haystack: $path, needle: 'build/')
+            || str_contains(haystack: $path, needle: '/tests/'));
     }
 
     /**
@@ -269,18 +269,18 @@ final readonly class CheckSourceTruth
 
     private function hasFrontmatterField(string $contents, string $field) : bool
     {
-        if (! str_starts_with($contents, "---\n") && ! str_starts_with($contents, "---\r\n")) {
+        if (! str_starts_with(haystack: $contents, needle: "---\n") && ! str_starts_with(haystack: $contents, needle: "---\r\n")) {
             return false;
         }
 
-        $delimiterPosition = strpos($contents, "\n---", 4);
+        $delimiterPosition = strpos(haystack: $contents, needle: "\n---", offset: 4);
 
         if ($delimiterPosition === false) {
             return false;
         }
 
-        $frontmatter = substr($contents, 0, $delimiterPosition);
+        $frontmatter = substr(string: $contents, offset: 0, length: $delimiterPosition);
 
-        return str_contains($frontmatter, $field);
+        return str_contains(haystack: $frontmatter, needle: $field);
     }
 }

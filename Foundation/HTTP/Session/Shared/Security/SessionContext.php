@@ -36,7 +36,7 @@ final readonly class SessionContext implements SessionContextInterface
     public function userId() : string|int|null
     {
         $value = $this->store->get(key: 'user_id');
-        if (is_string($value) || is_int($value)) {
+        if (is_string(value: $value) || is_int(value: $value)) {
             return $value;
         }
 
@@ -46,7 +46,7 @@ final readonly class SessionContext implements SessionContextInterface
     public function clientIp() : string|null
     {
         $stored = $this->store->get(key: 'ip_address');
-        if (is_string($stored) && $stored !== '') {
+        if (is_string(value: $stored) && $stored !== '') {
             return $stored;
         }
 
@@ -56,7 +56,7 @@ final readonly class SessionContext implements SessionContextInterface
     public function userAgent() : string|null
     {
         $stored = $this->store->get(key: 'user_agent');
-        if (is_string($stored) && $stored !== '') {
+        if (is_string(value: $stored) && $stored !== '') {
             return $stored;
         }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
@@ -194,11 +194,11 @@ assertSame(
 );
 assertSame(expected: 'demo-booted', actual: $state->message, message: 'Boot phase should run against the dependency-composed service graph.');
 assertTrue(
-    condition: str_contains($container->exportMetrics(), 'container_provider_boot_total 2'),
+    condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_provider_boot_total 2'),
     message  : 'Provider boot metrics should record each booted provider.'
 );
 assertTrue(
-    condition: str_contains($container->exportMetrics(), 'container_provider_register_total 2'),
+    condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_provider_register_total 2'),
     message  : 'Provider register metrics should record each registered provider.'
 );
 
@@ -225,7 +225,7 @@ assertSame(
     message : 'Deferred providers should register and boot exactly once on first resolve.'
 );
 assertTrue(
-    condition: str_contains($deferredContainer->exportMetrics(), 'container_provider_deferred_boot_total 1'),
+    condition: str_contains(haystack: $deferredContainer->exportMetrics(), needle: 'container_provider_deferred_boot_total 1'),
     message  : 'Deferred provider metrics should record lazy provider boots.'
 );
 
@@ -247,7 +247,7 @@ assertSame(
     message : 'Explicit compile paths must boot deferred providers when compiled services depend on them.'
 );
 assertTrue(
-    condition: $compiledDeferredReport !== null && in_array(DeferredProvidedContract::class, $compiledDeferredReport->entries, true),
+    condition: $compiledDeferredReport !== null && in_array(needle: DeferredProvidedContract::class, haystack: $compiledDeferredReport->entries, strict: true),
     message  : 'Deferred provider services required by compiled dependencies must be compiled into the artifact.'
 );
 assertTrue(
@@ -263,4 +263,4 @@ assertThrows(
     message      : 'Provider dependency cycles should fail fast.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

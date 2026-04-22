@@ -21,7 +21,7 @@ try {
     echo "   Valid chars: " . ($valid ? "✅ YES" : "❌ NO") . "\n";
 
     $params = Avax\HTTP\Router\Validation\RouteValidator::extractRouteParameters($path);
-    echo "   Params: [" . implode(', ', $params) . "]\n";
+    echo "   Params: [" . implode(separator: ', ', array: $params) . "]\n";
 
     echo "   ✅ RouteValidator direct test PASSED\n";
 } catch (Exception $e) {
@@ -36,7 +36,7 @@ echo "   route_valid('users') -> " . (route_valid(path: 'users') ? "❌ SHOULD B
 
 // Test route_params function
 $params = route_params(path: '/api/{version}/users/{userId}');
-echo "   route_params('/api/{version}/users/{userId}') -> [" . implode(', ', $params) . "]\n";
+echo "   route_params('/api/{version}/users/{userId}') -> [" . implode(separator: ', ', array: $params) . "]\n";
 
 // Test route_pattern function
 $pattern = route_pattern(template: '/users/{id}', constraints: ['id' => '\d+']);

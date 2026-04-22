@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
@@ -46,7 +46,7 @@ final class ContextualInjectionTarget
 }
 
 $envKey = 'AVAX_CONTAINER_ENV_' . uniqid();
-putenv($envKey);
+putenv(assignment: $envKey);
 
 $config    = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
 $container = makeTestContainer(config: $config);
@@ -94,7 +94,7 @@ assertTrue(condition: $compileReport?->compatible ?? false, message: 'Compile re
 assertSame(expected: 'fresh', actual: $compileReport?->freshnessState, message: 'Compile reports should expose artifact freshness.');
 assertSame(expected: 2, actual: $compileReport?->toArray()['schemaVersion'] ?? null, message: 'Compile reports should expose a stable JSON schema version.');
 assertSame(expected: CreateContainerConfig::EXECUTION_MODE_COMPILED, actual: $compileReport?->executionMode, message: 'Compile reports should expose execution mode.');
-assertTrue(condition: str_contains($compileReport?->toJson() ?? '', '"available": true'), message: 'Compile report should be JSON serializable.');
+assertTrue(condition: str_contains(haystack: $compileReport?->toJson() ?? '', needle: '"available": true'), message: 'Compile report should be JSON serializable.');
 assertSame(expected: $compileReport?->fingerprint, actual: $runtimeReport->compiled?->fingerprint, message: 'Runtime report should point to the same compiled artifact report.');
 assertTrue(condition: $runtimeReport->compiledAttached || $runtimeReport->warmedUp, message: 'Runtime report should expose compiled runtime state.');
 assertSame(expected: 4, actual: $runtimeReport->toArray()['schemaVersion'] ?? null, message: 'Runtime reports should expose a stable JSON schema version.');
@@ -105,7 +105,7 @@ assertTrue(condition: $runtimeReport->timelineEnabled === false, message: 'Minim
 assertSame(expected: 0, actual: $runtimeReport->sharedServiceCount, message: 'Runtime report should summarize shared service counts without inventing unresolved shared instances.');
 assertSame(expected: 1, actual: $runtimeReport->scopedServiceCount, message: 'Runtime report should summarize scoped service counts.');
 assertSame(expected: 'fresh', actual: $runtimeReport->hotPath['freshnessState'], message: 'Runtime report should expose hot-path artifact freshness.');
-assertTrue(condition: str_contains($runtimeReport->toJson(), '"metrics"'), message: 'Runtime report should be JSON serializable.');
+assertTrue(condition: str_contains(haystack: $runtimeReport->toJson(), needle: '"metrics"'), message: 'Runtime report should be JSON serializable.');
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, actual: $runtimeReport->diagnosticsMode, message: 'Runtime report should expose the active diagnostics mode.');
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, actual: $description['diagnosticsMode'], message: 'Service diagnostics should expose the active diagnostics mode.');
 assertSame(expected: ['diagnostics.service', DiagnosticsContract::class], actual: $aliasDescription['aliasChain'], message: 'Alias diagnostics should expose the alias expansion chain.');
@@ -147,7 +147,7 @@ assertTrue(condition: $tags['ordered'], message: 'Debug tags should declare dete
 assertSame(expected: 1, actual: $scope['depth'], message: 'Debug scope should expose the active scope depth.');
 assertSame(expected: [], actual: $plan['methods'], message: 'Debug plans should expose a simple constructor-only service.');
 assertTrue(condition: isset($aliases['diagnostics.service']), message: 'Debug aliases should expose alias mappings.');
-assertSame(expected: 1, actual: count($tags['ids']), message: 'Debug tags should expose tagged service ids.');
+assertSame(expected: 1, actual: count(value: $tags['ids']), message: 'Debug tags should expose tagged service ids.');
 assertSame(expected: DiagnosticsContract::class, actual: $selection['service'] ?? null, message: 'Selection diagnostics should expose the resolved service id.');
 assertSame(expected: 'balanced', actual: $governance['profile'] ?? null, message: 'Governance diagnostics should expose the active policy profile.');
 assertTrue(condition: isset($architecture['structuralDrift']), message: 'Architecture diagnostics should expose structural drift output.');
@@ -156,8 +156,8 @@ assertSame(expected: 'from-context', actual: $contextual->name, message: 'Contex
 assertSame(expected: 'from-call', actual: $called, message: 'Context views should feed scalar callable arguments.');
 assertSame(expected: 'from-injection', actual: $injected->name, message: 'Context views should feed scalar injection arguments.');
 $container->closeScope();
-assertTrue(condition: str_contains($container->exportMetrics(), 'container_scope_open_total'), message: 'Scope lifecycle metrics should be exported.');
-assertTrue(condition: str_contains($container->exportMetrics(), 'container_scope_close_total'), message: 'Scope lifecycle metrics should be exported.');
+assertTrue(condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_scope_open_total'), message: 'Scope lifecycle metrics should be exported.');
+assertTrue(condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_scope_close_total'), message: 'Scope lifecycle metrics should be exported.');
 
 $lazyProxy = $container->lazy(abstract: DiagnosticsContract::class);
 assertSame(expected: 'diagnostics', actual: $lazyProxy->label(), message: 'Lazy proxies should still resolve the target service.');
@@ -183,4 +183,4 @@ $ciReport = $ciContainer->runtimeReport();
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_CI, actual: $ciReport->diagnosticsMode, message: 'CI diagnostics mode should be preserved in runtime reports.');
 assertTrue(condition: $ciReport->timelineEnabled, message: 'CI diagnostics mode should keep timeline recording enabled.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

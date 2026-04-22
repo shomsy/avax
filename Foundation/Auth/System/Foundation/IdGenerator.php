@@ -16,6 +16,6 @@ final class IdGenerator implements IdGeneratorInterface
      */
     public function generate() : int
     {
-        return random_int(1_000_000, PHP_INT_MAX);
+        return random_int(min: 1_000_000, max: PHP_INT_MAX);
     }
 }

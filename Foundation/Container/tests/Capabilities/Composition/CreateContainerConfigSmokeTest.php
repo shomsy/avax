@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -84,4 +84,4 @@ assertTrue(condition: $config->configHash() !== '', message: 'Config hash should
 assertTrue(condition: $config->settingsFingerprint() !== '', message: 'Settings fingerprint should be available for metadata provenance.');
 assertSame(expected: 'ci-smoke', actual: $config->benchmarkBuildMarker(), message: 'Benchmark build marker should be available for benchmark artifacts and compile metadata.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

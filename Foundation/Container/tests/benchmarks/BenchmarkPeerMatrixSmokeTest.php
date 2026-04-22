@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 $artifactDir = sys_get_temp_dir() . '/container-benchmark-peer-' . uniqid();
-if (! mkdir($artifactDir, 0775, true) && ! is_dir($artifactDir)) {
+if (! mkdir(directory: $artifactDir, permissions: 0775, recursive: true) && ! is_dir(filename: $artifactDir)) {
     throw new RuntimeException(message: "Cannot create benchmark peer artifact directory [{$artifactDir}].");
 }
 
@@ -17,7 +17,7 @@ $baselineArtifact = [
     'meta'    => [
         'php'           => '8.3.0',
         'sapi'          => 'cli',
-        'timestamp'     => gmdate('c'),
+        'timestamp'     => gmdate(format: 'c'),
         'dockerImage'   => 'php:8.3-cli',
         'phpSettings'   => [
             'memory_limit'       => '-1',
@@ -40,23 +40,23 @@ $peerArtifact                                       = $baselineArtifact;
 $peerArtifact['results']['cached_get']['time_ms']   = 12.0;
 $peerArtifact['results']['cached_get']['ops_per_s'] = 833.3;
 
-file_put_contents($current, json_encode($baselineArtifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
-file_put_contents($peer, json_encode($peerArtifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+file_put_contents(filename: $current, data: json_encode(value: $baselineArtifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+file_put_contents(filename: $peer, data: json_encode(value: $peerArtifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
 
 $command = 'php tests/benchmarks/peer_matrix.php --json --output='
-    . escapeshellarg($output)
-    . ' current=' . escapeshellarg($current)
-    . ' peer=' . escapeshellarg($peer);
+    . escapeshellarg(arg: $output)
+    . ' current=' . escapeshellarg(arg: $current)
+    . ' peer=' . escapeshellarg(arg: $peer);
 
 $peerOutput = [];
-exec($command, $peerOutput, $status);
+exec(command: $command, output: $peerOutput, result_code: $status);
 
 assertSame(expected: 0, actual: $status, message: 'Peer benchmark matrix runner should emit a JSON artifact.');
-assertTrue(condition: is_file($output), message: 'Peer benchmark matrix runner should write the requested JSON artifact.');
+assertTrue(condition: is_file(filename: $output), message: 'Peer benchmark matrix runner should write the requested JSON artifact.');
 
-$json = implode(PHP_EOL, $peerOutput);
-assertTrue(condition: str_contains($json, '"schemaVersion"'), message: 'Peer benchmark matrix output should expose a schema version.');
-assertTrue(condition: str_contains($json, '"comparisons"'), message: 'Peer benchmark matrix output should expose peer comparison rows.');
-assertTrue(condition: str_contains($json, '"regressions"'), message: 'Peer benchmark matrix output should expose regression rows.');
+$json = implode(separator: PHP_EOL, array: $peerOutput);
+assertTrue(condition: str_contains(haystack: $json, needle: '"schemaVersion"'), message: 'Peer benchmark matrix output should expose a schema version.');
+assertTrue(condition: str_contains(haystack: $json, needle: '"comparisons"'), message: 'Peer benchmark matrix output should expose peer comparison rows.');
+assertTrue(condition: str_contains(haystack: $json, needle: '"regressions"'), message: 'Peer benchmark matrix output should expose regression rows.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 final class GraphToolIdentityService {}
 
@@ -23,7 +23,7 @@ final class GraphToolStepOne {}
 
 final class GraphToolStepTwo {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-graph-tool-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-graph-tool-' . uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(cacheDir: $cacheDir));
 
 $container->singleton(abstract: GraphToolIdentityService::class, concrete: GraphToolIdentityService::class)

@@ -55,7 +55,7 @@ final class RouterMetricsCollector
     {
         $this->increment(name: 'route_resolutions_total', labels: ['method' => $method, 'status' => $statusCode]);
         $this->observe(name: 'route_resolution_duration', value: $durationMs, labels: ['method' => $method]);
-        $this->setGauge(name: 'route_last_resolution_time', value: microtime(true));
+        $this->setGauge(name: 'route_last_resolution_time', value: microtime(as_float: true));
     }
 
     private function increment(string $name, array $labels = []) : void
@@ -65,14 +65,14 @@ final class RouterMetricsCollector
         $this->metrics[$key]['type']      = 'counter';
         $this->metrics[$key]['name']      = $name;
         $this->metrics[$key]['labels']    = $labels;
-        $this->metrics[$key]['timestamp'] = microtime(true);
+        $this->metrics[$key]['timestamp'] = microtime(as_float: true);
     }
 
     private function metricKey(string $name, array $labels) : string
     {
-        ksort($labels);
+        ksort(array: $labels);
 
-        return $name . '_' . md5(json_encode($labels));
+        return $name . '_' . md5(string: json_encode(value: $labels));
     }
 
     private function observe(string $name, float $value, array $labels = []) : void
@@ -97,7 +97,7 @@ final class RouterMetricsCollector
         $this->metrics[$key]['type']      = 'gauge';
         $this->metrics[$key]['name']      = $name;
         $this->metrics[$key]['labels']    = $labels;
-        $this->metrics[$key]['timestamp'] = microtime(true);
+        $this->metrics[$key]['timestamp'] = microtime(as_float: true);
     }
 
     /**
@@ -192,9 +192,9 @@ final class RouterMetricsCollector
         if (! empty($metric['labels'])) {
             $labelParts = [];
             foreach ($metric['labels'] as $k => $v) {
-                $labelParts[] = $k . '="' . addslashes((string) $v) . '"';
+                $labelParts[] = $k . '="' . addslashes(string: (string) $v) . '"';
             }
-            $labels = '{' . implode(',', $labelParts) . '}';
+            $labels = '{' . implode(separator: ',', array: $labelParts) . '}';
         }
 
         if ($metric['type'] === 'counter') {
@@ -211,8 +211,8 @@ final class RouterMetricsCollector
 
             // Calculate percentiles
             if (! empty($metric['values'])) {
-                sort($metric['values']);
-                $count = count($metric['values']);
+                sort(array: $metric['values']);
+                $count = count(value: $metric['values']);
                 $p50   = $metric['values'][(int) ($count * 0.5)] ?? 0;
                 $p95   = $metric['values'][(int) ($count * 0.95)] ?? 0;
                 $p99   = $metric['values'][(int) ($count * 0.99)] ?? 0;
@@ -314,7 +314,7 @@ final class RouterMetricsCollector
     private function getCounterValue(string $name) : int
     {
         $total  = 0;
-        $cutoff = microtime(true) - 60;
+        $cutoff = microtime(as_float: true) - 60;
 
         foreach ($this->metrics as $metric) {
             if (($metric['name'] ?? '') === $name &&
@@ -340,10 +340,10 @@ final class RouterMetricsCollector
             return 0.0;
         }
 
-        sort($values);
-        $index = (int) (count($values) * (95 / 100));
+        sort(array: $values);
+        $index = (int) (count(value: $values) * (95 / 100));
 
-        return $values[$index] ?? end($values);
+        return $values[$index] ?? end(array: $values);
     }
 
     private function getGaugeValue() : float

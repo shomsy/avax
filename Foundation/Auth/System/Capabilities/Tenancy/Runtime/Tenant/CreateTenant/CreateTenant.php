@@ -28,7 +28,7 @@ final readonly class CreateTenant
      */
     public function execute(CreateTenantData $data) : Tenant
     {
-        $slug = strtolower(trim($data->slug));
+        $slug = strtolower(string: trim(string: $data->slug));
 
         if ($slug === '') {
             throw TenantFailed::tenantNotFound(tenantSlug: '');
@@ -45,9 +45,9 @@ final readonly class CreateTenant
         }
 
         $tenant = new Tenant(
-            tenantId   : 'tenant_' . bin2hex(random_bytes(12)),
+            tenantId   : 'tenant_' . bin2hex(string: random_bytes(length: 12)),
             slug       : $slug,
-            name       : trim($data->name),
+            name       : trim(string: $data->name),
             ownerUserId: $data->ownerUserId,
             createdAt  : $this->clock->now()
         );

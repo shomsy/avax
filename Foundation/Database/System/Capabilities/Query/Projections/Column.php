@@ -6,7 +6,7 @@ namespace Avax\Database\System\Capabilities\Query\Projections;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final class Column
 {
     public function __construct(

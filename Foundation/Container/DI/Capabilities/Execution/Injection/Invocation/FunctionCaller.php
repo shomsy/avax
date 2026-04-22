@@ -73,9 +73,9 @@ final class FunctionCaller
         );
 
         if ($reflection instanceof ReflectionMethod) {
-            $object = is_object($normalized)
+            $object = is_object(value: $normalized)
                 ? $normalized
-                : (is_array($normalized) && is_object($normalized[0]) ? $normalized[0] : null);
+                : (is_array(value: $normalized) && is_object(value: $normalized[0]) ? $normalized[0] : null);
 
             return $reflection->invokeArgs(object: $object, args: $arguments);
         }
@@ -99,14 +99,14 @@ final class FunctionCaller
     {
         $context = $request?->context ?? [];
 
-        if (is_string($target) && class_exists($target) && method_exists($target, '__invoke')) {
+        if (is_string(value: $target) && class_exists(class: $target) && method_exists(object_or_class: $target, method: '__invoke')) {
             return $context !== []
                 ? $this->resolver->makeInContext(id: $target, parameters: [], context: $context)
                 : $this->resolver->get(id: $target);
         }
 
-        if (is_string($target) && str_contains($target, '@')) {
-            [$class, $method] = explode('@', $target, 2);
+        if (is_string(value: $target) && str_contains(haystack: $target, needle: '@')) {
+            [$class, $method] = explode(separator: '@', string: $target, limit: 2);
 
             return [
                 $context !== []
@@ -116,8 +116,8 @@ final class FunctionCaller
             ];
         }
 
-        if (is_string($target) && str_contains($target, '::')) {
-            [$class, $method] = explode('::', $target, 2);
+        if (is_string(value: $target) && str_contains(haystack: $target, needle: '::')) {
+            [$class, $method] = explode(separator: '::', string: $target, limit: 2);
             $reflection = new ReflectionMethod(objectOrMethod: $class, method: $method);
 
             return $reflection->isStatic()
@@ -130,7 +130,7 @@ final class FunctionCaller
                 ];
         }
 
-        if (is_array($target) && is_string($target[0]) && class_exists($target[0])) {
+        if (is_array(value: $target) && is_string(value: $target[0]) && class_exists(class: $target[0])) {
             $reflection = new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
             if (! $reflection->isStatic()) {
                 return [
@@ -150,15 +150,15 @@ final class FunctionCaller
      */
     private function reflect(callable|string|array $target) : ReflectionFunctionAbstract
     {
-        if (is_array($target)) {
+        if (is_array(value: $target)) {
             return new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
         }
 
-        if ($target instanceof Closure || is_string($target)) {
+        if ($target instanceof Closure || is_string(value: $target)) {
             return new ReflectionFunction(function: $target);
         }
 
-        if (is_object($target) && method_exists($target, '__invoke')) {
+        if (is_object(value: $target) && method_exists(object_or_class: $target, method: '__invoke')) {
             return new ReflectionMethod(objectOrMethod: $target, method: '__invoke');
         }
 

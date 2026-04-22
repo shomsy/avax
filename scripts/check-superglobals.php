@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$root         = dirname(__DIR__);
+$root         = dirname(path: __DIR__);
 $patterns     = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
 $allowedFiles = [
     'Foundation/HTTP/Context/PhpGlobalsProvider.php',
@@ -24,19 +24,19 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    if (strtolower($file->getExtension()) !== 'php') {
+    if (strtolower(string: $file->getExtension()) !== 'php') {
         continue;
     }
 
-    $relativePath = str_replace('\\', '/', substr($file->getRealPath(), strlen($root) + 1));
-    if (in_array($relativePath, $allowedFiles, true)) {
+    $relativePath = str_replace(search: '\\', replace: '/', subject: substr(string: $file->getRealPath(), offset: strlen(string: $root) + 1));
+    if (in_array(needle: $relativePath, haystack: $allowedFiles, strict: true)) {
         continue;
     }
 
-    $lines = file($file->getRealPath(), FILE_IGNORE_NEW_LINES);
+    $lines = file(filename: $file->getRealPath(), flags: FILE_IGNORE_NEW_LINES);
     foreach ($lines as $index => $line) {
         foreach ($patterns as $pattern) {
-            if (str_contains($line, $pattern)) {
+            if (str_contains(haystack: $line, needle: $pattern)) {
                 $violations[] = sprintf('%s:%d uses %s', $relativePath, $index + 1, $pattern);
             }
         }
@@ -45,7 +45,7 @@ foreach ($iterator as $file) {
 
 if ($violations !== []) {
     echo "Superglobal usage detected outside HTTP boundary:\n";
-    foreach (array_unique($violations) as $violation) {
+    foreach (array_unique(array: $violations) as $violation) {
         echo "  - {$violation}\n";
     }
     exit(1);

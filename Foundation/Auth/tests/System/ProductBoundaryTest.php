@@ -69,7 +69,7 @@ final class ProductBoundaryTest extends TestCase
     {
         foreach ($this->shippedCapabilities as $capability => $paths) {
             foreach ($paths as $path) {
-                $fullPath = dirname(__DIR__, 2) . '/' . $path;
+                $fullPath = dirname(path: __DIR__, levels: 2) . '/' . $path;
                 $this->assertFileExists(
                     filename: $fullPath,
                     message : "Auth kernel capability missing: {$capability} ({$path})"
@@ -80,7 +80,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testFullPlatformIsNotShipped() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         foreach ($this->notShippedCapabilities as $capability => $reason) {
             $uiPath    = $root . '/System/Ui';
@@ -89,19 +89,19 @@ final class ProductBoundaryTest extends TestCase
 
             if ($capability === 'Admin UI') {
                 $this->assertFalse(
-                    condition: is_dir($uiPath),
+                    condition: is_dir(filename: $uiPath),
                     message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'SIEM') {
                 $this->assertFalse(
-                    condition: is_dir($siemPath),
+                    condition: is_dir(filename: $siemPath),
                     message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
             if ($capability === 'Email') {
                 $this->assertFalse(
-                    condition: is_dir($emailPath),
+                    condition: is_dir(filename: $emailPath),
                     message  : "Full platform - {$capability} should NOT be shipped"
                 );
             }
@@ -110,7 +110,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testProductBoundaryIsClear() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $boundaryDocs = [
             $root . '/docs/product-boundary.md',
@@ -130,8 +130,8 @@ final class ProductBoundaryTest extends TestCase
 
     public function testAuthMergedArtifactIsNotCanonicalState() : void
     {
-        $root     = dirname(__DIR__, 2);
-        $contents = file_get_contents($root . '/Auth.txt');
+        $root     = dirname(path: __DIR__, levels: 2);
+        $contents = file_get_contents(filename: $root . '/Auth.txt');
 
         self::assertIsString(actual: $contents);
         $this->assertStringContainsString(needle: 'non-canonical merged artifact', haystack: $contents);
@@ -140,7 +140,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testIdentityKernelScope() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $tenantPath     = $root . '/System/Capabilities/Tenancy';
         $scimPath       = $root . '/System/Capabilities/IdentitySync/SCIM';
@@ -162,7 +162,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testCanonicalBoundaryDirectoriesExist() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredDirectories = [
             $root . '/System/Flows/Login',
@@ -199,7 +199,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testCanonicalFlowsTopLevelShapeMatchesRefactorPlan() : void
     {
-        $root     = dirname(__DIR__, 2);
+        $root     = dirname(path: __DIR__, levels: 2);
         $expected = [
             'ChangeEmail',
             'ChangePassword',
@@ -213,14 +213,14 @@ final class ProductBoundaryTest extends TestCase
 
         $this->assertSame(
             expected: $expected,
-            actual  : $this->topLevelDirectories($root . '/System/Flows'),
+            actual  : $this->topLevelDirectories(root: $root . '/System/Flows'),
             message : 'System/Flows top-level shape drifted away from the 8 canonical flow roots.'
         );
     }
 
     public function testCanonicalCapabilitiesTopLevelShapeMatchesRefactorPlan() : void
     {
-        $root     = dirname(__DIR__, 2);
+        $root     = dirname(path: __DIR__, levels: 2);
         $expected = [
             'Access',
             'Diagnostics',
@@ -232,14 +232,14 @@ final class ProductBoundaryTest extends TestCase
 
         $this->assertSame(
             expected: $expected,
-            actual  : $this->topLevelDirectories($root . '/System/Capabilities'),
+            actual  : $this->topLevelDirectories(root: $root . '/System/Capabilities'),
             message : 'System/Capabilities top-level shape drifted away from the canonical owner zones.'
         );
     }
 
     public function testCanonicalAnchorFilesExist() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredFiles = [
             $root . '/System/Flows/Login/AuthenticationResult.php',
@@ -277,7 +277,7 @@ final class ProductBoundaryTest extends TestCase
      */
     public function testZoneFacadesAreDecomposedIntoLocalOwnerFacades() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredFiles = [
             $root . '/System/Capabilities/Identity/IdentityOwners/Authentication.php',
@@ -332,17 +332,17 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($expectedConstructorTypes as $class => $expectedTypes) {
-            $constructor = (new ReflectionClass($class))->getConstructor();
+            $constructor = (new ReflectionClass(objectOrClass: $class))->getConstructor();
 
             self::assertNotNull(actual: $constructor, message: "Facade constructor missing: {$class}");
 
             $actualTypes = array_map(
-                static function (ReflectionParameter $parameter) : string|null {
+                callback: static function (ReflectionParameter $parameter) : string|null {
                     $type = $parameter->getType();
 
                     return $type instanceof ReflectionNamedType ? $type->getName() : null;
                 },
-                $constructor->getParameters()
+                array   : $constructor->getParameters()
             );
 
             $this->assertSame(
@@ -355,7 +355,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testCanonicalRootUnitsDeclareCanonicalNamespaces() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $expectedNamespaces = [
             $root . '/System/Auth.php'                            => 'namespace Avax\\Auth\\System;',
@@ -367,10 +367,10 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($expectedNamespaces as $file => $namespace) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents(filename: $file);
 
             self::assertIsString(actual: $contents);
-            $declaredNamespace = preg_match('/^namespace\s+([^;]+);$/m', $contents, $matches) === 1
+            $declaredNamespace = preg_match(pattern: '/^namespace\s+([^;]+);$/m', subject: $contents, matches: $matches) === 1
                 ? 'namespace ' . $matches[1] . ';'
                 : null;
 
@@ -384,7 +384,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testFoundationSubtreeUnitsDeclareCanonicalNamespaces() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $expectedNamespaces = [
             $root . '/System/Foundation/Exceptions/AuthException.php'             => 'namespace Avax\\Auth\\System\\Foundation\\Exceptions;',
@@ -410,10 +410,10 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($expectedNamespaces as $file => $namespace) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents(filename: $file);
 
             self::assertIsString(actual: $contents);
-            $declaredNamespace = preg_match('/^namespace\s+([^;]+);$/m', $contents, $matches) === 1
+            $declaredNamespace = preg_match(pattern: '/^namespace\s+([^;]+);$/m', subject: $contents, matches: $matches) === 1
                 ? 'namespace ' . $matches[1] . ';'
                 : null;
 
@@ -427,7 +427,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testCanonicalContractsUsePluralSystemRoots() : void
     {
-        $root  = dirname(__DIR__, 2);
+        $root  = dirname(path: __DIR__, levels: 2);
         $files = [
             $root . '/AGENTS.md',
             $root . '/README.md',
@@ -438,12 +438,12 @@ final class ProductBoundaryTest extends TestCase
             $root . '/docs/architecture/migration-map.md',
         ];
 
-        foreach (glob($root . '/docs/flows/*.md') ?: [] as $flowDoc) {
+        foreach (glob(pattern: $root . '/docs/flows/*.md') ?: [] as $flowDoc) {
             $files[] = $flowDoc;
         }
 
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents(filename: $file);
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
@@ -458,8 +458,8 @@ final class ProductBoundaryTest extends TestCase
             );
         }
 
-        $agents = file_get_contents($root . '/AGENTS.md');
-        $shape  = file_get_contents($root . '/docs/architecture/system-shape.md');
+        $agents = file_get_contents(filename: $root . '/AGENTS.md');
+        $shape  = file_get_contents(filename: $root . '/docs/architecture/system-shape.md');
 
         self::assertIsString(actual: $agents);
         self::assertIsString(actual: $shape);
@@ -471,7 +471,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testLegacySingularDirectoryRootsAreRemoved() : void
     {
-        $root       = dirname(__DIR__, 2);
+        $root       = dirname(path: __DIR__, levels: 2);
         $legacyDirs = [
             $root . '/System/Flow',
             $root . '/System/Capability',
@@ -489,9 +489,9 @@ final class ProductBoundaryTest extends TestCase
 
     public function testNoLegacyCompatibilityShimsRemainInSystemTree() : void
     {
-        $root     = dirname(__DIR__, 2);
+        $root     = dirname(path: __DIR__, levels: 2);
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($root . '/System', FilesystemIterator::SKIP_DOTS)
+            iterator: new RecursiveDirectoryIterator(directory: $root . '/System', flags: FilesystemIterator::SKIP_DOTS)
         );
 
         /** @var SplFileInfo $file */
@@ -500,7 +500,7 @@ final class ProductBoundaryTest extends TestCase
                 continue;
             }
 
-            $contents = file_get_contents($file->getPathname());
+            $contents = file_get_contents(filename: $file->getPathname());
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
@@ -523,7 +523,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testMigratedNamespaceRootsAreFullyCutOverInSourceAndTests() : void
     {
-        $root        = dirname(__DIR__, 2);
+        $root        = dirname(path: __DIR__, levels: 2);
         $bannedRoots = [
             'Avax\\Auth\\System\\Capabilities\\AdminRealm\\',
             'Avax\\Auth\\System\\Capabilities\\Explainability\\',
@@ -568,7 +568,7 @@ final class ProductBoundaryTest extends TestCase
 
         foreach ($directories as $directory) {
             $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
+                iterator: new RecursiveDirectoryIterator(directory: $directory, flags: FilesystemIterator::SKIP_DOTS)
             );
 
             /** @var SplFileInfo $file */
@@ -577,7 +577,7 @@ final class ProductBoundaryTest extends TestCase
                     continue;
                 }
 
-                $contents = file_get_contents($file->getPathname());
+                $contents = file_get_contents(filename: $file->getPathname());
 
                 self::assertIsString(actual: $contents);
 
@@ -594,14 +594,14 @@ final class ProductBoundaryTest extends TestCase
 
     public function testRefactorAndClosureDocsReflectPluralCanonicalRoots() : void
     {
-        $root  = dirname(__DIR__, 2);
+        $root  = dirname(path: __DIR__, levels: 2);
         $files = [
             $root . '/REFAKTOR.md',
             $root . '/complete-this.md',
         ];
 
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents(filename: $file);
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
@@ -619,8 +619,8 @@ final class ProductBoundaryTest extends TestCase
 
     public function testMutationConfigurationUsesPluralSystemRoots() : void
     {
-        $root     = dirname(__DIR__, 2);
-        $contents = file_get_contents($root . '/infection.json.dist');
+        $root     = dirname(path: __DIR__, levels: 2);
+        $contents = file_get_contents(filename: $root . '/infection.json.dist');
 
         self::assertIsString(actual: $contents);
         $this->assertStringNotContainsString(needle: 'System/Flow/', haystack: $contents);
@@ -631,7 +631,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testTargetFoundationArchitectureExists() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredDirectories = [
             $root . '/System/Foundation/Ids',
@@ -680,7 +680,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testTargetCapabilitiesArchitectureExists() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredDirectories = [
             $root . '/System/Capabilities/Access/Authentication',
@@ -793,7 +793,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testTargetTestArchitectureExists() : void
     {
-        $root = dirname(__DIR__, 2);
+        $root = dirname(path: __DIR__, levels: 2);
 
         $requiredDirectories = [
             $root . '/tests/Unit/System/Flows/Login',
@@ -932,7 +932,7 @@ final class ProductBoundaryTest extends TestCase
 
     public function testCoreFlowsDoNotCreateClockInternally() : void
     {
-        $root  = dirname(__DIR__, 2);
+        $root  = dirname(path: __DIR__, levels: 2);
         $files = [
             $root . '/System/Flows/Login/Login.php',
             $root . '/System/Flows/Register/Register.php',
@@ -940,7 +940,7 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($files as $file) {
-            $contents = file_get_contents($file);
+            $contents = file_get_contents(filename: $file);
 
             self::assertIsString(actual: $contents);
             $this->assertStringNotContainsString(
@@ -956,7 +956,7 @@ final class ProductBoundaryTest extends TestCase
      */
     private function topLevelDirectories(string $root) : array
     {
-        $entries = scandir($root);
+        $entries = scandir(directory: $root);
         self::assertNotFalse($entries);
 
         $directories = [];
@@ -966,12 +966,12 @@ final class ProductBoundaryTest extends TestCase
                 continue;
             }
 
-            if (is_dir($root . '/' . $entry)) {
+            if (is_dir(filename: $root . '/' . $entry)) {
                 $directories[] = $entry;
             }
         }
 
-        sort($directories);
+        sort(array: $directories);
 
         return $directories;
     }

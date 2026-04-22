@@ -249,7 +249,7 @@ final readonly class RouterDsl implements RouterInterface
     public function __call(string $method, array $arguments) : mixed
     {
         // Check if this might be an HTTP method (all uppercase)
-        if (strtoupper($method) === $method && strlen($method) > 0) {
+        if (strtoupper(string: $method) === $method && strlen(string: $method) > 0) {
             throw new BadMethodCallException(message: "HTTP method '{$method}' is not supported or route path is empty");
         }
 

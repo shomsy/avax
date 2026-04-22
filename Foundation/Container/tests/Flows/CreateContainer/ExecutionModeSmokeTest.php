@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -15,7 +15,7 @@ final class ExecutionModeService
     public function __construct(ExecutionModeDependency $dependency) { $this->dependency = $dependency; }
 }
 
-$generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid('', true);
+$generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid(prefix: '', more_entropy: true);
 $generated         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $generatedCacheDir,
     cacheVersion : 'generated-mode-smoke',
@@ -49,7 +49,7 @@ assertSame(
     message : 'Generated mode should remain explainable.'
 );
 
-$dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid('', true);
+$dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid(prefix: '', more_entropy: true);
 $dynamic         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $dynamicCacheDir,
     cacheVersion : 'dynamic-mode-smoke',
@@ -93,4 +93,4 @@ assertSame(
     message : 'Dynamic mode should still preserve compiled artifacts as derived outputs.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -20,7 +20,7 @@ final readonly class GuardUploadedFiles
     public function execute(array $files) : void
     {
         foreach ($files as $file) {
-            if (is_array($file)) {
+            if (is_array(value: $file)) {
                 $this->execute(files: $file);
 
                 continue;

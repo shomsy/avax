@@ -62,7 +62,7 @@ final class ReadConnection
 
         $config = $this->config['connections'][$resolvedName] ?? null;
 
-        if (! is_array($config)) {
+        if (! is_array(value: $config)) {
             throw new ConnectionException(name: $resolvedName, message: 'Database connection configuration not found.');
         }
 

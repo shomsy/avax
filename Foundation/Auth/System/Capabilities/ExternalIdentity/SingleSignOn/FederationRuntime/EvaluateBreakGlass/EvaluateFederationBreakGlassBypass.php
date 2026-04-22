@@ -29,7 +29,7 @@ final readonly class EvaluateFederationBreakGlassBypass
         }
 
         $allowed = $connection->breakGlassAllowed
-            && in_array($connection->health, [FederationConnectionHealth::DEGRADED, FederationConnectionHealth::UNAVAILABLE], true);
+            && in_array(needle: $connection->health, haystack: [FederationConnectionHealth::DEGRADED, FederationConnectionHealth::UNAVAILABLE], strict: true);
 
         $this->auditLog->record(event: new AuditEvent(
                                            name      : $allowed

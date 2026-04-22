@@ -16,7 +16,7 @@ final class GraphExporter
      */
     public function export(array $artifact, string $format = 'json') : string
     {
-        return match (strtolower(trim($format))) {
+        return match (strtolower(string: trim(string: $format))) {
             'mermaid'         => $this->toMermaid(artifact: $artifact),
             'dot', 'graphviz' => $this->toDot(artifact: $artifact),
             'html'            => $this->toHtml(artifact: $artifact),
@@ -30,7 +30,7 @@ final class GraphExporter
     private function toJson(array $artifact) : string
     {
         try {
-            return (string) json_encode($artifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return (string) json_encode(value: $artifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '{}';
         }
@@ -53,14 +53,14 @@ final class GraphExporter
         foreach ($artifact['edges'] ?? [] as $edge) {
             $from  = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
             $to    = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
-            $label = trim((string) ($edge['label'] ?? ''));
+            $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
                 ? '    ' . $from . ' -->|' . $this->escapeMermaid(label: $label) . '| ' . $to
                 : '    ' . $from . ' --> ' . $to;
         }
 
-        return implode(PHP_EOL, $lines) . PHP_EOL;
+        return implode(separator: PHP_EOL, array: $lines) . PHP_EOL;
     }
 
     /**
@@ -72,14 +72,14 @@ final class GraphExporter
             return $seen[$label];
         }
 
-        $seen[$label] = 'n' . substr(sha1($label), 0, 10);
+        $seen[$label] = 'n' . substr(string: sha1(string: $label), offset: 0, length: 10);
 
         return $seen[$label];
     }
 
     private function escapeMermaid(string $label) : string
     {
-        return str_replace(['"', "\n", "\r"], ["'", ' ', ' '], $label);
+        return str_replace(search: ['"', "\n", "\r"], replace: ["'", ' ', ' '], subject: $label);
     }
 
     /**
@@ -98,7 +98,7 @@ final class GraphExporter
         foreach ($artifact['edges'] ?? [] as $edge) {
             $from  = $this->quote(value: (string) ($edge['from'] ?? 'from'));
             $to    = $this->quote(value: (string) ($edge['to'] ?? 'to'));
-            $label = trim((string) ($edge['label'] ?? ''));
+            $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
                 ? '  ' . $from . ' -> ' . $to . ' [label=' . $this->quote(value: $label) . '];'
@@ -107,12 +107,12 @@ final class GraphExporter
 
         $lines[] = '}';
 
-        return implode(PHP_EOL, $lines) . PHP_EOL;
+        return implode(separator: PHP_EOL, array: $lines) . PHP_EOL;
     }
 
     private function quote(string $value) : string
     {
-        return '"' . str_replace(['\\', '"'], ['\\\\', '\\"'], $value) . '"';
+        return '"' . str_replace(search: ['\\', '"'], replace: ['\\\\', '\\"'], subject: $value) . '"';
     }
 
     /**
@@ -336,6 +336,6 @@ final class GraphExporter
             </html>
             HTML;
 
-        return str_replace('__GRAPH_DATA__', $json, $template);
+        return str_replace(search: '__GRAPH_DATA__', replace: $json, subject: $template);
     }
 }

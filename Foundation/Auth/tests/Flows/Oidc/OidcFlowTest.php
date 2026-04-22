@@ -130,12 +130,12 @@ final class OidcFlowTest extends TestCase
     {
         $keyId                     ??= 'oidc-key-1';
         $subjectIdentifierStrategy ??= SubjectIdentifierStrategy::PUBLIC;
-        $key                       = openssl_pkey_new([
+        $key                       = openssl_pkey_new(options: [
                                                           'private_key_bits' => 2048,
                                                           'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                                       ]);
         self::assertNotFalse(condition: $key);
-        openssl_pkey_export($key, $privateKeyPem);
+        openssl_pkey_export(key: $key, output: $privateKeyPem);
 
         return new OpenSslOidcProvider(
             issuer                   : 'https://auth.example.test',

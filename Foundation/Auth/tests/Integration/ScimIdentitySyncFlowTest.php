@@ -10,6 +10,6 @@ final class ScimIdentitySyncFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/Scim/ScimFlowTest.php';
+        return dirname(path: __DIR__) . '/Flows/Scim/ScimFlowTest.php';
     }
 }

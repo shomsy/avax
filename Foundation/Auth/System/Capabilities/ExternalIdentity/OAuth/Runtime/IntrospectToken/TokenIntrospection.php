@@ -44,6 +44,6 @@ final readonly class TokenIntrospection
 
     public function scopeString() : string
     {
-        return implode(' ', $this->scopes);
+        return implode(separator: ' ', array: $this->scopes);
     }
 }

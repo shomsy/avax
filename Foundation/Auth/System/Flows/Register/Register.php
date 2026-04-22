@@ -71,7 +71,7 @@ final readonly class Register
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'user_id'    => $createdUser->getId()->value,
-                                                           'email'      => strtolower($createdUser->getEmail()->value),
+                                                           'email'      => strtolower(string: $createdUser->getEmail()->value),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
                                                        ]

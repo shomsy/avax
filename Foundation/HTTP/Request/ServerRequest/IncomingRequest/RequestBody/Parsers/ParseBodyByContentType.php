@@ -20,7 +20,7 @@ final readonly class ParseBodyByContentType
             return null;
         }
 
-        $mediaType = strtolower(trim(explode(';', $contentType)[0]));
+        $mediaType = strtolower(string: trim(string: explode(separator: ';', string: $contentType)[0]));
 
         return match ($mediaType) {
             'application/json'                  => $this->jsonParser->execute(content: $content),

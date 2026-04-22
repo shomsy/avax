@@ -39,7 +39,7 @@ final class ServicePool
      */
     public function has(string $abstract) : bool
     {
-        return array_key_exists($abstract, $this->items);
+        return array_key_exists(key: $abstract, array: $this->items);
     }
 
     /**
@@ -106,7 +106,7 @@ final class ServicePool
      */
     public function count() : int
     {
-        return count($this->items);
+        return count(value: $this->items);
     }
 
     public function hasPooled(string $abstract) : bool
@@ -129,7 +129,7 @@ final class ServicePool
             ];
         }
 
-        $instance                = array_pop($bucket);
+        $instance                = array_pop(array: $bucket);
         $this->pooled[$abstract] = $bucket;
         if ($bucket === []) {
             unset($this->pooled[$abstract]);
@@ -161,7 +161,7 @@ final class ServicePool
             'disposable'       => $disposable,
         ];
 
-        if (! is_object($instance)) {
+        if (! is_object(value: $instance)) {
             $this->pooledStats['unsafe']++;
 
             return [
@@ -199,7 +199,7 @@ final class ServicePool
         }
 
         $bucket = $this->pooled[$abstract] ?? [];
-        if (count($bucket) >= max(1, $maxSize)) {
+        if (count(value: $bucket) >= max(1, $maxSize)) {
             $this->pooledStats['overflows']++;
 
             return [
@@ -225,12 +225,12 @@ final class ServicePool
     public function pooledCount(string $abstract = '') : int
     {
         if ($abstract !== '') {
-            return count($this->pooled[$abstract] ?? []);
+            return count(value: $this->pooled[$abstract] ?? []);
         }
 
-        return array_sum(array_map(
-                             static fn (array $bucket) : int => count($bucket),
-                             $this->pooled
+        return array_sum(array: array_map(
+                             callback: static fn (array $bucket) : int => count(value: $bucket),
+                             array   : $this->pooled
                          ));
     }
 
@@ -239,8 +239,8 @@ final class ServicePool
      */
     public function ids() : array
     {
-        $ids = array_keys($this->items);
-        sort($ids);
+        $ids = array_keys(array: $this->items);
+        sort(array: $ids);
 
         return $ids;
     }
@@ -270,12 +270,12 @@ final class ServicePool
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                static fn (mixed $instance) : string => is_object($instance) ? $instance::class : get_debug_type($instance),
-                $bucket
+                callback: static fn (mixed $instance) : string => is_object(value: $instance) ? $instance::class : get_debug_type(value: $instance),
+                array   : $bucket
             );
         }
 
-        ksort($snapshot);
+        ksort(array: $snapshot);
 
         return $snapshot;
     }
@@ -294,7 +294,7 @@ final class ServicePool
     public function pooledOptions() : array
     {
         $options = $this->pooledOptions;
-        ksort($options);
+        ksort(array: $options);
 
         return $options;
     }

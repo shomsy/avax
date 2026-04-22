@@ -47,7 +47,7 @@ final readonly class RegisterClient
                                                            'name'                              => $registered->client->name,
                                                            'type'                              => $registered->client->type->value,
                                                            'workload_identity'                 => $registered->client->workloadIdentity ? 1 : 0,
-                                                           'allowed_audiences'                 => implode(' ', $registered->client->allowedAudiences),
+                                                           'allowed_audiences'                 => implode(separator: ' ', array: $registered->client->allowedAudiences),
                                                            'sender_constraint'                 => $registered->client->requiredSenderConstraint?->value,
                                                            'request_object_signature_required' => $registered->client->requestObjectSignatureRequired ? 1 : 0,
                                                            'approval_status'                   => $registered->client->approvalStatus->value,

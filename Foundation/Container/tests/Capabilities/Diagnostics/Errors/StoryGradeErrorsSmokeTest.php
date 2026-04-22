@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
@@ -47,11 +47,11 @@ try {
     throw new RuntimeException(message: 'Flow-local services should not resolve from the top-level surface.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'is not part of the top-level container surface'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'is not part of the top-level container surface'),
         message  : 'Top-level access failures should explain the surface violation.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Likely fix: mark the flow root as entry(), export the shared capability'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: mark the flow root as entry(), export the shared capability'),
         message  : 'Top-level access failures should suggest an ownership-aware fix.'
     );
 }
@@ -64,11 +64,11 @@ try {
     throw new RuntimeException(message: 'ServerRequest-scoped services should require an active request scope.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'requires an active [request] scope'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'requires an active [request] scope'),
         message  : 'Scope failures should name the missing required scope.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), "openScope('request') before resolving it"),
+        condition: str_contains(haystack: $exception->getMessage(), needle: "openScope('request') before resolving it"),
         message  : 'Scope failures should suggest the exact scope operation to open.'
     );
 }
@@ -87,15 +87,15 @@ try {
     throw new RuntimeException(message: 'Cross-slice internal dependencies should be blocked.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Illegal cross-slice dependency'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Illegal cross-slice dependency'),
         message  : 'Cross-slice failures should name the blocked dependency edge.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Consumer slice [checkout] cannot use dependency slice [payments]'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Consumer slice [checkout] cannot use dependency slice [payments]'),
         message  : 'Cross-slice failures should expose the consumer and dependency slices.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Likely fix: export the dependency intentionally, import its slice'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: export the dependency intentionally, import its slice'),
         message  : 'Cross-slice failures should suggest an ownership-aware fix.'
     );
 }
@@ -108,11 +108,11 @@ try {
     throw new RuntimeException(message: 'Missing runtime input should fail.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Runtime input [$token] is missing'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Runtime input [$token] is missing'),
         message  : 'Runtime-input failures should name the missing input.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
         message  : 'Runtime-input failures should remain fix-oriented.'
     );
 }
@@ -128,13 +128,13 @@ try {
     throw new RuntimeException(message: 'Service locator drift should fail fast.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Service locator drift blocked'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Service locator drift blocked'),
         message  : 'Service locator failures should name the anti-pattern explicitly.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'inject the concrete dependency boundary instead of the container'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'inject the concrete dependency boundary instead of the container'),
         message  : 'Service locator failures should suggest an ownership-safe fix.'
     );
 }
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

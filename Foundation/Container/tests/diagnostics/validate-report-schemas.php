@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
@@ -30,7 +30,7 @@ final class DiagnosticsSchemaConsumer
 function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
 {
     foreach ($requiredKeys as $key) {
-        assertTrue(condition: array_key_exists($key, $payload), message: "{$label} should expose required key [{$key}].");
+        assertTrue(condition: array_key_exists(key: $key, array: $payload), message: "{$label} should expose required key [{$key}].");
     }
 }
 
@@ -103,8 +103,8 @@ assertSchemaKeys(
     label       : 'Runtime report'
 );
 
-$compileJson = json_decode($compileReport->toJson(), true, 512, JSON_THROW_ON_ERROR);
-$runtimeJson = json_decode($runtimeReport->toJson(), true, 512, JSON_THROW_ON_ERROR);
+$compileJson = json_decode(json: $compileReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+$runtimeJson = json_decode(json: $runtimeReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 
 assertSame(
     expected: CompileReport::SCHEMA_VERSION,
@@ -117,4 +117,4 @@ assertSame(
     message : 'Runtime report JSON should preserve its schema version.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

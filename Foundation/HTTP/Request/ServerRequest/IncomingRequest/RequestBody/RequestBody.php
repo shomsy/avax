@@ -41,7 +41,7 @@ final readonly class RequestBody
 
             return $stream->getContents();
         } finally {
-            $stream->seek($originalPosition);
+            $stream->seek(offset: $originalPosition);
         }
     }
 }

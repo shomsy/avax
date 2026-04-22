@@ -22,26 +22,26 @@ final class Hydrator
         $identifier = $metadata->identifierField();
         $entity     = null;
 
-        if ($identifier !== null && array_key_exists($identifier->column, $row)) {
+        if ($identifier !== null && array_key_exists(key: $identifier->column, array: $row)) {
             $entity = $this->identityMap->get(
                 entityClass: $entityClass,
                 id         : $row[$identifier->column]
             );
         }
 
-        $entity ??= (new ReflectionClass($entityClass))->newInstanceWithoutConstructor();
+        $entity ??= (new ReflectionClass(objectOrClass: $entityClass))->newInstanceWithoutConstructor();
 
         foreach ($metadata->fields as $field) {
-            if (! array_key_exists($field->column, $row)) {
+            if (! array_key_exists(key: $field->column, array: $row)) {
                 continue;
             }
 
-            $property = new ReflectionProperty($entityClass, $field->property);
-            $property->setAccessible(true);
-            $property->setValue($entity, $row[$field->column]);
+            $property = new ReflectionProperty(class: $entityClass, property: $field->property);
+            $property->setAccessible(accessible: true);
+            $property->setValue(objectOrValue: $entity, value: $row[$field->column]);
         }
 
-        if ($identifier !== null && array_key_exists($identifier->column, $row)) {
+        if ($identifier !== null && array_key_exists(key: $identifier->column, array: $row)) {
             $this->identityMap->put(
                 entityClass: $entityClass,
                 id         : $row[$identifier->column],

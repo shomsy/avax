@@ -34,9 +34,9 @@ enum ForeignAction: string
 
     private static function normalize(string $value) : string
     {
-        $value = preg_replace('/(?<!^)[A-Z]/', '_$0', $value) ?? $value;
-        $value = str_replace(['-', '_'], ' ', $value);
+        $value = preg_replace(pattern: '/(?<!^)[A-Z]/', replacement: '_$0', subject: $value) ?? $value;
+        $value = str_replace(search: ['-', '_'], replace: ' ', subject: $value);
 
-        return strtoupper(trim($value));
+        return strtoupper(string: trim(string: $value));
     }
 }

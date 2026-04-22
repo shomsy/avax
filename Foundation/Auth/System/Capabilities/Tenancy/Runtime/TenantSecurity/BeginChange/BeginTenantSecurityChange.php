@@ -43,10 +43,10 @@ final readonly class BeginTenantSecurityChange
             rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion
         );
         $changeRequest = new TenantSecurityChangeRequest(
-            changeId   : 'tenant_change_' . bin2hex(random_bytes(12)),
+            changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
             tenantSlug : $data->tenantSlug,
-            requestedBy: trim($data->requestedBy),
-            reason     : trim($data->reason),
+            requestedBy: trim(string: $data->requestedBy),
+            reason     : trim(string: $data->reason),
             before     : $before,
             after      : $after,
             diff       : $this->diff(before: $before, after: $after),
@@ -108,7 +108,7 @@ final readonly class BeginTenantSecurityChange
             $diff[$field] = $beforeValue . ' => ' . $afterValue;
         }
 
-        ksort($diff);
+        ksort(array: $diff);
 
         return $diff;
     }
@@ -125,7 +125,7 @@ final readonly class BeginTenantSecurityChange
         return [
             'federation_connection_id' => (string) $configuration->federationConnectionId,
             'scim_directory_id'        => (string) $configuration->scimDirectoryId,
-            'verified_domains'         => implode(',', $configuration->verifiedDomains),
+            'verified_domains'         => implode(separator: ',', array: $configuration->verifiedDomains),
             'group_role_map'           => $this->encodeDiff(value: $configuration->groupRoleMap),
             'policy_profile'           => $configuration->policyProfile,
             'rollout_version'          => (string) $configuration->rolloutVersion,
@@ -138,7 +138,7 @@ final readonly class BeginTenantSecurityChange
     private function encodeDiff(array $value) : string
     {
         try {
-            return json_encode($value, JSON_THROW_ON_ERROR);
+            return json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '';
         }

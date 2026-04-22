@@ -16,7 +16,7 @@ final class TypedResult
      */
     public static function fromRows(string $className, array $rows) : array
     {
-        $mapper = new ResultMapper($className);
+        $mapper = new ResultMapper(className: $className);
 
         return array_map(
             callback: fn (array $row) => $mapper->map(row: $row),
@@ -38,7 +38,7 @@ final class TypedResult
             return null;
         }
 
-        $mapper = new ResultMapper($className);
+        $mapper = new ResultMapper(className: $className);
 
         return $mapper->map(row: $row);
     }

@@ -40,7 +40,7 @@ final class BatchLoader
         $callback = $this->loaders[$name] ?? null;
 
         if ($callback === null) {
-            throw new RuntimeException("No loader registered for: {$name}");
+            throw new RuntimeException(message: "No loader registered for: {$name}");
         }
 
         $results            = $callback($keys);

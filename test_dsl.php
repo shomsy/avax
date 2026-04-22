@@ -22,7 +22,7 @@ echo "Word count: " . $text3->countWords() . "\n";
 
 $text4 = Avax\Text\Text::of(value: '/users/{id}/posts/{slug}');
 echo "Route path validation: " . ($text4->validateRoutePath() ? "✅ PASS" : "❌ FAIL") . "\n";
-echo "Route parameters: " . json_encode($text4->extractRouteParameters()) . "\n";
+echo "Route parameters: " . json_encode(value: $text4->extractRouteParameters()) . "\n";
 
 $text5 = Avax\Text\Text::of(value: 'user_name');
 echo "Valid route param: " . ($text5->matchesRouteParameter('user_name') ? "✅ PASS" : "❌ FAIL") . "\n";

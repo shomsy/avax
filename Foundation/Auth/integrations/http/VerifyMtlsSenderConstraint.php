@@ -36,7 +36,7 @@ final readonly class VerifyMtlsSenderConstraint
 
         if (
             $input->expectedTokenThumbprint !== null
-            && ! hash_equals($input->expectedTokenThumbprint, $thumbprint)
+            && ! hash_equals(known_string: $input->expectedTokenThumbprint, user_string: $thumbprint)
         ) {
             $this->recordFailure(reason: 'binding_mismatch', input: $input);
             throw MtlsBindingFailed::mismatch();
@@ -55,7 +55,7 @@ final readonly class VerifyMtlsSenderConstraint
     {
         $value = $server['TLS_CLIENT_CERT_SHA256'] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     /**
@@ -64,15 +64,15 @@ final readonly class VerifyMtlsSenderConstraint
     private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, 'x-tls-client-cert-sha256') !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: 'x-tls-client-cert-sha256') !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;
@@ -85,7 +85,7 @@ final readonly class VerifyMtlsSenderConstraint
                                            occurredAt: new DateTimeImmutable(),
                                            context   : [
                                                            'reason' => $reason,
-                                                           'method' => strtoupper($input->method),
+                                                           'method' => strtoupper(string: $input->method),
                                                            'uri'    => $input->uri,
                                                        ]
                                        ));

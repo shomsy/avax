@@ -85,7 +85,7 @@ final class RouteMatcherRegistry
     public function get(string $key) : RouteMatcherInterface
     {
         if (! isset($this->matchers[$key])) {
-            throw new InvalidArgumentException(message: "Route matcher '{$key}' is not registered. Available: " . implode(', ', array_keys($this->matchers)));
+            throw new InvalidArgumentException(message: "Route matcher '{$key}' is not registered. Available: " . implode(separator: ', ', array: array_keys(array: $this->matchers)));
         }
 
         return $this->matchers[$key];
@@ -106,7 +106,7 @@ final class RouteMatcherRegistry
      */
     public function keys() : array
     {
-        return array_keys($this->matchers);
+        return array_keys(array: $this->matchers);
     }
 
     /**
@@ -130,6 +130,6 @@ final class RouteMatcherRegistry
      */
     public function count() : int
     {
-        return count($this->matchers);
+        return count(value: $this->matchers);
     }
 }

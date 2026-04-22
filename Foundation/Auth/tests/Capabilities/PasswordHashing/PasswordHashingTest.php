@@ -16,9 +16,9 @@ class PasswordHashingTest extends TestCase
     {
         $hasher = new PasswordHasher();
         $hash   = $hasher->hash(password: 'secret');
-        $info   = password_get_info($hash);
+        $info   = password_get_info(hash: $hash);
 
-        if (defined('PASSWORD_ARGON2ID')) {
+        if (defined(constant_name: 'PASSWORD_ARGON2ID')) {
             $this->assertSame(expected: 'argon2id', actual: $info['algoName']);
 
             return;

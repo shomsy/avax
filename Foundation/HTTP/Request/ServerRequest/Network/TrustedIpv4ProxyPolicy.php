@@ -28,16 +28,16 @@ final readonly class TrustedIpv4ProxyPolicy
 
     public function isTrusted(string $ip): bool
     {
-        if ($ip === '' || filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
+        if ($ip === '' || filter_var(value: $ip, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false) {
             return false;
         }
 
-        return array_any($this->trustedProxies, fn ($rule) => $this->matchesRule(ip: $ip, rule: $rule));
+        return array_any(array: $this->trustedProxies, callback: fn ($rule) => $this->matchesRule(ip: $ip, rule: $rule));
     }
 
     private function matchesRule(string $ip, string $rule): bool
     {
-        $rule = trim($rule);
+        $rule = trim(string: $rule);
 
         if ($rule === '' ) {
             return false;
@@ -47,7 +47,7 @@ final readonly class TrustedIpv4ProxyPolicy
             return true;
         }
 
-        if (str_contains($rule, '/')) {
+        if (str_contains(haystack: $rule, needle: '/')) {
             return $this->matchesIpv4Cidr(ip: $ip, cidr: $rule);
         }
 
@@ -56,11 +56,11 @@ final readonly class TrustedIpv4ProxyPolicy
 
     private function matchesIpv4Cidr(string $ip, string $cidr): bool
     {
-        [$subnet, $mask] = explode('/', $cidr, 2) + [1 => '32'];
+        [$subnet, $mask] = explode(separator: '/', string: $cidr, limit: 2) + [1 => '32'];
 
         if (
-            filter_var($subnet, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false
-            || ! ctype_digit($mask)
+            filter_var(value: $subnet, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false
+            || ! ctype_digit(text: $mask)
         ) {
             return false;
         }
@@ -71,8 +71,8 @@ final readonly class TrustedIpv4ProxyPolicy
             return false;
         }
 
-        $ipLong = ip2long($ip);
-        $subnetLong = ip2long($subnet);
+        $ipLong = ip2long(ip: $ip);
+        $subnetLong = ip2long(ip: $subnet);
 
         if ($ipLong === false || $subnetLong === false) {
             return false;

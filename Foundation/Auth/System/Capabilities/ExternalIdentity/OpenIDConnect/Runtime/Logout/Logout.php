@@ -17,7 +17,7 @@ final readonly class Logout
 
     public function execute(LogoutData $data) : LogoutResult
     {
-        if ($data->logoutToken !== null && trim($data->logoutToken) !== '') {
+        if ($data->logoutToken !== null && trim(string: $data->logoutToken) !== '') {
             return $this->backChannelLogout->execute(data: new BackChannelLogoutData(logoutToken: $data->logoutToken));
         }
 

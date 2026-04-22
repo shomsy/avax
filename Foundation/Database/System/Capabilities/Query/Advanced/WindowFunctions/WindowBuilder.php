@@ -102,7 +102,7 @@ final class WindowBuilder
         $sql = $this->function . '(';
 
         if (! empty($this->partitionBy)) {
-            $partition = implode(separator: ', ', array_map(
+            $partition = implode(separator: ', ', array: array_map(
                 callback: fn ($col) => $this->grammar->wrap(value: $col),
                 array   : $this->partitionBy
             ));
@@ -126,7 +126,7 @@ final class WindowBuilder
             $parts = [];
 
             if (! empty($this->partitionBy)) {
-                $partition = implode(separator: ', ', array_map(
+                $partition = implode(separator: ', ', array: array_map(
                     callback: fn ($col) => $this->grammar->wrap(value: $col),
                     array   : $this->partitionBy
                 ));

@@ -211,7 +211,7 @@ final readonly class Audit
     private function resolveUserId() : int|null
     {
         $userId = $this->sessionContext?->userId();
-        if (is_int($userId)) {
+        if (is_int(value: $userId)) {
             return $userId;
         }
 

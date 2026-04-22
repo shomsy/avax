@@ -107,7 +107,7 @@ final class IRTransformer
         $parts = [];
 
         $parts[] = 'SELECT';
-        $parts[] = implode(',', $query->getSelect());
+        $parts[] = implode(separator: ',', array: $query->getSelect());
 
         $from = $query->getFrom();
         if ($from !== null) {
@@ -126,7 +126,7 @@ final class IRTransformer
 
         $groups = $query->getGroups();
         if (! empty($groups)) {
-            $parts[] = 'GROUP BY ' . implode(',', $groups);
+            $parts[] = 'GROUP BY ' . implode(separator: ',', array: $groups);
         }
 
         $orders = $query->getOrders();
@@ -137,6 +137,6 @@ final class IRTransformer
         $parts[] = 'LIMIT ' . ($query->getLimit() ?? '0');
         $parts[] = 'OFFSET ' . ($query->getOffset() ?? '0');
 
-        return md5(implode('|', array: $parts));
+        return md5(string: implode(separator: '|', array: $parts));
     }
 }

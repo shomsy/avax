@@ -8,6 +8,6 @@ final class NormalizeEmail
 {
     public function __invoke(string $value) : string
     {
-        return mb_strtolower(trim($value));
+        return mb_strtolower(string: trim(string: $value));
     }
 }

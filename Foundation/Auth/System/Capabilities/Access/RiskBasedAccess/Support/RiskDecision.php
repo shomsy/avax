@@ -18,6 +18,6 @@ final readonly class RiskDecision
 
     public static function allow(string ...$reasons) : self
     {
-        return new self(action: RiskAction::ALLOW, reasons: array_values($reasons));
+        return new self(action: RiskAction::ALLOW, reasons: array_values(array: $reasons));
     }
 }

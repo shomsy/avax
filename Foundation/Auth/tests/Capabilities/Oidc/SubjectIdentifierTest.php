@@ -39,7 +39,7 @@ final class SubjectIdentifierTest extends TestCase
 
         $this->assertSame(expected: $first, actual: $second);
         $this->assertNotSame(expected: $first, actual: $different);
-        $this->assertSame(expected: 64, actual: strlen($first));
+        $this->assertSame(expected: 64, actual: strlen(string: $first));
     }
 
     public function testSectorIdentifierValidationAcceptsUrisAndRejectsPlainStrings() : void

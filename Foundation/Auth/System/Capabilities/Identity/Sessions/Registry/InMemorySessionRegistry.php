@@ -42,8 +42,8 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         }
 
         usort(
-            $records,
-            static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt
+            array   : $records,
+            callback: static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt
         );
 
         return $records;

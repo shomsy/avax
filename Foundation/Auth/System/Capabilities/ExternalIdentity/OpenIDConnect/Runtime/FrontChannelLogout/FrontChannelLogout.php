@@ -40,7 +40,7 @@ final readonly class FrontChannelLogout
 
         if ($sessionId === null && $data->idTokenHint !== null && $this->oidcProvider !== null) {
             $claims    = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
-            $sessionId = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
+            $sessionId = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
         }
 
         if ($sessionId !== null && $sessionId !== '') {
@@ -86,16 +86,16 @@ final readonly class FrontChannelLogout
 
     private function resolveClientFromIdTokenHint(#[SensitiveParameter] string|null $idTokenHint) : OAuthClient|null
     {
-        if ($idTokenHint === null || trim($idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
+        if ($idTokenHint === null || trim(string: $idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
             return null;
         }
 
         $claims = $this->oidcProvider->resolveIdToken(idToken: $idTokenHint);
 
-        if (! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
+        if (! is_string(value: $claims['aud'] ?? null) || trim(string: $claims['aud']) === '') {
             return null;
         }
 
-        return $this->clientRegistry->find(clientId: trim($claims['aud']));
+        return $this->clientRegistry->find(clientId: trim(string: $claims['aud']));
     }
 }

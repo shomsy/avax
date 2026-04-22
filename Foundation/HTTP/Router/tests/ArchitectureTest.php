@@ -67,7 +67,7 @@ final class ArchitectureTest extends TestCase
     public function testNoStaticMutableProperties() : void
     {
         foreach (self::ROUTER_CLASSES as $className) {
-            if (! class_exists($className)) {
+            if (! class_exists(class: $className)) {
                 continue; // Skip interfaces or non-existent classes
             }
 
@@ -101,7 +101,7 @@ final class ArchitectureTest extends TestCase
     public function testNoBootstrapDependencies() : void
     {
         foreach (self::ROUTER_CLASSES as $className) {
-            if (! class_exists($className)) {
+            if (! class_exists(class: $className)) {
                 continue;
             }
 
@@ -116,7 +116,7 @@ final class ArchitectureTest extends TestCase
                         $typeName = $type->getName();
 
                         // Check if parameter type is from Bootstrap namespace
-                        if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
+                        if (str_contains(haystack: $typeName, needle: 'Avax\\HTTP\\Router\\Bootstrap')) {
                             $this->fail(message: sprintf(
                                                      'Router class %s depends on Bootstrap layer (%s) in constructor, violating architectural boundaries',
                                                      $className,
@@ -133,7 +133,7 @@ final class ArchitectureTest extends TestCase
                 if ($type instanceof ReflectionNamedType) {
                     $typeName = $type->getName();
 
-                    if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
+                    if (str_contains(haystack: $typeName, needle: 'Avax\\HTTP\\Router\\Bootstrap')) {
                         $this->fail(message: sprintf(
                                                  'Router class %s has Bootstrap dependency (%s) as property, violating architectural boundaries',
                                                  $className,
@@ -149,7 +149,7 @@ final class ArchitectureTest extends TestCase
                 if ($returnType instanceof ReflectionNamedType) {
                     $typeName = $returnType->getName();
 
-                    if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
+                    if (str_contains(haystack: $typeName, needle: 'Avax\\HTTP\\Router\\Bootstrap')) {
                         $this->fail(message: sprintf(
                                                  'Router method %s::%s() returns Bootstrap type (%s), violating architectural boundaries',
                                                  $className,
@@ -165,7 +165,7 @@ final class ArchitectureTest extends TestCase
                     if ($type instanceof ReflectionNamedType) {
                         $typeName = $type->getName();
 
-                        if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
+                        if (str_contains(haystack: $typeName, needle: 'Avax\\HTTP\\Router\\Bootstrap')) {
                             $this->fail(message: sprintf(
                                                      'Router method %s::%s() accepts Bootstrap type (%s) as parameter, violating architectural boundaries',
                                                      $className,
@@ -189,7 +189,7 @@ final class ArchitectureTest extends TestCase
     public function testProperNamespacing() : void
     {
         foreach (self::ROUTER_CLASSES as $className) {
-            if (! class_exists($className)) {
+            if (! class_exists(class: $className)) {
                 continue;
             }
 
@@ -216,7 +216,7 @@ final class ArchitectureTest extends TestCase
         ];
 
         foreach ($immutableClasses as $className) {
-            if (! class_exists($className)) {
+            if (! class_exists(class: $className)) {
                 continue;
             }
 
@@ -244,7 +244,7 @@ final class ArchitectureTest extends TestCase
         ];
 
         foreach ($interfaces as $interfaceName) {
-            if (! interface_exists($interfaceName)) {
+            if (! interface_exists(interface: $interfaceName)) {
                 continue;
             }
 
@@ -259,7 +259,7 @@ final class ArchitectureTest extends TestCase
 
                         // Interfaces should not reference concrete Bootstrap classes
                         $this->assertFalse(
-                            condition: str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap'),
+                            condition: str_contains(haystack: $typeName, needle: 'Avax\\HTTP\\Router\\Bootstrap'),
                             message  : sprintf(
                                            'Interface %s method %s() references Bootstrap class %s, violating interface segregation',
                                            $interfaceName,

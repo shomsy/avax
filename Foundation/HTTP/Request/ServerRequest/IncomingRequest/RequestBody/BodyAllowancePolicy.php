@@ -27,7 +27,7 @@ final readonly class BodyAllowancePolicy
     public function allowsRead(string $method, #[SensitiveParameter] array $headers) : bool
     {
         // Always allowed if method is in the list
-        if (in_array(strtoupper($method), $this->allowedMethods, true)) {
+        if (in_array(needle: strtoupper(string: $method), haystack: $this->allowedMethods, strict: true)) {
             return true;
         }
 

@@ -135,7 +135,7 @@ final readonly class AsyncRouteCacheLoader
 
                 $this->logger->info(message: 'Async route cache loaded successfully', context: [
                     'cache_path'    => $cachePath,
-                    'routes_loaded' => count($routes),
+                    'routes_loaded' => count(value: $routes),
                 ]);
             }
         );
@@ -148,7 +148,7 @@ final readonly class AsyncRouteCacheLoader
     {
         // Since we can't eval async, we need to parse the PHP export manually
         // This is a simplified implementation - in practice you'd want more robust parsing
-        return require 'data:text/plain;base64,' . base64_encode($content);
+        return require 'data:text/plain;base64,' . base64_encode(string: $content);
     }
 
     /**
@@ -160,7 +160,7 @@ final readonly class AsyncRouteCacheLoader
     private function registerRoutes(array $routes) : void
     {
         foreach ($routes as $definition) {
-            if (! is_array($definition)) {
+            if (! is_array(value: $definition)) {
                 throw new RuntimeException(message: 'Invalid route in cache.');
             }
 
@@ -200,12 +200,12 @@ final readonly class AsyncRouteCacheLoader
         /** @var array<array<string, mixed>> $routes */
         $routes = require $cachePath;
 
-        if (! is_array($routes)) {
+        if (! is_array(value: $routes)) {
             throw new RuntimeException(message: 'Invalid route cache: must be an array.');
         }
 
         foreach ($routes as $definition) {
-            if (! is_array($definition)) {
+            if (! is_array(value: $definition)) {
                 throw new RuntimeException(message: 'Invalid route in cache.');
             }
 
@@ -243,7 +243,7 @@ final readonly class AsyncRouteCacheLoader
      */
     private function writeAsyncInternal(string $cachePath, string $routesPath) : mixed
     {
-        $directory    = dirname($cachePath);
+        $directory    = dirname(path: $cachePath);
         $metadataPath = RouteCacheManifest::metadataPath(cachePath: $cachePath);
 
         // Ensure directory exists
@@ -257,12 +257,12 @@ final readonly class AsyncRouteCacheLoader
                     throw new RuntimeException(message: 'No cacheable routes available (closures are not cached).');
                 }
 
-                $exported = var_export($exportable, true);
-                $hash     = sha1($exported);
+                $exported = var_export(value: $exportable, return: true);
+                $hash     = sha1(string: $exported);
                 $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
 
                 $manifest        = RouteCacheManifest::buildFromDirectory(baseDir: $routesPath);
-                $manifestContent = json_encode($manifest->toArray(), JSON_THROW_ON_ERROR);
+                $manifestContent = json_encode(value: $manifest->toArray(), flags: JSON_THROW_ON_ERROR);
 
                 // Write cache and metadata in parallel
                 return all([
@@ -289,7 +289,7 @@ final readonly class AsyncRouteCacheLoader
     {
         return $routeDefinitions === []
             ? []
-            : array_merge(...array_values($routeDefinitions));
+            : array_merge(...array_values(array: $routeDefinitions));
     }
 
     /**
@@ -317,7 +317,7 @@ final readonly class AsyncRouteCacheLoader
      */
     private function writeSync(string $cachePath, string $routesPath) : void
     {
-        $directory = dirname($cachePath);
+        $directory = dirname(path: $cachePath);
 
         $this->ensureDirectoryIsWritable(directory: $directory);
 
@@ -329,8 +329,8 @@ final readonly class AsyncRouteCacheLoader
             throw new RuntimeException(message: 'No cacheable routes available (closures are not cached).');
         }
 
-        $exported = var_export($exportable, true);
-        $hash     = sha1($exported);
+        $exported = var_export(value: $exportable, return: true);
+        $hash     = sha1(string: $exported);
         $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
 
         $this->filesystem->put($cachePath, $content);

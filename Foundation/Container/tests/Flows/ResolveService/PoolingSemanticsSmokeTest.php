@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
@@ -121,4 +121,4 @@ assertSame(expected: $afterReset, actual: $afterResetAlias, message: 'Alias reso
 assertNotSame(expected: $deferredFirst, actual: $afterResetDeferred, message: 'Reset should also clear deferred-provider singleton instances from the pool.');
 assertTrue(condition: $afterReset->decorated, message: 'Rebuilt pooled singletons should keep decoration semantics after reset.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

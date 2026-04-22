@@ -95,11 +95,11 @@ final readonly class ExchangeAuthorizationCode
             }
 
             $expectedChallenge = rtrim(
-                strtr(base64_encode(hash('sha256', $data->codeVerifier, true)), '+/', '-_'),
-                '='
+                string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $data->codeVerifier, binary: true)), '+/', '-_'),
+                characters: '='
             );
 
-            if (! hash_equals($record->codeChallenge, $expectedChallenge)) {
+            if (! hash_equals(known_string: $record->codeChallenge, user_string: $expectedChallenge)) {
                 $this->recordFailure(data: $data, reason: 'pkce_verifier_mismatch');
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
@@ -134,7 +134,7 @@ final readonly class ExchangeAuthorizationCode
         );
         $idToken      = null;
 
-        if (in_array('openid', $record->scopes, true)) {
+        if (in_array(needle: 'openid', haystack: $record->scopes, strict: true)) {
             if ($this->oidcProvider === null) {
                 $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
                 throw OAuthTokenExchangeFailed::invalidGrant();
@@ -158,7 +158,7 @@ final readonly class ExchangeAuthorizationCode
                                                            'client_id'  => $client->clientId,
                                                            'user_id'    => $user->getId()->value,
                                                            'code_id'    => $record->codeId,
-                                                           'scope'      => implode(' ', $record->scopes),
+                                                           'scope'      => implode(separator: ' ', array: $record->scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
                                                        ]

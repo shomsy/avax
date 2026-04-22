@@ -149,13 +149,13 @@ final class SessionIdentity implements SessionIdentityInterface
 
         $storedUserId = $this->store->get(key: $this->sessionKey);
 
-        if (is_int($storedUserId)) {
+        if (is_int(value: $storedUserId)) {
             $this->touch();
 
             return $storedUserId;
         }
 
-        if (is_string($storedUserId) && ctype_digit($storedUserId)) {
+        if (is_string(value: $storedUserId) && ctype_digit(text: $storedUserId)) {
             $this->touch();
 
             return (int) $storedUserId;
@@ -232,9 +232,9 @@ final class SessionIdentity implements SessionIdentityInterface
     {
         $storedUserId = $this->store->get(key: $this->sessionKey);
         $sessionId    = $this->currentSessionId();
-        $userId       = is_int($storedUserId)
+        $userId       = is_int(value: $storedUserId)
             ? $storedUserId
-            : (is_string($storedUserId) && ctype_digit($storedUserId) ? (int) $storedUserId : null);
+            : (is_string(value: $storedUserId) && ctype_digit(text: $storedUserId) ? (int) $storedUserId : null);
 
         if ($sessionId !== null) {
             $this->sessionRegistry?->revoke(sessionId: $sessionId, revokedAt: $this->clock->now(), reason: $reason);
@@ -255,7 +255,7 @@ final class SessionIdentity implements SessionIdentityInterface
     {
         $stored = $this->store->get(key: $key);
 
-        if (! is_string($stored) || $stored === '') {
+        if (! is_string(value: $stored) || $stored === '') {
             return null;
         }
 
@@ -300,7 +300,7 @@ final class SessionIdentity implements SessionIdentityInterface
 
         $stored = $this->store->get(key: $this->mfaVerifiedAtKey);
 
-        if (! is_string($stored) || $stored === '') {
+        if (! is_string(value: $stored) || $stored === '') {
             return null;
         }
 

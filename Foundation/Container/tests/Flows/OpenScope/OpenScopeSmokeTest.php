@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 final class OpenScopeSmokeTest {}
 
@@ -16,4 +16,4 @@ $container->closeScope();
 
 assertSame(expected: $first, actual: $second, message: 'OpenScope should create a reusable active scope.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

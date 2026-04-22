@@ -45,17 +45,17 @@ final readonly class Login
      */
     public function execute(#[SensitiveParameter] Credentials $credentials): AuthenticationResult
     {
-        $this->checkRateLimit($credentials);
+        $this->checkRateLimit(credentials: $credentials);
 
-        $user = $this->authenticate($credentials);
+        $user = $this->authenticate(credentials: $credentials);
 
-        $this->rehashPasswordIfNeeded($user, $credentials);
+        $this->rehashPasswordIfNeeded(user: $user, credentials: $credentials);
 
         if ($this->mfaStore->isEnabled(userId: $user->getId())) {
-            return $this->startMfa($user, $credentials);
+            return $this->startMfa(user: $user, credentials: $credentials);
         }
 
-        return $this->completeLogin($user, $credentials);
+        return $this->completeLogin(user: $user, credentials: $credentials);
     }
 
     /**
@@ -75,7 +75,7 @@ final readonly class Login
             return $user;
         }
 
-        $this->failAuthentication($credentials);
+        $this->failAuthentication(credentials: $credentials);
     }
 
     /**
@@ -93,13 +93,13 @@ final readonly class Login
     {
         $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name: 'auth.login.failed',
             occurredAt: $this->clock->now(),
             context: [
-                'identifier' => strtolower($credentials->identifier),
-                'ip_address' => $credentials->ipAddress,
-                'user_agent' => $credentials->userAgent,
+                      'identifier' => strtolower(string: $credentials->identifier),
+                      'ip_address' => $credentials->ipAddress,
+                      'user_agent' => $credentials->userAgent,
             ],
         ));
 
@@ -166,7 +166,7 @@ final readonly class Login
 
         $this->rateLimit?->reset(identifier: $credentials->identifier);
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name: 'auth.login.succeeded',
             occurredAt: $this->clock->now(),
             context: [

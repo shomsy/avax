@@ -358,11 +358,11 @@ final class RouteBuilder
         $testPattern = "/{$pattern}/";
         $error       = null;
 
-        set_error_handler(static function ($errno, $errstr) use (&$error) {
+        set_error_handler(callback: static function ($errno, $errstr) use (&$error) {
             $error = $errstr;
         });
 
-        $result = preg_match($testPattern, '');
+        $result = preg_match(pattern: $testPattern, subject: '');
 
         restore_error_handler();
 

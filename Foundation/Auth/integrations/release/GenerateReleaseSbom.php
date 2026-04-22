@@ -20,7 +20,7 @@ final readonly class GenerateReleaseSbom
     public function execute(string $composerJsonPath, string|null $composerLockPath = null) : array
     {
         $composerJson = $this->readJsonFile(path: $composerJsonPath);
-        $lockPath     = $composerLockPath ?? dirname($composerJsonPath) . '/composer.lock';
+        $lockPath     = $composerLockPath ?? dirname(path: $composerJsonPath) . '/composer.lock';
         $components   = [];
 
         foreach ($this->readLockPackages(composerLockPath: $lockPath) as $package) {
@@ -28,15 +28,15 @@ final readonly class GenerateReleaseSbom
                 'type'    => 'library',
                 'name'    => (string) ($package['name'] ?? 'unknown'),
                 'version' => (string) ($package['version'] ?? 'unknown'),
-                'purl'    => 'pkg:composer/' . rawurlencode((string) ($package['name'] ?? 'unknown')) . '@' . rawurlencode((string) ($package['version'] ?? 'unknown')),
+                'purl'    => 'pkg:composer/' . rawurlencode(string: (string) ($package['name'] ?? 'unknown')) . '@' . rawurlencode(string: (string) ($package['version'] ?? 'unknown')),
             ];
         }
 
         usort(
-            $components,
-            static fn (array $left, array $right) : int => strcmp(
-                $left['name'],
-                $right['name']
+            array   : $components,
+            callback: static fn (array $left, array $right) : int => strcmp(
+                string1: $left['name'],
+                string2: $right['name']
             )
         );
 
@@ -46,8 +46,8 @@ final readonly class GenerateReleaseSbom
             'metadata'    => [
                 'component' => [
                     'type'    => 'library',
-                    'name'    => is_string($composerJson['name'] ?? null) ? $composerJson['name'] : 'unknown',
-                    'version' => is_string($composerJson['version'] ?? null) ? $composerJson['version'] : 'dev-main',
+                    'name'    => is_string(value: $composerJson['name'] ?? null) ? $composerJson['name'] : 'unknown',
+                    'version' => is_string(value: $composerJson['version'] ?? null) ? $composerJson['version'] : 'dev-main',
                 ],
             ],
             'components'  => $components,
@@ -59,19 +59,19 @@ final readonly class GenerateReleaseSbom
      */
     private function readJsonFile(string $path) : array
     {
-        $json = file_get_contents($path);
+        $json = file_get_contents(filename: $path);
 
         if ($json === false) {
             throw new RuntimeException(message: "Could not read JSON file: {$path}");
         }
 
         try {
-            $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: "Could not decode JSON file: {$path}", previous: $exception);
         }
 
-        if (! is_array($decoded)) {
+        if (! is_array(value: $decoded)) {
             throw new RuntimeException(message: "JSON file must decode to an object: {$path}");
         }
 
@@ -83,7 +83,7 @@ final readonly class GenerateReleaseSbom
      */
     private function readLockPackages(string $composerLockPath) : array
     {
-        if (! is_file($composerLockPath)) {
+        if (! is_file(filename: $composerLockPath)) {
             return [];
         }
 
@@ -92,7 +92,7 @@ final readonly class GenerateReleaseSbom
 
         foreach (['packages', 'packages-dev'] as $section) {
             foreach ($lock[$section] ?? [] as $package) {
-                if (! is_array($package)) {
+                if (! is_array(value: $package)) {
                     continue;
                 }
 

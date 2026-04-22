@@ -34,7 +34,7 @@ final readonly class AcceptTenantInvite
             throw TenantFailed::userNotFound(userId: $data->userId);
         }
 
-        if (strtolower($user->getEmail()->value) !== strtolower($invite->email)) {
+        if (strtolower(string: $user->getEmail()->value) !== strtolower(string: $invite->email)) {
             throw TenantFailed::inviteEmailMismatch();
         }
 

@@ -50,23 +50,23 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
      */
     private function readConfiguration() : array
     {
-        if (! is_file($this->keyRingPath) || ! is_readable($this->keyRingPath)) {
+        if (! is_file(filename: $this->keyRingPath) || ! is_readable(filename: $this->keyRingPath)) {
             throw new InvalidArgumentException(message: "Key ring file is not readable: {$this->keyRingPath}");
         }
 
-        $json = file_get_contents($this->keyRingPath);
+        $json = file_get_contents(filename: $this->keyRingPath);
 
         if ($json === false) {
             throw new InvalidArgumentException(message: "Key ring file could not be read: {$this->keyRingPath}");
         }
 
         try {
-            $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new InvalidArgumentException(message: 'Key ring file is not valid JSON.', previous: $exception);
         }
 
-        if (! is_array($decoded)) {
+        if (! is_array(value: $decoded)) {
             throw new InvalidArgumentException(message: 'Key ring file must decode to an object.');
         }
 
@@ -91,13 +91,13 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
      */
     private function normalizeKey(mixed $candidate, string $label) : array
     {
-        if (! is_array($candidate)) {
+        if (! is_array(value: $candidate)) {
             throw new InvalidArgumentException(message: "Key ring {$label} entry must be an object.");
         }
 
-        $secret    = trim((string) ($candidate['secret'] ?? ''));
-        $algorithm = trim((string) ($candidate['algorithm'] ?? 'HS256'));
-        $kid       = trim((string) ($candidate['kid'] ?? ''));
+        $secret    = trim(string: (string) ($candidate['secret'] ?? ''));
+        $algorithm = trim(string: (string) ($candidate['algorithm'] ?? 'HS256'));
+        $kid       = trim(string: (string) ($candidate['kid'] ?? ''));
 
         if ($secret === '') {
             throw new InvalidArgumentException(message: "Key ring {$label} secret cannot be empty.");

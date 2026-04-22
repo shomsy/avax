@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -130,29 +130,29 @@ assertSame(
 );
 assertTrue(condition: isset($fullGraph['slices']['capability.payments']), message: 'Full graph reports should include slice manifests.');
 assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), message: 'Full graph reports should include duplicate concept reports.');
-assertTrue(condition: in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, message: 'Live flow services should not be reported as dead.');
+assertTrue(condition: in_array(needle: BillingFlowUsesGateway::class, haystack: $fullGraph['deadRegistrations'], strict: true) === false, message: 'Live flow services should not be reported as dead.');
 array_filter(
-    $validGatewayIssues,
-    static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
+    array   : $validGatewayIssues,
+    callback: static fn (string $issue) : bool => str_contains(haystack: $issue, needle: BillingFlowUsesGateway::class)
 )
     |> array_values(...)
     |> (static fn ($x) => assertSame(expected: [], actual: $x, message: 'Imported shared capability dependencies should validate cleanly.'));
 
-$invalidAuditText = implode("\n", $invalidAuditIssues);
+$invalidAuditText = implode(separator: "\n", array: $invalidAuditIssues);
 assertTrue(
-    condition: str_contains($invalidAuditText, 'cannot use dependency [' . InternalAuditTrail::class . ']'),
+    condition: str_contains(haystack: $invalidAuditText, needle: 'cannot use dependency [' . InternalAuditTrail::class . ']'),
     message  : 'Validation should block illegal internal cross-slice dependencies.'
 );
 
-$lifetimeText = implode("\n", $lifetimeIssues);
+$lifetimeText = implode(separator: "\n", array: $lifetimeIssues);
 assertTrue(
-    condition: str_contains($lifetimeText, 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
+    condition: str_contains(haystack: $lifetimeText, needle: 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
     message  : 'Validation should detect shared-to-scoped lifetime capture.'
 );
 
-$profileText = implode("\n", $profileIssues);
+$profileText = implode(separator: "\n", array: $profileIssues);
 assertTrue(
-    condition: str_contains($profileText, 'environment [prod] is not in [dev]'),
+    condition: str_contains(haystack: $profileText, needle: 'environment [prod] is not in [dev]'),
     message  : 'Validation should explain environment/profile mismatches.'
 );
 
@@ -199,4 +199,4 @@ assertThrows(
     message      : 'Illegal cross-slice runtime dependencies should fail fast during resolution.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -46,7 +46,7 @@ final class JsonLinesAuditExporter implements AuditExporterInterface
             return;
         }
 
-        file_put_contents($this->path, implode(PHP_EOL, $lines) . PHP_EOL, FILE_APPEND | LOCK_EX);
+        file_put_contents(filename: $this->path, data: implode(separator: PHP_EOL, array: $lines) . PHP_EOL, flags: FILE_APPEND | LOCK_EX);
     }
 
     /**
@@ -54,7 +54,7 @@ final class JsonLinesAuditExporter implements AuditExporterInterface
      */
     private function hashPayload(array $payload) : string
     {
-        return hash('sha256', $this->encode(payload: $payload));
+        return hash(algo: 'sha256', data: $this->encode(payload: $payload));
     }
 
     /**
@@ -63,7 +63,7 @@ final class JsonLinesAuditExporter implements AuditExporterInterface
     private function encode(array $payload) : string
     {
         try {
-            return json_encode($payload, JSON_THROW_ON_ERROR);
+            return json_encode(value: $payload, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Audit payload could not be encoded.', previous: $exception);
         }

@@ -10,6 +10,6 @@ final class ChangeEmailFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/ChangeEmail/ChangeEmailTest.php';
+        return dirname(path: __DIR__) . '/Flows/ChangeEmail/ChangeEmailTest.php';
     }
 }

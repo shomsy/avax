@@ -60,14 +60,14 @@ final class RouterIntegrationTest extends TestCase
     private function assertRouteSetsAreIdentical(array $runtimeRoutes, array $cacheRoutes) : void
     {
         $this->assertEquals(
-            expected: count($runtimeRoutes),
-            actual  : count($cacheRoutes),
+            expected: count(value: $runtimeRoutes),
+            actual  : count(value: $cacheRoutes),
             message : 'Different number of HTTP methods between runtime and cache'
         );
 
         foreach ($runtimeRoutes as $method => $routes) {
             $this->assertArrayHasKey(key: $method, array: $cacheRoutes, message: "Method {$method} missing from cache");
-            $this->assertCount(expectedCount: count($routes), haystack: $cacheRoutes[$method], message: "Different route count for method {$method}");
+            $this->assertCount(expectedCount: count(value: $routes), haystack: $cacheRoutes[$method], message: "Different route count for method {$method}");
 
             foreach ($routes as $index => $runtimeRoute) {
                 $cacheRoute = $cacheRoutes[$method][$index];
@@ -101,8 +101,8 @@ final class RouterIntegrationTest extends TestCase
      */
     public function testRouteCountStabilityAcrossPhases() : void
     {
-        $runtimeCount = count($this->loadRoutesViaDsl());
-        $cacheCount   = count($this->loadRoutesViaCache());
+        $runtimeCount = count(value: $this->loadRoutesViaDsl());
+        $cacheCount   = count(value: $this->loadRoutesViaCache());
 
         $this->assertEquals(
             expected: $runtimeCount,
@@ -215,10 +215,10 @@ final class RouterIntegrationTest extends TestCase
         $this->cacheDir = sys_get_temp_dir() . '/router-cache-' . uniqid();
         $routesFile     = $this->cacheDir . '/routes.php';
 
-        mkdir($this->cacheDir, 0777, true);
+        mkdir(directory: $this->cacheDir, permissions: 0777, recursive: true);
 
         // Create a sample routes file
-        file_put_contents($routesFile, $this->getSampleRoutesContent());
+        file_put_contents(filename: $routesFile, data: $this->getSampleRoutesContent());
 
         $this->initializeRouterComponents();
     }
@@ -257,16 +257,16 @@ final class RouterIntegrationTest extends TestCase
 
     private function removeDirectory(string $dir) : void
     {
-        if (! is_dir($dir)) {
+        if (! is_dir(filename: $dir)) {
             return;
         }
 
-        $files = array_diff(scandir($dir), ['.', '..']);
+        $files = array_diff(scandir(directory: $dir), ['.', '..']);
         foreach ($files as $file) {
             $path = $dir . DIRECTORY_SEPARATOR . $file;
-            is_dir($path) ? $this->removeDirectory(dir: $path) : unlink($path);
+            is_dir(filename: $path) ? $this->removeDirectory(dir: $path) : unlink(filename: $path);
         }
 
-        rmdir($dir);
+        rmdir(directory: $dir);
     }
 }

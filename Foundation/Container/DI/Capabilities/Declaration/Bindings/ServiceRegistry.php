@@ -139,7 +139,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         return [
             'abstract'             => $registration->abstract,
-            'concrete'             => is_object($registration->concrete)
+            'concrete'             => is_object(value: $registration->concrete)
                 ? $registration->concrete::class
                 : $registration->concrete,
             'lifetime'             => $registration->lifetime,
@@ -253,7 +253,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
     {
-        if (is_callable($decorator)) {
+        if (is_callable(value: $decorator)) {
             $this->addExtender(
                 abstract  : $abstract,
                 extender  : Closure::fromCallable(callback: $decorator),
@@ -268,7 +268,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             extender  : static function (mixed $instance, mixed $container = null) use ($decorator) : mixed {
                 $resolved = $decorator;
 
-                if (is_string($resolved) && class_exists($resolved)) {
+                if (is_string(value: $resolved) && class_exists(class: $resolved)) {
                     $resolved = $container?->make($resolved, ['inner' => $instance, 'decorated' => $instance])
                         ?? new $resolved($instance);
                 }
@@ -277,7 +277,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                     return $resolved->decorate(instance: $instance, container: $container);
                 }
 
-                if (is_callable($resolved)) {
+                if (is_callable(value: $resolved)) {
                     return $resolved($instance, $container);
                 }
 
@@ -289,11 +289,11 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     private function describeDecorator(callable|object|string $decorator) : string
     {
-        if (is_string($decorator) && $decorator !== '') {
+        if (is_string(value: $decorator) && $decorator !== '') {
             return $decorator;
         }
 
-        if (is_object($decorator) && ! $decorator instanceof Closure) {
+        if (is_object(value: $decorator) && ! $decorator instanceof Closure) {
             return $decorator::class;
         }
 
@@ -339,13 +339,13 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $tagged = [];
 
         foreach ($this->all() as $abstract => $service) {
-            if (in_array($tag, $service->tags, true)) {
+            if (in_array(needle: $tag, haystack: $service->tags, strict: true)) {
                 $tagged[] = $abstract;
             }
         }
 
-        $tagged = array_values(array_unique($tagged));
-        sort($tagged);
+        $tagged = array_values(array: array_unique(array: $tagged));
+        sort(array: $tagged);
 
         return $tagged;
     }
@@ -356,7 +356,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function all() : array
     {
         $services = $this->services;
-        ksort($services);
+        ksort(array: $services);
 
         return $services;
     }
@@ -380,12 +380,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         usort(
-            $items,
-            static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
+            array   : $items,
+            callback: static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
                 <=> [$right['order'], $right['serviceId']]
         );
 
-        return array_column($items, 'serviceId');
+        return array_column(array: $items, column_key: 'serviceId');
     }
 
     /**
@@ -395,7 +395,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $needs    = $this->resolveAlias(abstract: $needs);
         $cacheKey = $consumer . '@' . $needs;
-        if (array_key_exists($cacheKey, $this->resolvedCache)) {
+        if (array_key_exists(key: $cacheKey, array: $this->resolvedCache)) {
             return $this->resolvedCache[$cacheKey];
         }
 
@@ -404,7 +404,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         foreach ($this->wildcardContextual as $pattern => $rules) {
-            if (isset($rules[$needs]) && fnmatch($pattern, $consumer)) {
+            if (isset($rules[$needs]) && fnmatch(pattern: $pattern, filename: $consumer)) {
                 return $this->resolvedCache[$cacheKey] = $rules[$needs];
             }
         }
@@ -434,9 +434,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return $this->classHierarchyCache[$class] = [
-            'parents'    => class_exists($class) ? array_values(class_parents($class)) : [],
-            'interfaces' => class_exists($class) || interface_exists($class)
-                ? array_values(class_implements($class))
+            'parents'    => class_exists(class: $class) ? array_values(array: class_parents(object_or_class: $class)) : [],
+            'interfaces' => class_exists(class: $class) || interface_exists(interface: $class)
+                ? array_values(array: class_implements(object_or_class: $class))
                 : [],
         ];
     }
@@ -448,7 +448,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $needs = $this->resolveAlias(abstract: $needs);
 
-        if (str_contains($consumer, '*')) {
+        if (str_contains(haystack: $consumer, needle: '*')) {
             $this->wildcardContextual[$consumer][$needs] = $give;
         } else {
             $this->contextual[$consumer][$needs] = $give;
@@ -471,7 +471,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function allIncludingSystem() : array
     {
         $services = $this->services + $this->systemServices;
-        ksort($services);
+        ksort(array: $services);
 
         return $services;
     }
@@ -482,7 +482,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function allAliases() : array
     {
         $aliases = $this->aliases;
-        ksort($aliases);
+        ksort(array: $aliases);
 
         return $aliases;
     }
@@ -515,14 +515,14 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $ownership[$abstract] = $registration->metadata->toArray();
         }
 
-        ksort($ownership);
+        ksort(array: $ownership);
 
         return $ownership;
     }
 
     public function allowsSliceAccess(string $viewerSlice, string $serviceId) : bool
     {
-        $normalized = trim($viewerSlice);
+        $normalized = trim(string: $viewerSlice);
         if ($normalized === '') {
             return false;
         }
@@ -539,7 +539,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         return $dependency->visibility === RegistrationVisibility::SHARED
             && $dependency->exported
-            && in_array($dependency->ownerSlice, $manifest['imports'] ?? [], true);
+            && in_array(needle: $dependency->ownerSlice, haystack: $manifest['imports'] ?? [], strict: true);
     }
 
     /**
@@ -547,7 +547,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function sliceManifest(string $slice) : array|null
     {
-        $normalized = trim($slice);
+        $normalized = trim(string: $slice);
         if ($normalized === '') {
             return null;
         }
@@ -597,18 +597,18 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         foreach ($manifests as $slice => $manifest) {
             foreach (['services', 'exports', 'public', 'shared', 'private', 'internal', 'imports'] as $key) {
-                $values = array_values(array_unique($manifest[$key]));
-                sort($values);
+                $values = array_values(array: array_unique(array: $manifest[$key]));
+                sort(array: $values);
                 $manifests[$slice][$key] = $values;
             }
 
-            $categories = array_keys($manifest['categories']);
-            sort($categories);
+            $categories = array_keys(array: $manifest['categories']);
+            sort(array: $categories);
             $manifests[$slice]['categories'] = $categories;
-            $manifests[$slice]['category']   = count($categories) === 1 ? $categories[0] : 'mixed';
+            $manifests[$slice]['category']   = count(value: $categories) === 1 ? $categories[0] : 'mixed';
         }
 
-        ksort($manifests);
+        ksort(array: $manifests);
 
         return $manifests;
     }
@@ -645,16 +645,16 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         usort(
-            $visible,
-            static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+            array   : $visible,
+            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
         );
         usort(
-            $hidden,
-            static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+            array   : $hidden,
+            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
         );
 
         return [
-            'slice'    => trim($slice),
+            'slice'    => trim(string: $slice),
             'exists'   => $manifest !== null,
             'manifest' => $manifest,
             'visible'  => $visible,
@@ -667,7 +667,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function sliceAccessTo(string $viewerSlice, string $serviceId) : array
     {
-        $normalized = trim($viewerSlice);
+        $normalized = trim(string: $viewerSlice);
         $manifest   = $this->sliceManifest(slice: $normalized);
         $dependency = $this->metadataFor(serviceId: $serviceId);
 
@@ -709,7 +709,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         if (
             $dependency->visibility === RegistrationVisibility::SHARED
             && $dependency->exported
-            && in_array($dependency->ownerSlice, $manifest['imports'] ?? [], true)
+            && in_array(needle: $dependency->ownerSlice, haystack: $manifest['imports'] ?? [], strict: true)
         ) {
             return [
                 'allowed'    => true,
@@ -754,13 +754,13 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $duplicates = [];
 
         foreach ($concepts as $concept => $services) {
-            if (count($services) <= 1) {
+            if (count(value: $services) <= 1) {
                 continue;
             }
 
             usort(
-                $services,
-                static fn (array $left, array $right) : int => [$left['ownerSlice'], $left['serviceId']]
+                array   : $services,
+                callback: static fn (array $left, array $right) : int => [$left['ownerSlice'], $left['serviceId']]
                     <=> [$right['ownerSlice'], $right['serviceId']]
             );
 
@@ -771,8 +771,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         usort(
-            $duplicates,
-            static fn (array $left, array $right) : int => $left['concept'] <=> $right['concept']
+            array   : $duplicates,
+            callback: static fn (array $left, array $right) : int => $left['concept'] <=> $right['concept']
         );
 
         return $duplicates;
@@ -790,7 +790,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         $history = $this->overrideHistory;
-        ksort($history);
+        ksort(array: $history);
 
         return $history;
     }
@@ -845,7 +845,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                 ];
             }
 
-            if (! in_array($dependency->ownerSlice, $consumer->imports, true)) {
+            if (! in_array(needle: $dependency->ownerSlice, haystack: $consumer->imports, strict: true)) {
                 return [
                     'allowed'    => false,
                     'reason'     => "consumer slice [{$consumer->ownerSlice}] does not declare an import for [{$dependency->ownerSlice}]",
@@ -885,7 +885,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         return $dependency->visibility === RegistrationVisibility::SHARED
             && $dependency->exported
-            && in_array($dependency->ownerSlice, $consumer->imports, true);
+            && in_array(needle: $dependency->ownerSlice, haystack: $consumer->imports, strict: true);
     }
 
     /**
@@ -1033,12 +1033,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         foreach ($index as $tag => $ids) {
-            $values = array_values(array_unique($ids));
-            sort($values);
+            $values = array_values(array: array_unique(array: $ids));
+            sort(array: $values);
             $index[$tag] = $values;
         }
 
-        ksort($index);
+        ksort(array: $index);
 
         return $index;
     }
@@ -1063,14 +1063,14 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         foreach ($index as $group => $items) {
             usort(
-                $items,
-                static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
+                array   : $items,
+                callback: static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
                     <=> [$right['order'], $right['serviceId']]
             );
             $index[$group] = $items;
         }
 
-        ksort($index);
+        ksort(array: $index);
 
         return $index;
     }
@@ -1086,7 +1086,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $lifetimes[$abstract] = $registration->lifetime;
         }
 
-        ksort($lifetimes);
+        ksort(array: $lifetimes);
 
         return $lifetimes;
     }
@@ -1102,7 +1102,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $deferred[$abstract] = $registration->deferred;
         }
 
-        ksort($deferred);
+        ksort(array: $deferred);
 
         return $deferred;
     }
@@ -1115,10 +1115,10 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $chains = [];
 
         foreach ($this->extenders as $abstract => $extenders) {
-            $chains[$abstract] = count($extenders);
+            $chains[$abstract] = count(value: $extenders);
         }
 
-        ksort($chains);
+        ksort(array: $chains);
 
         return $chains;
     }

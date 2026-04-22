@@ -168,7 +168,7 @@ final class RouterChaosTest extends TestCase
         }
 
         // Measure memory before
-        $memoryBefore = memory_get_usage(true);
+        $memoryBefore = memory_get_usage(real_usage: true);
 
         // Register routes
         foreach ($largeRoutes as $route) {
@@ -176,7 +176,7 @@ final class RouterChaosTest extends TestCase
         }
 
         // Measure memory after
-        $memoryAfter = memory_get_usage(true);
+        $memoryAfter = memory_get_usage(real_usage: true);
         $memoryUsed  = $memoryAfter - $memoryBefore;
 
         // Memory usage should be reasonable (< 50MB for 10k routes)
@@ -306,7 +306,7 @@ final class RouterChaosTest extends TestCase
         $this->assertNotEmpty(actual: $allRoutes);
 
         // Total routes should be reasonable (allowing for some race condition failures)
-        $totalRoutes = array_sum(array_map('count', $allRoutes));
+        $totalRoutes = array_sum(array: array_map(callback: 'count', array: $allRoutes));
         $this->assertGreaterThan(expected: 0, actual: $totalRoutes);
         $this->assertLessThanOrEqual(expected: $concurrentOperations * $routesPerOperation, actual: $totalRoutes);
     }
@@ -338,7 +338,7 @@ final class RouterChaosTest extends TestCase
     public function gradual_memory_leak_detection() : void
     {
         // Test for memory leaks during extended operation
-        $initialMemory = memory_get_usage(true);
+        $initialMemory = memory_get_usage(real_usage: true);
         $iterations    = 1000;
 
         for ($i = 0; $i < $iterations; $i++) {
@@ -356,7 +356,7 @@ final class RouterChaosTest extends TestCase
                 // Force garbage collection in test environment
                 gc_collect_cycles();
 
-                $currentMemory  = memory_get_usage(true);
+                $currentMemory  = memory_get_usage(real_usage: true);
                 $memoryIncrease = $currentMemory - $initialMemory;
 
                 // Memory increase should be bounded (allow some growth for route storage)
@@ -369,7 +369,7 @@ final class RouterChaosTest extends TestCase
         }
 
         // Final memory check
-        $finalMemory   = memory_get_usage(true);
+        $finalMemory   = memory_get_usage(real_usage: true);
         $totalIncrease = $finalMemory - $initialMemory;
 
         // Total memory increase should be reasonable for 1000 routes

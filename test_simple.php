@@ -17,7 +17,7 @@ try {
     echo "Valid chars: " . ($result ? "YES" : "NO") . "\n";
 
     $params = Avax\HTTP\Router\Validation\RouteValidator::extractRouteParameters(path: $path);
-    echo "Params: " . json_encode($params) . "\n";
+    echo "Params: " . json_encode(value: $params) . "\n";
 
     echo "✅ SUCCESS!\n";
 } catch (Exception $e) {

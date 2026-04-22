@@ -33,14 +33,14 @@ final readonly class RequestSession
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return array_key_exists($key, $this->data) 
+        return array_key_exists(key: $key, array: $this->data)
             ? $this->data[$key] 
             : $default;
     }
 
     public function has(string $key): bool
     {
-        return array_key_exists($key, $this->data);
+        return array_key_exists(key: $key, array: $this->data);
     }
 
     public function put(string $key, mixed $value) : self

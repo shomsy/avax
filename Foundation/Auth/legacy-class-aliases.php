@@ -33,10 +33,10 @@ $legacyAliases = [
 
 foreach ($legacyAliases as $legacyClass => $currentClass) {
     if (
-        ! class_exists($legacyClass)
-        && ! interface_exists($legacyClass)
-        && (class_exists($currentClass) || interface_exists($currentClass))
+        ! class_exists(class: $legacyClass)
+        && ! interface_exists(interface: $legacyClass)
+        && (class_exists(class: $currentClass) || interface_exists(interface: $currentClass))
     ) {
-        class_alias($currentClass, $legacyClass);
+        class_alias(class: $currentClass, alias: $legacyClass);
     }
 }

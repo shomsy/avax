@@ -24,11 +24,11 @@ final class ResultMapper
         $ref      = new ReflectionClass(objectOrClass: $className);
         $mappings = [];
 
-        foreach ($ref->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($ref->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
             $dbColumn     = $propertyName;
 
-            $attributes = $property->getAttributes(Column::class);
+            $attributes = $property->getAttributes(name: Column::class);
             if (! empty($attributes)) {
                 $attr     = $attributes[0]->newInstance();
                 $dbColumn = $attr->name ?? $propertyName;
@@ -48,7 +48,7 @@ final class ResultMapper
             if (array_key_exists(key: $dbColumn, array: $row)) {
                 $value = $row[$dbColumn];
 
-                if (method_exists(($this->className), '__set')) {
+                if (method_exists(object_or_class: ($this->className), method: '__set')) {
                     $instance->$propertyName = $value;
                 } else {
                     $property = (new ReflectionClass(objectOrClass: $this->className))

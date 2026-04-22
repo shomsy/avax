@@ -23,6 +23,6 @@ final readonly class ExportAuditEvents
 
         $this->exporter->export(events: $events);
 
-        return count($events);
+        return count(value: $events);
     }
 }

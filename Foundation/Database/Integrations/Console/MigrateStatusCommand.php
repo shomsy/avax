@@ -22,12 +22,12 @@ final readonly class MigrateStatusCommand
                 return 0;
             }
 
-            echo str_pad('Migration', 50) . " | Status  | Integrity\n";
-            echo str_repeat('-', 80) . "\n";
+            echo str_pad(string: 'Migration', length: 50) . " | Status  | Integrity\n";
+            echo str_repeat(string: '-', times: 80) . "\n";
 
             foreach ($status['rows'] as $row) {
-                echo str_pad($row['migration'], 50) . ' | '
-                    . str_pad($row['status'], 7) . ' | '
+                echo str_pad(string: $row['migration'], length: 50) . ' | '
+                    . str_pad(string: $row['status'], length: 7) . ' | '
                     . $row['integrity'] . "\n";
             }
 

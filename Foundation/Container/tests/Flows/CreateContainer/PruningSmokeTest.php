@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -17,7 +17,7 @@ final class PrunedFlowEntry
 
 final class DeadPrunableService {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'pruning-smoke',
@@ -55,17 +55,17 @@ assertSame(
     message : 'Pruning diagnostics should expose the active pruning mode.'
 );
 assertTrue(
-    condition: in_array(DeadPrunableService::class, $report->pruning['prunedServices'] ?? [], true),
+    condition: in_array(needle: DeadPrunableService::class, haystack: $report->pruning['prunedServices'] ?? [], strict: true),
     message  : 'Strict pruning should report services removed from the generated artifact.'
 );
 assertTrue(
-    condition: ! in_array(DeadPrunableService::class, $report->entries, true),
+    condition: ! in_array(needle: DeadPrunableService::class, haystack: $report->entries, strict: true),
     message  : 'Pruned services should stay out of compiled entries.'
 );
 assertSame(expected: false, actual: $container->has(id: DeadPrunableService::class), message: 'Pruned private flow services should still stay outside the top-level surface.');
 assertSame(expected: true, actual: $deadSlice->has(id: DeadPrunableService::class), message: 'Pruning must not mutate canonical authored slice visibility.');
-array_column($deadSliceView['visible'] ?? [], 'serviceId')
-    |> (static fn ($x) => in_array(DeadPrunableService::class, $x, true))
+array_column(array: $deadSliceView['visible'] ?? [], column_key: 'serviceId')
+    |> (static fn ($x) => in_array(needle: DeadPrunableService::class, haystack: $x, strict: true))
     |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice views should still expose authored services even when pruning omits them from the artifact.'));
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

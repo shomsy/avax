@@ -86,12 +86,12 @@ final class RegisterBindingsTest extends TestCase
 
     private function createRoutesFile() : string
     {
-        $file = tempnam(sys_get_temp_dir(), 'avax-routes-');
+        $file = tempnam(directory: sys_get_temp_dir(), prefix: 'avax-routes-');
         if ($file === false) {
             throw new LogicException(message: 'Unable to create temporary routes file.');
         }
 
-        file_put_contents($file, "<?php\n");
+        file_put_contents(filename: $file, data: "<?php\n");
 
         return $file;
     }

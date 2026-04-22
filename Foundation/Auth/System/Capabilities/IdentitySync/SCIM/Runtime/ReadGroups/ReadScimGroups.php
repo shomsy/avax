@@ -30,14 +30,14 @@ final readonly class ReadScimGroups
             }
         }
 
-        ksort($groups);
+        ksort(array: $groups);
         $projections = [];
 
         foreach ($groups as $groupId => $group) {
             $members = $group['members'];
             usort(
-                $members,
-                static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp($left->externalId, $right->externalId)
+                array   : $members,
+                callback: static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp(string1: $left->externalId, string2: $right->externalId)
             );
             $projections[] = new ScimGroupProjection(
                 directoryId: $directoryId,

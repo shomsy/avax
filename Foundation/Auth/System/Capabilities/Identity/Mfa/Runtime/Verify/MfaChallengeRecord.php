@@ -43,7 +43,7 @@ final readonly class MfaChallengeRecord
 
     public function isLocked() : bool
     {
-        return count($this->attempts) >= $this->maxAttempts;
+        return count(value: $this->attempts) >= $this->maxAttempts;
     }
 
     public function recordAttempt(MfaVerificationAttempt $attempt) : self
@@ -74,6 +74,6 @@ final readonly class MfaChallengeRecord
 
     public function remainingAttempts() : int
     {
-        return max(0, $this->maxAttempts - count($this->attempts));
+        return max(0, $this->maxAttempts - count(value: $this->attempts));
     }
 }

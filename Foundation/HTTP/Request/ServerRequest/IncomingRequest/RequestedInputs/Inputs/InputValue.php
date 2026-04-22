@@ -82,7 +82,7 @@ final readonly class InputValue
 
     public function string(string $default = '') : string
     {
-        if (is_scalar($this->value) || $this->value instanceof Stringable) {
+        if (is_scalar(value: $this->value) || $this->value instanceof Stringable) {
             return (string) $this->value;
         }
 
@@ -97,7 +97,7 @@ final readonly class InputValue
             return $default;
         }
 
-        $filtered = filter_var($value, FILTER_VALIDATE_INT);
+        $filtered = filter_var(value: $value, filter: FILTER_VALIDATE_INT);
 
         return $filtered !== false
             ? (int) $filtered
@@ -106,7 +106,7 @@ final readonly class InputValue
 
     private function normalizeScalar(mixed $value) : string|int|float|bool|null
     {
-        if (is_scalar($value)) {
+        if (is_scalar(value: $value)) {
             return $value;
         }
 
@@ -125,7 +125,7 @@ final readonly class InputValue
             return $default;
         }
 
-        $filtered = filter_var($value, FILTER_VALIDATE_FLOAT);
+        $filtered = filter_var(value: $value, filter: FILTER_VALIDATE_FLOAT);
 
         return $filtered !== false
             ? (float) $filtered
@@ -140,11 +140,11 @@ final readonly class InputValue
             return $default;
         }
 
-        $lower = strtolower($value);
-        if (in_array($lower, ['true', '1', 'on'], true)) {
+        $lower = strtolower(string: $value);
+        if (in_array(needle: $lower, haystack: ['true', '1', 'on'], strict: true)) {
             return true;
         }
-        if (in_array($lower, ['false', '0', 'off'], true)) {
+        if (in_array(needle: $lower, haystack: ['false', '0', 'off'], strict: true)) {
             return false;
         }
 
@@ -158,7 +158,7 @@ final readonly class InputValue
      */
     public function array(array $default = []) : array
     {
-        return is_array($this->value)
+        return is_array(value: $this->value)
             ? $this->value
             : $default;
     }
@@ -172,7 +172,7 @@ final readonly class InputValue
      */
     public function enum(string $enumClass, mixed $default = null) : BackedEnum|null
     {
-        if ($this->value === null || ! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
+        if ($this->value === null || ! enum_exists(enum: $enumClass) || ! is_subclass_of(object_or_class: $enumClass, class: BackedEnum::class)) {
             return $default;
         }
 

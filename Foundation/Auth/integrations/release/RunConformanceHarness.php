@@ -29,14 +29,14 @@ final readonly class RunConformanceHarness
     {
         $resolvedChecks = $checks ?? $this->defaultChecks(repositoryRoot: $repositoryRoot);
         $results        = [
-            'timestamp' => gmdate(DATE_ATOM),
+            'timestamp' => gmdate(format: DATE_ATOM),
             'version'   => '1.0.0',
             'package'   => $this->detectPackageName(repositoryRoot: $repositoryRoot),
             'overall'   => 'PASSED',
             'summary'   => [
                 'passed' => 0,
                 'failed' => 0,
-                'total'  => count($resolvedChecks),
+                'total'  => count(value: $resolvedChecks),
             ],
             'checks'    => [],
         ];
@@ -53,7 +53,7 @@ final readonly class RunConformanceHarness
                 'description' => $check['description'],
                 'status'      => $status,
                 'exit_code'   => $execution['exit_code'],
-                'command'     => implode(' ', $check['command']),
+                'command'     => implode(separator: ' ', array: $check['command']),
             ];
 
             if ($status === 'PASSED') {
@@ -74,7 +74,7 @@ final readonly class RunConformanceHarness
     private function defaultChecks(string $repositoryRoot) : array
     {
         $php = PHP_BINARY;
-        $bin = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/vendor/bin';
+        $bin = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/vendor/bin';
 
         return [
             [
@@ -122,16 +122,16 @@ final readonly class RunConformanceHarness
 
     private function detectPackageName(string $repositoryRoot) : string
     {
-        $composerJsonPath = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/composer.json';
+        $composerJsonPath = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/composer.json';
 
-        if (! is_file($composerJsonPath)) {
+        if (! is_file(filename: $composerJsonPath)) {
             return 'unknown';
         }
 
-        $json    = file_get_contents($composerJsonPath);
-        $decoded = is_string($json) ? json_decode($json, true) : null;
+        $json    = file_get_contents(filename: $composerJsonPath);
+        $decoded = is_string(value: $json) ? json_decode(json: $json, associative: true) : null;
 
-        return is_array($decoded) && is_string($decoded['name'] ?? null)
+        return is_array(value: $decoded) && is_string(value: $decoded['name'] ?? null)
             ? $decoded['name']
             : 'unknown';
     }
@@ -151,28 +151,28 @@ final readonly class RunConformanceHarness
 
         $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);
 
-        if (! is_resource($process)) {
+        if (! is_resource(value: $process)) {
             throw new RuntimeException(message: 'Conformance command could not start.');
         }
 
-        fclose($pipes[0]);
-        stream_set_blocking($pipes[1], false);
-        stream_set_blocking($pipes[2], false);
+        fclose(stream: $pipes[0]);
+        stream_set_blocking(stream: $pipes[1], enable: false);
+        stream_set_blocking(stream: $pipes[2], enable: false);
 
         $stdout = '';
         $stderr = '';
         $status = ['exitcode' => 1, 'running' => true];
 
         do {
-            $status  = proc_get_status($process);
+            $status  = proc_get_status(process: $process);
             $running = $status['running'];
             $read    = [];
 
-            if (! feof($pipes[1])) {
+            if (! feof(stream: $pipes[1])) {
                 $read[] = $pipes[1];
             }
 
-            if (! feof($pipes[2])) {
+            if (! feof(stream: $pipes[2])) {
                 $read[] = $pipes[2];
             }
 
@@ -181,20 +181,20 @@ final readonly class RunConformanceHarness
                     break;
                 }
 
-                usleep(10_000);
+                usleep(microseconds: 10_000);
                 continue;
             }
 
             $write  = null;
             $except = null;
-            $ready  = @stream_select($read, $write, $except, 0, 200_000);
+            $ready  = @stream_select(read: $read, write: $write, except: $except, seconds: 0, microseconds: 200_000);
 
             if ($ready === false) {
                 break;
             }
 
             foreach ($read as $stream) {
-                $chunk = stream_get_contents($stream);
+                $chunk = stream_get_contents(stream: $stream);
 
                 if ($chunk === false || $chunk === '') {
                     continue;
@@ -207,12 +207,12 @@ final readonly class RunConformanceHarness
 
                 $stderr .= $chunk;
             }
-        } while ( $running || ! feof($pipes[1]) || ! feof($pipes[2]) );
+        } while ( $running || ! feof(stream: $pipes[1]) || ! feof(stream: $pipes[2]) );
 
-        fclose($pipes[1]);
-        fclose($pipes[2]);
+        fclose(stream: $pipes[1]);
+        fclose(stream: $pipes[2]);
 
-        $exitCode = proc_close($process);
+        $exitCode = proc_close(process: $process);
 
         if ($exitCode < 0) {
             $exitCode = $status['exitcode'];

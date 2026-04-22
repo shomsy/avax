@@ -25,12 +25,12 @@ final readonly class RequestCookies
 
     public function has(string $name) : bool
     {
-        return array_key_exists($name, $this->cookies);
+        return array_key_exists(key: $name, array: $this->cookies);
     }
 
     public function get(string $name, string|null $default = null) : string|null
     {
-        return array_key_exists($name, $this->cookies)
+        return array_key_exists(key: $name, array: $this->cookies)
             ? $this->cookies[$name]
             : $default;
     }

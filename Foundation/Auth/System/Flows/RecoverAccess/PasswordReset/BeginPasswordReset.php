@@ -47,7 +47,7 @@ final readonly class BeginPasswordReset
                                                name      : 'auth.password_reset.throttled',
                                                occurredAt: $this->clock->now(),
                                                context   : [
-                                                               'email'       => strtolower($data->email),
+                                                               'email'       => strtolower(string: $data->email),
                                                                'ip_address'  => $data->ipAddress,
                                                                'user_agent'  => $data->userAgent,
                                                                'retry_after' => $exception->retryAfter(),
@@ -65,7 +65,7 @@ final readonly class BeginPasswordReset
                                                name      : 'auth.password_reset.requested',
                                                occurredAt: $this->clock->now(),
                                                context   : [
-                                                               'email'      => strtolower($data->email),
+                                                               'email'      => strtolower(string: $data->email),
                                                                'dispatched' => false,
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
@@ -96,12 +96,12 @@ final readonly class BeginPasswordReset
 
     private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] string|null $ipAddress) : string
     {
-        $normalizedEmail = strtolower(trim($email));
+        $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
             return 'password_reset:' . $normalizedEmail;
         }
 
-        return 'password_reset:' . $normalizedEmail . '|' . trim($ipAddress);
+        return 'password_reset:' . $normalizedEmail . '|' . trim(string: $ipAddress);
     }
 }

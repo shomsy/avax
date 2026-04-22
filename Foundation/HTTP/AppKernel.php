@@ -140,9 +140,9 @@ final readonly class AppKernel implements Kernel
                 // Example: Allow local development and office IPs
                 $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
                 foreach ($allowed as $allowedIp) {
-                    if (str_contains($allowedIp, '/')) {
+                    if (str_contains(haystack: $allowedIp, needle: '/')) {
                         // CIDR notation - simplified check
-                        if (str_starts_with($ipAddress, '192.168.1.')) {
+                        if (str_starts_with(haystack: $ipAddress, needle: '192.168.1.')) {
                             return true;
                         }
                     } elseif ($ipAddress === $allowedIp) {
@@ -209,47 +209,47 @@ final readonly class AppKernel implements Kernel
             logger: new class implements LoggerInterface {
                       public function emergency(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function alert(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function critical(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function error(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function warning(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function notice(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function info(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function debug(Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
 
                       public function log($level, Stringable|string $message, array $context = []) : void
                       {
-                          error_log($message);
+                          error_log(message: $message);
                       }
                   }
         );

@@ -34,7 +34,7 @@ final readonly class ScanCommittedSecrets
 
             $lineNumber = 0;
 
-            $lines = file($path, FILE_IGNORE_NEW_LINES);
+            $lines = file(filename: $path, flags: FILE_IGNORE_NEW_LINES);
 
             foreach ($lines !== false ? $lines : [] as $line) {
                 $lineNumber++;
@@ -61,9 +61,9 @@ final readonly class ScanCommittedSecrets
     private function isIgnored(string $path, array $ignoredDirectories) : bool
     {
         foreach ($ignoredDirectories as $directory) {
-            $needle = DIRECTORY_SEPARATOR . trim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $needle = DIRECTORY_SEPARATOR . trim(string: $directory, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-            if (str_contains($path, $needle)) {
+            if (str_contains(haystack: $path, needle: $needle)) {
                 return true;
             }
         }
@@ -81,7 +81,7 @@ final readonly class ScanCommittedSecrets
         ];
 
         foreach ($patterns as $name => $pattern) {
-            if (preg_match($pattern, $line) === 1) {
+            if (preg_match(pattern: $pattern, subject: $line) === 1) {
                 return $name;
             }
         }

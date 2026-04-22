@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
@@ -28,4 +28,4 @@ assertSame(expected: 'deferred', actual: $deferredReflection->getMethod(name: 'd
 assertSame(expected: 'provides', actual: $deferredReflection->getMethod(name: 'provides')->getName(), message: 'Deferred provider contract should expose provides().');
 assertSame(expected: 'array', actual: $deferredReflection->getMethod(name: 'provides')->getReturnType()?->getName(), message: 'Deferred provider ownership should be returned as an array.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

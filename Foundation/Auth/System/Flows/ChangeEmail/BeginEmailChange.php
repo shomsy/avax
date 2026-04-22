@@ -49,9 +49,9 @@ final readonly class BeginEmailChange
             throw EmailChangeFailed::unauthenticated();
         }
 
-        $newEmail = strtolower(trim($data->newEmail));
+        $newEmail = strtolower(string: trim(string: $data->newEmail));
 
-        if ($newEmail === '' || $newEmail === strtolower($user->getEmail()->value)) {
+        if ($newEmail === '' || $newEmail === strtolower(string: $user->getEmail()->value)) {
             throw EmailChangeFailed::invalidEmail();
         }
 

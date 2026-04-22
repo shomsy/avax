@@ -24,7 +24,7 @@ final class FakeFederationRuntime implements FederationRuntimeInterface, Federat
     ) : StartedFederatedLogin
     {
         return new StartedFederatedLogin(
-            redirectUrl: 'https://idp.example.test/login?connection=' . $connection->connectionId . '&redirect=' . urlencode($redirectUri),
+            redirectUrl: 'https://idp.example.test/login?connection=' . $connection->connectionId . '&redirect=' . urlencode(string: $redirectUri),
             state      : $state
         );
     }
@@ -38,7 +38,7 @@ final class FakeFederationRuntime implements FederationRuntimeInterface, Federat
             subject      : (string) ($payload['subject'] ?? 'subject-1'),
             email        : (string) ($payload['email'] ?? 'federated@example.com'),
             displayName  : (string) ($payload['display_name'] ?? 'Federated User'),
-            groups       : array_values(array_map('strval', $payload['groups'] ?? [])),
+            groups       : array_values(array: array_map(callback: 'strval', array: $payload['groups'] ?? [])),
             emailVerified: (bool) ($payload['email_verified'] ?? true)
         );
     }

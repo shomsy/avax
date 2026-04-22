@@ -88,7 +88,7 @@ final readonly class ControllerDispatcher
             $result = new Response(stream: Stream::fromString(content: 'Callable returned null. Must return a ResponseInterface.'));
         }
 
-        if (is_string($result)) {
+        if (is_string(value: $result)) {
             return new Response(stream: Stream::fromString(content: $result));
         }
 
@@ -162,11 +162,11 @@ final readonly class ControllerDispatcher
                 // If the type is a Request-backed DTO (FormRequest).
                 if (is_a(object_or_class: $typeName, class: RequestDto::class, allow_string: true)) {
                     /** @var RequestDtoFactory $factory */
-                    $factory = $this->container->has(RequestDtoFactory::class)
-                        ? $this->container->get(RequestDtoFactory::class)
+                    $factory = $this->container->has(id: RequestDtoFactory::class)
+                        ? $this->container->get(id: RequestDtoFactory::class)
                         : new RequestDtoFactory();
 
-                    $arguments[] = $factory->create($request, $typeName);
+                    $arguments[] = $factory->create(serverRequest: $request, requestClass: $typeName);
                     continue;
                 }
 
@@ -210,7 +210,7 @@ final readonly class ControllerDispatcher
             return new Response(stream: Stream::fromString(content: "Controller returned null"));
         }
 
-        if (is_string($result)) {
+        if (is_string(value: $result)) {
             return new Response(stream: Stream::fromString(content: $result));
         }
 
@@ -277,7 +277,7 @@ final readonly class ControllerDispatcher
             return new Response(stream: Stream::fromString(content: "Controller returned null"));
         }
 
-        if (is_string($result)) {
+        if (is_string(value: $result)) {
             return new Response(stream: Stream::fromString(content: $result));
         }
 

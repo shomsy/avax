@@ -310,9 +310,9 @@ readonly class ContextContainer implements ContainerInterface
             return $serviceIds;
         }
 
-        $visibleIds = array_values(array_map(
-                                       static fn (array $row) : string => $row['serviceId'],
-                                       $this->resolver->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? []
+        $visibleIds = array_values(array: array_map(
+                                       callback: static fn (array $row) : string => $row['serviceId'],
+                                       array   : $this->resolver->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? []
                                    ));
 
         if ($serviceIds === []) {
@@ -320,12 +320,12 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         $resolvedIds = array_map(
-            fn (string $serviceId) : string => $this->resolver->registrations()->resolveAlias(abstract: $serviceId),
-            $serviceIds
+            callback: fn (string $serviceId) : string => $this->resolver->registrations()->resolveAlias(abstract: $serviceId),
+            array   : $serviceIds
         );
-        $filtered    = array_values(array_intersect($visibleIds, $resolvedIds));
+        $filtered    = array_values(array: array_intersect($visibleIds, $resolvedIds));
 
-        if (count($filtered) !== count(array_unique($resolvedIds))) {
+        if (count(value: $filtered) !== count(value: array_unique(array: $resolvedIds))) {
             throw new InvalidArgumentException(
                 message: "Strict slice view [{$slice}] can only compile services visible from its boundary."
             );
@@ -605,7 +605,7 @@ readonly class ContextContainer implements ContainerInterface
     public function tag(string|array $abstracts, string|array $tags) : void
     {
         foreach ((array) $abstracts as $abstract) {
-            if (is_string($abstract) && $abstract !== '') {
+            if (is_string(value: $abstract) && $abstract !== '') {
                 $this->assertOwnedMutation(abstract: $abstract, action: 'tag');
             }
         }

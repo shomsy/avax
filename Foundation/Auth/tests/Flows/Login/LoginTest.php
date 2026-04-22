@@ -408,7 +408,7 @@ class LoginTest extends TestCase
         $userSource->shouldReceive('findByCredentials')->once()->with($credentials)->andReturn($user);
         $userSource->shouldReceive('updatePassword')->once()->with(
             $userId,
-            Mockery::on(closure: static fn (#[SensitiveParameter] string $hash) : bool => password_verify('password', $hash))
+            Mockery::on(closure: static fn (#[SensitiveParameter] string $hash) : bool => password_verify(password: 'password', hash: $hash))
         );
 
         $identity = Mockery::mock(IdentityInterface::class);

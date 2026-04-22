@@ -22,13 +22,13 @@ try {
     // Check RouterInterface
     $routerInterface = new ReflectionClass(objectOrClass: 'Avax\HTTP\Router\RouterInterface');
     $routerMethods   = $routerInterface->getMethods(filter: ReflectionMethod::IS_PUBLIC);
-    echo '✅ RouterInterface: ' . count($routerMethods) . " public methods\n";
+    echo '✅ RouterInterface: ' . count(value: $routerMethods) . " public methods\n";
 
     // Check Kernel interface
     $kernelInterface     = new ReflectionClass(objectOrClass: 'Avax\HTTP\Kernel');
     $handleMethod        = $kernelInterface->getMethod(name: 'handle');
     $params              = $handleMethod->getParameters();
-    $hasCorrectSignature = count($params) === 1 &&
+    $hasCorrectSignature = count(value: $params) === 1 &&
         $params[0]->getType()?->getName() === 'Psr\Http\Message\ServerRequestInterface';
     echo "✅ Kernel interface: correct PSR-7 signature\n";
 
@@ -42,8 +42,8 @@ echo "\n🧪 TEST 2: PSR-7 Interface Compatibility\n";
 
 try {
     // Check PSR-7 interfaces exist (they should be available via composer)
-    $serverRequestExists = interface_exists('Psr\Http\Message\ServerRequestInterface');
-    $responseExists      = interface_exists('Psr\Http\Message\ResponseInterface');
+    $serverRequestExists = interface_exists(interface: 'Psr\Http\Message\ServerRequestInterface');
+    $responseExists      = interface_exists(interface: 'Psr\Http\Message\ResponseInterface');
     echo "✅ PSR-7 interfaces available in environment\n";
 
 } catch (Exception $e) {
@@ -64,7 +64,7 @@ try {
     $params       = $handleMethod->getParameters();
     $returnType   = $handleMethod->getReturnType();
 
-    $acceptsServerRequest = count($params) === 1 &&
+    $acceptsServerRequest = count(value: $params) === 1 &&
         $params[0]->getType()?->getName() === 'Psr\Http\Message\ServerRequestInterface';
     $returnsResponse      = $returnType?->getName() === 'Psr\Http\Message\ResponseInterface';
 
@@ -80,13 +80,13 @@ echo "\n🧪 TEST 4: Architecture Compatibility\n";
 
 try {
     // Verify no namespace conflicts
-    $kernelExists = interface_exists('Avax\HTTP\Kernel');
-    $routerExists = interface_exists('Avax\HTTP\Router\RouterInterface');
+    $kernelExists = interface_exists(interface: 'Avax\HTTP\Kernel');
+    $routerExists = interface_exists(interface: 'Avax\HTTP\Router\RouterInterface');
     echo "✅ No namespace conflicts\n";
 
     // Check PSR-15 interfaces exist
-    $middlewareExists = interface_exists('Avax\HTTP\Middleware\MiddlewareInterface');
-    $handlerExists    = interface_exists('Avax\HTTP\Middleware\RequestHandlerInterface');
+    $middlewareExists = interface_exists(interface: 'Avax\HTTP\Middleware\MiddlewareInterface');
+    $handlerExists    = interface_exists(interface: 'Avax\HTTP\Middleware\RequestHandlerInterface');
     echo "✅ PSR-15 interfaces available\n";
 
 } catch (Exception $e) {
@@ -108,7 +108,7 @@ $requiredFiles = [
 
 $missingFiles = [];
 foreach ($requiredFiles as $file) {
-    if (! file_exists($file)) {
+    if (! file_exists(filename: $file)) {
         $missingFiles[] = $file;
     }
 }
@@ -116,7 +116,7 @@ foreach ($requiredFiles as $file) {
 if (empty($missingFiles)) {
     echo "✅ All core architecture files present\n";
 } else {
-    echo '❌ Missing files: ' . implode(', ', $missingFiles) . "\n";
+    echo '❌ Missing files: ' . implode(separator: ', ', array: $missingFiles) . "\n";
     exit(1);
 }
 
@@ -125,9 +125,9 @@ echo "\n🧪 TEST 6: Syntax Validation\n";
 
 $syntaxErrors = [];
 foreach ($requiredFiles as $file) {
-    $output = shell_exec("php -l \"{$file}\" 2>&1");
-    if (strpos($output, 'No syntax errors detected') === false) {
-        $syntaxErrors[] = $file . ': ' . trim($output);
+    $output = shell_exec(command: "php -l \"{$file}\" 2>&1");
+    if (strpos(haystack: $output, needle: 'No syntax errors detected') === false) {
+        $syntaxErrors[] = $file . ': ' . trim(string: $output);
     }
 }
 

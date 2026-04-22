@@ -13,10 +13,10 @@ final readonly class SessionId implements Stringable
 
     public function __construct(string $value)
     {
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('SessionId cannot be empty.');
+            throw new InvalidArgumentException(message: 'SessionId cannot be empty.');
         }
 
         $this->value = $normalized;

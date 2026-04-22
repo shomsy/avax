@@ -59,7 +59,7 @@ final readonly class SubjectIdentifier
     {
         $input = $localSubject . '.' . $sector . '.' . $salt;
 
-        return hash('sha256', $input);
+        return hash(algo: 'sha256', data: $input);
     }
 
     private function defaultSalt() : string
@@ -72,7 +72,7 @@ final readonly class SubjectIdentifier
      */
     public function isValidSectorIdentifier(string $sectorIdentifier) : bool
     {
-        $parsed = parse_url($sectorIdentifier);
+        $parsed = parse_url(url: $sectorIdentifier);
 
         return isset($parsed['scheme']) && isset($parsed['host']);
     }

@@ -125,7 +125,7 @@ final readonly class ManageScopes implements ScopeInterface
         }
 
         $frames = $this->store->terminate();
-        foreach (array_reverse($frames) as $frame) {
+        foreach (array_reverse(array: $frames) as $frame) {
             foreach ($frame['pooled'] as $serviceId => $options) {
                 $instance = $frame['items'][$serviceId] ?? null;
                 unset($frame['items'][$serviceId], $frame['disposable'][$serviceId]);

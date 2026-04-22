@@ -10,6 +10,6 @@ final class LoginFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/Login/LoginTest.php';
+        return dirname(path: __DIR__) . '/Flows/Login/LoginTest.php';
     }
 }

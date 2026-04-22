@@ -84,7 +84,7 @@ final readonly class ExchangeClientCredentials
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'client_id'  => $client->clientId,
-                                                           'scope'      => implode(' ', $scopes),
+                                                           'scope'      => implode(separator: ' ', array: $scopes),
                                                            'audience'   => $audience,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
@@ -124,7 +124,7 @@ final readonly class ExchangeClientCredentials
 
     private function normalizeAudience(string|null $audience) : string|null
     {
-        $normalized = trim((string) $audience);
+        $normalized = trim(string: (string) $audience);
 
         return $normalized !== '' ? $normalized : null;
     }
@@ -139,16 +139,16 @@ final readonly class ExchangeClientCredentials
         $normalized = [];
 
         foreach ($scopes as $scope) {
-            $value = trim($scope);
+            $value = trim(string: $scope);
 
-            if ($value === '' || in_array($value, $normalized, true)) {
+            if ($value === '' || in_array(needle: $value, haystack: $normalized, strict: true)) {
                 continue;
             }
 
             $normalized[] = $value;
         }
 
-        sort($normalized);
+        sort(array: $normalized);
 
         return $normalized;
     }

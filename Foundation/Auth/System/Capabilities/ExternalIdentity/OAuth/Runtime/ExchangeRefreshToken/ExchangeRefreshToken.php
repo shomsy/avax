@@ -127,7 +127,7 @@ final readonly class ExchangeRefreshToken
                                                            'client_id'  => $client->clientId,
                                                            'user_id'    => $user->getId()->value,
                                                            'family_id'  => $refreshToken->familyId,
-                                                           'scope'      => implode(' ', $record->scopes),
+                                                           'scope'      => implode(separator: ' ', array: $record->scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
                                                        ]

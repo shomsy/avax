@@ -28,14 +28,14 @@ final readonly class ErrorResponseFactory
 
     public function createMethodNotAllowedResponse(string $method, string $path, array $allowedMethods) : ResponseInterface
     {
-        $body = sprintf('Method %s not allowed for %s. Allowed: %s', $method, $path, implode(', ', $allowedMethods));
+        $body = sprintf('Method %s not allowed for %s. Allowed: %s', $method, $path, implode(separator: ', ', array: $allowedMethods));
 
         return new Response(
             stream    : Stream::fromString(content: $body),
             statusCode: 405,
             headers   : [
                             'Content-Type' => 'text/plain',
-                            'Allow'        => implode(', ', $allowedMethods),
+                            'Allow'        => implode(separator: ', ', array: $allowedMethods),
                         ],
         );
     }

@@ -16,6 +16,6 @@ final readonly class OAuthSenderConstraint
     public function equals(self $other) : bool
     {
         return $this->type === $other->type
-            && hash_equals($this->thumbprint, $other->thumbprint);
+            && hash_equals(known_string: $this->thumbprint, user_string: $other->thumbprint);
     }
 }

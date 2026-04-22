@@ -29,7 +29,7 @@ final class AuditExporterAdaptersTest extends TestCase
      */
     public function testJsonLinesExporterMasksSensitiveContextAndChainsHashes() : void
     {
-        $path = tempnam(sys_get_temp_dir(), 'auth-audit-');
+        $path = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-audit-');
         $this->assertIsString(actual: $path);
 
         $exporter = new JsonLinesAuditExporter(path: $path);
@@ -47,12 +47,12 @@ final class AuditExporterAdaptersTest extends TestCase
                                       ),
                                   ]);
 
-        $lines = file($path, FILE_IGNORE_NEW_LINES);
+        $lines = file(filename: $path, flags: FILE_IGNORE_NEW_LINES);
         $this->assertIsArray(actual: $lines);
         $this->assertCount(expectedCount: 2, haystack: $lines);
 
-        $first  = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
-        $second = json_decode($lines[1], true, 512, JSON_THROW_ON_ERROR);
+        $first  = json_decode(json: $lines[0], associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+        $second = json_decode(json: $lines[1], associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 
         $this->assertSame(expected: '[redacted]', actual: $first['context']['email']);
         $this->assertSame(expected: '[redacted]', actual: $first['context']['ip_address']);
@@ -60,7 +60,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertArrayHasKey(key: 'record_hash', array: $second);
         $this->assertSame(expected: $first['record_hash'], actual: $second['previous_hash']);
 
-        unlink($path);
+        unlink(filename: $path);
     }
 
     /**
@@ -87,7 +87,7 @@ final class AuditExporterAdaptersTest extends TestCase
 
                       public function send(string $severity, string $message) : void
                       {
-                          $this->capture->syslog[] = [$severity, json_decode($message, true, 512, JSON_THROW_ON_ERROR)];
+                          $this->capture->syslog[] = [$severity, json_decode(json: $message, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR)];
                       }
                   }
         ))->export(events: [$event]);
@@ -130,7 +130,7 @@ final class AuditExporterAdaptersTest extends TestCase
      */
     public function testLegalHoldPreservesSensitiveContextForForensicExport() : void
     {
-        $path = tempnam(sys_get_temp_dir(), 'auth-audit-hold-');
+        $path = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-audit-hold-');
         $this->assertIsString(actual: $path);
 
         $exporter = new JsonLinesAuditExporter(
@@ -151,14 +151,14 @@ final class AuditExporterAdaptersTest extends TestCase
                                       ),
                                   ]);
 
-        $lines = file($path, FILE_IGNORE_NEW_LINES);
+        $lines = file(filename: $path, flags: FILE_IGNORE_NEW_LINES);
         $this->assertIsArray(actual: $lines);
-        $payload = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
+        $payload = json_decode(json: $lines[0], associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 
         $this->assertSame(expected: 'admin@example.com', actual: $payload['context']['email']);
         $this->assertSame(expected: '127.0.0.1', actual: $payload['context']['ip_address']);
 
-        unlink($path);
+        unlink(filename: $path);
     }
 
     public function testSecurityNotificationExporterRoutesHighSignalEvents() : void

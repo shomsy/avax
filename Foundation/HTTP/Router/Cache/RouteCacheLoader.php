@@ -76,7 +76,7 @@ final readonly class RouteCacheLoader
 
         try {
             /** @var array<array<string, mixed>> $routes */
-            $routes = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
+            $routes = json_decode(json: $cacheContent, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Invalid route cache JSON format.', previous: $exception);
         }
@@ -86,7 +86,7 @@ final readonly class RouteCacheLoader
         }
 
         foreach ($routes as $definition) {
-            if (! is_array($definition)) {
+            if (! is_array(value: $definition)) {
                 throw new RuntimeException(message: 'Invalid route in cache.');
             }
 
@@ -135,7 +135,7 @@ final readonly class RouteCacheLoader
 
         // Write secure JSON format instead of PHP code
         try {
-            $content = json_encode($exportable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $content = json_encode(value: $exportable, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Failed to encode route cache as JSON.', previous: $exception);
         }

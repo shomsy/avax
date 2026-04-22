@@ -151,7 +151,7 @@ final readonly class CompleteFederatedLogin
     private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
     {
         $username = $this->uniqueUsername(displayName: $displayName, email: $email);
-        $password = bin2hex(random_bytes(24));
+        $password = bin2hex(string: random_bytes(length: 24));
 
         return $this->userSource->create(user: User::create(
             id          : new UserId(value: $this->idGenerator->generate()),
@@ -163,11 +163,11 @@ final readonly class CompleteFederatedLogin
 
     private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email) : string
     {
-        $normalizedDisplayName = preg_replace('/[^a-z0-9]+/i', '-', strtolower(trim($displayName)));
+        $normalizedDisplayName = preg_replace(pattern: '/[^a-z0-9]+/i', replacement: '-', subject: strtolower(string: trim(string: $displayName)));
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
             ? $normalizedDisplayName
-            : explode('@', $email)[0];
-        $candidate             = trim($base, '-');
+            : explode(separator: '@', string: $email)[0];
+        $candidate             = trim(string: $base, characters: '-');
 
         if ($candidate === '') {
             $candidate = 'federated-user';
@@ -198,7 +198,7 @@ final readonly class CompleteFederatedLogin
             foreach ($groupRoleMap[$group] ?? [] as $roleValue) {
                 $role = UserRole::tryFrom(value: $roleValue);
 
-                if ($role !== null && ! in_array($role, $roles, true)) {
+                if ($role !== null && ! in_array(needle: $role, haystack: $roles, strict: true)) {
                     $roles[] = $role;
                 }
             }

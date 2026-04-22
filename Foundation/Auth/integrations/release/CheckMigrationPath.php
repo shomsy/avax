@@ -29,11 +29,11 @@ final readonly class CheckMigrationPath
         $upgradeTest      = $repositoryRoot . '/tests/System/ProductBoundaryTest.php';
         $notes            = [];
 
-        if (! is_file($migrationGuide)) {
+        if (! is_file(filename: $migrationGuide)) {
             $notes[] = 'Migration guide is missing.';
         }
 
-        if (! is_file($upgradeTest)) {
+        if (! is_file(filename: $upgradeTest)) {
             $notes[] = 'Automated upgrade boundary test is missing.';
         }
 
@@ -43,10 +43,10 @@ final readonly class CheckMigrationPath
 
         return [
             'package'                     => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'clean'                       => $legacyReferences === [] && is_file($migrationGuide) && is_file($upgradeTest),
+            'clean'                       => $legacyReferences === [] && is_file(filename: $migrationGuide) && is_file(filename: $upgradeTest),
             'current_namespace'           => 'Avax\\Auth\\System\\',
-            'migration_documented'        => is_file($migrationGuide),
-            'automated_upgrade_test'      => is_file($upgradeTest),
+            'migration_documented'        => is_file(filename: $migrationGuide),
+            'automated_upgrade_test'      => is_file(filename: $upgradeTest),
             'legacy_namespace_references' => $legacyReferences,
             'notes'                       => $notes,
         ];
@@ -68,48 +68,48 @@ final readonly class CheckMigrationPath
                 continue;
             }
 
-            $relativePath = ltrim(str_replace($repositoryRoot, '', $file->getPathname()), DIRECTORY_SEPARATOR);
+            $relativePath = ltrim(string: str_replace(search: $repositoryRoot, replace: '', subject: $file->getPathname()), characters: DIRECTORY_SEPARATOR);
 
             if ($this->shouldIgnore(path: $relativePath) || $file->getExtension() !== 'php') {
                 continue;
             }
 
-            $contents = file_get_contents($file->getPathname());
+            $contents = file_get_contents(filename: $file->getPathname());
 
-            if (! is_string($contents)) {
+            if (! is_string(value: $contents)) {
                 continue;
             }
 
             if (
-                str_contains($contents, 'System\\Configuration\\AuthServiceProvider')
-                || str_contains($contents, 'Avax\\Container\\Auth')
+                str_contains(haystack: $contents, needle: 'System\\Configuration\\AuthServiceProvider')
+                || str_contains(haystack: $contents, needle: 'Avax\\Container\\Auth')
             ) {
                 $matches[] = $relativePath;
             }
         }
 
-        sort($matches);
+        sort(array: $matches);
 
-        return array_values(array_unique($matches));
+        return array_values(array: array_unique(array: $matches));
     }
 
     private function shouldIgnore(string $path) : bool
     {
-        return array_any(['vendor/', '.git/', 'build/'], fn ($ignoredPrefix) => str_starts_with($path, $ignoredPrefix));
+        return array_any(array: ['vendor/', '.git/', 'build/'], callback: fn ($ignoredPrefix) => str_starts_with(haystack: $path, needle: $ignoredPrefix));
     }
 
     private function detectPackageName(string $repositoryRoot) : string
     {
-        $composerJsonPath = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/composer.json';
+        $composerJsonPath = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/composer.json';
 
-        if (! is_file($composerJsonPath)) {
+        if (! is_file(filename: $composerJsonPath)) {
             return 'unknown';
         }
 
-        $json    = file_get_contents($composerJsonPath);
-        $decoded = is_string($json) ? json_decode($json, true) : null;
+        $json    = file_get_contents(filename: $composerJsonPath);
+        $decoded = is_string(value: $json) ? json_decode(json: $json, associative: true) : null;
 
-        return is_array($decoded) && is_string($decoded['name'] ?? null)
+        return is_array(value: $decoded) && is_string(value: $decoded['name'] ?? null)
             ? $decoded['name']
             : 'unknown';
     }

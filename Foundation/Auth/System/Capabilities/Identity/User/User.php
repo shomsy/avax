@@ -33,8 +33,8 @@ final readonly class User implements UserInterface, Stringable
     {
         $roles              ??= [];
         $permissions        ??= [];
-        $this->roles = array_values($roles);
-        $this->permissions = array_values($permissions);
+        $this->roles = array_values(array: $roles);
+        $this->permissions = array_values(array: $permissions);
     }
 
     /**
@@ -59,7 +59,7 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        if (in_array($role, $this->roles, true)) {
+        if (in_array(needle: $role, haystack: $this->roles, strict: true)) {
             return true;
         }
 
@@ -68,12 +68,12 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        return array_any($this->permissions, fn ($userPermission) => $userPermission->equals(other: $permission));
+        return array_any(array: $this->permissions, callback: fn ($userPermission) => $userPermission->equals(other: $permission));
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        return array_any($this->roles, fn ($role) => $role->canAccess(required: $requiredRole));
+        return array_any(array: $this->roles, callback: fn ($role) => $role->canAccess(required: $requiredRole));
     }
 
     public function isActive() : bool

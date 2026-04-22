@@ -42,7 +42,7 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
             'http_status_code' => $httpStatusCode,
             'is_retryable'     => $isRetryable,
             'exception_class'  => static::class,
-            'timestamp'        => microtime(true),
+            'timestamp'        => microtime(as_float: true),
         ]);
     }
 

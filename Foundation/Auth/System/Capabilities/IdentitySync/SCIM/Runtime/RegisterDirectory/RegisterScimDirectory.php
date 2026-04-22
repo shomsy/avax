@@ -38,11 +38,11 @@ final readonly class RegisterScimDirectory
             throw ScimFailed::invalidGroupRoleMapping();
         }
 
-        $plainTextToken = bin2hex(random_bytes(24));
+        $plainTextToken = bin2hex(string: random_bytes(length: 24));
         $directory      = new ScimDirectory(
-            directoryId : 'scim_' . bin2hex(random_bytes(12)),
-            tenantSlug  : trim($data->tenantSlug),
-            name        : trim($data->name),
+            directoryId : 'scim_' . bin2hex(string: random_bytes(length: 12)),
+            tenantSlug  : trim(string: $data->tenantSlug),
+            name        : trim(string: $data->name),
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
             groupRoleMap: $data->groupRoleMap,
             createdAt   : $this->clock->now()

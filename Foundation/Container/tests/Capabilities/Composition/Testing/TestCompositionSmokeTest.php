@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\Testing\TestComposition;
 
@@ -62,4 +62,4 @@ $isolatedEntry = $isolated->container()->make(abstract: LoginFlowEntry::class);
 
 assertInstanceOf(expectedClass: RealTestingClock::class, value: $isolatedEntry->clock, message: 'Fresh test compositions should not leak runtime or override state from previous compositions.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

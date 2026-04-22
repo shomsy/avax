@@ -25,8 +25,8 @@ final class MultiTenantPool
     public function getForTenant(string $tenantId) : ConnectionPoolInterface
     {
         if (! isset($this->pools[$tenantId])) {
-            if (count($this->pools) >= $this->maxTenants) {
-                throw new RuntimeException("Max tenants reached: {$this->maxTenants}");
+            if (count(value: $this->pools) >= $this->maxTenants) {
+                throw new RuntimeException(message: "Max tenants reached: {$this->maxTenants}");
             }
 
             $this->pools[$tenantId] = ($this->poolFactory)($tenantId);
@@ -70,7 +70,7 @@ final class MultiTenantPool
 
     public function getTenantCount() : int
     {
-        return count($this->pools);
+        return count(value: $this->pools);
     }
 }
 
@@ -87,18 +87,18 @@ final class ShardedPool
     )
     {
         if ($shardCount < 1) {
-            throw new InvalidArgumentException('Shard count must be >= 1');
+            throw new InvalidArgumentException(message: 'Shard count must be >= 1');
         }
     }
 
     public function getForUserId(int $userId) : ConnectionPoolInterface
     {
-        return $this->getForKey((string) $userId);
+        return $this->getForKey(key: (string) $userId);
     }
 
     public function getForKey(string $key) : ConnectionPoolInterface
     {
-        $shardIndex = abs(crc32($key)) % $this->shardCount;
+        $shardIndex = abs(num: crc32(string: $key)) % $this->shardCount;
 
         if (! isset($this->pools[$shardIndex])) {
             $this->pools[$shardIndex] = ($this->poolFactory)($shardIndex);
@@ -109,7 +109,7 @@ final class ShardedPool
 
     public function getForTenant(string $tenantId) : ConnectionPoolInterface
     {
-        return $this->getForKey($tenantId);
+        return $this->getForKey(key: $tenantId);
     }
 
     public function closeAll() : void
@@ -146,7 +146,7 @@ final class ShardedPool
             );
         }
 
-        return ['total' => $totalStats, 'shards' => array_map(fn ($p) => $p->stats(), $this->pools)];
+        return ['total' => $totalStats, 'shards' => array_map(callback: fn ($p) => $p->stats(), array: $this->pools)];
     }
 }
 
@@ -177,12 +177,12 @@ final class ReadWritePool
 
     public function releaseRead(PooledConnection $connection) : void
     {
-        $this->readPool->release($connection);
+        $this->readPool->release(connection: $connection);
     }
 
     public function releaseWrite(PooledConnection $connection) : void
     {
-        $this->writePool->release($connection);
+        $this->writePool->release(connection: $connection);
     }
 
     public function isReadWriteSplitEnabled() : bool

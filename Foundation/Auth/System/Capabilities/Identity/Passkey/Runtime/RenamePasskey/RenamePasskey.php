@@ -35,7 +35,7 @@ final readonly class RenamePasskey
             throw PasskeyOperationFailed::notFound();
         }
 
-        $label = trim($data->label);
+        $label = trim(string: $data->label);
 
         if ($label === '') {
             throw PasskeyOperationFailed::invalidLabel();

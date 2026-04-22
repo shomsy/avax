@@ -98,7 +98,7 @@ final readonly class ServiceCompiler
         $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
         $registrationArguments = $registration?->arguments ?? [];
 
-        if (is_string($candidate) && class_exists($candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
+        if (is_string(value: $candidate) && class_exists(class: $candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
             $blueprint   = $this->blueprints->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
                 || $blueprint->injectableMethods !== []
@@ -107,7 +107,7 @@ final readonly class ServiceCompiler
             return [
                 'serviceId'             => $serviceId,
                 'method'                => $methodName,
-                'signature'             => sha1(serialize([
+                'signature'             => sha1(string: serialize(value: [
                                                               'serviceId' => $serviceId,
                                                               'candidate' => $candidate,
                                                               'lifetime'  => $registration?->lifetime,
@@ -127,7 +127,7 @@ final readonly class ServiceCompiler
         return [
             'serviceId'             => $serviceId,
             'method'                => $methodName,
-            'signature'             => sha1(serialize([
+            'signature'             => sha1(string: serialize(value: [
                                                           'serviceId' => $serviceId,
                                                           'candidate' => $this->dynamicSignature(candidate: $candidate),
                                                           'lifetime'  => $registration?->lifetime,
@@ -148,7 +148,7 @@ final readonly class ServiceCompiler
             return $registration->concrete;
         }
 
-        return class_exists($serviceId) ? $serviceId : null;
+        return class_exists(class: $serviceId) ? $serviceId : null;
     }
 
     /**
@@ -167,11 +167,11 @@ final readonly class ServiceCompiler
 
     private function supportsCompiledValue(mixed $value) : bool
     {
-        if ($value === null || is_scalar($value)) {
+        if ($value === null || is_scalar(value: $value)) {
             return true;
         }
 
-        if (! is_array($value)) {
+        if (! is_array(value: $value)) {
             return false;
         }
 
@@ -197,10 +197,10 @@ final readonly class ServiceCompiler
                 . ':' . $reflection->getEndLine();
         }
 
-        if (is_object($candidate)) {
+        if (is_object(value: $candidate)) {
             return 'object:' . $candidate::class;
         }
 
-        return get_debug_type($candidate) . ':' . var_export($candidate, true);
+        return get_debug_type(value: $candidate) . ':' . var_export(value: $candidate, return: true);
     }
 }

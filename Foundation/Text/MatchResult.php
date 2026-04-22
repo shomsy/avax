@@ -37,7 +37,7 @@ final readonly class MatchResult
      */
     public function namedGroups() : array
     {
-        return array_filter($this->matches, static function ($key) { return ! is_int($key); }, ARRAY_FILTER_USE_KEY);
+        return array_filter(array: $this->matches, callback: static function ($key) { return ! is_int(value: $key); }, mode: ARRAY_FILTER_USE_KEY);
     }
 
     /**

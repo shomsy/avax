@@ -142,7 +142,7 @@ final readonly class ControllerRequestHandler implements RequestHandlerInterface
         return new Response(
             status : 200,
             headers: ['Content-Type' => 'application/json'],
-            body   : json_encode(['message' => 'Controller executed'])
+            body   : json_encode(value: ['message' => 'Controller executed'])
         );
     }
 }

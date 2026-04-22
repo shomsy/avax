@@ -37,7 +37,7 @@ final class ScopeStore
             return false;
         }
 
-        return array_key_exists($abstract, $this->scopes[$index]['items']);
+        return array_key_exists(key: $abstract, array: $this->scopes[$index]['items']);
     }
 
     private function frameIndex(string $kind) : int|null
@@ -49,10 +49,10 @@ final class ScopeStore
         $normalized = ScopeKind::normalize(kind: $kind);
 
         if ($normalized === ScopeKind::ANY) {
-            return array_key_last($this->scopes);
+            return array_key_last(array: $this->scopes);
         }
 
-        for ($index = array_key_last($this->scopes); $index >= 0; $index--) {
+        for ($index = array_key_last(array: $this->scopes); $index >= 0; $index--) {
             if (($this->scopes[$index]['kind'] ?? '') === $normalized) {
                 return $index;
             }
@@ -125,7 +125,7 @@ final class ScopeStore
         $kind           ??= ScopeKind::OPERATION;
         $this->scopes[] = [
             'kind'       => ScopeKind::normalize(kind: $kind),
-            'id'         => trim($scopeId),
+            'id'         => trim(string: $scopeId),
             'items'      => [],
             'disposable' => [],
             'pooled'     => [],
@@ -150,14 +150,14 @@ final class ScopeStore
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
         }
 
-        $frame = $this->scopes[array_key_last($this->scopes)];
+        $frame = $this->scopes[array_key_last(array: $this->scopes)];
         if ($kind !== null && ScopeKind::normalize(kind: $kind) !== $frame['kind']) {
             throw new ContainerException(
                 message: "Cannot close scope kind [{$kind}] while active scope kind [{$frame['kind']}] is on top of the stack."
             );
         }
 
-        array_pop($this->scopes);
+        array_pop(array: $this->scopes);
 
         return $frame;
     }
@@ -230,11 +230,11 @@ final class ScopeStore
     public function snapshot() : array
     {
         $frames = array_map(
-            static function (array $frame) : array {
-                $services = array_keys($frame['items']);
-                sort($services);
-                $pooledServices = array_keys($frame['pooled']);
-                sort($pooledServices);
+            callback: static function (array $frame) : array {
+                $services = array_keys(array: $frame['items']);
+                sort(array: $services);
+                $pooledServices = array_keys(array: $frame['pooled']);
+                sort(array: $pooledServices);
 
                 return [
                     'kind'           => $frame['kind'],
@@ -243,24 +243,24 @@ final class ScopeStore
                     'pooledServices' => $pooledServices,
                 ];
             },
-            $this->scopes
+            array   : $this->scopes
         );
 
         return [
             'scoped'      => array_map(
-                static fn (array $frame) : array => $frame['items'],
-                $this->scopes
+                callback: static fn (array $frame) : array => $frame['items'],
+                array   : $this->scopes
             ),
             'pooled'      => array_reduce(
-                $this->scopes,
-                static function (array $carry, array $frame) : array {
+                array   : $this->scopes,
+                callback: static function (array $carry, array $frame) : array {
                     foreach ($frame['pooled'] as $serviceId => $options) {
                         $carry[$serviceId][] = $frame['kind'] . ($frame['id'] !== '' ? ':' . $frame['id'] : '');
                     }
 
                     return $carry;
                 },
-                []
+                initial : []
             ),
             'pooledStats' => [],
             'frames'      => $frames,

@@ -429,7 +429,7 @@ class AuthBuilderTest extends TestCase
             {
                 return new OidcIdToken(
                     token    : 'id-token',
-                    expiresAt: new DateTimeImmutable('+5 minutes')
+                    expiresAt: new DateTimeImmutable(datetime: '+5 minutes')
                 );
             }
 

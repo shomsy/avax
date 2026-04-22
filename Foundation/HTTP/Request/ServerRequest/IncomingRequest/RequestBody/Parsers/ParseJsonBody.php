@@ -13,15 +13,15 @@ final readonly class ParseJsonBody
 {
     public function execute(string $content) : array|null
     {
-        $content = trim($content);
+        $content = trim(string: $content);
         if ($content === '') {
             return null;
         }
 
         try {
-            $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(json: $content, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 
-            return (is_array($data) || is_object($data)) ? $data : null;
+            return (is_array(value: $data) || is_object(value: $data)) ? $data : null;
         } catch (JsonException) {
             return null;
         }

@@ -12,10 +12,10 @@ $files = [
 
 foreach ($files as $name => $path) {
     echo "Checking {$name}: ";
-    $content = file_get_contents($path);
+    $content = file_get_contents(filename: $path);
     
     // Check for session_regenerate_id with proper parameters
-    if (preg_match('/session_regenerate_id\([^)]*delete_old_session:\s*true[^)]*\)/', $content)) {
+    if (preg_match(pattern: '/session_regenerate_id\([^)]*delete_old_session:\s*true[^)]*\)/', subject: $content)) {
         echo "OK (regenerates with delete_old_session)\n";
     } else {
         echo "OK\n";

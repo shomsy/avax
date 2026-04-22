@@ -54,9 +54,9 @@ final class StageChain
         $this->logger->debug(message: 'Building route pipeline.', context: ['pipeline' => $pipeline]);
 
         return array_reduce(
-            array_reverse($pipeline),
-            fn (Closure $next, string $class) : Closure => fn (Request $request) : ResponseInterface => $this->invoke(class: $class, next: $next, request: $request),
-            $core
+            array   : array_reverse(array: $pipeline),
+            callback: fn (Closure $next, string $class) : Closure => fn (Request $request) : ResponseInterface => $this->invoke(class: $class, next: $next, request: $request),
+            initial : $core
         );
     }
 
@@ -108,9 +108,9 @@ final class StageChain
 
         // Log successful validation
         $this->logger->debug(message: 'StageChain validation passed', context: [
-            'stages_count'     => count($stages),
-            'middleware_count' => count($middleware),
-            'total_pipeline'   => count($pipeline),
+            'stages_count'     => count(value: $stages),
+            'middleware_count' => count(value: $middleware),
+            'total_pipeline'   => count(value: $pipeline),
             'order_contract'   => self::ORDER_CONTRACT
         ]);
     }

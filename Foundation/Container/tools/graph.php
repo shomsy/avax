@@ -5,27 +5,27 @@ declare(strict_types=1);
 use Avax\Container\DI\ContainerInterface;
 
 if ($argc < 3) {
-    fwrite(STDERR, "Usage: php tools/graph.php <command> <fixture> [args...]\n");
+    fwrite(stream: STDERR, data: "Usage: php tools/graph.php <command> <fixture> [args...]\n");
     exit(1);
 }
 
-require_once dirname(__DIR__) . '/tests/bootstrap.php';
+require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
 $command     = (string) ($argv[1] ?? '');
 $fixturePath = (string) ($argv[2] ?? '');
 
-if (! is_file($fixturePath)) {
-    fwrite(STDERR, "Fixture [{$fixturePath}] was not found.\n");
+if (! is_file(filename: $fixturePath)) {
+    fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
     exit(1);
 }
 
 $loaded = require $fixturePath;
-if (is_callable($loaded)) {
+if (is_callable(value: $loaded)) {
     $loaded = $loaded();
 }
 
 if (! $loaded instanceof ContainerInterface) {
-    fwrite(STDERR, "Fixture [{$fixturePath}] must return a ContainerInterface instance.\n");
+    fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] must return a ContainerInterface instance.\n");
     exit(1);
 }
 
@@ -35,13 +35,13 @@ $container = $loaded;
  * @throws JsonException
  */
 $print = static function (mixed $payload) : void {
-    if (is_string($payload)) {
+    if (is_string(value: $payload)) {
         echo $payload;
 
         return;
     }
 
-    echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+    echo json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 };
 
 switch ($command) {
@@ -118,6 +118,6 @@ switch ($command) {
         exit(0);
 
     default:
-        fwrite(STDERR, "Unknown command [{$command}].\n");
+        fwrite(stream: STDERR, data: "Unknown command [{$command}].\n");
         exit(1);
 }

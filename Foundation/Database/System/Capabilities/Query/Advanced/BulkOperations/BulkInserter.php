@@ -38,7 +38,7 @@ final class BulkInserter
 
     private function executeBatch(array $batch) : bool
     {
-        $columns = implode(separator: ', ', array_map(
+        $columns = implode(separator: ', ', array: array_map(
             callback: fn ($col) => $this->grammar->wrap(value: $col),
             array   : $this->columns
         ));

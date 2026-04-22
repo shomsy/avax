@@ -13,7 +13,7 @@ final class TextReplaceRegexCallbackTest extends TestCase
     public function test_replace_regex_callback_basic() : void
     {
         $result = Text::of(value: 'hello world')
-            ->replaceRegexCallback(pattern: '(\w+)', fn: static fn ($matches) => strtoupper($matches[0]))
+            ->replaceRegexCallback(pattern: '(\w+)', fn: static fn ($matches) => strtoupper(string: $matches[0]))
             ->toString();
 
         $this->assertEquals(expected: 'HELLO WORLD', actual: $result);
@@ -40,7 +40,7 @@ final class TextReplaceRegexCallbackTest extends TestCase
     public function test_replace_regex_callback_with_flags() : void
     {
         $result = Text::of(value: 'HELLO world')
-            ->replaceRegexCallback(pattern: '(\w+)', fn: static fn ($matches) => strtolower($matches[0]), flags: 'i')
+            ->replaceRegexCallback(pattern: '(\w+)', fn: static fn ($matches) => strtolower(string: $matches[0]), flags: 'i')
             ->toString();
 
         $this->assertEquals(expected: 'hello world', actual: $result);

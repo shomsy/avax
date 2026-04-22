@@ -53,14 +53,14 @@ final readonly class ServeTenantSecurityHttpSurface
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
     {
-        $method     = strtoupper(trim($input->method));
+        $method     = strtoupper(string: trim(string: $input->method));
         $path       = $this->normalizePath(path: $input->path);
         $tenantSlug = $this->tenantSlug(input: $input);
 
         try {
             if ($method === 'GET' && $path === '/tenants') {
                 return $this->response(statusCode: 200, body: [
-                    'tenants' => array_map($this->tenantResource(...), $this->auth->readTenants()),
+                    'tenants' => array_map(callback: $this->tenantResource(...), array: $this->auth->readTenants()),
                 ]);
             }
 
@@ -77,7 +77,7 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/members') {
                 return $this->response(statusCode: 200, body: [
                     'tenant'  => $tenantSlug,
-                    'members' => array_map($this->memberResource(...), $this->auth->readTenantMembers(tenantSlug: $tenantSlug)),
+                    'members' => array_map(callback: $this->memberResource(...), array: $this->auth->readTenantMembers(tenantSlug: $tenantSlug)),
                 ]);
             }
 
@@ -85,7 +85,7 @@ final readonly class ServeTenantSecurityHttpSurface
                 $invite = $this->auth->inviteTenantMember(data: new InviteTenantMemberData(
                                                                     tenantSlug: $tenantSlug,
                                                                     email     : $this->requiredString(body: $input->body, field: 'email'),
-                                                                    role      : TenantMemberRole::from(value: strtolower($this->requiredString(body: $input->body, field: 'role'))),
+                                                                    role      : TenantMemberRole::from(value: strtolower(string: $this->requiredString(body: $input->body, field: 'role'))),
                                                                     invitedBy : $this->requiredString(body: $input->body, field: 'invitedBy')
                                                                 ));
 
@@ -104,7 +104,7 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['member' => $this->memberResource(member: $member)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/members/([0-9]+)/suspend$~', $path, $matches) === 1) {
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/members/([0-9]+)/suspend$~', subject: $path, matches: $matches) === 1) {
                 $member = $this->auth->suspendTenantMember(data: new SuspendTenantMemberData(
                                                                      tenantSlug: $tenantSlug,
                                                                      userId    : (int) $matches[1]
@@ -113,7 +113,7 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['member' => $this->memberResource(member: $member)]);
             }
 
-            if ($method === 'DELETE' && preg_match('~^/tenants/[^/]+/members/([0-9]+)$~', $path, $matches) === 1) {
+            if ($method === 'DELETE' && preg_match(pattern: '~^/tenants/[^/]+/members/([0-9]+)$~', subject: $path, matches: $matches) === 1) {
                 $this->auth->removeTenantMember(data: new RemoveTenantMemberData(
                                                           tenantSlug: $tenantSlug,
                                                           userId    : (int) $matches[1]
@@ -134,8 +134,8 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/oauth-clients') {
                 return $this->response(statusCode: 200, body: [
                     'clients' => array_map(
-                        $this->oauthClientResource(...),
-                        $this->tenantOAuthClients(tenantSlug: $tenantSlug)
+                        callback: $this->oauthClientResource(...),
+                        array   : $this->tenantOAuthClients(tenantSlug: $tenantSlug)
                     ),
                 ]);
             }
@@ -143,7 +143,7 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'POST' && $path === '/tenants/' . $tenantSlug . '/oauth-clients') {
                 $client = $this->auth->registerOAuthClient(data: new RegisterClientData(
                                                                      name                           : $this->requiredString(body: $input->body, field: 'name'),
-                                                                     type                           : OAuthClientType::from(value: strtolower($this->requiredString(body: $input->body, field: 'type'))),
+                                                                     type                           : OAuthClientType::from(value: strtolower(string: $this->requiredString(body: $input->body, field: 'type'))),
                                                                      redirectUris                   : $this->stringList(values: $input->body['redirectUris'] ?? []),
                                                                      tenantSlug                     : $tenantSlug,
                                                                      allowedScopes                  : $this->stringList(values: $input->body['allowedScopes'] ?? []),
@@ -167,20 +167,20 @@ final readonly class ServeTenantSecurityHttpSurface
                 ]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)/approve$~', $path, $matches) === 1) {
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/oauth-clients/([^/]+)/approve$~', subject: $path, matches: $matches) === 1) {
                 $client = $this->auth->approveOAuthClientRegistration(data: new ApproveClientRegistrationData(
-                                                                                clientId  : urldecode($matches[1]),
+                                                                                clientId  : urldecode(string: $matches[1]),
                                                                                 approvedBy: $this->requiredString(body: $input->body, field: 'approvedBy')
                                                                             ));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
             }
 
-            if ($method === 'PUT' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)$~', $path, $matches) === 1) {
+            if ($method === 'PUT' && preg_match(pattern: '~^/tenants/[^/]+/oauth-clients/([^/]+)$~', subject: $path, matches: $matches) === 1) {
                 $client = $this->auth->updateOAuthClient(data: new UpdateClientData(
-                                                                   clientId                       : urldecode($matches[1]),
+                                                                   clientId                       : urldecode(string: $matches[1]),
                                                                    name                           : $this->requiredString(body: $input->body, field: 'name'),
-                                                                   type                           : OAuthClientType::from(value: strtolower($this->requiredString(body: $input->body, field: 'type'))),
+                                                                   type                           : OAuthClientType::from(value: strtolower(string: $this->requiredString(body: $input->body, field: 'type'))),
                                                                    redirectUris                   : $this->stringList(values: $input->body['redirectUris'] ?? []),
                                                                    tenantSlug                     : $tenantSlug,
                                                                    allowedScopes                  : $this->stringList(values: $input->body['allowedScopes'] ?? []),
@@ -201,8 +201,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)/rotate-secret$~', $path, $matches) === 1) {
-                $client = $this->auth->rotateOAuthClientSecret(clientId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/oauth-clients/([^/]+)/rotate-secret$~', subject: $path, matches: $matches) === 1) {
+                $client = $this->auth->rotateOAuthClientSecret(clientId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: [
                     'client'          => $this->oauthClientResource(client: $client->client),
@@ -210,8 +210,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 ]);
             }
 
-            if ($method === 'DELETE' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)$~', $path, $matches) === 1) {
-                $client = $this->auth->disableOAuthClient(clientId: urldecode($matches[1]));
+            if ($method === 'DELETE' && preg_match(pattern: '~^/tenants/[^/]+/oauth-clients/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+                $client = $this->auth->disableOAuthClient(clientId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
             }
@@ -223,12 +223,12 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/security/changes') {
                 return $this->response(statusCode: 200, body: [
                     'tenant'  => $tenantSlug,
-                    'changes' => array_map($this->changeResource(...), $this->auth->readTenantSecurityChangeRequests(tenantSlug: $tenantSlug)),
+                    'changes' => array_map(callback: $this->changeResource(...), array: $this->auth->readTenantSecurityChangeRequests(tenantSlug: $tenantSlug)),
                 ]);
             }
 
-            if ($method === 'GET' && preg_match('~^/tenants/[^/]+/security/changes/([^/]+)$~', $path, $matches) === 1) {
-                $change = $this->auth->readTenantSecurityChangeRequest(changeId: urldecode($matches[1]));
+            if ($method === 'GET' && preg_match(pattern: '~^/tenants/[^/]+/security/changes/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+                $change = $this->auth->readTenantSecurityChangeRequest(changeId: urldecode(string: $matches[1]));
 
                 return $change === null
                     ? $this->error(statusCode: 404, errorCode: 'not_found', message: 'Tenant security change request was not found.')
@@ -246,23 +246,23 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 201, body: ['change' => $this->changeResource(change: $change)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/changes/([^/]+)/approve$~', $path, $matches) === 1) {
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/changes/([^/]+)/approve$~', subject: $path, matches: $matches) === 1) {
                 $change = $this->auth->approveTenantSecurityChange(
-                    changeId  : urldecode($matches[1]),
+                    changeId  : urldecode(string: $matches[1]),
                     approvedBy: $this->requiredString(body: $input->body, field: 'approvedBy')
                 );
 
                 return $this->response(statusCode: 200, body: ['change' => $this->changeResource(change: $change)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/changes/([^/]+)/apply$~', $path, $matches) === 1) {
-                $configuration = $this->auth->applyTenantSecurityChange(changeId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/changes/([^/]+)/apply$~', subject: $path, matches: $matches) === 1) {
+                $configuration = $this->auth->applyTenantSecurityChange(changeId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: ['configuration' => $this->configurationResource(configuration: $configuration)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/changes/([^/]+)/rollback$~', $path, $matches) === 1) {
-                $configuration = $this->auth->rollbackTenantSecurityChange(changeId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/changes/([^/]+)/rollback$~', subject: $path, matches: $matches) === 1) {
+                $configuration = $this->auth->rollbackTenantSecurityChange(changeId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: ['configuration' => $this->configurationResource(configuration: $configuration)]);
             }
@@ -270,8 +270,8 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/security/federation-connections') {
                 return $this->response(statusCode: 200, body: [
                     'connections' => array_map(
-                        $this->connectionResource(...),
-                        $this->tenantConnections(tenantSlug: $tenantSlug)
+                        callback: $this->connectionResource(...),
+                        array   : $this->tenantConnections(tenantSlug: $tenantSlug)
                     ),
                 ]);
             }
@@ -280,7 +280,7 @@ final readonly class ServeTenantSecurityHttpSurface
                 $connection = $this->auth->registerFederationConnection(data: new RegisterFederationConnectionData(
                                                                                   tenantSlug       : $tenantSlug,
                                                                                   name             : $this->requiredString(body: $input->body, field: 'name'),
-                                                                                  provider         : FederationProvider::from(value: strtolower($this->requiredString(body: $input->body, field: 'provider'))),
+                                                                                  provider         : FederationProvider::from(value: strtolower(string: $this->requiredString(body: $input->body, field: 'provider'))),
                                                                                   domain           : $this->requiredString(body: $input->body, field: 'domain'),
                                                                                   ssoOnly          : $this->boolValue(body: $input->body, field: 'ssoOnly'),
                                                                                   groupRoleMap     : $this->groupRoleMap(body: $input->body),
@@ -291,23 +291,23 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 201, body: ['connection' => $this->connectionResource(connection: $connection)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/federation-connections/([^/]+)/verify-domain$~', $path, $matches) === 1) {
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/federation-connections/([^/]+)/verify-domain$~', subject: $path, matches: $matches) === 1) {
                 $connection = $this->auth->verifyFederationDomain(data: new VerifyFederationDomainData(
-                                                                            connectionId     : urldecode($matches[1]),
+                                                                            connectionId     : urldecode(string: $matches[1]),
                                                                             verificationToken: $this->requiredString(body: $input->body, field: 'verificationToken')
                                                                         ));
 
                 return $this->response(statusCode: 200, body: ['connection' => $this->connectionResource(connection: $connection)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/federation-connections/([^/]+)/sync-metadata$~', $path, $matches) === 1) {
-                $connection = $this->auth->syncFederationMetadata(connectionId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/federation-connections/([^/]+)/sync-metadata$~', subject: $path, matches: $matches) === 1) {
+                $connection = $this->auth->syncFederationMetadata(connectionId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: ['connection' => $this->connectionResource(connection: $connection)]);
             }
 
-            if ($method === 'GET' && preg_match('~^/tenants/[^/]+/security/federation-connections/([^/]+)/health$~', $path, $matches) === 1) {
-                $health = $this->auth->checkFederationConnectionHealth(connectionId: urldecode($matches[1]));
+            if ($method === 'GET' && preg_match(pattern: '~^/tenants/[^/]+/security/federation-connections/([^/]+)/health$~', subject: $path, matches: $matches) === 1) {
+                $health = $this->auth->checkFederationConnectionHealth(connectionId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: ['health' => $health->value]);
             }
@@ -315,8 +315,8 @@ final readonly class ServeTenantSecurityHttpSurface
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/security/scim-directories') {
                 return $this->response(statusCode: 200, body: [
                     'directories' => array_map(
-                        $this->directoryResource(...),
-                        $this->auth->readScimDirectories(tenantSlug: $tenantSlug)
+                        callback: $this->directoryResource(...),
+                        array   : $this->auth->readScimDirectories(tenantSlug: $tenantSlug)
                     ),
                 ]);
             }
@@ -334,8 +334,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 ]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/scim-directories/([^/]+)/rotate-token$~', $path, $matches) === 1) {
-                $rotated = $this->auth->rotateScimToken(directoryId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/scim-directories/([^/]+)/rotate-token$~', subject: $path, matches: $matches) === 1) {
+                $rotated = $this->auth->rotateScimToken(directoryId: urldecode(string: $matches[1]));
 
                 return $this->response(statusCode: 200, body: [
                     'directory'      => $this->directoryResource(directory: $rotated->directory),
@@ -343,8 +343,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 ]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/scim-directories/([^/]+)/outage$~', $path, $matches) === 1) {
-                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/scim-directories/([^/]+)/outage$~', subject: $path, matches: $matches) === 1) {
+                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode(string: $matches[1]));
                 $updated   = $this->auth->markScimDirectoryOutage(data: new MarkScimDirectoryOutageData(
                                                                             directoryId: $directory->directoryId,
                                                                             reason     : $this->nullableString(body: $input->body, field: 'reason')
@@ -353,8 +353,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
             }
 
-            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/scim-directories/([^/]+)/recover$~', $path, $matches) === 1) {
-                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode($matches[1]));
+            if ($method === 'POST' && preg_match(pattern: '~^/tenants/[^/]+/security/scim-directories/([^/]+)/recover$~', subject: $path, matches: $matches) === 1) {
+                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode(string: $matches[1]));
                 $updated   = $this->auth->recoverScimDirectoryOutage(data: new RecoverScimDirectoryOutageData(
                                                                                directoryId: $directory->directoryId
                                                                            ));
@@ -362,8 +362,8 @@ final readonly class ServeTenantSecurityHttpSurface
                 return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
             }
         } catch (Throwable $failure) {
-            $message = strtolower($failure->getMessage());
-            $status  = str_contains($message, 'not found') || str_contains($message, 'unknown')
+            $message = strtolower(string: $failure->getMessage());
+            $status  = str_contains(haystack: $message, needle: 'not found') || str_contains(haystack: $message, needle: 'unknown')
                 ? 404
                 : 422;
 
@@ -375,25 +375,25 @@ final readonly class ServeTenantSecurityHttpSurface
 
     private function normalizePath(string $path) : string
     {
-        $trimmed = trim($path);
+        $trimmed = trim(string: $path);
 
         if ($trimmed === '' || $trimmed === '/') {
             return '/';
         }
 
-        return '/' . trim($trimmed, '/');
+        return '/' . trim(string: $trimmed, characters: '/');
     }
 
     private function tenantSlug(HttpEndpointInput $input) : string
     {
         $routeTenantSlug = $input->routeParameters['tenantSlug'] ?? null;
 
-        if (is_scalar($routeTenantSlug) && trim((string) $routeTenantSlug) !== '') {
-            return trim((string) $routeTenantSlug);
+        if (is_scalar(value: $routeTenantSlug) && trim(string: (string) $routeTenantSlug) !== '') {
+            return trim(string: (string) $routeTenantSlug);
         }
 
-        if (preg_match('~^/tenants/([^/]+)(?:/.*)?$~', $this->normalizePath(path: $input->path), $matches) === 1) {
-            return urldecode($matches[1]);
+        if (preg_match(pattern: '~^/tenants/([^/]+)(?:/.*)?$~', subject: $this->normalizePath(path: $input->path), matches: $matches) === 1) {
+            return urldecode(string: $matches[1]);
         }
 
         return '';
@@ -432,7 +432,7 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $value = $body[$field] ?? null;
 
-        return is_scalar($value) ? trim((string) $value) : null;
+        return is_scalar(value: $value) ? trim(string: (string) $value) : null;
     }
 
     /**
@@ -456,11 +456,11 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $value = $body[$field] ?? null;
 
-        if (is_int($value)) {
+        if (is_int(value: $value)) {
             return $value;
         }
 
-        if (is_string($value) && ctype_digit($value)) {
+        if (is_string(value: $value) && ctype_digit(text: $value)) {
             return (int) $value;
         }
 
@@ -516,9 +516,9 @@ final readonly class ServeTenantSecurityHttpSurface
      */
     private function tenantOAuthClients(string $tenantSlug) : array
     {
-        return array_values(array_filter(
-                                $this->auth->readOAuthClients(),
-                                static fn (OAuthClient $client) : bool => $client->tenantSlug === $tenantSlug
+        return array_values(array: array_filter(
+                                array   : $this->auth->readOAuthClients(),
+                                callback: static fn (OAuthClient $client) : bool => $client->tenantSlug === $tenantSlug
                             ));
     }
 
@@ -532,11 +532,11 @@ final readonly class ServeTenantSecurityHttpSurface
         $resolved = [];
 
         foreach ($values as $value) {
-            if (! is_scalar($value)) {
+            if (! is_scalar(value: $value)) {
                 continue;
             }
 
-            $trimmed = trim((string) $value);
+            $trimmed = trim(string: (string) $value);
 
             if ($trimmed !== '') {
                 $resolved[] = $trimmed;
@@ -558,7 +558,7 @@ final readonly class ServeTenantSecurityHttpSurface
         foreach ($this->stringList(values: $values) as $value) {
             $grantType = OAuthGrantType::tryFrom(value: $value);
 
-            if ($grantType !== null && ! in_array($grantType, $resolved, true)) {
+            if ($grantType !== null && ! in_array(needle: $grantType, haystack: $resolved, strict: true)) {
                 $resolved[] = $grantType;
             }
         }
@@ -575,18 +575,18 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $boundaries = $body['audienceScopeBoundaries'] ?? [];
 
-        if (! is_array($boundaries)) {
+        if (! is_array(value: $boundaries)) {
             return [];
         }
 
         $resolved = [];
 
         foreach ($boundaries as $audience => $scopes) {
-            if (! is_string($audience) || trim($audience) === '' || ! is_array($scopes)) {
+            if (! is_string(value: $audience) || trim(string: $audience) === '' || ! is_array(value: $scopes)) {
                 continue;
             }
 
-            $resolved[trim($audience)] = $this->stringList(values: $scopes);
+            $resolved[trim(string: $audience)] = $this->stringList(values: $scopes);
         }
 
         return $resolved;
@@ -600,7 +600,7 @@ final readonly class ServeTenantSecurityHttpSurface
         $value = $this->nullableString(body: $body, field: 'tokenEndpointAuthMethod');
 
         return $value !== null && $value !== ''
-            ? OAuthTokenEndpointAuthMethod::from(value: strtolower($value))
+            ? OAuthTokenEndpointAuthMethod::from(value: strtolower(string: $value))
             : null;
     }
 
@@ -612,7 +612,7 @@ final readonly class ServeTenantSecurityHttpSurface
         $value = $this->nullableString(body: $body, field: 'requiredSenderConstraint');
 
         return $value !== null && $value !== ''
-            ? OAuthSenderConstraintType::from(value: strtolower($value))
+            ? OAuthSenderConstraintType::from(value: strtolower(string: $value))
             : null;
     }
 
@@ -623,12 +623,12 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $value = $body[$field] ?? null;
 
-        if (is_bool($value)) {
+        if (is_bool(value: $value)) {
             return $value;
         }
 
-        if (is_string($value)) {
-            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+        if (is_string(value: $value)) {
+            return in_array(needle: strtolower(string: trim(string: $value)), haystack: ['1', 'true', 'yes', 'on'], strict: true);
         }
 
         return false;
@@ -641,7 +641,7 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $value = $body['requestObjectVerificationKeyPem'] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     /**
@@ -657,7 +657,7 @@ final readonly class ServeTenantSecurityHttpSurface
             'redirectUris'                    => $client->redirectUris,
             'allowedScopes'                   => $client->allowedScopes,
             'allowedAudiences'                => $client->allowedAudiences,
-            'allowedGrantTypes'               => array_map(static fn (OAuthGrantType $grantType) : string => $grantType->value, $client->allowedGrantTypes),
+            'allowedGrantTypes'               => array_map(callback: static fn (OAuthGrantType $grantType) : string => $grantType->value, array: $client->allowedGrantTypes),
             'audienceScopeBoundaries'         => $client->audienceScopeBoundaries,
             'tokenEndpointAuthMethod'         => $client->tokenEndpointAuthMethod->value,
             'requiredSenderConstraint'        => $client->requiredSenderConstraint?->value,
@@ -680,16 +680,16 @@ final readonly class ServeTenantSecurityHttpSurface
             'tenant'                => $tenantSlug,
             'configuration'         => $this->configurationResource(configuration: $this->auth->readTenantSecurityConfiguration(tenantSlug: $tenantSlug)),
             'federationConnections' => array_map(
-                $this->connectionResource(...),
-                $this->tenantConnections(tenantSlug: $tenantSlug)
+                callback: $this->connectionResource(...),
+                array   : $this->tenantConnections(tenantSlug: $tenantSlug)
             ),
             'scimDirectories'       => array_map(
-                $this->directoryResource(...),
-                $this->auth->readScimDirectories(tenantSlug: $tenantSlug)
+                callback: $this->directoryResource(...),
+                array   : $this->auth->readScimDirectories(tenantSlug: $tenantSlug)
             ),
             'changes'               => array_map(
-                $this->changeResource(...),
-                $this->auth->readTenantSecurityChangeRequests(tenantSlug: $tenantSlug)
+                callback: $this->changeResource(...),
+                array   : $this->auth->readTenantSecurityChangeRequests(tenantSlug: $tenantSlug)
             ),
         ]);
     }
@@ -719,9 +719,9 @@ final readonly class ServeTenantSecurityHttpSurface
      */
     private function tenantConnections(string $tenantSlug) : array
     {
-        return array_values(array_filter(
-                                $this->auth->readFederationConnections(),
-                                static fn (FederationConnection $connection) : bool => $connection->tenantSlug === $tenantSlug
+        return array_values(array: array_filter(
+                                array   : $this->auth->readFederationConnections(),
+                                callback: static fn (FederationConnection $connection) : bool => $connection->tenantSlug === $tenantSlug
                             ));
     }
 
@@ -780,18 +780,18 @@ final readonly class ServeTenantSecurityHttpSurface
     {
         $groupRoleMap = $body['groupRoleMap'] ?? [];
 
-        if (! is_array($groupRoleMap)) {
+        if (! is_array(value: $groupRoleMap)) {
             return [];
         }
 
         $resolved = [];
 
         foreach ($groupRoleMap as $group => $roles) {
-            if (! is_string($group) || trim($group) === '' || ! is_array($roles)) {
+            if (! is_string(value: $group) || trim(string: $group) === '' || ! is_array(value: $roles)) {
                 continue;
             }
 
-            $resolved[trim($group)] = $this->stringList(values: $roles);
+            $resolved[trim(string: $group)] = $this->stringList(values: $roles);
         }
 
         return $resolved;

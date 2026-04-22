@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Container\DI\ContainerInterface;
@@ -112,7 +112,7 @@ assertSame(
     actual  : $messageDescription['decorationChain'],
     message : 'Decoration diagnostics should preserve deterministic decoration ordering.'
 );
-assertSame(expected: 2, actual: count($tagged), message: 'Tagged services should resolve back into service instances.');
+assertSame(expected: 2, actual: count(value: $tagged), message: 'Tagged services should resolve back into service instances.');
 assertInstanceOf(expectedClass: DefaultRegisterLogger::class, value: $tagged[0], message: 'Tagged resolution should return the registered service.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

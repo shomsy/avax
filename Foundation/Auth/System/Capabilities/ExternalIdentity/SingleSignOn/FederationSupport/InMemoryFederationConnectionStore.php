@@ -21,10 +21,10 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
 
     public function findByDomain(string $domain) : FederationConnection|null
     {
-        $normalized = strtolower(trim($domain));
+        $normalized = strtolower(string: trim(string: $domain));
 
         foreach ($this->connections as $connection) {
-            if (strtolower($connection->domain) === $normalized) {
+            if (strtolower(string: $connection->domain) === $normalized) {
                 return $connection;
             }
         }
@@ -34,6 +34,6 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
 
     public function all() : array
     {
-        return array_values($this->connections);
+        return array_values(array: $this->connections);
     }
 }

@@ -59,7 +59,7 @@ final readonly class DatabaseExporter
                 foreach ($rows as $row) {
                     $cols = implode(
                         separator: ', ',
-                        array    : array_map(fn (string $column) => $this->quoteIdentifier(name: $column), array_keys(array: $row))
+                        array    : array_map(callback: fn (string $column) => $this->quoteIdentifier(name: $column), array: array_keys(array: $row))
                     );
                     $vals    = array_map(callback: static fn ($v) => is_null(value: $v) ? 'NULL' : "'" . addslashes(string: (string) $v) . "'", array: array_values(array: $row));
                     $valsStr = implode(separator: ', ', array: $vals);
@@ -125,11 +125,11 @@ final readonly class DatabaseExporter
     {
         // noinspection SqlNoDataSourceInspection
         $statement = $this->pdo->query(query: $sql);
-        $rows      = $statement === false ? [] : $statement->fetchAll(PDO::FETCH_NUM);
+        $rows      = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
 
-        return array_values(array_filter(
-                                array_map(static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', $rows),
-                                static fn (string $value) => $value !== ''
+        return array_values(array: array_filter(
+                                array   : array_map(callback: static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', array: $rows),
+                                callback: static fn (string $value) => $value !== ''
                             ));
     }
 
@@ -139,14 +139,14 @@ final readonly class DatabaseExporter
 
         // noinspection SqlNoDataSourceInspection
         $statement = $this->pdo->query(query: "SHOW CREATE TABLE {$quotedTableName}");
-        $row       = $statement === false ? false : $statement->fetch(PDO::FETCH_ASSOC);
+        $row       = $statement === false ? false : $statement->fetch(mode: PDO::FETCH_ASSOC);
 
-        if (! is_array($row)) {
+        if (! is_array(value: $row)) {
             return '';
         }
 
         foreach (['Create Table', 'Create View'] as $column) {
-            if (isset($row[$column]) && is_string($row[$column])) {
+            if (isset($row[$column]) && is_string(value: $row[$column])) {
                 return $row[$column];
             }
         }
@@ -163,7 +163,7 @@ final readonly class DatabaseExporter
 
         $value = $statement->fetchColumn();
 
-        return is_string($value) ? $value : '';
+        return is_string(value: $value) ? $value : '';
     }
 
     private function quoteIdentifier(string $name) : string

@@ -82,8 +82,8 @@ final class MfaEnrollmentTest extends TestCase
                                         'auth.mfa.enrollment.completed',
                                         'auth.mfa.enabled',
                                     ], actual: array_map(
-                                        static fn ($event) : string => $event->name,
-                                        $auditLog->events()
+            callback: static fn ($event) : string => $event->name,
+            array   : $auditLog->events()
                                     ));
     }
 

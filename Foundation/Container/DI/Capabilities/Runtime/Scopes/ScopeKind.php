@@ -32,12 +32,12 @@ final class ScopeKind
 
     public static function normalize(string $kind) : string
     {
-        return match (trim($kind)) {
+        return match (trim(string: $kind)) {
             self::ANY,
             self::OPERATION,
             self::REQUEST,
             self::JOB,
-            self::TENANT => trim($kind),
+            self::TENANT => trim(string: $kind),
             default      => self::OPERATION,
         };
     }

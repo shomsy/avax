@@ -77,7 +77,7 @@ final readonly class CsrfTokenManager
 
         $this->logger->info(
             message: 'Generated CSRF token.',
-            context: ['token_count' => count($tokens)]
+            context: ['token_count' => count(value: $tokens)]
         );
 
         return $newToken;
@@ -90,16 +90,16 @@ final readonly class CsrfTokenManager
      */
     private function pruneExcessTokens(#[SensitiveParameter] array $tokens) : array
     {
-        if (count($tokens) <= $this->maxTokensPerSession) {
+        if (count(value: $tokens) <= $this->maxTokensPerSession) {
             return $tokens;
         }
 
-        asort($tokens);
-        $trimmed = array_slice($tokens, -$this->maxTokensPerSession, null, true);
+        asort(array: $tokens);
+        $trimmed = array_slice(array: $tokens, offset: -$this->maxTokensPerSession, length: null, preserve_keys: true);
 
         $this->logger->warning(
             message: 'Trimmed excess CSRF tokens for the session.',
-            context: ['token_count' => count($tokens), 'max_tokens' => $this->maxTokensPerSession]
+            context: ['token_count' => count(value: $tokens), 'max_tokens' => $this->maxTokensPerSession]
         );
 
         return $trimmed;
@@ -110,8 +110,8 @@ final readonly class CsrfTokenManager
         $currentTime = time();
 
         return array_filter(
-            $tokens,
-            fn ($timestamp) => is_int($timestamp) && $currentTime - $timestamp <= $this->tokenExpirationMinutes * 60
+            array   : $tokens,
+            callback: fn ($timestamp) => is_int(value: $timestamp) && $currentTime - $timestamp <= $this->tokenExpirationMinutes * 60
         );
     }
 
@@ -119,10 +119,10 @@ final readonly class CsrfTokenManager
     {
         $tokens = $this->session->get(key: self::SESSION_KEY, default: []);
 
-        if (! is_array($tokens)) {
+        if (! is_array(value: $tokens)) {
             $this->logger->warning(
                 message: 'CSRF tokens session value was not an array. Resetting.',
-                context: ['type' => gettype($tokens)]
+                context: ['type' => gettype(value: $tokens)]
             );
 
             $this->storeTokens(tokens: []);
@@ -147,9 +147,9 @@ final readonly class CsrfTokenManager
             return null;
         }
 
-        arsort($tokens);
+        arsort(array: $tokens);
 
-        return (string) array_key_first($tokens);
+        return (string) array_key_first(array: $tokens);
     }
 
     /**
@@ -157,7 +157,7 @@ final readonly class CsrfTokenManager
      */
     private function generateToken() : string
     {
-        return bin2hex(random_bytes(32));
+        return bin2hex(string: random_bytes(length: 32));
     }
 
     /**
@@ -191,7 +191,7 @@ final readonly class CsrfTokenManager
 
         $this->logger->info(
             message: 'CSRF token validated and consumed.',
-            context: ['remaining_token_count' => count($tokens)]
+            context: ['remaining_token_count' => count(value: $tokens)]
         );
 
         return true;

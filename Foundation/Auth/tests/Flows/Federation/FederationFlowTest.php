@@ -77,11 +77,11 @@ final class FederationFlowTest extends TestCase
         $this->assertTrue(condition: $auth->evaluateFederationBreakGlassBypass(connectionId: $connection->connectionId));
         $this->assertContains(
             needle  : 'auth.federation.break_glass.denied',
-            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
+            haystack: array_map(callback: static fn ($event) => $event->name, array: $auditLog->events())
         );
         $this->assertContains(
             needle  : 'auth.federation.break_glass.allowed',
-            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
+            haystack: array_map(callback: static fn ($event) => $event->name, array: $auditLog->events())
         );
 
         try {

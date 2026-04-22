@@ -17,7 +17,7 @@ use Avax\Auth\System\Flows\Login\Credentials;
 $passwordHasher = new PasswordHasher();
 $userSource     = new InMemoryUserSource();
 
-$userSource->create(User::create(
+$userSource->create(user: User::create(
     id          : new UserId(value: 1),
     email       : new UserEmail(value: 'user@example.com'),
     username    : 'user',
@@ -31,7 +31,7 @@ $auth = Auth::configuration()
     ->ready();
 
 try {
-    $loginResult = $auth->login(new Credentials(
+    $loginResult = $auth->login(credentials: new Credentials(
         identifier: 'user@example.com',
         password: 'password'
     ));

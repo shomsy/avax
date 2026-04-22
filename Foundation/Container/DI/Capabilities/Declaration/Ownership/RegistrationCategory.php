@@ -19,9 +19,9 @@ final class RegistrationCategory
 
     public static function normalize(string $category) : string
     {
-        $normalized = strtolower(trim($category));
+        $normalized = strtolower(string: trim(string: $category));
 
-        return in_array($normalized, self::all(), true)
+        return in_array(needle: $normalized, haystack: self::all(), strict: true)
             ? $normalized
             : self::CONFIGURATION;
     }

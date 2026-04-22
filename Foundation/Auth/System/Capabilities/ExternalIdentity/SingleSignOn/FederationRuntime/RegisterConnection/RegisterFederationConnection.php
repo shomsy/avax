@@ -26,7 +26,7 @@ final readonly class RegisterFederationConnection
      */
     public function execute(RegisterFederationConnectionData $data) : FederationConnection
     {
-        $domain   = strtolower(trim($data->domain));
+        $domain   = strtolower(string: trim(string: $data->domain));
         $existing = $this->connectionStore->findByDomain(domain: $domain);
 
         if ($existing !== null) {
@@ -42,15 +42,15 @@ final readonly class RegisterFederationConnection
         }
 
         $connection = new FederationConnection(
-            connectionId           : 'fed_' . bin2hex(random_bytes(12)),
-            tenantSlug             : trim($data->tenantSlug),
-            name                   : trim($data->name),
+            connectionId           : 'fed_' . bin2hex(string: random_bytes(length: 12)),
+            tenantSlug             : trim(string: $data->tenantSlug),
+            name                   : trim(string: $data->name),
             provider               : $data->provider,
             domain                 : $domain,
             ssoOnly                : $data->ssoOnly,
             groupRoleMap           : $data->groupRoleMap,
             metadataUrl            : $data->metadataUrl,
-            domainVerificationToken: bin2hex(random_bytes(16)),
+            domainVerificationToken: bin2hex(string: random_bytes(length: 16)),
             health                 : FederationConnectionHealth::UNKNOWN,
             breakGlassAllowed      : $data->breakGlassAllowed
         );

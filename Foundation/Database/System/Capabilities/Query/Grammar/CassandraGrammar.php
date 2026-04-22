@@ -47,7 +47,7 @@ final class CassandraGrammar extends BaseGrammar
         foreach ($state->wheres as $where) {
             $col = $where->column;
             $op  = $where->operator;
-            $val = is_string($where->value) ? "'{$where->value}'" : $where->value;
+            $val = is_string(value: $where->value) ? "'{$where->value}'" : $where->value;
 
             $conditions[] = "{$col} {$op} {$val}";
         }
@@ -107,11 +107,11 @@ final class CassandraGrammar extends BaseGrammar
     #[Override]
     public function compileInsert(QueryState $state) : string
     {
-        $table   = $this->wrap($state->from);
-        $columns = implode(', ', array_keys($state->values));
-        $values  = implode(', ', array_map(
-            fn ($v) => is_string($v) ? "'{$v}'" : $v,
-            $state->values
+        $table   = $this->wrap(value: $state->from);
+        $columns = implode(separator: ', ', array: array_keys(array: $state->values));
+        $values  = implode(separator: ', ', array: array_map(
+            callback: fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
+            array   : $state->values
         ));
 
         return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";

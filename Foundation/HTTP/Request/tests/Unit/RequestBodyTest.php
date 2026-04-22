@@ -12,8 +12,8 @@ class RequestBodyTest extends TestCase
 {
     public function test_content_reads_full_stream_regardless_of_cursor()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'hello world');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'hello world');
         
         $stream = new Stream(stream: $handle);
         $body = new RequestBody(stream: $stream);
@@ -27,8 +27,8 @@ class RequestBodyTest extends TestCase
 
     public function test_content_restores_cursor_on_seekable_stream()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'hello world');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'hello world');
         
         $stream = new Stream(stream: $handle);
         $body = new RequestBody(stream: $stream);
@@ -42,8 +42,8 @@ class RequestBodyTest extends TestCase
 
     public function test_repeated_reads_are_safe_on_seekable_stream()
     {
-        $handle = fopen('php://temp', 'r+');
-        fwrite($handle, 'safe read');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $handle, data: 'safe read');
         
         $stream = new Stream(stream: $handle);
         $body = new RequestBody(stream: $stream);
@@ -57,7 +57,7 @@ class RequestBodyTest extends TestCase
 
     public function test_stream_returns_raw_psr7_stream()
     {
-        $handle = fopen('php://temp', 'r+');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
         $stream = new Stream(stream: $handle);
         $body = new RequestBody(stream: $stream);
 

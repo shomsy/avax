@@ -53,11 +53,11 @@ final readonly class BeginPasskeyRegistration
 
         $this->requireFreshMfa->execute();
 
-        $challengeId = 'pkreg_' . bin2hex(random_bytes(12));
-        $challenge   = bin2hex(random_bytes(32));
+        $challengeId = 'pkreg_' . bin2hex(string: random_bytes(length: 12));
+        $challenge   = bin2hex(string: random_bytes(length: 32));
         $excludeIds  = array_map(
-            static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
-            $this->credentialStore->forUser(userId: $user->id)
+            callback: static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
+            array   : $this->credentialStore->forUser(userId: $user->id)
         );
 
         $this->challengeStore->issue(record: new PasskeyChallengeRecord(

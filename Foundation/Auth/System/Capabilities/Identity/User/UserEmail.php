@@ -16,7 +16,7 @@ final readonly class UserEmail implements Stringable
         public string $value
     )
     {
-        if (filter_var($this->value, FILTER_VALIDATE_EMAIL) === false) {
+        if (filter_var(value: $this->value, filter: FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException(message: "Invalid email format: {$this->value}");
         }
     }
@@ -28,6 +28,6 @@ final readonly class UserEmail implements Stringable
 
     public function equals(self $other) : bool
     {
-        return strtolower($this->value) === strtolower($other->value);
+        return strtolower(string: $this->value) === strtolower(string: $other->value);
     }
 }

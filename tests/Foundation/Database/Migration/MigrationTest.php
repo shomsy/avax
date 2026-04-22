@@ -16,7 +16,7 @@ class MigrationTest extends TestCase
     {
         $blueprint = new Blueprint(table: 'users');
         $blueprint->id();
-        $blueprint->string('email');
+        $blueprint->string(name: 'email');
         $blueprint->timestamps();
 
         $sql = $blueprint->toSql(grammar: new MySQLGrammar());

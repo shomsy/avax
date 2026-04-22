@@ -215,7 +215,7 @@ abstract class Repository
                 ->where(column: 'id', operator: '=', value: $entity->getId())
                 ->update(values: $data);
         } else {
-            $id = $this->query()->insertGetId($data);
+            $id = $this->query()->insertGetId(values: $data);
 
             if (method_exists(object_or_class: $entity, method: 'setId')) {
                 $entity->setId($id);

@@ -79,8 +79,8 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         }
 
         usort(
-            $records,
-            static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt
+            array   : $records,
+            callback: static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt
         );
 
         return $records;
@@ -166,7 +166,7 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
             $userId    = $data['user_id'] ?? null;
             $sessionId = $data['session_id'] ?? null;
 
-            if (is_string($userId) && $userId !== '' && is_string($sessionId) && $sessionId !== '') {
+            if (is_string(value: $userId) && $userId !== '' && is_string(value: $sessionId) && $sessionId !== '') {
                 $this->redis->srem(key: self::USER_KEY_PREFIX . $userId, value: $sessionId);
             }
 

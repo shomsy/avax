@@ -21,7 +21,7 @@ final readonly class GenerateEvidenceBundle
      */
     public function execute(string $repositoryRoot, array $artifactPaths = []) : array
     {
-        $resolvedPath = realpath($repositoryRoot);
+        $resolvedPath = realpath(path: $repositoryRoot);
         $resolvedRoot = $resolvedPath !== false ? $resolvedPath : $repositoryRoot;
         $artifacts    = [];
         $missing      = [];
@@ -29,7 +29,7 @@ final readonly class GenerateEvidenceBundle
         foreach ($artifactPaths !== [] ? $artifactPaths : $this->defaultArtifacts() as $type => $relativePath) {
             $fullPath = $resolvedRoot . '/' . $relativePath;
 
-            if (! is_file($fullPath)) {
+            if (! is_file(filename: $fullPath)) {
                 $artifacts[$type] = [
                     'path'   => $relativePath,
                     'exists' => false,
@@ -38,19 +38,19 @@ final readonly class GenerateEvidenceBundle
                 continue;
             }
 
-            $size       = filesize($fullPath);
-            $modifiedAt = filemtime($fullPath);
+            $size       = filesize(filename: $fullPath);
+            $modifiedAt = filemtime(filename: $fullPath);
 
             $artifacts[$type] = [
                 'path'        => $relativePath,
                 'exists'      => true,
                 'size'        => $size === false ? 0 : $size,
-                'modified_at' => $modifiedAt === false ? '' : gmdate(DATE_ATOM, $modifiedAt),
+                'modified_at' => $modifiedAt === false ? '' : gmdate(format: DATE_ATOM, timestamp: $modifiedAt),
             ];
         }
 
         return [
-            'generated_at'      => gmdate(DATE_ATOM),
+            'generated_at'      => gmdate(format: DATE_ATOM),
             'version'           => '1.0.0',
             'package'           => $this->detectPackageName(repositoryRoot: $resolvedRoot),
             'repository_root'   => $resolvedRoot,
@@ -83,16 +83,16 @@ final readonly class GenerateEvidenceBundle
 
     private function detectPackageName(string $repositoryRoot) : string
     {
-        $composerJsonPath = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/composer.json';
+        $composerJsonPath = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/composer.json';
 
-        if (! is_file($composerJsonPath)) {
+        if (! is_file(filename: $composerJsonPath)) {
             return 'unknown';
         }
 
-        $json    = file_get_contents($composerJsonPath);
-        $decoded = is_string($json) ? json_decode($json, true) : null;
+        $json    = file_get_contents(filename: $composerJsonPath);
+        $decoded = is_string(value: $json) ? json_decode(json: $json, associative: true) : null;
 
-        return is_array($decoded) && is_string($decoded['name'] ?? null)
+        return is_array(value: $decoded) && is_string(value: $decoded['name'] ?? null)
             ? $decoded['name']
             : 'unknown';
     }

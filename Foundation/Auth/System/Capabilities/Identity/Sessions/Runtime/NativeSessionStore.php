@@ -64,7 +64,7 @@ final class NativeSessionStore implements SessionStoreInterface
         }
 
         if (! headers_sent()) {
-            session_set_cookie_params([
+            session_set_cookie_params(lifetime_or_options: [
                                           'secure'   => $this->cookieSettings->secure,
                                           'httponly' => $this->cookieSettings->httpOnly,
                                           'samesite' => $this->normalizeSameSite(sameSite: $this->cookieSettings->sameSite),
@@ -147,7 +147,7 @@ final class NativeSessionStore implements SessionStoreInterface
 
         $_SESSION = [];
 
-        $useCookies = ini_get('session.use_cookies') !== '0';
+        $useCookies = ini_get(option: 'session.use_cookies') !== '0';
 
         if ($useCookies && session_status() === PHP_SESSION_ACTIVE) {
             $params      = session_get_cookie_params();
@@ -177,7 +177,7 @@ final class NativeSessionStore implements SessionStoreInterface
      */
     private function normalizeSameSite(string $sameSite) : string
     {
-        return match (strtolower($sameSite)) {
+        return match (strtolower(string: $sameSite)) {
             'strict' => 'Strict',
             'none'   => 'None',
             default  => 'Lax',
@@ -186,7 +186,7 @@ final class NativeSessionStore implements SessionStoreInterface
 
     private function canStartAfterOutput() : bool
     {
-        return in_array(PHP_SAPI, ['cli', 'phpdbg'], true);
+        return in_array(needle: PHP_SAPI, haystack: ['cli', 'phpdbg'], strict: true);
     }
 
     private function nativeSessionActive() : bool
@@ -201,7 +201,7 @@ final class NativeSessionStore implements SessionStoreInterface
 
     private function generateCliSessionId() : string
     {
-        return 'cli-session-' . str_replace('.', '', uniqid('', true));
+        return 'cli-session-' . str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
     }
 
     private function readNativeSessionId() : string

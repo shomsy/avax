@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 final class LazyProxySmokeTest
 {
@@ -23,4 +23,4 @@ assertSame(expected: LazyCounter::class, actual: $lazy->serviceId(), message: 'L
 assertSame(expected: 1, actual: $lazy->increment(), message: 'Lazy proxy should resolve on first method call.');
 assertSame(expected: 2, actual: $lazy->increment(), message: 'Lazy proxy should reuse the same resolved service instance.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

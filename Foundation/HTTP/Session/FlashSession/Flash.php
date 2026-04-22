@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Features;
+namespace Avax\HTTP\Session\FlashSession;
 
 use Avax\HTTP\Session\Shared\Contracts\FeatureInterface;
 

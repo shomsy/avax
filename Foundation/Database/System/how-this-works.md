@@ -1,6 +1,6 @@
 ---
 title: system-how-this-works
-owner: foundation-database
+owner: foundation-database-database
 last_reviewed: 2026-04-22
 classification: internal
 ---
@@ -9,35 +9,52 @@ classification: internal
 
 ## What this folder is
 
-This folder contains the canonical Database system. It is the only Database core surface that application code should
-build against.
+This folder is the canonical Database system root.
 
 ## Real commands or triggers that reach this folder
 
-- `Database::configuration()->ready()`
-- Container resolution through `DatabaseServiceProvider`
-- Any runtime call that enters `Database`, `DatabaseInterface`, or capability accessors
+- Application bootstrap and Database runtime entry reach this folder.
 
 ## Exact upstream handoffs
 
-- `Configuration/DatabaseBuilder.php` constructs the root
-- `Database.php` hands work to capability owners
-- `Capabilities/*` execute the actual runtime logic
+- The parent slice hands work into this folder when it needs the behavior owned here.
+- The files in this folder do the local work and return control upstream when their responsibility is complete.
 
-## Main decision point
+## How this folder works
 
-- `DatabaseBuilder::ready()` determines the concrete runtime instances exposed through `DatabaseInterface`
+It separates assembly from execution: the builder wires the runtime graph, the Database surface exposes the public
+entrypoints, and the capability folders below perform the actual work.
+
+## The simplest story
+
+- A caller reaches the parent Database surface or the owning parent folder.
+- This folder handles the one responsibility it owns.
+- The result returns upstream or moves to the next local slice.
+
+## The first important path
+
+- The caller enters through the Database surface or the parent folder.
+- `Capabilities/` holds the next narrower ownership slice below this folder.
+- Control returns to the caller or the next local slice once this folder finishes its job.
+
+## Main units in this folder
+
+- `Capabilities/` holds the next narrower ownership slice below this folder.
+- `Configuration/` holds the next narrower ownership slice below this folder.
+- `Database.php` participates directly in the behavior owned by this folder.
+- `DatabaseInterface.php` participates directly in the behavior owned by this folder.
+- `Foundation/` holds the next narrower ownership slice below this folder.
 
 ## Writes and side effects
 
-- None at load time
-- Runtime side effects happen only when capabilities are invoked
+- This slice shapes or assembles runtime behavior; lower folders perform the concrete side effects when needed.
 
 ## Failure shape
 
-- Mis-wired builders fail here before the request reaches lower-level capabilities
+- Assembly or adapter mistakes surface here before the deeper runtime does the wrong thing.
 
 ## Debug first
 
-- Check `DatabaseInterface` for expected public contract
-- Check `DatabaseBuilder` for assembly bugs
+- Start with `Capabilities/` holds the next narrower ownership slice below this folder.
+- Start with `Configuration/` holds the next narrower ownership slice below this folder.
+- Start with `Database.php` participates directly in the behavior owned by this folder.

@@ -1,33 +1,55 @@
 ---
-title: loadmigrations-how-this-works
+title: system-capabilities-migrations-loadmigrations-how-this-works
 owner: foundation-database-migrations
 last_reviewed: 2026-04-22
 classification: internal
 ---
 
-# LoadMigrations How This Works
+# System / Capabilities / Migrations / Load Migrations How This Works
 
 ## What this folder is
 
-This folder owns discovering migration files, loading them, and calculating their checksums.
+This folder owns migration file discovery, loading, sorting, and checksum calculation.
 
 ## Real commands or triggers that reach this folder
 
-- `Migrations::loader()`
-- migration run, rollback, and status adapters
+- `Database::migrations()` or `Database::schema()` plus migration console commands reach this folder.
 
 ## Exact upstream handoffs
 
-- `Migrations.php` returns `MigrationLoader.php` from this folder
+- The parent slice hands work into this folder when it needs the behavior owned here.
+- The files in this folder do the local work and return control upstream when their responsibility is complete.
 
-## Main decision point
+## How this folder works
 
-- `MigrationLoader.php` decides which PHP files are valid migrations and how they are keyed
+It reads the filesystem migration set and returns ordered migration objects or pending lists for the rest of the
+migration runtime.
+
+## The simplest story
+
+- A caller reaches the parent Database surface or the owning parent folder.
+- This folder handles the one responsibility it owns.
+- The result returns upstream or moves to the next local slice.
+
+## The first important path
+
+- The caller enters through the Database surface or the parent folder.
+- `MigrationLoader.php` participates directly in the behavior owned by this folder.
+- Control returns to the caller or the next local slice once this folder finishes its job.
+
+## Main units in this folder
+
+- `MigrationLoader.php` participates directly in the behavior owned by this folder.
 
 ## Writes and side effects
 
-- Reads migration files from disk
+- This slice can read or write migration files, mutate schema, update migration history, seed data, or export SQL
+  snapshots.
+
+## Failure shape
+
+- Loader defects, repository drift, schema DSL bugs, or migration execution failures surface through this slice.
 
 ## Debug first
 
-- `MigrationLoader.php`
+- Start with `MigrationLoader.php` participates directly in the behavior owned by this folder.

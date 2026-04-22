@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Migrations\Design\Column\Render;
 
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 /**
  * Professional technician for translating column definitions into SQL fragments.

@@ -1,32 +1,32 @@
 ---
-title: Design-how-this-works
+title: system-capabilities-migrations-design-how-this-works
 owner: foundation-database-migrations
-last_reviewed: 2026-04-22
+last_reviewed: 2024-10-22
 classification: internal
 ---
 
-# Design How This Works
+# System / Capabilities / Migrations / Design How This Works
 
 ## What this folder is
 
-This folder owns the migration DSL and the base migration contract.
+DSL for schema declarations (tables, columns, indexes) in BaseMigration.
 
-## Real commands or triggers that reach this folder
+## Triggers
 
-- Migration classes and runtime schema operations resolve design primitives from this folder
+MigrationGenerator stubs → Blueprint::table('users', fn(Column $col) => $col->string()).
 
-## Exact upstream handoffs
+## Upstream
 
-- Migrations/Execution and user migration files consume these types
+CreateMigration → Design DSL → SchemaOperations compile/run.
 
-## Main decision point
+## How it works
 
-- Blueprint and BaseMigration decide how migration intent is expressed before execution
+Fluent ColumnDefinition collected → ColumnSQLRenderer → SQL.
 
-## Writes and side effects
+## Main units
 
-- BaseMigration ultimately executes compiled statements through QueryBuilder
-
-## Debug first
-
-- Start with BaseMigration.php and Design/Table/Blueprint.php
+- BaseMigration.php: Extends with DSL methods.
+- Table/Blueprint.php, TableDefinition.php.
+- Column/DSL/ColumnDefinition.php.
+- Column/Render/ColumnSQLRenderer.php.
+- TypeMapping/SQLToPHPTypeMapper.php.

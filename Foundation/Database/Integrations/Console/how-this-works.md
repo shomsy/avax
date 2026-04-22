@@ -1,46 +1,70 @@
 ---
-title: console-how-this-works
+title: integrations-console-how-this-works
 owner: foundation-database-integrations
 last_reviewed: 2026-04-22
 classification: internal
 ---
 
-# Console How This Works
+# Integrations / Console How This Works
 
 ## What this folder is
 
-This folder contains CLI-facing adapters for Database migration and export commands. The adapters keep command ownership
-out of `System` while delegating to runtime services from the Database component.
+This folder owns CLI wrappers for migration, seeding, and export commands.
 
 ## Real commands that reach this folder
 
 - `migrate`
 - `migrate:rollback`
 - `migrate:status`
+- `migrate:fresh`
+- `migrate:refresh`
 - `make:migration`
 - `db:seed`
 - `db:export`
 
 ## Exact CLI front doors
 
-- `Foundation/Commands/CommandDefinitions.php` maps command aliases to these wrapper classes
+- `Foundation/Commands/CommandDefinitions.php` maps command names and aliases to the classes in this folder.
+- Each `handle(...)` method is the concrete CLI front door for one command.
 
-## Main decision point
+## How this folder works
 
-- Each adapter decides how CLI arguments map to runtime services without introducing core behavior into `System`
+Each command class accepts command input, calls one narrow runtime service, renders console output, and returns an exit
+code.
+
+## The simplest story
+
+- A typed command resolves to one wrapper class in this folder.
+- That wrapper calls one narrow Database runtime service.
+- The wrapper prints the result and returns a process exit code.
+
+## The first important path
+
+- `Foundation/Commands/CommandDefinitions.php` maps the typed command to one wrapper class here.
+- The wrapper `handle(...)` method translates CLI input into one runtime call.
+- The runtime service performs the work and the wrapper renders the outcome.
+
+## Main units in this folder
+
+- `ExportCommand.php` participates directly in the behavior owned by this folder.
+- `MakeMigrationCommand.php` participates directly in the behavior owned by this folder.
+- `MigrateCommand.php` participates directly in the behavior owned by this folder.
+- `MigrateFreshCommand.php` participates directly in the behavior owned by this folder.
+- `MigrateRefreshCommand.php` participates directly in the behavior owned by this folder.
+- `MigrateRollbackCommand.php` participates directly in the behavior owned by this folder.
+- `MigrateStatusCommand.php` participates directly in the behavior owned by this folder.
+- `SeedCommand.php` participates directly in the behavior owned by this folder.
 
 ## Writes and side effects
 
-- Runs migrations
-- Rolls back migrations
-- Reads migration status
-- Generates migration files
-- Runs seeder classes
-- Exports SQL snapshots
+- This slice can register container bindings or translate CLI commands into Database runtime calls.
+
+## Failure shape
+
+- Assembly or adapter mistakes surface here before the deeper runtime does the wrong thing.
 
 ## Debug first
 
-- `MigrateCommand.php`
-- `MigrateRollbackCommand.php`
-- `MigrateStatusCommand.php`
-- `MakeMigrationCommand.php`
+- Start with `ExportCommand.php` participates directly in the behavior owned by this folder.
+- Start with `MakeMigrationCommand.php` participates directly in the behavior owned by this folder.
+- Start with `MigrateCommand.php` participates directly in the behavior owned by this folder.

@@ -16,7 +16,7 @@ use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
 use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
 use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Query\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Database\System\Database;
@@ -2201,8 +2201,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\Design;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
 use Closure;
 use RuntimeException;
@@ -2611,7 +2611,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\Design\Column\Render;
 
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
 
 /**
@@ -2992,7 +2992,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\Design\Table;
 
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
 use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
 
@@ -4179,7 +4179,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\ExportDatabase;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -4369,12 +4369,12 @@ use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenera
 use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
 use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
 use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\CreateDatabase;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropDatabase;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropTable;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\TruncateTable;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Migrations\Schema\CreateDatabase;
+use Avax\Database\System\Capabilities\Migrations\Schema\DropDatabase;
+use Avax\Database\System\Capabilities\Migrations\Schema\DropTable;
+use Avax\Database\System\Capabilities\Migrations\Schema\TruncateTable;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Querying;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use ReflectionException;
 use Throwable;
@@ -4674,7 +4674,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\RunMigrations;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -4780,7 +4780,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\RunMigrations;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Database\System\Capabilities\Migrations\Exceptions\MigrationException;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Throwable;
@@ -4893,14 +4893,14 @@ final readonly class MigrationRunner
     }
 }
 
-=== System/Capabilities/Migrations/SchemaOperations/CreateDatabase.php ===
+=== System/Capabilities/Migrations/Schema/CreateDatabase.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\SchemaOperations;
+namespace Avax\Database\System\Capabilities\Migrations\Schema;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -4919,14 +4919,14 @@ final readonly class CreateDatabase
     }
 }
 
-=== System/Capabilities/Migrations/SchemaOperations/DropDatabase.php ===
+=== System/Capabilities/Migrations/Schema/DropDatabase.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\SchemaOperations;
+namespace Avax\Database\System\Capabilities\Migrations\Schema;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -4945,14 +4945,14 @@ final readonly class DropDatabase
     }
 }
 
-=== System/Capabilities/Migrations/SchemaOperations/DropTable.php ===
+=== System/Capabilities/Migrations/Schema/DropTable.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\SchemaOperations;
+namespace Avax\Database\System\Capabilities\Migrations\Schema;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -4971,14 +4971,14 @@ final readonly class DropTable
     }
 }
 
-=== System/Capabilities/Migrations/SchemaOperations/TruncateTable.php ===
+=== System/Capabilities/Migrations/Schema/TruncateTable.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\SchemaOperations;
+namespace Avax\Database\System\Capabilities\Migrations\Schema;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -5004,7 +5004,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\SeedDatabase;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 
 /**
  * Base Seeder class.
@@ -5037,12 +5037,12 @@ abstract class Seeder
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasAdvancedMutations.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasAdvancedMutations.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Throwable;
 
@@ -5166,12 +5166,12 @@ trait HasAdvancedMutations
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasAggregates.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasAggregates.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Throwable;
 
@@ -5289,16 +5289,16 @@ trait HasAggregates
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasConditions.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasConditions.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\NestedWhereNode;
-use Avax\Database\System\Capabilities\Querying\State\AST\WhereNode;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Closure;
 use InvalidArgumentException;
 use ReflectionException;
@@ -5520,14 +5520,14 @@ trait HasConditions
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasControlStructures.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasControlStructures.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Closure;
 
 /**
@@ -5639,14 +5639,14 @@ trait HasControlStructures
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasGroups.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasGroups.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 
 /**
  * Trait providing aggregation grouping (GROUP BY) and aggregate filtering (HAVING) capabilities.
@@ -5722,16 +5722,16 @@ trait HasGroups
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasJoins.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasJoins.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\JoinNode;
-use Avax\Database\System\Capabilities\Querying\Builder\JoinClause;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\State\AST\JoinNode;
+use Avax\Database\System\Capabilities\Query\Builder\JoinClause;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Closure;
 
 /**
@@ -5914,15 +5914,15 @@ trait HasJoins
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasOrders.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasOrders.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\OrderNode;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\State\AST\OrderNode;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 
 /**
  * Trait providing sorting and ordering capabilities for the QueryBuilder.
@@ -6053,12 +6053,12 @@ trait HasOrders
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasSchema.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasSchema.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
 use Throwable;
@@ -6133,15 +6133,15 @@ trait HasSchema
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/HasSoftDeletes.php ===
+=== System/Capabilities/Query/Builder/Concerns/HasSoftDeletes.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\WhereNode;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -6205,8 +6205,8 @@ trait HasSoftDeletes
     /**
      * Filter the results     *
      *
-     * @return HasSoftDeletes|QueryBuilder \Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Querying\Builder\Concerns\HasSoftDeletes
-     *                                                                                                                                \Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Querying\Builder\Concerns\HasSoftDeletes
+     * @return HasSoftDeletes|QueryBuilder \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
+     *                                                                                                                                \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
      *                                                                                                                                A
      *                                                                                                                                fresh,
      *                                                                                                                                cloned
@@ -6366,12 +6366,12 @@ trait HasSoftDeletes
     }
 }
 
-=== System/Capabilities/Querying/Builder/Concerns/Macroable.php ===
+=== System/Capabilities/Query/Builder/Concerns/Macroable.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder\Concerns;
+namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
 
 use BadMethodCallException;
 use Closure;
@@ -6464,14 +6464,14 @@ trait Macroable
     }
 }
 
-=== System/Capabilities/Querying/Builder/JoinClause.php ===
+=== System/Capabilities/Query/Builder/JoinClause.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder;
+namespace Avax\Database\System\Capabilities\Query\Builder;
 
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 /**
  * technical builder for constructing and compiling JOIN clause conditions.
@@ -6582,19 +6582,19 @@ final class JoinClause
     }
 }
 
-=== System/Capabilities/Querying/Builder/QueryBuilder.php ===
+=== System/Capabilities/Query/Builder/QueryBuilder.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Builder;
+namespace Avax\Database\System\Capabilities\Query\Builder;
 
-use Avax\Database\System\Capabilities\Querying\Identity\IdentityMap;
-use Avax\Database\System\Capabilities\Querying\State\QueryState;
-use Avax\Database\System\Capabilities\Querying\Execution\QueryOrchestrator;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Querying\Exceptions\InvalidCriteriaException;
-use Avax\Database\System\Capabilities\Querying\ValueObjects\Expression;
+use Avax\Database\System\Capabilities\Query\Identity\IdentityMap;
+use Avax\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Exceptions\InvalidCriteriaException;
+use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
@@ -7221,19 +7221,19 @@ class QueryBuilder
     }
 }
 
-=== System/Capabilities/Querying/CreateBuilder/CreateBuilder.php ===
+=== System/Capabilities/Query/CreateBuilder/CreateBuilder.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\CreateBuilder;
+namespace Avax\Database\System\Capabilities\Query\CreateBuilder;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Execution\PDOExecutor;
-use Avax\Database\System\Capabilities\Querying\Execution\QueryOrchestrator;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Querying\Identity\IdentityMap;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Execution\PDOExecutor;
+use Avax\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Identity\IdentityMap;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
@@ -7280,12 +7280,12 @@ final readonly class CreateBuilder
     }
 }
 
-=== System/Capabilities/Querying/DTO/ExecutionResult.php ===
+=== System/Capabilities/Query/DTO/ExecutionResult.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\DTO;
+namespace Avax\Database\System\Capabilities\Query\DTO;
 
 /**
  * The "Operation Result" (Execution Result).
@@ -7363,12 +7363,12 @@ final readonly class ExecutionResult
     }
 }
 
-=== System/Capabilities/Querying/Enums/Operator.php ===
+=== System/Capabilities/Query/Enums/Operator.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Enums;
+namespace Avax\Database\System\Capabilities\Query\Enums;
 
 /**
  * Domain-fluent enumeration of supported SQL comparison operators.
@@ -7389,12 +7389,12 @@ enum Operator: string
     case NOT_IN        = 'NOT IN';
 }
 
-=== System/Capabilities/Querying/Enums/QueryBuilderEnum.php ===
+=== System/Capabilities/Query/Enums/QueryBuilderEnum.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Enums;
+namespace Avax\Database\System\Capabilities\Query\Enums;
 
 /**
  * Technical base class for all enumerations used within the QueryBuilder domain.
@@ -7411,12 +7411,12 @@ abstract class QueryBuilderEnum
     abstract public static function values() : array;
 }
 
-=== System/Capabilities/Querying/Exceptions/InvalidCriteriaException.php ===
+=== System/Capabilities/Query/Exceptions/InvalidCriteriaException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Exceptions;
+namespace Avax\Database\System\Capabilities\Query\Exceptions;
 
 use Avax\Database\System\Foundation\Exceptions\DatabaseException;
 
@@ -7457,12 +7457,12 @@ final class InvalidCriteriaException extends DatabaseException
     }
 }
 
-=== System/Capabilities/Querying/Exceptions/QueryException.php ===
+=== System/Capabilities/Query/Exceptions/QueryException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Exceptions;
+namespace Avax\Database\System\Capabilities\Query\Exceptions;
 
 use Avax\Database\System\Foundation\Exceptions\DatabaseException;
 use SensitiveParameter;
@@ -7533,14 +7533,14 @@ class QueryException extends DatabaseException
     }
 }
 
-=== System/Capabilities/Querying/Execution/ExecutorInterface.php ===
+=== System/Capabilities/Query/Execution/ExecutorInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Execution;
+namespace Avax\Database\System\Capabilities\Query\Execution;
 
-use Avax\Database\System\Capabilities\Querying\DTO\ExecutionResult;
+use Avax\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Throwable;
 
@@ -7595,18 +7595,18 @@ interface ExecutorInterface
     public function getDriverName() : string;
 }
 
-=== System/Capabilities/Querying/Execution/PDOExecutor.php ===
+=== System/Capabilities/Query/Execution/PDOExecutor.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Execution;
+namespace Avax\Database\System\Capabilities\Query\Execution;
 
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
-use Avax\Database\System\Capabilities\Querying\DTO\ExecutionResult;
-use Avax\Database\System\Capabilities\Querying\Exceptions\QueryException;
+use Avax\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Database\System\Capabilities\Query\Exceptions\QueryException;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use PDO;
 use Random\RandomException;
@@ -7766,15 +7766,15 @@ final readonly class PDOExecutor implements ExecutorInterface
     }
 }
 
-=== System/Capabilities/Querying/Execution/QueryOrchestrator.php ===
+=== System/Capabilities/Query/Execution/QueryOrchestrator.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Execution;
+namespace Avax\Database\System\Capabilities\Query\Execution;
 
-use Avax\Database\System\Capabilities\Querying\Identity\IdentityMap;
-use Avax\Database\System\Capabilities\Querying\DTO\ExecutionResult;
+use Avax\Database\System\Capabilities\Query\Identity\IdentityMap;
+use Avax\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Avax\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
 use Random\RandomException;
@@ -7929,17 +7929,17 @@ final class QueryOrchestrator
 
 }
 
-=== System/Capabilities/Querying/Grammar/BaseGrammar.php ===
+=== System/Capabilities/Query/Grammar/BaseGrammar.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Grammar;
+namespace Avax\Database\System\Capabilities\Query\Grammar;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\NestedWhereNode;
-use Avax\Database\System\Capabilities\Querying\State\AST\WhereNode;
-use Avax\Database\System\Capabilities\Querying\State\QueryState;
-use Avax\Database\System\Capabilities\Querying\ValueObjects\Expression;
+use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
 use RuntimeException;
 
 /**
@@ -8394,14 +8394,14 @@ abstract class BaseGrammar implements GrammarInterface
     }
 }
 
-=== System/Capabilities/Querying/Grammar/GrammarInterface.php ===
+=== System/Capabilities/Query/Grammar/GrammarInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Grammar;
+namespace Avax\Database\System\Capabilities\Query\Grammar;
 
-use Avax\Database\System\Capabilities\Querying\State\QueryState;
+use Avax\Database\System\Capabilities\Query\State\QueryState;
 
 /**
  * Technical contract for translating logical QueryState into dialect-specific SQL SNAPSHOTS.
@@ -8554,15 +8554,15 @@ interface GrammarInterface
     public function wrap(mixed $value) : string;
 }
 
-=== System/Capabilities/Querying/Grammar/MySQLGrammar.php ===
+=== System/Capabilities/Query/Grammar/MySQLGrammar.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Grammar;
+namespace Avax\Database\System\Capabilities\Query\Grammar;
 
-use Avax\Database\System\Capabilities\Querying\State\QueryState;
-use Avax\Database\System\Capabilities\Querying\ValueObjects\Expression;
+use Avax\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Override;
 
 /**
@@ -8705,12 +8705,12 @@ final class MySQLGrammar extends BaseGrammar
     }
 }
 
-=== System/Capabilities/Querying/Identity/IdentityMap.php ===
+=== System/Capabilities/Query/Identity/IdentityMap.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\Identity;
+namespace Avax\Database\System\Capabilities\Query\Identity;
 
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
@@ -8781,17 +8781,17 @@ final class IdentityMap
     }
 }
 
-=== System/Capabilities/Querying/Querying.php ===
+=== System/Capabilities/Query/Querying.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying;
+namespace Avax\Database\System\Capabilities\Query;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\CreateBuilder\CreateBuilder;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
@@ -8847,14 +8847,14 @@ final readonly class Querying
     }
 }
 
-=== System/Capabilities/Querying/State/AST/JoinNode.php ===
+=== System/Capabilities/Query/State/AST/JoinNode.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State\AST;
+namespace Avax\Database\System\Capabilities\Query\State\AST;
 
-use Avax\Database\System\Capabilities\Querying\Builder\JoinClause;
+use Avax\Database\System\Capabilities\Query\Builder\JoinClause;
 
 /**
  * Immutable AST node representing a SQL JOIN operation.
@@ -8897,14 +8897,14 @@ final readonly class JoinNode
     }
 }
 
-=== System/Capabilities/Querying/State/AST/NestedWhereNode.php ===
+=== System/Capabilities/Query/State/AST/NestedWhereNode.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State\AST;
+namespace Avax\Database\System\Capabilities\Query\State\AST;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 
 /**
  * Immutable AST node representing a nested logical grouping (SQL parentheses).
@@ -8931,12 +8931,12 @@ final readonly class NestedWhereNode
     }
 }
 
-=== System/Capabilities/Querying/State/AST/OrderNode.php ===
+=== System/Capabilities/Query/State/AST/OrderNode.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State\AST;
+namespace Avax\Database\System\Capabilities\Query\State\AST;
 
 /**
  * Immutable AST node representing a sorting instruction (ORDER BY).
@@ -8971,12 +8971,12 @@ final readonly class OrderNode
     }
 }
 
-=== System/Capabilities/Querying/State/AST/WhereNode.php ===
+=== System/Capabilities/Query/State/AST/WhereNode.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State\AST;
+namespace Avax\Database\System\Capabilities\Query\State\AST;
 
 /**
  * Immutable AST node representing a single WHERE condition.
@@ -9015,12 +9015,12 @@ final readonly class WhereNode
     }
 }
 
-=== System/Capabilities/Querying/State/BindingBag.php ===
+=== System/Capabilities/Query/State/BindingBag.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable container for query parameter bindings.
@@ -9077,12 +9077,12 @@ final readonly class BindingBag
     }
 }
 
-=== System/Capabilities/Querying/State/Condition.php ===
+=== System/Capabilities/Query/State/Condition.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable value object encapsulating a single logical comparison constraint.
@@ -9116,12 +9116,12 @@ final readonly class Condition
     }
 }
 
-=== System/Capabilities/Querying/State/PaginationOptions.php ===
+=== System/Capabilities/Query/State/PaginationOptions.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable value object encapsulating pagination parameters (page, perPage, total).
@@ -9161,18 +9161,18 @@ final readonly class PaginationOptions
     }
 }
 
-=== System/Capabilities/Querying/State/QueryState.php ===
+=== System/Capabilities/Query/State/QueryState.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
-use Avax\Database\System\Capabilities\Querying\State\AST\JoinNode;
-use Avax\Database\System\Capabilities\Querying\State\AST\NestedWhereNode;
-use Avax\Database\System\Capabilities\Querying\State\AST\OrderNode;
-use Avax\Database\System\Capabilities\Querying\State\AST\WhereNode;
-use Avax\Database\System\Capabilities\Querying\State\BindingBag;
+use Avax\Database\System\Capabilities\Query\State\AST\JoinNode;
+use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Database\System\Capabilities\Query\State\AST\OrderNode;
+use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Database\System\Capabilities\Query\State\BindingBag;
 
 /**
  * Immutable technical state container for database query metadata.
@@ -9530,12 +9530,12 @@ final readonly class QueryState
     }
 }
 
-=== System/Capabilities/Querying/ValueObjects/ColumnIdentifier.php ===
+=== System/Capabilities/Query/ValueObjects/ColumnIdentifier.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable value object representing a database column identifier with optional alias.
@@ -9573,12 +9573,12 @@ final readonly class ColumnIdentifier
     }
 }
 
-=== System/Capabilities/Querying/ValueObjects/Expression.php ===
+=== System/Capabilities/Query/ValueObjects/Expression.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\ValueObjects;
+namespace Avax\Database\System\Capabilities\Query\ValueObjects;
 
 use Stringable;
 
@@ -9623,12 +9623,12 @@ final readonly class Expression implements Stringable
     }
 }
 
-=== System/Capabilities/Querying/ValueObjects/QuotedIdentifier.php ===
+=== System/Capabilities/Query/ValueObjects/QuotedIdentifier.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable value object representing a pre-quoted SQL identifier.
@@ -9653,12 +9653,12 @@ final readonly class QuotedIdentifier
     }
 }
 
-=== System/Capabilities/Querying/ValueObjects/TableIdentifier.php ===
+=== System/Capabilities/Query/ValueObjects/TableIdentifier.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Querying\State;
+namespace Avax\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable value object representing a database table identifier with optional alias.
@@ -11157,9 +11157,9 @@ namespace Avax\Database\System\Configuration;
 use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Query\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Config\Config;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Events\Subscribers\DatabaseLoggerSubscriber;
@@ -11318,8 +11318,8 @@ namespace Avax\Database\System;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Database\System\Configuration\DatabaseBuilder;
@@ -11402,8 +11402,8 @@ namespace Avax\Database\System;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 

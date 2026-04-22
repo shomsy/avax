@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\SeedDatabase;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use RuntimeException;
 
 /**
  * Base Seeder class.
@@ -13,6 +14,15 @@ use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
  */
 abstract class Seeder
 {
+    protected QueryBuilder|null $builder = null;
+
+    public function withBuilder(QueryBuilder $builder) : static
+    {
+        $this->builder = $builder;
+
+        return $this;
+    }
+
     /**
      * Seed the given seeder class.
      */
@@ -20,7 +30,7 @@ abstract class Seeder
     {
         basename(path: $class);
         echo "\033[36mSeeding:\033[0m {$class}\n";
-        (new $class)->run();
+        (new $class)->withBuilder(builder: $this->builder())->run();
     }
 
     /**
@@ -33,6 +43,15 @@ abstract class Seeder
      */
     protected function command(string $table) : QueryBuilder
     {
-        return app(abstract: QueryBuilder::class)->from(table: $table);
+        return $this->builder()->from(table: $table);
+    }
+
+    protected function builder() : QueryBuilder
+    {
+        if ($this->builder === null) {
+            throw new RuntimeException(message: 'Seeder requires an injected QueryBuilder before it can run.');
+        }
+
+        return $this->builder;
     }
 }

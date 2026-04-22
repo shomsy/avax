@@ -1,32 +1,58 @@
 ---
-title: Enums-how-this-works
+title: system-capabilities-migrations-design-enums-how-this-works
 owner: foundation-database-migrations
 last_reviewed: 2026-04-22
 classification: internal
 ---
 
-# Enums How This Works
+# System / Capabilities / Migrations / Design / Enums How This Works
 
 ## What this folder is
 
-This folder owns focused design-time support types for the migration DSL.
+This folder holds the enum vocabulary for the owning slice.
 
 ## Real commands or triggers that reach this folder
 
-- Blueprint and migration design flows delegate here when shaping schema changes
+- `Database::migrations()` or `Database::schema()` plus migration console commands reach this folder.
 
 ## Exact upstream handoffs
 
-- Design/* composes these files into the final migration statements
+- The parent slice hands work into this folder when it needs the behavior owned here.
+- The files in this folder do the local work and return control upstream when their responsibility is complete.
 
-## Main decision point
+## How this folder works
 
-- These files define how structural schema intent is represented or rendered
+The rest of the slice reads stable tokens from here instead of scattering repeated strings through many files.
+
+## The simplest story
+
+- A caller reaches the parent Database surface or the owning parent folder.
+- This folder handles the one responsibility it owns.
+- The result returns upstream or moves to the next local slice.
+
+## The first important path
+
+- The caller enters through the Database surface or the parent folder.
+- `FieldModifier.php` participates directly in the behavior owned by this folder.
+- Control returns to the caller or the next local slice once this folder finishes its job.
+
+## Main units in this folder
+
+- `FieldModifier.php` participates directly in the behavior owned by this folder.
+- `FieldType.php` participates directly in the behavior owned by this folder.
+- `ForeignAction.php` participates directly in the behavior owned by this folder.
 
 ## Writes and side effects
 
-- No direct side effects
+- This slice can read or write migration files, mutate schema, update migration history, seed data, or export SQL
+  snapshots.
+
+## Failure shape
+
+- Loader defects, repository drift, schema DSL bugs, or migration execution failures surface through this slice.
 
 ## Debug first
 
-- Start with the design type directly involved in the failing migration path
+- Start with `FieldModifier.php` participates directly in the behavior owned by this folder.
+- Start with `FieldType.php` participates directly in the behavior owned by this folder.
+- Start with `ForeignAction.php` participates directly in the behavior owned by this folder.

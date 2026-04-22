@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session;
 
 use Avax\HTTP\Session\Events\Events;
-use Avax\HTTP\Session\Features\Flash;
+use Avax\HTTP\Session\FlashSession\Flash;
 use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 
 /**

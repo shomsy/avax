@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations;
 
+use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
 use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
 use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
@@ -17,7 +18,6 @@ use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropTable;
 use Avax\Database\System\Capabilities\Migrations\SchemaOperations\TruncateTable;
 use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
 use Avax\Database\System\Capabilities\Querying\Querying;
-use Avax\Database\System\Capabilities\Transactions\Transactions;
 use ReflectionException;
 use Throwable;
 
@@ -28,7 +28,7 @@ final readonly class Migrations
 {
     public function __construct(
         private Querying $querying,
-        private Transactions        $transactions
+        private Connections $connections
     ) {}
 
     /**
@@ -122,7 +122,7 @@ final readonly class Migrations
      */
     public function exporter(string|null $connectionName = null) : DatabaseExporter
     {
-        return new DatabaseExporter(builder: $this->builder(connectionName: $connectionName));
+        return new DatabaseExporter(pdo: $this->connections->pdo(name: $connectionName));
     }
 
     /**

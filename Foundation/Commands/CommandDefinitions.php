@@ -9,12 +9,12 @@ use Avax\Commands\App\MakeRepositoryCommand;
 use Avax\Database\Integrations\Console\ExportCommand;
 use Avax\Database\Integrations\Console\MakeMigrationCommand;
 use Avax\Database\Integrations\Console\MigrateCommand;
+use Avax\Database\Integrations\Console\MigrateFreshCommand;
+use Avax\Database\Integrations\Console\MigrateRefreshCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Avax\Database\Integrations\Console\MigrateStatusCommand;
 use Avax\Database\Integrations\Console\SeedCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Console\Migrations\MigrateFreshCommand;
-use Illuminate\Database\Console\Migrations\MigrateRefreshCommand;
 
 class CommandDefinitions
 {

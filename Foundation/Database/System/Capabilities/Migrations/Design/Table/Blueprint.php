@@ -860,6 +860,7 @@ final class Blueprint
             array   : $this->columns
         );
 
+        // noinspection SqlNoDataSourceInspection
         $sql = 'CREATE TABLE ' . $grammar->wrap(value: $this->table) . ' (';
         $sql .= implode(separator: ', ', array: $columns);
         $sql .= ')';
@@ -877,14 +878,17 @@ final class Blueprint
 
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
+            // noinspection SqlNoDataSourceInspection
             $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $renderer->render(column: $column, grammar: $grammar);
         }
 
         // Handle commands (DROP, RENAME)
         foreach ($this->commands as $command) {
             if ($command['type'] === 'drop') {
+                // noinspection SqlNoDataSourceInspection
                 $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' DROP COLUMN ' . $grammar->wrap(value: $command['name']);
             } elseif ($command['type'] === 'rename') {
+                // noinspection SqlNoDataSourceInspection
                 $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' RENAME COLUMN ' . $grammar->wrap(value: $command['from']) . ' TO ' . $grammar->wrap(value: $command['to']);
             }
         }

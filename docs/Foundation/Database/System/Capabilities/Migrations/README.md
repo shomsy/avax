@@ -80,7 +80,9 @@ return new class extends BaseMigration
 
 - **[COMPLETE_SQL_TYPES.md](./COMPLETE_SQL_TYPES.md)** - Full reference for all 63 SQL types
 - **[DATA_TYPES.md](./DATA_TYPES.md)** - Quick reference guide
-- **[examples/](./examples/)** - Working migration examples
+- **[all_types_demonstration.php](./examples/all_types_demonstration.php)** - Full type showcase
+- **[comprehensive_types_example.php](./examples/comprehensive_types_example.php)** - Real-world migration example
+- **[type_mapper_usage.php](./examples/type_mapper_usage.php)** - Type mapping usage example
 
 ---
 
@@ -372,11 +374,11 @@ Foundation/Database/System/Capabilities/Migrations/
 
 ## 🎓 Examples
 
-See the **[examples/](./examples/)** directory for:
+See these example files:
 
-- `all_types_demonstration.php` - All 63 SQL types in one migration
-- `comprehensive_types_example.php` - Real-world e-commerce example
-- `type_mapper_usage.php` - PHP type mapping examples
+- [all_types_demonstration.php](./examples/all_types_demonstration.php) - All 63 SQL types in one migration
+- [comprehensive_types_example.php](./examples/comprehensive_types_example.php) - Real-world e-commerce example
+- [type_mapper_usage.php](./examples/type_mapper_usage.php) - PHP type mapping examples
 
 ---
 

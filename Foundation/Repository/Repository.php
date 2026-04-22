@@ -86,9 +86,10 @@ abstract class Repository
      */
     protected function getTableName() : string
     {
+        /** @var class-string $entityClass */
         $entityClass = $this->getEntityClass();
 
-        if (! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
+        if (! class_exists(class: $entityClass) || ! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
             throw new RuntimeException(
                 message: sprintf(
                              'Entity class %s must implement a getTableName() method.',
@@ -97,13 +98,13 @@ abstract class Repository
             );
         }
 
-        return $entityClass::getTableName();
+        return (string) $entityClass::getTableName();
     }
 
     /**
      * Get the entity class for the repository.
      *
-     * @return string The fully qualified class name of the entity.
+     * @return class-string The fully qualified class name of the entity.
      */
     abstract protected function getEntityClass() : string;
 

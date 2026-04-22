@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Tests\Unit;
+namespace Avax\Tests\Foundation\Database\Unit;
 
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
@@ -13,7 +13,6 @@ use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
 use Avax\Database\System\Capabilities\Querying\Identity\IdentityMap;
 use Avax\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
 use Exception;
-use Override;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -163,11 +162,11 @@ final class CriticalPathTest extends TestCase
         $this->fail(message: 'Expected QueryException was not thrown.');
     }
 
-    #[Override]
     protected function setUp() : void
     {
         $this->pdo = new PDO(dsn: 'sqlite::memory:');
         $this->pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
+        // noinspection SqlNoDataSourceInspection
         $this->pdo->exec(statement: 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)');
     }
 }

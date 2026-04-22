@@ -128,6 +128,7 @@ abstract class BaseMigration
     protected function drop(string $table) : void
     {
         $grammar = $this->getGrammar();
+        // noinspection SqlNoDataSourceInspection
         $sql     = 'DROP TABLE IF EXISTS ' . $grammar->wrap(value: $table);
 
         $this->getConnection()->statement(query: $sql);

@@ -16,15 +16,15 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#count
      *
-     * @param string $columns The specific technical field to target for counting (defaults to '*').
+     * @param string $column The specific technical field to target for counting (defaults to '*').
      *
      * @return int The total number of matching records found.
      *
      * @throws Throwable If the query execution fails at the driver level.
      */
-    public function count(string $columns = '*') : int
+    public function count(string $column = '*') : int
     {
-        return (int) $this->aggregate(function: 'count', columns: [$columns]);
+        return (int) $this->aggregate(function: 'count', columns: [$column]);
     }
 
     /**

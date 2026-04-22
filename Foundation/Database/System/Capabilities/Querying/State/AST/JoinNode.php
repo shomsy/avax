@@ -30,7 +30,7 @@ final readonly class JoinNode
      */
     public function __construct(
         string      $table,
-        string      $type = null,
+        ?string $type = null,
         ?string     $first = null,
         ?string     $operator = null,
         ?string     $second = null,

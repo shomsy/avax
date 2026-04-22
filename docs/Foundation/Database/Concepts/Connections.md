@@ -10,10 +10,10 @@ established, pooled, and managed.
 ### Core Connections
 
 - [PdoConnection](#pdoconnection)
-- [BuildPhysicalConnection](#connectionfactory)
-- [ReadConnection](#connectionmanager)
-- [OpenConnection](#directconnectionflow)
-- [RunWithConnection](#databaseflow)
+- [BuildPhysicalConnection](#buildphysicalconnection)
+- [ReadConnection](#readconnection)
+- [OpenConnection](#openconnection)
+- [RunWithConnection](#runwithconnection)
 
 ### Connection Pooling
 

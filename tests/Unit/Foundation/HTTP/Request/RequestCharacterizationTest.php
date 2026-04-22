@@ -9,7 +9,6 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 
 /**
  * Characterization tests for the existing ServerRequest class.

@@ -1,8 +1,0 @@
-deptrac:
-  paths:
-    - ./Layer1
-  layers:
-    - name: Layer1
-      collectors:
-        - type: directory
-          value: ./examples/Layer1/.*

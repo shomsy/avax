@@ -7,7 +7,6 @@ namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 
 final class UserRegistrationDTOTest extends TestCase
 {

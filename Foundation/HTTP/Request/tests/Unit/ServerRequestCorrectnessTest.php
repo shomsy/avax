@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\tests\Unit;
 
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseFormBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJsonBody;

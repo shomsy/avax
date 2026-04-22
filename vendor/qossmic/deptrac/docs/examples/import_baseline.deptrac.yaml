@@ -1,4 +1,0 @@
-deptrac:
-  skip_violations:
-    examples\Layer2\SomeOtherClass:
-      - examples\Layer1\SomeClass

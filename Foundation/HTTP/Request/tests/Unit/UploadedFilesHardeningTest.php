@@ -7,7 +7,6 @@ namespace Avax\HTTP\Request\tests\Unit;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFile;
-use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

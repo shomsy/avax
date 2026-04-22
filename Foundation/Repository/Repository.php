@@ -313,7 +313,7 @@ abstract class Repository
                 $query->where(column: $column, operator: '=', value: $value);
             }
 
-            return $query->count(column: '*');
+            return $query->count();
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to count entities.', context: [
                 'conditions' => $conditions,

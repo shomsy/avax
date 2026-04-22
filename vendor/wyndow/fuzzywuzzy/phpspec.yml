@@ -1,5 +1,0 @@
-suites:
-  fuzzywuzzy_suite:
-    namespace:   FuzzyWuzzy
-    psr4_prefix: FuzzyWuzzy
-    src_path:    lib

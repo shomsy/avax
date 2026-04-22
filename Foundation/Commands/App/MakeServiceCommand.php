@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Commands\App;
 
-use Avax\Database\Migration\Runner\Generators\Service\ServiceGenerator;
+use Avax\Commands\App\Contracts\ServiceGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 final readonly class MakeServiceCommand
 {
     private LoggerInterface  $logger;
-    private ServiceGenerator $serviceGenerator;
+    private ServiceGeneratorInterface $serviceGenerator;
 
     public function __construct(
-        ServiceGenerator $serviceGenerator,
-        LoggerInterface  $logger
+        ServiceGeneratorInterface $serviceGenerator,
+        LoggerInterface           $logger
     )
     {
         $this->serviceGenerator = $serviceGenerator;

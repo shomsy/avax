@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Commands\App;
 
-use Avax\Database\Migration\Runner\Generators\Entity\EntityGenerator;
+use Avax\Commands\App\Contracts\EntityGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 final readonly class MakeEntityCommand
 {
     private LoggerInterface $logger;
-    private EntityGenerator $entityGenerator;
+    private EntityGeneratorInterface $entityGenerator;
 
     public function __construct(
-        EntityGenerator $entityGenerator,
-        LoggerInterface $logger
+        EntityGeneratorInterface $entityGenerator,
+        LoggerInterface          $logger
     )
     {
         $this->entityGenerator = $entityGenerator;

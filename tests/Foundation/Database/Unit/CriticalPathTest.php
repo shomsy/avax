@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Database\Tests\Unit;
 
-use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Identity\IdentityMap;
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
-use Avax\Database\QueryBuilder\Core\Executor\PDOExecutor;
-use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
-use Avax\Database\QueryBuilder\Core\Grammar\MySQLGrammar;
-use Avax\Database\QueryBuilder\Exceptions\QueryException;
-use Avax\Database\Transaction\Transaction;
-use Avax\Database\Transaction\TransactionManager;
+use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\QueryBuilder\Exceptions\QueryException;
+use Avax\Database\System\Capabilities\QueryBuilder\Execution\PDOExecutor;
+use Avax\Database\System\Capabilities\QueryBuilder\Execution\QueryOrchestrator;
+use Avax\Database\System\Capabilities\QueryBuilder\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Transactions\Identity\IdentityMap;
+use Avax\Database\System\Capabilities\Transactions\Transaction;
 use Exception;
 use Override;
 use PDO;
@@ -31,7 +30,6 @@ final class CriticalPathTest extends TestCase
     /**
      * Test: Transaction rollback on inner failure.
      *
-     * @throws RandomException
      * @throws ReflectionException
      * @throws Throwable
      */
@@ -123,7 +121,6 @@ final class CriticalPathTest extends TestCase
     /**
      * Test: QueryException never exposes raw bindings by default.
      *
-     * @throws RandomException
      * @throws ReflectionException
      * @throws Throwable
      */
@@ -160,7 +157,11 @@ final class CriticalPathTest extends TestCase
 
             $rawBindings = $e->getBindings(redacted: false); // Explicit opt-in
             $this->assertSame(expected: ['password123'], actual: $rawBindings);
+
+            return;
         }
+
+        $this->fail(message: 'Expected QueryException was not thrown.');
     }
 
     #[Override]

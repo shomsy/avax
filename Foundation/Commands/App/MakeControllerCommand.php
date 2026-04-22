@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Commands\App;
 
-use Avax\Database\Migration\Runner\Generators\Controller\ControllerGenerator;
+use Avax\Commands\App\Contracts\ControllerGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 final readonly class MakeControllerCommand
 {
     private LoggerInterface     $logger;
-    private ControllerGenerator $controllerGenerator;
+    private ControllerGeneratorInterface $controllerGenerator;
 
     public function __construct(
-        ControllerGenerator $controllerGenerator,
-        LoggerInterface     $logger
+        ControllerGeneratorInterface $controllerGenerator,
+        LoggerInterface              $logger
     )
     {
         $this->controllerGenerator = $controllerGenerator;

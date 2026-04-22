@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Repository;
 
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
 use Exception;
 use ReflectionException;
 use RuntimeException;
@@ -76,7 +76,7 @@ abstract class Repository
      */
     protected function query() : QueryBuilder
     {
-        return $this->queryBuilder->newQuery()->table($this->getTableName());
+        return $this->queryBuilder->newQuery()->from(table: $this->getTableName());
     }
 
     /**

@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Database\System\Capabilities\Migrations\Execution\Console;
+
+use Avax\Database\System\Capabilities\Migrations\Execution\Repository\MigrationRepository;
+use Avax\Database\System\Capabilities\Migrations\Execution\Runner\MigrationRunner;
+use Avax\Database\System\Capabilities\Migrations\Generate\MigrationLoader;
+use Throwable;
+
+/**
+ * Console command to run pending migrations.
+ */
+final readonly class MigrateCommand
+{
+    private MigrationLoader     $loader;
+    private MigrationRunner     $runner;
+    private MigrationRepository $repository;
+
+    public function __construct(
+        MigrationRepository $repository,
+        MigrationRunner     $runner,
+        MigrationLoader     $loader
+    )
+    {
+        $this->repository = $repository;
+        $this->runner     = $runner;
+        $this->loader     = $loader;
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function handle(string $path, bool $dryRun = false) : int
+    {
+        if ($dryRun) {
+            $this->info(msg: 'DRY RUN MODE: No changes will be executed.');
+        }
+
+        $this->info(msg: 'Running migrations...');
+        $this->repository->ensureTableExists();
+
+        $ran = $this->repository->getRan();
+
+        // --- Enterprise Integrity Check ---
+        $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
+        foreach ($ran as $record) {
+            $name       = $record['migration'];
+            $dbChecksum = $record['checksum'];
+
+            if ($dbChecksum) {
+                $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
+                if ($fileChecksum && $dbChecksum !== $fileChecksum) {
+                    $this->error(msg: "CRITICAL: Migration integrity violation in '{$name}'.");
+                    $this->error(msg: 'The file has been modified after execution. Please revert changes.');
+
+                    return 1;
+                }
+            }
+        }
+
+        $pending = $this->loader->getPending(path: $path, ran: $ran);
+
+        if (empty($pending)) {
+            $this->info(msg: 'Nothing to migrate.');
+
+            return 0;
+        }
+
+        $pending
+            |> count(...)
+            |> (static fn ($x) => sprintf('Found %d pending migration(s).', $x))
+            |> $this(...);
+
+        try {
+            $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
+
+            if ($dryRun) {
+                $this->success();
+            } else {
+                $pending
+                    |> count(...)
+                    |> (static fn ($x) => sprintf('Migrated %d migration(s) successfully!', $x))
+                    |> $this(...);
+            }
+
+            foreach (array_keys(array: $pending) as $name) {
+                echo "  ✓ {$name}\n";
+            }
+
+            return 0;
+        } catch (Throwable $e) {
+            $this->error(msg: 'Migration failed: ' . $e->getMessage());
+
+            return 1;
+        }
+    }
+
+    private function info(string $msg) : void
+    {
+        echo "\033[36m{$msg}\033[0m\n";
+    }
+
+    private function error(string $msg) : void
+    {
+        echo "\033[31m{$msg}\033[0m\n";
+    }
+
+    private function success() : void
+    {
+        echo "\033[32mDry run completed successfully. No changes made.\033[0m\n";
+    }
+}

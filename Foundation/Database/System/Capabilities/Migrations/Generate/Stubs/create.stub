@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Avax\Migrations\Design\BaseMigration;
+use Avax\Migrations\Design\Table\Blueprint;
+
+/**
+ * Migration: {{className}}
+ */
+return new class extends BaseMigration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up() : void
+    {
+        $this->create(table: '{{table}}', callback: function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down() : void
+    {
+        $this->drop(table: '{{table}}');
+    }
+};

@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Avax\Database\Migration\Design\Table\Enum\FieldModifierEnum;
+use Avax\Database\System\Capabilities\Migrations\Design\Enums\FieldModifier;
 use Avax\Exceptions\ValidationException;
 
 /**
  * Validates and casts an array of migration field modifiers.
  *
  * Accepts:
- * - FieldModifierEnum[]
- * - string[] matching FieldModifierEnum values
+ * - FieldModifier[]
+ * - string[] matching FieldModifier values
  *
  * Rejects:
  * - any non-array input
- * - values not resolvable via FieldModifierEnum::tryFrom()
+ * - values not resolvable via FieldModifier::fromInput()
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class MigrationFieldAttributesRule
@@ -36,7 +36,7 @@ readonly class MigrationFieldAttributesRule
 
         if (! is_array(value: $value)) {
             throw new ValidationException(
-                message: "{$property} must be an array of FieldModifierEnum values or string equivalents."
+                message: "{$property} must be an array of FieldModifier values or string equivalents."
             );
         }
 
@@ -45,7 +45,7 @@ readonly class MigrationFieldAttributesRule
                 continue;
             }
 
-            if ($item instanceof FieldModifierEnum) {
+            if ($item instanceof FieldModifier) {
                 continue;
             }
 
@@ -55,7 +55,7 @@ readonly class MigrationFieldAttributesRule
                 );
             }
 
-            if (! FieldModifierEnum::tryFrom($item)) {
+            if (FieldModifier::fromInput(value: $item) === null) {
                 throw new ValidationException(
                     message: "{$property} contains invalid field modifier: " . var_export(value: $item, return: true)
                 );
@@ -65,6 +65,13 @@ readonly class MigrationFieldAttributesRule
 
     public function apply(mixed $value) : array|null
     {
-        return is_array(value: $value) ? $value : null;
+        if (! is_array(value: $value)) {
+            return null;
+        }
+
+        return array_map(
+            callback: static fn (mixed $item) => is_string(value: $item) ? FieldModifier::fromInput(value: $item) : $item,
+            array   : $value
+        );
     }
 }

@@ -6,7 +6,7 @@ namespace Avax\Auth\Examples\Jobs;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
-use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges\CleanupExpiredMfaChallenges;
+use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
@@ -17,18 +17,15 @@ use SensitiveParameter;
  */
 final readonly class RunAuthMaintenanceJobs
 {
-    private CleanupExpiredMfaChallenges      $cleanupExpiredMfaChallenges;
-
     public function __construct(
         #[SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
         #[SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
-        CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
+        private CleanupExpiredMfaChallenges     $cleanupExpiredMfaChallenges,
         #[SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
-        private CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
-        private ExportAuditEvents                                      $exportAuditEvents
+        private CleanupExpiredPasskeyChallenges $cleanupExpiredPasskeyChallenges,
+        private ExportAuditEvents               $exportAuditEvents
     )
     {
-        $this->cleanupExpiredMfaChallenges      = $cleanupExpiredMfaChallenges;
     }
 
     /**

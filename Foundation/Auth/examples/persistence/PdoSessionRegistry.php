@@ -26,6 +26,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
      */
     public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');
         $statement->execute(params: ['session_id' => $sessionId]);
         $row = $statement->fetch(mode: PDO::FETCH_ASSOC);
@@ -63,6 +64,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
 
     public function track(SessionRecord $record) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'INSERT INTO auth_sessions (
                 session_id, user_id, created_at, last_seen_at, idle_expires_at, absolute_expires_at,
@@ -105,6 +107,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
 
     public function listForUser(UserId $userId) : array
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC'
         );
@@ -119,6 +122,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id'
         );
@@ -131,6 +135,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
 
     public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id'
         );

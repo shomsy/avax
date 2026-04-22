@@ -26,6 +26,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
      */
     public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->prepare(
             query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1'
         );
@@ -78,6 +79,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
 
     public function track(SessionRecord $record) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $this->executeStatement(
             query     : <<<'SQL'
                 INSERT INTO auth_sessions (
@@ -133,6 +135,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
 
     public function listForUser(UserId $userId) : array
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->prepare(
             query: 'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC'
         );
@@ -149,6 +152,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $this->executeStatement(
             query     : 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
             parameters: [
@@ -161,6 +165,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
 
     public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $this->executeStatement(
             query     : 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
             parameters: [
@@ -173,6 +178,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
 
     public function pruneExpired(DateTimeImmutable $now) : int
     {
+        /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->prepare(
             query: 'DELETE FROM auth_sessions WHERE revoked_at IS NOT NULL OR idle_expires_at <= :now OR absolute_expires_at <= :now'
         );

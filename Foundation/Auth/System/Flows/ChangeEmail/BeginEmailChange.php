@@ -27,9 +27,7 @@ final readonly class BeginEmailChange
         private AuditLogInterface                               $auditLog,
         private Clock                                           $clock,
         private int                                             $expiresAfterSeconds = 1800
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws EmailChangeFailed
@@ -80,7 +78,7 @@ final readonly class BeginEmailChange
         $challenge = $this->emailChangeStore->issue(
             userId   : $user->getId(),
             newEmail : $newEmail,
-            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+$this->expiresAfterSeconds seconds")
         );
 
         $this->auditLog->record(event: new AuditEvent(

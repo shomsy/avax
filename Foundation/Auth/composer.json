@@ -36,7 +36,9 @@
     "mockery/mockery": "^1.6"
   },
   "suggest": {
-    "avax/container": "Optional adapter support for Avax container integration."
+    "avax/container": "Optional adapter support for Avax container integration.",
+    "ext-openssl": "Required when using OpenSslOidcProvider for OIDC token signing.",
+    "ext-redis": "Required when using RedisSessionRegistry."
   },
   "autoload": {
     "psr-4": {

@@ -6,8 +6,9 @@ namespace Avax\Commands;
 
 use Avax\Commands\App\MakeControllerCommand;
 use Avax\Commands\App\MakeRepositoryCommand;
-use Avax\Migrations\Execution\Console\MigrateCommand;
-use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
+use Avax\Database\Integrations\Console\MakeMigrationCommand;
+use Avax\Database\Integrations\Console\MigrateCommand;
+use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand;
 use Illuminate\Database\Console\Migrations\MigrateFreshCommand;
 use Illuminate\Database\Console\Migrations\MigrateRefreshCommand;
@@ -71,9 +72,11 @@ class CommandDefinitions
                 'class'       => MakeMigrationCommand::class,
                 'arguments'   => [
                     'name' => 'The name of the migration.',
+                    'path' => 'The directory where the migration should be created.',
                 ],
                 'options'     => [
                     '--table' => 'The table to create or modify.',
+                    '--create' => 'Create a new table migration instead of an update migration.',
                 ],
             ],
         ];
@@ -98,7 +101,8 @@ class CommandDefinitions
                 'description' => 'Generate a new repository.',
                 'class'       => MakeRepositoryCommand::class,
                 'arguments'   => [
-                    'name' => 'The name of the repository.',
+                    'name'   => 'The name of the repository.',
+                    'entity' => 'The fully qualified entity class name.',
                 ],
                 'options'     => [],
             ],

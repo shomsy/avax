@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Query;
 
-use Avax\Database\Database;
-use Avax\Database\Modules\Query\Builder\QueryBuilder;
-use Avax\Database\Modules\Query\Query;
+use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
 use Avax\Tests\TestCase;
 use Override;
 use Throwable;
@@ -15,7 +13,7 @@ class BuilderTest extends TestCase
 {
     public function test_basic_select() : void
     {
-        $results = Query::table('users')->select('id', 'name')->get();
+        $results = $this->database->table(table: 'users')->select('id', 'name')->get();
 
         $this->assertCount(expectedCount: 1, haystack: $results);
         $this->assertEquals(expected: 'John Doe', actual: $results[0]['name']);
@@ -23,14 +21,16 @@ class BuilderTest extends TestCase
 
     public function test_where_clauses() : void
     {
-        $builder = Query::table('users')->where('id', 1)->orWhere('email', 'test@example.com');
+        $builder = $this->database->table(table: 'users')
+            ->where(column: 'id', value: 1)
+            ->orWhere(column: 'email', value: 'test@example.com');
 
         $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 
     public function test_joins() : void
     {
-        $builder = Query::table('users')
+        $builder = $this->database->table(table: 'users')
             ->join('posts', 'users.id', '=', 'posts.user_id')
             ->select('users.name', 'posts.title');
 
@@ -39,7 +39,7 @@ class BuilderTest extends TestCase
 
     public function test_aggregates() : void
     {
-        $count = Query::table('users')->count();
+        $count = $this->database->table(table: 'users')->count();
 
         $this->assertSame(expected: 1, actual: $count);
     }
@@ -52,15 +52,27 @@ class BuilderTest extends TestCase
     {
         parent::setUp();
 
-        // Create the users table for testing
-        Database::schema()->create('users', static function ($table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->timestamps();
-        });
+        $pdo = $this->database->connections()->pdo();
 
-        // Seed some data
-        Database::table('users')->insert(['name' => 'John Doe', 'email' => 'john@example.com']);
+        $pdo->exec(
+            statement: 'CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                created_at TEXT NULL,
+                updated_at TEXT NULL
+            )'
+        );
+
+        $pdo->exec(
+            statement: 'CREATE TABLE posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL
+            )'
+        );
+
+        $this->database->table(table: 'users')->insert(['name' => 'John Doe', 'email' => 'john@example.com']);
+        $this->database->table(table: 'posts')->insert(['user_id' => 1, 'title' => 'Hello']);
     }
 }

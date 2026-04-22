@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Commands\App;
 
-use Avax\Database\Migration\Runner\Generators\Repository\RepositoryGenerator;
+use Avax\Commands\App\Contracts\RepositoryGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 final readonly class MakeRepositoryCommand
 {
     private LoggerInterface     $logger;
-    private RepositoryGenerator $repositoryGenerator;
+    private RepositoryGeneratorInterface $repositoryGenerator;
 
     public function __construct(
-        RepositoryGenerator $repositoryGenerator,
-        LoggerInterface     $logger
+        RepositoryGeneratorInterface $repositoryGenerator,
+        LoggerInterface              $logger
     )
     {
         $this->repositoryGenerator = $repositoryGenerator;
@@ -28,8 +28,8 @@ final readonly class MakeRepositoryCommand
         $entity = $arguments['entity'] ?? null;
 
         if (empty($name) || empty($entity)) {
-            $this->logger->error(message: 'Settings name and entity are required.');
-            echo "Error: Settings name and entity are required.\n";
+            $this->logger->error(message: 'Repository name and entity are required.');
+            echo "Error: Repository name and entity are required.\n";
 
             return;
         }
@@ -38,7 +38,7 @@ final readonly class MakeRepositoryCommand
             $this->repositoryGenerator->create(tableName: $name, entity: $entity);
             $this->logger->info(
                 message: sprintf(
-                             "Settings '%s' for entity '%s' created successfully.",
+                             "Repository '%s' for entity '%s' created successfully.",
                              $name,
                              $entity
                          )

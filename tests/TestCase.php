@@ -4,42 +4,39 @@ declare(strict_types=1);
 
 namespace Avax\Tests;
 
-use Avax\Database\Kernel;
+use Avax\Database\System\Database;
+use Avax\Database\System\DatabaseInterface;
 use Override;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Random\RandomException;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected Kernel $kernel;
+    protected DatabaseInterface $database;
 
     #[Override]
+    /**
+     * @throws RandomException
+     */
     protected function setUp() : void
     {
         parent::setUp();
 
-        if (! class_exists(Kernel::class)) {
-            $this->markTestSkipped(message: 'Database kernel is not available in this installation.');
-        }
-
-        $this->kernel = Kernel::getInstance();
-        $this->kernel->bootstrap([
-                                     'database' => [
-                                         'default'     => 'sqlite',
-                                         'connections' => [
-                                             'sqlite' => [
-                                                 'driver'   => 'sqlite',
-                                                 'database' => ':memory:',
-                                                 'prefix'   => '',
-                                             ],
-                                         ],
-                                     ],
-                                 ]);
+        $this->database = Database::configuration()->usingConfig([
+                                                                     'default'     => 'sqlite',
+                                                                     'connections' => [
+                                                                         'sqlite' => [
+                                                                             'driver'   => 'sqlite',
+                                                                             'database' => ':memory:',
+                                                                             'prefix'   => '',
+                                                                         ],
+                                                                     ],
+                                                                 ])->ready();
     }
 
     #[Override]
     protected function tearDown() : void
     {
-        $this->kernel->shutdown();
         parent::tearDown();
     }
 }

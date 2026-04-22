@@ -4,34 +4,49 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Core;
 
-use Avax\Database\Events\EventBus;
-use Avax\Database\Kernel;
+use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\Database\System\Capabilities\Migrations\Migrations;
+use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Telemetry\Telemetry;
+use Avax\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Database\System\Database;
+use Avax\Database\System\DatabaseInterface;
 use Avax\Tests\TestCase;
 
 class KernelTest extends TestCase
 {
-    public function test_kernel_is_singleton() : void
+    public function test_database_configuration_builds_public_surface() : void
     {
-        $instance1 = Kernel::getInstance();
-        $instance2 = Kernel::getInstance();
+        $database = Database::configuration()->usingConfig([
+                                                               'default'     => 'sqlite',
+                                                               'connections' => [
+                                                                   'sqlite' => [
+                                                                       'driver'   => 'sqlite',
+                                                                       'database' => ':memory:',
+                                                                       'prefix'   => '',
+                                                                   ],
+                                                               ],
+                                                           ])->ready();
 
-        $this->assertSame(expected: $instance1, actual: $instance2);
+        $this->assertInstanceOf(expected: DatabaseInterface::class, actual: $database);
+        $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());
+        $this->assertInstanceOf(expected: QueryBuilderRuntime::class, actual: $database->query());
+        $this->assertInstanceOf(expected: Migrations::class, actual: $database->migrations());
+        $this->assertInstanceOf(expected: Transactions::class, actual: $database->transactions());
+        $this->assertInstanceOf(expected: Telemetry::class, actual: $database->telemetry());
     }
 
-    public function test_kernel_resolves_core_services() : void
+    public function test_database_capability_aliases_point_to_same_instances() : void
     {
-        $container = $this->kernel->getContainer();
-
-        $this->assertInstanceOf(expected: Container::class, actual: $container->resolve('container'));
-        $this->assertInstanceOf(expected: Registry::class, actual: $container->resolve('registry'));
-        $this->assertInstanceOf(expected: EventBus::class, actual: $container->resolve('events'));
+        $this->assertSame(expected: $this->database->queryBuilder(), actual: $this->database->query());
+        $this->assertSame(expected: $this->database->migrations(), actual: $this->database->schema());
     }
 
-    public function test_kernel_is_bootstrapped() : void
+    public function test_database_table_entrypoint_returns_query_builder() : void
     {
-        $container = $this->kernel->getContainer();
+        $builder = $this->database->table(table: 'users');
 
-        $this->assertTrue(condition: $container->has('config'));
-        $this->assertEquals(expected: 'sqlite', actual: $container->resolve('config')->get('database.default'));
+        $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 }

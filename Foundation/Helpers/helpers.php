@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 require __DIR__ . '/app_instance.php';
 
-use Avax\Auth\Contracts\AuthInterface;
 use Avax\Auth\System\AuthInterface;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Config\Service\Config;
-use Avax\Database\Connection\ConnectionManager;
+use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\DataHandling\ObjectHandling\Collections\Collection;
 use Avax\DumpDebugger;
@@ -321,14 +320,14 @@ if (! function_exists(function: 'connection')) {
      */
     function connection(string|null $connectionName = null) : PDO
     {
-        /** @var ConnectionManager $databaseManager */
-        $databaseManager = app(abstract: ConnectionManager::class);
+        /** @var Connections $connections */
+        $connections = app(abstract: Connections::class);
 
-        if (! $databaseManager instanceof ConnectionManager) {
+        if (! $connections instanceof Connections) {
             throw new RuntimeException(message: 'Database connection service is not registered in DI container.');
         }
 
-        return $databaseManager->getPdo(name: $connectionName);
+        return $connections->pdo(name: $connectionName);
     }
 }
 

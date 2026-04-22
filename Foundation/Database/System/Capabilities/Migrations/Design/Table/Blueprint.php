@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\Design\Table;
 
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
-use Avax\Database\System\Capabilities\Migrations\Design\Column\Renderer\ColumnSQLRenderer;
+use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
+use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
 
 /**
  * Enterprise-grade designer for defining database table structures.

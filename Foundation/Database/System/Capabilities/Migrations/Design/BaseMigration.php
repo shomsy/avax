@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\Design;
 
-use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\GrammarInterface;
 use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
 use Closure;
 use RuntimeException;
 use Throwable;

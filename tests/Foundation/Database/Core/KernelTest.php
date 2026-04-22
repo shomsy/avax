@@ -6,8 +6,8 @@ namespace Avax\Tests\Core;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Querying\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Database\System\Database;
@@ -31,7 +31,7 @@ class KernelTest extends TestCase
 
         $this->assertInstanceOf(expected: DatabaseInterface::class, actual: $database);
         $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());
-        $this->assertInstanceOf(expected: QueryBuilderRuntime::class, actual: $database->query());
+        $this->assertInstanceOf(expected: Querying::class, actual: $database->query());
         $this->assertInstanceOf(expected: Migrations::class, actual: $database->migrations());
         $this->assertInstanceOf(expected: Transactions::class, actual: $database->transactions());
         $this->assertInstanceOf(expected: Telemetry::class, actual: $database->telemetry());

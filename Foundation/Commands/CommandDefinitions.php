@@ -6,9 +6,12 @@ namespace Avax\Commands;
 
 use Avax\Commands\App\MakeControllerCommand;
 use Avax\Commands\App\MakeRepositoryCommand;
+use Avax\Database\Integrations\Console\ExportCommand;
 use Avax\Database\Integrations\Console\MakeMigrationCommand;
 use Avax\Database\Integrations\Console\MigrateCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
+use Avax\Database\Integrations\Console\MigrateStatusCommand;
+use Avax\Database\Integrations\Console\SeedCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand;
 use Illuminate\Database\Console\Migrations\MigrateFreshCommand;
 use Illuminate\Database\Console\Migrations\MigrateRefreshCommand;
@@ -59,6 +62,13 @@ class CommandDefinitions
                 'arguments'   => [],
                 'options'     => [],
             ],
+            'migrate:status'   => [
+                'alias'       => null,
+                'description' => 'Show migration status and integrity.',
+                'class'       => MigrateStatusCommand::class,
+                'arguments'   => [],
+                'options'     => [],
+            ],
             'migrate:fresh'    => [
                 'alias'       => 'migrate:clean',
                 'description' => 'Drop all tables and re-run all migrations.',
@@ -77,6 +87,26 @@ class CommandDefinitions
                 'options'     => [
                     '--table' => 'The table to create or modify.',
                     '--create' => 'Create a new table migration instead of an update migration.',
+                ],
+            ],
+            'db:seed'          => [
+                'alias'       => null,
+                'description' => 'Run a database seeder class.',
+                'class'       => SeedCommand::class,
+                'arguments'   => [
+                    'seeder' => 'The fully qualified seeder class name.',
+                ],
+                'options'     => [],
+            ],
+            'db:export'        => [
+                'alias'       => null,
+                'description' => 'Export database schema and data to SQL.',
+                'class'       => ExportCommand::class,
+                'arguments'   => [
+                    'path' => 'The export output directory.',
+                ],
+                'options'     => [
+                    '--table' => 'Optional table name to export.',
                 ],
             ],
         ];

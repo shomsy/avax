@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Tests\Migration;
 
 use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
-use Avax\Database\System\Capabilities\Migrations\Design\Column\Renderer\ColumnSQLRenderer;
+use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
 use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
 use Avax\Tests\TestCase;
 
 class MigrationTest extends TestCase

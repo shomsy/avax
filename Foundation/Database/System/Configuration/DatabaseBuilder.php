@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Configuration;
 
-use Avax\Database\System\Capabilities\Connections\ConnectionManager;
 use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\QueryBuilder\Grammar\MySQLGrammar;
-use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Querying\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Config\Config;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Events\Subscribers\DatabaseLoggerSubscriber;
@@ -122,7 +122,7 @@ final class DatabaseBuilder
         }
 
         $connections = new Connections(
-            manager: new ConnectionManager(
+            readConnection: new ReadConnection(
                          config  : $this->config,
                          eventBus: $eventBus,
                          scope   : $scope
@@ -130,7 +130,7 @@ final class DatabaseBuilder
         );
 
         $transactions = new Transactions(connections: $connections);
-        $queryBuilder = new QueryBuilderRuntime(
+        $querying    = new Querying(
             connections : $connections,
             transactions: $transactions,
             eventBus    : $eventBus,
@@ -139,7 +139,7 @@ final class DatabaseBuilder
         );
 
         $migrations = new Migrations(
-            queryBuilder: $queryBuilder,
+            querying    : $querying,
             transactions: $transactions
         );
 
@@ -151,7 +151,7 @@ final class DatabaseBuilder
 
         return new Database(
             connections : $connections,
-            queryBuilder: $queryBuilder,
+            querying    : $querying,
             migrations  : $migrations,
             transactions: $transactions,
             telemetry   : $telemetry

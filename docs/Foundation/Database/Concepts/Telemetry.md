@@ -330,7 +330,7 @@ $scope = new ExecutionScope(
 );
 
 // Attach to connection flow
-$connection = DirectConnectionFlow::begin()
+$connection = OpenConnection::begin()
     ->using($config)
     ->withScope($scope)
     ->connect();

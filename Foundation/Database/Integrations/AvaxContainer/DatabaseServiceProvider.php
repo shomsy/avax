@@ -7,12 +7,15 @@ namespace Avax\Database\Integrations\AvaxContainer;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\ContainerInterface;
 use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Migrations\Execution\Repository\MigrationRepository;
-use Avax\Database\System\Capabilities\Migrations\Execution\Runner\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\Generate\MigrationGenerator;
-use Avax\Database\System\Capabilities\Migrations\Generate\MigrationLoader;
+use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Database\System\Capabilities\Querying\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Database\System\Database;
@@ -44,7 +47,7 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
             return $this->app->get(id: DatabaseInterface::class)->connections();
         });
 
-        $this->app->singleton(QueryBuilderRuntime::class, function () {
+        $this->app->singleton(Querying::class, function () {
             return $this->app->get(id: DatabaseInterface::class)->query();
         });
 
@@ -69,6 +72,18 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
 
         $this->app->singleton(MigrationRunner::class, function () {
             return $this->app->get(id: Migrations::class)->runner();
+        });
+
+        $this->app->singleton(RollbackMigrations::class, function () {
+            return $this->app->get(id: Migrations::class)->rollbacker();
+        });
+
+        $this->app->singleton(ReadMigrationStatus::class, function () {
+            return $this->app->get(id: Migrations::class)->status();
+        });
+
+        $this->app->singleton(DatabaseExporter::class, function () {
+            return $this->app->get(id: Migrations::class)->exporter();
         });
     }
 

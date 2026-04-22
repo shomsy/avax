@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Database\Integrations\Console;
 
-use Avax\Database\System\Capabilities\Migrations\Execution\Repository\MigrationRepository;
-use Avax\Database\System\Capabilities\Migrations\Execution\Runner\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\Generate\MigrationLoader;
+use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Throwable;
 
 final readonly class MigrateCommand
 {
@@ -18,10 +19,34 @@ final readonly class MigrateCommand
 
     public function handle(string $path, bool $dryRun = false) : int
     {
-        return (new \Avax\Database\System\Capabilities\Migrations\Execution\Console\MigrateCommand(
-            repository: $this->repository,
-            runner    : $this->runner,
-            loader    : $this->loader
-        ))->handle(path: $path, dryRun: $dryRun);
+        try {
+            if ($dryRun) {
+                echo "\033[36mDRY RUN MODE:\033[0m No changes will be executed.\n";
+            }
+
+            $this->repository->ensureTableExists();
+            $ran     = $this->repository->getRan();
+            $pending = $this->loader->getPending(path: $path, ran: $ran);
+
+            if (empty($pending)) {
+                echo "\033[36mNothing to migrate.\033[0m\n";
+
+                return 0;
+            }
+
+            $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
+
+            foreach (array_keys($pending) as $name) {
+                echo "  ✓ {$name}\n";
+            }
+
+            echo "\033[32mMigrated " . count($pending) . " migration(s).\033[0m\n";
+
+            return 0;
+        } catch (Throwable $throwable) {
+            echo "\033[31mMigration failed:\033[0m {$throwable->getMessage()}\n";
+
+            return 1;
+        }
     }
 }

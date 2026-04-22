@@ -9,21 +9,21 @@ classification: internal
 
 ## What this folder is
 
-This folder owns transaction boundaries, nested transaction handling, savepoints, transaction scopes, and the deferred
-identity-map flush mechanism.
+This folder owns transaction boundaries, nested transaction handling, savepoints, transaction scopes, and connection-
+bound transaction execution.
 
 ## Real commands or triggers that reach this folder
 
 - `DatabaseInterface::transactions()`
 - `QueryBuilder::transaction()`
-- Deferred-write flows that use `IdentityMap`
+- Deferred-write flows coordinated by Querying
 - Migration runner transaction wrapping
 
 ## Exact upstream handoffs
 
-- `Transactions.php` creates transaction managers per connection name
-- `Transaction.php` manages begin, commit, rollback, and savepoints
-- `Identity/IdentityMap.php` buffers deferred writes until commit-time execution
+- `Transactions.php` is the public capability owner
+- `OnConnection/OnConnection.php` resolves the concrete transaction manager for one connection
+- `RunTransaction/Transaction.php` manages begin, commit, rollback, and savepoints
 
 ## Main decision point
 
@@ -33,13 +33,9 @@ identity-map flush mechanism.
 
 - Opens and closes database transactions
 - Creates and releases savepoints
-- Flushes buffered writes when the transaction succeeds
-
-## Failure shape
-
 - Transaction lifecycle defects throw `TransactionException`
 
 ## Debug first
 
-- `Transaction.php`
-- `Identity/IdentityMap.php`
+- `OnConnection/OnConnection.php`
+- `RunTransaction/Transaction.php`

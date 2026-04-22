@@ -6,8 +6,8 @@ namespace Avax\Database\System;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\QueryBuilder\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\QueryBuilder\QueryBuilderRuntime;
+use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Querying\Querying;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 
@@ -18,9 +18,11 @@ interface DatabaseInterface
 {
     public function connections() : Connections;
 
-    public function queryBuilder() : QueryBuilderRuntime;
+    public function querying() : Querying;
 
-    public function query() : QueryBuilderRuntime;
+    public function queryBuilder() : Querying;
+
+    public function query() : Querying;
 
     public function migrations() : Migrations;
 

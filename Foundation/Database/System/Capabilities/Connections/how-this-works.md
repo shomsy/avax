@@ -21,12 +21,12 @@ release lifecycle.
 ## Exact upstream handoffs
 
 - `System/Configuration/DatabaseBuilder.php` creates `Connections`
-- `Connections.php` forwards to `ConnectionManager`
-- `ConnectionManager` decides between direct connection flow and pooled authority
+- `Connections.php` forwards to `ReadConnection`
+- `ReadConnection` decides between direct connection flow and pooled authority
 
 ## Main decision point
 
-- `ConnectionManager::connection()` decides whether the requested connection is cached, pooled, or built fresh
+- `ReadConnection::connection()` decides whether the requested connection is cached, pooled, or built fresh
 
 ## Writes and side effects
 
@@ -40,6 +40,6 @@ release lifecycle.
 
 ## Debug first
 
-- `ConnectionManager.php`
-- `DirectConnectionFlow.php`
-- `Pool/ConnectionPool.php`
+- `ReadConnection.php`
+- `OpenConnection.php`
+- `Pools/ConnectionPool.php`

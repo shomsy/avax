@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Tests\Foundation\Filesystem\Files;
+
+use Avax\Filesystem\Files\WriteFile;
+use Avax\Filesystem\Files\FileWriteFailed;
+use Avax\Filesystem\Disks\Local\LocalDisk;
+use PHPUnit\Framework\TestCase;
+
+class WriteFileTest extends TestCase
+{
+    private LocalDisk $disk;
+    private string $testFile;
+
+    protected function setUp() : void
+    {
+        parent::setUp();
+        $this->disk = new LocalDisk();
+        $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/write_test.txt';
+    }
+
+    protected function tearDown() : void
+    {
+        @unlink(filename: $this->testFile);
+        parent::tearDown();
+    }
+
+    public function testExecuteCreatesFile() : void
+    {
+        $result = (new WriteFile(disk: $this->disk))->execute(path: $this->testFile, content: 'test');
+
+        self::assertTrue(condition: $result);
+        self::assertFileExists(filename: $this->testFile);
+    }
+
+    public function testExecuteCreatesParentDirectory() : void
+    {
+        $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir/nested/test.txt';
+
+        try {
+            (new WriteFile(disk: $this->disk))->execute(path: $file, content: 'test');
+        } finally {
+            @unlink(filename: $file);
+            @rmdir(directory: '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir/nested');
+            @rmdir(directory: '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir');
+        }
+
+        self::assertFileExists(filename: $file);
+    }
+
+    public function testExecuteAddsNewlineAutomatically() : void
+    {
+        (new WriteFile(disk: $this->disk))->execute(path: $this->testFile, content: 'test');
+
+        $content = file_get_contents(filename: $this->testFile);
+        self::assertStringEndsWith(haystack: $content, needdle: "\n");
+    }
+}

@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Tests\Foundation\Filesystem\Disks;
+
+use Avax\Filesystem\Disks\ResolveDisk;
+use Avax\Filesystem\Disks\UnsupportedDiskDriver;
+use Avax\Filesystem\Disks\Local\LocalDisk;
+use PHPUnit\Framework\TestCase;
+
+class ResolveDiskTest extends TestCase
+{
+    public function testExecuteReturnsLocalDisk() : void
+    {
+        $result = (new ResolveDisk())->execute(name: 'local');
+
+        self::assertInstanceOf(expected: LocalDisk::class, actual: $result);
+    }
+
+    public function testExecuteThrowsExceptionForUnsupportedDriver() : void
+    {
+        $this->expectException(exception: UnsupportedDiskDriver::class);
+        $this->expectExceptionMessage(message: 'Unsupported disk driver:');
+
+        (new ResolveDisk())->execute(name: 'unknown');
+    }
+
+    public function testExecuteWithNullReturnsLocalDisk() : void
+    {
+        $result = (new ResolveDisk())->execute(name: null);
+
+        self::assertInstanceOf(expected: LocalDisk::class, actual: $result);
+    }
+}

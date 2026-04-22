@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Tests;
 
-use Avax\Database\System\Database;
-use Avax\Database\System\DatabaseInterface;
+use Avax\Database\Database;
 use Override;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Random\RandomException;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected DatabaseInterface $database;
+    protected Database $database;
 
     #[Override]
     /**

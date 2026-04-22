@@ -1,6 +1,6 @@
 ---
 title: database-how-this-works
-owner: foundation-database
+owner: foundation-database-database
 last_reviewed: 2026-04-22
 classification: internal
 ---
@@ -9,42 +9,49 @@ classification: internal
 
 ## What this folder is
 
-This folder owns the Database component as a standalone system. The component exposes one public root, one
-container-free builder, five first-class capabilities, and optional integration adapters.
+This folder owns the Database component as a standalone system: one public root, one composition builder, several
+first-class capabilities, and optional runtime adapters.
 
 ## Real commands or triggers that reach this folder
 
-- Application bootstrap that resolves `Avax\Database\System\DatabaseInterface`
-- Runtime code that calls `Database::configuration()->ready()`
-- Runtime code that requests `connections()`, `query()`, `migrations()`, `transactions()`, or `telemetry()`
-- Console flows that invoke migration wrappers under `Foundation/Database/Integrations/Console`
+- Application bootstrap and Database runtime entry reach this folder.
 
 ## Exact upstream handoffs
 
-- `Foundation/Database/System/Configuration/DatabaseBuilder.php` assembles the runtime graph
-- `Foundation/Database/System/Database.php` exposes the public component surface
-- `Foundation/Database/Integrations/*` adapt the system to container and console front doors without changing the core
+- The parent slice hands work into this folder when it needs the behavior owned here.
+- The files in this folder do the local work and return control upstream when their responsibility is complete.
 
-## Main decision point
+## How this folder works
 
-- `DatabaseBuilder::ready()` decides which connection manager, grammar, telemetry bus, transaction runtime, and
-  migration runtime are bound into the final `DatabaseInterface`
+The component is assembled once through the Database builder, then callers use the public Database surface and the
+selected capability owns the rest of the runtime story.
+
+## The simplest story
+
+- A caller reaches the parent Database surface or the owning parent folder.
+- This folder handles the one responsibility it owns.
+- The result returns upstream or moves to the next local slice.
+
+## The first important path
+
+- `Database::configuration()` starts assembly.
+- `DatabaseBuilder::ready()` wires the runtime graph.
+- `Database.php` exposes the ready capability owners to the caller.
+
+## Main units in this folder
+
+- `Integrations/` holds the next narrower ownership slice below this folder.
+- `System/` holds the next narrower ownership slice below this folder.
 
 ## Writes and side effects
 
-- Opens PDO connections
-- Executes SQL queries and migrations
-- Emits telemetry events for connection and query activity
-- Generates migration files through console adapters
+- This slice shapes or assembles runtime behavior; lower folders perform the concrete side effects when needed.
 
 ## Failure shape
 
-- Configuration or connection failures surface as Database exceptions from `System/Foundation/Exceptions`
-- Query compilation and execution failures surface from `System/Capabilities/QueryBuilder/Exceptions`
-- Migration failures surface from `System/Capabilities/Migrations/Exceptions`
+- Assembly or adapter mistakes surface here before the deeper runtime does the wrong thing.
 
 ## Debug first
 
-- Start at `System/Configuration/DatabaseBuilder.php` for assembly problems
-- Start at `System/Database.php` for public API shape issues
-- Start at the relevant capability folder for runtime behavior defects
+- Start with `Integrations/` holds the next narrower ownership slice below this folder.
+- Start with `System/` holds the next narrower ownership slice below this folder.

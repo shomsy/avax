@@ -6,20 +6,22 @@ namespace Avax\Database\Integrations\AvaxContainer;
 
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\ContainerInterface;
+use Avax\Database\Database;
+use Avax\Database\EntityManager;
+use Avax\Database\Migrations;
+use Avax\Database\Query;
+use Avax\Database\Schema;
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
 use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
 use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use Avax\Database\System\Capabilities\Migrations\Migrations;
 use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
 use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
-use Avax\Database\System\Capabilities\Querying\Querying;
-use Avax\Database\System\Capabilities\Telemetry\Telemetry;
-use Avax\Database\System\Capabilities\Transactions\Transactions;
-use Avax\Database\System\Database;
-use Avax\Database\System\DatabaseInterface;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\Telemetry;
+use Avax\Database\Transactions;
 
 /**
  * Optional Avax Container adapter for assembling the Database system.
@@ -35,32 +37,40 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
 
     public function register() : void
     {
-        $this->app->singleton(DatabaseInterface::class, function () {
+        $this->app->singleton(Database::class, function () {
             return $this->buildDatabase();
         });
 
-        $this->app->singleton(Database::class, function () {
-            return $this->app->get(id: DatabaseInterface::class);
-        });
-
         $this->app->singleton(Connections::class, function () {
-            return $this->app->get(id: DatabaseInterface::class)->connections();
+            return $this->app->get(id: Database::class)->connections();
         });
 
-        $this->app->singleton(Querying::class, function () {
-            return $this->app->get(id: DatabaseInterface::class)->query();
+        $this->app->singleton(Query::class, function () {
+            return $this->app->get(id: Database::class)->query();
         });
 
         $this->app->singleton(Migrations::class, function () {
-            return $this->app->get(id: DatabaseInterface::class)->migrations();
+            return $this->app->get(id: Database::class)->migrations();
+        });
+
+        $this->app->singleton(EntityManager::class, function () {
+            return $this->app->get(id: Database::class)->entityManager();
+        });
+
+        $this->app->singleton(Schema::class, function () {
+            return $this->app->get(id: Database::class)->schema();
         });
 
         $this->app->singleton(Transactions::class, function () {
-            return $this->app->get(id: DatabaseInterface::class)->transactions();
+            return $this->app->get(id: Database::class)->transactions();
         });
 
         $this->app->singleton(Telemetry::class, function () {
-            return $this->app->get(id: DatabaseInterface::class)->telemetry();
+            return $this->app->get(id: Database::class)->telemetry();
+        });
+
+        $this->app->bind(QueryBuilder::class, function () {
+            return $this->app->get(id: Query::class)->builder();
         });
 
         $this->app->singleton(MigrationLoader::class);
@@ -113,7 +123,7 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
         return [];
     }
 
-    private function buildDatabase() : DatabaseInterface
+    private function buildDatabase() : Database
     {
         return Database::configuration()
             ->usingConfig(config: $this->resolveDatabaseConfig())

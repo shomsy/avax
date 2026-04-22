@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Configuration;
 
+use Avax\Database\Database;
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Querying\Grammar\MySQLGrammar;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Database\System\Capabilities\ORM\EntityManager;
+use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Query\Query;
 use Avax\Database\System\Capabilities\Telemetry\Config\Config;
 use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Database\System\Capabilities\Telemetry\Events\Subscribers\DatabaseLoggerSubscriber;
 use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
-use Avax\Database\System\Database;
-use Avax\Database\System\DatabaseInterface;
 use Psr\Log\LoggerInterface;
 use Random\RandomException;
 
@@ -108,7 +109,7 @@ final class DatabaseBuilder
     /**
      * @throws RandomException
      */
-    public function ready() : DatabaseInterface
+    public function ready() : Database
     {
         $scope          = $this->scope ?? ExecutionScope::fresh();
         $telemetryState = new Config(items: $this->telemetryConfig);
@@ -130,17 +131,25 @@ final class DatabaseBuilder
         );
 
         $transactions = new Transactions(connections: $connections);
-        $querying    = new Querying(
-            connections : $connections,
-            transactions: $transactions,
-            eventBus    : $eventBus,
-            grammar     : $this->grammar ?? new MySQLGrammar(),
-            scope       : $scope
+        $query = new Query(
+            connections: $connections,
+            eventBus   : $eventBus,
+            grammar    : $this->grammar ?? new MySQLGrammar(),
+            scope      : $scope
         );
 
+        $schema     = new Schema(query: $query);
         $migrations = new Migrations(
-            querying   : $querying,
-            connections: $connections
+            query       : $query,
+            connections : $connections,
+            transactions: $transactions,
+            schema      : $schema
+        );
+
+        $entityManager = new EntityManager(
+            query       : $query,
+            connections : $connections,
+            transactions: $transactions
         );
 
         $telemetry = new Telemetry(
@@ -150,11 +159,13 @@ final class DatabaseBuilder
         );
 
         return new Database(
-            connections : $connections,
-            querying    : $querying,
-            migrations  : $migrations,
-            transactions: $transactions,
-            telemetry   : $telemetry
+            connections  : $connections,
+            query        : $query,
+            entityManager: $entityManager,
+            schema       : $schema,
+            migrations   : $migrations,
+            transactions : $transactions,
+            telemetry    : $telemetry
         );
     }
 }

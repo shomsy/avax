@@ -1,339 +1,551 @@
-Da. Sada već ima dovoljno stvarnog materijala da se nacrta **finalan target tree**, a ne samo smer. Zadržao bih ono što
-je već dobro postavljeno: `System/` kao pravi system root, `Database.php` i `DatabaseInterface.php` kao mali stabilni
-public surface, `DatabaseBuilder.php` kao jedini composition root, i capability podelu na connections, query builder,
-migrations, transactions i telemetry. To već postoji i već ide u dobrom smeru. Ono što fali je da svaka capability
-dobije još pošteniji, glasniji local shape.
+# Database: Laravel-like Query DSL + Doctrine-style ORM under AI Prompt rules
 
-Ja bih išao na ovakav target:
+## Enterprise Expansion v2 - Phase Plan
 
-```text
-Database/
-  System/
-    how-this-works.md
+Ovaj dokument proširuje original refactor.md sa enterprise-grade funkcijama.
 
-    Database.php
-    DatabaseInterface.php
+---
 
-    Capabilities/
-      how-this-works.md
+### Phase 1: Dialect Engine Expansion
 
-      Connections/
-        how-this-works.md
-        Connections.php
+**Cilj**: Multi-database podrška - MySQL, PostgreSQL, SQLite, SQL Server
 
-        ReadConnection/
-          how-this-works.md
-          ReadConnection.php
-          ReadPdo.php
-          ResolveDefaultConnection.php
-          RememberConnection.php
-
-        OpenConnection/
-          how-this-works.md
-          OpenConnection.php
-          BuildPhysicalConnection.php
-          PdoConnection.php
-
-        RunWithConnection/
-          how-this-works.md
-          RunWithConnection.php
-
-        Pools/
-          how-this-works.md
-          ConnectionPool.php
-          BorrowedConnection.php
-          PooledConnectionAuthority.php
-          PoolState.php
-
-          Contracts/
-            how-this-works.md
-            ConnectionPoolInterface.php
-
-          DTO/
-            how-this-works.md
-            ConnectionPoolMetrics.php
-
-        Contracts/
-          how-this-works.md
-          DatabaseConnection.php
-
-        ValueObjects/
-          how-this-works.md
-          ConnectionConfig.php
-          Dsn.php
-
-        Exceptions/
-          how-this-works.md
-          ConnectionException.php
-          ConnectionFailure.php
-          PoolLimitReachedException.php
-
-      Querying/
-        how-this-works.md
-        Querying.php
-
-        CreateBuilder/
-          how-this-works.md
-          CreateBuilder.php
-
-        Builder/
-          how-this-works.md
-          QueryBuilder.php
-          JoinClause.php
-
-          Concerns/
-            HasAdvancedMutations.php
-            HasAggregates.php
-            HasConditions.php
-            HasControlStructures.php
-            HasGroups.php
-            HasJoins.php
-            HasOrders.php
-            HasSchema.php
-            HasSoftDeletes.php
-            Macroable.php
-
-        Execution/
-          how-this-works.md
-          QueryOrchestrator.php
-          PDOExecutor.php
-
-        Grammar/
-          how-this-works.md
-          GrammarInterface.php
-          BaseGrammar.php
-          MySQLGrammar.php
-
-        State/
-          how-this-works.md
-          QueryState.php
-          PaginationOptions.php
-
-          AST/
-            JoinNode.php
-            NestedWhereNode.php
-            OrderNode.php
-            WhereNode.php
-
-        Identity/
-          how-this-works.md
-          IdentityMap.php
-
-        ValueObjects/
-          how-this-works.md
-          Expression.php
-          ColumnIdentifier.php
-          TableIdentifier.php
-          QuotedIdentifier.php
-
-        Enums/
-          how-this-works.md
-          Operator.php
-          QueryBuilderEnum.php
-
-        Exceptions/
-          how-this-works.md
-          InvalidCriteriaException.php
-          QueryException.php
-
-      Transactions/
-        how-this-works.md
-        Transactions.php
-
-        OnConnection/
-          how-this-works.md
-          OnConnection.php
-
-        RunTransaction/
-          how-this-works.md
-          RunTransaction.php
-          Transaction.php
-          TransactionScope.php
-
-        Contracts/
-          how-this-works.md
-          TransactionManagerInterface.php
-
-        Exceptions/
-          how-this-works.md
-          TransactionException.php
-
-      Migrations/
-        how-this-works.md
-        Migrations.php
-
-        Design/
-          how-this-works.md
-          BaseMigration.php
-
-          Table/
-            how-this-works.md
-            Blueprint.php
-            TableDefinition.php
-
-          Column/
-            DSL/
-              how-this-works.md
-              ColumnDefinition.php
-
-            Render/
-              how-this-works.md
-              ColumnSQLRenderer.php
-
-          TypeMapping/
-            how-this-works.md
-            SQLToPHPTypeMapper.php
-
-        CreateMigration/
-          how-this-works.md
-          MigrationGenerator.php
-
-          Stubs/
-            blank.stub
-            create.stub
-            update.stub
-
-        LoadMigrations/
-          how-this-works.md
-          MigrationLoader.php
-
-        RunMigrations/
-          how-this-works.md
-          MigrationRunner.php
-          MigrationRepository.php
-
-        RollbackMigrations/
-          how-this-works.md
-          RollbackMigrations.php
-
-        ReadMigrationStatus/
-          how-this-works.md
-          ReadMigrationStatus.php
-
-        SeedDatabase/
-          how-this-works.md
-          Seeder.php
-
-        ExportDatabase/
-          how-this-works.md
-          DatabaseExporter.php
-
-        SchemaOperations/
-          how-this-works.md
-          CreateDatabase.php
-          DropDatabase.php
-          DropTable.php
-          TruncateTable.php
-
-        Exceptions/
-          how-this-works.md
-          MigrationException.php
-
-      Telemetry/
-        how-this-works.md
-        Telemetry.php
-
-        Events/
-          how-this-works.md
-          Event.php
-          EventBus.php
-          EventSubscriberInterface.php
-          ConnectionOpened.php
-          ConnectionFailed.php
-          ConnectionAcquired.php
-          QueryExecuted.php
-
-          Subscribers/
-            how-this-works.md
-            DatabaseLoggerSubscriber.php
-
-        Support/
-          how-this-works.md
-          ExecutionScope.php
-          SequenceTracker.php
-
-        Config/
-          how-this-works.md
-          Config.php
-
-    Configuration/
-      how-this-works.md
-      DatabaseBuilder.php
-
-    Foundation/
-      how-this-works.md
-
-      Exceptions/
-        how-this-works.md
-        DatabaseException.php
-        DatabaseThrowable.php
-
-  Integrations/
-    how-this-works.md
-
-    AvaxContainer/
-      how-this-works.md
-      DatabaseServiceProvider.php
-
-    Console/
-      how-this-works.md
-      MakeMigrationCommand.php
-      MigrateCommand.php
-      MigrateRollbackCommand.php
-      MigrateStatusCommand.php
-      SeedCommand.php
-      ExportCommand.php
-
-  docs/
-    System/
-      ...
-    Integrations/
-      ...
-
-  examples/
-    querying/
-      ...
-    migrations/
-      ...
-
-  tests/
-    System/
-      ...
-    Integrations/
-      ...
+```
+System/Capabilities/Query/Grammar/
+├── GrammarInterface.php    (postoji - proširiti)
+├── MySQLGrammar.php       (postoji)
+├── PostgreSQLGrammar.php  [NOVO]
+├── SQLiteGrammar.php      [NOVO]
+├── SQLServerGrammar.php [NOVO]
+└── DialectFactory.php    [NOVO]
 ```
 
-Ovaj tree je namerno **capability-first na root-u**, jer i sadašnji sistem već jasno kaže da caller bira capability, a
-`DatabaseBuilder::ready()` sastavlja capability ownere za connections, query builder, migrations, transactions i
-telemetry. Znači, root priča sistema nije “jedan end-to-end flow”, nego “jedan database system sa više velikih
-sposobnosti”. Zato ne bih uvodio lažni root `Flows/` samo da bi tree izgledao “više arhitektonski”. Flow treba da
-postoji tamo gde je stvarno sekvenca, pa su zato `ReadConnection`, `OpenConnection`, `RunWithConnection`,
-`CreateMigration`, `LoadMigrations`, `RunMigrations`, `RollbackMigrations`, `RunTransaction` i slični folderi lokalni
-flow slice-ovi unutar capability-ja. To je direktno u skladu sa tvojim pravilima o fractal ownership-u.
+**NOVO**: `PostgreSQLGrammar` sa:
 
-Najvažnija rename odluka je da bih `QueryBuilder` capability preveo u **`Querying/`**, zato što ta zona već sada ne
-poseduje samo builder, nego i grammar compilation, executor dispatch, raw expression/value objects, query exceptions i
-identity-map ponašanje. Drugim rečima, to više nije “jedan builder”, nego cela query runtime priča. `QueryBuilder` neka
-ostane unutra kao glavni fluent unit, ali capability treba da se zove šire i poštenije.
+- JSONB, ARRAY, HSTORE tipovi
+- ON CONFLICT (upsert)
+- RETURNING
+- Window functions (ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD)
+- WITH RECURSIVE (CTE)
+- ILIKE, ~ (regex)
+- advisory locks
 
-`Migrations` ostaje posebna velika capability, ali ne kao izolovan svet. `BaseMigration` već direktno zavisi od
-`QueryBuilder` i grammar-a za stvarno izvršavanje schema SQL-a, što znači da migration capability prirodno stoji na
-query runtime-u. Zato je ispravno da bude sibling capability, ali da joj unutrašnja priča vrišti kroz dizajn,
-generisanje, učitavanje, izvršavanje, rollback, status, export i seed.
+**NOVO**: `SQLiteGrammar` sa:
 
-`Transactions` i `Telemetry` bih zadržao kao odvojene capability-je, ne bih ih gurao u foundation. Trenutna
-dokumentacija za transactions već kaže da ta zona poseduje transaction boundaries, nested handling, savepoints i
-deferred identity-map flush, a telemetry već poseduje event bus, correlation scope, sequence tracking i logger
-subscribers. To su stvarne sposobnosti sistema, nisu neutralni atomi.
+- UPSERT (ON CONFLICT)
+- RETURNING
+- Window functions (novije verzije)
+- REGEXP (via extension)
 
-Ono što bih potpuno ubio iz target verzije su **stari lifecycle/module registry ostaci**. Tvoj novi
-`Configuration/how-this-works.md` već eksplicitno kaže da `DatabaseBuilder` zamenjuje stari lifecycle i module registry
-pattern, tako da `Manifest`, stari module boot/shutdown jezik i slični fosili ne treba da prežive u scream verziji. Isto
-važi za generičke ownership nazive poput `ConnectionManager` kao finalnog centra sveta. To mogu biti prelazni adapteri
-tokom refaktora, ali ne i konačni shape.
+**NOVO**: `SQLServerGrammar` sa:
 
-Jedna stvar koju bih tvrdoglavo sačuvao je public surface. `Database.php` i `DatabaseInterface.php` već nude jasan mali
-ulaz sa `connections()`, `queryBuilder()/query()`, `migrations()/schema()`, `transactions()`, `telemetry()`, `builder()`
-i `table()`. To je dobar paket-shaped entry i ne treba ga razbijati. Menjaš unutrašnju arhitekturu, ne rušiš lice
-komponente bez potrebe.
+- MERGE
+- OUTPUT clause
+- Window functions
+- CTEs
+- PIVOT/UNPIVOT
+- hierarchyid
 
+---
+
+### Phase 2: Query IR/AST
+
+**Cilj**: Intermediate Representation za query optimizaciju, linting, static analysis
+
+```
+System/Capabilities/Query/IR/
+├── Nodes/
+│   ├── QueryNode.php
+│   ├── SelectNode.php
+│   ├── FromNode.php
+│   ├── JoinNode.php
+│   ├── WhereNode.php
+│   ├── GroupByNode.php
+│   ├── OrderByNode.php
+│   ├── HavingNode.php
+│   └── ProjectionNode.php
+├── IRBuilder.php        (fluent API za gradnju IR-a)
+├── IRTransformer.php   (AST → SQL)
+├── IRValidator.php     (static analysis, query safety)
+├── IRNormalizer.php    (canonical form)
+└── IRCache.php        (query plan caching)
+```
+
+**Svrha**:
+
+- Optimizacija upita pre renderovanja
+- Statička validacija (postojanje kolona, tipovi)
+- Query plan fingerprinting
+- Cross-dialect portability
+
+---
+
+### Phase 3: Type-Safe Projections
+
+**Cilj**: Typed result mapping umesto `array`
+
+```
+System/Capabilities/Query/Projections/
+├── Projection.php         (interface)
+├── TypedResult.php        (generic wrapper)
+├── ResultMapper.php       (mapiranje)
+├── ProjectionBuilder.php   (fluent gradnja)
+└── TypeGuesser.php         (inference iz query-ja)
+```
+
+**API**:
+
+```php
+// Umesto:
+$users = $qb->get(); // array
+
+// Sa projekcijom:
+$result = $qb->select('id', 'name', 'email')
+    ->as(UserSummary::class)
+    ->get();
+
+/** @var UserSummary $user */ foreach ($result as $user) {
+    echo $user->name; // type-safe
+}
+```
+
+---
+
+### Phase 4: Advanced Query Features
+
+**Cilj**: CTE, Window Functions, Bulk Operations, Upsert
+
+```
+System/Capabilities/Query/Advanced/
+├── CTE/
+│   ├── CTEBuilder.php
+│   ├── RecursiveCTE.php
+│   └── CTEUnion.php
+├── WindowFunctions/
+│   ├── WindowFunction.php
+│   ├── RowNumber.php
+│   ├── Rank.php
+│   ├── LagLead.php
+│   └── PartitionBuilder.php
+├── BulkOperations/
+│   ├── BatchInsert.php
+│   ├── BatchUpdate.php
+│   └── BulkUpsert.php
+└── Upsert/
+    ├── UpsertBuilder.php
+    └── OnConflict.php
+```
+
+**Primeri**:
+
+```php
+// CTE
+$qb->with('cte_rank', function($cte) {
+    return $cte->selectRaw('ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) as rn')
+        ->from('employees');
+})->from('cte_rank')->where('rn', '<=', 3);
+
+// Window function
+$qb->select('name', 'department')
+  ->over('department', 'ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC)')
+  ->rank('department_salary_rank');
+
+// Bulk upsert
+$db->upsert('users')->values($users)->onConflict('email')->doNothing();
+```
+
+---
+
+### Phase 5: Transaction Control
+
+**Cilj**: Isolation levels, retry policies, savepoints, deadlock handling
+
+```
+System/Capabilities/Transactions/
+├── Transactions.php       (proširiti)
+├── IsolationLevels.php    [NOVO]
+│   ├── READ_UNCOMMITTED
+│   ├── READ_COMMITTED
+│   ├── REPEATABLE_READ
+│   └── SERIALIZABLE
+├── SavepointManager.php  [NOVO]
+├── RetryPolicy.php        [NOVO]
+│   ├── maxAttempts
+│   ├── backoffStrategy
+│   └── retryOn
+├── DeadlockDetector.php   [NOVO]
+├── LockManager.php       [NOVO]
+│   ├── advisoryLock()
+│   ├── pgAdvisoryLock()
+│   └── rowLock()
+└── TransactionProfiler.php [NOVO]
+```
+
+---
+
+### Phase 6: Observability
+
+**Cilj**: OpenTelemetry, query fingerprinting, N+1 detection
+
+```
+System/Capabilities/Telemetry/
+├── Telemetry.php       (proširiti)
+├── OpenTelemetry/     [NOVO]
+│   ├── SpanBuilder.php
+│   ├── TraceExporter.php
+│   ├── MetricsExporter.php
+│   └── OtelConfig.php
+├── QueryFingerprint.php [NOVO]
+├── SlowQueryDetector.php [NOVO]
+├── N1QueryDetector.php [NOVO]
+├── QueryTimeline.php   [NOVO]
+└── DbMetricsCollector.php [NOVO]
+```
+
+---
+
+### Phase 7: DataLoader Pattern
+
+**Cilj**: Batched relation loading, N+1 prevention
+
+```
+System/Capabilities/ORM/
+├── DataLoader/          [NOVO]
+│   ├── DataLoaderInterface.php
+│   ├── BatchLoader.php
+│   ├── LoaderRegistry.php
+│   └── LoaderContext.php
+└── N1QueryDetector.php [NOVO] (alarm, ne prevention)
+```
+
+---
+
+### Phase 8: Modeling Enhancements
+
+**Cilj**: Composite PKs, unique constraints, custom types
+
+```
+System/Capabilities/ORM/Metadata/
+├── FieldMetadata.php  (proširiti)
+│   - unique: bool
+│   - generated: bool
+│   - computed: string|callable
+├── EntityMetadata.php (proširiti)
+│   - compositeKeys: array
+│   - naturalKeys: array
+│   - uniqueConstraints: array
+└── FieldTypeRegistry.php [NOVO]
+    - registerCustomType()
+    - getTypeHandler()
+```
+
+---
+
+## Enterprise Public API Additions
+
+```php
+// Dialect-aware query
+$db->query()
+   ->useDialect('postgresql')
+   ->table('users');
+
+// Type-safe projections
+$result = $qb->select('id', 'name')
+    ->as(UserVO::class)
+    ->get();
+
+// CTE
+$qb->with('high_earners', fn($cte) => $cte->...)
+    ->from('high_earners');
+
+// Window functions
+$qb->select('*')
+   ->over('department', 'ROW_NUMBER() OVER (...)');
+
+// Bulk upsert
+$db->upsert('users')->values($batch)->onConflict('email')->doUpdate();
+
+// Transaction control
+$db->transactions()
+   ->isolation(Isolation::REPEATABLE_READ)
+   ->retry(3)
+   ->run(fn() => ...);
+```
+
+---
+
+## Test Plan - Enterprise
+
+- Dialect switching tests (MySQL ↔ PostgreSQL ↔ SQLite)
+- IR validation tests
+- Projection mapping tests
+- CTE and window function tests
+- Bulk upsert tests
+- Isolation level tests
+- Retry policy tests
+- N+1 detection tests
+- Query fingerprint tests
+
+---
+
+## Locked Architectural Decisions (v2)
+
+- Dialect Factory se registruje kroz DatabaseBuilder (ne globals)
+- IR je interni - ne izlaže se kao public API
+- Projections su opt-in (array je default za back-compat)
+- Window functions rade samo ako ih dialect podržava
+- DataLoader je default za relation loading
+- Retry policy se konfiguriše po connection-u, ne global
+
+---
+
+## Assumptions (v2)
+
+- PostgreSQL je prioritetni dialect #1 posle MySQL
+- SQLite je za testiranje embedded scenarija
+- IR caching za prepared statement reuse
+- DataLoader koristi query batching, ne N+1
+
+---
+
+## Test Plan - Enterprise
+
+- Dialect switching tests (MySQL ↔ PostgreSQL ↔ SQLite)
+- IR validation tests
+- Projection mapping tests
+- CTE and window function tests
+- Bulk upsert tests
+- Isolation level tests
+- Retry policy tests
+- N+1 detection tests
+- Query fingerprint tests
+
+---
+
+## Locked Architectural Decisions (v2)
+
+- Dialect Factory se registruje kroz DatabaseBuilder (ne globals)
+- IR je interni - ne izlaže se kao public API
+- Projections su opt-in (array je default za back-compat)
+- Window functions rade samo ako ih dialect podržava
+- DataLoader je default za relation loading
+- Retry policy se konfiguriše po connection-u, ne global
+
+---
+
+## Assumptions (v2)
+
+- PostgreSQL je prioritetni dialect #1 posle MySQL
+- SQLite je za testiranje embedded scenarija
+- IR caching za prepared statement reuse
+- DataLoader koristi query batching, ne N+1
+
+---
+
+## Current Tree
+
+```text
+Foundation/
+├── Entity/Entity.php
+├── Repository/Repository.php
+└── Database/
+    ├── Integrations/
+    ├── System/
+    │   ├── Database.php
+    │   ├── DatabaseInterface.php
+    │   ├── Configuration/DatabaseBuilder.php
+    │   └── Capabilities/
+    │       ├── Connections/
+    │       ├── Querying/
+    │       ├── Migrations/
+    │       ├── Transactions/
+    │       └── Telemetry/
+    ├── refactor.md
+    └── how-this-works.md
+```
+
+## Target Tree
+
+```text
+Foundation/Database/
+├── Database.php
+├── Query.php
+├── EntityManager.php
+├── Schema.php
+├── Migrations.php
+├── Transactions.php
+├── Telemetry.php
+├── Integrations/
+│   ├── AvaxContainer/
+│   └── Console/
+└── System/
+    ├── Configuration/
+    │   └── DatabaseBuilder.php
+    ├── Foundation/
+    └── Capabilities/
+        ├── Connections/
+        ├── Query/
+        │   ├── Query.php
+        │   ├── Builder/
+        │   ├── Execution/
+        │   ├── Grammar/
+        │   ├── DSL/
+        │   └── State/
+        ├── ORM/
+        │   ├── EntityManager.php
+        │   ├── Metadata/
+        │   ├── Attributes/
+        │   ├── Hydration/
+        │   ├── Persisters/
+        │   ├── UnitOfWork/
+        │   ├── IdentityMap/
+        │   ├── Relations/
+        │   ├── Proxies/
+        │   └── Repositories/
+        ├── Migrations/
+        │   ├── Migrations.php
+        │   ├── Schema/
+        │   ├── CreateMigration/
+        │   ├── LoadMigrations/
+        │   ├── RunMigrations/
+        │   ├── RollbackMigrations/
+        │   ├── ReadMigrationStatus/
+        │   ├── ExportDatabase/
+        │   └── SeedDatabase/
+        ├── Transactions/
+        └── Telemetry/
+```
+
+## Summary
+
+- Root Database komponenta dobija **realne javne predstavnike** za glavne slice-ove: `Query`, `EntityManager`, `Schema`,
+  `Migrations`, `Transactions`, `Telemetry`.
+- Trenutni `Querying` se deli na dve poštene capability zone:
+    - `Query`: Laravel-like fluent DSL i SQL execution surface
+    - `ORM`: Doctrine/Hibernate/EF-style persistence model
+- `Schema` postaje javni Laravel-like facade za schema DSL, dok `Migrations` ostaje runtime/admin capability za load,
+  run, rollback, status, export i seed.
+- `IdentityMap` i deferred-write ponašanje izlaze iz query capability-ja i prelaze pod `ORM/UnitOfWork`, jer su ORM
+  concern, ne query DSL concern.
+- Root predstavnici su **instance-based public surfaces**, ne Laravel-style global static facades; inspiracija je
+  Laravel ergonomija, ali arhitektura ostaje AI Prompt-compliant.
+
+## Locked Architectural Decisions
+
+- `Querying/` se preimenuje u `Query/` da ne postoji parallel naming između public `Query` surface-a i internog
+  capability-ja.
+- ORM postaje zaseban capability umesto da ostane razliven kroz `QueryBuilder`, `Repository` i `IdentityMap`.
+- `Foundation/Entity/Entity.php` prestaje da bude kanonski ORM oslonac; ciljni ORM koristi **POPO entitete sa PHP
+  attributes metadata**.
+- `Foundation/Repository/Repository.php` prestaje da bude kanonski persistence API; zamenjuje ga ORM repository model
+  vezan za `EntityManager`.
+- `QueryBuilder::transaction()` se uklanja iz javnog surface-a; transaction ownership ostaje isključivo u `Transactions`
+  i ORM transactional API-ju.
+- `Migrations/RunMigrations` više ne sme zavisiti od `QueryBuilder::transaction()`, nego od `Transactions::run(...)`.
+- `SchemaOperations/` se preoblikuje u `Migrations/Schema/` da folder kaže capability, ne tehnički bucket.
+- Root representative class se uvodi samo kada ima jasno public ownership značenje; ne uvode se generički `Manager` ili
+  `Facade` nazivi bez potrebe.
+
+## Public API / Type Changes
+
+- `Database` postaje kanonski composition root sa:
+    - `connections()`
+    - `query()`
+    - `entityManager()`
+    - `schema()`
+    - `migrations()`
+    - `transactions()`
+    - `telemetry()`
+    - `table(string $table)`
+- `Query` je javni fluent DSL entrypoint i daje:
+    - `table(...)`
+    - `builder(...)`
+    - `from(...)`
+    - `raw(...)`
+    - `on(connection: ...)`
+- `EntityManager` je javni ORM entrypoint i daje:
+    - `find(...)`
+    - `persist(...)`
+    - `remove(...)`
+    - `flush()`
+    - `clear()`
+    - `refresh(...)`
+    - `repository(...)`
+    - `transactional(...)`
+- `Schema` je javni schema DSL entrypoint i daje Laravel-like surface:
+    - `create(...)`
+    - `table(...)`
+    - `drop(...)`
+    - `dropIfExists(...)`
+    - `truncate(...)`
+    - `createDatabase(...)`
+    - `dropDatabase(...)`
+- `Migrations` ostaje runtime surface:
+    - `loader()`
+    - `runner()`
+    - `rollbacker()`
+    - `status()`
+    - `generator()`
+    - `exporter()`
+    - `seed(...)`
+- ORM metadata je **PHP attributes first**. Docblock annotations mogu postojati samo kao migracioni compatibility driver
+  ako se pokaže potrebnim, ali nisu kanonski model.
+
+## Implementation Changes
+
+- **Query capability**
+    - Zadržati Laravel-like builder ergonomiju i proširiti je prema modernom DSL standardu.
+    - `Builder` ostaje query object, ne ORM owner.
+    - `Execution`, `Grammar`, `State` i DSL concerns ostaju pod Query capability-jem.
+    - Iz Query capability-ja izvući `IdentityMap` i transaction flush logiku.
+
+- **ORM capability**
+    - Uvesti `EntityManager`, metadata reader, hydrator, persister, repository factory, UnitOfWork i IdentityMap.
+    - Uvesti relation mapping i cascade ownership za minimum: `ManyToOne`, `OneToMany`, `OneToOne`, `ManyToMany`.
+    - Uvesti lazy loading/proxy support kao deo enterprise core scope-a.
+    - ORM gradi na `Query`, `Transactions` i `Connections`, ali ne sme da ih zamagli.
+
+- **Schema + Migrations**
+    - Razdvojiti javni `Schema` DSL od migration runtime priče.
+    - Schema design i type mapping ostaju u migrations capability-ju, ali pod jasno imenovanim `Schema/` ownership-om.
+    - Uskladiti type mapping sa ORM metadata modelom kako bi migrations i ORM govorili isti jezik za tipove, ključeve i
+      relacije.
+
+- **Docs / AI Prompt compliance**
+    - `how-this-works.md` ostaje u svakom ownership folderu i svaki mora koristiti realne komande, realne fajlove i
+      realne funkcije.
+    - `docs/Foundation/Database/...` mora mirror-ovati source tree i dokumentovati novi public root surfaces i
+      capability split.
+    - Generički i placeholder `how-this-works` tekstovi se brišu i pišu ponovo.
+    - Legacy konceptualni docs koji još pričaju o `Kernel`, `Manifest`, starom module sistemu ili starom query
+      ownership-u moraju biti prepisani ili uklonjeni.
+
+## Test Plan
+
+- Query DSL tests:
+    - Laravel-like chaining za select/filter/join/group/order/aggregate/paginate/upsert/raw guardrails
+    - builder cloning, connection switching i pretend mode
+- ORM tests:
+    - attributes metadata reading
+    - entity hydration i identity stability
+    - dirty tracking, `persist/remove/flush`
+    - UnitOfWork ordering
+    - relation loading, cascade rules i lazy proxies
+    - repository resolution kroz `EntityManager`
+- Schema/Migrations tests:
+    - `Schema` facade API
+    - migration load/run/rollback/status/export/seed
+    - migrations inside `Transactions`
+- Governance tests:
+    - nema `QueryBuilder::transaction()`
+    - nema parallel naming alias-a na public root-u
+    - svaki ownership folder ima validan `how-this-works.md`
+    - `docs/Foundation/Database/...` mirroruje source tree
+
+## Assumptions
+
+- Laravel je inspiracija za **ergonomiju Query DSL-a i Schema API-ja**, ne za static/global facade model.
+- Doctrine/Hibernate/EF Core su inspiracija za **ORM semantics**, identity, UnitOfWork, metadata i repository model.
+- Root representative classes postoje samo za velike, user-facing slice-ove; ne uvode se mehanički u svaki folder.
+- ORM target ne zahteva da entiteti nasleđuju baznu klasu; atributi i metadata su kanonski mehanizam.
+- `EntityManager` je kanonski ORM public naziv; ne uvodi se dodatni paralelni public naziv tipa `orm()`.

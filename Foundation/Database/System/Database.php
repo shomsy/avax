@@ -6,8 +6,10 @@ namespace Avax\Database\System;
 
 use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Database\System\Capabilities\ORM\EntityManager;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Query;
 use Avax\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Database\System\Configuration\DatabaseBuilder;
@@ -20,11 +22,13 @@ use Throwable;
 final readonly class Database implements DatabaseInterface
 {
     public function __construct(
-        private Connections         $connections,
-        private Querying $querying,
-        private Migrations          $migrations,
-        private Transactions        $transactions,
-        private Telemetry           $telemetry
+        private Connections   $connections,
+        private Query         $query,
+        private EntityManager $entityManager,
+        private Schema        $schema,
+        private Migrations    $migrations,
+        private Transactions  $transactions,
+        private Telemetry     $telemetry
     ) {}
 
     public static function configuration() : DatabaseBuilder
@@ -37,19 +41,14 @@ final readonly class Database implements DatabaseInterface
         return $this->connections;
     }
 
-    public function querying() : Querying
+    public function query() : Query
     {
-        return $this->querying;
+        return $this->query;
     }
 
-    public function queryBuilder() : Querying
+    public function entityManager() : EntityManager
     {
-        return $this->querying();
-    }
-
-    public function query() : Querying
-    {
-        return $this->querying();
+        return $this->entityManager;
     }
 
     public function migrations() : Migrations
@@ -57,9 +56,9 @@ final readonly class Database implements DatabaseInterface
         return $this->migrations;
     }
 
-    public function schema() : Migrations
+    public function schema() : Schema
     {
-        return $this->migrations();
+        return $this->schema;
     }
 
     public function transactions() : Transactions
@@ -76,17 +75,8 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(string|null $connectionName = null) : QueryBuilder
-    {
-        return $this->querying->builder(connectionName: $connectionName);
-    }
-
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
     public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
-        return $this->querying->from(table: $table, connectionName: $connectionName);
+        return $this->query->from(table: $table, connectionName: $connectionName);
     }
 }

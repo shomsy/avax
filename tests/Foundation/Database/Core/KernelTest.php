@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\Core;
 
+use Avax\Database\Database;
+use Avax\Database\EntityManager;
+use Avax\Database\Migrations;
+use Avax\Database\Query;
+use Avax\Database\Schema;
 use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Migrations\Migrations;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
-use Avax\Database\System\Capabilities\Telemetry\Telemetry;
-use Avax\Database\System\Capabilities\Transactions\Transactions;
-use Avax\Database\System\Database;
-use Avax\Database\System\DatabaseInterface;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\Telemetry;
+use Avax\Database\Transactions;
 use Avax\Tests\TestCase;
 
 class KernelTest extends TestCase
@@ -29,18 +30,14 @@ class KernelTest extends TestCase
                                                                ],
                                                            ])->ready();
 
-        $this->assertInstanceOf(expected: DatabaseInterface::class, actual: $database);
+        $this->assertInstanceOf(expected: Database::class, actual: $database);
         $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());
-        $this->assertInstanceOf(expected: Querying::class, actual: $database->query());
+        $this->assertInstanceOf(expected: Query::class, actual: $database->query());
+        $this->assertInstanceOf(expected: EntityManager::class, actual: $database->entityManager());
+        $this->assertInstanceOf(expected: Schema::class, actual: $database->schema());
         $this->assertInstanceOf(expected: Migrations::class, actual: $database->migrations());
         $this->assertInstanceOf(expected: Transactions::class, actual: $database->transactions());
         $this->assertInstanceOf(expected: Telemetry::class, actual: $database->telemetry());
-    }
-
-    public function test_database_capability_aliases_point_to_same_instances() : void
-    {
-        $this->assertSame(expected: $this->database->queryBuilder(), actual: $this->database->query());
-        $this->assertSame(expected: $this->database->migrations(), actual: $this->database->schema());
     }
 
     public function test_database_table_entrypoint_returns_query_builder() : void

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Migrations\RunMigrations;
 
 use Avax\Database\System\Capabilities\Migrations\Exceptions\MigrationException;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Transactions\Transactions;
 use Throwable;
 
 /**
@@ -17,14 +18,20 @@ final readonly class MigrationRunner
 {
     private QueryBuilder        $builder;
     private MigrationRepository $repository;
+    private Transactions $transactions;
+    private string|null  $connectionName;
 
     public function __construct(
         MigrationRepository $repository,
-        QueryBuilder        $builder
+        QueryBuilder $builder,
+        Transactions $transactions,
+        string|null  $connectionName = null
     )
     {
-        $this->repository = $repository;
-        $this->builder    = $builder;
+        $this->repository     = $repository;
+        $this->builder        = $builder;
+        $this->transactions   = $transactions;
+        $this->connectionName = $connectionName;
     }
 
     public function up(array $migrations, string $path, bool $dryRun = false) : void
@@ -70,7 +77,7 @@ final readonly class MigrationRunner
                 $migration->setQueryBuilder($builder);
             }
 
-            $builder->transaction(callback: function () use ($migration, $method, $name, $batch, $checksum) {
+            $this->transactions->run(callback      : function () use ($migration, $method, $name, $batch, $checksum) {
                 $migration->{$method}();
 
                 if ($method === 'up') {
@@ -78,7 +85,7 @@ final readonly class MigrationRunner
                 } else {
                     $this->repository->remove(name: $name);
                 }
-            });
+            },                       connectionName: $this->connectionName);
         } catch (Throwable $e) {
             throw new MigrationException(
                 migrationClass: $name,

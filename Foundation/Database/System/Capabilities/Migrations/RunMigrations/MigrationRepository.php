@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Migrations\RunMigrations;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**
@@ -16,12 +17,15 @@ final class MigrationRepository
 {
     private string                $table = 'migrations';
     private readonly QueryBuilder $builder;
+    private readonly Schema $schema;
 
     public function __construct(
-        QueryBuilder $builder
+        QueryBuilder $builder,
+        Schema       $schema
     )
     {
         $this->builder = $builder;
+        $this->schema = $schema;
     }
 
     /**
@@ -94,7 +98,7 @@ final class MigrationRepository
      */
     public function createRepository() : void
     {
-        $this->builder->create(table: $this->table, callback: static function ($table) {
+        $this->schema->create(table: $this->table, callback: static function ($table) {
             $table->id();
             $table->string(name: 'migration');
             $table->integer(name: 'batch');

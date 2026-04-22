@@ -12,12 +12,12 @@ use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrati
 use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\CreateDatabase;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropDatabase;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\DropTable;
-use Avax\Database\System\Capabilities\Migrations\SchemaOperations\TruncateTable;
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Querying\Querying;
+use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Query;
+use Avax\Database\System\Capabilities\Transactions\Transactions;
+use InvalidArgumentException;
 use ReflectionException;
 use Throwable;
 
@@ -27,8 +27,10 @@ use Throwable;
 final readonly class Migrations
 {
     public function __construct(
-        private Querying $querying,
-        private Connections $connections
+        private Query        $query,
+        private Connections  $connections,
+        private Transactions $transactions,
+        private Schema|null  $schema = null
     ) {}
 
     /**
@@ -37,7 +39,12 @@ final readonly class Migrations
      */
     public function builder(string|null $connectionName = null) : QueryBuilder
     {
-        return $this->querying->builder(connectionName: $connectionName);
+        return $this->query->builder(connectionName: $connectionName);
+    }
+
+    public function schema() : Schema
+    {
+        return $this->schema ?? new Schema(query: $this->query);
     }
 
     /**
@@ -46,7 +53,7 @@ final readonly class Migrations
      */
     public function create(string $table, callable $callback, string|null $connectionName = null) : void
     {
-        $this->builder(connectionName: $connectionName)->create(table: $table, callback: $callback);
+        $this->schema()->create(table: $table, callback: $callback, connectionName: $connectionName);
     }
 
     /**
@@ -55,7 +62,7 @@ final readonly class Migrations
      */
     public function dropIfExists(string $table, string|null $connectionName = null) : void
     {
-        $this->dropTable(connectionName: $connectionName)->named(table: $table);
+        $this->schema()->dropIfExists(table: $table, connectionName: $connectionName);
     }
 
     /**
@@ -64,7 +71,7 @@ final readonly class Migrations
      */
     public function truncate(string $table, string|null $connectionName = null) : void
     {
-        $this->truncateTable(connectionName: $connectionName)->named(table: $table);
+        $this->schema()->truncate(table: $table, connectionName: $connectionName);
     }
 
     /**
@@ -73,7 +80,7 @@ final readonly class Migrations
      */
     public function createDatabase(string $name, string|null $connectionName = null) : void
     {
-        $this->createDatabaseOperation(connectionName: $connectionName)->named(name: $name);
+        $this->schema()->createDatabase(name: $name, connectionName: $connectionName);
     }
 
     /**
@@ -82,7 +89,7 @@ final readonly class Migrations
      */
     public function dropDatabase(string $name, string|null $connectionName = null) : void
     {
-        $this->dropDatabaseOperation(connectionName: $connectionName)->named(name: $name);
+        $this->schema()->dropDatabase(name: $name, connectionName: $connectionName);
     }
 
     /**
@@ -91,7 +98,10 @@ final readonly class Migrations
      */
     public function repository(string|null $connectionName = null) : MigrationRepository
     {
-        return new MigrationRepository(builder: $this->builder(connectionName: $connectionName));
+        return new MigrationRepository(
+            builder: $this->builder(connectionName: $connectionName),
+            schema : $this->schema()
+        );
     }
 
     /**
@@ -102,7 +112,9 @@ final readonly class Migrations
     {
         return new MigrationRunner(
             repository: $this->repository(connectionName: $connectionName),
-            builder   : $this->builder(connectionName: $connectionName)
+            builder   : $this->builder(connectionName: $connectionName),
+            transactions: $this->transactions,
+            connectionName: $connectionName
         );
     }
 
@@ -150,39 +162,14 @@ final readonly class Migrations
         );
     }
 
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
-    public function createDatabaseOperation(string|null $connectionName = null) : CreateDatabase
+    public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
     {
-        return new CreateDatabase(builder: $this->builder(connectionName: $connectionName));
-    }
+        $instance = is_string($seeder) ? new $seeder() : $seeder;
 
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
-    public function dropDatabaseOperation(string|null $connectionName = null) : DropDatabase
-    {
-        return new DropDatabase(builder: $this->builder(connectionName: $connectionName));
-    }
+        if (! $instance instanceof Seeder) {
+            throw new InvalidArgumentException(message: 'Seed target must extend the base Seeder class.');
+        }
 
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
-    public function dropTable(string|null $connectionName = null) : DropTable
-    {
-        return new DropTable(builder: $this->builder(connectionName: $connectionName));
-    }
-
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
-    public function truncateTable(string|null $connectionName = null) : TruncateTable
-    {
-        return new TruncateTable(builder: $this->builder(connectionName: $connectionName));
+        $instance->withBuilder(builder: $this->builder(connectionName: $connectionName))->run();
     }
 }

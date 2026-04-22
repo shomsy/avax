@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Repository;
 
-use Avax\Database\System\Capabilities\Querying\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Exception;
 use ReflectionException;
 use RuntimeException;

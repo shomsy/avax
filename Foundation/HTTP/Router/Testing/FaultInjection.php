@@ -32,7 +32,7 @@ final class FaultInjection
             'type'    => 'filesystem_read_failure',
             'pattern' => $pattern,
             'handler' => function (string $path) {
-                if (fnmatch($this->activeFaults['filesystem_read']['pattern'], basename($path))) {
+                if (fnmatch(pattern: $this->activeFaults['filesystem_read']['pattern'], filename: basename(path: $path))) {
                     throw new RuntimeException(message: "Injected filesystem read failure for: {$path}");
                 }
             }
@@ -48,7 +48,7 @@ final class FaultInjection
             'type'    => 'filesystem_write_failure',
             'pattern' => $pattern,
             'handler' => function (string $path) {
-                if (fnmatch($this->activeFaults['filesystem_write']['pattern'], basename($path))) {
+                if (fnmatch(pattern: $this->activeFaults['filesystem_write']['pattern'], filename: basename(path: $path))) {
                     throw new RuntimeException(message: "Injected filesystem write failure for: {$path}");
                 }
             }
@@ -82,7 +82,7 @@ final class FaultInjection
             'type'    => 'random_resolution_failure',
             'rate'    => $failureRate,
             'handler' => static function () use ($failureRate) {
-                if (mt_rand(0, 100) / 100 < $failureRate) {
+                if (mt_rand(min: 0, max: 100) / 100 < $failureRate) {
                     throw new RuntimeException(message: "Injected random resolution failure");
                 }
             }
@@ -97,9 +97,9 @@ final class FaultInjection
         $this->activeFaults['cache_corruption'] = [
             'type'    => 'cache_corruption',
             'handler' => static function (&$data) {
-                if (is_array($data)) {
+                if (is_array(value: $data)) {
                     // Corrupt route data randomly
-                    $data = array_slice($data, 0, mt_rand(0, count($data) - 1));
+                    $data = array_slice(array: $data, offset: 0, length: mt_rand(min: 0, max: count(value: $data) - 1));
                 }
             }
         ];
@@ -114,7 +114,7 @@ final class FaultInjection
             'type'     => 'network_partition',
             'delay_ms' => $delayMs,
             'handler'  => static function () use ($delayMs) {
-                usleep($delayMs * 1000); // Convert to microseconds
+                usleep(microseconds: $delayMs * 1000); // Convert to microseconds
                 throw new RuntimeException(message: "Injected network partition delay");
             }
         ];
@@ -193,7 +193,7 @@ final class FaultInjection
      */
     public function getActiveFaults() : array
     {
-        return array_keys($this->activeFaults);
+        return array_keys(array: $this->activeFaults);
     }
 
     /**

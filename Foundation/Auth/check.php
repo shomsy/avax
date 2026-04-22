@@ -2,18 +2,18 @@
 $baseDir       = '/home/shomsy/projects/components/Foundation/Auth/System';
 $baseNamespace = 'Avax\\Auth\\System';
 
-$iterator   = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir));
+$iterator   = new RecursiveIteratorIterator(iterator: new RecursiveDirectoryIterator(directory: $baseDir));
 $mismatches = [];
 
 foreach ($iterator as $file) {
     if ($file->isFile() && $file->getExtension() === 'php') {
-        $content = file_get_contents($file->getPathname());
-        if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
+        $content = file_get_contents(filename: $file->getPathname());
+        if (preg_match(pattern: '/namespace\s+([^;]+);/', subject: $content, matches: $matches)) {
             $actualNamespace = $matches[1];
 
-            $relativePath      = str_replace($baseDir, '', $file->getPathname());
-            $expectedNamespace = $baseNamespace . str_replace('/', '\\', dirname($relativePath));
-            $expectedNamespace = rtrim($expectedNamespace, '\\'); // handle root directory
+            $relativePath      = str_replace(search: $baseDir, replace: '', subject: $file->getPathname());
+            $expectedNamespace = $baseNamespace . str_replace(search: '/', replace: '\\', subject: dirname(path: $relativePath));
+            $expectedNamespace = rtrim(string: $expectedNamespace, characters: '\\'); // handle root directory
 
             if ($actualNamespace !== $expectedNamespace) {
                 $mismatches[] = [
@@ -26,5 +26,5 @@ foreach ($iterator as $file) {
     }
 }
 
-file_put_contents('/home/shomsy/projects/components/Foundation/Auth/mismatches.json', json_encode($mismatches, JSON_PRETTY_PRINT));
+file_put_contents(filename: '/home/shomsy/projects/components/Foundation/Auth/mismatches.json', data: json_encode(value: $mismatches, flags: JSON_PRETTY_PRINT));
 echo "Done.\n";

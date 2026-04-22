@@ -33,7 +33,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         $statement->execute(params: ['session_id' => $sessionId]);
         $row = $statement->fetch(mode: PDO::FETCH_ASSOC);
 
-        return is_array($row) ? $this->hydrate(row: $row) : null;
+        return is_array(value: $row) ? $this->hydrate(row: $row) : null;
     }
 
     private function prepare(string $query) : PDOStatement
@@ -65,7 +65,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
             absoluteExpiresAt: new DateTimeImmutable(datetime: (string) $row['absolute_expires_at']),
             ipCreated        : isset($row['ip_created']) ? (string) $row['ip_created'] : null,
             userAgentCreated : isset($row['user_agent_created']) ? (string) $row['user_agent_created'] : null,
-            revokedAt        : is_string($revokedAt) && $revokedAt !== ''
+            revokedAt        : is_string(value: $revokedAt) && $revokedAt !== ''
                                    ? new DateTimeImmutable(datetime: $revokedAt)
                                    : null,
             revokeReason     : isset($row['revoke_reason']) ? (string) $row['revoke_reason'] : null
@@ -142,7 +142,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface, Pru
         $statement->execute(params: ['user_id' => $userId->value]);
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
-        return array_values(array_map(
+        return array_values(array: array_map(
         /**
          * @throws DateMalformedStringException
          */ callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),

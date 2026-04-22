@@ -127,8 +127,8 @@ class RouterBenchmark
 
         for ($i = 0; $i < 1000; $i++) {
             $route = new RouteDefinition(
-                method    : $methods[$i % count($methods)],
-                path      : $patterns[$i % count($patterns)],
+                method    : $methods[$i % count(value: $methods)],
+                path      : $patterns[$i % count(value: $patterns)],
                 action    : "Controller{$i}@action",
                 middleware: ['middleware' . ($i % 5)],
                 name      : "route.{$i}"
@@ -173,7 +173,7 @@ class RouterBenchmark
         $pattern = $params['pattern'];
 
         // Simple regex match simulation
-        preg_match($pattern, '/users/123/posts/456/comments/789');
+        preg_match(pattern: $pattern, subject: '/users/123/posts/456/comments/789');
     }
 
     public function provideRoutePatterns() : array
@@ -206,7 +206,7 @@ class RouterBenchmark
     private function simulateMiddleware(string $input, string $middleware) : string
     {
         // Simulate middleware processing overhead
-        return hash('sha256', $input . $middleware);
+        return hash(algo: 'sha256', data: $input . $middleware);
     }
 
     public function provideMiddlewareStacks() : array
@@ -275,7 +275,7 @@ class RouterBenchmark
 
         foreach ($constraints as $type => $pattern) {
             $value = $testValues[$type];
-            preg_match("#^{$pattern}$#", $value);
+            preg_match(pattern: "#^{$pattern}$#", subject: $value);
         }
     }
 
@@ -301,10 +301,10 @@ class RouterBenchmark
         }
 
         // Benchmark serialization
-        $serialized = serialize($routes);
+        $serialized = serialize(value: $routes);
 
         // Benchmark deserialization
-        unserialize($serialized);
+        unserialize(data: $serialized);
     }
 
     /**
@@ -344,7 +344,7 @@ class RouterBenchmark
      */
     public function benchMemoryUsageScaling() : void
     {
-        $initialMemory = memory_get_usage(true);
+        $initialMemory = memory_get_usage(real_usage: true);
 
         // Scale from 100 to 10,000 routes
         for ($count = 100; $count <= 10000; $count *= 10) {
@@ -358,7 +358,7 @@ class RouterBenchmark
                 );
             }
 
-            $memoryAfter    = memory_get_usage(true);
+            $memoryAfter    = memory_get_usage(real_usage: true);
             $memoryPerRoute = ($memoryAfter - $initialMemory) / $count;
 
             // Log memory scaling characteristics

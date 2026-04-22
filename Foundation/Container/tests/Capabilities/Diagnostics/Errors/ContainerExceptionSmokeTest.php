@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
@@ -15,4 +15,4 @@ $notFoundException  = new ServiceNotFoundException(message: 'missing');
 assertInstanceOf(expectedClass: ContainerExceptionInterface::class, value: $containerException, message: 'ContainerException should satisfy PSR.');
 assertInstanceOf(expectedClass: NotFoundExceptionInterface::class, value: $notFoundException, message: 'ServiceNotFoundException should satisfy PSR.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

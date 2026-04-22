@@ -142,9 +142,9 @@ enum FieldType: string
 
     private static function normalize(string $value) : string
     {
-        $value = preg_replace('/(?<!^)[A-Z]/', '_$0', $value) ?? $value;
-        $value = str_replace(['-', ' '], '_', $value);
+        $value = preg_replace(pattern: '/(?<!^)[A-Z]/', replacement: '_$0', subject: $value) ?? $value;
+        $value = str_replace(search: ['-', ' '], replace: '_', subject: $value);
 
-        return strtolower($value);
+        return strtolower(string: $value);
     }
 }

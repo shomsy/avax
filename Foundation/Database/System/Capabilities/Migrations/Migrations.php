@@ -164,7 +164,7 @@ final readonly class Migrations
 
     public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
     {
-        $instance = is_string($seeder) ? new $seeder() : $seeder;
+        $instance = is_string(value: $seeder) ? new $seeder() : $seeder;
 
         if (! $instance instanceof Seeder) {
             throw new InvalidArgumentException(message: 'Seed target must extend the base Seeder class.');

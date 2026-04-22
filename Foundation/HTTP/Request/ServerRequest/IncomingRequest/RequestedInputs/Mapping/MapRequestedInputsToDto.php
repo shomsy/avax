@@ -35,19 +35,19 @@ final readonly class MapRequestedInputsToDto
      */
     public function map(RequestedInputs $inputs, string $dtoClass) : object
     {
-        if (! class_exists($dtoClass)) {
+        if (! class_exists(class: $dtoClass)) {
             throw new InvalidArgumentException(
                 message: sprintf('DTO class does not exist: %s', $dtoClass)
             );
         }
 
-        if (! is_a($dtoClass, AbstractDTO::class, allow_string: true)) {
+        if (! is_a(object_or_class: $dtoClass, class: AbstractDTO::class, allow_string: true)) {
             throw new InvalidArgumentException(
                 message: sprintf('DTO class "%s" must extend %s', $dtoClass, AbstractDTO::class)
             );
         }
 
-        if (is_a($dtoClass, Request::class, allow_string: true)) {
+        if (is_a(object_or_class: $dtoClass, class: Request::class, allow_string: true)) {
             throw new LogicException(
                 message: sprintf(
                     'DTO class "%s" is a Request subclass and cannot be mapped generically from RequestedInputs. Use RequestDtoFactory or controller autowiring instead.',

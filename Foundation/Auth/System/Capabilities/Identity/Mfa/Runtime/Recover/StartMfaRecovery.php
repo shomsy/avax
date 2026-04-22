@@ -52,7 +52,7 @@ final readonly class StartMfaRecovery
                                                name      : 'auth.mfa.recovery.throttled',
                                                occurredAt: $this->clock->now(),
                                                context   : [
-                                                               'email'       => strtolower($data->email),
+                                                               'email'       => strtolower(string: $data->email),
                                                                'ip_address'  => $data->ipAddress,
                                                                'user_agent'  => $data->userAgent,
                                                                'retry_after' => $exception->retryAfter(),
@@ -70,7 +70,7 @@ final readonly class StartMfaRecovery
                                                name      : 'auth.mfa.recovery.started',
                                                occurredAt: $this->clock->now(),
                                                context   : [
-                                                               'email'      => strtolower($data->email),
+                                                               'email'      => strtolower(string: $data->email),
                                                                'dispatched' => false,
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
@@ -85,13 +85,13 @@ final readonly class StartMfaRecovery
 
     private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] string|null $ipAddress) : string
     {
-        $normalizedEmail = strtolower(trim($email));
+        $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
             return 'mfa_recovery:' . $normalizedEmail;
         }
 
-        return 'mfa_recovery:' . $normalizedEmail . '|' . trim($ipAddress);
+        return 'mfa_recovery:' . $normalizedEmail . '|' . trim(string: $ipAddress);
     }
 
     /**
@@ -100,7 +100,7 @@ final readonly class StartMfaRecovery
      */
     private function issue(int $userId, BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
-        $plainToken = bin2hex(random_bytes(32));
+        $plainToken = bin2hex(string: random_bytes(length: 32));
         $expiresAt  = $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds");
         $tokenHash  = $this->hash(token: $plainToken);
         $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
@@ -128,6 +128,6 @@ final readonly class StartMfaRecovery
 
     private function hash(#[SensitiveParameter] string $token) : string
     {
-        return hash('sha256', $token);
+        return hash(algo: 'sha256', data: $token);
     }
 }

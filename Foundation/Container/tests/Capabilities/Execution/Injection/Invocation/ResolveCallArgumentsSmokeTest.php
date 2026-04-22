@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 4) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 4) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
@@ -44,4 +44,4 @@ $resolved   = $arguments->resolve(
 assertSame(expected: 'args', actual: $resolved[0]->message(), message: 'Call arguments should resolve container-backed dependencies.');
 assertSame(expected: 'custom', actual: $resolved[1], message: 'Call arguments should honor explicit overrides.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 interface CallGreeterContract
 {
@@ -46,4 +46,4 @@ assertSame(expected: 'hello', actual: $container->call(callable: CallAction::cla
 assertSame(expected: 'hello', actual: $container->call(callable: CallAction::class . '@greet'), message: 'Class@method calls should receive injected arguments.');
 assertSame(expected: 'static', actual: $container->call(callable: [CallAction::class, 'staticHello']), message: 'Static callables should still work.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

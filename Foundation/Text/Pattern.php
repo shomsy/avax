@@ -36,7 +36,7 @@ final readonly class Pattern
     public function test(string $subject) : bool
     {
         $pattern = $this->toPreg();
-        $result  = preg_match($pattern, $subject);
+        $result  = preg_match(pattern: $pattern, subject: $subject);
 
         if ($result === false) {
             throw RegexException::fromLastError(pattern: $pattern);
@@ -51,7 +51,7 @@ final readonly class Pattern
     public function toPreg() : string
     {
         $d       = $this->delimiter;
-        $escaped = str_replace($d, '\\' . $d, $this->raw);
+        $escaped = str_replace(search: $d, replace: '\\' . $d, subject: $this->raw);
 
         return $d . $escaped . $d . $this->flags;
     }
@@ -63,7 +63,7 @@ final readonly class Pattern
     {
         $pattern = $this->toPreg();
         $matches = [];
-        $result  = preg_match($pattern, $subject, $matches);
+        $result  = preg_match(pattern: $pattern, subject: $subject, matches: $matches);
 
         if ($result === false) {
             throw RegexException::fromLastError(pattern: $pattern);
@@ -78,9 +78,9 @@ final readonly class Pattern
     public function replace(string $subject, string $replacement) : string
     {
         $pattern = $this->toPreg();
-        $result  = preg_replace($pattern, $replacement, $subject);
+        $result  = preg_replace(pattern: $pattern, replacement: $replacement, subject: $subject);
 
-        if (! is_string($result)) {
+        if (! is_string(value: $result)) {
             throw RegexException::fromLastError(pattern: $pattern);
         }
 
@@ -93,9 +93,9 @@ final readonly class Pattern
     public function replaceCallback(string $subject, callable $fn) : string
     {
         $pattern = $this->toPreg();
-        $result  = preg_replace_callback($pattern, $fn, $subject);
+        $result  = preg_replace_callback(pattern: $pattern, callback: $fn, subject: $subject);
 
-        if (! is_string($result)) {
+        if (! is_string(value: $result)) {
             throw RegexException::fromLastError(pattern: $pattern);
         }
 
@@ -109,7 +109,7 @@ final readonly class Pattern
     {
         $pattern = $this->toPreg();
         $matches = [];
-        $result  = preg_match_all($pattern, $subject, $matches, PREG_SET_ORDER);
+        $result  = preg_match_all(pattern: $pattern, subject: $subject, matches: $matches, flags: PREG_SET_ORDER);
 
         if ($result === false) {
             throw RegexException::fromLastError(pattern: $pattern);
@@ -125,9 +125,9 @@ final readonly class Pattern
     {
         $limit   ??= -1;
         $pattern = $this->toPreg();
-        $result  = preg_split($pattern, $subject, $limit, $flags);
+        $result  = preg_split(pattern: $pattern, subject: $subject, limit: $limit, flags: $flags);
 
-        if (! is_array($result)) {
+        if (! is_array(value: $result)) {
             throw RegexException::fromLastError(pattern: $pattern);
         }
 

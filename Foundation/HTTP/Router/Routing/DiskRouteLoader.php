@@ -40,15 +40,15 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
         }
 
         // Execute routes in scoped collector context to prevent global pollution
-        $collector = RouteCollector::scoped(function (RouteCollector $collector) : void {
+        $collector = RouteCollector::scoped(closure: function (RouteCollector $collector) : void {
             try {
                 // Read file content and execute DSL
-                $code = file_get_contents($this->routesPath);
+                $code = file_get_contents(filename: $this->routesPath);
                 if ($code === false) {
                     throw new RuntimeException(message: "Cannot read routes file: {$this->routesPath}");
                 }
 
-                $collector->executeDsl($code);
+                $collector->executeDsl(code: $code);
             } catch (Throwable $exception) {
                 throw new RuntimeException(
                     message : "Failed to load routes from {$this->routesPath}: " . $exception->getMessage(),
@@ -78,7 +78,7 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
      */
     public function isAvailable() : bool
     {
-        return is_file($this->routesPath) && is_readable($this->routesPath);
+        return is_file(filename: $this->routesPath) && is_readable(filename: $this->routesPath);
     }
 
     /**

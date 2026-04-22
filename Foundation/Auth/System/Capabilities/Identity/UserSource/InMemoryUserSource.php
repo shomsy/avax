@@ -27,12 +27,12 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
 
     public function findByCredentials(#[SensitiveParameter] Credentials $credentials) : User|null
     {
-        $identifier = strtolower($credentials->identifier);
+        $identifier = strtolower(string: $credentials->identifier);
 
         foreach ($this->users as $user) {
             if (
-                strtolower($user->getEmail()->value) === $identifier
-                || strtolower($user->getUsername()) === $identifier
+                strtolower(string: $user->getEmail()->value) === $identifier
+                || strtolower(string: $user->getUsername()) === $identifier
             ) {
                 return $user;
             }
@@ -45,13 +45,13 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         #[SensitiveParameter] string $email
     ) : bool
     {
-        return array_any($this->users, fn ($user) => strtolower($user->getEmail()->value) === strtolower($email));
+        return array_any(array: $this->users, callback: fn ($user) => strtolower(string: $user->getEmail()->value) === strtolower(string: $email));
     }
 
     public function findByEmail(#[SensitiveParameter] string $email) : User|null
     {
         foreach ($this->users as $user) {
-            if (strtolower($user->getEmail()->value) === strtolower($email)) {
+            if (strtolower(string: $user->getEmail()->value) === strtolower(string: $email)) {
                 return $user;
             }
         }
@@ -61,7 +61,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
 
     public function usernameExists(string $username) : bool
     {
-        return array_any($this->users, fn ($user) => strtolower($user->getUsername()) === strtolower($username));
+        return array_any(array: $this->users, callback: fn ($user) => strtolower(string: $user->getUsername()) === strtolower(string: $username));
     }
 
     public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash) : void

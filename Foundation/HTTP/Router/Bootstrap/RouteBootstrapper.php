@@ -115,7 +115,7 @@ final readonly class RouteBootstrapper
             }
 
             // Log final bootstrap statistics
-            $routesCount = count($this->httpRequestRouter->allRoutes());
+            $routesCount = count(value: $this->httpRequestRouter->allRoutes());
             $this->logger->info(message: 'Route bootstrap completed.', context: [
                 'routes_count' => $routesCount,
                 'source'       => $this->bootstrapState
@@ -393,17 +393,17 @@ final readonly class RouteBootstrapper
 
             $snapshot = RouterSnapshot::capture(router: $routerInterface, context: [
                 'routes_path'    => $routesPath,
-                'bootstrap_time' => date('c'),
+                'bootstrap_time' => date(format: 'c'),
             ]);
 
             // Export to standard location
-            $snapshotPath = dirname($routesPath) . '/router-snapshot.json';
+            $snapshotPath = dirname(path: $routesPath) . '/router-snapshot.json';
             $snapshot->exportToFile(path: $snapshotPath);
 
             $this->logger->info(message: 'Router snapshot exported for reproducibility', context: [
                 'snapshot_path' => $snapshotPath,
                 'routes_count'  => $snapshot->metadata['total_routes'],
-                'checksum'      => substr($snapshot->checksum, 0, 16) . '...',
+                'checksum'      => substr(string: $snapshot->checksum, offset: 0, length: 16) . '...',
             ]);
 
         } catch (Throwable $exception) {

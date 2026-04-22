@@ -31,7 +31,7 @@ class BuilderTest extends TestCase
     public function test_joins() : void
     {
         $builder = $this->database->table(table: 'users')
-            ->join('posts', 'users.id', '=', 'posts.user_id')
+            ->join(table: 'posts', first: 'users.id', operator: '=', second: 'posts.user_id')
             ->select('users.name', 'posts.title');
 
         $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
@@ -74,7 +74,7 @@ class BuilderTest extends TestCase
             )'
         );
 
-        $this->database->table(table: 'users')->insert(['name' => 'John Doe', 'email' => 'john@example.com']);
-        $this->database->table(table: 'posts')->insert(['user_id' => 1, 'title' => 'Hello']);
+        $this->database->table(table: 'users')->insert(values: ['name' => 'John Doe', 'email' => 'john@example.com']);
+        $this->database->table(table: 'posts')->insert(values: ['user_id' => 1, 'title' => 'Hello']);
     }
 }

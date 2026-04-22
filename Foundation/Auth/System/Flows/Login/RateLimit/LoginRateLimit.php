@@ -61,7 +61,7 @@ final readonly class LoginRateLimit
 
     private function normalizeIdentifier(string $identifier) : string
     {
-        return strtolower(trim($identifier));
+        return strtolower(string: trim(string: $identifier));
     }
 
     public function reset(string $identifier) : void

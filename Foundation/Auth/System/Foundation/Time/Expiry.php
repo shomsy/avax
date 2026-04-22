@@ -17,7 +17,7 @@ final readonly class Expiry
     {
         $clock ??= new SystemClock();
 
-        return new self($clock->now()->add($interval));
+        return new self(at: $clock->now()->add(interval: $interval));
     }
 
     public function isExpired(?DateTimeImmutable $now = null) : bool

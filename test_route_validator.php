@@ -18,7 +18,7 @@ $text     = Avax\Text\Text::of(value: $testPath);
 
 echo "Path: {$testPath}\n";
 echo "Valid route path: " . (Avax\HTTP\Router\Validation\RouteValidator::containsValidRoutePathCharacters(path: $testPath) ? "✅ YES" : "❌ NO") . "\n";
-echo "Route params: " . json_encode(Avax\HTTP\Router\Validation\RouteValidator::extractRouteParameters(path: $testPath)) . "\n";
+echo "Route params: " . json_encode(value: Avax\HTTP\Router\Validation\RouteValidator::extractRouteParameters(path: $testPath)) . "\n";
 
 echo "\n🔄 Testing RoutePathValidator Integration:\n";
 

@@ -40,7 +40,7 @@ final readonly class RouteMatcher implements RouteMatcherInterface
      */
     public function matches(RouteDefinition $route, Request $request) : bool
     {
-        $method = strtoupper($request->getMethod());
+        $method = strtoupper(string: $request->getMethod());
 
         // Check if route method matches (or is ANY)
         if ($route->method !== $method && $route->method !== HttpMethod::ANY->value) {
@@ -50,8 +50,8 @@ final readonly class RouteMatcher implements RouteMatcherInterface
         $uriPath = $request->getUri()->getPath();
 
         // Sanitize URI path
-        $uriPath = filter_var($uriPath, FILTER_SANITIZE_URL);
-        if ($uriPath === false || ! is_string($uriPath)) {
+        $uriPath = filter_var(value: $uriPath, filter: FILTER_SANITIZE_URL);
+        if ($uriPath === false || ! is_string(value: $uriPath)) {
             return false;
         }
 
@@ -66,7 +66,7 @@ final readonly class RouteMatcher implements RouteMatcherInterface
         }
 
         // Check path pattern using precompiled regex for performance
-        return preg_match($route->compiledPathRegex, $uriPath) === 1;
+        return preg_match(pattern: $route->compiledPathRegex, subject: $uriPath) === 1;
     }
 
     /**
@@ -81,18 +81,18 @@ final readonly class RouteMatcher implements RouteMatcherInterface
      */
     public function match(array $routes, Request $request) : array|null
     {
-        $method = strtoupper($request->getMethod());
+        $method = strtoupper(string: $request->getMethod());
 
         // Validate HTTP method
-        if (! in_array($method, ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'ANY'], true)) {
+        if (! in_array(needle: $method, haystack: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'ANY'], strict: true)) {
             throw new InvalidArgumentException(message: "Malformed HTTP method: {$method}");
         }
 
         $uriPath = $request->getUri()->getPath();
 
         // Sanitize URI path
-        $uriPath = filter_var($uriPath, FILTER_SANITIZE_URL);
-        if ($uriPath === false || ! is_string($uriPath)) {
+        $uriPath = filter_var(value: $uriPath, filter: FILTER_SANITIZE_URL);
+        if ($uriPath === false || ! is_string(value: $uriPath)) {
             throw new InvalidArgumentException(message: 'Invalid URI path');
         }
 
@@ -121,7 +121,7 @@ final readonly class RouteMatcher implements RouteMatcherInterface
                 // Use precompiled regex pattern for performance
                 $matches = [];
 
-                if (preg_match($route->compiledPathRegex, $uriPath, $matches)) {
+                if (preg_match(pattern: $route->compiledPathRegex, subject: $uriPath, matches: $matches)) {
                     return [$route, $matches];
                 }
             }
@@ -136,13 +136,13 @@ final readonly class RouteMatcher implements RouteMatcherInterface
     {
         // PERFORMANCE: Compile route pattern from template and constraints
         $pattern = preg_replace_callback(
-            '/\{([^}]+)\}/',
-            static function ($matches) use ($constraints) {
+            pattern : '/\{([^}]+)\}/',
+            callback: static function ($matches) use ($constraints) {
                 $param      = $matches[1];
-                $isOptional = str_ends_with($param, '?');
-                $isWildcard = str_ends_with($param, '*');
+                $isOptional = str_ends_with(haystack: $param, needle: '?');
+                $isWildcard = str_ends_with(haystack: $param, needle: '*');
 
-                $paramName  = preg_replace('/[?*]$/', '', $param);
+                $paramName  = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $param);
                 $constraint = $constraints[$paramName] ?? '[^/]+';
 
                 $segment = "(?P<{$paramName}>{$constraint})";
@@ -159,7 +159,7 @@ final readonly class RouteMatcher implements RouteMatcherInterface
 
                 return $segment;
             },
-            $template
+            subject : $template
         );
 
         return "#^{$pattern}$#";
@@ -167,11 +167,11 @@ final readonly class RouteMatcher implements RouteMatcherInterface
 
     private function extractParameters(array $matches) : array
     {
-        $params = array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+        $params = array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
 
         // Sanitize parameter values
         foreach ($params as $key => $value) {
-            $params[$key] = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+            $params[$key] = filter_var(value: $value, filter: FILTER_SANITIZE_STRING, options: FILTER_FLAG_NO_ENCODE_QUOTES);
         }
 
         return $params;

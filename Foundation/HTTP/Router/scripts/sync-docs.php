@@ -39,8 +39,8 @@ class DocsSync
 
     private function ensureDocsDir() : void
     {
-        if (! is_dir($this->docsDir)) {
-            mkdir($this->docsDir, 0755, true);
+        if (! is_dir(filename: $this->docsDir)) {
+            mkdir(directory: $this->docsDir, permissions: 0755, recursive: true);
         }
     }
 
@@ -59,9 +59,9 @@ class DocsSync
         $content .= "- **Dependency Injection**: No tight coupling between layers\n";
         $content .= "- **Interface Segregation**: Clean contracts between components\n";
         $content .= "- **Thread Safety**: Components safe for concurrent access\n\n";
-        $content .= "*Generated automatically on " . date('Y-m-d H:i:s') . "*\n";
+        $content .= "*Generated automatically on " . date(format: 'Y-m-d H:i:s') . "*\n";
 
-        file_put_contents($file, $content);
+        file_put_contents(filename: $file, data: $content);
         echo "📊 Generated architecture diagram\n";
     }
 
@@ -121,22 +121,22 @@ class DocsSync
             $content .= "- **Description**: {$exception['description']}\n\n";
         }
 
-        $content .= "*Generated automatically on " . date('Y-m-d H:i:s') . "*\n";
+        $content .= "*Generated automatically on " . date(format: 'Y-m-d H:i:s') . "*\n";
 
-        file_put_contents($file, $content);
+        file_put_contents(filename: $file, data: $content);
         echo "📋 Generated exception reference\n";
     }
 
     private function scanExceptions() : array
     {
         $exceptions     = [];
-        $exceptionFiles = glob($this->routerDir . '/Routing/Exceptions/*.php');
+        $exceptionFiles = glob(pattern: $this->routerDir . '/Routing/Exceptions/*.php');
 
         foreach ($exceptionFiles as $file) {
-            $className = basename($file, '.php');
+            $className = basename(path: $file, suffix: '.php');
             $fullClass = "Avax\\HTTP\\Router\\Routing\\Exceptions\\{$className}";
 
-            if (class_exists($fullClass)) {
+            if (class_exists(class: $fullClass)) {
                 try {
                     $reflection = new ReflectionClass(objectOrClass: $fullClass);
 
@@ -145,10 +145,10 @@ class DocsSync
 
                         $exceptions[] = [
                             'class'       => $className,
-                            'http_status' => method_exists($instance, 'getHttpStatusCode')
+                            'http_status' => method_exists(object_or_class: $instance, method: 'getHttpStatusCode')
                                 ? $instance->getHttpStatusCode()
                                 : 'Unknown',
-                            'retryable'   => method_exists($instance, 'isRetryable')
+                            'retryable'   => method_exists(object_or_class: $instance, method: 'isRetryable')
                                 ? ($instance->isRetryable() ? 'Yes' : 'No')
                                 : 'Unknown',
                             'description' => $this->extractClassDescription(reflection: $reflection),
@@ -168,9 +168,9 @@ class DocsSync
         $docComment = $reflection->getDocComment();
         if ($docComment) {
             // Extract first line of class docblock
-            $lines = explode("\n", $docComment);
+            $lines = explode(separator: "\n", string: $docComment);
             foreach ($lines as $line) {
-                $line = trim($line, " \t/*");
+                $line = trim(string: $line, characters: " \t/*");
                 if (! empty($line)) {
                     return $line;
                 }
@@ -208,9 +208,9 @@ class DocsSync
             }
         }
 
-        $content .= "*Generated automatically on " . date('Y-m-d H:i:s') . "*\n";
+        $content .= "*Generated automatically on " . date(format: 'Y-m-d H:i:s') . "*\n";
 
-        file_put_contents($file, $content);
+        file_put_contents(filename: $file, data: $content);
         echo "📖 Generated API reference\n";
     }
 
@@ -225,36 +225,36 @@ class DocsSync
         ];
 
         foreach ($interfaceFiles as $file) {
-            if (file_exists($file)) {
-                $content      = file_get_contents($file);
+            if (file_exists(filename: $file)) {
+                $content      = file_get_contents(filename: $file);
                 $interfaces[] = $this->parseInterface(content: $content, file: $file);
             }
         }
 
-        return array_filter($interfaces);
+        return array_filter(array: $interfaces);
     }
 
     private function parseInterface(string $content, string $file) : array
     {
         $interface = [
-            'name'        => basename($file, '.php'),
+            'name'        => basename(path: $file, suffix: '.php'),
             'namespace'   => 'Avax\\HTTP\\Router',
             'description' => '',
             'methods'     => [],
         ];
 
         // Extract namespace
-        if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
+        if (preg_match(pattern: '/namespace\s+([^;]+);/', subject: $content, matches: $matches)) {
             $interface['namespace'] = $matches[1];
         }
 
         // Extract interface description
-        if (preg_match('/\/\*\*\s*\n\s*\*\s*([^*\n]+)/', $content, $matches)) {
-            $interface['description'] = trim($matches[1]);
+        if (preg_match(pattern: '/\/\*\*\s*\n\s*\*\s*([^*\n]+)/', subject: $content, matches: $matches)) {
+            $interface['description'] = trim(string: $matches[1]);
         }
 
         // Extract methods
-        preg_match_all('/public\s+function\s+([^\(]+)\([^)]*\)/', $content, $methodMatches);
+        preg_match_all(pattern: '/public\s+function\s+([^\(]+)\([^)]*\)/', subject: $content, matches: $methodMatches);
         foreach ($methodMatches[0] as $methodSignature) {
             $interface['methods'][] = [
                 'signature'   => $methodSignature,

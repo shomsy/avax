@@ -49,7 +49,7 @@ final readonly class VerifyDpopProof
 
         $claims = $this->codec->decode(token: $proof);
 
-        if (! is_array($claims)) {
+        if (! is_array(value: $claims)) {
             $this->recordFailure(input: $input, reason: 'decode_failed');
             throw DpopProofFailed::invalid(reason: 'decode_failed');
         }
@@ -62,11 +62,11 @@ final readonly class VerifyDpopProof
         $ath        = $claims['ath'] ?? null;
 
         if (
-            ! is_string($jti)
-            || ! is_int($iat)
-            || ! is_string($htu)
-            || ! is_string($htm)
-            || ! is_string($thumbprint)
+            ! is_string(value: $jti)
+            || ! is_int(value: $iat)
+            || ! is_string(value: $htu)
+            || ! is_string(value: $htm)
+            || ! is_string(value: $thumbprint)
         ) {
             $this->recordFailure(input: $input, reason: 'missing_required_claims');
             throw DpopProofFailed::invalid(reason: 'missing_required_claims');
@@ -74,14 +74,14 @@ final readonly class VerifyDpopProof
 
         $now      = new DateTimeImmutable();
         $issuedAt = new DateTimeImmutable(datetime: "@{$iat}");
-        $age      = abs($now->getTimestamp() - $issuedAt->getTimestamp());
+        $age      = abs(num: $now->getTimestamp() - $issuedAt->getTimestamp());
 
         if ($age > $this->maxAgeSeconds) {
             $this->recordFailure(input: $input, reason: 'proof_expired');
             throw DpopProofFailed::invalid(reason: 'proof_expired');
         }
 
-        if (strtoupper($htm) !== strtoupper($input->method)) {
+        if (strtoupper(string: $htm) !== strtoupper(string: $input->method)) {
             $this->recordFailure(input: $input, reason: 'method_mismatch');
             throw DpopProofFailed::invalid(reason: 'method_mismatch');
         }
@@ -93,17 +93,17 @@ final readonly class VerifyDpopProof
 
         if ($input->accessToken !== null) {
             $expectedAth = rtrim(
-                strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'),
-                '='
+                string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $input->accessToken, binary: true)), '+/', '-_'),
+                characters: '='
             );
 
-            if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
+            if (! is_string(value: $ath) || ! hash_equals(known_string: $expectedAth, user_string: $ath)) {
                 $this->recordFailure(input: $input, reason: 'access_token_mismatch');
                 throw DpopProofFailed::invalid(reason: 'access_token_mismatch');
             }
         }
 
-        $proofId = hash('sha256', "{$thumbprint}:{$jti}");
+        $proofId = hash(algo: 'sha256', data: "{$thumbprint}:{$jti}");
 
         if (! $this->replayStore->remember(proofId: $proofId, expiresAt: $issuedAt->modify(modifier: "+{$this->maxAgeSeconds} seconds"))) {
             $this->recordFailure(input: $input, reason: 'replay_detected');
@@ -122,15 +122,15 @@ final readonly class VerifyDpopProof
     private function readHeader(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, 'DPoP') !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: 'DPoP') !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;
@@ -143,7 +143,7 @@ final readonly class VerifyDpopProof
     {
         $value = $server['HTTP_DPOP'] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     private function recordFailure(HttpOAuthProofInput $input, string $reason) : void
@@ -153,7 +153,7 @@ final readonly class VerifyDpopProof
                                            occurredAt: new DateTimeImmutable(),
                                            context   : [
                                                            'reason' => $reason,
-                                                           'method' => strtoupper($input->method),
+                                                           'method' => strtoupper(string: $input->method),
                                                            'uri'    => $input->uri,
                                                        ]
                                        ));
@@ -161,6 +161,6 @@ final readonly class VerifyDpopProof
 
     private function sameUri(string $expected, string $actual) : bool
     {
-        return rtrim($expected, '/') === rtrim($actual, '/');
+        return rtrim(string: $expected, characters: '/') === rtrim(string: $actual, characters: '/');
     }
 }

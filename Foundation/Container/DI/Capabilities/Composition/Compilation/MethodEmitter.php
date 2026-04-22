@@ -16,7 +16,7 @@ final class MethodEmitter
      */
     public function methodNameFor(string $serviceId) : string
     {
-        return 'service_' . substr(sha1($serviceId), 0, 16);
+        return 'service_' . substr(string: sha1(string: $serviceId), offset: 0, length: 16);
     }
 
     /**
@@ -46,7 +46,7 @@ final class MethodEmitter
         bool             $needsFinish
     ) : string
     {
-        $className                     = '\\' . ltrim($class, '\\');
+        $className                     = '\\' . ltrim(string: $class, characters: '\\');
         $arguments                     = $this->emitArguments(plan: $plan, serviceId: $serviceId);
         $compiledRegistrationArguments = $registrationArguments
                 |> serialize(...)
@@ -68,7 +68,7 @@ final class MethodEmitter
             $body .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
 
             foreach ($arguments as $index => $argument) {
-                $suffix = $index === array_key_last($arguments) ? '' : ',';
+                $suffix = $index === array_key_last(array: $arguments) ? '' : ',';
                 $body   .= '            ' . $argument . $suffix . PHP_EOL;
             }
 
@@ -129,7 +129,7 @@ final class MethodEmitter
 
     private function export(mixed $value) : string
     {
-        return var_export($value, true);
+        return var_export(value: $value, return: true);
     }
 
     /**

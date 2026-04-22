@@ -10,6 +10,6 @@ final class RecoverAccessFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/Recover/ResetPasswordTest.php';
+        return dirname(path: __DIR__) . '/Flows/Recover/ResetPasswordTest.php';
     }
 }

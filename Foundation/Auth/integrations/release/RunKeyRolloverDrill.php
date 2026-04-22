@@ -32,10 +32,10 @@ final readonly class RunKeyRolloverDrill
 
     private function readPrimaryKid(string $keyRingPath) : string
     {
-        $json    = file_get_contents($keyRingPath);
-        $decoded = is_string($json) ? json_decode($json, true) : null;
-        $kid     = is_array($decoded) ? ($decoded['primary']['kid'] ?? null) : null;
+        $json    = file_get_contents(filename: $keyRingPath);
+        $decoded = is_string(value: $json) ? json_decode(json: $json, associative: true) : null;
+        $kid     = is_array(value: $decoded) ? ($decoded['primary']['kid'] ?? null) : null;
 
-        return is_string($kid) ? $kid : '';
+        return is_string(value: $kid) ? $kid : '';
     }
 }

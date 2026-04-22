@@ -33,7 +33,7 @@ final class DeferredProviderRegistry
     public function services() : array
     {
         $services = $this->serviceOwners;
-        ksort($services);
+        ksort(array: $services);
 
         return $services;
     }
@@ -48,7 +48,7 @@ final class DeferredProviderRegistry
      */
     public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
-        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+        foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
                 serviceId: $registrations->resolveAlias(abstract: $serviceId),
                 metrics  : $metrics
@@ -94,14 +94,14 @@ final class DeferredProviderRegistry
     {
         $providerClass = $provider::class;
         $ids           = array_map(
-                fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
-                $serviceIds
+                callback: fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
+                array   : $serviceIds
             )
-                |> (static fn ($x) => array_filter($x, static fn (string $serviceId) : bool => $serviceId !== ''))
+                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $serviceId) : bool => $serviceId !== ''))
                 |> array_unique(...)
                 |> array_values(...);
 
-        sort($ids);
+        sort(array: $ids);
 
         if ($ids === []) {
             throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
@@ -121,6 +121,6 @@ final class DeferredProviderRegistry
         }
 
         $metrics?->increment(name: 'container_provider_deferred_total');
-        $metrics?->increment(name: 'container_provider_deferred_services_total', by: count($ids));
+        $metrics?->increment(name: 'container_provider_deferred_services_total', by: count(value: $ids));
     }
 }

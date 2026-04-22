@@ -23,11 +23,11 @@ final readonly class DetectUnsafeDeploymentMode
         $production               ??= true;
         $senderConstraintExpected ??= false;
         $warnings                 = [];
-        $scheme                   = strtolower((string) parse_url($input->uri, PHP_URL_SCHEME));
+        $scheme                   = strtolower(string: (string) parse_url(url: $input->uri, component: PHP_URL_SCHEME));
         $forwardedProto           = $this->readHeader(headers: $input->headers, name: 'X-Forwarded-Proto');
         $remoteAddress            = $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR');
 
-        if ($production && $scheme !== 'https' && strtolower((string) $forwardedProto) !== 'https') {
+        if ($production && $scheme !== 'https' && strtolower(string: (string) $forwardedProto) !== 'https') {
             $warnings[] = 'plain_http_in_production';
         }
 
@@ -40,12 +40,12 @@ final readonly class DetectUnsafeDeploymentMode
                 $warnings[] = 'sender_constraint_signal_missing';
             }
 
-            if ($remoteAddress !== null && $this->hasProxyHeaders(headers: $input->headers) && ! in_array($remoteAddress, $trustedProxies, true)) {
+            if ($remoteAddress !== null && $this->hasProxyHeaders(headers: $input->headers) && ! in_array(needle: $remoteAddress, haystack: $trustedProxies, strict: true)) {
                 $warnings[] = 'untrusted_proxy_source';
             }
         }
 
-        return array_values(array_unique($warnings));
+        return array_values(array: array_unique(array: $warnings));
     }
 
     /**
@@ -54,15 +54,15 @@ final readonly class DetectUnsafeDeploymentMode
     private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $header => $value) {
-            if (strcasecmp($header, $name) !== 0) {
+            if (strcasecmp(string1: $header, string2: $name) !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;
@@ -75,7 +75,7 @@ final readonly class DetectUnsafeDeploymentMode
     {
         $value = $server[$name] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     /**
@@ -83,10 +83,10 @@ final readonly class DetectUnsafeDeploymentMode
      */
     private function hasProxyHeaders(#[SensitiveParameter] array $headers) : bool
     {
-        foreach (array_keys($headers) as $header) {
-            $normalized = strtolower($header);
+        foreach (array_keys(array: $headers) as $header) {
+            $normalized = strtolower(string: $header);
 
-            if (str_starts_with($normalized, 'x-forwarded-') || str_starts_with($normalized, 'x-client-cert') || str_starts_with($normalized, 'x-tls-client-')) {
+            if (str_starts_with(haystack: $normalized, needle: 'x-forwarded-') || str_starts_with(haystack: $normalized, needle: 'x-client-cert') || str_starts_with(haystack: $normalized, needle: 'x-tls-client-')) {
                 return true;
             }
         }

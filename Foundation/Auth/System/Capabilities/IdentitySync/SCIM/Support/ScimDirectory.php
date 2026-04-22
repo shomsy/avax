@@ -50,7 +50,7 @@ final readonly class ScimDirectory
             rotatedAt        : $this->rotatedAt,
             health           : ScimDirectoryHealth::UNAVAILABLE,
             healthCheckedAt  : $startedAt,
-            outageReason     : trim((string) $reason) !== '' ? trim((string) $reason) : 'scim_outage',
+            outageReason     : trim(string: (string) $reason) !== '' ? trim(string: (string) $reason) : 'scim_outage',
             outageStartedAt  : $startedAt,
             outageRecoveredAt: null
         );

@@ -17,7 +17,7 @@ final readonly class ValidateRequestObject
 
     public function execute(ValidateRequestObjectData $data) : ValidatedRequestObject
     {
-        $requestUri = trim($data->requestUri);
+        $requestUri = trim(string: $data->requestUri);
 
         if ($requestUri === '' || $this->requestObjectStore === null) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
@@ -61,11 +61,11 @@ final readonly class ValidateRequestObject
 
     private function readStringValue(mixed $value) : string|null
     {
-        if (! is_string($value)) {
+        if (! is_string(value: $value)) {
             return null;
         }
 
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         return $normalized !== '' ? $normalized : null;
     }
@@ -80,7 +80,7 @@ final readonly class ValidateRequestObject
         $normalized = [];
 
         foreach ($scopes as $scope) {
-            $parts = preg_split(pattern: '/\s+/', subject: trim($scope), flags: PREG_SPLIT_NO_EMPTY);
+            $parts = preg_split(pattern: '/\s+/', subject: trim(string: $scope), flags: PREG_SPLIT_NO_EMPTY);
 
             if ($parts === false) {
                 continue;
@@ -107,25 +107,25 @@ final readonly class ValidateRequestObject
      */
     private function normalizeScopeValue(string|array|null $value) : array
     {
-        if (is_array($value)) {
-            return array_values($value);
+        if (is_array(value: $value)) {
+            return array_values(array: $value);
         }
 
-        if (! is_string($value) || trim($value) === '') {
+        if (! is_string(value: $value) || trim(string: $value) === '') {
             return [];
         }
 
-        $parts = preg_split(pattern: '/\s+/', subject: trim($value), flags: PREG_SPLIT_NO_EMPTY);
+        $parts = preg_split(pattern: '/\s+/', subject: trim(string: $value), flags: PREG_SPLIT_NO_EMPTY);
 
         return $parts === false ? [] : $parts;
     }
 
     private function normalizeCodeChallengeMethod(string|null $value) : PkceMethod|null
     {
-        if ($value === null || trim($value) === '') {
+        if ($value === null || trim(string: $value) === '') {
             return null;
         }
 
-        return PkceMethod::tryFrom(value: trim($value));
+        return PkceMethod::tryFrom(value: trim(string: $value));
     }
 }

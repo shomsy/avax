@@ -87,6 +87,6 @@ final readonly class ConfirmMfaRecovery
 
     private function hash(#[SensitiveParameter] string $token) : string
     {
-        return hash('sha256', $token);
+        return hash(algo: 'sha256', data: $token);
     }
 }

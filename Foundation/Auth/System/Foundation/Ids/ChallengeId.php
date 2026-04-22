@@ -13,10 +13,10 @@ final readonly class ChallengeId implements Stringable
 
     public function __construct(string $value)
     {
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('ChallengeId cannot be empty.');
+            throw new InvalidArgumentException(message: 'ChallengeId cannot be empty.');
         }
 
         $this->value = $normalized;

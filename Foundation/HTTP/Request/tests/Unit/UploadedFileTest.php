@@ -18,14 +18,14 @@ class UploadedFileTest extends TestCase
 
         $file->moveTo(targetPath: $target);
 
-        $this->assertTrue(condition: file_exists($target));
-        unlink($target);
+        $this->assertTrue(condition: file_exists(filename: $target));
+        unlink(filename: $target);
     }
 
     private function createUploadedFile() : UploadedFile
     {
         $path = sys_get_temp_dir() . '/uploaded_test_' . uniqid();
-        file_put_contents($path, 'dummy content');
+        file_put_contents(filename: $path, data: 'dummy content');
 
         return new UploadedFile(
             tmpName: $path,
@@ -50,12 +50,12 @@ class UploadedFileTest extends TestCase
         try {
             $file->moveTo(targetPath: $target2);
         } finally {
-            if (file_exists($target1)) {
-                unlink($target1);
+            if (file_exists(filename: $target1)) {
+                unlink(filename: $target1);
             }
 
-            if (file_exists($target2)) {
-                unlink($target2);
+            if (file_exists(filename: $target2)) {
+                unlink(filename: $target2);
             }
         }
     }
@@ -73,8 +73,8 @@ class UploadedFileTest extends TestCase
         try {
             $file->getStream();
         } finally {
-            if (file_exists($target)) {
-                unlink($target);
+            if (file_exists(filename: $target)) {
+                unlink(filename: $target);
             }
         }
     }

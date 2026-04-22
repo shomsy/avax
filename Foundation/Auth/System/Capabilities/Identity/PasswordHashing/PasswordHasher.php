@@ -42,16 +42,16 @@ final readonly class PasswordHasher
             return null;
         }
 
-        if (array_key_exists('cost', $options)) {
+        if (array_key_exists(key: 'cost', array: $options)) {
             return PASSWORD_BCRYPT;
         }
 
         if (
-            defined('PASSWORD_ARGON2ID')
+            defined(constant_name: 'PASSWORD_ARGON2ID')
             && (
-                array_key_exists('memory_cost', $options)
-                || array_key_exists('time_cost', $options)
-                || array_key_exists('threads', $options)
+                array_key_exists(key: 'memory_cost', array: $options)
+                || array_key_exists(key: 'time_cost', array: $options)
+                || array_key_exists(key: 'threads', array: $options)
             )
         ) {
             return PASSWORD_ARGON2ID;
@@ -62,7 +62,7 @@ final readonly class PasswordHasher
 
     private function defaultAlgorithm() : string
     {
-        return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
+        return defined(constant_name: 'PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
     }
 
     /**
@@ -70,7 +70,7 @@ final readonly class PasswordHasher
      */
     private function defaultOptions(string $algo) : array
     {
-        if (defined('PASSWORD_ARGON2ID') && $algo === PASSWORD_ARGON2ID) {
+        if (defined(constant_name: 'PASSWORD_ARGON2ID') && $algo === PASSWORD_ARGON2ID) {
             return [
                 'memory_cost' => PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
                 'time_cost'   => PASSWORD_ARGON2_DEFAULT_TIME_COST,

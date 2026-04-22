@@ -132,7 +132,7 @@ final readonly class RegistrationMetadata
 
     private static function normalizeText(string $value, string $fallback) : string
     {
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         return $normalized !== '' ? $normalized : $fallback;
     }
@@ -144,18 +144,18 @@ final readonly class RegistrationMetadata
      */
     private static function stringList(mixed $values) : array
     {
-        if (! is_array($values)) {
+        if (! is_array(value: $values)) {
             return [];
         }
 
         $items = [];
 
         foreach ($values as $value) {
-            if (! is_string($value)) {
+            if (! is_string(value: $value)) {
                 continue;
             }
 
-            $normalized = trim($value);
+            $normalized = trim(string: $value);
             if ($normalized === '') {
                 continue;
             }
@@ -163,32 +163,32 @@ final readonly class RegistrationMetadata
             $items[] = $normalized;
         }
 
-        $items = array_values(array_unique($items));
-        sort($items);
+        $items = array_values(array: array_unique(array: $items));
+        sort(array: $items);
 
         return $items;
     }
 
     private static function normalizeNullable(string|null $value) : string|null
     {
-        if (! is_string($value)) {
+        if (! is_string(value: $value)) {
             return null;
         }
 
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         return $normalized !== '' ? $normalized : null;
     }
 
     private static function derivedConcept(string $unitId) : string
     {
-        $normalized = str_replace(['\\', '/', '@', ':'], '.', $unitId);
-        $segments   = explode('.', $normalized)
-                |> (static fn ($x) => array_filter($x, static fn (string $segment) : bool => $segment !== ''))
+        $normalized = str_replace(search: ['\\', '/', '@', ':'], replace: '.', subject: $unitId);
+        $segments   = explode(separator: '.', string: $normalized)
+                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $segment) : bool => $segment !== ''))
                 |> array_values(...);
-        $last       = $segments !== [] ? $segments[array_key_last($segments)] : $unitId;
+        $last       = $segments !== [] ? $segments[array_key_last(array: $segments)] : $unitId;
 
-        return strtolower(trim($last)) ?: strtolower($unitId);
+        return strtolower(string: trim(string: $last)) ?: strtolower(string: $unitId);
     }
 
     public static function for(string $unitId) : self
@@ -219,7 +219,7 @@ final readonly class RegistrationMetadata
             tenants       : self::stringList(values: $state['tenants'] ?? []),
             regions       : self::stringList(values: $state['regions'] ?? []),
             modes         : self::stringList(values: $state['modes'] ?? []),
-            overrideSource: is_string($state['overrideSource'] ?? null)
+            overrideSource: is_string(value: $state['overrideSource'] ?? null)
                                 ? $state['overrideSource']
                                 : null,
             reason        : (string) ($state['reason'] ?? 'registered service'),
@@ -408,7 +408,7 @@ final readonly class RegistrationMetadata
             return true;
         }
 
-        return in_array($environment, $this->profiles, true);
+        return in_array(needle: $environment, haystack: $this->profiles, strict: true);
     }
 
     /**
@@ -421,7 +421,7 @@ final readonly class RegistrationMetadata
         }
 
         foreach ($this->flags as $flag) {
-            if (! in_array($flag, $activeFlags, true)) {
+            if (! in_array(needle: $flag, haystack: $activeFlags, strict: true)) {
                 return false;
             }
         }
@@ -431,25 +431,25 @@ final readonly class RegistrationMetadata
 
     public function supportsTenant(string $tenant) : bool
     {
-        return $this->tenants === [] || in_array($tenant, $this->tenants, true);
+        return $this->tenants === [] || in_array(needle: $tenant, haystack: $this->tenants, strict: true);
     }
 
     public function supportsRegion(string $region) : bool
     {
-        return $this->regions === [] || in_array($region, $this->regions, true);
+        return $this->regions === [] || in_array(needle: $region, haystack: $this->regions, strict: true);
     }
 
     public function supportsMode(string $mode) : bool
     {
-        return $this->modes === [] || in_array($mode, $this->modes, true);
+        return $this->modes === [] || in_array(needle: $mode, haystack: $this->modes, strict: true);
     }
 
     public function exportsSurface() : bool
     {
         return $this->exported || in_array(
-                $this->visibility,
-                [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED],
-                true
+                needle  : $this->visibility,
+                haystack: [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED],
+                strict  : true
             );
     }
 

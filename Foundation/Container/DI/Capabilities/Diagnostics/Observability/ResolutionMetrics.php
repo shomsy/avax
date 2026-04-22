@@ -31,14 +31,14 @@ final class ResolutionMetrics
             $lines[] = $name . ' ' . $value;
         }
 
-        return implode(PHP_EOL, $lines);
+        return implode(separator: PHP_EOL, array: $lines);
     }
 
     /** @return array<string, int> */
     public function all() : array
     {
         $counters = $this->counters;
-        ksort($counters);
+        ksort(array: $counters);
 
         return $counters;
     }

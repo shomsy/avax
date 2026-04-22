@@ -46,19 +46,19 @@ final class ElasticsearchGrammar extends BaseGrammar
         if (! empty($state->orders)) {
             $sort = [];
             foreach ($state->orders as $order) {
-                $sort[$order->column] = ['order' => strtolower($order->direction)];
+                $sort[$order->column] = ['order' => strtolower(string: $order->direction)];
             }
             $query['sort'] = [$sort];
         }
 
-        return json_encode($query);
+        return json_encode(value: $query);
     }
 
     #[Override]
     public function compileInsert(QueryState $state) : string
     {
         $index    = $this->wrap(value: $state->from);
-        $document = json_encode($state->values);
+        $document = json_encode(value: $state->values);
 
         return "{$index}/_doc {$document}";
     }
@@ -68,7 +68,7 @@ final class ElasticsearchGrammar extends BaseGrammar
     {
         $index    = $this->wrap(value: $state->from);
         $id       = $state->values['id'] ?? '';
-        $document = json_encode($state->values);
+        $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
     }
@@ -87,34 +87,34 @@ final class ElasticsearchGrammar extends BaseGrammar
     {
         $index    = $this->wrap(value: $state->from);
         $id       = $state->values['id'] ?? '';
-        $document = json_encode($state->values);
+        $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
     }
 
     public function compileMatch(string $field, string $query, float $boost = 1.0) : string
     {
-        return json_encode(['match' => [$field => ['query' => $query, 'boost' => $boost]]]);
+        return json_encode(value: ['match' => [$field => ['query' => $query, 'boost' => $boost]]]);
     }
 
     public function compileMultiMatch(array $fields, string $query) : string
     {
-        return json_encode(['multi_match' => ['query' => $query, 'fields' => $fields]]);
+        return json_encode(value: ['multi_match' => ['query' => $query, 'fields' => $fields]]);
     }
 
     public function compileTerm(string $field, mixed $value) : string
     {
-        return json_encode(['term' => [$field => $value]]);
+        return json_encode(value: ['term' => [$field => $value]]);
     }
 
     public function compileTerms(string $field, array $values) : string
     {
-        return json_encode(['terms' => [$field => $values]]);
+        return json_encode(value: ['terms' => [$field => $values]]);
     }
 
     public function compileRange(string $field, array $range) : string
     {
-        return json_encode(['range' => [$field => $range]]);
+        return json_encode(value: ['range' => [$field => $range]]);
     }
 
     public function compileBool(array $must = [], array $mustNot = [], array $should = []) : string
@@ -130,17 +130,17 @@ final class ElasticsearchGrammar extends BaseGrammar
             $bool['should'] = $should;
         }
 
-        return json_encode(['bool' => $bool]);
+        return json_encode(value: ['bool' => $bool]);
     }
 
     public function compileAggregation(string $name, string $type, array $config) : string
     {
-        return json_encode(['aggs' => [$name => [$type => $config]]]);
+        return json_encode(value: ['aggs' => [$name => [$type => $config]]]);
     }
 
     #[Override]
     public function compileTruncate(string $table) : string
     {
-        return "{$table}/_delete_by_query " . json_encode(['query' => ['match_all' => (object) []]]);
+        return "{$table}/_delete_by_query " . json_encode(value: ['query' => ['match_all' => (object) []]]);
     }
 }

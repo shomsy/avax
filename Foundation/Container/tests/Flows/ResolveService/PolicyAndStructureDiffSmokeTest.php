@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\ContainerInterface;
@@ -51,7 +51,7 @@ final class LocatorDriftService
     public function __construct(ContainerInterface $container) { $this->container = $container; }
 }
 
-$cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
 $config    = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
@@ -94,7 +94,7 @@ $container->singleton(abstract: StructureDiffService::class, concrete: Structure
 
 $graph        = $container->debugGraph();
 $serviceGraph = $container->debugGraph(id: StructureDiffService::class);
-$issues       = implode("\n", $container->validate(serviceIds: [
+$issues       = implode(separator: "\n", array: $container->validate(serviceIds: [
                                                                    OverInjectedPolicyService::class,
                                                                    FlowToFlowEntry::class,
                                                                    GenericHelperService::class,
@@ -102,24 +102,24 @@ $issues       = implode("\n", $container->validate(serviceIds: [
                                                                    LocatorDriftService::class,
                                                                ]));
 
-$overInjectedCodes = array_column($graph['policyFindings'][OverInjectedPolicyService::class] ?? [], 'code');
-$flowCodes         = array_column($graph['policyFindings'][FlowToFlowEntry::class] ?? [], 'code');
-$genericCodes      = array_column($graph['policyFindings'][GenericHelperService::class] ?? [], 'code');
-$locatorCodes      = array_column($graph['policyFindings'][LocatorDriftService::class] ?? [], 'code');
+$overInjectedCodes = array_column(array: $graph['policyFindings'][OverInjectedPolicyService::class] ?? [], column_key: 'code');
+$flowCodes         = array_column(array: $graph['policyFindings'][FlowToFlowEntry::class] ?? [], column_key: 'code');
+$genericCodes      = array_column(array: $graph['policyFindings'][GenericHelperService::class] ?? [], column_key: 'code');
+$locatorCodes      = array_column(array: $graph['policyFindings'][LocatorDriftService::class] ?? [], column_key: 'code');
 
-assertTrue(condition: in_array('POL-001', $overInjectedCodes, true), message: 'Policy diagnostics should flag over-injected constructors.');
-assertTrue(condition: in_array('POL-004', $flowCodes, true), message: 'Policy diagnostics should flag direct flow-to-flow dependencies.');
-assertTrue(condition: in_array('POL-005', $genericCodes, true), message: 'Policy diagnostics should flag generic concept naming.');
-assertTrue(condition: in_array('POL-008', $locatorCodes, true), message: 'Policy diagnostics should flag service locator drift.');
+assertTrue(condition: in_array(needle: 'POL-001', haystack: $overInjectedCodes, strict: true), message: 'Policy diagnostics should flag over-injected constructors.');
+assertTrue(condition: in_array(needle: 'POL-004', haystack: $flowCodes, strict: true), message: 'Policy diagnostics should flag direct flow-to-flow dependencies.');
+assertTrue(condition: in_array(needle: 'POL-005', haystack: $genericCodes, strict: true), message: 'Policy diagnostics should flag generic concept naming.');
+assertTrue(condition: in_array(needle: 'POL-008', haystack: $locatorCodes, strict: true), message: 'Policy diagnostics should flag service locator drift.');
 assertTrue(
     condition: ($serviceGraph['structureDiff']['ownership']['changed'] ?? false) === true,
     message  : 'Structure diff diagnostics should detect ownership changes after compilation.'
 );
 assertTrue(
-    condition: str_contains($issues, 'POL-004'),
+    condition: str_contains(haystack: $issues, needle: 'POL-004'),
     message  : 'Validation should surface policy errors for direct flow-to-flow dependencies.'
 );
 
-rmdir($cacheDir);
+rmdir(directory: $cacheDir);
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

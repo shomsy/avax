@@ -162,7 +162,7 @@ final readonly class CompileReport implements JsonSerializable
             'decorationMapSize'        => $this->decorationMapSize,
             'providerBootPlanSize'     => $this->providerBootPlanSize,
             'lifetimePlanSummary'      => $this->lifetimePlanSummary,
-            'serviceCount'             => count($this->entries),
+            'serviceCount'             => count(value: $this->entries),
             'entries'                  => $this->entries,
             'changedServices'          => $this->changedServices,
             'invalidatedServices'      => $this->invalidatedServices,
@@ -178,7 +178,7 @@ final readonly class CompileReport implements JsonSerializable
     public function toJson() : string
     {
         try {
-            return (string) json_encode($this, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return (string) json_encode(value: $this, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '{}';
         }

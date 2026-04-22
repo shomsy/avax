@@ -64,7 +64,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
      */
     private function isSafeMethod(string $method) : bool
     {
-        return in_array(strtoupper($method), ['GET', 'HEAD', 'OPTIONS'], true);
+        return in_array(needle: strtoupper(string: $method), haystack: ['GET', 'HEAD', 'OPTIONS'], strict: true);
     }
 
     /**
@@ -86,7 +86,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
 
             // Try parsed body for POST requests
             $parsedBody = $request->getParsedBody();
-            if (is_array($parsedBody) && isset($parsedBody['csrf_token'])) {
+            if (is_array(value: $parsedBody) && isset($parsedBody['csrf_token'])) {
                 return (string) $parsedBody['csrf_token'];
             }
         }
@@ -104,7 +104,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
      */
     private function isValidToken(#[SensitiveParameter] string|null $token) : bool
     {
-        if ($token === null || strlen($token) < 32) {
+        if ($token === null || strlen(string: $token) < 32) {
             return false;
         }
 

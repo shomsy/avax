@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -58,7 +58,7 @@ assertTrue(condition: ! $report->available, message: 'Stale compiled artifacts m
 assertTrue(condition: $report->compatible, message: 'Stale artifacts should still report structural compatibility when only service signatures changed.');
 assertSame(expected: 'stale', actual: $report->freshnessState, message: 'Stale service signatures must be reported explicitly.');
 assertTrue(
-    condition: in_array('compiled artifact signatures are stale', $report->warnings, true),
+    condition: in_array(needle: 'compiled artifact signatures are stale', haystack: $report->warnings, strict: true),
     message  : 'Compile reports should warn when compiled service signatures are stale.'
 );
 assertTrue(condition: ! $reloaded->isCompiled(id: FreshnessConsumer::class), message: 'Stale compiled artifacts must not report compiled availability.');
@@ -70,4 +70,4 @@ assertSame(
 );
 assertSame(expected: 'v2', actual: $resolved->dependency->version(), message: 'Runtime should resolve the fresh dynamic graph after signature drift.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

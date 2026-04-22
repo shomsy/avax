@@ -71,7 +71,7 @@ final class MongoDBGrammar extends BaseGrammar
                 '>='          => ['$gte' => $value],
                 '<'           => ['$lt' => $value],
                 '<='          => ['$lte' => $value],
-                'LIKE'        => ['$regex' => str_replace('%', '.*', $value)],
+                'LIKE'        => ['$regex' => str_replace(search: '%', replace: '.*', subject: $value)],
                 'IN'          => ['$in' => $value],
                 'NOT IN'      => ['$nin' => $value],
                 'IS NULL'     => ['$exists' => false],
@@ -82,7 +82,7 @@ final class MongoDBGrammar extends BaseGrammar
             $conditions[$column] = $mongoOp;
         }
 
-        return json_encode($conditions);
+        return json_encode(value: $conditions);
     }
 
     private function compileMongoProjection(array $columns) : string
@@ -92,18 +92,18 @@ final class MongoDBGrammar extends BaseGrammar
             $projection[$col] = 1;
         }
 
-        return ', ' . json_encode($projection);
+        return ', ' . json_encode(value: $projection);
     }
 
     private function compileMongoSort(array $orders) : string
     {
         $sort = [];
         foreach ($orders as $order) {
-            $direction            = strtoupper($order->direction) === 'DESC' ? -1 : 1;
+            $direction            = strtoupper(string: $order->direction) === 'DESC' ? -1 : 1;
             $sort[$order->column] = $direction;
         }
 
-        return json_encode($sort);
+        return json_encode(value: $sort);
     }
 
     #[Override]
@@ -117,7 +117,7 @@ final class MongoDBGrammar extends BaseGrammar
 
     private function compileMongoDocument(array $values) : string
     {
-        return json_encode($values);
+        return json_encode(value: $values);
     }
 
     #[Override]
@@ -137,7 +137,7 @@ final class MongoDBGrammar extends BaseGrammar
             $set[$key] = $value;
         }
 
-        return json_encode(['$set' => $set]);
+        return json_encode(value: ['$set' => $set]);
     }
 
     #[Override]

@@ -231,8 +231,8 @@ class RouterIntegrationTest extends TestCase
             HttpClientServiceProvider::class,
         ];
 
-        $routes   = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
-        $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
+        $routes   = dirname(path: __DIR__, levels: 2) . '/Presentation/HTTP/routes/web.routes.php';
+        $cacheDir = dirname(path: __DIR__, levels: 2) . '/storage/cache';
 
         $this->app = AppFactory::http(
             providers: $providers,

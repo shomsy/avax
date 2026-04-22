@@ -20,8 +20,8 @@ final readonly class ParseForwardedAddresses
             return [];
         }
 
-        $ips = array_map('trim', explode(',', $headerLine));
+        $ips = array_map(callback: 'trim', array: explode(separator: ',', string: $headerLine));
         
-        return array_filter($ips, static fn($ip) => filter_var($ip, FILTER_VALIDATE_IP) !== false);
+        return array_filter(array: $ips, callback: static fn($ip) => filter_var(value: $ip, filter: FILTER_VALIDATE_IP) !== false);
     }
 }

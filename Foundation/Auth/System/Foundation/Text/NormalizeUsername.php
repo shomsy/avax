@@ -8,6 +8,6 @@ final class NormalizeUsername
 {
     public function __invoke(string $value) : string
     {
-        return mb_strtolower(trim(preg_replace('/\s+/', ' ', $value) ?? $value));
+        return mb_strtolower(string: trim(string: preg_replace(pattern: '/\s+/', replacement: ' ', subject: $value) ?? $value));
     }
 }

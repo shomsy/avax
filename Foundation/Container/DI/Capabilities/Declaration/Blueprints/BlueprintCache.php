@@ -66,7 +66,7 @@ final class BlueprintCache
         }
 
         $path = $this->pathFor(class: $class);
-        if (! is_file($path)) {
+        if (! is_file(filename: $path)) {
             $this->metrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
@@ -99,12 +99,12 @@ final class BlueprintCache
 
     private function pathFor(string $class) : string
     {
-        return $this->directory() . '/' . sha1($class) . '.php';
+        return $this->directory() . '/' . sha1(string: $class) . '.php';
     }
 
     private function directory() : string
     {
-        return rtrim($this->cacheDir, '/\\') . '/container/' . rawurlencode($this->cacheVersion) . '/blueprints';
+        return rtrim(string: $this->cacheDir, characters: '/\\') . '/container/' . rawurlencode(string: $this->cacheVersion) . '/blueprints';
     }
 
     /**
@@ -115,8 +115,8 @@ final class BlueprintCache
         unset($this->items[$class]);
 
         $path = $this->pathFor(class: $class);
-        if (is_file($path)) {
-            unlink($path);
+        if (is_file(filename: $path)) {
+            unlink(filename: $path);
         }
     }
 
@@ -134,21 +134,21 @@ final class BlueprintCache
             return $blueprint;
         }
 
-        $directory = dirname($this->pathFor(class: $blueprint->class));
-        if (! is_dir($directory) && ! mkdir($directory, 0777, true) && ! is_dir($directory)) {
+        $directory = dirname(path: $this->pathFor(class: $blueprint->class));
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0777, recursive: true) && ! is_dir(filename: $directory)) {
             throw new ContainerException(message: "Cannot create blueprint cache directory [{$directory}].");
         }
 
         $path = $this->pathFor(class: $blueprint->class);
-        $temp = $path . '.' . uniqid('tmp', true);
-        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($blueprint, true) . ';' . PHP_EOL;
+        $temp = $path . '.' . uniqid(prefix: 'tmp', more_entropy: true);
+        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $blueprint, return: true) . ';' . PHP_EOL;
 
-        if (file_put_contents($temp, $body, LOCK_EX) === false) {
+        if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
             throw new ContainerException(message: "Cannot write blueprint cache file [{$temp}].");
         }
 
-        if (! rename($temp, $path)) {
-            unlink($temp);
+        if (! rename(from: $temp, to: $path)) {
+            unlink(filename: $temp);
             throw new ContainerException(message: "Cannot publish blueprint cache file [{$path}].");
         }
 
@@ -163,11 +163,11 @@ final class BlueprintCache
         $this->items = [];
 
         $directory = $this->directory();
-        if (! is_dir($directory)) {
+        if (! is_dir(filename: $directory)) {
             return;
         }
 
-        $files = scandir($directory);
+        $files = scandir(directory: $directory);
         if ($files === false) {
             return;
         }
@@ -178,18 +178,18 @@ final class BlueprintCache
             }
 
             $path = $directory . '/' . $file;
-            if (is_dir($path)) {
+            if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
                 continue;
             }
 
-            unlink($path);
+            unlink(filename: $path);
         }
     }
 
     private function deleteDirectory(string $directory) : void
     {
-        $files = scandir($directory);
+        $files = scandir(directory: $directory);
         if ($files === false) {
             return;
         }
@@ -200,14 +200,14 @@ final class BlueprintCache
             }
 
             $path = $directory . '/' . $file;
-            if (is_dir($path)) {
+            if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
                 continue;
             }
 
-            unlink($path);
+            unlink(filename: $path);
         }
 
-        rmdir($directory);
+        rmdir(directory: $directory);
     }
 }

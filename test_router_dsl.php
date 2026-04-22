@@ -29,7 +29,7 @@ echo "\nRoute Parameter Extraction:\n";
 $paths = ['/users/{id}', '/api/{version}/users/{userId}/posts/{postId}'];
 foreach ($paths as $path) {
     $params = route_params(path: $path);
-    echo "📋 '{$path}' -> [" . implode(', ', $params) . "]\n";
+    echo "📋 '{$path}' -> [" . implode(separator: ', ', array: $params) . "]\n";
 }
 
 echo "\nRoute Pattern Compilation:\n";

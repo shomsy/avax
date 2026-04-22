@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -85,16 +85,16 @@ $inactive->singleton(abstract: ConditionalGateway::class, concrete: ActiveCondit
 assertTrue(condition: ! $inactive->has(id: ConditionalGateway::class), message: 'Inactive conditional registrations should not report as resolvable.');
 assertTrue(
     condition: in_array(
-                   'region [us] is not in [eu]',
-                   $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
-                   true
+                   needle  : 'region [us] is not in [eu]',
+                   haystack: $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
+                   strict  : true
                ),
     message  : 'Service descriptions should explain why a conditional registration is inactive.'
 );
 
-$inactiveIssues = implode("\n", $inactive->validate(serviceIds: [ConditionalGateway::class]));
+$inactiveIssues = implode(separator: "\n", array: $inactive->validate(serviceIds: [ConditionalGateway::class]));
 assertTrue(
-    condition: str_contains($inactiveIssues, 'region [us] is not in [eu]'),
+    condition: str_contains(haystack: $inactiveIssues, needle: 'region [us] is not in [eu]'),
     message  : 'Validation should report the exact inactive composition reason.'
 );
 
@@ -103,11 +103,11 @@ try {
     throw new RuntimeException(message: 'Inactive conditional registrations should fail when resolved.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'region [us] is not in [eu]'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'region [us] is not in [eu]'),
         message  : 'Runtime failures should explain the inactive composition condition.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
         message  : 'Runtime failures should suggest how to activate a matching composition.'
     );
 }
@@ -129,12 +129,12 @@ $override->singleton(abstract: ConditionalGateway::class, concrete: OverrideCond
     ->concept(concept: 'payments.gateway');
 
 $overrideDebug  = $override->debugGraph(id: ConditionalGateway::class);
-$overrideIssues = implode("\n", $override->validate(serviceIds: [ConditionalGateway::class]));
+$overrideIssues = implode(separator: "\n", array: $override->validate(serviceIds: [ConditionalGateway::class]));
 
 assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');
 assertTrue(
-    condition: str_contains($overrideIssues, 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
+    condition: str_contains(haystack: $overrideIssues, needle: 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
     message  : 'Validation should reject overlapping overrides that change ownership posture silently.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

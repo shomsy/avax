@@ -66,7 +66,7 @@ final class ReflectionCache
      */
     public static function getMethod(object|string $classOrObject, string $methodName) : ReflectionMethod
     {
-        $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
+        $className = is_string(value: $classOrObject) ? $classOrObject : $classOrObject::class;
         $key       = $className . '::' . $methodName;
 
         return self::$methodCache[$key] ??= self::getClass(className: $className)->getMethod(name: $methodName);
@@ -118,7 +118,7 @@ final class ReflectionCache
      */
     public static function getProperty(object|string $classOrObject, string $propertyName) : ReflectionProperty
     {
-        $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
+        $className = is_string(value: $classOrObject) ? $classOrObject : $classOrObject::class;
         $key       = $className . '::$' . $propertyName;
 
         return self::$propertyCache[$key] ??= self::getClass(className: $className)->getProperty(name: $propertyName);
@@ -184,9 +184,9 @@ final class ReflectionCache
     public static function getStats() : array
     {
         return [
-            'class_count'    => count(self::$classCache),
-            'method_count'   => count(self::$methodCache),
-            'property_count' => count(self::$propertyCache),
+            'class_count'    => count(value: self::$classCache),
+            'method_count'   => count(value: self::$methodCache),
+            'property_count' => count(value: self::$propertyCache),
         ];
     }
 }

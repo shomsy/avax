@@ -58,7 +58,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
             }
         }
 
-        return new OidcJsonWebKeySet(keys: array_values($keys));
+        return new OidcJsonWebKeySet(keys: array_values(array: $keys));
     }
 
     /**

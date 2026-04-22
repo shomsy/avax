@@ -31,8 +31,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken
     {
-        $tokenId  = bin2hex(random_bytes(32));
-        $familyId ??= bin2hex(random_bytes(16));
+        $tokenId  = bin2hex(string: random_bytes(length: 32));
+        $familyId ??= bin2hex(string: random_bytes(length: 16));
 
         $record = new RefreshTokenRecord(
             tokenId          : $tokenId,

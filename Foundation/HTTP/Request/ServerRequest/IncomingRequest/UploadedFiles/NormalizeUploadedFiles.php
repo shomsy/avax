@@ -27,13 +27,13 @@ final readonly class NormalizeUploadedFiles
                 continue;
             }
 
-            if (is_array($value) && isset($value['tmp_name'])) {
+            if (is_array(value: $value) && isset($value['tmp_name'])) {
                 $normalized[$key] = $this->createUploadedFileFromSpec(value: $value);
 
                 continue;
             }
 
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 $normalized[$key] = $this->execute(files: $value);
 
             }
@@ -44,7 +44,7 @@ final readonly class NormalizeUploadedFiles
 
     private function createUploadedFileFromSpec(array $value) : array|UploadedFileInterface
     {
-        if (is_array($value['tmp_name'])) {
+        if (is_array(value: $value['tmp_name'])) {
             return $this->normalizeNestedFileSpec(files: $value);
         }
 
@@ -61,7 +61,7 @@ final readonly class NormalizeUploadedFiles
     {
         $normalized = [];
 
-        foreach (array_keys($files['tmp_name']) as $key) {
+        foreach (array_keys(array: $files['tmp_name']) as $key) {
             $spec = [
                 'tmp_name' => $files['tmp_name'][$key],
                 'size'     => $files['size'][$key],

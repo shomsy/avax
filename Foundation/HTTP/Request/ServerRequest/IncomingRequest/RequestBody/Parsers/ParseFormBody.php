@@ -19,7 +19,7 @@ final readonly class ParseFormBody
         }
 
         $data = [];
-        parse_str($content, $data);
+        parse_str(string: $content, result: $data);
 
         return $data;
     }

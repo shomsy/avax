@@ -46,7 +46,7 @@ final class WhereNode
 
         if ($this->operator === ComparisonOperator::IN || $this->operator === ComparisonOperator::NOT_IN) {
             $values       = is_array(value: $this->value) ? $this->value : [$this->value];
-            $placeholders = implode(separator: ', ', array_fill(start_index: 0, count: count($values), value: '?'));
+            $placeholders = implode(separator: ', ', array: array_fill(start_index: 0, count: count(value: $values), value: '?'));
 
             return "{$boolean} {$column} {$operator} ({$placeholders})";
         }

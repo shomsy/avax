@@ -85,8 +85,8 @@ class HttpMethodCompletenessTest extends TestCase
     public function enum_cases_match_supported_methods() : void
     {
         $enumValues = array_map(
-            static fn ($case) => $case->value,
-            HttpMethod::cases()
+            callback: static fn ($case) => $case->value,
+            array   : HttpMethod::cases()
         );
 
         $supportedMethods = HttpMethod::getSupportedMethods();

@@ -34,7 +34,7 @@ final class RouterTrace
     public function __construct()
     {
         $this->events     = [];
-        $this->startTime  = microtime(true);
+        $this->startTime  = microtime(as_float: true);
         $this->eventCount = 0;
     }
 
@@ -58,24 +58,24 @@ final class RouterTrace
         $enrichedContext = $context;
 
         // Auto-enrich with request ID if available
-        if (in_array('request_id', $autoEnrich, true)) {
+        if (in_array(needle: 'request_id', haystack: $autoEnrich, strict: true)) {
             $enrichedContext['request_id'] = $this->getCurrentRequestId();
         }
 
         // Auto-enrich with memory usage
-        if (in_array('memory', $autoEnrich, true)) {
-            $enrichedContext['memory_usage'] = memory_get_usage(true);
-            $enrichedContext['memory_peak']  = memory_get_peak_usage(true);
+        if (in_array(needle: 'memory', haystack: $autoEnrich, strict: true)) {
+            $enrichedContext['memory_usage'] = memory_get_usage(real_usage: true);
+            $enrichedContext['memory_peak']  = memory_get_peak_usage(real_usage: true);
         }
 
         // Auto-enrich with route information if available in context
-        if (in_array('route', $autoEnrich, true)) {
+        if (in_array(needle: 'route', haystack: $autoEnrich, strict: true)) {
             $enrichedContext = $this->enrichWithRouteContext(event: $event, context: $enrichedContext);
         }
 
         // Auto-enrich with system context
         $enrichedContext['php_version'] = PHP_VERSION;
-        $enrichedContext['timestamp']   = microtime(true);
+        $enrichedContext['timestamp']   = microtime(as_float: true);
         $enrichedContext['process_id']  = getmypid();
 
         $this->log(event: $event, context: $enrichedContext);
@@ -101,7 +101,7 @@ final class RouterTrace
         }
 
         // Generate a unique request ID if none found
-        return uniqid('req_', true);
+        return uniqid(prefix: 'req_', more_entropy: true);
     }
 
     /**
@@ -121,7 +121,7 @@ final class RouterTrace
         }
 
         // Add timing information for route resolution events
-        if (str_starts_with($event, 'resolve.')) {
+        if (str_starts_with(haystack: $event, needle: 'resolve.')) {
             $context['resolution_time_ms'] = $this->calculateResolutionTime();
         }
 
@@ -134,7 +134,7 @@ final class RouterTrace
     private function findRecentRouteInfo() : array|null
     {
         // Look for the most recent route matching event
-        for ($i = count($this->events) - 1; $i >= 0; $i--) {
+        for ($i = count(value: $this->events) - 1; $i >= 0; $i--) {
             $event = $this->events[$i];
 
             if (isset($event['context']['route'])) {
@@ -144,7 +144,7 @@ final class RouterTrace
                     'name'             => $route->name ?? null,
                     'method'           => $route->method ?? null,
                     'path'             => $route->path ?? null,
-                    'middleware_count' => count($route->middleware ?? []),
+                    'middleware_count' => count(value: $route->middleware ?? []),
                     'domain'           => $route->domain ?? null,
                 ];
             }
@@ -172,7 +172,7 @@ final class RouterTrace
         }
 
         if ($startTime !== null && $endTime !== null) {
-            return round($endTime - $startTime, 3);
+            return round(num: $endTime - $startTime, precision: 3);
         }
 
         return 0.0;
@@ -187,7 +187,7 @@ final class RouterTrace
     public function log(string $event, array $context = []) : void
     {
         $this->events[] = [
-            'time'    => round((microtime(true) - $this->startTime) * 1000, 3), // milliseconds
+            'time'    => round(num: (microtime(as_float: true) - $this->startTime) * 1000, precision: 3), // milliseconds
             'event'   => $event,
             'context' => $context,
         ];
@@ -210,18 +210,18 @@ final class RouterTrace
             'events'        => $this->events,
             'system_info'   => [
                 'php_version' => PHP_VERSION,
-                'memory_peak' => memory_get_peak_usage(true),
+                'memory_peak' => memory_get_peak_usage(real_usage: true),
                 'process_id'  => getmypid(),
             ],
         ];
 
         try {
-            return json_encode($traceData, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            return json_encode(value: $traceData, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         } catch (JsonException $exception) {
-            return json_encode([
+            return json_encode(   value: [
                                    'error' => 'Failed to export trace data',
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'message' => $exception->getMessage(),
-                               ], JSON_THROW_ON_ERROR);
+                               ], flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
         }
     }
@@ -231,7 +231,7 @@ final class RouterTrace
      */
     public function getTotalTime() : float
     {
-        return round((microtime(true) - $this->startTime) * 1000, 3);
+        return round(num: (microtime(as_float: true) - $this->startTime) * 1000, precision: 3);
     }
 
     /**
@@ -256,7 +256,7 @@ final class RouterTrace
         }
 
         if ($fromTime !== null && $toTime !== null) {
-            return round($toTime - $fromTime, 3);
+            return round(num: $toTime - $fromTime, precision: 3);
         }
 
         return null;
@@ -282,8 +282,8 @@ final class RouterTrace
     public function getEventsByType(string $eventType) : array
     {
         return array_filter(
-            $this->events,
-            static fn (array $event) => $event['event'] === $eventType
+            array   : $this->events,
+            callback: static fn (array $event) => $event['event'] === $eventType
         );
     }
 
@@ -294,7 +294,7 @@ final class RouterTrace
     {
         $this->events     = [];
         $this->eventCount = 0;
-        $this->startTime  = microtime(true);
+        $this->startTime  = microtime(as_float: true);
     }
 
     /**
@@ -303,14 +303,14 @@ final class RouterTrace
     public function toString() : string
     {
         $output = sprintf("Router Trace (Total: %.3fms, Events: %d)\n", $this->getTotalTime(), $this->eventCount);
-        $output .= str_repeat('=', 50) . "\n";
+        $output .= str_repeat(string: '=', times: 50) . "\n";
 
         foreach ($this->events as $event) {
             $output .= sprintf(
                 "[%7.3fms] %-25s %s\n",
                 $event['time'],
                 $event['event'],
-                ! empty($event['context']) ? json_encode($event['context'], JSON_UNESCAPED_SLASHES) : ''
+                ! empty($event['context']) ? json_encode(value: $event['context'], flags: JSON_UNESCAPED_SLASHES) : ''
             );
         }
 

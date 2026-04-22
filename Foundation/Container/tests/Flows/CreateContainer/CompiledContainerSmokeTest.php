@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -43,7 +43,7 @@ final class CompiledNeedsObjectArgument
 $cacheDir = sys_get_temp_dir() . '/container-runtime-' . uniqid();
 $version  = 'compiled-container-smoke';
 $config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
-$artifact = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.php';
+$artifact = $cacheDir . '/container/' . rawurlencode(string: $version) . '/compiled/container.php';
 
 $first = makeTestContainer(config: $config);
 $first->bind(abstract: CompiledGreeterContract::class, concrete: CompiledGreeter::class);
@@ -52,7 +52,7 @@ $first->singleton(abstract: CompiledNeedsObjectArgument::class, concrete: Compil
     ->withArgument(name: 'payload', value: (object) ['kind' => 'dynamic-fallback']);
 $first->compileContainer(serviceIds: [CompiledNeedsGreeter::class, CompiledConfiguredMessage::class, CompiledNeedsObjectArgument::class]);
 
-assertTrue(condition: is_file($artifact), message: 'CompileContainer should write a generated compiled runtime artifact.');
+assertTrue(condition: is_file(filename: $artifact), message: 'CompileContainer should write a generated compiled runtime artifact.');
 
 $resolvedFromCompiled       = $first->get(id: CompiledNeedsGreeter::class);
 $configuredFromCompiled     = $first->get(id: CompiledConfiguredMessage::class);
@@ -61,7 +61,7 @@ assertSame(expected: 'compiled-runtime', actual: $resolvedFromCompiled->greeter-
 assertSame(expected: 'from-compiled', actual: $configuredFromCompiled->name, message: 'Compiled runtime should preserve registration constructor arguments.');
 assertSame(expected: 'dynamic-fallback', actual: $objectArgumentFromCompiled->payload->kind, message: 'Non-compile-safe constructor arguments should still resolve through the dynamic fallback path.');
 assertTrue(
-    condition: str_contains($first->exportMetrics(), 'container_compiled_container_resolve_total'),
+    condition: str_contains(haystack: $first->exportMetrics(), needle: 'container_compiled_container_resolve_total'),
     message  : 'Compiled runtime should record hot-path resolution metrics.'
 );
 
@@ -79,8 +79,8 @@ assertSame(expected: 'compiled-runtime', actual: $resolvedFromDisk->greeter->mes
 assertSame(expected: 'from-compiled', actual: $configuredFromDisk->name, message: 'Disk-loaded compiled runtime should preserve registration constructor arguments.');
 assertSame(expected: 'dynamic-fallback', actual: $objectArgumentFromDisk->payload->kind, message: 'Disk-loaded runtime should preserve dynamic fallback services with object arguments.');
 assertTrue(
-    condition: str_contains($metrics, 'container_compiled_container_hits_total'),
+    condition: str_contains(haystack: $metrics, needle: 'container_compiled_container_hits_total'),
     message  : 'Loading a generated runtime from disk should be reported.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

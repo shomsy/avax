@@ -36,26 +36,26 @@ final class AttributeMetadataReader
      */
     private function read(string $entityClass) : EntityMetadata
     {
-        $reflection = new ReflectionClass($entityClass);
+        $reflection = new ReflectionClass(objectOrClass: $entityClass);
 
-        $entityAttribute = $reflection->getAttributes(Entity::class)[0] ?? null;
+        $entityAttribute = $reflection->getAttributes(name: Entity::class)[0] ?? null;
         if ($entityAttribute === null) {
             throw new RuntimeException(message: sprintf('Entity class %s must declare #[Entity].', $entityClass));
         }
 
-        $tableAttribute = $reflection->getAttributes(Table::class)[0] ?? null;
+        $tableAttribute = $reflection->getAttributes(name: Table::class)[0] ?? null;
         $table          = $tableAttribute !== null
             ? $tableAttribute->newInstance()->name
-            : strtolower($reflection->getShortName()) . 's';
+            : strtolower(string: $reflection->getShortName()) . 's';
 
         $entity    = $entityAttribute->newInstance();
         $fields    = [];
         $relations = [];
 
         foreach ($reflection->getProperties() as $property) {
-            $columnAttribute    = $property->getAttributes(Column::class)[0] ?? null;
-            $idAttribute        = $property->getAttributes(Id::class)[0] ?? null;
-            $generatedAttribute = $property->getAttributes(GeneratedValue::class)[0] ?? null;
+            $columnAttribute    = $property->getAttributes(name: Column::class)[0] ?? null;
+            $idAttribute        = $property->getAttributes(name: Id::class)[0] ?? null;
+            $generatedAttribute = $property->getAttributes(name: GeneratedValue::class)[0] ?? null;
 
             if ($columnAttribute !== null || $idAttribute !== null) {
                 $column                       = $columnAttribute?->newInstance() ?? new Column(name: $property->getName());
@@ -69,11 +69,11 @@ final class AttributeMetadataReader
                 );
             }
 
-            $joinColumn = $property->getAttributes(JoinColumn::class)[0] ?? null;
-            $relation   = $property->getAttributes(ManyToOne::class)[0]
-                ?? $property->getAttributes(OneToMany::class)[0]
-                ?? $property->getAttributes(OneToOne::class)[0]
-                ?? $property->getAttributes(ManyToMany::class)[0]
+            $joinColumn = $property->getAttributes(name: JoinColumn::class)[0] ?? null;
+            $relation   = $property->getAttributes(name: ManyToOne::class)[0]
+                ?? $property->getAttributes(name: OneToMany::class)[0]
+                ?? $property->getAttributes(name: OneToOne::class)[0]
+                ?? $property->getAttributes(name: ManyToMany::class)[0]
                 ?? null;
 
             if ($relation === null) {

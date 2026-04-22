@@ -77,7 +77,7 @@ final class MySQLGrammar extends BaseGrammar
     #[Override]
     public function wrap(mixed $value) : string
     {
-        parent::wrap($value);
+        parent::wrap(value: $value);
         if ($value instanceof Expression) {
             return $value->getValue();
         }
@@ -111,7 +111,7 @@ final class MySQLGrammar extends BaseGrammar
     #[Override]
     protected function wrapSegment(string $segment) : string
     {
-        parent::wrapSegment($segment);
+        parent::wrapSegment(segment: $segment);
         if ($segment === '*' || $segment === '') {
             return $segment;
         }

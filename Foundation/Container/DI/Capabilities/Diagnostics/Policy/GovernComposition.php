@@ -59,7 +59,7 @@ final readonly class GovernComposition
 
         foreach ($findings as $serviceFindings) {
             foreach ($serviceFindings as $finding) {
-                $severity = strtolower(trim((string) ($finding['severity'] ?? 'warn')));
+                $severity = strtolower(string: trim(string: (string) ($finding['severity'] ?? 'warn')));
                 if (! isset($summary[$severity])) {
                     continue;
                 }
@@ -93,7 +93,7 @@ final readonly class GovernComposition
 
         foreach ($report['findings'] ?? [] as $serviceId => $findings) {
             foreach ($findings as $finding) {
-                $messages[] = strtoupper((string) ($finding['severity'] ?? 'warn'))
+                $messages[] = strtoupper(string: (string) ($finding['severity'] ?? 'warn'))
                     . ' '
                     . ($finding['code'] ?? 'POLICY')
                     . ' ['
@@ -103,7 +103,7 @@ final readonly class GovernComposition
             }
         }
 
-        sort($messages);
+        sort(array: $messages);
 
         return $messages;
     }

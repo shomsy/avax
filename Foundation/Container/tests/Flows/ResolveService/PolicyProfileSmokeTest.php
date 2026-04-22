@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -39,10 +39,10 @@ $relaxedFindings  = $relaxed->debugGraph()['policyFindings'];
 $strictFindings   = $strict->debugGraph()['policyFindings'];
 $strictGovernance = $strict->debugGovernance();
 
-$relaxedFlowSeverities        = array_column($relaxedFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
-$strictFlowSeverities         = array_column($strictFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
-$relaxedConditionalSeverities = array_column($relaxedFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
-$strictConditionalSeverities  = array_column($strictFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
+$relaxedFlowSeverities        = array_column(array: $relaxedFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$strictFlowSeverities         = array_column(array: $strictFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$relaxedConditionalSeverities = array_column(array: $relaxedFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
+$strictConditionalSeverities  = array_column(array: $strictFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
 
 assertSame(expected: 'warn', actual: $relaxedFlowSeverities['POL-006'] ?? null, message: 'Relaxed policy profile should keep POL-006 as a warning.');
 assertSame(expected: 'error', actual: $strictFlowSeverities['POL-006'] ?? null, message: 'Strict policy profile should escalate POL-006 to an error.');
@@ -52,4 +52,4 @@ assertSame(expected: 'strict', actual: $strictGovernance['profile'] ?? null, mes
 assertSame(expected: 'closed', actual: $strictGovernance['failMode'] ?? null, message: 'Governance diagnostics should expose the fail-open/fail-closed posture.');
 assertTrue(condition: ($strictGovernance['blocked'] ?? false) === true, message: 'Fail-closed governance should report when policy errors block the composition.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

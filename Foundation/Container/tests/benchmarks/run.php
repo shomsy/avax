@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
@@ -195,15 +195,15 @@ final class BenchInjectionTarget
 function benchmark(callable $callback, int $iterations = 1) : array
 {
     gc_collect_cycles();
-    $peakBefore = memory_get_peak_usage(true);
-    $start      = hrtime(true);
+    $peakBefore = memory_get_peak_usage(real_usage: true);
+    $start      = hrtime(as_number: true);
 
     for ($i = 0; $i < $iterations; $i++) {
         $callback();
     }
 
-    $elapsedMs = (hrtime(true) - $start) / 1_000_000;
-    $peakAfter = memory_get_peak_usage(true);
+    $elapsedMs = (hrtime(as_number: true) - $start) / 1_000_000;
+    $peakAfter = memory_get_peak_usage(real_usage: true);
 
     return [
         'time_ms' => $elapsedMs,
@@ -274,20 +274,20 @@ function measureScenarioForGuard(array $scenario, int $runs = 3) : array
         $samples[] = measureScenario(scenario: $scenario);
     }
 
-    $timeSamples = array_values(array_map(
-                                    static fn (array $sample) : float => (float) $sample['time_ms'],
-                                    $samples
+    $timeSamples = array_values(array: array_map(
+                                    callback: static fn (array $sample) : float => (float) $sample['time_ms'],
+                                    array   : $samples
                                 ));
-    sort($timeSamples);
+    sort(array: $timeSamples);
 
-    $peakSamples = array_values(array_map(
-                                    static fn (array $sample) : float => (float) $sample['peak_mb'],
-                                    $samples
+    $peakSamples = array_values(array: array_map(
+                                    callback: static fn (array $sample) : float => (float) $sample['peak_mb'],
+                                    array   : $samples
                                 ));
-    sort($peakSamples);
+    sort(array: $peakSamples);
 
     $iterations = max(1, $scenario['iterations']);
-    $middle     = intdiv(count($timeSamples), 2);
+    $middle     = intdiv(num1: count(value: $timeSamples), num2: 2);
     $timeMs     = $timeSamples[$middle] ?? 0.0;
     $peakMb     = $peakSamples[$middle] ?? 0.0;
 
@@ -547,9 +547,9 @@ function benchmarkScenarios() : array
 function benchmarkPhpSettings() : array
 {
     return [
-        'memory_limit'       => (string) ini_get('memory_limit'),
-        'opcache.enable_cli' => (string) ini_get('opcache.enable_cli'),
-        'zend.assertions'    => (string) ini_get('zend.assertions'),
+        'memory_limit'       => (string) ini_get(option: 'memory_limit'),
+        'opcache.enable_cli' => (string) ini_get(option: 'opcache.enable_cli'),
+        'zend.assertions'    => (string) ini_get(option: 'zend.assertions'),
     ];
 }
 
@@ -577,17 +577,17 @@ function assertThresholds(array $thresholds, array $results) : void
     }
 
     if ($failures !== []) {
-        throw new RuntimeException(message: "Benchmark guard failed:\n- " . implode("\n- ", $failures));
+        throw new RuntimeException(message: "Benchmark guard failed:\n- " . implode(separator: "\n- ", array: $failures));
     }
 }
 
-$jsonOutput = in_array('--json', $argv, true);
-$guard      = in_array('--guard', $argv, true);
+$jsonOutput = in_array(needle: '--json', haystack: $argv, strict: true);
+$guard      = in_array(needle: '--guard', haystack: $argv, strict: true);
 $outputPath = null;
 
 foreach ($argv as $argument) {
-    if (str_starts_with($argument, '--output=')) {
-        $outputPath = substr($argument, strlen('--output='));
+    if (str_starts_with(haystack: $argument, needle: '--output=')) {
+        $outputPath = substr(string: $argument, offset: strlen(string: '--output='));
     }
 }
 
@@ -604,30 +604,30 @@ if ($guard) {
     assertThresholds(thresholds: $thresholds, results: $results);
 }
 
-if ($jsonOutput || is_string($outputPath)) {
-    $payload = json_encode([
+if ($jsonOutput || is_string(value: $outputPath)) {
+    $payload = json_encode(   value: [
                                'meta' => [
                                    'php' => PHP_VERSION,
-                                                                                                                                                                                                                                                        'sapi' => PHP_SAPI,
-                                                                                                                                                                                                                                                                                                     'timestamp' => gmdate('c'),
-                                                                                                                                                                                                                                                                                                                                                                    'dockerImage' => BENCHMARK_DOCKER_IMAGE,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                     'phpSettings' => benchmarkPhpSettings(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'suiteVersion' => BENCHMARK_SUITE_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'buildMarker' => (string) (getenv('BENCHMARK_BUILD_MARKER') ?: ''),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'guard' => $guard,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'scenarioCount' => count($results),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'scenarios' => array_keys($results),
+                                   'sapi' => PHP_SAPI,
+                                   'timestamp' => gmdate(format: 'c'),
+                                   'dockerImage' => BENCHMARK_DOCKER_IMAGE,
+                                   'phpSettings' => benchmarkPhpSettings(),
+                                   'suiteVersion' => BENCHMARK_SUITE_VERSION,
+                                   'buildMarker' => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
+                                   'guard' => $guard,
+                                   'scenarioCount' => count(value: $results),
+                                   'scenarios' => array_keys(array: $results),
                                ],
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'results' => $results,
-                           ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+                           ], flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 
-    if (is_string($outputPath) && $outputPath !== '') {
-        $directory = dirname($outputPath);
-        if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+    if (is_string(value: $outputPath) && $outputPath !== '') {
+        $directory = dirname(path: $outputPath);
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
             throw new RuntimeException(message: "Cannot create benchmark artifact directory [{$directory}].");
         }
 
-        if (file_put_contents($outputPath, $payload, LOCK_EX) === false) {
+        if (file_put_contents(filename: $outputPath, data: $payload, flags: LOCK_EX) === false) {
             throw new RuntimeException(message: "Cannot write benchmark artifact [{$outputPath}].");
         }
     }
@@ -640,11 +640,11 @@ if ($jsonOutput || is_string($outputPath)) {
 
 foreach ($results as $name => $result) {
     fwrite(
-        STDOUT,
-        str_pad($name, 24)
-        . str_pad(number_format($result['time_ms'], 2) . ' ms', 14)
-        . str_pad(number_format($result['ops_per_s'], 2) . ' ops/s', 18)
-        . number_format($result['peak_mb'], 2) . " MB\n"
+        stream: STDOUT,
+        data  : str_pad(string: $name, length: 24)
+        . str_pad(string: number_format(num: $result['time_ms'], decimals: 2) . ' ms', length: 14)
+        . str_pad(string: number_format(num: $result['ops_per_s'], decimals: 2) . ' ops/s', length: 18)
+        . number_format(num: $result['peak_mb'], decimals: 2) . " MB\n"
     );
 }
 

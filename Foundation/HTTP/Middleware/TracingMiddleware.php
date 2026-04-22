@@ -31,7 +31,7 @@ class TracingMiddleware implements MiddlewareInterface
     {
         $this->logger          = $logger;
         $this->requestIdHeader = $requestIdHeader;
-        $this->startTime       = microtime(true);
+        $this->startTime       = microtime(as_float: true);
     }
 
     /**
@@ -41,7 +41,7 @@ class TracingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, callable $next) : ResponseInterface
     {
         $requestId = $this->generateRequestId();
-        $startTime = microtime(true);
+        $startTime = microtime(as_float: true);
 
         // Add request ID to request
         $request = $request->withHeader(name: $this->requestIdHeader, value: $requestId);
@@ -57,33 +57,33 @@ class TracingMiddleware implements MiddlewareInterface
         try {
             $response = $next($request);
 
-            $latency = (microtime(true) - $startTime) * 1000; // ms
+            $latency = (microtime(as_float: true) - $startTime) * 1000; // ms
 
             // Update metrics
             $this->metrics['total_requests']++;
             $this->metrics['total_latency_ms'] += $latency;
-            $this->metrics['uptime_seconds']   = microtime(true) - $this->startTime;
+            $this->metrics['uptime_seconds']   = microtime(as_float: true) - $this->startTime;
 
             $this->logger->info(message: 'ServerRequest completed', context: [
                 'request_id'          => $requestId,
                 'method'              => $request->method,
                 'path'                => $request->uri->getPath(),
                 'status'              => $response->getStatusCode(),
-                'latency_ms'          => round($latency, 2),
-                'response_size_bytes' => strlen((string) $response->getBody()),
+                'latency_ms'          => round(num: $latency, precision: 2),
+                'response_size_bytes' => strlen(string: (string) $response->getBody()),
             ]);
 
             // Add request ID to response
             return $response->withHeader($this->requestIdHeader, $requestId);
 
         } catch (Throwable $e) {
-            $latency = (microtime(true) - $startTime) * 1000;
+            $latency = (microtime(as_float: true) - $startTime) * 1000;
 
             $this->logger->error(message: 'ServerRequest failed', context: [
                 'request_id' => $requestId,
                 'method'     => $request->method,
                 'path'       => $request->uri->getPath(),
-                'latency_ms' => round($latency, 2),
+                'latency_ms' => round(num: $latency, precision: 2),
                 'error'      => $e->getMessage(),
                 'trace'      => $e->getTraceAsString(),
             ]);
@@ -99,9 +99,9 @@ class TracingMiddleware implements MiddlewareInterface
     {
         return sprintf(
             '%s-%s-%s',
-            bin2hex(random_bytes(4)),
-            bin2hex(random_bytes(2)),
-            bin2hex(random_bytes(2))
+            bin2hex(string: random_bytes(length: 4)),
+            bin2hex(string: random_bytes(length: 2)),
+            bin2hex(string: random_bytes(length: 2))
         );
     }
 
@@ -119,10 +119,10 @@ class TracingMiddleware implements MiddlewareInterface
 
         // Truncate long headers
         foreach ($headers as $name => $values) {
-            if (is_array($values)) {
-                $headers[$name] = array_map(static function ($value) {
-                    return strlen($value) > 100 ? substr($value, 0, 100) . '...' : $value;
-                }, $values);
+            if (is_array(value: $values)) {
+                $headers[$name] = array_map(callback: static function ($value) {
+                    return strlen(string: $value) > 100 ? substr(string: $value, offset: 0, length: 100) . '...' : $value;
+                },                          array   : $values);
             }
         }
 
@@ -136,10 +136,10 @@ class TracingMiddleware implements MiddlewareInterface
             : 0;
 
         return [
-            'uptime_seconds'     => round($this->metrics['uptime_seconds'], 2),
+            'uptime_seconds'     => round(num: $this->metrics['uptime_seconds'], precision: 2),
             'total_requests'     => $this->metrics['total_requests'],
-            'average_latency_ms' => round($avgLatency, 2),
-            'total_latency_ms'   => round($this->metrics['total_latency_ms'], 2),
+            'average_latency_ms' => round(num: $avgLatency, precision: 2),
+            'total_latency_ms'   => round(num: $this->metrics['total_latency_ms'], precision: 2),
         ];
     }
 }

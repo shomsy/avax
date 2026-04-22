@@ -34,12 +34,12 @@ class RequestAttachedDtoTest extends TestCase
     public function test_from_request_exposes_attached_server_request_accessors(): void
     {
         $serverRequest = $this->createServerRequest();
-        $request       = RequestAttachedDto::fromRequest($serverRequest);
+        $request       = RequestAttachedDto::fromRequest(request: $serverRequest);
 
         $this->assertSame(expected: $serverRequest, actual: $request->serverRequest());
         $this->assertSame(expected: 'POST', actual: $request->method());
         $this->assertSame(expected: 'example.com', actual: $request->uri()->getHost());
-        $this->assertSame(expected: 'value', actual: $request->header('X-Test'));
+        $this->assertSame(expected: 'value', actual: $request->header(name: 'X-Test'));
     }
 
     private function createServerRequest() : ServerRequest

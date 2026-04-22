@@ -36,11 +36,11 @@ final readonly class MigrateCommand
 
             $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
 
-            foreach (array_keys($pending) as $name) {
+            foreach (array_keys(array: $pending) as $name) {
                 echo "  ✓ {$name}\n";
             }
 
-            echo "\033[32mMigrated " . count($pending) . " migration(s).\033[0m\n";
+            echo "\033[32mMigrated " . count(value: $pending) . " migration(s).\033[0m\n";
 
             return 0;
         } catch (Throwable $throwable) {

@@ -157,7 +157,7 @@ final class OAuthFlowTest extends TestCase
 
         $this->assertContains(
             needle  : 'auth.oauth.refresh.reuse_detected',
-            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
+            haystack: array_map(callback: static fn ($event) => $event->name, array: $auditLog->events())
         );
 
         $auth->revokeOAuthToken(data: new RevokeTokenData(

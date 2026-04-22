@@ -87,7 +87,7 @@ final class RouteCacheTest extends TestCase
     private function cleanupDirectory(string $dir) : void
     {
         $files = glob(pattern: $dir . '/*') ?: [];
-        array_map('unlink', $files);
-        rmdir($dir);
+        array_map(callback: 'unlink', array: $files);
+        rmdir(directory: $dir);
     }
 }

@@ -27,7 +27,7 @@ final class NormalizeHeaders
                 continue;
             }
 
-            $lookupKey = strtolower($normalizedHeader['name']);
+            $lookupKey = strtolower(string: $normalizedHeader['name']);
 
             if (! isset($canonicalNames[$lookupKey])) {
                 $canonicalNames[$lookupKey] = $normalizedHeader['name'];
@@ -72,7 +72,7 @@ final class NormalizeHeaders
         $nameMap = [];
 
         foreach ($normalizedHeaders as $name => $_) {
-            $nameMap[strtolower($name)] = $name;
+            $nameMap[strtolower(string: $name)] = $name;
         }
 
         return $nameMap;
@@ -80,7 +80,7 @@ final class NormalizeHeaders
 
     private static function normalizeHeaderName(string $name): string|null
     {
-        $normalizedName = trim($name);
+        $normalizedName = trim(string: $name);
 
         return $normalizedName === ''
             ? null
@@ -93,13 +93,13 @@ final class NormalizeHeaders
      */
     private static function normalizeValues(string|array $value): array
     {
-        if (is_string($value)) {
+        if (is_string(value: $value)) {
             return self::splitHeaderValue(value: $value);
         }
 
         $normalizedValues = [];
 
-        foreach (array_values($value) as $item) {
+        foreach (array_values(array: $value) as $item) {
             $normalizedValues = [
                 ...$normalizedValues,
                 ...self::splitHeaderValue(value: $item),
@@ -114,21 +114,21 @@ final class NormalizeHeaders
      */
     private static function splitHeaderValue(string $value): array
     {
-        $trimmed = trim($value);
+        $trimmed = trim(string: $value);
 
         if ($trimmed === '') {
             return [''];
         }
 
         $segments = array_map(
-            static fn (string $segment): string => trim($segment),
-            explode(',', $trimmed),
+            callback: static fn (string $segment): string => trim(string: $segment),
+            array   : explode(separator: ',', string: $trimmed),
         );
 
         return array_values(
-            array_filter(
-                $segments,
-                static fn (string $segment): bool => $segment !== '',
+            array: array_filter(
+                array   : $segments,
+                callback: static fn (string $segment): bool => $segment !== '',
             )
         );
     }

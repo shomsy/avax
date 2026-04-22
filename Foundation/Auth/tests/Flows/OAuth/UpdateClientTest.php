@@ -21,12 +21,12 @@ final class UpdateClientTest extends TestCase
      */
     public function testUpdateClientPropagatesRequestObjectVerificationKey() : void
     {
-        $key = openssl_pkey_new([
+        $key = openssl_pkey_new(options: [
                                     'private_key_bits' => 2048,
                                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                 ]);
         self::assertNotFalse(condition: $key);
-        $details = openssl_pkey_get_details($key);
+        $details = openssl_pkey_get_details(key: $key);
         self::assertIsArray(actual: $details);
 
         $registry   = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());

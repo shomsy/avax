@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Container\DI\Capabilities\Runtime\ServicePool;
@@ -48,4 +48,4 @@ assertSame(expected: true, actual: $checkedOut['hit'], message: 'Pooled checkout
 assertInstanceOf(expectedClass: PoolBucketService::class, value: $checkedOut['instance'], message: 'Pooled checkout should return the stored object instance.');
 assertSame(expected: 0, actual: $pool->pooledCount(abstract: 'pooled'), message: 'Checkout should remove the instance from the available bucket.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

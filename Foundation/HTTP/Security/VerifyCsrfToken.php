@@ -93,21 +93,21 @@ class VerifyCsrfToken
             return $xsrfToken;
         }
 
-        $contentType = strtolower($request->getHeaderLine(name: 'Content-Type'));
+        $contentType = strtolower(string: $request->getHeaderLine(name: 'Content-Type'));
 
-        if (str_starts_with($contentType, 'application/json')) {
+        if (str_starts_with(haystack: $contentType, needle: 'application/json')) {
             $data = json_decode(json: $request->getBody()->getContents(), associative: true);
 
-            if (is_array($data)) {
+            if (is_array(value: $data)) {
                 $jsonToken = $data['_csrf_token'] ?? $data['_token'] ?? null;
 
-                return is_string($jsonToken) && $jsonToken !== '' ? $jsonToken : null;
+                return is_string(value: $jsonToken) && $jsonToken !== '' ? $jsonToken : null;
             }
         }
 
         $inputToken = $request->input(key: '_csrf_token') ?? $request->input(key: '_token');
 
-        return is_string($inputToken) && $inputToken !== '' ? $inputToken : null;
+        return is_string(value: $inputToken) && $inputToken !== '' ? $inputToken : null;
     }
 
     /**

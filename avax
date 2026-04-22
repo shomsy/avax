@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 // Determine the root directory
 $rootDir = __DIR__;
-while ( ! file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir) ) {
-    $rootDir = dirname($rootDir);
+while ( ! file_exists(filename: $rootDir . '/bootstrap.php') && $rootDir !== dirname(path: $rootDir) ) {
+    $rootDir = dirname(path: $rootDir);
 }
 
 // Bootstrap application
@@ -69,8 +69,8 @@ try {
         case 'db:export':
             $table = null;
             $path  = $exportPath;
-            if ($arg1 && str_starts_with($arg1, '--table=')) {
-                $table = substr($arg1, 8);
+            if ($arg1 && str_starts_with(haystack: $arg1, needle: '--table=')) {
+                $table = substr(string: $arg1, offset: 8);
                 $path  = $arg2 ?? $exportPath;
             } else {
                 $path = $arg1 ?? $exportPath;
@@ -101,11 +101,11 @@ try {
 
         case 'make':
             $options = [];
-            if ($arg2 && str_starts_with($arg2, '--create=')) {
-                $options['table']  = substr($arg2, 9);
+            if ($arg2 && str_starts_with(haystack: $arg2, needle: '--create=')) {
+                $options['table']  = substr(string: $arg2, offset: 9);
                 $options['create'] = true;
-            } elseif ($arg2 && str_starts_with($arg2, '--table=')) {
-                $options['table'] = substr($arg2, 8);
+            } elseif ($arg2 && str_starts_with(haystack: $arg2, needle: '--table=')) {
+                $options['table'] = substr(string: $arg2, offset: 8);
             }
             exit((new MigrateMakeCommand(generator: $generator))->handle(name: $arg1, path: $migrationsPath, options: $options));
 

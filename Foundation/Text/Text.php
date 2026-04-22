@@ -76,7 +76,7 @@ final readonly class Text
 
     public function isBlank() : bool
     {
-        return trim($this->value) === '';
+        return trim(string: $this->value) === '';
     }
 
     public function replaceRegexCallback(string $pattern, callable $fn, string $flags = '') : self
@@ -106,43 +106,43 @@ final readonly class Text
 
     public function before(string $needle, bool $last = false) : self
     {
-        $pos = $last ? strrpos($this->value, $needle) : strpos($this->value, $needle);
+        $pos = $last ? strrpos(haystack: $this->value, needle: $needle) : strpos(haystack: $this->value, needle: $needle);
         if ($pos === false) {
             return $this;
         }
 
-        return new self(value: substr($this->value, 0, (int) $pos));
+        return new self(value: substr(string: $this->value, offset: 0, length: (int) $pos));
     }
 
     public function after(string $needle, bool $last = false) : self
     {
-        $pos = $last ? strrpos($this->value, $needle) : strpos($this->value, $needle);
+        $pos = $last ? strrpos(haystack: $this->value, needle: $needle) : strpos(haystack: $this->value, needle: $needle);
         if ($pos === false) {
             return $this;
         }
 
-        return new self(value: substr($this->value, (int) $pos + strlen($needle)));
+        return new self(value: substr(string: $this->value, offset: (int) $pos + strlen(string: $needle)));
     }
 
     public function between(string $left, string $right) : self
     {
-        $start = strpos($this->value, $left);
+        $start = strpos(haystack: $this->value, needle: $left);
         if ($start === false) {
             return new self(value: '');
         }
 
-        $start += strlen($left);
-        $end   = strpos($this->value, $right, $start);
+        $start += strlen(string: $left);
+        $end   = strpos(haystack: $this->value, needle: $right, offset: $start);
         if ($end === false) {
             return new self(value: '');
         }
 
-        return new self(value: substr($this->value, $start, $end - $start));
+        return new self(value: substr(string: $this->value, offset: $start, length: $end - $start));
     }
 
     public function contains(string $needle) : bool
     {
-        return strpos($this->value, $needle) !== false;
+        return strpos(haystack: $this->value, needle: $needle) !== false;
     }
 
     public function ensurePrefix(string $prefix) : self
@@ -152,7 +152,7 @@ final readonly class Text
 
     public function startsWith(string $prefix) : bool
     {
-        return strncmp($this->value, $prefix, strlen($prefix)) === 0;
+        return strncmp(string1: $this->value, string2: $prefix, length: strlen(string: $prefix)) === 0;
     }
 
     public function ensureSuffix(string $suffix) : self
@@ -162,25 +162,25 @@ final readonly class Text
 
     public function endsWith(string $suffix) : bool
     {
-        $len = strlen($suffix);
+        $len = strlen(string: $suffix);
         if ($len === 0) {
             return true;
         }
 
-        return substr($this->value, -$len) === $suffix;
+        return substr(string: $this->value, offset: -$len) === $suffix;
     }
 
     public function stripPrefix(string $prefix) : self
     {
         return $this->startsWith(prefix: $prefix)
-            ? new self(value: substr($this->value, strlen($prefix)))
+            ? new self(value: substr(string: $this->value, offset: strlen(string: $prefix)))
             : $this;
     }
 
     public function stripSuffix(string $suffix) : self
     {
         return $this->endsWith(suffix: $suffix)
-            ? new self(value: substr($this->value, 0, -strlen($suffix)))
+            ? new self(value: substr(string: $this->value, offset: 0, length: -strlen(string: $suffix)))
             : $this;
     }
 
@@ -194,28 +194,28 @@ final readonly class Text
             return $this;
         }
 
-        if (function_exists('mb_substr')) {
-            $cut = (string) mb_substr($this->value, 0, $max, 'UTF-8');
+        if (function_exists(function: 'mb_substr')) {
+            $cut = (string) mb_substr(string: $this->value, start: 0, length: $max, encoding: 'UTF-8');
 
             return new self(value: $cut . $suffix);
         }
 
-        return new self(value: substr($this->value, 0, $max) . $suffix);
+        return new self(value: substr(string: $this->value, offset: 0, length: $max) . $suffix);
     }
 
     public function length() : int
     {
-        if (function_exists('mb_strlen')) {
-            return (int) mb_strlen($this->value, 'UTF-8');
+        if (function_exists(function: 'mb_strlen')) {
+            return (int) mb_strlen(string: $this->value, encoding: 'UTF-8');
         }
 
-        return strlen($this->value);
+        return strlen(string: $this->value);
     }
 
     public function toInt(int|null $default = null) : int|null
     {
         $v = $this->trim()->toString();
-        if ($v === '' || ! preg_match('~^[+-]?\d+$~', $v)) {
+        if ($v === '' || ! preg_match(pattern: '~^[+-]?\d+$~', subject: $v)) {
             return $default;
         }
 
@@ -229,13 +229,13 @@ final readonly class Text
 
     public function trim(string $chars = " \t\n\r\0\x0B") : self
     {
-        return new self(value: trim($this->value, $chars));
+        return new self(value: trim(string: $this->value, characters: $chars));
     }
 
     public function toFloat(float|null $default = null) : float|null
     {
         $v = $this->trim()->toString();
-        if ($v === '' || ! is_numeric($v)) {
+        if ($v === '' || ! is_numeric(value: $v)) {
             return $default;
         }
 
@@ -255,18 +255,18 @@ final readonly class Text
 
     public function lower() : self
     {
-        if (function_exists('mb_strtolower')) {
-            return new self(value: (string) mb_strtolower($this->value, 'UTF-8'));
+        if (function_exists(function: 'mb_strtolower')) {
+            return new self(value: (string) mb_strtolower(string: $this->value, encoding: 'UTF-8'));
         }
 
-        return new self(value: strtolower($this->value));
+        return new self(value: strtolower(string: $this->value));
     }
 
     public function slug(string $separator = '-') : self
     {
         $s = $this->toAscii()->lower()->toString();
-        $s = preg_replace('~[^a-z0-9]+~', $separator, $s);
-        $s = trim((string) $s, $separator);
+        $s = preg_replace(pattern: '~[^a-z0-9]+~', replacement: $separator, subject: $s);
+        $s = trim(string: (string) $s, characters: $separator);
 
         return new self(value: (string) $s);
     }
@@ -275,16 +275,16 @@ final readonly class Text
     {
         $v = $this->value;
 
-        if (function_exists('iconv')) {
-            $converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $v);
-            if (is_string($converted)) {
+        if (function_exists(function: 'iconv')) {
+            $converted = iconv(from_encoding: 'UTF-8', to_encoding: 'ASCII//TRANSLIT//IGNORE', string: $v);
+            if (is_string(value: $converted)) {
                 $v = $converted;
             }
         }
 
         // Clean up non-ASCII characters
-        $v = preg_replace('~[^\x20-\x7E]+~', '', $v);
-        if (! is_string($v)) {
+        $v = preg_replace(pattern: '~[^\x20-\x7E]+~', replacement: '', subject: $v);
+        if (! is_string(value: $v)) {
             $v = $this->value;
         }
 
@@ -298,20 +298,20 @@ final readonly class Text
             return new self(value: '');
         }
 
-        return new self(value: lcfirst($studly));
+        return new self(value: lcfirst(string: $studly));
     }
 
     public function studly() : self
     {
         $s = $this->toAscii()->replaceRegex(pattern: '~[^a-zA-Z0-9]+~', replacement: ' ')->collapseWhitespace()->toString();
 
-        $parts = explode(' ', $s);
+        $parts = explode(separator: ' ', string: $s);
         $parts = array_map(
-            static fn (string $p) : string => $p === '' ? '' : ucfirst(strtolower($p)),
-            $parts
+            callback: static fn (string $p) : string => $p === '' ? '' : ucfirst(string: strtolower(string: $p)),
+            array   : $parts
         );
 
-        return new self(value: implode('', $parts));
+        return new self(value: implode(separator: '', array: $parts));
     }
 
     public function collapseWhitespace() : self
@@ -326,14 +326,14 @@ final readonly class Text
 
     public function replace(string $search, string $replace) : self
     {
-        return new self(value: str_replace($search, $replace, $this->value));
+        return new self(value: str_replace(search: $search, replace: $replace, subject: $this->value));
     }
 
     public function snake(string $delimiter = '_') : self
     {
         $s = $this->value;
-        $s = preg_replace('~([a-z0-9])([A-Z])~', '$1' . $delimiter . '$2', $s);
-        $s = preg_replace('~[\s\-]+~', $delimiter, (string) $s);
+        $s = preg_replace(pattern: '~([a-z0-9])([A-Z])~', replacement: '$1' . $delimiter . '$2', subject: $s);
+        $s = preg_replace(pattern: '~[\s\-]+~', replacement: $delimiter, subject: (string) $s);
 
         return self::of(value: (string) $s)->lower();
     }
@@ -382,7 +382,7 @@ final readonly class Text
 
     public function countWords() : int
     {
-        return count($this->extractWords());
+        return count(value: $this->extractWords());
     }
 
     public function extractWords() : array
@@ -393,21 +393,21 @@ final readonly class Text
             $words[] = $match[0] ?? '';
         }
 
-        return array_filter($words);
+        return array_filter(array: $words);
     }
 
     public function startsWithPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: '^' . preg_quote($pattern, '~'))->test(subject: $this->value);
+        return Pattern::of(raw: '^' . preg_quote(str: $pattern, delimiter: '~'))->test(subject: $this->value);
     }
 
     public function endsWithPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: preg_quote($pattern, '~') . '$')->test(subject: $this->value);
+        return Pattern::of(raw: preg_quote(str: $pattern, delimiter: '~') . '$')->test(subject: $this->value);
     }
 
     public function containsPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: preg_quote($pattern, '~'))->test(subject: $this->value);
+        return Pattern::of(raw: preg_quote(str: $pattern, delimiter: '~'))->test(subject: $this->value);
     }
 }

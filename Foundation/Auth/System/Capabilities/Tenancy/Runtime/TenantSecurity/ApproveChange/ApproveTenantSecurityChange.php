@@ -39,7 +39,7 @@ final readonly class ApproveTenantSecurityChange
             diff        : $changeRequest->diff,
             status      : TenantSecurityChangeRequestStatus::APPROVED,
             requestedAt : $changeRequest->requestedAt,
-            approvedBy  : trim($approvedBy),
+            approvedBy  : trim(string: $approvedBy),
             approvedAt  : $this->clock->now(),
             appliedAt   : $changeRequest->appliedAt,
             rolledBackAt: $changeRequest->rolledBackAt

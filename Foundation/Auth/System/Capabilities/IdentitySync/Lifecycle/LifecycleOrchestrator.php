@@ -68,7 +68,7 @@ final readonly class LifecycleOrchestrator
     private function isAllowedTransition(LifecycleState $from, LifecycleState $to) : bool
     {
         return match ($from) {
-            LifecycleState::ACTIVE, LifecycleState::SUSPENDED => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
+            LifecycleState::ACTIVE, LifecycleState::SUSPENDED => in_array(needle: $to, haystack: [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], strict: true),
             LifecycleState::DEPROVISIONED                     => $to === LifecycleState::DEPROVISIONED,
         };
     }

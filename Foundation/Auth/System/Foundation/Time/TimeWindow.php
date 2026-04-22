@@ -15,7 +15,7 @@ final readonly class TimeWindow
     public function __construct(DateTimeImmutable $startsAt, DateTimeImmutable $endsAt)
     {
         if ($endsAt < $startsAt) {
-            throw new InvalidArgumentException('TimeWindow end must be greater than or equal to start.');
+            throw new InvalidArgumentException(message: 'TimeWindow end must be greater than or equal to start.');
         }
 
         $this->startsAt = $startsAt;

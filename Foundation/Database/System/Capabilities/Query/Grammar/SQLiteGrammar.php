@@ -26,20 +26,20 @@ final class SQLiteGrammar extends BaseGrammar
 
     public function __construct()
     {
-        $this->supportsReturning       = $this->checkVersion('3.35.0');
-        $this->supportsWindowFunctions = $this->checkVersion('3.25.0');
-        $this->supportsCTE             = $this->checkVersion('3.26.0');
+        $this->supportsReturning       = $this->checkVersion(required: '3.35.0');
+        $this->supportsWindowFunctions = $this->checkVersion(required: '3.25.0');
+        $this->supportsCTE             = $this->checkVersion(required: '3.26.0');
     }
 
     private function checkVersion(string $required) : bool
     {
-        if (! extension_loaded('sqlite3')) {
+        if (! extension_loaded(extension: 'sqlite3')) {
             return false;
         }
 
         $version = SQLite3::version();
 
-        return version_compare($version['versionString'], $required, '>=');
+        return version_compare(version1: $version['versionString'], version2: $required, operator: '>=');
     }
 
     #[Override]
@@ -153,7 +153,7 @@ final class SQLiteGrammar extends BaseGrammar
     public function compileWindowFunction(string $function, string $partitionBy = '', string $orderBy = '') : string
     {
         if (! $this->supportsWindowFunctions) {
-            throw new RuntimeException('Window functions require SQLite 3.25.0+');
+            throw new RuntimeException(message: 'Window functions require SQLite 3.25.0+');
         }
 
         $sql = $function . '(';
@@ -178,7 +178,7 @@ final class SQLiteGrammar extends BaseGrammar
     public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery) : string
     {
         if (! $this->supportsCTE) {
-            throw new RuntimeException('CTE requires SQLite 3.26.0+');
+            throw new RuntimeException(message: 'CTE requires SQLite 3.26.0+');
         }
 
         return "WITH RECURSIVE {$name} AS ({$initialQuery} UNION ALL {$recursiveQuery})";

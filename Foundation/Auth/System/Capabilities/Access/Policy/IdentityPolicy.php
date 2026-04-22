@@ -54,11 +54,11 @@ final readonly class IdentityPolicy
 
     public function allowsFactor(AuthenticationFactor $factor) : bool
     {
-        return in_array($factor, $this->allowedFactors, true);
+        return in_array(needle: $factor, haystack: $this->allowedFactors, strict: true);
     }
 
     public function requiresFactor(AuthenticationFactor $factor) : bool
     {
-        return in_array($factor, $this->requiredFactors, true);
+        return in_array(needle: $factor, haystack: $this->requiredFactors, strict: true);
     }
 }

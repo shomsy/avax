@@ -51,7 +51,7 @@ final readonly class RouterSnapshot
         $routes   = $router->allRoutes();
         $metadata = [
             'total_routes' => self::countTotalRoutes(routes: $routes),
-            'methods'      => array_keys($routes),
+            'methods'      => array_keys(array: $routes),
             'context'      => $context,
             'php_version'  => PHP_VERSION,
             'timestamp'    => time(),
@@ -60,14 +60,14 @@ final readonly class RouterSnapshot
         $data = [
             'routes'      => $routes,
             'metadata'    => $metadata,
-            'created_at'  => date('c'),
-            'environment' => $context['environment'] ?? getenv('APP_ENV') ?: 'unknown',
+            'created_at'  => date(format: 'c'),
+            'environment' => $context['environment'] ?? getenv(name: 'APP_ENV') ?: 'unknown',
             'version'     => $context['version'] ?? 'unknown',
         ];
 
         try {
-            $json     = json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $checksum = hash('sha256', $json);
+            $json     = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $checksum = hash(algo: 'sha256', data: $json);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to generate router snapshot.', code: $exception);
         }
@@ -75,7 +75,7 @@ final readonly class RouterSnapshot
         return new self(
             routes     : $routes,
             metadata   : $metadata,
-            createdAt  : date('c'),
+            createdAt  : date(format: 'c'),
             environment: $data['environment'],
             version    : $data['version'],
             checksum   : $checksum
@@ -87,7 +87,7 @@ final readonly class RouterSnapshot
      */
     private static function countTotalRoutes(array $routes) : int
     {
-        return array_sum(array_map('count', $routes));
+        return array_sum(array: array_map(callback: 'count', array: $routes));
     }
 
     /**
@@ -95,12 +95,12 @@ final readonly class RouterSnapshot
      */
     public static function loadFromFile(string $path) : self
     {
-        if (! file_exists($path) || ! is_readable($path)) {
+        if (! file_exists(filename: $path) || ! is_readable(filename: $path)) {
             throw new RuntimeException(message: "Snapshot file not found or not readable: {$path}");
         }
 
         try {
-            $data = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(json: file_get_contents(filename: $path), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: "Invalid snapshot file: {$path}", code: $exception);
         }
@@ -116,7 +116,7 @@ final readonly class RouterSnapshot
         return new self(
             routes     : $data['routes'] ?? [],
             metadata   : $data['metadata'] ?? [],
-            createdAt  : $data['created_at'] ?? date('c'),
+            createdAt  : $data['created_at'] ?? date(format: 'c'),
             environment: $data['environment'] ?? 'unknown',
             version    : $data['version'] ?? 'unknown',
             checksum   : $data['checksum'] ?? ''
@@ -131,8 +131,8 @@ final readonly class RouterSnapshot
         $data = $this->toArray();
 
         try {
-            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            file_put_contents($path, $json . "\n");
+            $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            file_put_contents(filename: $path, data: $json . "\n");
         } catch (JsonException $exception) {
             throw new RuntimeException(message: "Unable to export snapshot to {$path}.", code: $exception);
         }
@@ -162,9 +162,9 @@ final readonly class RouterSnapshot
         unset($data['checksum']); // Remove checksum from validation data
 
         try {
-            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+            $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
 
-            return hash('sha256', $json) === $this->checksum;
+            return hash(algo: 'sha256', data: $json) === $this->checksum;
         } catch (JsonException) {
             return false;
         }
@@ -187,8 +187,8 @@ final readonly class RouterSnapshot
 
         // Compare routes by method
         foreach (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as $method) {
-            $thisRoutes  = count($this->routes[$method] ?? []);
-            $otherRoutes = count($other->routes[$method] ?? []);
+            $thisRoutes  = count(value: $this->routes[$method] ?? []);
+            $otherRoutes = count(value: $other->routes[$method] ?? []);
 
             if ($thisRoutes !== $otherRoutes) {
                 $differences[] = "{$method} routes: {$thisRoutes} → {$otherRoutes}";
@@ -219,16 +219,16 @@ final readonly class RouterSnapshot
             "Environment: {$this->environment}",
             "Version: {$this->version}",
             "Total Routes: {$this->metadata['total_routes']}",
-            "Checksum: " . substr($this->checksum, 0, 16) . "...",
+            "Checksum: " . substr(string: $this->checksum, offset: 0, length: 16) . "...",
             "",
             "Routes by Method:",
         ];
 
         foreach ($this->metadata['methods'] as $method) {
-            $count   = count($this->routes[$method] ?? []);
+            $count   = count(value: $this->routes[$method] ?? []);
             $lines[] = "  {$method}: {$count} routes";
         }
 
-        return implode("\n", $lines);
+        return implode(separator: "\n", array: $lines);
     }
 }

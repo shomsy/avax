@@ -37,7 +37,7 @@ final readonly class VerifyTrustedProxyHeaders
     {
         $remoteAddress = $this->readServerValue(server: $input->server);
 
-        if ($remoteAddress !== null && in_array($remoteAddress, $this->trustedProxies, true)) {
+        if ($remoteAddress !== null && in_array(needle: $remoteAddress, haystack: $this->trustedProxies, strict: true)) {
             return;
         }
 
@@ -65,24 +65,24 @@ final readonly class VerifyTrustedProxyHeaders
     {
         $value = $server['REMOTE_ADDR'] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     private function matchesProxyOnlyCertificateHeader(#[SensitiveParameter] string $header) : bool
     {
         foreach ($this->proxyOnlyClientCertificateHeaders as $candidate) {
-            if (strcasecmp($header, $candidate) === 0) {
+            if (strcasecmp(string1: $header, string2: $candidate) === 0) {
                 return true;
             }
         }
 
-        return str_starts_with(strtolower($header), 'x-tls-client-');
+        return str_starts_with(haystack: strtolower(string: $header), needle: 'x-tls-client-');
     }
 
     private function matchesForwardedHeader(
         #[SensitiveParameter] string $header
     ) : bool
     {
-        return array_any($this->forwardedHeaders, fn ($candidate) => strcasecmp($header, $candidate) === 0);
+        return array_any(array: $this->forwardedHeaders, callback: fn ($candidate) => strcasecmp(string1: $header, string2: $candidate) === 0);
     }
 }

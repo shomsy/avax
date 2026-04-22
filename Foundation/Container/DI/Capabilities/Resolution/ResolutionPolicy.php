@@ -52,7 +52,7 @@ final readonly class ResolutionPolicy
             return true;
         }
 
-        return class_exists($abstract) || interface_exists($abstract);
+        return class_exists(class: $abstract) || interface_exists(interface: $abstract);
     }
 
     public function severityFor(#[SensitiveParameter] string $code, string $defaultSeverity) : string
@@ -72,7 +72,7 @@ final readonly class ResolutionPolicy
 
     public function forEnvironment(string $environment) : self
     {
-        $normalized = trim($environment);
+        $normalized = trim(string: $environment);
         if ($normalized === '' || ! isset($this->profiles[$normalized])) {
             return $this;
         }
@@ -89,7 +89,7 @@ final readonly class ResolutionPolicy
     public function shouldFailOn(string $severity) : bool
     {
         return $this->failMode === self::FAIL_MODE_CLOSED
-            && strtolower(trim($severity)) === 'error';
+            && strtolower(string: trim(string: $severity)) === 'error';
     }
 
     public function isFailClosed() : bool

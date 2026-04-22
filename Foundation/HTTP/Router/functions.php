@@ -18,7 +18,7 @@ use Avax\Text\RegexException;
  */
 
 
-if (! function_exists('route_validate_path')) {
+if (! function_exists(function: 'route_validate_path')) {
     /**
      * Validate a route path format and syntax (internal function).
      *
@@ -36,7 +36,7 @@ if (! function_exists('route_validate_path')) {
             throw new InvalidArgumentException(message: "Invalid characters in route path: {$path}");
         }
 
-        if (substr_count($path, '{') !== substr_count($path, '}')) {
+        if (substr_count(haystack: $path, needle: '{') !== substr_count(haystack: $path, needle: '}')) {
             throw new InvalidArgumentException(message: "Unbalanced route parameter braces in path: {$path}");
         }
 
@@ -44,7 +44,7 @@ if (! function_exists('route_validate_path')) {
     }
 }
 
-if (! function_exists('route_contains_valid_path_chars')) {
+if (! function_exists(function: 'route_contains_valid_path_chars')) {
     /**
      * Check if a string contains only valid route path characters.
      *
@@ -58,7 +58,7 @@ if (! function_exists('route_contains_valid_path_chars')) {
     }
 }
 
-if (! function_exists('route_validate_parameters')) {
+if (! function_exists(function: 'route_validate_parameters')) {
     /**
      * Validate route parameter syntax in a path.
      *
@@ -69,7 +69,7 @@ if (! function_exists('route_validate_parameters')) {
     function route_validate_parameters(string $path) : void
     {
         $outside = Pattern::of(raw: '\\{[^{}]*\\}')->replace(subject: $path, replacement: '');
-        if (str_contains($outside, '?') || str_contains($outside, '*')) {
+        if (str_contains(haystack: $outside, needle: '?') || str_contains(haystack: $outside, needle: '*')) {
             throw new InvalidArgumentException(message: "Wildcard or optional markers must be inside parameters: {$path}");
         }
 
@@ -85,7 +85,7 @@ if (! function_exists('route_validate_parameters')) {
             }
 
             // Check for wildcard modifier
-            if (str_ends_with($segment, '*')) {
+            if (str_ends_with(haystack: $segment, needle: '*')) {
                 $wildcardCount++;
 
                 if ($wildcardCount > 1) {
@@ -93,10 +93,10 @@ if (! function_exists('route_validate_parameters')) {
                 }
 
                 // Find position of this match in the path
-                $offset = strpos($path, $fullMatch);
+                $offset = strpos(haystack: $path, needle: $fullMatch);
                 if ($offset !== false) {
-                    $endOfPlaceholder = $offset + strlen($fullMatch);
-                    if ($endOfPlaceholder !== strlen($path)) {
+                    $endOfPlaceholder = $offset + strlen(string: $fullMatch);
+                    if ($endOfPlaceholder !== strlen(string: $path)) {
                         throw new InvalidArgumentException(message: "Wildcard parameters must be the final path segment: {$path}");
                     }
                 }
@@ -105,7 +105,7 @@ if (! function_exists('route_validate_parameters')) {
     }
 }
 
-if (! function_exists('route_matches_parameter')) {
+if (! function_exists(function: 'route_matches_parameter')) {
     /**
      * Validate a route parameter name syntax.
      *
@@ -121,7 +121,7 @@ if (! function_exists('route_matches_parameter')) {
     }
 }
 
-if (! function_exists('route_validate_constraint')) {
+if (! function_exists(function: 'route_validate_constraint')) {
     /**
      * Validate a regex constraint pattern syntax (internal function).
      *
@@ -144,7 +144,7 @@ if (! function_exists('route_validate_constraint')) {
     }
 }
 
-if (! function_exists('route_valid')) {
+if (! function_exists(function: 'route_valid')) {
     /**
      * Validate if a route path has correct syntax and is safe.
      *
@@ -164,7 +164,7 @@ if (! function_exists('route_valid')) {
     }
 }
 
-if (! function_exists('route_compile_pattern')) {
+if (! function_exists(function: 'route_compile_pattern')) {
     /**
      * Compile a route path template into a regex pattern (internal function).
      *
@@ -183,11 +183,11 @@ if (! function_exists('route_compile_pattern')) {
             $paramName = $match[1];
 
             // Check for optional parameter (ends with ?)
-            $isOptional = str_ends_with($paramName, '?');
-            $isWildcard = str_ends_with($paramName, '*');
+            $isOptional = str_ends_with(haystack: $paramName, needle: '?');
+            $isWildcard = str_ends_with(haystack: $paramName, needle: '*');
 
             // Remove modifiers from parameter name
-            $cleanName = preg_replace('/[?*]$/', '', $paramName);
+            $cleanName = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $paramName);
 
             // Get constraint or default
             $constraint = $constraints[$cleanName] ?? '[^/]+';
@@ -212,7 +212,7 @@ if (! function_exists('route_compile_pattern')) {
     }
 }
 
-if (! function_exists('route_pattern')) {
+if (! function_exists(function: 'route_pattern')) {
     /**
      * Create a normalized route regex pattern from DSL path template.
      *
@@ -232,7 +232,7 @@ if (! function_exists('route_pattern')) {
     }
 }
 
-if (! function_exists('route_extract_params')) {
+if (! function_exists(function: 'route_extract_params')) {
     /**
      * Extract parameter names from a route path template (internal function).
      *
@@ -248,11 +248,11 @@ if (! function_exists('route_extract_params')) {
             $params[] = $match[1] ?? '';
         }
 
-        return array_filter($params);
+        return array_filter(array: $params);
     }
 }
 
-if (! function_exists('route_params')) {
+if (! function_exists(function: 'route_params')) {
     /**
      * Extract parameter names from a route path template.
      *
@@ -266,7 +266,7 @@ if (! function_exists('route_params')) {
     }
 }
 
-if (! function_exists('route_path')) {
+if (! function_exists(function: 'route_path')) {
     /**
      * Normalize and validate a route path.
      *
@@ -283,7 +283,7 @@ if (! function_exists('route_path')) {
     }
 }
 
-if (! function_exists('route_constraint')) {
+if (! function_exists(function: 'route_constraint')) {
     /**
      * Validate and compile a route parameter constraint.
      *
@@ -299,7 +299,7 @@ if (! function_exists('route_constraint')) {
     }
 }
 
-if (! function_exists('route_match')) {
+if (! function_exists(function: 'route_match')) {
     /**
      * Match a route path against a compiled pattern.
      *
@@ -313,17 +313,17 @@ if (! function_exists('route_match')) {
     function route_match(string $pattern, string $subject) : array|null
     {
         $matches = [];
-        $result  = preg_match($pattern, $subject, $matches);
+        $result  = preg_match(pattern: $pattern, subject: $subject, matches: $matches);
 
         if ($result === 1) {
-            return array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+            return array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
         }
 
         return null;
     }
 }
 
-if (! function_exists('route_compile')) {
+if (! function_exists(function: 'route_compile')) {
     /**
      * Compile a route path template into a regex pattern.
      *
@@ -343,7 +343,7 @@ if (! function_exists('route_compile')) {
 // DSL Functions for Route Registration
 // These functions provide the global API that route files use
 
-if (! function_exists('get')) {
+if (! function_exists(function: 'get')) {
     /**
      * Register a GET route.
      *
@@ -360,7 +360,7 @@ if (! function_exists('get')) {
     }
 }
 
-if (! function_exists('post')) {
+if (! function_exists(function: 'post')) {
     /**
      * Register a POST route.
      *
@@ -377,7 +377,7 @@ if (! function_exists('post')) {
     }
 }
 
-if (! function_exists('put')) {
+if (! function_exists(function: 'put')) {
     /**
      * Register a PUT route.
      *
@@ -394,7 +394,7 @@ if (! function_exists('put')) {
     }
 }
 
-if (! function_exists('patch')) {
+if (! function_exists(function: 'patch')) {
     /**
      * Register a PATCH route.
      *
@@ -411,7 +411,7 @@ if (! function_exists('patch')) {
     }
 }
 
-if (! function_exists('delete')) {
+if (! function_exists(function: 'delete')) {
     /**
      * Register a DELETE route.
      *
@@ -428,7 +428,7 @@ if (! function_exists('delete')) {
     }
 }
 
-if (! function_exists('options')) {
+if (! function_exists(function: 'options')) {
     /**
      * Register an OPTIONS route.
      *
@@ -445,7 +445,7 @@ if (! function_exists('options')) {
     }
 }
 
-if (! function_exists('head')) {
+if (! function_exists(function: 'head')) {
     /**
      * Register a HEAD route.
      *
@@ -462,7 +462,7 @@ if (! function_exists('head')) {
     }
 }
 
-if (! function_exists('any')) {
+if (! function_exists(function: 'any')) {
     /**
      * Register an ANY method route.
      *
@@ -479,7 +479,7 @@ if (! function_exists('any')) {
     }
 }
 
-if (! function_exists('fallback')) {
+if (! function_exists(function: 'fallback')) {
     /**
      * Register a fallback route handler.
      *
@@ -494,7 +494,7 @@ if (! function_exists('fallback')) {
 // Domain-Specific Developer Helpers
 // These provide context-aware, fluent APIs for common routing patterns
 
-if (! function_exists('route_group')) {
+if (! function_exists(function: 'route_group')) {
     /**
      * Create a route group with common middleware and prefix patterns.
      *
@@ -522,7 +522,7 @@ if (! function_exists('route_group')) {
     }
 }
 
-if (! function_exists('route_any')) {
+if (! function_exists(function: 'route_any')) {
     /**
      * Register routes for multiple HTTP methods with the same handler.
      *
@@ -539,7 +539,7 @@ if (! function_exists('route_any')) {
     {
         $proxies = [];
         foreach ($methods as $method) {
-            $proxies[] = match (strtolower($method)) {
+            $proxies[] = match (strtolower(string: $method)) {
                 'get'     => get(path: $path, action: $handler),
                 'post'    => post(path: $path, action: $handler),
                 'put'     => put(path: $path, action: $handler),
@@ -555,7 +555,7 @@ if (! function_exists('route_any')) {
     }
 }
 
-if (! function_exists('route_constraint')) {
+if (! function_exists(function: 'route_constraint')) {
     /**
      * Apply parameter constraints with intelligent pattern recognition.
      *
@@ -571,7 +571,7 @@ if (! function_exists('route_constraint')) {
         $processed = [];
 
         foreach ($constraints as $param => $pattern) {
-            $processed[$param] = match (strtolower($pattern)) {
+            $processed[$param] = match (strtolower(string: $pattern)) {
                 'uuid'     => '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}',
                 'email'    => '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
                 'slug'     => '[a-z0-9]+(?:-[a-z0-9]+)*',
@@ -586,7 +586,7 @@ if (! function_exists('route_constraint')) {
     }
 }
 
-if (! function_exists('route_resource')) {
+if (! function_exists(function: 'route_resource')) {
     /**
      * Generate standard REST resource routes with intelligent naming.
      *
@@ -618,15 +618,15 @@ if (! function_exists('route_resource')) {
 
                 // Apply constraints for ID parameters
                 $constraints = [];
-                if (str_contains($path, "_id}")) {
+                if (str_contains(haystack: $path, needle: "_id}")) {
                     $constraints["{$resource}_id"] = route_constraint(['id' => 'id'])['id'];
                 }
 
-                $routes[] = match (strtolower($method)) {
-                    'get'    => get(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
-                    'post'   => post(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller),
-                    'put'    => put(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
-                    'delete' => delete(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                $routes[] = match (strtolower(string: $method)) {
+                    'get'    => get(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'post'   => post(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller),
+                    'put'    => put(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'delete' => delete(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
                 };
             }
         }

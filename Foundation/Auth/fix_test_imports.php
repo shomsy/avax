@@ -47,28 +47,28 @@ $replacements = [
 
 $count = 0;
 foreach ($dirs as $baseDir) {
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir));
+    $iterator = new RecursiveIteratorIterator(iterator: new RecursiveDirectoryIterator(directory: $baseDir));
     foreach ($iterator as $file) {
         if ($file->isFile() && $file->getExtension() === 'php') {
             $path       = $file->getPathname();
-            $content    = file_get_contents($path);
+            $content    = file_get_contents(filename: $path);
             $newContent = $content;
 
             foreach ($replacements as $old => $new) {
-                $newContent = str_replace($old . ';', $new . ';', $newContent);
-                $newContent = str_replace($old . ' ', $new . ' ', $newContent);
-                $newContent = str_replace($old . ':', $new . ':', $newContent);
-                $newContent = str_replace($old . '\\', $new . '\\', $newContent);
-                $newContent = str_replace($old . "\n", $new . "\n", $newContent);
+                $newContent = str_replace(search: $old . ';', replace: $new . ';', subject: $newContent);
+                $newContent = str_replace(search: $old . ' ', replace: $new . ' ', subject: $newContent);
+                $newContent = str_replace(search: $old . ':', replace: $new . ':', subject: $newContent);
+                $newContent = str_replace(search: $old . '\\', replace: $new . '\\', subject: $newContent);
+                $newContent = str_replace(search: $old . "\n", replace: $new . "\n", subject: $newContent);
             }
 
             if ($content !== $newContent) {
                 // To avoid duplicate identical imports if we accidentally map two old ones to the same new one
-                $lines      = explode("\n", $newContent);
+                $lines      = explode(separator: "\n", string: $newContent);
                 $imports    = [];
                 $finalLines = [];
                 foreach ($lines as $line) {
-                    if (str_starts_with($line, 'use ') && str_ends_with($line, ';')) {
+                    if (str_starts_with(haystack: $line, needle: 'use ') && str_ends_with(haystack: $line, needle: ';')) {
                         if (! isset($imports[$line])) {
                             $imports[$line] = true;
                             $finalLines[]   = $line;
@@ -77,9 +77,9 @@ foreach ($dirs as $baseDir) {
                         $finalLines[] = $line;
                     }
                 }
-                $newContent = implode("\n", $finalLines);
+                $newContent = implode(separator: "\n", array: $finalLines);
 
-                file_put_contents($path, $newContent);
+                file_put_contents(filename: $path, data: $newContent);
                 $count++;
             }
         }

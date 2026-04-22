@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
@@ -57,10 +57,10 @@ $container->bind(abstract: UnsafePooledService::class, concrete: UnsafePooledSer
     ->pooled(maxSize: 1);
 
 $issues    = $container->validate(serviceIds: [ReusablePooledService::class, UnsafePooledService::class]);
-$issueText = implode("\n", $issues);
+$issueText = implode(separator: "\n", array: $issues);
 
 assertTrue(
-    condition: str_contains($issueText, 'does not implement ResettableInterface'),
+    condition: str_contains(haystack: $issueText, needle: 'does not implement ResettableInterface'),
     message  : 'Validation should flag unsafe pooled candidates that cannot reset before reuse.'
 );
 
@@ -102,4 +102,4 @@ assertSame(expected: 'pooled', actual: $debug['lifetimePlan']['name'] ?? null, m
 assertSame(expected: 1, actual: $debug['lifetimePlan']['poolSize'] ?? null, message: 'Pooled lifetime plans should expose pool size.');
 assertSame(expected: true, actual: $debug['lifetimePlan']['poolResetBeforeReuse'] ?? null, message: 'Pooled lifetime plans should expose reset-before-reuse posture.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

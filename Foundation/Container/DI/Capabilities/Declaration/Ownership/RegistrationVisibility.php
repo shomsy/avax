@@ -19,9 +19,9 @@ final class RegistrationVisibility
 
     public static function normalize(string $visibility) : string
     {
-        $normalized = strtolower(trim($visibility));
+        $normalized = strtolower(string: trim(string: $visibility));
 
-        return in_array($normalized, self::all(), true)
+        return in_array(needle: $normalized, haystack: self::all(), strict: true)
             ? $normalized
             : self::PUBLIC;
     }

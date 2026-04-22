@@ -81,7 +81,7 @@ abstract class Request extends AbstractDTO
      */
     public function header(string $name) : string
     {
-        return $this->requireServerRequest()->getHeaderLine($name);
+        return $this->requireServerRequest()->getHeaderLine(name: $name);
     }
 
     /**
@@ -91,7 +91,7 @@ abstract class Request extends AbstractDTO
     {
         $serverRequest = $this->requireServerRequest();
 
-        return $serverRequest->resolveClientAddress($serverRequest->getServerParams());
+        return $serverRequest->resolveClientAddress(serverParams: $serverRequest->getServerParams());
     }
 
     /**

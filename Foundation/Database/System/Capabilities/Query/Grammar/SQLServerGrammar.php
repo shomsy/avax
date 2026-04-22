@@ -23,14 +23,14 @@ final class SQLServerGrammar extends BaseGrammar
     #[Override]
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
     {
-        $table = $this->wrap($state->from);
-        $rows  = $this->normalizeInsertRows($state->values);
+        $table = $this->wrap(value: $state->from);
+        $rows  = $this->normalizeInsertRows(values: $state->values);
 
         if (empty($rows)) {
             throw new RuntimeException(message: 'INSERT compilation requires at least one row of values.');
         }
 
-        $columns = implode(', ', array_map(fn ($c) => $this->wrap($c), array_keys($rows[0])));
+        $columns = implode(separator: ', ', array: array_map(callback: fn ($c) => $this->wrap(value: $c), array: array_keys(array: $rows[0])));
 
         $valueGroups = [];
         foreach ($rows as $row) {
@@ -38,21 +38,21 @@ final class SQLServerGrammar extends BaseGrammar
             foreach ($row as $value) {
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
-            $valueGroups[] = '(' . implode(', ', $placeholders) . ')';
+            $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
         }
 
-        $conflictColumns = implode(', ', array_map(
-            fn ($col) => $this->wrap($col),
-            $uniqueBy
+        $conflictColumns = implode(separator: ', ', array: array_map(
+            callback: fn ($col) => $this->wrap(value: $col),
+            array   : $uniqueBy
         ));
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap($column) . ' = source.' . $this->wrap($column);
+            $updates[] = $this->wrap(value: $column) . ' = source.' . $this->wrap(value: $column);
         }
-        $updateSet = implode(', ', $updates);
+        $updateSet = implode(separator: ', ', array: $updates);
 
-        $valuesSql = 'VALUES ' . implode(', ', $valueGroups);
+        $valuesSql = 'VALUES ' . implode(separator: ', ', array: $valueGroups);
 
         $sql = "MERGE {$table} AS target\n";
         $sql .= "USING (SELECT {$columns} {$valuesSql}) AS source ({$columns})\n";
@@ -72,18 +72,18 @@ final class SQLServerGrammar extends BaseGrammar
 
         $value = (string) $value;
 
-        if ($value === '*' || str_contains($value, '(')) {
+        if ($value === '*' || str_contains(haystack: $value, needle: '(')) {
             return $value;
         }
 
-        if (str_contains($value, '.')) {
-            return implode('.', array_map(
-                fn ($segment) => $this->wrapSegment($segment),
-                explode('.', $value)
+        if (str_contains(haystack: $value, needle: '.')) {
+            return implode(separator: '.', array: array_map(
+                callback: fn ($segment) => $this->wrapSegment(segment: $segment),
+                array   : explode(separator: '.', string: $value)
             ));
         }
 
-        return $this->wrapSegment($value);
+        return $this->wrapSegment(segment: $value);
     }
 
     protected function wrapSegment(string $segment) : string
@@ -92,7 +92,7 @@ final class SQLServerGrammar extends BaseGrammar
             return $segment;
         }
 
-        return '[' . str_replace(']', ']]', $segment) . ']';
+        return '[' . str_replace(search: ']', replace: ']]', subject: $segment) . ']';
     }
 
     private function normalizeInsertRows(array $values) : array
@@ -101,7 +101,7 @@ final class SQLServerGrammar extends BaseGrammar
             return [];
         }
 
-        if (array_is_list($values) && is_array($values[0] ?? null)) {
+        if (array_is_list(array: $values) && is_array(value: $values[0] ?? null)) {
             return $values;
         }
 
@@ -117,25 +117,25 @@ final class SQLServerGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table) : string
     {
-        return 'TRUNCATE TABLE ' . $this->wrap($table);
+        return 'TRUNCATE TABLE ' . $this->wrap(value: $table);
     }
 
     #[Override]
     public function compileDropIfExists(string $table) : string
     {
-        return "IF OBJECT_ID('" . $table . "') IS NOT NULL DROP TABLE " . $this->wrap($table);
+        return "IF OBJECT_ID('" . $table . "') IS NOT NULL DROP TABLE " . $this->wrap(value: $table);
     }
 
     #[Override]
     public function compileCreateDatabase(string $name) : string
     {
-        return 'CREATE DATABASE ' . $this->wrap($name);
+        return 'CREATE DATABASE ' . $this->wrap(value: $name);
     }
 
     #[Override]
     public function compileDropDatabase(string $name) : string
     {
-        return 'DROP DATABASE ' . $this->wrap($name);
+        return 'DROP DATABASE ' . $this->wrap(value: $name);
     }
 
     public function compileOutput(array $columns) : string
@@ -144,21 +144,21 @@ final class SQLServerGrammar extends BaseGrammar
             return '';
         }
 
-        $cols = implode(', ', array_map(fn ($col) => $this->wrap($col), $columns));
+        $cols = implode(separator: ', ', array: array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns));
 
         return 'OUTPUT ' . $cols;
     }
 
     public function compilePivot(string $column, string $pivotColumn, array $pivotValues) : string
     {
-        $pivotcols = implode(', ', array_map(fn ($val) => "['{$val}']", $pivotValues));
+        $pivotcols = implode(separator: ', ', array: array_map(callback: fn ($val) => "['{$val}']", array: $pivotValues));
 
         return "PIVOT ({$column} FOR {$pivotColumn} IN ({$pivotcols}))";
     }
 
     public function compileUnpivot(string $column, array $unpivotColumns) : string
     {
-        $unpivcols = implode(', ', array_map(fn ($col) => $this->wrap($col), $unpivotColumns));
+        $unpivcols = implode(separator: ', ', array: array_map(callback: fn ($col) => $this->wrap(value: $col), array: $unpivotColumns));
 
         return "UNPIVOT ({$column} IN ({$unpivcols}))";
     }
@@ -168,9 +168,9 @@ final class SQLServerGrammar extends BaseGrammar
         $sql = $function . '(';
 
         if ($partitionBy !== '') {
-            $partitionColumns = implode(', ', array_map(
-                fn ($col) => $this->wrap($col),
-                explode(',', $partitionBy)
+            $partitionColumns = implode(separator: ', ', array: array_map(
+                callback: fn ($col) => $this->wrap(value: $col),
+                array   : explode(separator: ',', string: $partitionBy)
             ));
             $sql              .= 'PARTITION BY ' . $partitionColumns;
         }

@@ -32,7 +32,7 @@ class RequestDetachedDtoTest extends TestCase
         yield 'serverRequest' => [static fn (Request $request) => $request->serverRequest()];
         yield 'method' => [static fn (Request $request) => $request->method()];
         yield 'uri' => [static fn (Request $request) => $request->uri()];
-        yield 'header' => [static fn (Request $request) => $request->header('X-Test')];
+        yield 'header' => [static fn (Request $request) => $request->header(name: 'X-Test')];
         yield 'clientAddress' => [static fn (Request $request) => $request->clientAddress()];
     }
 

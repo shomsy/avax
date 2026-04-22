@@ -27,7 +27,7 @@ trait AccessesTypedValues
 
     public function has(string $key) : bool
     {
-        return array_key_exists($key, $this->data());
+        return array_key_exists(key: $key, array: $this->data());
     }
 
     /**
@@ -39,7 +39,7 @@ trait AccessesTypedValues
     {
         $data = $this->data();
 
-        return array_key_exists($key, $data)
+        return array_key_exists(key: $key, array: $data)
             ? $data[$key]
             : $default;
     }
@@ -55,7 +55,7 @@ trait AccessesTypedValues
         $data   = $this->data();
 
         foreach ($keys as $key) {
-            if (array_key_exists($key, $data)) {
+            if (array_key_exists(key: $key, array: $data)) {
                 $result[$key] = $data[$key];
             }
         }
@@ -88,7 +88,7 @@ trait AccessesTypedValues
 
     private function toString(mixed $value) : string|null
     {
-        if (is_scalar($value) || $value instanceof Stringable) {
+        if (is_scalar(value: $value) || $value instanceof Stringable) {
             return (string) $value;
         }
 
@@ -103,7 +103,7 @@ trait AccessesTypedValues
             return $default;
         }
 
-        $filtered = filter_var($value, FILTER_VALIDATE_INT);
+        $filtered = filter_var(value: $value, filter: FILTER_VALIDATE_INT);
 
         return $filtered !== false
             ? (int) $filtered
@@ -112,7 +112,7 @@ trait AccessesTypedValues
 
     private function normalizeScalar(mixed $value) : string|int|float|bool|null
     {
-        if (is_scalar($value)) {
+        if (is_scalar(value: $value)) {
             return $value;
         }
 
@@ -131,7 +131,7 @@ trait AccessesTypedValues
             return $default;
         }
 
-        $filtered = filter_var($value, FILTER_VALIDATE_FLOAT);
+        $filtered = filter_var(value: $value, filter: FILTER_VALIDATE_FLOAT);
 
         return $filtered !== false
             ? (float) $filtered
@@ -146,15 +146,15 @@ trait AccessesTypedValues
             return $default;
         }
 
-        if (is_bool($value)) {
+        if (is_bool(value: $value)) {
             return $value;
         }
 
-        $normalized = strtolower((string) $value);
-        if (in_array($normalized, ['true', '1', 'on', 'yes'], true)) {
+        $normalized = strtolower(string: (string) $value);
+        if (in_array(needle: $normalized, haystack: ['true', '1', 'on', 'yes'], strict: true)) {
             return true;
         }
-        if (in_array($normalized, ['false', '0', 'off', 'no'], true)) {
+        if (in_array(needle: $normalized, haystack: ['false', '0', 'off', 'no'], strict: true)) {
             return false;
         }
 
@@ -170,7 +170,7 @@ trait AccessesTypedValues
     {
         $value = $this->get(key: $key);
 
-        return is_array($value)
+        return is_array(value: $value)
             ? $value
             : $default;
     }
@@ -186,12 +186,12 @@ trait AccessesTypedValues
     {
         $value = $this->get(key: $key);
 
-        if ($value === null || ! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
+        if ($value === null || ! enum_exists(enum: $enumClass) || ! is_subclass_of(object_or_class: $enumClass, class: BackedEnum::class)) {
             return $default;
         }
 
         // tryFrom only accepts string or int
-        if (! is_string($value) && ! is_int($value)) {
+        if (! is_string(value: $value) && ! is_int(value: $value)) {
             return $default;
         }
 

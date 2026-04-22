@@ -23,7 +23,7 @@ final readonly class SyslogAuditExporter implements AuditExporterInterface
     {
         foreach ($events as $event) {
             $payload = $this->normalizeAuditEvent->execute(event: $event);
-            $this->sender->send(severity: 'info', message: json_encode($payload, JSON_THROW_ON_ERROR));
+            $this->sender->send(severity: 'info', message: json_encode(value: $payload, flags: JSON_THROW_ON_ERROR));
         }
     }
 }

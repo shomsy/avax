@@ -6,7 +6,7 @@ use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 final class ManageScopesSmokeTest {}
 
@@ -49,4 +49,4 @@ $container->closeScope();
 assertInstanceOf(expectedClass: ScopedService::class, value: $fromWithinScope, message: 'Scope callback should return the resolved service.');
 assertNotSame(expected: $firstScope, actual: $secondScope, message: 'Scoped services should not leak across scopes.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

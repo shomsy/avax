@@ -85,7 +85,7 @@ final readonly class RouteCacheCompiler
     private function generateCacheFileContent(array $routes) : string
     {
         try {
-            return json_encode($routes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            return json_encode(value: $routes, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Failed to encode route cache as JSON.', previous: $exception);
         }

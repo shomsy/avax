@@ -27,9 +27,9 @@ final class ViewServiceProviderTest extends TestCase
         $builder->method('withArguments')->willReturnSelf();
         $builder->method('withArgument')->willReturnSelf();
 
-        mkdir($temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', 0777, true);
-        mkdir($defaultCache, 0777, true);
-        chdir($temporaryBase);
+        mkdir(directory: $temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', permissions: 0777, recursive: true);
+        mkdir(directory: $defaultCache, permissions: 0777, recursive: true);
+        chdir(directory: $temporaryBase);
 
         try {
             $container = $this->createMock(ContainerInterface::class);
@@ -55,8 +55,8 @@ final class ViewServiceProviderTest extends TestCase
             $this->assertIsCallable(actual: $factory);
             $this->assertInstanceOf(expected: BladeTemplateEngine::class, actual: $factory());
         } finally {
-            if (is_string($previousCwd) && $previousCwd !== '') {
-                chdir($previousCwd);
+            if (is_string(value: $previousCwd) && $previousCwd !== '') {
+                chdir(directory: $previousCwd);
             }
         }
     }

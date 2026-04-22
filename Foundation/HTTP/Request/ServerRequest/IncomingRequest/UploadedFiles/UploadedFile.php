@@ -35,7 +35,7 @@ final class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(message: 'Cannot retrieve stream for file with upload error.');
         }
 
-        return new Stream(stream: fopen($this->tmpName, 'r'));
+        return new Stream(stream: fopen(filename: $this->tmpName, mode: 'r'));
     }
 
     public function moveTo(string $targetPath) : void
@@ -48,14 +48,14 @@ final class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(message: 'Cannot move file with upload error.');
         }
 
-        if (! is_string($targetPath) || $targetPath === '') {
+        if (! is_string(value: $targetPath) || $targetPath === '') {
             throw new InvalidArgumentException(message: 'Invalid target path provided.');
         }
 
         if (PHP_SAPI === 'cli') {
-            $success = rename($this->tmpName, $targetPath);
+            $success = rename(from: $this->tmpName, to: $targetPath);
         } else {
-            $success = move_uploaded_file($this->tmpName, $targetPath);
+            $success = move_uploaded_file(from: $this->tmpName, to: $targetPath);
         }
 
         if (! $success) {

@@ -30,7 +30,7 @@ final readonly class VerifyFederationDomain
 
         if (
             $connection->domainVerificationToken === null
-            || ! hash_equals($connection->domainVerificationToken, trim($data->verificationToken))
+            || ! hash_equals(known_string: $connection->domainVerificationToken, user_string: trim(string: $data->verificationToken))
         ) {
             throw FederationFailed::invalidDomainVerificationToken();
         }

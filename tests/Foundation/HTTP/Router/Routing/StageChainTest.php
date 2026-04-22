@@ -20,7 +20,7 @@ final class FakeContainer implements PsrContainerInterface
 
     public function has(string $id) : bool
     {
-        return class_exists($id);
+        return class_exists(class: $id);
     }
 
     public function make(string $abstract, array $parameters = []) : object

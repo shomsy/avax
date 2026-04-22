@@ -19,11 +19,11 @@ final readonly class CreateReleaseProvenance
     {
         return [
             'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
+            'repository_root'     => realpath(path: $repositoryRoot) !== false ? realpath(path: $repositoryRoot) : $repositoryRoot,
             'git_commit'          => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', 'HEAD']),
             'git_branch'          => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', '--abbrev-ref', 'HEAD']),
             'git_dirty'           => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['status', '--short']) !== '',
-            'generated_at'        => gmdate(DATE_ATOM),
+            'generated_at'        => gmdate(format: DATE_ATOM),
             'php_version'         => PHP_VERSION,
             'validation_commands' => $validationCommands,
         ];
@@ -31,21 +31,21 @@ final readonly class CreateReleaseProvenance
 
     private function detectPackageName(string $repositoryRoot) : string
     {
-        $composerJsonPath = rtrim($repositoryRoot, '/') . '/composer.json';
+        $composerJsonPath = rtrim(string: $repositoryRoot, characters: '/') . '/composer.json';
 
-        if (! is_file($composerJsonPath)) {
+        if (! is_file(filename: $composerJsonPath)) {
             return 'unknown';
         }
 
-        $contents = file_get_contents($composerJsonPath);
+        $contents = file_get_contents(filename: $composerJsonPath);
 
         if ($contents === false) {
             return 'unknown';
         }
 
-        $decoded = json_decode($contents, true);
+        $decoded = json_decode(json: $contents, associative: true);
 
-        return is_array($decoded) && is_string($decoded['name'] ?? null)
+        return is_array(value: $decoded) && is_string(value: $decoded['name'] ?? null)
             ? $decoded['name']
             : 'unknown';
     }

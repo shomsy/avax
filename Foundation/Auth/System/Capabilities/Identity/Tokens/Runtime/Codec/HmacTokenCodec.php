@@ -36,7 +36,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
                 message: sprintf(
                              'Unsupported HMAC token algorithm "%s". Supported algorithms: %s.',
                              $this->algorithm,
-                             implode(', ', array_keys(self::SUPPORTED_ALGORITHMS))
+                             implode(separator: ', ', array: array_keys(array: self::SUPPORTED_ALGORITHMS))
                          )
             );
         }
@@ -77,7 +77,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         try {
             $parts = explode(separator: '.', string: $token);
 
-            if (count($parts) !== 3) {
+            if (count(value: $parts) !== 3) {
                 return null;
             }
 
@@ -88,7 +88,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             $headerAlgorithm = $header['alg'] ?? null;
             $headerKeyId     = $header['kid'] ?? null;
 
-            if (! is_string($headerAlgorithm) || $headerAlgorithm !== $this->algorithm) {
+            if (! is_string(value: $headerAlgorithm) || $headerAlgorithm !== $this->algorithm) {
                 return null;
             }
 
@@ -96,7 +96,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
                 return null;
             }
 
-            if ($headerKeyId !== null && ! is_string($headerKeyId)) {
+            if ($headerKeyId !== null && ! is_string(value: $headerKeyId)) {
                 return null;
             }
 
@@ -108,7 +108,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
                 binary: true
             );
 
-            if (! hash_equals($expectedSignature, $providedSignature)) {
+            if (! hash_equals(known_string: $expectedSignature, user_string: $providedSignature)) {
                 return null;
             }
 
@@ -125,9 +125,9 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 
     private function base64UrlDecode(string $value) : string
     {
-        $padding = (4 - (strlen($value) % 4)) % 4;
+        $padding = (4 - (strlen(string: $value) % 4)) % 4;
         $decoded = base64_decode(
-            string: strtr($value . str_repeat('=', $padding), '-_', '+/'),
+            string: strtr($value . str_repeat(string: '=', times: $padding), '-_', '+/'),
             strict: true
         );
 
@@ -161,7 +161,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             throw new InvalidArgumentException(message: 'Token payload is not valid JSON.', previous: $exception);
         }
 
-        if (! is_array($decoded)) {
+        if (! is_array(value: $decoded)) {
             throw new InvalidArgumentException(message: 'Token payload must decode to an object.');
         }
 

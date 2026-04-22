@@ -81,7 +81,7 @@ final readonly class RouterKernel
      */
     public function handle(Request $request) : ResponseInterface
     {
-        $startTime = microtime(true);
+        $startTime = microtime(as_float: true);
         $method    = $request->getMethod();
         $path      = $request->getUri()->getPath();
 
@@ -108,7 +108,7 @@ final readonly class RouterKernel
                 'method'   => $route->method,
                 'path'     => $route->path,
                 'domain'   => $route->domain,
-                'duration' => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+                'duration' => round(num: (microtime(as_float: true) - $startTime) * 1000, precision: 2) . 'ms',
             ]);
 
             // Inject route parameters from resolution context into the request as attributes.
@@ -128,7 +128,7 @@ final readonly class RouterKernel
             $this->trace?->log(event: 'kernel.request.complete', context: [
                 'route'    => $route->name ?? $route->path,
                 'status'   => $response->statusCode,
-                'duration' => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+                'duration' => round(num: (microtime(as_float: true) - $startTime) * 1000, precision: 2) . 'ms',
             ]);
 
             return $response;
@@ -138,9 +138,9 @@ final readonly class RouterKernel
             $this->trace?->log(event: 'kernel.request.failed', context: [
                 'method'    => $method,
                 'path'      => $path,
-                'exception' => get_class($exception),
+                'exception' => get_class(object: $exception),
                 'message'   => $exception->getMessage(),
-                'duration'  => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+                'duration'  => round(num: (microtime(as_float: true) - $startTime) * 1000, precision: 2) . 'ms',
             ]);
 
             // Check if this is a routing exception that should trigger fallback
@@ -148,7 +148,7 @@ final readonly class RouterKernel
                 $exception instanceof MethodNotAllowedException) {
 
                 $this->trace?->log(event: 'kernel.fallback.triggered', context: [
-                    'reason'  => get_class($exception),
+                    'reason'  => get_class(object: $exception),
                     'message' => $exception->getMessage(),
                 ]);
 

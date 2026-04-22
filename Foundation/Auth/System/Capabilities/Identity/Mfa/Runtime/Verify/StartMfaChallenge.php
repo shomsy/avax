@@ -85,7 +85,7 @@ final readonly class StartMfaChallenge
 
         $now    = $this->clock->now();
         $record = new MfaChallengeRecord(
-            challengeId: bin2hex(random_bytes(16)),
+            challengeId: bin2hex(string: random_bytes(length: 16)),
             userId     : $userId,
             purpose    : $purpose,
             createdAt  : $now,

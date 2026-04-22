@@ -44,12 +44,12 @@ final class ContainerPublicSurfaceTest extends TestCase
 
     public function test_container_does_not_implement_runtime_interface() : void
     {
-        $this->assertFalse(condition: is_a(Container::class, ContainerRuntimeInterface::class, true));
+        $this->assertFalse(condition: is_a(object_or_class: Container::class, class: ContainerRuntimeInterface::class, allow_string: true));
     }
 
     public function test_container_does_not_expose_runtime_only_methods() : void
     {
-        $this->assertFalse(condition: method_exists(Container::class, 'resolveContext'));
-        $this->assertFalse(condition: method_exists(Container::class, 'resolve'));
+        $this->assertFalse(condition: method_exists(object_or_class: Container::class, method: 'resolveContext'));
+        $this->assertFalse(condition: method_exists(object_or_class: Container::class, method: 'resolve'));
     }
 }

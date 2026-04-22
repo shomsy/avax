@@ -33,21 +33,21 @@ final readonly class ProviderBootPlan
      */
     public static function build(array $instances) : self
     {
-        ksort($instances);
+        ksort(array: $instances);
 
         $dependencies = [];
         foreach ($instances as $class => $provider) {
             $dependencyClasses = $provider->dependsOn()
                     |> array_unique(...)
                     |> array_values(...);
-            sort($dependencyClasses);
+            sort(array: $dependencyClasses);
             $dependencies[$class] = $dependencyClasses;
         }
 
         $ordered = [];
         $state   = [];
 
-        foreach (array_keys($instances) as $class) {
+        foreach (array_keys(array: $instances) as $class) {
             self::visit(
                 class       : $class,
                 dependencies: $dependencies,
@@ -85,7 +85,7 @@ final readonly class ProviderBootPlan
         if ($currentState === 'visiting') {
             $stack[] = $class;
             throw new LogicException(
-                message: 'Provider dependency cycle detected: ' . implode(' -> ', $stack)
+                message: 'Provider dependency cycle detected: ' . implode(separator: ' -> ', array: $stack)
             );
         }
 
@@ -138,7 +138,7 @@ final readonly class ProviderBootPlan
         return [
             'order'         => $this->order,
             'dependencies'  => $this->dependencies,
-            'providerCount' => count($this->order),
+            'providerCount' => count(value: $this->order),
         ];
     }
 }

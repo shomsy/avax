@@ -221,7 +221,7 @@ final class RouterBootstrapper
      */
     public function middleware(string $routeKey, MiddlewareInterface|array $middleware) : self
     {
-        $middlewareArray                  = is_array($middleware) ? $middleware : [$middleware];
+        $middlewareArray                  = is_array(value: $middleware) ? $middleware : [$middleware];
         $this->routeMiddleware[$routeKey] = array_merge(
             $this->routeMiddleware[$routeKey] ?? [],
             $middlewareArray

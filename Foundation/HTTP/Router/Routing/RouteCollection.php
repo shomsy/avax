@@ -58,7 +58,7 @@ final class RouteCollection
 
         $this->routeKeys[$key] = true;
 
-        $method = strtoupper($route->method);
+        $method = strtoupper(string: $route->method);
 
         // Check if path contains parameters (indicating pattern route)
         if ($this->isPatternRoute(path: $route->path)) {
@@ -76,7 +76,7 @@ final class RouteCollection
     {
         return sprintf(
             '%s|%s|%s',
-            strtoupper($route->method),
+            strtoupper(string: $route->method),
             $route->domain ?? '',
             $route->path
         );
@@ -87,7 +87,7 @@ final class RouteCollection
      */
     private function isPatternRoute(string $path) : bool
     {
-        return str_contains($path, '{') && str_contains($path, '}');
+        return str_contains(haystack: $path, needle: '{') && str_contains(haystack: $path, needle: '}');
     }
 
     /**
@@ -95,7 +95,7 @@ final class RouteCollection
      */
     public function findExactRoute(string $method, string $path) : RouteDefinition|null
     {
-        return $this->exactRoutes[strtoupper($method)][$path] ?? null;
+        return $this->exactRoutes[strtoupper(string: $method)][$path] ?? null;
     }
 
     /**
@@ -105,7 +105,7 @@ final class RouteCollection
      */
     public function getPatternRoutes(string $method) : array
     {
-        return $this->patternRoutes[strtoupper($method)] ?? [];
+        return $this->patternRoutes[strtoupper(string: $method)] ?? [];
     }
 
     /**
@@ -117,7 +117,7 @@ final class RouteCollection
     {
         $allRoutes = [];
 
-        foreach (array_keys($this->exactRoutes + $this->patternRoutes) as $method) {
+        foreach (array_keys(array: $this->exactRoutes + $this->patternRoutes) as $method) {
             $allRoutes[$method] = $this->getAllRoutesForMethod(method: $method);
         }
 
@@ -131,7 +131,7 @@ final class RouteCollection
      */
     public function getAllRoutesForMethod(string $method) : array
     {
-        $method = strtoupper($method);
+        $method = strtoupper(string: $method);
         $routes = [];
 
         // Add exact routes
@@ -156,12 +156,12 @@ final class RouteCollection
     {
         $exactCount = 0;
         foreach ($this->exactRoutes as $routes) {
-            $exactCount += count($routes);
+            $exactCount += count(value: $routes);
         }
 
         $patternCount = 0;
         foreach ($this->patternRoutes as $routes) {
-            $patternCount += count($routes);
+            $patternCount += count(value: $routes);
         }
 
         return [

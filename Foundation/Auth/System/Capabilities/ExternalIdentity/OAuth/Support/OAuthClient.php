@@ -96,12 +96,12 @@ final readonly class OAuthClient
 
     public function allowsRedirectUri(string $redirectUri) : bool
     {
-        return in_array($redirectUri, $this->redirectUris, true);
+        return in_array(needle: $redirectUri, haystack: $this->redirectUris, strict: true);
     }
 
     public function allowsGrantType(OAuthGrantType $grantType) : bool
     {
-        return in_array($grantType, $this->allowedGrantTypes, true);
+        return in_array(needle: $grantType, haystack: $this->allowedGrantTypes, strict: true);
     }
 
     public function requiresAudience() : bool
@@ -112,14 +112,14 @@ final readonly class OAuthClient
     public function allowsAudience(string|null $audience) : bool
     {
         if ($this->allowedAudiences === []) {
-            return $audience === null || trim($audience) === '';
+            return $audience === null || trim(string: $audience) === '';
         }
 
-        if ($audience === null || trim($audience) === '') {
+        if ($audience === null || trim(string: $audience) === '') {
             return false;
         }
 
-        return in_array(trim($audience), $this->allowedAudiences, true);
+        return in_array(needle: trim(string: $audience), haystack: $this->allowedAudiences, strict: true);
     }
 
     /**
@@ -131,13 +131,13 @@ final readonly class OAuthClient
             return false;
         }
 
-        $normalizedAudience = trim((string) $audience);
+        $normalizedAudience = trim(string: (string) $audience);
 
         if ($normalizedAudience === '' || ! isset($this->audienceScopeBoundaries[$normalizedAudience])) {
             return true;
         }
 
-        return array_all($scopes, fn ($scope) => in_array($scope, $this->audienceScopeBoundaries[$normalizedAudience], true));
+        return array_all(array: $scopes, callback: fn ($scope) => in_array(needle: $scope, haystack: $this->audienceScopeBoundaries[$normalizedAudience], strict: true));
     }
 
     /**
@@ -145,7 +145,7 @@ final readonly class OAuthClient
      */
     public function allowsScopes(array $scopes) : bool
     {
-        return array_all($scopes, fn ($scope) => in_array($scope, $this->allowedScopes, true));
+        return array_all(array: $scopes, callback: fn ($scope) => in_array(needle: $scope, haystack: $this->allowedScopes, strict: true));
     }
 
     public function requiresSenderConstraint() : bool

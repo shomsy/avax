@@ -39,7 +39,7 @@ final class RouteGroupStack
      */
     public function pop() : void
     {
-        array_pop($this->stack);
+        array_pop(array: $this->stack);
     }
 
     /**
@@ -63,7 +63,7 @@ final class RouteGroupStack
      */
     public function current() : RouteGroupContext|null
     {
-        return end($this->stack) ?: null;
+        return end(array: $this->stack) ?: null;
     }
 
     /**
@@ -79,7 +79,7 @@ final class RouteGroupStack
      */
     public function depth() : int
     {
-        return count($this->stack);
+        return count(value: $this->stack);
     }
 
     /**

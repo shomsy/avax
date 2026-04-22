@@ -34,7 +34,7 @@ final class SliceContext
 
     public static function normalize(string $slice) : string
     {
-        return trim($slice);
+        return trim(string: $slice);
     }
 
     /**
@@ -44,7 +44,7 @@ final class SliceContext
     {
         $slice = $context[self::KEY] ?? '';
 
-        return is_string($slice) ? self::normalize(slice: $slice) : '';
+        return is_string(value: $slice) ? self::normalize(slice: $slice) : '';
     }
 
     public static function isRoot(string $slice) : bool
@@ -69,19 +69,19 @@ final class SliceContext
     {
         $normalized = self::normalize(slice: $slice);
 
-        if (str_starts_with($normalized, 'flow.')) {
+        if (str_starts_with(haystack: $normalized, needle: 'flow.')) {
             return RegistrationCategory::FLOW;
         }
 
-        if (str_starts_with($normalized, 'capability.')) {
+        if (str_starts_with(haystack: $normalized, needle: 'capability.')) {
             return RegistrationCategory::CAPABILITY;
         }
 
-        if (str_starts_with($normalized, 'configuration.')) {
+        if (str_starts_with(haystack: $normalized, needle: 'configuration.')) {
             return RegistrationCategory::CONFIGURATION;
         }
 
-        if (str_starts_with($normalized, 'foundation.')) {
+        if (str_starts_with(haystack: $normalized, needle: 'foundation.')) {
             return RegistrationCategory::FOUNDATION;
         }
 

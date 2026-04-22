@@ -18,7 +18,7 @@ final readonly class NormalizeProtocolVersion
             return '1.1';
         }
 
-        if (preg_match('#(?:HTTP/)?(?P<version>1\.[01]|2(?:\.0)?|3)#i', $protocol, $matches)) {
+        if (preg_match(pattern: '#(?:HTTP/)?(?P<version>1\.[01]|2(?:\.0)?|3)#i', subject: $protocol, matches: $matches)) {
             return $matches['version'];
         }
 

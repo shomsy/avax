@@ -101,10 +101,10 @@ final readonly class AttributeRouteRegistrar
         $prefix = $prefix ?? '';
         $prefix = $prefix === '' ? '' : '/' . ltrim(string: $prefix, characters: '/');
 
-        $normalizedPath = rtrim($prefix, '/') . '/' . ltrim(string: $path, characters: '/');
+        $normalizedPath = rtrim(string: $prefix, characters: '/') . '/' . ltrim(string: $path, characters: '/');
 
         // Normalize multiple consecutive slashes to single slash
-        return preg_replace('#//+#', '/', $normalizedPath);
+        return preg_replace(pattern: '#//+#', replacement: '/', subject: $normalizedPath);
     }
 
     private function resolveMethods(RouteAttribute $route, RouteAttribute|null $baseRoute) : array
@@ -112,8 +112,8 @@ final readonly class AttributeRouteRegistrar
         $methods = $route->methods !== [] ? $route->methods : ($baseRoute?->methods ?? [HttpMethod::GET->value]);
 
         return array_map(
-            static fn (string $method) => strtoupper(string: $method),
-            $methods
+            callback: static fn (string $method) => strtoupper(string: $method),
+            array   : $methods
         );
     }
 

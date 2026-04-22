@@ -53,19 +53,19 @@ final class RetryPolicy
 
         $message = $e->getMessage();
 
-        if (stripos($message, 'deadlock') !== false) {
+        if (stripos(haystack: $message, needle: 'deadlock') !== false) {
             return true;
         }
 
-        if (stripos($message, 'connection refused') !== false) {
+        if (stripos(haystack: $message, needle: 'connection refused') !== false) {
             return true;
         }
 
-        if (stripos($message, 'timeout') !== false) {
+        if (stripos(haystack: $message, needle: 'timeout') !== false) {
             return true;
         }
 
-        if (stripos($message, 'too many connections') !== false) {
+        if (stripos(haystack: $message, needle: 'too many connections') !== false) {
             return true;
         }
 
@@ -74,7 +74,7 @@ final class RetryPolicy
 
     public function getDelayMs(int $attempt) : int
     {
-        $delay = (int) ($this->baseDelayMs * pow($this->multiplier, $attempt));
+        $delay = (int) ($this->baseDelayMs * pow(num: $this->multiplier, exponent: $attempt));
 
         return min($delay, $this->maxDelayMs);
     }

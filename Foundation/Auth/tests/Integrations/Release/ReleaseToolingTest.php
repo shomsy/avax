@@ -25,7 +25,7 @@ final class ReleaseToolingTest extends TestCase
 {
     public function testSbomContainsPackageMetadata() : void
     {
-        $root = dirname(__DIR__, 3);
+        $root = dirname(path: __DIR__, levels: 3);
         $sbom = (new GenerateReleaseSbom())->execute(composerJsonPath: $root . '/composer.json', composerLockPath: $root . '/composer.lock');
 
         $this->assertSame(expected: 'CycloneDX', actual: $sbom['bomFormat']);
@@ -34,7 +34,7 @@ final class ReleaseToolingTest extends TestCase
 
     public function testReleaseProvenanceCapturesRepositoryState() : void
     {
-        $root       = dirname(__DIR__, 3);
+        $root       = dirname(path: __DIR__, levels: 3);
         $provenance = (new CreateReleaseProvenance())->execute(repositoryRoot: $root, validationCommands: ['php composer.phar test']);
 
         $this->assertSame(expected: 'avax/auth', actual: $provenance['package']);
@@ -45,10 +45,10 @@ final class ReleaseToolingTest extends TestCase
 
     public function testRollbackEvidenceCapturesRollbackTargetAndArtifactDigests() : void
     {
-        $root     = dirname(__DIR__, 3);
-        $artifact = tempnam(sys_get_temp_dir(), 'auth-rollback-');
+        $root     = dirname(path: __DIR__, levels: 3);
+        $artifact = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-rollback-');
         self::assertIsString(actual: $artifact);
-        file_put_contents($artifact, 'rollback-artifact');
+        file_put_contents(filename: $artifact, data: 'rollback-artifact');
 
         $evidence = (new GenerateRollbackEvidence())->execute(
             repositoryRoot    : $root,
@@ -60,7 +60,7 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: 'avax/auth', actual: $evidence['package']);
         $this->assertTrue(condition: $evidence['rollback_ready']);
         $this->assertNotNull(actual: $evidence['rollback_target']);
-        $this->assertSame(expected: hash_file('sha256', $artifact), actual: $evidence['artifacts'][0]['sha256']);
+        $this->assertSame(expected: hash_file(algo: 'sha256', filename: $artifact), actual: $evidence['artifacts'][0]['sha256']);
     }
 
     /**
@@ -68,9 +68,9 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSecretScannerFindsCommittedSecretPatterns() : void
     {
-        $directory = sys_get_temp_dir() . '/auth-secret-scan-' . bin2hex(random_bytes(4));
-        mkdir($directory);
-        file_put_contents($directory . '/keys.txt', 'AKIA' . "IOSFODNN7EXAMPLE\n");
+        $directory = sys_get_temp_dir() . '/auth-secret-scan-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $directory);
+        file_put_contents(filename: $directory . '/keys.txt', data: 'AKIA' . "IOSFODNN7EXAMPLE\n");
 
         $findings = (new ScanCommittedSecrets())->execute(rootPath: $directory, ignoredDirectories: []);
 
@@ -80,7 +80,7 @@ final class ReleaseToolingTest extends TestCase
 
     public function testDependencyReviewApprovesCurrentLockPolicy() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $review = (new ReviewComposerDependencies())->execute(
             composerLockPath: $root . '/composer.lock',
             policyPath      : $root . '/tooling/dependency-review-policy.json'
@@ -96,12 +96,12 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testDependencyReviewRejectsUnreviewedOrUnapprovedPackages() : void
     {
-        $lockPath   = tempnam(sys_get_temp_dir(), 'auth-lock-');
-        $policyPath = tempnam(sys_get_temp_dir(), 'auth-policy-');
+        $lockPath   = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-lock-');
+        $policyPath = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-policy-');
         self::assertIsString(actual: $lockPath);
         self::assertIsString(actual: $policyPath);
 
-        file_put_contents($lockPath, json_encode([
+        file_put_contents(filename: $lockPath, data: json_encode(value: [
                                                      'packages' => [[
                                                                         'name' => 'approved/package',
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'version' => '1.0.0',
@@ -113,12 +113,12 @@ final class ReleaseToolingTest extends TestCase
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'type' => 'composer-plugin',
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'source' => ['url' => 'https://git.example.test/new/plugin-package.git'],
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ]],
-                                                 ], JSON_THROW_ON_ERROR));
-        file_put_contents($policyPath, json_encode([
+                                                 ],              flags: JSON_THROW_ON_ERROR));
+        file_put_contents(filename: $policyPath, data: json_encode(value: [
                                                        'reviewed_packages' => ['approved/package'],
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           'allowed_plugin_packages' => [],
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 'allowed_source_hosts' => ['github.com'],
-                                                   ], JSON_THROW_ON_ERROR));
+                                                   ],              flags: JSON_THROW_ON_ERROR));
 
         $review = (new ReviewComposerDependencies())->execute(composerLockPath: $lockPath, policyPath: $policyPath);
 
@@ -131,27 +131,27 @@ final class ReleaseToolingTest extends TestCase
 
     public function testArtifactSignerProducesVerifiableSignature() : void
     {
-        $artifact = tempnam(sys_get_temp_dir(), 'auth-artifact-');
+        $artifact = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-artifact-');
         self::assertIsString(actual: $artifact);
-        file_put_contents($artifact, 'release-artifact');
+        file_put_contents(filename: $artifact, data: 'release-artifact');
 
-        $privateKey = openssl_pkey_new([
+        $privateKey = openssl_pkey_new(options: [
                                            'private_key_bits' => 2048,
                                            'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                        ]);
         self::assertNotFalse(condition: $privateKey);
-        openssl_pkey_export($privateKey, $privateKeyPem);
-        $details = openssl_pkey_get_details($privateKey);
+        openssl_pkey_export(key: $privateKey, output: $privateKeyPem);
+        $details = openssl_pkey_get_details(key: $privateKey);
         self::assertIsArray(actual: $details);
         $publicKeyPem = $details['key'];
 
         $signature = (new SignReleaseArtifact())->execute(artifactPath: $artifact, privateKeyPem: $privateKeyPem);
 
         $verification = openssl_verify(
-            'release-artifact',
-            base64_decode($signature, true) ?: '',
-            $publicKeyPem,
-            OPENSSL_ALGO_SHA256
+            data      : 'release-artifact',
+            signature : base64_decode(string: $signature, strict: true) ?: '',
+            public_key: $publicKeyPem,
+            algorithm : OPENSSL_ALGO_SHA256
         );
 
         $this->assertSame(expected: 1, actual: $verification);
@@ -209,16 +209,16 @@ final class ReleaseToolingTest extends TestCase
      */
     private function createKeyRingFile(array $configuration) : string
     {
-        $path = tempnam(sys_get_temp_dir(), 'auth-release-');
+        $path = tempnam(directory: sys_get_temp_dir(), prefix: 'auth-release-');
         self::assertIsString(actual: $path);
-        file_put_contents($path, json_encode($configuration, JSON_THROW_ON_ERROR));
+        file_put_contents(filename: $path, data: json_encode(value: $configuration, flags: JSON_THROW_ON_ERROR));
 
         return $path;
     }
 
     public function testConformanceHarnessReportsPassedAndFailedChecks() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $report = (new RunConformanceHarness())->execute(
             repositoryRoot: $root,
             checks        : [
@@ -242,7 +242,7 @@ final class ReleaseToolingTest extends TestCase
 
     public function testConformanceHarnessDoesNotDeadlockOnHighOutputCommands() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $report = (new RunConformanceHarness())->execute(
             repositoryRoot: $root,
             checks        : [[
@@ -263,11 +263,11 @@ final class ReleaseToolingTest extends TestCase
 
     public function testPhpUnitConfigurationDoesNotReferenceRemovedLegacyTestRoots() : void
     {
-        $root     = dirname(__DIR__, 3);
-        $contents = file_get_contents($root . '/phpunit.xml.dist');
+        $root     = dirname(path: __DIR__, levels: 3);
+        $contents = file_get_contents(filename: $root . '/phpunit.xml.dist');
 
         self::assertIsString(actual: $contents);
-        $configuration = simplexml_load_string($contents);
+        $configuration = simplexml_load_string(data: $contents);
         self::assertNotFalse(condition: $configuration);
 
         $directories = [];
@@ -286,21 +286,21 @@ final class ReleaseToolingTest extends TestCase
 
     public function testIntegrationFlowAnchorFilesDeclarePhpUnitTestCases() : void
     {
-        $root  = dirname(__DIR__, 3);
-        $files = glob($root . '/tests/Integration/*FlowTest.php');
+        $root  = dirname(path: __DIR__, levels: 3);
+        $files = glob(pattern: $root . '/tests/Integration/*FlowTest.php');
 
         self::assertIsArray(actual: $files);
         self::assertNotSame(expected: [], actual: $files);
 
         foreach ($files as $file) {
-            $class = 'Avax\\Auth\\Tests\\Integration\\' . basename($file, '.php');
+            $class = 'Avax\\Auth\\Tests\\Integration\\' . basename(path: $file, suffix: '.php');
 
             self::assertTrue(
-                condition: class_exists($class),
+                condition: class_exists(class: $class),
                 message  : sprintf('Expected %s to declare %s.', $file, $class)
             );
             self::assertTrue(
-                condition: is_subclass_of($class, TestCase::class),
+                condition: is_subclass_of(object_or_class: $class, class: TestCase::class),
                 message  : sprintf('Expected %s to extend %s.', $class, TestCase::class)
             );
         }
@@ -308,7 +308,7 @@ final class ReleaseToolingTest extends TestCase
 
     public function testProductionSourcesPassPhpStanAnalysisWithoutInternalErrors() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $report = (new RunConformanceHarness())->execute(
             repositoryRoot: $root,
             checks        : [[
@@ -332,7 +332,7 @@ final class ReleaseToolingTest extends TestCase
 
     public function testProductionSourcesPassStrictPhpStanAnalysis() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $report = (new RunConformanceHarness())->execute(
             repositoryRoot: $root,
             checks        : [[
@@ -358,8 +358,8 @@ final class ReleaseToolingTest extends TestCase
 
     public function testRectorConfigurationExistsForDeterministicReleaseChecks() : void
     {
-        $root     = dirname(__DIR__, 3);
-        $contents = file_get_contents($root . '/rector.php');
+        $root     = dirname(path: __DIR__, levels: 3);
+        $contents = file_get_contents(filename: $root . '/rector.php');
 
         self::assertIsString(actual: $contents);
         self::assertStringContainsString(needle: "__DIR__ . '/System'", haystack: $contents);
@@ -371,8 +371,8 @@ final class ReleaseToolingTest extends TestCase
 
     public function testReadmeQuickStartTracksStableBootstrapSeams() : void
     {
-        $root     = dirname(__DIR__, 3);
-        $contents = file_get_contents($root . '/README.md');
+        $root     = dirname(path: __DIR__, levels: 3);
+        $contents = file_get_contents(filename: $root . '/README.md');
 
         self::assertIsString(actual: $contents);
         self::assertStringContainsString(needle: '->withIdentityBackends(', haystack: $contents);
@@ -387,11 +387,11 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testEvidenceBundleTracksArtifactPresence() : void
     {
-        $root = sys_get_temp_dir() . '/auth-evidence-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/build', 0777, true);
-        file_put_contents($root . '/composer.json', json_encode(['name' => 'avax/auth'], JSON_THROW_ON_ERROR));
-        file_put_contents($root . '/build/conformance-report.json', '{"ok":true}');
+        $root = sys_get_temp_dir() . '/auth-evidence-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/build', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/composer.json', data: json_encode(value: ['name' => 'avax/auth'], flags: JSON_THROW_ON_ERROR));
+        file_put_contents(filename: $root . '/build/conformance-report.json', data: '{"ok":true}');
 
         $bundle = (new GenerateEvidenceBundle())->execute(
             repositoryRoot: $root,
@@ -413,12 +413,12 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testMigrationPathCheckDetectsLegacyReferencesAndMissingGuide() : void
     {
-        $root = sys_get_temp_dir() . '/auth-migration-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/tests/System', 0777, true);
-        file_put_contents($root . '/composer.json', json_encode(['name' => 'avax/auth'], JSON_THROW_ON_ERROR));
-        file_put_contents($root . '/System/Configuration/Legacy.php', "<?php\nuse Avax\\Auth\\System\\Configuration\\AuthServiceProvider;\n");
+        $root = sys_get_temp_dir() . '/auth-migration-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/tests/System', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/composer.json', data: json_encode(value: ['name' => 'avax/auth'], flags: JSON_THROW_ON_ERROR));
+        file_put_contents(filename: $root . '/System/Configuration/Legacy.php', data: "<?php\nuse Avax\\Auth\\System\\Configuration\\AuthServiceProvider;\n");
 
         $result = (new CheckMigrationPath())->execute(repositoryRoot: $root);
 
@@ -433,18 +433,18 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSourceTruthCheckRejectsContradictoryState() : void
     {
-        $root = sys_get_temp_dir() . '/auth-source-truth-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/docs', 0777, true);
-        mkdir($root . '/.agents/management/evidence', 0777, true);
-        file_put_contents($root . '/docs/STATUS.md', "# Status\n");
-        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
-        file_put_contents($root . '/docs/capability-matrix.md', "| device trust assessment | ⚠️ partial | boundary |\n");
-        file_put_contents($root . '/docs/current-state.md', "This document is the canonical current-state summary for the Auth package.\n");
-        file_put_contents($root . '/Auth.txt', "legacy mixed status\n");
+        $root = sys_get_temp_dir() . '/auth-source-truth-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/docs', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/.agents/management/evidence', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/docs/STATUS.md', data: "# Status\n");
+        file_put_contents(filename: $root . '/docs/product-boundary.md', data: "# Boundary\n");
+        file_put_contents(filename: $root . '/docs/capability-matrix.md', data: "| device trust assessment | ⚠️ partial | boundary |\n");
+        file_put_contents(filename: $root . '/docs/current-state.md', data: "This document is the canonical current-state summary for the Auth package.\n");
+        file_put_contents(filename: $root . '/Auth.txt', data: "legacy mixed status\n");
         file_put_contents(
-            $root . '/.agents/management/evidence/RISK_REGISTER.md',
-            "still does not ship OIDC provider behavior, client-credentials, SCIM runtime\n"
+            filename: $root . '/.agents/management/evidence/RISK_REGISTER.md',
+            data    : "still does not ship OIDC provider behavior, client-credentials, SCIM runtime\n"
         );
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
@@ -458,22 +458,22 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSourceTruthCheckRejectsMissingCapabilityEvidencePaths() : void
     {
-        $root = sys_get_temp_dir() . '/auth-source-truth-evidence-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/docs', 0777, true);
-        mkdir($root . '/.agents/management/evidence', 0777, true);
-        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
-        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
-        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
-        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        $root = sys_get_temp_dir() . '/auth-source-truth-evidence-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/docs', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/.agents/management/evidence', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/docs/STATUS.md', data: "This document is authoritative.\n");
+        file_put_contents(filename: $root . '/docs/product-boundary.md', data: "# Boundary\n");
+        file_put_contents(filename: $root . '/docs/current-state.md', data: "# Current State\n");
+        file_put_contents(filename: $root . '/docs/upgrade-migration-guide.md', data: "# Migration\n");
         file_put_contents(
-            $root . '/docs/capability-matrix.md',
-            "| Capability | Status | Ownership | Evidence |\n"
+            filename: $root . '/docs/capability-matrix.md',
+            data    : "| Capability | Status | Ownership | Evidence |\n"
             . "|---|---|---|---|\n"
             . "| demo capability | ✅ supported | kernel | `tests/Flows/MissingTest.php`, `System/Flows/Missing/` |\n"
         );
-        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
-        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
+        file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
         $this->writeOwnershipHowThisWorksDocs(root: $root);
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
@@ -481,7 +481,7 @@ final class ReleaseToolingTest extends TestCase
         $this->assertFalse(condition: $result['approved']);
         $this->assertStringContainsString(
             needle  : "Capability matrix evidence path missing for 'demo capability': tests/Flows/MissingTest.php",
-            haystack: implode("\n", $result['issues'])
+            haystack: implode(separator: "\n", array: $result['issues'])
         );
     }
 
@@ -490,19 +490,19 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSourceTruthCheckIgnoresCapabilityMatrixSeparatorsAndLegendRows() : void
     {
-        $root = sys_get_temp_dir() . '/auth-source-truth-legend-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/docs', 0777, true);
-        mkdir($root . '/.agents/management/evidence', 0777, true);
-        mkdir($root . '/System/Capabilities/PasswordHashing', 0777, true);
-        mkdir($root . '/tests/Capabilities/PasswordHashing', 0777, true);
-        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
-        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
-        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
-        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        $root = sys_get_temp_dir() . '/auth-source-truth-legend-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/docs', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/.agents/management/evidence', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Capabilities/PasswordHashing', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/tests/Capabilities/PasswordHashing', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/docs/STATUS.md', data: "This document is authoritative.\n");
+        file_put_contents(filename: $root . '/docs/product-boundary.md', data: "# Boundary\n");
+        file_put_contents(filename: $root . '/docs/current-state.md', data: "# Current State\n");
+        file_put_contents(filename: $root . '/docs/upgrade-migration-guide.md', data: "# Migration\n");
         file_put_contents(
-            $root . '/docs/capability-matrix.md',
-            "# Capability Matrix\n\n"
+            filename: $root . '/docs/capability-matrix.md',
+            data    : "# Capability Matrix\n\n"
             . "| Capability       | Status      | Ownership | Evidence |\n"
             . "|------------------|-------------|-----------|----------|\n"
             . "| password hashing | ✅ supported | kernel    | `System/Capabilities/PasswordHashing/`, `tests/Capabilities/PasswordHashing/` |\n\n"
@@ -511,13 +511,13 @@ final class ReleaseToolingTest extends TestCase
             . "|-------------|---------|\n"
             . "| ✅ supported | Package owns the capability |\n"
         );
-        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
-        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
+        file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
         $this->writeOwnershipHowThisWorksDocs(root: $root);
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
-        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+        $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
     }
 
     /**
@@ -525,19 +525,19 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSourceTruthCheckRejectsLegacySingularSystemRootsInCanonicalContracts() : void
     {
-        $root = sys_get_temp_dir() . '/auth-source-truth-roots-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/docs/architecture', 0777, true);
-        mkdir($root . '/.agents/management/evidence', 0777, true);
-        file_put_contents($root . '/AGENTS.md', "Source roots:\n- `System/Flow/`\n- `System/Capability/`\n");
-        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
-        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
-        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
-        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
-        file_put_contents($root . '/docs/capability-matrix.md', "# Capability Matrix\n");
-        file_put_contents($root . '/docs/architecture/system-shape.md', "# Shape\n`System/Flow/`\n");
-        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
-        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        $root = sys_get_temp_dir() . '/auth-source-truth-roots-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/docs/architecture', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/.agents/management/evidence', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/AGENTS.md', data: "Source roots:\n- `System/Flow/`\n- `System/Capability/`\n");
+        file_put_contents(filename: $root . '/docs/STATUS.md', data: "This document is authoritative.\n");
+        file_put_contents(filename: $root . '/docs/product-boundary.md', data: "# Boundary\n");
+        file_put_contents(filename: $root . '/docs/current-state.md', data: "# Current State\n");
+        file_put_contents(filename: $root . '/docs/upgrade-migration-guide.md', data: "# Migration\n");
+        file_put_contents(filename: $root . '/docs/capability-matrix.md', data: "# Capability Matrix\n");
+        file_put_contents(filename: $root . '/docs/architecture/system-shape.md', data: "# Shape\n`System/Flow/`\n");
+        file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
+        file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
@@ -557,17 +557,17 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSourceTruthCheckRejectsMissingOwnershipHowThisWorksPages() : void
     {
-        $root = sys_get_temp_dir() . '/auth-source-truth-docs-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/docs', 0777, true);
-        mkdir($root . '/.agents/management/evidence', 0777, true);
-        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
-        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
-        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
-        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
-        file_put_contents($root . '/docs/capability-matrix.md', "# Capability Matrix\n");
-        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
-        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+        $root = sys_get_temp_dir() . '/auth-source-truth-docs-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/docs', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/.agents/management/evidence', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/docs/STATUS.md', data: "This document is authoritative.\n");
+        file_put_contents(filename: $root . '/docs/product-boundary.md', data: "# Boundary\n");
+        file_put_contents(filename: $root . '/docs/current-state.md', data: "# Current State\n");
+        file_put_contents(filename: $root . '/docs/upgrade-migration-guide.md', data: "# Migration\n");
+        file_put_contents(filename: $root . '/docs/capability-matrix.md', data: "# Capability Matrix\n");
+        file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
+        file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
 
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
@@ -580,10 +580,10 @@ final class ReleaseToolingTest extends TestCase
 
     public function testSourceTruthCheckApprovesCurrentRepository() : void
     {
-        $root   = dirname(__DIR__, 3);
+        $root   = dirname(path: __DIR__, levels: 3);
         $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
 
-        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+        $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
     }
 
     /**
@@ -591,16 +591,16 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSystemShapeCheckRejectsUnexpectedAndForbiddenDirectories() : void
     {
-        $root = sys_get_temp_dir() . '/auth-shape-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/System/Flow', 0777, true);
-        mkdir($root . '/System/Capability', 0777, true);
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/System/Foundation', 0777, true);
-        mkdir($root . '/System/Actions', 0777, true);
-        mkdir($root . '/System/Capabilities/Helpers', 0777, true);
-        file_put_contents($root . '/System/Auth.php', "<?php\n");
-        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+        $root = sys_get_temp_dir() . '/auth-shape-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/System/Flow', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Capability', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Actions', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Capabilities/Helpers', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
@@ -618,8 +618,8 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSystemShapeCheckApprovesCanonicalPluralTree() : void
     {
-        $root = sys_get_temp_dir() . '/auth-shape-canonical-' . bin2hex(random_bytes(4));
-        mkdir($root);
+        $root = sys_get_temp_dir() . '/auth-shape-canonical-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
         foreach ([
             '/System/Flows/Login',
             '/System/Flows/Logout',
@@ -636,16 +636,16 @@ final class ReleaseToolingTest extends TestCase
             '/System/Capabilities/Tenancy',
             '/System/Capabilities/Diagnostics',
         ] as $directory) {
-            mkdir($root . $directory, 0777, true);
+            mkdir(directory: $root . $directory, permissions: 0777, recursive: true);
         }
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/System/Foundation', 0777, true);
-        file_put_contents($root . '/System/Auth.php', "<?php\n");
-        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
-        $this->assertTrue(condition: $result['approved'], message: implode("\n", $result['issues']));
+        $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
         $this->assertSame(expected: [], actual: $result['unexpected_top_level']);
         $this->assertSame(expected: [], actual: $result['forbidden_directories']);
     }
@@ -655,8 +655,8 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSystemShapeCheckRejectsUnexpectedBoundaryDirectoriesInsideFlowsAndCapabilities() : void
     {
-        $root = sys_get_temp_dir() . '/auth-shape-boundaries-' . bin2hex(random_bytes(4));
-        mkdir($root);
+        $root = sys_get_temp_dir() . '/auth-shape-boundaries-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
 
         foreach ([
             '/System/Flows/Login',
@@ -676,13 +676,13 @@ final class ReleaseToolingTest extends TestCase
             '/System/Capabilities/Diagnostics',
             '/System/Capabilities/OAuth',
         ] as $directory) {
-            mkdir($root . $directory, 0777, true);
+            mkdir(directory: $root . $directory, permissions: 0777, recursive: true);
         }
 
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/System/Foundation', 0777, true);
-        file_put_contents($root . '/System/Auth.php', "<?php\n");
-        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
@@ -696,14 +696,14 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSystemShapeCheckRejectsLegacySingularRoots() : void
     {
-        $root = sys_get_temp_dir() . '/auth-shape-legacy-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/System/Flow', 0777, true);
-        mkdir($root . '/System/Capability', 0777, true);
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/System/Foundation', 0777, true);
-        file_put_contents($root . '/System/Auth.php', "<?php\n");
-        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+        $root = sys_get_temp_dir() . '/auth-shape-legacy-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/System/Flow', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Capability', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
@@ -717,16 +717,16 @@ final class ReleaseToolingTest extends TestCase
      */
     public function testSystemShapeCheckRejectsLegacySymlinkAliases() : void
     {
-        $root = sys_get_temp_dir() . '/auth-shape-links-' . bin2hex(random_bytes(4));
-        mkdir($root);
-        mkdir($root . '/System/Flows', 0777, true);
-        mkdir($root . '/System/Capabilities', 0777, true);
-        mkdir($root . '/System/Configuration', 0777, true);
-        mkdir($root . '/System/Foundation', 0777, true);
-        file_put_contents($root . '/System/Auth.php', "<?php\n");
-        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
-        symlink($root . '/System/Flows', $root . '/System/Flow');
-        symlink($root . '/System/Capabilities', $root . '/System/Capability');
+        $root = sys_get_temp_dir() . '/auth-shape-links-' . bin2hex(string: random_bytes(length: 4));
+        mkdir(directory: $root);
+        mkdir(directory: $root . '/System/Flows', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Capabilities', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
+        mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
+        file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        symlink(target: $root . '/System/Flows', link: $root . '/System/Flow');
+        symlink(target: $root . '/System/Capabilities', link: $root . '/System/Capability');
 
         $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
 
@@ -758,10 +758,10 @@ final class ReleaseToolingTest extends TestCase
                      'docs/integrations/release/how-this-works.md',
                  ] as $relativePath) {
             $fullPath = $root . '/' . $relativePath;
-            mkdir(dirname($fullPath), 0777, true);
+            mkdir(directory: dirname(path: $fullPath), permissions: 0777, recursive: true);
             file_put_contents(
-                $fullPath,
-                "---\n"
+                filename: $fullPath,
+                data    : "---\n"
                 . "title: test-how-this-works\n"
                 . "owner: tests\n"
                 . "last_reviewed: 2026-04-21\n"

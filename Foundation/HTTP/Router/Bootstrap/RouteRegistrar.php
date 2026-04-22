@@ -45,7 +45,7 @@ final readonly class RouteRegistrar
      */
     public function load(string $path, string $cacheDir) : void
     {
-        if (is_file($path)) {
+        if (is_file(filename: $path)) {
             $snapshot  = $this->groupStack->snapshot();
             $router    = $this->httpRouter; // expose low-level router for route files
             $dslRouter = $this->dslRouter; // expose DSL if needed

@@ -15,7 +15,7 @@ final readonly class AuthIssueExplainer
         string|null $resourceTenant = null
     ) : AuthIssueExplanation
     {
-        $resourceName = trim($resource) !== '' ? trim($resource) : 'resource';
+        $resourceName = trim(string: $resource) !== '' ? trim(string: $resource) : 'resource';
 
         return new AuthIssueExplanation(
             code      : 'access_denied',
@@ -28,9 +28,9 @@ final readonly class AuthIssueExplainer
                         ],
             context   : [
                             'resource'            => $resourceName,
-                            'required_permission' => $requiredPermission !== null && trim($requiredPermission) !== '' ? trim($requiredPermission) : null,
-                            'tenant'              => $tenant !== null && trim($tenant) !== '' ? trim($tenant) : null,
-                            'resource_tenant'     => $resourceTenant !== null && trim($resourceTenant) !== '' ? trim($resourceTenant) : null,
+                            'required_permission' => $requiredPermission !== null && trim(string: $requiredPermission) !== '' ? trim(string: $requiredPermission) : null,
+                            'tenant'              => $tenant !== null && trim(string: $tenant) !== '' ? trim(string: $tenant) : null,
+                            'resource_tenant'     => $resourceTenant !== null && trim(string: $resourceTenant) !== '' ? trim(string: $resourceTenant) : null,
                         ]
         );
     }
@@ -42,7 +42,7 @@ final readonly class AuthIssueExplainer
     ) : AuthIssueExplanation
     {
         $phishingResistantRequired ??= false;
-        $actionName                = trim($action) !== '' ? trim($action) : 'sensitive_action';
+        $actionName                = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
 
         return new AuthIssueExplanation(
             code      : 'step_up_required',
@@ -70,7 +70,7 @@ final readonly class AuthIssueExplainer
         string|null $requiredConstraint = null
     ) : AuthIssueExplanation
     {
-        $normalizedReason = trim($reason) !== '' ? trim($reason) : 'unknown_reason';
+        $normalizedReason = trim(string: $reason) !== '' ? trim(string: $reason) : 'unknown_reason';
 
         return new AuthIssueExplanation(
             code      : 'sender_constraint_failed',
@@ -83,14 +83,14 @@ final readonly class AuthIssueExplainer
                         ],
             context   : [
                             'reason'              => $normalizedReason,
-                            'required_constraint' => $requiredConstraint !== null && trim($requiredConstraint) !== '' ? trim($requiredConstraint) : null,
+                            'required_constraint' => $requiredConstraint !== null && trim(string: $requiredConstraint) !== '' ? trim(string: $requiredConstraint) : null,
                         ]
         );
     }
 
     public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
-        $normalizedStatus = strtoupper(trim($status));
+        $normalizedStatus = strtoupper(string: trim(string: $status));
         $meaning          = match ($normalizedStatus) {
             'LOCAL_ONLY' => 'The local session state was revoked, but relying-party propagation is not part of this flow.',
             'PARTIAL'    => 'The local session state was revoked, but at least one downstream relying party still needs operator attention.',
@@ -109,7 +109,7 @@ final readonly class AuthIssueExplainer
                         ],
             context   : [
                             'status'     => $normalizedStatus !== '' ? $normalizedStatus : 'UNKNOWN',
-                            'session_id' => $sessionId !== null && trim($sessionId) !== '' ? trim($sessionId) : null,
+                            'session_id' => $sessionId !== null && trim(string: $sessionId) !== '' ? trim(string: $sessionId) : null,
                         ]
         );
     }
@@ -126,7 +126,7 @@ final readonly class AuthIssueExplainer
                             'Refer to docs/trusted-device-policy.md before adding device-specific bypass behavior.',
                         ],
             context   : [
-                            'device_id' => $deviceId !== null && trim($deviceId) !== '' ? trim($deviceId) : null,
+                            'device_id' => $deviceId !== null && trim(string: $deviceId) !== '' ? trim(string: $deviceId) : null,
                         ]
         );
     }

@@ -75,13 +75,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $issuer    = $claims['iss'] ?? null;
 
             if (
-                ! is_string($issuer)
+                ! is_string(value: $issuer)
                 || $issuer !== $this->issuer
-                || ! is_int($expiresAt)
-                || ! is_int($issuedAt)
-                || ! is_int($notBefore)
-                || ! is_scalar($subject)
-                || ! is_string($tokenId)
+                || ! is_int(value: $expiresAt)
+                || ! is_int(value: $issuedAt)
+                || ! is_int(value: $notBefore)
+                || ! is_scalar(value: $subject)
+                || ! is_string(value: $tokenId)
             ) {
                 return null;
             }
@@ -109,23 +109,23 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $scopes                     = [];
             $senderConstraint           = null;
 
-            if (is_int($mfaTimestamp)) {
+            if (is_int(value: $mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable(datetime: "@{$mfaTimestamp}");
             }
 
-            if (! is_string($clientId) && $clientId !== null) {
+            if (! is_string(value: $clientId) && $clientId !== null) {
                 return null;
             }
 
-            if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(
-                    explode(' ', $scopeClaim),
-                    static fn (string $scope) : bool => $scope !== ''
+            if (is_string(value: $scopeClaim) && $scopeClaim !== '') {
+                $scopes = array_values(array: array_filter(
+                                           array   : explode(separator: ' ', string: $scopeClaim),
+                                           callback: static fn (string $scope) : bool => $scope !== ''
                 ));
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
-                if (! is_string($senderConstraintType) || ! is_string($senderConstraintThumbprint)) {
+                if (! is_string(value: $senderConstraintType) || ! is_string(value: $senderConstraintThumbprint)) {
                     return null;
                 }
 
@@ -150,7 +150,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 clientId         : $clientId,
                 scopes           : $scopes,
                 senderConstraint : $senderConstraint,
-                familyId         : is_string($familyId) ? $familyId : null
+                familyId         : is_string(value: $familyId) ? $familyId : null
             );
         } catch (Throwable) {
             return null;
@@ -171,7 +171,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         string|null                $audience = null
     ) : IssuedToken
     {
-        $normalizedSubject = trim($subject);
+        $normalizedSubject = trim(string: $subject);
 
         if ($normalizedSubject === '') {
             throw new InvalidArgumentException(message: 'Workload token subject cannot be empty.');
@@ -179,7 +179,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         $issuedAt  = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: "+{$this->tokenExpiry} seconds");
-        $tokenId   = bin2hex(random_bytes(16));
+        $tokenId   = bin2hex(string: random_bytes(length: 16));
         $payload   = [
             'iss'       => $this->issuer,
             'sub'       => $normalizedSubject,
@@ -192,11 +192,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         ];
 
         if ($scopes !== []) {
-            $payload['scope'] = implode(' ', $scopes);
+            $payload['scope'] = implode(separator: ' ', array: $scopes);
         }
 
-        if ($audience !== null && trim($audience) !== '') {
-            $payload['aud'] = trim($audience);
+        if ($audience !== null && trim(string: $audience) !== '') {
+            $payload['aud'] = trim(string: $audience);
         }
 
         if ($senderConstraint !== null) {
@@ -240,18 +240,18 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $senderConstraint           = null;
 
             if (! $workloadIdentity
-                || ! is_int($expiresAt)
-                || ! is_int($issuedAt)
-                || ! is_int($notBefore)
-                || ! is_string($subject)
-                || trim($subject) === ''
-                || ! is_string($tokenId)
-                || ! is_string($clientId)
-                || ! is_string($issuer) || $issuer !== ($expectedIssuer ?? $this->issuer)) {
+                || ! is_int(value: $expiresAt)
+                || ! is_int(value: $issuedAt)
+                || ! is_int(value: $notBefore)
+                || ! is_string(value: $subject)
+                || trim(string: $subject) === ''
+                || ! is_string(value: $tokenId)
+                || ! is_string(value: $clientId)
+                || ! is_string(value: $issuer) || $issuer !== ($expectedIssuer ?? $this->issuer)) {
                 return null;
             }
 
-            if ($audience !== null && ! is_string($audience)) {
+            if ($audience !== null && ! is_string(value: $audience)) {
                 return null;
             }
 
@@ -265,15 +265,15 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            if (is_string($scopeClaim) && $scopeClaim !== '') {
-                $scopes = array_values(array_filter(
-                    explode(' ', $scopeClaim),
-                    static fn (string $scope) : bool => $scope !== ''
+            if (is_string(value: $scopeClaim) && $scopeClaim !== '') {
+                $scopes = array_values(array: array_filter(
+                                           array   : explode(separator: ' ', string: $scopeClaim),
+                                           callback: static fn (string $scope) : bool => $scope !== ''
                 ));
             }
 
             if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
-                if (! is_string($senderConstraintType) || ! is_string($senderConstraintThumbprint)) {
+                if (! is_string(value: $senderConstraintType) || ! is_string(value: $senderConstraintThumbprint)) {
                     return null;
                 }
 
@@ -349,7 +349,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         $issuedAt  = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: "+{$this->tokenExpiry} seconds");
-        $tokenId   = bin2hex(random_bytes(16));
+        $tokenId   = bin2hex(string: random_bytes(length: 16));
         $payload   = [
             'iss' => $this->issuer,
             'sub' => $user->getId()->value,
@@ -376,7 +376,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         if ($scopes !== []) {
-            $payload['scope'] = implode(' ', $scopes);
+            $payload['scope'] = implode(separator: ' ', array: $scopes);
         }
 
         if ($senderConstraint !== null) {

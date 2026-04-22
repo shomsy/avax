@@ -327,7 +327,7 @@ final class HttpRouterRoutingTest extends TestCase
 
         $routes = $this->router->allRoutes();
 
-        $paths = array_map(static fn ($route) => $route->path, $routes['GET'] ?? []);
+        $paths = array_map(callback: static fn ($route) => $route->path, array: $routes['GET'] ?? []);
 
         $this->assertContains(needle: '/api/ping', haystack: $paths);
         $this->assertContains(needle: '/raw', haystack: $paths);

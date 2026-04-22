@@ -39,7 +39,7 @@ class RouterHardeningTest extends TestCase
     public function callable_returning_null_should_return_fallback_response() : void
     {
         // Given: A route with callable that returns null
-        $routes = dirname(__DIR__, 2) . '/tests/fixtures/routes_with_null_callable.php';
+        $routes = dirname(path: __DIR__, levels: 2) . '/tests/fixtures/routes_with_null_callable.php';
 
         // Create app with test routes
         $this->app = $this->createAppWithRoutes(routesFile: $routes);
@@ -71,7 +71,7 @@ class RouterHardeningTest extends TestCase
             HttpClientServiceProvider::class,
         ];
 
-        $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
+        $cacheDir = dirname(path: __DIR__, levels: 2) . '/storage/cache';
 
         return AppFactory::http(
             providers: $providers,
@@ -263,8 +263,8 @@ class RouterHardeningTest extends TestCase
             HttpClientServiceProvider::class,
         ];
 
-        $routes   = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
-        $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
+        $routes   = dirname(path: __DIR__, levels: 2) . '/Presentation/HTTP/routes/web.routes.php';
+        $cacheDir = dirname(path: __DIR__, levels: 2) . '/storage/cache';
 
         $this->app = AppFactory::http(
             providers: $providers,

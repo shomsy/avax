@@ -25,7 +25,7 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
 
     public function all() : array
     {
-        return array_values($this->directories);
+        return array_values(array: $this->directories);
     }
 
     public function verifyToken(

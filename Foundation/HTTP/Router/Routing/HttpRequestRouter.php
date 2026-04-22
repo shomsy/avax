@@ -147,13 +147,13 @@ final class HttpRequestRouter
      */
     public function resolve(Request $request) : RouteResolutionContext
     {
-        $startTime = microtime(true);
+        $startTime = microtime(as_float: true);
         $path      = $request->getUri()->getPath();
         $method    = $request->getMethod();
         $host      = $request->getUri()->getHost();
 
         $resolutionPath = [
-            ['timestamp' => date('H:i:s.u'), 'description' => "Started resolution for {$method} {$path} from {$host}"],
+            ['timestamp' => date(format: 'H:i:s.u'), 'description' => "Started resolution for {$method} {$path} from {$host}"],
         ];
 
         $this->trace?->log(event: 'resolve.start', context: ['path' => $path, 'method' => $method, 'host' => $host]);
@@ -162,19 +162,19 @@ final class HttpRequestRouter
             $matchResult = $this->matcher->match(routes: $this->routes, request: $request);
 
             if ($matchResult === null) {
-                $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'No route matched'];
+                $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => 'No route matched'];
                 $this->trace?->log(event: 'resolve.no_match', context: ['path' => $path, 'method' => $method]);
 
                 // No route matched - determine if it's 404 or 405
                 $allowedMethods   = $this->findAllowedMethodsForPath(path: $path);
-                $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Checked allowed methods: ' . implode(', ', $allowedMethods)];
+                $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => 'Checked allowed methods: ' . implode(separator: ', ', array: $allowedMethods)];
                 $this->trace?->log(event: 'resolve.allowed_methods', context: ['allowed' => $allowedMethods]);
 
                 $failureReason = ! empty($allowedMethods)
-                    ? "Method {$method} not allowed (allowed: " . implode(', ', $allowedMethods) . ')'
+                    ? "Method {$method} not allowed (allowed: " . implode(separator: ', ', array: $allowedMethods) . ')'
                     : "No route found for path {$path}";
 
-                $matchTime = (microtime(true) - $startTime) * 1000;
+                $matchTime = (microtime(as_float: true) - $startTime) * 1000;
 
                 if (! empty($allowedMethods)) {
                     $this->trace?->log(event: 'resolve.method_not_allowed');
@@ -191,15 +191,15 @@ final class HttpRequestRouter
             }
 
             [$route, $matches] = $matchResult;
-            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => "Matched route: {$route->method} {$route->path}"];
+            $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => "Matched route: {$route->method} {$route->path}"];
             $this->trace?->log(event: 'resolve.match_found', context: [
                 'route'   => $route->name ?? $route->path,
-                'matches' => count($matches)
+                'matches' => count(value: $matches)
             ]);
 
             // Extract any parameters captured from the regex match (e.g., {id} = 123).
             $parameters       = $this->extractParameters(matches: $matches);
-            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Extracted parameters: ' . json_encode($parameters)];
+            $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => 'Extracted parameters: ' . json_encode(value: $parameters)];
             $this->trace?->log(event: 'resolve.parameters_extracted', context: ['params' => $parameters]);
 
             // Apply default route parameters and merge them with extracted parameters into the request object.
@@ -208,15 +208,15 @@ final class HttpRequestRouter
                 defaults  : $route->defaults,
                 parameters: $parameters
             );
-            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Injected parameters into request'];
+            $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => 'Injected parameters into request'];
             $this->trace?->log(event: 'resolve.parameters_injected', context: ['defaults' => $route->defaults]);
 
             // Calls the validate method of the RouteConstraintValidator instance.
             $this->constraintValidator->validate(route: $route, request: $request);
-            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Route validation completed'];
+            $resolutionPath[] = ['timestamp' => date(format: 'H:i:s.u'), 'description' => 'Route validation completed'];
             $this->trace?->log(event: 'resolve.validation_complete');
 
-            $matchTime     = (microtime(true) - $startTime) * 1000;
+            $matchTime     = (microtime(as_float: true) - $startTime) * 1000;
             $matchedDomain = $route->domain ?? null;
 
             $this->trace?->log(event: 'resolve.complete', context: ['route' => $route->name ?? $route->path]);
@@ -230,7 +230,7 @@ final class HttpRequestRouter
             );
 
         } catch (RouteNotFoundException|MethodNotAllowedException $e) {
-            $matchTime = (microtime(true) - $startTime) * 1000;
+            $matchTime = (microtime(as_float: true) - $startTime) * 1000;
             $this->trace?->log(event: 'resolve.failed', context: ['reason' => $e->getMessage()]);
 
             return RouteResolutionContext::failure(
@@ -268,8 +268,8 @@ final class HttpRequestRouter
         }
 
         // Remove duplicates and sort
-        $allowedMethods = array_unique($allowedMethods);
-        sort($allowedMethods);
+        $allowedMethods = array_unique(array: $allowedMethods);
+        sort(array: $allowedMethods);
 
         return $allowedMethods;
     }
@@ -290,12 +290,12 @@ final class HttpRequestRouter
     private function matchesIgnoringMethod(RouteDefinition $route, string $path) : bool
     {
         // Use precompiled regex pattern for performance
-        return preg_match($route->compiledPathRegex, $path) === 1;
+        return preg_match(pattern: $route->compiledPathRegex, subject: $path) === 1;
     }
 
     private function extractParameters(array $matches) : array
     {
-        return array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+        return array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -418,13 +418,13 @@ final class HttpRequestRouter
      */
     private function replaceRoute(RouteKey $key, RouteDefinition $newRoute) : void
     {
-        $method = strtoupper($key->method);
+        $method = strtoupper(string: $key->method);
 
         // Remove existing route
         if (isset($this->routes[$method][$key->path])) {
             $this->routes[$method][$key->path] = array_filter(
-                $this->routes[$method][$key->path],
-                static fn (RouteDefinition $route) => $route->domain !== $key->domain
+                array   : $this->routes[$method][$key->path],
+                callback: static fn (RouteDefinition $route) => $route->domain !== $key->domain
             );
         }
 
@@ -447,7 +447,7 @@ final class HttpRequestRouter
     {
         return sprintf(
             '%s|%s|%s',
-            strtoupper($route->method),
+            strtoupper(string: $route->method),
             $route->domain ?? '',
             $route->path
         );
@@ -464,13 +464,13 @@ final class HttpRequestRouter
     private function compileRoutePattern(string $template, array $constraints) : string
     {
         $pattern = preg_replace_callback(
-            '/\{([^}]+)\}/',
-            static function ($matches) use ($constraints) {
+            pattern : '/\{([^}]+)\}/',
+            callback: static function ($matches) use ($constraints) {
                 $param      = $matches[1];
-                $isOptional = str_ends_with($param, '?');
-                $isWildcard = str_ends_with($param, '*');
+                $isOptional = str_ends_with(haystack: $param, needle: '?');
+                $isWildcard = str_ends_with(haystack: $param, needle: '*');
 
-                $paramName  = preg_replace('/[?*]$/', '', $param);
+                $paramName  = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $param);
                 $constraint = $constraints[$paramName] ?? '[^/]+';
 
                 $segment = "(?P<{$paramName}>{$constraint})";
@@ -487,7 +487,7 @@ final class HttpRequestRouter
 
                 return $segment;
             },
-            $template
+            subject : $template
         );
 
         return "#^{$pattern}$#";

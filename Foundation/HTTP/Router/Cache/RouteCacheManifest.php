@@ -39,11 +39,11 @@ final readonly class RouteCacheManifest
             $files[$file->getPathname()] = $file->getMTime();
         }
 
-        ksort($files);
+        ksort(array: $files);
 
         try {
-            $hash     = sha1(string: json_encode($files, JSON_THROW_ON_ERROR));
-            $checksum = hash('sha256', $hash . json_encode($files, JSON_THROW_ON_ERROR));
+            $hash     = sha1(string: json_encode(value: $files, flags: JSON_THROW_ON_ERROR));
+            $checksum = hash(algo: 'sha256', data: $hash . json_encode(value: $files, flags: JSON_THROW_ON_ERROR));
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to serialize route metadata.', previous: $exception);
         }
@@ -59,7 +59,7 @@ final readonly class RouteCacheManifest
 
         try {
             /** @var array{files: array<string, int>, hash: string, generated_at: int, checksum?: string, manifest_hash?: string} $payload */
-            $payload = json_decode(file_get_contents(filename: $metadataPath), true, 512, JSON_THROW_ON_ERROR);
+            $payload = json_decode(json: file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return null;
         }
@@ -74,7 +74,7 @@ final readonly class RouteCacheManifest
         // Validate manifest integrity using stored hash
         if (isset($payload['manifest_hash'])) {
             $expectedHash = $manifest->generateManifestHash();
-            if (! hash_equals($expectedHash, $payload['manifest_hash'])) {
+            if (! hash_equals(known_string: $expectedHash, user_string: $payload['manifest_hash'])) {
                 // Manifest has been tampered with
                 return null;
             }
@@ -96,7 +96,7 @@ final readonly class RouteCacheManifest
         ];
 
         try {
-            return hash('sha256', json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+            return hash(algo: 'sha256', data: json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to generate manifest hash.', previous: $exception);
         }
@@ -178,9 +178,9 @@ final readonly class RouteCacheManifest
         ];
 
         try {
-            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+            $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
 
-            return hash('sha256', $json);
+            return hash(algo: 'sha256', data: $json);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to generate route manifest signature.', previous: $exception);
         }
@@ -233,7 +233,7 @@ final readonly class RouteCacheManifest
             return false; // No signature file = invalid
         }
 
-        $storedSignature = trim(file_get_contents(filename: $signaturePath));
+        $storedSignature = trim(string: file_get_contents(filename: $signaturePath));
 
         return $this->signature() === $storedSignature;
     }
@@ -252,7 +252,7 @@ final readonly class RouteCacheManifest
         unset($routeData['metadata']); // Metadata can change without affecting routing
 
         try {
-            return hash('sha256', json_encode($routeData, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+            return hash(algo: 'sha256', data: json_encode(value: $routeData, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to generate route hash.', code: 0, previous: $exception);
         }

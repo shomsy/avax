@@ -34,9 +34,9 @@ class CacheManifestIntegrityTest extends TestCase
      */
     private function createManifest(array $files, int $generatedAt) : RouteCacheManifest
     {
-        ksort($files);
-        $hash     = sha1(json_encode($files));
-        $checksum = hash('sha256', $hash . json_encode($files));
+        ksort(array: $files);
+        $hash     = sha1(string: json_encode(value: $files));
+        $checksum = hash(algo: 'sha256', data: $hash . json_encode(value: $files));
 
         return new RouteCacheManifest(
             files      : $files,
@@ -157,14 +157,14 @@ class CacheManifestIntegrityTest extends TestCase
         // Create manifest without checksum (backward compatibility)
         $manifest1 = new RouteCacheManifest(
             files      : $files,
-            hash       : sha1(json_encode($files)),
+            hash       : sha1(string: json_encode(value: $files)),
             generatedAt: 1640995400,
             checksum   : '' // Empty checksum
         );
 
         $manifest2 = new RouteCacheManifest(
             files      : $files,
-            hash       : sha1(json_encode($files)),
+            hash       : sha1(string: json_encode(value: $files)),
             generatedAt: 1640995400,
             checksum   : '' // Empty checksum
         );
@@ -202,11 +202,11 @@ class CacheManifestIntegrityTest extends TestCase
     {
         // Create a temporary directory structure for testing
         $tempDir = sys_get_temp_dir() . '/router_test_' . uniqid();
-        mkdir($tempDir);
-        mkdir($tempDir . '/routes');
+        mkdir(directory: $tempDir);
+        mkdir(directory: $tempDir . '/routes');
 
         $routeFile = $tempDir . '/routes/web.php';
-        file_put_contents($routeFile, '<?php // test route file');
+        file_put_contents(filename: $routeFile, data: '<?php // test route file');
 
         try {
             $manifest = RouteCacheManifest::buildFromDirectory(baseDir: $tempDir);
@@ -218,9 +218,9 @@ class CacheManifestIntegrityTest extends TestCase
             $this->assertArrayHasKey(key: $routeFile, array: $manifest->getFiles());
         } finally {
             // Cleanup
-            unlink($routeFile);
-            rmdir($tempDir . '/routes');
-            rmdir($tempDir);
+            unlink(filename: $routeFile);
+            rmdir(directory: $tempDir . '/routes');
+            rmdir(directory: $tempDir);
         }
     }
 }

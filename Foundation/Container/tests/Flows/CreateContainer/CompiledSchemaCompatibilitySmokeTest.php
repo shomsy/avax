@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -17,7 +17,7 @@ final class SchemaCompatibilityService
 
 $cacheDir     = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();
 $version      = 'compiled-schema-compatibility';
-$metadataPath = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.json';
+$metadataPath = $cacheDir . '/container/' . rawurlencode(string: $version) . '/compiled/container.json';
 
 $compiled = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -27,9 +27,9 @@ $compiled = makeTestContainer(config: CreateContainerConfig::create(
 $compiled->singleton(abstract: SchemaCompatibilityDependency::class, concrete: SchemaCompatibilityDependency::class);
 $compiled->compileContainer(serviceIds: [SchemaCompatibilityService::class, SchemaCompatibilityDependency::class]);
 
-$metadata                  = json_decode((string) file_get_contents($metadataPath), true, 512, JSON_THROW_ON_ERROR);
+$metadata                  = json_decode(json: (string) file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 $metadata['schemaVersion'] = 999;
-file_put_contents($metadataPath, json_encode($metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+file_put_contents(filename: $metadataPath, data: json_encode(value: $metadata, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
 
 $reloaded = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -46,7 +46,7 @@ assertTrue(condition: ! $report->available, message: 'Schema-incompatible artifa
 assertTrue(condition: ! $report->compatible, message: 'Schema-incompatible artifacts must fail compatibility checks.');
 assertSame(expected: 'incompatible', actual: $report->freshnessState, message: 'Schema-incompatible artifacts must report incompatible freshness.');
 assertTrue(
-    condition: in_array('schema version mismatch', $report->compatibilityIssues, true),
+    condition: in_array(needle: 'schema version mismatch', haystack: $report->compatibilityIssues, strict: true),
     message  : 'Compile reports should expose schema version compatibility mismatches.'
 );
 assertTrue(condition: ! $reloaded->isCompiled(id: SchemaCompatibilityService::class), message: 'Schema-incompatible artifacts must not report compiled service availability.');
@@ -56,4 +56,4 @@ assertInstanceOf(
     message      : 'Schema-incompatible artifacts should fall back to dynamic resolution.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

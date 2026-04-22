@@ -39,8 +39,8 @@ final readonly class CreateServiceBlueprint
      */
     public function warm(array $classes) : void
     {
-        foreach (array_values(array_unique($classes)) as $class) {
-            if (! class_exists($class)) {
+        foreach (array_values(array: array_unique(array: $classes)) as $class) {
+            if (! class_exists(class: $class)) {
                 continue;
             }
 
@@ -64,13 +64,13 @@ final readonly class CreateServiceBlueprint
         $reflection  = new ReflectionClass(objectOrClass: $class);
         $fingerprint = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflection);
 
-        $properties = array_values(array_filter(
-                                       $reflection->getProperties(),
-                                       static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic()
+        $properties = array_values(array: array_filter(
+                                       array   : $reflection->getProperties(),
+                                       callback: static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic()
                                    ));
-        $methods    = array_values(array_filter(
-                                       $reflection->getMethods(),
-                                       static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic()
+        $methods    = array_values(array: array_filter(
+                                       array   : $reflection->getMethods(),
+                                       callback: static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic()
                                    ));
 
         return $this->cache->put(blueprint: new ServiceBlueprint(
@@ -80,19 +80,19 @@ final readonly class CreateServiceBlueprint
                                                                           ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
                                                                           : null,
                                                 injectableProperties: array_map(
-                                                                          fn (ReflectionProperty $property) => [
+                                                                          callback: fn (ReflectionProperty $property) => [
                                                                               'name'      => $property->getName(),
                                                                               'serviceId' => $this->serviceIdFor(property: $property),
                                                                               'readonly'  => $property->isReadOnly(),
                                                                           ],
-                                                                          $properties
+                                                                          array   : $properties
                                                                       ),
                                                 injectableMethods   : array_map(
-                                                                          fn (ReflectionMethod $method) => [
+                                                                          callback: fn (ReflectionMethod $method) => [
                                                                               'name' => $method->getName(),
                                                                               'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
                                                                           ],
-                                                                          $methods
+                                                                          array   : $methods
                                                                       ),
                                                 shared              : $reflection->getAttributes(name: Singleton::class) !== [],
                                                 fingerprint         : $fingerprint
@@ -116,13 +116,13 @@ final readonly class CreateServiceBlueprint
         $parts = [];
 
         foreach ($files as $file) {
-            $timestamp = is_file($file) ? (string) filemtime($file) : 'missing';
+            $timestamp = is_file(filename: $file) ? (string) filemtime(filename: $file) : 'missing';
             $parts[]   = $file . ':' . $timestamp;
         }
 
-        sort($parts);
+        sort(array: $parts);
 
-        return sha1($reflection->getName() . '|' . implode('|', $parts));
+        return sha1(string: $reflection->getName() . '|' . implode(separator: '|', array: $parts));
     }
 
     /**
@@ -135,30 +135,30 @@ final readonly class CreateServiceBlueprint
         $files = [];
 
         $classFile = $reflection->getFileName();
-        if (is_string($classFile) && $classFile !== '') {
+        if (is_string(value: $classFile) && $classFile !== '') {
             $files[] = $classFile;
         }
 
-        foreach (class_parents($reflection->getName()) ?: [] as $parent) {
+        foreach (class_parents(object_or_class: $reflection->getName()) ?: [] as $parent) {
             $parentReflection = new ReflectionClass(objectOrClass: $parent);
             $parentFile       = $parentReflection->getFileName();
-            if (is_string($parentFile) && $parentFile !== '') {
+            if (is_string(value: $parentFile) && $parentFile !== '') {
                 $files[] = $parentFile;
             }
             $files = array_merge($files, $this->traitFilesFor(reflection: $parentReflection));
         }
 
-        foreach (class_implements($reflection->getName()) ?: [] as $interface) {
+        foreach (class_implements(object_or_class: $reflection->getName()) ?: [] as $interface) {
             $interfaceReflection = new ReflectionClass(objectOrClass: $interface);
             $interfaceFile       = $interfaceReflection->getFileName();
-            if (is_string($interfaceFile) && $interfaceFile !== '') {
+            if (is_string(value: $interfaceFile) && $interfaceFile !== '') {
                 $files[] = $interfaceFile;
             }
         }
 
         $files = array_merge($files, $this->traitFilesFor(reflection: $reflection));
 
-        return array_values(array_unique($files));
+        return array_values(array: array_unique(array: $files));
     }
 
     /**
@@ -170,14 +170,14 @@ final readonly class CreateServiceBlueprint
 
         foreach ($reflection->getTraits() as $trait) {
             $traitFile = $trait->getFileName();
-            if (is_string($traitFile) && $traitFile !== '') {
+            if (is_string(value: $traitFile) && $traitFile !== '') {
                 $files[] = $traitFile;
             }
 
             $files = array_merge($files, $this->traitFilesFor(reflection: $trait));
         }
 
-        return array_values(array_unique($files));
+        return array_values(array: array_unique(array: $files));
     }
 
     /**
@@ -188,7 +188,7 @@ final readonly class CreateServiceBlueprint
         $attributes = $property->getAttributes(name: Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
-            if (is_string($inject->abstract) && $inject->abstract !== '') {
+            if (is_string(value: $inject->abstract) && $inject->abstract !== '') {
                 return $inject->abstract;
             }
         }

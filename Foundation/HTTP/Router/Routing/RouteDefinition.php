@@ -111,8 +111,8 @@ final readonly class RouteDefinition
 
         // Calculate route specificity: (segment count) - (parameter count)
         // Higher specificity = more specific routes matched first
-        $segmentCount   = substr_count($path, '/') - ($path === '/' ? 0 : 1); // Don't count leading slash
-        $parameterCount = preg_match_all('/\{[^}]+\}/', $path);
+        $segmentCount   = substr_count(haystack: $path, needle: '/') - ($path === '/' ? 0 : 1); // Don't count leading slash
+        $parameterCount = preg_match_all(pattern: '/\{[^}]+\}/', subject: $path);
         $specificity    = $segmentCount - $parameterCount;
 
         // Precompile regex pattern for performance
@@ -159,7 +159,7 @@ final readonly class RouteDefinition
             throw new InvalidArgumentException(message: 'Route path cannot be empty');
         }
 
-        if (! str_starts_with($path, '/')) {
+        if (! str_starts_with(haystack: $path, needle: '/')) {
             throw new InvalidArgumentException(message: 'Route path must start with /');
         }
     }
@@ -175,11 +175,11 @@ final readonly class RouteDefinition
             throw new InvalidArgumentException(message: 'Route action cannot be null');
         }
 
-        if (! is_callable($action) && ! is_string($action) && ! is_array($action)) {
+        if (! is_callable(value: $action) && ! is_string(value: $action) && ! is_array(value: $action)) {
             throw new InvalidArgumentException(message: 'Route action must be callable, string, or array');
         }
 
-        if (is_array($action) && count($action) !== 2) {
+        if (is_array(value: $action) && count(value: $action) !== 2) {
             throw new InvalidArgumentException(message: 'Route action array must have exactly 2 elements [class, method]');
         }
     }
@@ -192,7 +192,7 @@ final readonly class RouteDefinition
      */
     private function validateRouteName(string $name) : void
     {
-        if (! empty($name) && str_starts_with($name, '__avax.')) {
+        if (! empty($name) && str_starts_with(haystack: $name, needle: '__avax.')) {
             throw new ReservedRouteNameException(name: $name);
         }
     }
@@ -222,11 +222,11 @@ final readonly class RouteDefinition
         $testPattern = "/{$pattern}/";
         $error       = null;
 
-        set_error_handler(static function ($errno, $errstr) use (&$error) {
+        set_error_handler(callback: static function ($errno, $errstr) use (&$error) {
             $error = $errstr;
         });
 
-        $result = preg_match($testPattern, '');
+        $result = preg_match(pattern: $testPattern, subject: '');
 
         restore_error_handler();
 
@@ -246,13 +246,13 @@ final readonly class RouteDefinition
     private function compileRoutePattern(string $template, array $constraints) : string
     {
         $pattern = preg_replace_callback(
-            '/\{([^}]+)\}/',
-            static function ($matches) use ($constraints) {
+            pattern : '/\{([^}]+)\}/',
+            callback: static function ($matches) use ($constraints) {
                 $param      = $matches[1];
-                $isOptional = str_ends_with($param, '?');
-                $isWildcard = str_ends_with($param, '*');
+                $isOptional = str_ends_with(haystack: $param, needle: '?');
+                $isWildcard = str_ends_with(haystack: $param, needle: '*');
 
-                $paramName  = preg_replace('/[?*]$/', '', $param);
+                $paramName  = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $param);
                 $constraint = $constraints[$paramName] ?? '[^/]+';
 
                 $segment = "(?P<{$paramName}>{$constraint})";
@@ -269,7 +269,7 @@ final readonly class RouteDefinition
 
                 return $segment;
             },
-            $template
+            subject : $template
         );
 
         return "#^{$pattern}$#";
@@ -448,7 +448,7 @@ final readonly class RouteDefinition
      */
     public function hasMetadata(string $key) : bool
     {
-        return array_key_exists($key, $this->metadata);
+        return array_key_exists(key: $key, array: $this->metadata);
     }
 
     /**

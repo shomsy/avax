@@ -41,11 +41,11 @@ final class RouteExportValidator
             }
         }
 
-        $skipped = count($routes) - count($exportable);
+        $skipped = count(value: $routes) - count(value: $exportable);
         if ($skipped > 0) {
             $this->logger->info(message: 'Some routes skipped during cache export', context: [
-                'total_routes'      => count($routes),
-                'exportable_routes' => count($exportable),
+                'total_routes'      => count(value: $routes),
+                'exportable_routes' => count(value: $exportable),
                 'skipped_routes'    => $skipped,
             ]);
         }
@@ -85,12 +85,12 @@ final class RouteExportValidator
         }
 
         // Check domain exportability
-        if ($route->domain !== null && ! is_string($route->domain)) {
+        if ($route->domain !== null && ! is_string(value: $route->domain)) {
             $issues[] = 'domain is not a string';
         }
 
         // Check authorization exportability
-        if ($route->authorization !== null && ! is_string($route->authorization)) {
+        if ($route->authorization !== null && ! is_string(value: $route->authorization)) {
             $issues[] = 'authorization is not a string';
         }
 
@@ -113,13 +113,13 @@ final class RouteExportValidator
     private function isActionExportable(mixed $action) : bool
     {
         // String actions are always exportable
-        if (is_string($action)) {
+        if (is_string(value: $action)) {
             return true;
         }
 
         // Array actions must be [class-string, method-string]
-        if (is_array($action) && count($action) === 2) {
-            return is_string($action[0]) && is_string($action[1]);
+        if (is_array(value: $action) && count(value: $action) === 2) {
+            return is_string(value: $action[0]) && is_string(value: $action[1]);
         }
 
         // Closures and other objects are not exportable
@@ -132,7 +132,7 @@ final class RouteExportValidator
     private function isMiddlewareExportable(array $middleware) : bool
     {
         foreach ($middleware as $mw) {
-            if (! is_string($mw)) {
+            if (! is_string(value: $mw)) {
                 return false;
             }
         }
@@ -154,11 +154,11 @@ final class RouteExportValidator
     private function isScalarArray(array $array) : bool
     {
         foreach ($array as $value) {
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 if (! $this->isScalarArray(array: $value)) {
                     return false;
                 }
-            } elseif (! is_scalar($value) && $value !== null) {
+            } elseif (! is_scalar(value: $value) && $value !== null) {
                 return false;
             }
         }

@@ -17,7 +17,7 @@ final readonly class MakeMigrationCommand
     public function handle(string $name, string $path, array $options = []) : int
     {
         try {
-            $table  = isset($options['table']) && is_string($options['table']) ? $options['table'] : null;
+            $table  = isset($options['table']) && is_string(value: $options['table']) ? $options['table'] : null;
             $create = (bool) ($options['create'] ?? false);
             $file   = $this->generator->generate(name: $name, path: $path, table: $table, create: $create);
 

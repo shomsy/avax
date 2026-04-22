@@ -24,23 +24,23 @@ namespace {
     use Avax\Container\DI\Container;
     use Avax\Container\DI\Flows\CreateContainer\CreateContainer;
 
-    $root             = dirname(__DIR__) . '/DI';
-    $composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
-    if (is_file($composerAutoload)) {
+    $root             = dirname(path: __DIR__) . '/DI';
+    $composerAutoload = dirname(path: __DIR__, levels: 2) . '/vendor/autoload.php';
+    if (is_file(filename: $composerAutoload)) {
         require_once $composerAutoload;
     }
 
     spl_autoload_register(
-        static function (string $class) use ($root) : void {
+        callback: static function (string $class) use ($root) : void {
             $prefix = 'Avax\\Container\\DI\\';
-            if (! str_starts_with($class, $prefix)) {
+            if (! str_starts_with(haystack: $class, needle: $prefix)) {
                 return;
             }
 
-            $relative = substr($class, strlen($prefix));
-            $path     = $root . '/' . str_replace('\\', '/', $relative) . '.php';
+            $relative = substr(string: $class, offset: strlen(string: $prefix));
+            $path     = $root . '/' . str_replace(search: '\\', replace: '/', subject: $relative) . '.php';
 
-            if (is_file($path)) {
+            if (is_file(filename: $path)) {
                 require_once $path;
             }
         }
@@ -57,7 +57,7 @@ namespace {
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
-                message: $message . ' Expected ' . var_export($expected, true) . ' but got ' . var_export($actual, true) . '.'
+                message: $message . ' Expected ' . var_export(value: $expected, return: true) . ' but got ' . var_export(value: $actual, return: true) . '.'
             );
         }
     }

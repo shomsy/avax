@@ -51,7 +51,7 @@ final readonly class Host implements Stringable
             throw new InvalidArgumentException(message: 'Host cannot be empty.');
         }
 
-        if (str_contains($normalizedHost, ':') && ! str_starts_with($normalizedHost, '[')) {
+        if (str_contains(haystack: $normalizedHost, needle: ':') && ! str_starts_with(haystack: $normalizedHost, needle: '[')) {
             $parsed = parse_url(url: 'https://' . $normalizedHost);
             if ($parsed !== false && isset($parsed['host'])) {
                 $normalizedHost = $parsed['host'];
@@ -59,9 +59,9 @@ final readonly class Host implements Stringable
         }
 
         $asciiHost = $normalizedHost;
-        if (function_exists('idn_to_ascii')) {
-            $flags     = defined('IDNA_DEFAULT') ? IDNA_DEFAULT : 0;
-            $variant   = defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
+        if (function_exists(function: 'idn_to_ascii')) {
+            $flags     = defined(constant_name: 'IDNA_DEFAULT') ? IDNA_DEFAULT : 0;
+            $variant   = defined(constant_name: 'INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
             $converted = idn_to_ascii(domain: $normalizedHost, flags: $flags, variant: $variant);
             if ($converted !== false) {
                 $asciiHost = $converted;

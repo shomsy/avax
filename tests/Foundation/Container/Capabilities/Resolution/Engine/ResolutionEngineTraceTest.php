@@ -37,7 +37,7 @@ final class ResolutionEngineTraceTest extends TestCase
         $this->assertInstanceOf(expected: stdClass::class, actual: $result);
         $this->assertNotNull(actual: $observer->trace);
 
-        $stages = array_column($observer->trace?->toArray() ?? [], 'stage');
+        $stages = array_column(array: $observer->trace?->toArray() ?? [], column_key: 'stage');
         $this->assertContains(needle: 'evaluate', haystack: $stages);
         $this->assertContains(needle: 'instantiate', haystack: $stages);
     }

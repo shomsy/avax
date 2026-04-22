@@ -42,7 +42,7 @@ class RequestRegressionTest extends TestCase
             session      : null,
             serverParams : $serverParams,
             uri          : new Uri('http://localhost'),
-            body         : new Stream(stream: fopen('php://temp', 'r+')),
+            body         : new Stream(stream: fopen(filename: 'php://temp', mode: 'r+')),
             queryParams  : [],
             parsedBody   : [],
             cookies      : [],

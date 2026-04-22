@@ -158,13 +158,13 @@ final class ServeOidcHttpSurfaceTest extends TestCase
      */
     private function rsaKeyPair() : array
     {
-        $key = openssl_pkey_new([
+        $key = openssl_pkey_new(options: [
                                     'private_key_bits' => 2048,
                                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                 ]);
         self::assertNotFalse(condition: $key);
-        openssl_pkey_export($key, $privateKeyPem);
-        $details = openssl_pkey_get_details($key);
+        openssl_pkey_export(key: $key, output: $privateKeyPem);
+        $details = openssl_pkey_get_details(key: $key);
         self::assertIsArray(actual: $details);
 
         return [$privateKeyPem, $details['key']];
@@ -288,7 +288,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
         $updated = $surface->execute(input: new HttpEndpointInput(
                                                 method: 'PUT',
-                                                path  : '/oidc/register/' . rawurlencode($created->body['client_id']),
+                                                path  : '/oidc/register/' . rawurlencode(string: $created->body['client_id']),
                                                 body  : [
                                                             'client_name'                => 'OIDC Dynamic SPA 2',
                                                             'token_endpoint_auth_method' => 'none',
@@ -323,7 +323,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
         $updated = $surface->execute(input: new HttpEndpointInput(
                                                 method: 'PUT',
-                                                path  : '/oidc/register/' . rawurlencode($created->body['client_id']),
+                                                path  : '/oidc/register/' . rawurlencode(string: $created->body['client_id']),
                                                 body  : [
                                                             'client_name'   => 'OIDC Dynamic SPA',
                                                             'redirect_uris' => ['https://spa.example.test/callback'],
@@ -356,7 +356,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
         $deleted = $surface->execute(input: new HttpEndpointInput(
                                                 method: 'DELETE',
-                                                path  : '/oidc/register/' . rawurlencode($created->body['client_id'])
+                                                path  : '/oidc/register/' . rawurlencode(string: $created->body['client_id'])
                                             ));
 
         $this->assertSame(expected: 200, actual: $deleted->statusCode);
@@ -422,12 +422,12 @@ final class ServeOidcHttpSurfaceTest extends TestCase
      */
     private function signRs256Jwt(array $claims, #[SensitiveParameter] string $privateKeyPem) : string
     {
-        $header    = $this->base64UrlEncode(value: json_encode(['typ' => 'JWT', 'alg' => 'RS256'], JSON_THROW_ON_ERROR));
-        $payload   = $this->base64UrlEncode(value: json_encode($claims, JSON_THROW_ON_ERROR));
+        $header    = $this->base64UrlEncode(value: json_encode(value: ['typ' => 'JWT', 'alg' => 'RS256'], flags: JSON_THROW_ON_ERROR));
+        $payload   = $this->base64UrlEncode(value: json_encode(value: $claims, flags: JSON_THROW_ON_ERROR));
         $input     = $header . '.' . $payload;
         $signature = '';
 
-        $signed = openssl_sign($input, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
+        $signed = openssl_sign(data: $input, signature: $signature, private_key: $privateKeyPem, algorithm: OPENSSL_ALGO_SHA256);
         self::assertTrue(condition: $signed);
 
         return $input . '.' . $this->base64UrlEncode(value: $signature);
@@ -438,6 +438,6 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         return $value
                 |> base64_encode(...)
                 |> (static fn ($x) => strtr($x, '+/', '-_'))
-                |> (static fn ($x) => rtrim($x, '='));
+                |> (static fn ($x) => rtrim(string: $x, characters: '='));
     }
 }

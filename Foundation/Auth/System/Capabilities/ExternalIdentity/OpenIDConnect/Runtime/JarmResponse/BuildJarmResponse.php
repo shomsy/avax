@@ -25,15 +25,15 @@ final readonly class BuildJarmResponse
         $expiresAt = $issuedAt->modify(modifier: '+5 minutes');
         $claims    = [
             'iss'  => $this->oidcProvider->readProviderMetadata()->issuer,
-            'aud'  => trim($data->clientId),
+            'aud'  => trim(string: $data->clientId),
             'code' => $data->code,
             'iat'  => $issuedAt->getTimestamp(),
             'exp'  => $expiresAt->getTimestamp(),
-            'jti'  => bin2hex(random_bytes(16)),
+            'jti'  => bin2hex(string: random_bytes(length: 16)),
         ];
 
-        if ($data->state !== null && trim($data->state) !== '') {
-            $claims['state'] = trim($data->state);
+        if ($data->state !== null && trim(string: $data->state) !== '') {
+            $claims['state'] = trim(string: $data->state);
         }
 
         return new JarmResponse(

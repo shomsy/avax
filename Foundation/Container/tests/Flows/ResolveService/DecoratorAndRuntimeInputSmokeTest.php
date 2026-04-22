@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -122,17 +122,17 @@ assertSame(expected: 'Grace', actual: $factoryConsumer->name, message: 'Factory 
 assertTrue(condition: $consumer->service instanceof DecoratedService && $consumer->service->decorated, message: 'Decorators should still run before runtime-input consumers receive the service.');
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
-    actual  : array_map(static fn (object $service) : string => $service::class, $grouped),
+    actual  : array_map(callback: static fn (object $service) : string => $service::class, array: $grouped),
     message : 'Grouped multi-bindings should resolve in deterministic order.'
 );
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
-    actual  : array_column($graph['groups']['checkout.steps'], 'serviceId'),
+    actual  : array_column(array: $graph['groups']['checkout.steps'], column_key: 'serviceId'),
     message : 'Graph diagnostics should expose grouped binding order.'
 );
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
-    actual  : array_column($groupReport['items'], 'serviceId'),
+    actual  : array_column(array: $groupReport['items'], column_key: 'serviceId'),
     message : 'Group diagnostics should expose grouped binding order.'
 );
 assertSame(expected: OwnedDecorator::class, actual: $description['decorationDetails'][0]['descriptor'] ?? null, message: 'Decorator diagnostics should expose the registered decorator descriptor.');
@@ -149,11 +149,11 @@ try {
     throw new RuntimeException(message: 'Missing runtime input should fail.');
 } catch (ContainerException $exception) {
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Runtime input [$name] is missing'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Runtime input [$name] is missing'),
         message  : 'Runtime input failures should name the missing input.'
     );
     assertTrue(
-        condition: str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
+        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
         message  : 'Runtime input failures should be fix-oriented.'
     );
 }
@@ -164,14 +164,14 @@ $container->singleton(abstract: ConflictingGroupedStep::class, concrete: Conflic
     ->export()
     ->group(group: 'checkout.steps', order: 10);
 
-$groupIssues = implode("\n", $container->validate(serviceIds: [
+$groupIssues = implode(separator: "\n", array: $container->validate(serviceIds: [
                                                                   FirstGroupedStep::class,
                                                                   SecondGroupedStep::class,
                                                                   ConflictingGroupedStep::class,
                                                               ]));
 
 assertTrue(
-    condition: str_contains($groupIssues, 'Group [checkout.steps] uses duplicate order [10]'),
+    condition: str_contains(haystack: $groupIssues, needle: 'Group [checkout.steps] uses duplicate order [10]'),
     message  : 'Validation should reject conflicting grouped binding order.'
 );
 
@@ -185,11 +185,11 @@ $invisibleDecoratorContainer->singleton(abstract: InvisibleDecorator::class, con
     ->asInternal();
 $invisibleDecoratorContainer->decorate(abstract: DecoratedContract::class, decorator: InvisibleDecorator::class);
 
-$decoratorIssues = implode("\n", $invisibleDecoratorContainer->validate(serviceIds: [DecoratedContract::class]));
+$decoratorIssues = implode(separator: "\n", array: $invisibleDecoratorContainer->validate(serviceIds: [DecoratedContract::class]));
 
 assertTrue(
-    condition: str_contains($decoratorIssues, 'decorator is not visible from the service slice'),
+    condition: str_contains(haystack: $decoratorIssues, needle: 'decorator is not visible from the service slice'),
     message  : 'Validation should reject decorators that violate slice visibility.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -279,7 +279,7 @@ final class ServerRequest implements ServerRequestInterface
 
     private function initializeRequest(RequestInit $state): self
     {
-        return clone($this, [
+        return clone(object: $this, withProperties: [
             "setup" => $this->setup->withState(state: $state)
         ]);
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 
@@ -71,7 +71,7 @@ assertTrue(condition: ! $topLevelInternal['allowed'], message: 'Internal service
 
 $duplicates = $registry->duplicateConcepts();
 assertSame(expected: 'clock', actual: $duplicates[0]['concept'] ?? null, message: 'Duplicate concept reports should retain the repeated concept name.');
-assertSame(expected: 2, actual: count($duplicates[0]['services'] ?? []), message: 'Duplicate concept reports should keep every conflicting owner.');
+assertSame(expected: 2, actual: count(value: $duplicates[0]['services'] ?? []), message: 'Duplicate concept reports should keep every conflicting owner.');
 
 $ownershipMap = $registry->ownershipMap();
 assertSame(
@@ -80,4 +80,4 @@ assertSame(
     message : 'Ownership maps should preserve provenance for diagnostics and compile metadata.'
 );
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -41,7 +41,7 @@ final readonly class ServeScimHttpSurface
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
     {
-        $method = strtoupper(trim($input->method));
+        $method = strtoupper(string: trim(string: $input->method));
         $path   = $this->normalizePath(path: $input->path);
 
         try {
@@ -73,8 +73,8 @@ final readonly class ServeScimHttpSurface
                 return $this->bulk(input: $input);
             }
 
-            if (preg_match('~^/Users/([^/]+)$~', $path, $matches) === 1) {
-                $externalId = urldecode($matches[1]);
+            if (preg_match(pattern: '~^/Users/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+                $externalId = urldecode(string: $matches[1]);
 
                 return match ($method) {
                     'GET'    => $this->readUser(input: $input, externalId: $externalId),
@@ -85,8 +85,8 @@ final readonly class ServeScimHttpSurface
                 };
             }
 
-            if (preg_match('~^/Groups/([^/]+)$~', $path, $matches) === 1) {
-                $groupId = urldecode($matches[1]);
+            if (preg_match(pattern: '~^/Groups/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+                $groupId = urldecode(string: $matches[1]);
 
                 return match ($method) {
                     'GET'   => $this->readGroup(input: $input, groupId: $groupId),
@@ -104,9 +104,9 @@ final readonly class ServeScimHttpSurface
 
     private function normalizePath(string $path) : string
     {
-        $trimmed    = '/' . trim($path, '/');
-        $normalized = preg_replace('~^/scim/v2(?=/|$)~', '', $trimmed);
-        $normalized = is_string($normalized) ? $normalized : $trimmed;
+        $trimmed    = '/' . trim(string: $path, characters: '/');
+        $normalized = preg_replace(pattern: '~^/scim/v2(?=/|$)~', replacement: '', subject: $trimmed);
+        $normalized = is_string(value: $normalized) ? $normalized : $trimmed;
 
         return $normalized === '' ? '/' : $normalized;
     }
@@ -171,9 +171,9 @@ final readonly class ServeScimHttpSurface
     {
         return $this->response(body: [
                                          'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-                                         'totalResults' => count($resources),
+                                         'totalResults' => count(value: $resources),
                                          'startIndex'   => 1,
-                                         'itemsPerPage' => count($resources),
+                                         'itemsPerPage' => count(value: $resources),
                                          'Resources'    => $resources,
                                      ]);
     }
@@ -224,15 +224,15 @@ final readonly class ServeScimHttpSurface
         $users      = $this->auth->readScimUsers(directoryId: $directoryId);
         $users      = $this->applyFilter(users: $users, filter: $this->stringValue(source: $input->query, field: 'filter'));
         $startIndex = max(1, $this->intValue(source: $input->query, field: 'startIndex') ?? 1);
-        $count      = $this->intValue(source: $input->query, field: 'count') ?? count($users);
-        $slice      = array_slice($users, $startIndex - 1, $count);
+        $count      = $this->intValue(source: $input->query, field: 'count') ?? count(value: $users);
+        $slice      = array_slice(array: $users, offset: $startIndex - 1, length: $count);
 
         return $this->response(body: [
                                          'schemas'      => [self::LIST_RESPONSE_SCHEMA],
-                                         'totalResults' => count($users),
+                                         'totalResults' => count(value: $users),
                                          'startIndex'   => $startIndex,
-                                         'itemsPerPage' => count($slice),
-                                         'Resources'    => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
+                                         'itemsPerPage' => count(value: $slice),
+                                         'Resources'    => array_map(callback: fn (ScimUserProjection $user) : array => $this->userResource(user: $user), array: $slice),
                                      ]);
     }
 
@@ -262,7 +262,7 @@ final readonly class ServeScimHttpSurface
     {
         $value = $source[$field] ?? null;
 
-        return is_scalar($value) ? trim((string) $value) : null;
+        return is_scalar(value: $value) ? trim(string: (string) $value) : null;
     }
 
     private function directoryToken(HttpEndpointInput $input) : string
@@ -283,20 +283,20 @@ final readonly class ServeScimHttpSurface
      */
     private function applyFilter(array $users, string|null $filter) : array
     {
-        if ($filter === null || trim($filter) === '') {
+        if ($filter === null || trim(string: $filter) === '') {
             return $users;
         }
 
-        if (preg_match('/^(externalId|userName) eq "([^"]+)"$/', trim($filter), $matches) !== 1) {
+        if (preg_match(pattern: '/^(externalId|userName) eq "([^"]+)"$/', subject: trim(string: $filter), matches: $matches) !== 1) {
             throw new InvalidArgumentException(message: 'Unsupported SCIM filter syntax.');
         }
 
         $field = $matches[1];
         $value = $matches[2];
 
-        return array_values(array_filter(
-                                $users,
-                                static fn (ScimUserProjection $user) : bool => match ($field) {
+        return array_values(array: array_filter(
+                                array   : $users,
+                                callback: static fn (ScimUserProjection $user) : bool => match ($field) {
                                     'externalId' => $user->externalId === $value,
                                     'userName'   => $user->username === $value,
                                 }
@@ -310,11 +310,11 @@ final readonly class ServeScimHttpSurface
     {
         $value = $source[$field] ?? null;
 
-        if (is_int($value)) {
+        if (is_int(value: $value)) {
             return $value;
         }
 
-        if (is_string($value) && $value !== '' && ctype_digit($value)) {
+        if (is_string(value: $value) && $value !== '' && ctype_digit(text: $value)) {
             return (int) $value;
         }
 
@@ -337,8 +337,8 @@ final readonly class ServeScimHttpSurface
                                                 'primary' => true,
                                             ]],
             'groups'                    => array_map(
-                static fn (string $group) : array => ['value' => $group, 'display' => $group],
-                $user->groups
+                callback: static fn (string $group) : array => ['value' => $group, 'display' => $group],
+                array   : $user->groups
             ),
             self::USER_EXTENSION_SCHEMA => [
                 'state' => $user->state->value,
@@ -363,7 +363,7 @@ final readonly class ServeScimHttpSurface
                         ],
             headers   : [
                             'Content-Type' => self::SCIM_CONTENT_TYPE,
-                            'Location'     => '/Users/' . rawurlencode($result->externalId),
+                            'Location'     => '/Users/' . rawurlencode(string: $result->externalId),
                         ]
         );
     }
@@ -404,19 +404,19 @@ final readonly class ServeScimHttpSurface
     {
         $emails = $body['emails'] ?? null;
 
-        if (is_array($emails)) {
+        if (is_array(value: $emails)) {
             foreach ($emails as $candidate) {
-                if (is_array($candidate) && is_scalar($candidate['value'] ?? null)) {
-                    return trim((string) $candidate['value']);
+                if (is_array(value: $candidate) && is_scalar(value: $candidate['value'] ?? null)) {
+                    return trim(string: (string) $candidate['value']);
                 }
             }
         }
 
-        if (is_scalar($body['email'] ?? null)) {
-            return trim((string) $body['email']);
+        if (is_scalar(value: $body['email'] ?? null)) {
+            return trim(string: (string) $body['email']);
         }
 
-        if ($fallback !== null && trim($fallback) !== '') {
+        if ($fallback !== null && trim(string: $fallback) !== '') {
             return $fallback;
         }
 
@@ -428,11 +428,11 @@ final readonly class ServeScimHttpSurface
      */
     private function username(array $body, string|null $fallback = null) : string
     {
-        if (is_scalar($body['userName'] ?? null) || is_scalar($body['username'] ?? null)) {
-            return trim((string) ($body['userName'] ?? $body['username']));
+        if (is_scalar(value: $body['userName'] ?? null) || is_scalar(value: $body['username'] ?? null)) {
+            return trim(string: (string) ($body['userName'] ?? $body['username']));
         }
 
-        if ($fallback !== null && trim($fallback) !== '') {
+        if ($fallback !== null && trim(string: $fallback) !== '') {
             return $fallback;
         }
 
@@ -447,30 +447,30 @@ final readonly class ServeScimHttpSurface
      */
     private function groups(array $body, array $fallback) : array
     {
-        if (! array_key_exists('groups', $body)) {
+        if (! array_key_exists(key: 'groups', array: $body)) {
             return $fallback;
         }
 
         $groups = $body['groups'];
 
-        if (! is_array($groups)) {
+        if (! is_array(value: $groups)) {
             throw new InvalidArgumentException(message: 'SCIM groups must be an array.');
         }
 
         $resolved = [];
 
         foreach ($groups as $candidate) {
-            if (is_scalar($candidate)) {
-                $resolved[] = trim((string) $candidate);
+            if (is_scalar(value: $candidate)) {
+                $resolved[] = trim(string: (string) $candidate);
                 continue;
             }
 
-            if (is_array($candidate) && is_scalar($candidate['value'] ?? null)) {
-                $resolved[] = trim((string) $candidate['value']);
+            if (is_array(value: $candidate) && is_scalar(value: $candidate['value'] ?? null)) {
+                $resolved[] = trim(string: (string) $candidate['value']);
             }
         }
 
-        return array_values(array_filter($resolved, static fn (string $group) : bool => $group !== ''));
+        return array_values(array: array_filter(array: $resolved, callback: static fn (string $group) : bool => $group !== ''));
     }
 
     /**
@@ -478,9 +478,9 @@ final readonly class ServeScimHttpSurface
      */
     private function state(array $body, ScimAccountState $fallback) : ScimAccountState
     {
-        if (is_scalar($body['state'] ?? null)) {
+        if (is_scalar(value: $body['state'] ?? null)) {
             $state = ScimAccountState::tryFrom(
-                value: strtolower(trim((string) $body['state']))
+                value: strtolower(string: trim(string: (string) $body['state']))
             );
 
             if ($state !== null) {
@@ -488,7 +488,7 @@ final readonly class ServeScimHttpSurface
             }
         }
 
-        if (is_bool($body['active'] ?? null)) {
+        if (is_bool(value: $body['active'] ?? null)) {
             return $body['active'] === true ? ScimAccountState::ACTIVE : ScimAccountState::SUSPENDED;
         }
 
@@ -502,8 +502,8 @@ final readonly class ServeScimHttpSurface
         $groups = $this->auth->readScimGroups(directoryId: $directoryId);
 
         return $this->listResponse(resources: array_map(
-                                                  fn (ScimGroupProjection $group) : array => $this->groupResource(group: $group),
-                                                  $groups
+                                                  callback: fn (ScimGroupProjection $group) : array => $this->groupResource(group: $group),
+                                                  array   : $groups
                                               ));
     }
 
@@ -517,12 +517,12 @@ final readonly class ServeScimHttpSurface
             'id'          => $group->groupId,
             'displayName' => $group->displayName,
             'members'     => array_map(
-                static fn ($member) : array => [
+                callback: static fn ($member) : array => [
                     'value'   => $member->externalId,
                     'display' => $member->email,
-                    '$ref'    => '/Users/' . rawurlencode($member->externalId),
+                    '$ref'    => '/Users/' . rawurlencode(string: $member->externalId),
                 ],
-                $group->members
+                array   : $group->members
             ),
         ];
     }
@@ -539,14 +539,14 @@ final readonly class ServeScimHttpSurface
         return $this->response(body: [
                                          'schemas'    => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
                                          'Operations' => array_map(
-                                             static fn (ScimBulkOperationResult $result) : array => [
+                                             callback: static fn (ScimBulkOperationResult $result) : array => [
                                                  'method'   => $result->method,
                                                  'path'     => $result->path,
                                                  'status'   => (string) $result->status,
                                                  'bulkId'   => $result->bulkId,
                                                  'response' => $result->response,
                                              ],
-                                             $response->operations
+                                             array   : $response->operations
                                          ),
                                      ]);
     }
@@ -560,19 +560,19 @@ final readonly class ServeScimHttpSurface
     {
         $operations = $body['Operations'] ?? [];
 
-        if (! is_array($operations)) {
+        if (! is_array(value: $operations)) {
             throw new InvalidArgumentException(message: 'SCIM bulk Operations must be an array.');
         }
 
         $resolved = [];
 
         foreach ($operations as $operation) {
-            if (! is_array($operation)) {
+            if (! is_array(value: $operation)) {
                 continue;
             }
 
-            $method = strtoupper(trim((string) ($operation['method'] ?? '')));
-            $path   = trim((string) ($operation['path'] ?? ''));
+            $method = strtoupper(string: trim(string: (string) ($operation['method'] ?? '')));
+            $path   = trim(string: (string) ($operation['path'] ?? ''));
 
             if ($method === '' || $path === '') {
                 continue;
@@ -581,8 +581,8 @@ final readonly class ServeScimHttpSurface
             $resolved[] = new ScimBulkOperation(
                 method: $method,
                 path  : $path,
-                body  : is_array($operation['data'] ?? null) ? $operation['data'] : [],
-                bulkId: is_scalar($operation['bulkId'] ?? null) ? trim((string) $operation['bulkId']) : null
+                body  : is_array(value: $operation['data'] ?? null) ? $operation['data'] : [],
+                bulkId: is_scalar(value: $operation['bulkId'] ?? null) ? trim(string: (string) $operation['bulkId']) : null
             );
         }
 
@@ -656,22 +656,22 @@ final readonly class ServeScimHttpSurface
             'externalId' => $current->externalId,
             'userName'   => $current->username,
             'emails'     => [['value' => $current->email, 'primary' => true]],
-            'groups'     => array_map(static fn (string $group) : array => ['value' => $group, 'display' => $group], $current->groups),
+            'groups'     => array_map(callback: static fn (string $group) : array => ['value' => $group, 'display' => $group], array: $current->groups),
             'state'      => $current->state->value,
             'active'     => $current->state === ScimAccountState::ACTIVE,
         ];
 
         foreach (($body['Operations'] ?? []) as $operation) {
-            if (! is_array($operation)) {
+            if (! is_array(value: $operation)) {
                 continue;
             }
 
-            $op    = strtoupper(trim((string) ($operation['op'] ?? '')));
-            $path  = trim((string) ($operation['path'] ?? ''));
+            $op    = strtoupper(string: trim(string: (string) ($operation['op'] ?? '')));
+            $path  = trim(string: (string) ($operation['path'] ?? ''));
             $value = $operation['value'] ?? null;
 
             if ($path === '') {
-                if (($op === 'ADD' || $op === 'REPLACE') && is_array($value)) {
+                if (($op === 'ADD' || $op === 'REPLACE') && is_array(value: $value)) {
                     $patched = array_replace($patched, $value);
                 }
 
@@ -683,16 +683,16 @@ final readonly class ServeScimHttpSurface
                 continue;
             }
 
-            if (! in_array($op, ['ADD', 'REPLACE'], true)) {
+            if (! in_array(needle: $op, haystack: ['ADD', 'REPLACE'], strict: true)) {
                 continue;
             }
 
             match ($path) {
-                'userName'                                      => $patched['userName'] = is_scalar($value) ? (string) $value : $patched['userName'],
-                'emails'                                        => $patched['emails'] = is_array($value) ? $value : $patched['emails'],
-                'groups'                                        => $patched['groups'] = is_array($value) ? $value : $patched['groups'],
+                'userName'                                      => $patched['userName'] = is_scalar(value: $value) ? (string) $value : $patched['userName'],
+                'emails'                                        => $patched['emails'] = is_array(value: $value) ? $value : $patched['emails'],
+                'groups'                                        => $patched['groups'] = is_array(value: $value) ? $value : $patched['groups'],
                 'active'                                        => $this->applyActiveStatePatch(patched: $patched, value: $value),
-                'state', self::USER_EXTENSION_SCHEMA . ':state' => $patched['state'] = is_scalar($value) ? (string) $value : $patched['state'],
+                'state', self::USER_EXTENSION_SCHEMA . ':state' => $patched['state'] = is_scalar(value: $value) ? (string) $value : $patched['state'],
                 default                                         => null,
             };
         }
@@ -705,7 +705,7 @@ final readonly class ServeScimHttpSurface
      */
     private function applyActiveStatePatch(array &$patched, mixed $value) : void
     {
-        if (! is_bool($value)) {
+        if (! is_bool(value: $value)) {
             return;
         }
 

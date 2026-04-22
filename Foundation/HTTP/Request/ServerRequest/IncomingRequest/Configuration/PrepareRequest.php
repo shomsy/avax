@@ -101,14 +101,14 @@ final readonly class PrepareRequest
             return '';
         }
 
-        $content = file_get_contents('php://input');
+        $content = file_get_contents(filename: 'php://input');
 
         return $content !== false ? $content : '';
     }
 
     private function stageReadMethod(ServerEnvironment $env) : string
     {
-        return strtoupper($env->requestMethod ?? 'GET');
+        return strtoupper(string: $env->requestMethod ?? 'GET');
     }
 
     private function stageReadProtocol(ServerEnvironment $env) : string
@@ -131,11 +131,11 @@ final readonly class PrepareRequest
     {
         $headers = [];
         foreach ($server as $key => $value) {
-            if (str_starts_with($key, 'HTTP_')) {
-                $name           = str_replace('_', '-', substr($key, 5));
+            if (str_starts_with(haystack: $key, needle: 'HTTP_')) {
+                $name           = str_replace(search: '_', replace: '-', subject: substr(string: $key, offset: 5));
                 $headers[$name] = $value;
-            } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'], true)) {
-                $name           = str_replace('_', '-', $key);
+            } elseif (in_array(needle: $key, haystack: ['CONTENT_TYPE', 'CONTENT_LENGTH'], strict: true)) {
+                $name           = str_replace(search: '_', replace: '-', subject: $key);
                 $headers[$name] = $value;
             }
         }
@@ -154,9 +154,9 @@ final readonly class PrepareRequest
 
     private function createEmptyBodyStream() : Stream
     {
-        $handle = fopen('php://temp', 'r+');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
         if ($handle === false) {
-            return new Stream(stream: fopen('php://temp', 'r+'));
+            return new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
         }
 
         return new Stream(stream: $handle);
@@ -164,9 +164,9 @@ final readonly class PrepareRequest
 
     private function createBodyStreamFromRaw(string $rawBody) : Stream
     {
-        $handle = fopen('php://temp', 'r+');
+        $handle = fopen(filename: 'php://temp', mode: 'r+');
         if ($handle === false) {
-            return new Stream(stream: fopen('php://temp', 'r+'));
+            return new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
         }
 
         $stream = new Stream(stream: $handle);
@@ -211,10 +211,10 @@ final readonly class PrepareRequest
     {
         $queryParams    ??= [];
         $parsedBodyData = match (true) {
-            is_array($parsedBody)  => $parsedBody,
-            is_object($parsedBody) => (array) $parsedBody,
-            $parsedBody === null   => null,
-            default                => [],
+            is_array(value: $parsedBody)  => $parsedBody,
+            is_object(value: $parsedBody) => (array) $parsedBody,
+            $parsedBody === null          => null,
+            default                       => [],
         };
 
         return $this->defaults()

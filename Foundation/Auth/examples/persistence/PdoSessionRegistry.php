@@ -31,7 +31,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $statement->execute(params: ['session_id' => $sessionId]);
         $row = $statement->fetch(mode: PDO::FETCH_ASSOC);
 
-        return is_array($row) ? $this->hydrate(row: $row) : null;
+        return is_array(value: $row) ? $this->hydrate(row: $row) : null;
     }
 
     /**
@@ -115,8 +115,8 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
         return array_map(
-            fn (array $row) : SessionRecord => $this->hydrate(row: $row),
-            $rows
+            callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+            array   : $rows
         );
     }
 

@@ -13,10 +13,10 @@ final readonly class TenantId implements Stringable
 
     public function __construct(string|int $value)
     {
-        $normalized = trim((string) $value);
+        $normalized = trim(string: (string) $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('TenantId cannot be empty.');
+            throw new InvalidArgumentException(message: 'TenantId cannot be empty.');
         }
 
         $this->value = $normalized;

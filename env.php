@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 use Dotenv\Dotenv;
 
-if (! function_exists('env')) {
+if (! function_exists(function: 'env')) {
     /**
      * Retrieves the value of an environment variable.
      *
@@ -40,7 +40,7 @@ if (! function_exists('env')) {
  */
 function loadEnvFile(string $filePath, string $context) : void
 {
-    if (! file_exists($filePath)) {
+    if (! file_exists(filename: $filePath)) {
         throw new Exception(
             message: sprintf(
                          'The required %s .env file is missing at path: %s. 
@@ -51,7 +51,7 @@ function loadEnvFile(string $filePath, string $context) : void
         );
     }
 
-    $dotenv = Dotenv::createImmutable(paths: dirname($filePath));
+    $dotenv = Dotenv::createImmutable(paths: dirname(path: $filePath));
     $dotenv->load();
 }
 
@@ -70,7 +70,7 @@ function loadEnvFiles() : void
 
     /* Load Docker-specific environment variables */
     $dockerEnv = __DIR__ . '/docker/mysql/.env';
-    if (file_exists($dockerEnv)) {
+    if (file_exists(filename: $dockerEnv)) {
         loadEnvFile(filePath: $dockerEnv, context: 'Docker MySQL');
     }
 }

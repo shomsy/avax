@@ -30,6 +30,6 @@ final readonly class ResolveClientAddress
             return $remoteAddr;
         }
 
-        return reset($ips);
+        return reset(array: $ips);
     }
 }

@@ -10,6 +10,6 @@ final class TenantMembershipFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Flows/Tenant/TenantFlowTest.php';
+        return dirname(path: __DIR__) . '/Flows/Tenant/TenantFlowTest.php';
     }
 }

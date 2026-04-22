@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 final class ResolveGreeter
 {
@@ -34,4 +34,4 @@ $built     = $container->make(abstract: ResolveWithParameters::class, parameters
 assertSame(expected: 'resolved', actual: $autowired->greeter->message(), message: 'ResolveService should autowire instantiable classes.');
 assertSame(expected: 'custom', actual: $built->name, message: 'ResolveService should honor explicit make() overrides.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

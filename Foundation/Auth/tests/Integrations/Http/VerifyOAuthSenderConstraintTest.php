@@ -96,10 +96,10 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
 
     private function hashAccessToken(#[SensitiveParameter] string $token) : string
     {
-        return hash('sha256', $token, true)
+        return hash(algo: 'sha256', data: $token, binary: true)
                 |> base64_encode(...)
                 |> (static fn ($x) => strtr($x, '+/', '-_'))
-                |> (static fn ($x) => rtrim($x, '='));
+                |> (static fn ($x) => rtrim(string: $x, characters: '='));
     }
 
     /**
@@ -247,7 +247,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
 
         $this->assertContains(
             needle  : 'auth.oauth.sender_constraint.mismatch',
-            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
+            haystack: array_map(callback: static fn ($event) => $event->name, array: $auditLog->events())
         );
 
         $mtlsBinding = $verifier->execute(

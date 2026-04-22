@@ -30,12 +30,12 @@ final readonly class TrustedProxyPolicy
             return false;
         }
 
-        return array_any($this->trustedProxies, fn ($rule) => $this->matchesRule(ip: $ip, rule: $rule));
+        return array_any(array: $this->trustedProxies, callback: fn ($rule) => $this->matchesRule(ip: $ip, rule: $rule));
     }
 
     private function matchesRule(string $ip, string $rule): bool
     {
-        $rule = trim($rule);
+        $rule = trim(string: $rule);
 
         if ($rule === '') {
             return false;
@@ -45,7 +45,7 @@ final readonly class TrustedProxyPolicy
             return true;
         }
 
-        if (str_contains($rule, '/')) {
+        if (str_contains(haystack: $rule, needle: '/')) {
             return $this->matchesCidr(ip: $ip, cidr: $rule);
         }
 
@@ -54,7 +54,7 @@ final readonly class TrustedProxyPolicy
 
     private function matchesCidr(string $ip, string $cidr): bool
     {
-        if (str_contains($ip, ':')) {
+        if (str_contains(haystack: $ip, needle: ':')) {
             return $this->matchesIpv6Cidr(ip: $ip, cidr: $cidr);
         }
 
@@ -63,16 +63,16 @@ final readonly class TrustedProxyPolicy
 
     private function matchesIpv4Cidr(string $ip, string $cidr): bool
     {
-        if (!str_contains($cidr, '/') || str_contains($cidr, ':')) {
+        if (!str_contains(haystack: $cidr, needle: '/') || str_contains(haystack: $cidr, needle: ':')) {
              return false;
         }
 
-        [$subnet, $mask] = explode('/', $cidr, 2) + [1 => '32'];
+        [$subnet, $mask] = explode(separator: '/', string: $cidr, limit: 2) + [1 => '32'];
 
         if (
-            filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false ||
-            filter_var($subnet, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false ||
-            ! ctype_digit($mask)
+            filter_var(value: $ip, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false ||
+            filter_var(value: $subnet, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false ||
+            ! ctype_digit(text: $mask)
         ) {
             return false;
         }
@@ -82,8 +82,8 @@ final readonly class TrustedProxyPolicy
             return false;
         }
 
-        $ipLong = ip2long($ip);
-        $subnetLong = ip2long($subnet);
+        $ipLong = ip2long(ip: $ip);
+        $subnetLong = ip2long(ip: $subnet);
 
         if ($maskInt === 0) {
             return true;
@@ -96,16 +96,16 @@ final readonly class TrustedProxyPolicy
 
     private function matchesIpv6Cidr(string $ip, string $cidr): bool
     {
-        if (!str_contains($cidr, '/') || !str_contains($cidr, ':')) {
+        if (!str_contains(haystack: $cidr, needle: '/') || !str_contains(haystack: $cidr, needle: ':')) {
             return false;
         }
 
-        [$subnet, $mask] = explode('/', $cidr, 2) + [1 => '128'];
+        [$subnet, $mask] = explode(separator: '/', string: $cidr, limit: 2) + [1 => '128'];
 
         if (
-            filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false ||
-            filter_var($subnet, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false ||
-            ! ctype_digit($mask)
+            filter_var(value: $ip, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6) === false ||
+            filter_var(value: $subnet, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6) === false ||
+            ! ctype_digit(text: $mask)
         ) {
             return false;
         }
@@ -115,14 +115,14 @@ final readonly class TrustedProxyPolicy
             return false;
         }
 
-        $ipBin = inet_pton($ip);
-        $subnetBin = inet_pton($subnet);
+        $ipBin = inet_pton(ip: $ip);
+        $subnetBin = inet_pton(ip: $subnet);
 
-        $maskBin = str_repeat("\xff", $maskInt >> 3);
+        $maskBin = str_repeat(string: "\xff", times: $maskInt >> 3);
         if ($maskInt % 8 !== 0) {
-            $maskBin .= chr(0xff << (8 - ($maskInt % 8)));
+            $maskBin .= chr(codepoint: 0xff << (8 - ($maskInt % 8)));
         }
-        $maskBin = str_pad($maskBin, 16, "\x00");
+        $maskBin = str_pad(string: $maskBin, length: 16, pad_string: "\x00");
 
         return ($ipBin & $maskBin) === ($subnetBin & $maskBin);
     }

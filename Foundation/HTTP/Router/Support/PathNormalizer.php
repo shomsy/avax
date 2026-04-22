@@ -46,20 +46,20 @@ final class PathNormalizer
         }
 
         // Collapse multiple slashes and normalize
-        $path = preg_replace('#/+#', '/', $path);
+        $path = preg_replace(pattern: '#/+#', replacement: '/', subject: $path);
 
         if ($path === null) {
             throw new InvalidArgumentException(message: 'Invalid path format for normalization');
         }
 
         // Ensure leading slash
-        if (! str_starts_with($path, '/')) {
+        if (! str_starts_with(haystack: $path, needle: '/')) {
             $path = '/' . $path;
         }
 
         // Remove trailing slash unless it's the root path
-        if ($path !== '/' && str_ends_with($path, '/')) {
-            $path = rtrim($path, '/');
+        if ($path !== '/' && str_ends_with(haystack: $path, needle: '/')) {
+            $path = rtrim(string: $path, characters: '/');
         }
 
         return $path;

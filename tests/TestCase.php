@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->database = Database::configuration()->usingConfig([
+        $this->database = Database::configuration()->usingConfig(config: [
                                                                      'default'     => 'sqlite',
                                                                      'connections' => [
                                                                          'sqlite' => [

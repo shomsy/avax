@@ -16,8 +16,8 @@ final readonly class DiscoverFederationConnection
 
     public function execute(#[SensitiveParameter] string $email) : FederationConnection|null
     {
-        $separator = strrchr($email, '@');
-        $domain    = strtolower(trim(substr($separator !== false ? $separator : '', 1)));
+        $separator = strrchr(haystack: $email, needle: '@');
+        $domain    = strtolower(string: trim(string: substr(string: $separator !== false ? $separator : '', offset: 1)));
 
         if ($domain === '') {
             return null;

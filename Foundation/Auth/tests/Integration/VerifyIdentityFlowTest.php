@@ -10,6 +10,6 @@ final class VerifyIdentityFlowTest extends CanonicalIntegrationAnchorTestCase
 {
     protected static function canonicalTestPath() : string
     {
-        return dirname(__DIR__) . '/Unit/System/Flows/VerifyIdentity/VerifyIdentityTest.php';
+        return dirname(path: __DIR__) . '/Unit/System/Flows/VerifyIdentity/VerifyIdentityTest.php';
     }
 }

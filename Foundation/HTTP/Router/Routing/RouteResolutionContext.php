@@ -108,7 +108,7 @@ final readonly class RouteResolutionContext
         }
 
         $domainInfo = $this->matchedDomain ? " on domain {$this->matchedDomain}" : '';
-        $paramsInfo = ! empty($this->parameters) ? ' with params: ' . json_encode($this->parameters) : '';
+        $paramsInfo = ! empty($this->parameters) ? ' with params: ' . json_encode(value: $this->parameters) : '';
 
         return sprintf(
             'Resolved %s %s%s%s in %.3fms',
@@ -136,7 +136,7 @@ final readonly class RouteResolutionContext
         $path = $this->route->path;
 
         foreach ($this->parameters as $key => $value) {
-            $path = str_replace("{{$key}}", (string) $value, $path);
+            $path = str_replace(search: "{{$key}}", replace: (string) $value, subject: $path);
         }
 
         return $path;
@@ -170,12 +170,12 @@ final readonly class RouteResolutionContext
     public function getResolutionSteps() : array
     {
         return array_map(
-            static fn (array $step) : string => sprintf(
+            callback: static fn (array $step) : string => sprintf(
                 '[%s] %s',
                 $step['timestamp'] ?? 'unknown',
                 $step['description'] ?? 'unknown step'
             ),
-            $this->resolutionPath
+            array   : $this->resolutionPath
         );
     }
 }

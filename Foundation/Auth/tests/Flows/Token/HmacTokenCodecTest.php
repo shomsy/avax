@@ -44,8 +44,8 @@ final class HmacTokenCodecTest extends TestCase
                                            'jti' => 'token-1',
                                        ]);
 
-        [$header, $claims, $signature] = explode('.', $token);
-        $tamperedSignature             = substr($signature, 0, -1) . (substr($signature, -1) === 'A' ? 'B' : 'A');
+        [$header, $claims, $signature] = explode(separator: '.', string: $token);
+        $tamperedSignature             = substr(string: $signature, offset: 0, length: -1) . (substr(string: $signature, offset: -1) === 'A' ? 'B' : 'A');
         $tamperedToken                 = "{$header}.{$claims}.{$tamperedSignature}";
 
         $this->assertNull(actual: $codec->decode(token: $tamperedToken));

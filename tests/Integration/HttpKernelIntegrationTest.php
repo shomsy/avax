@@ -116,7 +116,7 @@ class HttpKernelIntegrationTest extends TestCase
         // Then: Response has JSON content type and valid JSON
         $this->assertStringContains('application/json', $response->getHeaderLine(name: 'Content-Type'));
 
-        $body = json_decode((string) $response->getBody(), true);
+        $body = json_decode(json: (string) $response->getBody(), associative: true);
         $this->assertIsArray(actual: $body);
     }
 
@@ -172,7 +172,7 @@ class HttpKernelIntegrationTest extends TestCase
         $this->assertEquals(expected: 500, actual: $response->statusCode);
         $this->assertStringContains('application/json', $response->getHeaderLine(name: 'Content-Type'));
 
-        $body = json_decode((string) $response->getBody(), true);
+        $body = json_decode(json: (string) $response->getBody(), associative: true);
         $this->assertArrayHasKey(key: 'error', array: $body);
     }
 

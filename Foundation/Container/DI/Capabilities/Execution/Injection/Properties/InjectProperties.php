@@ -43,7 +43,7 @@ final class InjectProperties
                 throw new ContainerException(message: "Cannot inject readonly property [{$name}] on [{$blueprint->class}].");
             }
 
-            if (array_key_exists($name, $overrides)) {
+            if (array_key_exists(key: $name, array: $overrides)) {
                 ($this->writerFor(class: $blueprint->class, property: $name))($target, $overrides[$name]);
                 continue;
             }

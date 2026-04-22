@@ -86,7 +86,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('action contains non-serializable data (closures or objects)', $context['issues']);
+                    in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
@@ -108,7 +108,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('action contains non-serializable data (closures or objects)', $context['issues']);
+                    in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
@@ -131,7 +131,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('middleware contains non-string values', $context['issues']);
+                    in_array(needle: 'middleware contains non-string values', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
@@ -154,7 +154,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('defaults contain non-scalar values', $context['issues']);
+                    in_array(needle: 'defaults contain non-scalar values', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
@@ -177,7 +177,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('attributes contain non-scalar values', $context['issues']);
+                    in_array(needle: 'attributes contain non-scalar values', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
@@ -200,7 +200,7 @@ class RouteExportValidatorTest extends TestCase
             ->method(constraint: 'warning')
             ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
                 return isset($context['issues']) &&
-                    in_array('domain is not a string', $context['issues']);
+                    in_array(needle: 'domain is not a string', haystack: $context['issues']);
             }));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));

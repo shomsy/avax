@@ -39,7 +39,7 @@ final class N1QueryDetector
 
     public function isN1Problem(int $threshold = 10) : bool
     {
-        $uniqueTables = count($this->tableAccessLog);
+        $uniqueTables = count(value: $this->tableAccessLog);
 
         return $this->queryCount > $threshold * $uniqueTables;
     }

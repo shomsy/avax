@@ -31,7 +31,7 @@ final readonly class BackupCode
 
     public function masked() : string
     {
-        $tail = substr($this->value, -4);
+        $tail = substr(string: $this->value, offset: -4);
 
         return '****-****-' . $tail;
     }

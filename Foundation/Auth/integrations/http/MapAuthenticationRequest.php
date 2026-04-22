@@ -47,7 +47,7 @@ final readonly class MapAuthenticationRequest
     {
         $value = $server[$name] ?? null;
 
-        return is_scalar($value) ? (string) $value : null;
+        return is_scalar(value: $value) ? (string) $value : null;
     }
 
     /**
@@ -56,15 +56,15 @@ final readonly class MapAuthenticationRequest
     private function readHeaderValue(#[SensitiveParameter] array $headers) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, 'User-Agent') !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: 'User-Agent') !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            return is_scalar($value) ? (string) $value : null;
+            return is_scalar(value: $value) ? (string) $value : null;
         }
 
         return null;

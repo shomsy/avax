@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__) . '/bootstrap.php';
 require_once __DIR__ . '/adapters/ArtifactBenchmarkPeerAdapter.php';
 
 /**
@@ -15,19 +15,19 @@ function peerTargets(array $arguments) : array
     $targets = [];
 
     foreach ($arguments as $argument) {
-        if (str_starts_with($argument, '--')) {
+        if (str_starts_with(haystack: $argument, needle: '--')) {
             continue;
         }
 
-        $parts = explode('=', $argument, 2);
-        if (count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
+        $parts = explode(separator: '=', string: $argument, limit: 2);
+        if (count(value: $parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
             throw new RuntimeException(message: 'Peer benchmark targets must use the form name=/path/to/report.json.');
         }
 
         $targets[$parts[0]] = $parts[1];
     }
 
-    if (! isset($targets['current']) || count($targets) < 2) {
+    if (! isset($targets['current']) || count(value: $targets) < 2) {
         throw new RuntimeException(message: 'Peer benchmark matrix requires current=/path/to/current.json plus at least one peer artifact.');
     }
 
@@ -39,8 +39,8 @@ function peerTargets(array $arguments) : array
  */
 function benchmarkScenariosForArtifact(array $artifact) : array
 {
-    $names = array_keys($artifact['results']);
-    sort($names);
+    $names = array_keys(array: $artifact['results']);
+    sort(array: $names);
 
     return $names;
 }
@@ -110,14 +110,14 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
     $current = $artifacts['current'];
     $peers   = $artifacts
             |> array_keys(...)
-            |> (static fn ($x) => array_filter($x, static fn (string $name) : bool => $name !== 'current'))
+            |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $name) : bool => $name !== 'current'))
             |> array_values(...);
-    sort($peers);
+    sort(array: $peers);
 
     $payload = [
         'schemaVersion' => 1,
         'meta'          => [
-            'generatedAt'    => gmdate('c'),
+            'generatedAt'    => gmdate(format: 'c'),
             'subject'        => 'current',
             'peers'          => $peers,
             'dockerImage'    => (string) ($current['meta']['dockerImage'] ?? ''),
@@ -128,8 +128,8 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
             'thresholdsFile' => __DIR__ . '/peer-thresholds.php',
         ],
         'artifactMeta'  => array_map(
-            static fn (array $artifact) : array => $artifact['meta'],
-            $artifacts
+            callback: static fn (array $artifact) : array => $artifact['meta'],
+            array   : $artifacts
         ),
         'parityIssues'  => [],
         'regressions'   => [],
@@ -180,7 +180,7 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
         }
 
         $payload['comparisons'][$peerName] = [
-            'scenarioCount' => count($peerRows),
+            'scenarioCount' => count(value: $peerRows),
             'scenarios'     => $peerRows,
         ];
     }
@@ -188,17 +188,17 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
     return $payload;
 }
 
-$jsonOutput       = in_array('--json', $argv, true);
-$failOnRegression = in_array('--fail-on-regression', $argv, true);
+$jsonOutput       = in_array(needle: '--json', haystack: $argv, strict: true);
+$failOnRegression = in_array(needle: '--fail-on-regression', haystack: $argv, strict: true);
 $outputPath       = null;
 
 foreach ($argv as $argument) {
-    if (str_starts_with($argument, '--output=')) {
-        $outputPath = substr($argument, strlen('--output='));
+    if (str_starts_with(haystack: $argument, needle: '--output=')) {
+        $outputPath = substr(string: $argument, offset: strlen(string: '--output='));
     }
 }
 
-$targets   = peerTargets(arguments: array_slice($argv, 1));
+$targets   = peerTargets(arguments: array_slice(array: $argv, offset: 1));
 $artifacts = [];
 foreach ($targets as $name => $path) {
     $adapter                     = new ArtifactBenchmarkPeerAdapter(peerName: $name, path: $path);
@@ -208,15 +208,15 @@ foreach ($targets as $name => $path) {
 /** @var array<string, array<string, float>> $thresholds */
 $thresholds = require __DIR__ . '/peer-thresholds.php';
 $payload    = peerMatrixPayload(artifacts: $artifacts, thresholds: $thresholds);
-$json       = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+$json       = json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 
-if (is_string($outputPath) && $outputPath !== '') {
-    $directory = dirname($outputPath);
-    if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+if (is_string(value: $outputPath) && $outputPath !== '') {
+    $directory = dirname(path: $outputPath);
+    if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
         throw new RuntimeException(message: "Cannot create peer benchmark artifact directory [{$directory}].");
     }
 
-    if (file_put_contents($outputPath, $json, LOCK_EX) === false) {
+    if (file_put_contents(filename: $outputPath, data: $json, flags: LOCK_EX) === false) {
         throw new RuntimeException(message: "Cannot write peer benchmark artifact [{$outputPath}].");
     }
 }
@@ -225,11 +225,11 @@ if ($failOnRegression && ($payload['parityIssues'] !== [] || $payload['regressio
     throw new RuntimeException(
         message: "Peer benchmark matrix failed:\n- "
                  . array_map(
-                   static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
-                   $payload['regressions']
+                   callback: static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
+                   array   : $payload['regressions']
                )
                    |> (static fn ($x) => array_merge($payload['parityIssues'], $x))
-                   |> (static fn ($x) => implode("\n- ", $x))
+                   |> (static fn ($x) => implode(separator: "\n- ", array: $x))
     );
 }
 

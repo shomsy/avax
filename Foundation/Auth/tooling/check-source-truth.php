@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 use Avax\Auth\Integrations\Release\CheckSourceTruth;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(path: __DIR__) . '/vendor/autoload.php';
 
-$root   = dirname(__DIR__);
-$json   = in_array('--json', $argv, true) || in_array('-j', $argv, true);
+$root   = dirname(path: __DIR__);
+$json   = in_array(needle: '--json', haystack: $argv, strict: true) || in_array(needle: '-j', haystack: $argv, strict: true);
 $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
 if ($json) {
-    echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+    echo json_encode(value: $result, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
     exit($result['approved'] ? 0 : 1);
 }
 

@@ -37,8 +37,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         bool                                  $phishingResistant = false
     ) : IssuedAuthorizationCode
     {
-        $plainCode = bin2hex(random_bytes(32));
-        $codeId    = 'code_' . bin2hex(random_bytes(12));
+        $plainCode = bin2hex(string: random_bytes(length: 32));
+        $codeId    = 'code_' . bin2hex(string: random_bytes(length: 12));
 
         $this->records[$codeId]                                 = new AuthorizationCodeRecord(
             codeId             : $codeId,
@@ -65,7 +65,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
 
     private function hash(#[SensitiveParameter] string $plainCode) : string
     {
-        return hash('sha256', $plainCode);
+        return hash(algo: 'sha256', data: $plainCode);
     }
 
     public function find(#[SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
@@ -121,8 +121,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         }
 
         $this->hashToCodeId = array_filter(
-            $this->hashToCodeId,
-            fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId])
+            array   : $this->hashToCodeId,
+            callback: fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId])
         );
 
         return $removed;

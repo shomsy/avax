@@ -20,8 +20,8 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
      */
     public function issue(UserId $userId, #[SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
     {
-        $token                                 = bin2hex(random_bytes(32));
-        $this->records[hash('sha256', $token)] = [
+        $token                                 = bin2hex(string: random_bytes(length: 32));
+        $this->records[hash(algo: 'sha256', data: $token)] = [
             'user_id'    => $userId->value,
             'new_email'  => $newEmail,
             'expires_at' => $expiresAt->getTimestamp(),
@@ -39,7 +39,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
      */
     public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
     {
-        $key    = hash('sha256', $token);
+        $key    = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;
         unset($this->records[$key]);
 

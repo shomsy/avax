@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Container;
 use Avax\Container\DI\ContainerInterface;
@@ -76,8 +76,8 @@ $expectedMethods = [
 ];
 
 foreach ($expectedMethods as $method) {
-    assertTrue(condition: method_exists(ContainerInterface::class, $method), message: "ContainerInterface should expose [{$method}].");
-    assertTrue(condition: method_exists(Container::class, $method), message: "Container should implement [{$method}].");
+    assertTrue(condition: method_exists(object_or_class: ContainerInterface::class, method: $method), message: "ContainerInterface should expose [{$method}].");
+    assertTrue(condition: method_exists(object_or_class: Container::class, method: $method), message: "Container should implement [{$method}].");
 }
 
 $forbiddenLegacyMethods = [
@@ -86,8 +86,8 @@ $forbiddenLegacyMethods = [
 ];
 
 foreach ($forbiddenLegacyMethods as $method) {
-    assertTrue(condition: ! method_exists(ContainerInterface::class, $method), message: "Legacy public method [{$method}] must stay absent from ContainerInterface.");
-    assertTrue(condition: ! method_exists(Container::class, $method), message: "Legacy public method [{$method}] must stay absent from Container.");
+    assertTrue(condition: ! method_exists(object_or_class: ContainerInterface::class, method: $method), message: "Legacy public method [{$method}] must stay absent from ContainerInterface.");
+    assertTrue(condition: ! method_exists(object_or_class: Container::class, method: $method), message: "Legacy public method [{$method}] must stay absent from Container.");
 }
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

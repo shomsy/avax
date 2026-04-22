@@ -20,17 +20,17 @@ final class InMemoryTenantStore implements TenantStoreInterface
 
     public function saveTenant(Tenant $tenant) : void
     {
-        $this->tenantsBySlug[strtolower($tenant->slug)] = $tenant;
+        $this->tenantsBySlug[strtolower(string: $tenant->slug)] = $tenant;
     }
 
     public function findTenantBySlug(string $slug) : Tenant|null
     {
-        return $this->tenantsBySlug[strtolower(trim($slug))] ?? null;
+        return $this->tenantsBySlug[strtolower(string: trim(string: $slug))] ?? null;
     }
 
     public function allTenants() : array
     {
-        return array_values($this->tenantsBySlug);
+        return array_values(array: $this->tenantsBySlug);
     }
 
     public function saveMember(TenantMember $member) : void
@@ -50,9 +50,9 @@ final class InMemoryTenantStore implements TenantStoreInterface
 
     public function allMembers(string $tenantId) : array
     {
-        return array_values(array_filter(
-                                $this->members,
-                                static fn (TenantMember $member) : bool => $member->tenantId === $tenantId
+        return array_values(array: array_filter(
+                                array   : $this->members,
+                                callback: static fn (TenantMember $member) : bool => $member->tenantId === $tenantId
                             ));
     }
 
@@ -73,14 +73,14 @@ final class InMemoryTenantStore implements TenantStoreInterface
 
     public function findInviteByToken(#[SensitiveParameter] string $plainToken) : TenantInvite|null
     {
-        $tokenHash = hash('sha256', $plainToken);
+        $tokenHash = hash(algo: 'sha256', data: $plainToken);
 
         foreach ($this->invites as $invite) {
             if ($invite->isAccepted()) {
                 continue;
             }
 
-            if (hash_equals($invite->tokenHash, $tokenHash)) {
+            if (hash_equals(known_string: $invite->tokenHash, user_string: $tokenHash)) {
                 return $invite;
             }
         }

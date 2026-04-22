@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -79,7 +79,7 @@ final class InvalidTransientDisposableService implements DisposableInterface
 
 final class JobScopedService {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid(prefix: '', more_entropy: true);
 $config    = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
@@ -94,26 +94,26 @@ $container->singleton(abstract: InvalidDisposableService::class, concrete: Inval
 $container->bind(abstract: InvalidTransientDisposableService::class, concrete: InvalidTransientDisposableService::class)->dispose();
 $container->scoped(abstract: JobScopedService::class, concrete: JobScopedService::class)->job();
 
-$issues = implode("\n", $container->validate(serviceIds: [
+$issues = implode(separator: "\n", array: $container->validate(serviceIds: [
                                                              SharedCapturesTransientService::class,
                                                              SharedCapturesRequestScopedService::class,
                                                              InvalidDisposableService::class,
                                                          ]));
 
 assertTrue(
-    condition: str_contains($issues, 'captures transient dependency [' . PlainTransientDependency::class . ']'),
+    condition: str_contains(haystack: $issues, needle: 'captures transient dependency [' . PlainTransientDependency::class . ']'),
     message  : 'Validation should detect captured transient dependencies.'
 );
 assertTrue(
-    condition: str_contains($issues, 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
+    condition: str_contains(haystack: $issues, needle: 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
     message  : 'Validation should detect shared services that capture scoped dependencies.'
 );
 assertTrue(
-    condition: str_contains($issues, 'does not expose dispose() or implement DisposableInterface'),
+    condition: str_contains(haystack: $issues, needle: 'does not expose dispose() or implement DisposableInterface'),
     message  : 'Validation should reject invalid disposable registrations.'
 );
 assertTrue(
-    condition: str_contains($issues, 'uses transient lifetime, so the container cannot own its disposal boundary'),
+    condition: str_contains(haystack: $issues, needle: 'uses transient lifetime, so the container cannot own its disposal boundary'),
     message  : 'Validation should reject disposable transient services because the container cannot own their disposal boundary.'
 );
 
@@ -172,6 +172,6 @@ $container->reset();
 
 assertSame(expected: 1, actual: AdvancedLifetimeSequence::$sharedDisposals, message: 'Reset should dispose explicitly disposable shared services.');
 
-rmdir($cacheDir);
+rmdir(directory: $cacheDir);
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

@@ -35,7 +35,7 @@ final readonly class SessionCookieSettings
         $this->httpOnly = $httpOnly;
         $this->sameSite = $sameSite;
         $this->path     = $path;
-        if (! in_array($this->sameSite, ['Lax', 'Strict', 'None'], true)) {
+        if (! in_array(needle: $this->sameSite, haystack: ['Lax', 'Strict', 'None'], strict: true)) {
             throw new InvalidArgumentException(message: 'Cookie sameSite must be Lax, Strict, or None.');
         }
 

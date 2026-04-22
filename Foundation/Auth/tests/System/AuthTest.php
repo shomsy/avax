@@ -165,7 +165,7 @@ final class AuthTest extends TestCase
         $events = $auditLog->events();
         $this->assertNotSame(expected: [], actual: $events);
         $this->assertContainsOnlyInstancesOf(className: AuditEvent::class, haystack: $events);
-        array_map(static fn ($event) => $event->correlationId, $events)
+        array_map(callback: static fn ($event) => $event->correlationId, array: $events)
             |> array_filter(...)
             |> array_unique(...)
             |> array_values(...)

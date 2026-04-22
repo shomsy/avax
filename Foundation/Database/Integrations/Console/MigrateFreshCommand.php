@@ -74,11 +74,11 @@ final readonly class MigrateFreshCommand
 
         // noinspection SqlNoDataSourceInspection
         $statement = $pdo->query(query: $sql);
-        $rows      = $statement === false ? [] : $statement->fetchAll(PDO::FETCH_NUM);
+        $rows      = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
 
-        return array_values(array_filter(
-                                array_map(static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', $rows),
-                                static fn (string $value) => $value !== ''
+        return array_values(array: array_filter(
+                                array   : array_map(callback: static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', array: $rows),
+                                callback: static fn (string $value) => $value !== ''
                             ));
     }
 

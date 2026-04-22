@@ -17,7 +17,7 @@ final readonly class GroupRoleMappingValidator
     public function isValid(array $groupRoleMap) : bool
     {
         foreach ($groupRoleMap as $group => $roles) {
-            if (trim($group) === '') {
+            if (trim(string: $group) === '') {
                 return false;
             }
 

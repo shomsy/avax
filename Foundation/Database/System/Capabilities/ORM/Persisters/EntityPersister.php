@@ -57,17 +57,17 @@ final readonly class EntityPersister
 
     private function propertyValue(object $entity, string $property) : mixed
     {
-        $reflection = new ReflectionProperty($entity, $property);
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionProperty(class: $entity, property: $property);
+        $reflection->setAccessible(accessible: true);
 
-        return $reflection->getValue($entity);
+        return $reflection->getValue(object: $entity);
     }
 
     private function setPropertyValue(object $entity, string $property, mixed $value) : void
     {
-        $reflection = new ReflectionProperty($entity, $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($entity, $value);
+        $reflection = new ReflectionProperty(class: $entity, property: $property);
+        $reflection->setAccessible(accessible: true);
+        $reflection->setValue(objectOrValue: $entity, value: $value);
     }
 
     /**
@@ -171,7 +171,7 @@ final readonly class EntityPersister
             ->where(column: $identifier->column, operator: '=', value: $id)
             ->first();
 
-        if (! is_array($row)) {
+        if (! is_array(value: $row)) {
             return null;
         }
 

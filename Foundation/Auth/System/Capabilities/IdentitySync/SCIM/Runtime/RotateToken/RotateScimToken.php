@@ -47,7 +47,7 @@ final readonly class RotateScimToken
 
         $this->enforceThrottle(directoryId: $directory->directoryId);
 
-        $plainTextToken = bin2hex(random_bytes(24));
+        $plainTextToken = bin2hex(string: random_bytes(length: 24));
         $rotated        = new ScimDirectory(
             directoryId : $directory->directoryId,
             tenantSlug  : $directory->tenantSlug,

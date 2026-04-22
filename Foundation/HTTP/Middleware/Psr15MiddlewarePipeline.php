@@ -60,7 +60,7 @@ final readonly class Psr15MiddlewarePipeline implements RequestHandlerInterface
         // Build the middleware chain from the inside out
         $handler = $this->finalHandler;
 
-        foreach (array_reverse($this->middleware) as $middleware) {
+        foreach (array_reverse(array: $this->middleware) as $middleware) {
             $handler = new MiddlewareHandler(middleware: $middleware, next: $handler);
         }
 

@@ -25,10 +25,10 @@ final readonly class CheckSystemShape
      */
     public function execute(string $repositoryRoot) : array
     {
-        $systemRoot = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/System';
+        $systemRoot = rtrim(string: $repositoryRoot, characters: DIRECTORY_SEPARATOR) . '/System';
         $issues     = [];
 
-        if (! is_dir($systemRoot)) {
+        if (! is_dir(filename: $systemRoot)) {
             return [
                 'approved'              => false,
                 'issues'                => ['Missing canonical system root: System/'],
@@ -45,7 +45,7 @@ final readonly class CheckSystemShape
         $allowedTopLevelFiles       = ['Auth.php', 'AuthInterface.php'];
         $unexpectedTopLevel         = [];
 
-        $entries = scandir($systemRoot);
+        $entries = scandir(directory: $systemRoot);
 
         foreach ($entries === false ? [] : $entries as $entry) {
             if ($entry === '.' || $entry === '..') {
@@ -54,12 +54,12 @@ final readonly class CheckSystemShape
 
             $fullPath = $systemRoot . '/' . $entry;
 
-            if (is_dir($fullPath) && ! in_array($entry, $allowedTopLevelDirectories, true)) {
+            if (is_dir(filename: $fullPath) && ! in_array(needle: $entry, haystack: $allowedTopLevelDirectories, strict: true)) {
                 $unexpectedTopLevel[] = 'System/' . $entry;
                 continue;
             }
 
-            if (is_file($fullPath) && ! in_array($entry, $allowedTopLevelFiles, true)) {
+            if (is_file(filename: $fullPath) && ! in_array(needle: $entry, haystack: $allowedTopLevelFiles, strict: true)) {
                 $unexpectedTopLevel[] = 'System/' . $entry;
             }
         }
@@ -97,19 +97,19 @@ final readonly class CheckSystemShape
 
             $name = $node->getBasename();
 
-            if (! in_array($name, $forbiddenNames, true)) {
+            if (! in_array(needle: $name, haystack: $forbiddenNames, strict: true)) {
                 continue;
             }
 
-            $relativePath           = str_replace($repositoryRoot . '/', '', $node->getPathname());
+            $relativePath           = str_replace(search: $repositoryRoot . '/', replace: '', subject: $node->getPathname());
             $forbiddenDirectories[] = $relativePath;
         }
 
-        sort($unexpectedTopLevel);
-        sort($forbiddenDirectories);
+        sort(array: $unexpectedTopLevel);
+        sort(array: $forbiddenDirectories);
 
         if ($unexpectedTopLevel !== []) {
-            $issues[] = 'Unexpected System root entries: ' . implode(', ', $unexpectedTopLevel);
+            $issues[] = 'Unexpected System root entries: ' . implode(separator: ', ', array: $unexpectedTopLevel);
         }
 
         $flowTopLevel = $this->validateCanonicalChildDirectories(
@@ -128,11 +128,11 @@ final readonly class CheckSystemShape
         );
 
         if ($flowTopLevel['unexpected'] !== []) {
-            $issues[] = 'Unexpected System/Flows root entries: ' . implode(', ', $flowTopLevel['unexpected']);
+            $issues[] = 'Unexpected System/Flows root entries: ' . implode(separator: ', ', array: $flowTopLevel['unexpected']);
         }
 
         if ($flowTopLevel['missing'] !== []) {
-            $issues[] = 'Missing System/Flows root entries: ' . implode(', ', $flowTopLevel['missing']);
+            $issues[] = 'Missing System/Flows root entries: ' . implode(separator: ', ', array: $flowTopLevel['missing']);
         }
 
         $capabilityTopLevel = $this->validateCanonicalChildDirectories(
@@ -149,15 +149,15 @@ final readonly class CheckSystemShape
         );
 
         if ($capabilityTopLevel['unexpected'] !== []) {
-            $issues[] = 'Unexpected System/Capabilities root entries: ' . implode(', ', $capabilityTopLevel['unexpected']);
+            $issues[] = 'Unexpected System/Capabilities root entries: ' . implode(separator: ', ', array: $capabilityTopLevel['unexpected']);
         }
 
         if ($capabilityTopLevel['missing'] !== []) {
-            $issues[] = 'Missing System/Capabilities root entries: ' . implode(', ', $capabilityTopLevel['missing']);
+            $issues[] = 'Missing System/Capabilities root entries: ' . implode(separator: ', ', array: $capabilityTopLevel['missing']);
         }
 
         if ($forbiddenDirectories !== []) {
-            $issues[] = 'Forbidden junk-drawer directories present: ' . implode(', ', $forbiddenDirectories);
+            $issues[] = 'Forbidden junk-drawer directories present: ' . implode(separator: ', ', array: $forbiddenDirectories);
         }
 
         return [
@@ -183,17 +183,17 @@ final readonly class CheckSystemShape
         string $relativePrefix
     ) : array
     {
-        if (! is_dir($root)) {
+        if (! is_dir(filename: $root)) {
             return [
                 'unexpected' => [],
                 'missing'    => array_map(
-                    static fn (string $directory) : string => $relativePrefix . $directory,
-                    $expected
+                    callback: static fn (string $directory) : string => $relativePrefix . $directory,
+                    array   : $expected
                 ),
             ];
         }
 
-        $entries = scandir($root);
+        $entries = scandir(directory: $root);
         $actual  = [];
 
         foreach ($entries === false ? [] : $entries as $entry) {
@@ -201,24 +201,24 @@ final readonly class CheckSystemShape
                 continue;
             }
 
-            if (is_dir($root . '/' . $entry)) {
+            if (is_dir(filename: $root . '/' . $entry)) {
                 $actual[] = $entry;
             }
         }
 
-        sort($actual);
+        sort(array: $actual);
 
-        $unexpected = array_values(array_diff($actual, $expected));
-        $missing    = array_values(array_diff($expected, $actual));
+        $unexpected = array_values(array: array_diff($actual, $expected));
+        $missing    = array_values(array: array_diff($expected, $actual));
 
         return [
             'unexpected' => array_map(
-                static fn (string $directory) : string => $relativePrefix . $directory,
-                $unexpected
+                callback: static fn (string $directory) : string => $relativePrefix . $directory,
+                array   : $unexpected
             ),
             'missing'    => array_map(
-                static fn (string $directory) : string => $relativePrefix . $directory,
-                $missing
+                callback: static fn (string $directory) : string => $relativePrefix . $directory,
+                array   : $missing
             ),
         ];
     }

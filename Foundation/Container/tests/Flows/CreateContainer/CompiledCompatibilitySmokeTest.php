@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -51,18 +51,18 @@ assertTrue(condition: ! $report->available, message: 'Incompatible compiled arti
 assertTrue(condition: ! $report->compatible, message: 'Incompatible compiled artifacts must report compatibility failure.');
 assertSame(expected: 'incompatible', actual: $report->freshnessState, message: 'Incompatible compiled artifacts must expose an incompatible freshness state.');
 assertTrue(
-    condition: in_array('config hash mismatch', $report->compatibilityIssues, true),
+    condition: in_array(needle: 'config hash mismatch', haystack: $report->compatibilityIssues, strict: true),
     message  : 'Compile reports should expose config compatibility mismatches.'
 );
 assertTrue(
-    condition: in_array('compile mode mismatch', $report->compatibilityIssues, true),
+    condition: in_array(needle: 'compile mode mismatch', haystack: $report->compatibilityIssues, strict: true),
     message  : 'Compile reports should expose compile mode compatibility mismatches.'
 );
 assertTrue(
-    condition: in_array('diagnostics mode mismatch', $report->compatibilityIssues, true),
+    condition: in_array(needle: 'diagnostics mode mismatch', haystack: $report->compatibilityIssues, strict: true),
     message  : 'Compile reports should expose diagnostics mode compatibility mismatches.'
 );
 assertTrue(condition: ! $reloaded->isCompiled(id: CompatibilityTarget::class), message: 'Incompatible artifacts must not report compiled service availability.');
 assertSame(expected: 'compatibility', actual: $resolved->dependency->id(), message: 'Runtime should fall back to dynamic resolution for incompatible artifacts.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

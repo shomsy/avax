@@ -46,7 +46,7 @@ final readonly class AuthorizeCode
         $context = $this->currentAuthentication->read();
         $actor   = $context->user();
         $now     = $this->clock->now();
-        if ($data->requestUri !== null && trim($data->requestUri) !== '') {
+        if ($data->requestUri !== null && trim(string: $data->requestUri) !== '') {
             if ($this->requestObjectValidator === null) {
                 $this->recordFailure(data: $data, reason: 'request_object_not_supported');
                 throw OAuthAuthorizationFailed::invalidRequestObject();
@@ -116,13 +116,13 @@ final readonly class AuthorizeCode
             throw OAuthAuthorizationFailed::invalidScopes();
         }
 
-        if (in_array('openid', $scopes, true)) {
+        if (in_array(needle: 'openid', haystack: $scopes, strict: true)) {
             if ($this->oidcProvider === null) {
                 $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
                 throw OAuthAuthorizationFailed::openIdProviderNotConfigured();
             }
 
-            if ($data->nonce === null || trim($data->nonce) === '') {
+            if ($data->nonce === null || trim(string: $data->nonce) === '') {
                 $this->recordFailure(data: $data, reason: 'oidc_nonce_required');
                 throw OAuthAuthorizationFailed::nonceRequired();
             }
@@ -161,7 +161,7 @@ final readonly class AuthorizeCode
                                                            'client_id'  => $client->clientId,
                                                            'user_id'    => $user->getId()->value,
                                                            'code_id'    => $issued->codeId,
-                                                           'scope'      => implode(' ', $scopes),
+                                                           'scope'      => implode(separator: ' ', array: $scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
                                                        ]
@@ -195,7 +195,7 @@ final readonly class AuthorizeCode
         $normalized = [];
 
         foreach ($scopes as $scope) {
-            $parts = preg_split(pattern: '/\s+/', subject: trim($scope), flags: PREG_SPLIT_NO_EMPTY);
+            $parts = preg_split(pattern: '/\s+/', subject: trim(string: $scope), flags: PREG_SPLIT_NO_EMPTY);
 
             if ($parts === false) {
                 continue;

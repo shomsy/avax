@@ -21,11 +21,11 @@ final class PoolFactory
         int    $maxConnections = 20,
     ) : ConnectionPool
     {
-        return match (Dialect::from($driver)) {
+        return match (Dialect::from(value: $driver)) {
             default => new LazyConnectionPool(
                 config        : $config,
                 maxConnections: $maxConnections,
-                factory       : fn () => PoolFactory::create($driver, $config, minConnections: 0, maxConnections: $maxConnections),
+                factory       : fn () => PoolFactory::create(driver: $driver, config: $config, minConnections: 0, maxConnections: $maxConnections),
             ),
         };
     }
@@ -37,20 +37,20 @@ final class PoolFactory
         int    $maxConnections = 20,
     ) : ConnectionPool
     {
-        return match (Dialect::from($driver)) {
-            Dialect::MYSQL         => new MySQLPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::POSTGRESQL    => new PostgreSQLPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::SQLITE        => new SQLitePool($config, minConnections: $minConnections, maxConnections: 5),
-            Dialect::SQLSERVER     => new SQLServerPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::MONGODB       => new MongoDBPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::REDIS         => new RedisPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::ELASTICSEARCH => new ElasticsearchPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::CASSANDRA     => new CassandraPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::NEO4J         => new Neo4jPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::CLICKHOUSE    => new ClickHousePool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::COCKROACHDB   => new CockroachDBPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::YUGABYTEDB    => new YugabyteDBPool($config, minConnections: $minConnections, maxConnections: $maxConnections),
-            default                => throw new InvalidArgumentException("Unsupported driver: {$driver}"),
+        return match (Dialect::from(value: $driver)) {
+            Dialect::MYSQL         => new MySQLPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::POSTGRESQL    => new PostgreSQLPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::SQLITE        => new SQLitePool(config: $config, minConnections: $minConnections, maxConnections: 5),
+            Dialect::SQLSERVER     => new SQLServerPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::MONGODB       => new MongoDBPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::REDIS         => new RedisPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::ELASTICSEARCH => new ElasticsearchPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::CASSANDRA     => new CassandraPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::NEO4J         => new Neo4jPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::CLICKHOUSE    => new ClickHousePool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::COCKROACHDB   => new CockroachDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::YUGABYTEDB    => new YugabyteDBPool(minConnections: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            default                => throw new InvalidArgumentException(message: "Unsupported driver: {$driver}"),
         };
     }
 }
@@ -76,13 +76,13 @@ final class LazyConnectionPool extends BaseConnectionPool
             connectionTimeoutMs: 10000,
             idleTimeoutMs      : 600000,
         );
-        $this->factory = $factory ?? throw new InvalidArgumentException('Factory required');
+        $this->factory = $factory ?? throw new InvalidArgumentException(message: 'Factory required');
     }
 
     public function warmup(int $count = 1) : void
     {
         if (! $this->initialized) {
-            $this->release($this->createConnection());
+            $this->release(connection: $this->createConnection());
             $this->initialized = true;
         }
     }
@@ -121,12 +121,12 @@ final class MySQLPool extends BaseConnectionPool
 
             public function getCreatedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function getLastUsedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function executeCount() : int
@@ -188,12 +188,12 @@ final class MongoDBPool extends BaseConnectionPool
 
             public function getCreatedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function getLastUsedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function executeCount() : int
@@ -262,12 +262,12 @@ final class CassandraPool extends BaseConnectionPool
 
             public function getCreatedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function getLastUsedAt() : float
             {
-                return microtime(true);
+                return microtime(as_float: true);
             }
 
             public function executeCount() : int
@@ -307,12 +307,12 @@ final class CockroachDBPool extends PostgreSQLPool
 {
     public function __construct(array $config, int $minConnections = 5, int $maxConnections = 20)
     {
-        parent::__construct($config, $minConnections, $maxConnections);
+        parent::__construct(minConnections: $config, maxConnections: $minConnections, connectionTimeoutMs: $maxConnections);
     }
 
     public function withRetry(int $maxRetries = 3) : RetryablePool
     {
-        return new RetryablePool($this, maxRetries: $maxRetries);
+        return new RetryablePool(pool: $this, maxRetries: $maxRetries);
     }
 }
 
@@ -343,7 +343,7 @@ final class RetryablePool
                 if ($this->attempts >= $this->maxRetries) {
                     throw $e;
                 }
-                usleep(100000 * $this->attempts);
+                usleep(microseconds: 100000 * $this->attempts);
             }
         }
 

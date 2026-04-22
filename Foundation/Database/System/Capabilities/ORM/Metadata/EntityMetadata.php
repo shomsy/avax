@@ -39,9 +39,9 @@ final readonly class EntityMetadata
         $values = [];
 
         foreach ($this->fields as $field) {
-            $property = new ReflectionProperty($entity, $field->property);
-            $property->setAccessible(true);
-            $values[$field->column] = $property->getValue($entity);
+            $property = new ReflectionProperty(class: $entity, property: $field->property);
+            $property->setAccessible(accessible: true);
+            $values[$field->column] = $property->getValue(object: $entity);
         }
 
         return $values;

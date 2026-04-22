@@ -81,7 +81,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $oauthClientId        = $oauthClient->body['client']['clientId'];
         $updatedOAuthClient   = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'PUT',
-                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId),
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode(string: $oauthClientId),
                                                              body  : [
                                                                          'name'                        => 'Acme App Updated',
                                                                          'type'                        => 'confidential',
@@ -94,7 +94,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                                                          ));
         $rotatedOAuthSecret   = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'POST',
-                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId) . '/rotate-secret'
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode(string: $oauthClientId) . '/rotate-secret'
                                                          ));
         $listedOAuthClients   = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'GET',
@@ -102,7 +102,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                                                          ));
         $disabledOAuthClient  = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'DELETE',
-                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId)
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode(string: $oauthClientId)
                                                          ));
         $pendingOAuthClient   = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'POST',
@@ -122,7 +122,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $pendingOAuthClientId = $pendingOAuthClient->body['client']['clientId'];
         $approvedOAuthClient  = $surface->execute(input: new HttpEndpointInput(
                                                              method: 'POST',
-                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($pendingOAuthClientId) . '/approve',
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode(string: $pendingOAuthClientId) . '/approve',
                                                              body  : ['approvedBy' => 'approver']
                                                          ));
         $removedFormerOwner   = $surface->execute(input: new HttpEndpointInput(
@@ -148,16 +148,16 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
 
         $verified       = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'POST',
-                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/verify-domain',
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode(string: $connectionId) . '/verify-domain',
                                                        body  : ['verificationToken' => $verificationToken]
                                                    ));
         $metadataSynced = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'POST',
-                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/sync-metadata'
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode(string: $connectionId) . '/sync-metadata'
                                                    ));
         $health         = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'GET',
-                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/health'
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode(string: $connectionId) . '/health'
                                                    ));
         $directory      = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'POST',
@@ -170,12 +170,12 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $directoryId    = $directory->body['directory']['directoryId'];
         $outage         = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'POST',
-                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/outage',
+                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode(string: $directoryId) . '/outage',
                                                        body  : ['reason' => 'Maintenance']
                                                    ));
         $recovered      = $surface->execute(input: new HttpEndpointInput(
                                                        method: 'POST',
-                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/recover'
+                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode(string: $directoryId) . '/recover'
                                                    ));
 
         $change     = $surface->execute(input: new HttpEndpointInput(
@@ -198,12 +198,12 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                                                ));
         $approved   = $surface->execute(input: new HttpEndpointInput(
                                                    method: 'POST',
-                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/approve',
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode(string: $changeId) . '/approve',
                                                    body  : ['approvedBy' => 'approver']
                                                ));
         $applied    = $surface->execute(input: new HttpEndpointInput(
                                                    method: 'POST',
-                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/apply'
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode(string: $changeId) . '/apply'
                                                ));
         $summary    = $surface->execute(input: new HttpEndpointInput(
                                                    method: 'GET',
@@ -211,7 +211,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                                                ));
         $rolledBack = $surface->execute(input: new HttpEndpointInput(
                                                    method: 'POST',
-                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/rollback'
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode(string: $changeId) . '/rollback'
                                                ));
 
         $this->assertSame(expected: 201, actual: $tenant->statusCode);
@@ -250,7 +250,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'approved', actual: $approved->body['change']['status']);
         $this->assertSame(expected: $connectionId, actual: $applied->body['configuration']['federationConnectionId']);
         $this->assertSame(expected: $directoryId, actual: $summary->body['configuration']['scimDirectoryId']);
-        $this->assertSame(expected: 1, actual: count($summary->body['federationConnections']));
+        $this->assertSame(expected: 1, actual: count(value: $summary->body['federationConnections']));
         $this->assertNull(actual: $rolledBack->body['configuration']['federationConnectionId']);
     }
 
@@ -300,7 +300,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
 
         $response = $surface->execute(input: new HttpEndpointInput(
                                                  method: 'POST',
-                                                 path  : '/tenants/acme/security/changes/' . rawurlencode($change->body['change']['changeId']) . '/apply'
+                                                 path  : '/tenants/acme/security/changes/' . rawurlencode(string: $change->body['change']['changeId']) . '/apply'
                                              ));
 
         $this->assertSame(expected: 422, actual: $response->statusCode);
@@ -309,20 +309,20 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
 
     public function testTenantSecurityHttpSurfacePropagatesRequestObjectVerificationKey() : void
     {
-        $key = openssl_pkey_new([
+        $key = openssl_pkey_new(options: [
                                     'private_key_bits' => 2048,
                                     'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                 ]);
         self::assertNotFalse(condition: $key);
-        $details = openssl_pkey_get_details($key);
+        $details = openssl_pkey_get_details(key: $key);
         self::assertIsArray(actual: $details);
 
-        $rotatedKey = openssl_pkey_new([
+        $rotatedKey = openssl_pkey_new(options: [
                                            'private_key_bits' => 2048,
                                            'private_key_type' => OPENSSL_KEYTYPE_RSA,
                                        ]);
         self::assertNotFalse(condition: $rotatedKey);
-        $rotatedDetails = openssl_pkey_get_details($rotatedKey);
+        $rotatedDetails = openssl_pkey_get_details(key: $rotatedKey);
         self::assertIsArray(actual: $rotatedDetails);
 
         $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
@@ -351,7 +351,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
 
         $updated = $surface->execute(input: new HttpEndpointInput(
                                                 method: 'PUT',
-                                                path  : '/tenants/acme/oauth-clients/' . rawurlencode($created->body['client']['clientId']),
+                                                path  : '/tenants/acme/oauth-clients/' . rawurlencode(string: $created->body['client']['clientId']),
                                                 body  : [
                                                             'name'                            => 'Acme SPA',
                                                             'type'                            => 'public',

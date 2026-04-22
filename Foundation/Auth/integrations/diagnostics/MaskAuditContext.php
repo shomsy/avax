@@ -46,7 +46,7 @@ final readonly class MaskAuditContext
                 continue;
             }
 
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 $masked[$key] = $this->maskArray(value: $value);
                 continue;
             }
@@ -59,9 +59,9 @@ final readonly class MaskAuditContext
 
     private function isSensitiveKey(string $key) : bool
     {
-        $normalized = strtolower(trim($key));
+        $normalized = strtolower(string: trim(string: $key));
 
-        return array_any($this->sensitiveKeys, fn ($candidate) => $normalized === strtolower($candidate));
+        return array_any(array: $this->sensitiveKeys, callback: fn ($candidate) => $normalized === strtolower(string: $candidate));
     }
 
     /**
@@ -74,12 +74,12 @@ final readonly class MaskAuditContext
         $masked = [];
 
         foreach ($value as $itemKey => $itemValue) {
-            if (is_string($itemKey) && $this->isSensitiveKey(key: $itemKey)) {
+            if (is_string(value: $itemKey) && $this->isSensitiveKey(key: $itemKey)) {
                 $masked[$itemKey] = '[redacted]';
                 continue;
             }
 
-            if (is_array($itemValue)) {
+            if (is_array(value: $itemValue)) {
                 $masked[$itemKey] = $this->maskArray(value: $itemValue);
                 continue;
             }

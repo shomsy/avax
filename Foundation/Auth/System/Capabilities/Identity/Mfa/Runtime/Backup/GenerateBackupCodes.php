@@ -32,10 +32,10 @@ final readonly class GenerateBackupCodes
         $generatedAt = $this->clock->now();
 
         for ($index = 0; $index < $this->count; $index++) {
-            $plain        = strtoupper(bin2hex(random_bytes(4)) . '-' . bin2hex(random_bytes(4)));
+            $plain        = strtoupper(string: bin2hex(string: random_bytes(length: 4)) . '-' . bin2hex(string: random_bytes(length: 4)));
             $plainCodes[] = new BackupCode(value: $plain);
             $records[]    = new BackupCodeRecord(
-                backupCodeId: bin2hex(random_bytes(16)),
+                backupCodeId: bin2hex(string: random_bytes(length: 16)),
                 codeHash    : $this->passwordHasher->hash(password: $plain)
             );
         }

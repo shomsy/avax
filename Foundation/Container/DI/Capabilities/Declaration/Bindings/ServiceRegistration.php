@@ -94,14 +94,14 @@ final class ServiceRegistration
         $registration->poolScopeKind        = ScopeKind::normalize(
             kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
         );
-        $registration->group                = is_string($array['group'] ?? null) ? $array['group'] : null;
+        $registration->group                = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
         $registration->groupOrder           = (int) ($array['groupOrder'] ?? 0);
         $registration->tags                 = $array['tags'] ?? [];
         $registration->arguments            = $array['arguments'] ?? [];
         $metadata                           = $array['metadata'] ?? null;
         if ($metadata instanceof RegistrationMetadata) {
             $registration->metadata = $metadata;
-        } elseif (is_array($metadata)) {
+        } elseif (is_array(value: $metadata)) {
             $registration->metadata = RegistrationMetadata::fromArray(state: $metadata);
         }
 
@@ -173,14 +173,14 @@ final class ServiceRegistration
     private function stringList(mixed $values) : array
     {
         $items = array_map(
-                static fn (mixed $value) : string => is_string($value) ? trim($value) : '',
-                (array) $values
+                callback: static fn (mixed $value) : string => is_string(value: $value) ? trim(string: $value) : '',
+                array   : (array) $values
             )
-                |> (static fn ($x) => array_filter($x, static fn (string $value) : bool => $value !== ''))
+                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $value) : bool => $value !== ''))
                 |> array_values(...);
 
-        $items = array_values(array_unique($items));
-        sort($items);
+        $items = array_values(array: array_unique(array: $items));
+        sort(array: $items);
 
         return $items;
     }
@@ -421,7 +421,7 @@ final class ServiceRegistration
 
     public function group(string $group, int $order = 0) : self
     {
-        $normalized       = trim($group);
+        $normalized       = trim(string: $group);
         $this->group      = $normalized !== '' ? $normalized : null;
         $this->groupOrder = $order;
 

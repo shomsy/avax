@@ -36,10 +36,10 @@ final class RouteConstraintValidator
             }
 
             // Escape delimiters in pattern to prevent regex injection
-            $escapedPattern = preg_quote($pattern, '/');
+            $escapedPattern = preg_quote(str: $pattern, delimiter: '/');
             $fullPattern    = "/^{$escapedPattern}$/";
 
-            $matchResult = preg_match($fullPattern, (string) $value);
+            $matchResult = preg_match(pattern: $fullPattern, subject: (string) $value);
 
             if ($matchResult === false) {
                 throw new InvalidConstraintException(pattern: $pattern, reason: 'regex compilation failed');
@@ -66,11 +66,11 @@ final class RouteConstraintValidator
         $testPattern = "/{$pattern}/";
         $error       = null;
 
-        set_error_handler(static function ($errno, $errstr) use (&$error) {
+        set_error_handler(callback: static function ($errno, $errstr) use (&$error) {
             $error = $errstr;
         });
 
-        $result = preg_match($testPattern, '');
+        $result = preg_match(pattern: $testPattern, subject: '');
 
         restore_error_handler();
 

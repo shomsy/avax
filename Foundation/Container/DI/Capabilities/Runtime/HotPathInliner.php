@@ -56,7 +56,7 @@ final class HotPathInliner
     public function state(string|null $serviceId = null) : array
     {
         $attached = $this->compiled !== null;
-        $hasEntry = $attached && is_string($serviceId) && $serviceId !== '' && $this->compiled->has(serviceId: $serviceId);
+        $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiled->has(serviceId: $serviceId);
 
         return [
             'attached'   => $attached,

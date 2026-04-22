@@ -26,7 +26,7 @@ final class DisposeInstances
 
     public function dispose(mixed $instance, bool $disposable = false) : void
     {
-        if (! is_object($instance)) {
+        if (! is_object(value: $instance)) {
             return;
         }
 
@@ -40,7 +40,7 @@ final class DisposeInstances
             return;
         }
 
-        if (method_exists($instance, 'dispose')) {
+        if (method_exists(object_or_class: $instance, method: 'dispose')) {
             $instance->dispose();
         }
     }

@@ -48,6 +48,6 @@ final readonly class OAuthTokenGrant
 
     public function scopeString() : string
     {
-        return implode(' ', $this->scopes);
+        return implode(separator: ' ', array: $this->scopes);
     }
 }

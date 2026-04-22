@@ -24,7 +24,7 @@ final class PdoSessionRegistryTest extends TestCase
 
         $pdo->expects($this->once())
             ->method(constraint: 'prepare')
-            ->with($this->callback(callback: static fn (string $query) : bool => str_contains($query, 'INSERT INTO auth_sessions')))
+            ->with($this->callback(callback: static fn (string $query) : bool => str_contains(haystack: $query, needle: 'INSERT INTO auth_sessions')))
             ->willReturn(value: $statement);
 
         $statement->expects($this->once())
@@ -143,7 +143,7 @@ final class PdoSessionRegistryTest extends TestCase
 
         $pruneStatement->expects($this->once())
             ->method(constraint: 'execute')
-            ->with($this->callback(callback: static fn (array $params) : bool => isset($params['now']) && is_string($params['now'])))
+            ->with($this->callback(callback: static fn (array $params) : bool => isset($params['now']) && is_string(value: $params['now'])))
             ->willReturn(value: true);
         $pruneStatement->expects($this->once())
             ->method(constraint: 'rowCount')

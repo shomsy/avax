@@ -151,7 +151,7 @@ final readonly class ArtifactMetadata
      */
     public function includes(array $serviceIds) : bool
     {
-        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+        foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             if (! $this->hasEntry(serviceId: $serviceId)) {
                 return false;
             }
@@ -170,7 +170,7 @@ final readonly class ArtifactMetadata
      */
     public function entryIds() : array
     {
-        return array_keys($this->entries);
+        return array_keys(array: $this->entries);
     }
 
     /**
@@ -184,7 +184,7 @@ final readonly class ArtifactMetadata
             $plans[$serviceId] = LifetimePlan::fromArray(serviceId: $serviceId, state: $plan);
         }
 
-        ksort($plans);
+        ksort(array: $plans);
 
         return $plans;
     }
@@ -240,21 +240,21 @@ final readonly class ArtifactMetadata
      */
     private static function stringMap(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string($key)) {
+            if (! is_string(value: $key)) {
                 continue;
             }
 
             $items[$key] = (string) $value;
         }
 
-        ksort($items);
+        ksort(array: $items);
 
         return $items;
     }
@@ -266,14 +266,14 @@ final readonly class ArtifactMetadata
      */
     private static function services(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $services = [];
 
         foreach ($state as $serviceId => $service) {
-            if (! is_string($serviceId) || ! is_array($service)) {
+            if (! is_string(value: $serviceId) || ! is_array(value: $service)) {
                 continue;
             }
 
@@ -283,7 +283,7 @@ final readonly class ArtifactMetadata
             ];
         }
 
-        ksort($services);
+        ksort(array: $services);
 
         return $services;
     }
@@ -295,28 +295,28 @@ final readonly class ArtifactMetadata
      */
     private static function tags(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $tags = [];
 
         foreach ($state as $tag => $serviceIds) {
-            if (! is_string($tag) || ! is_array($serviceIds)) {
+            if (! is_string(value: $tag) || ! is_array(value: $serviceIds)) {
                 continue;
             }
 
             $values = array_map(
-                    static fn (mixed $value) : string => (string) $value,
-                    $serviceIds
+                    callback: static fn (mixed $value) : string => (string) $value,
+                    array   : $serviceIds
                 )
                     |> array_unique(...)
                     |> array_values(...);
-            sort($values);
+            sort(array: $values);
             $tags[$tag] = $values;
         }
 
-        ksort($tags);
+        ksort(array: $tags);
 
         return $tags;
     }
@@ -328,24 +328,24 @@ final readonly class ArtifactMetadata
      */
     private static function lifetimes(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $plans = [];
 
         foreach ($state as $serviceId => $plan) {
-            if (! is_string($serviceId)) {
+            if (! is_string(value: $serviceId)) {
                 continue;
             }
 
             $plans[$serviceId] = LifetimePlan::fromArray(
                 serviceId: $serviceId,
-                state    : is_array($plan) ? $plan : []
+                state    : is_array(value: $plan) ? $plan : []
             )->toArray();
         }
 
-        ksort($plans);
+        ksort(array: $plans);
 
         return $plans;
     }
@@ -401,21 +401,21 @@ final readonly class ArtifactMetadata
      */
     private static function boolMap(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string($key)) {
+            if (! is_string(value: $key)) {
                 continue;
             }
 
             $items[$key] = (bool) $value;
         }
 
-        ksort($items);
+        ksort(array: $items);
 
         return $items;
     }
@@ -427,21 +427,21 @@ final readonly class ArtifactMetadata
      */
     private static function intMap(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string($key)) {
+            if (! is_string(value: $key)) {
                 continue;
             }
 
             $items[$key] = (int) $value;
         }
 
-        ksort($items);
+        ksort(array: $items);
 
         return $items;
     }
@@ -453,22 +453,22 @@ final readonly class ArtifactMetadata
      */
     private static function mapOfMaps(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string($key) || ! is_array($value)) {
+            if (! is_string(value: $key) || ! is_array(value: $value)) {
                 continue;
             }
 
-            ksort($value);
+            ksort(array: $value);
             $items[$key] = $value;
         }
 
-        ksort($items);
+        ksort(array: $items);
 
         return $items;
     }
@@ -480,21 +480,21 @@ final readonly class ArtifactMetadata
      */
     private static function map(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string($key)) {
+            if (! is_string(value: $key)) {
                 continue;
             }
 
             $items[$key] = $value;
         }
 
-        ksort($items);
+        ksort(array: $items);
 
         return $items;
     }
@@ -506,17 +506,17 @@ final readonly class ArtifactMetadata
      */
     private static function stringList(mixed $state) : array
     {
-        if (! is_array($state)) {
+        if (! is_array(value: $state)) {
             return [];
         }
 
-        $items = array_values(array_map(
-                                  static fn (mixed $value) : string => (string) $value,
-                                  $state
+        $items = array_values(array: array_map(
+                                  callback: static fn (mixed $value) : string => (string) $value,
+                                  array   : $state
                               ));
 
-        sort($items);
+        sort(array: $items);
 
-        return array_values(array_unique($items));
+        return array_values(array: array_unique(array: $items));
     }
 }

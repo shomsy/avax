@@ -50,13 +50,13 @@ final class RoutePathValidator
     private static function validateParameters(string $path) : void
     {
         // Find all {param} patterns
-        preg_match_all('/\{([^}]+)\}/', $path, $matches);
+        preg_match_all(pattern: '/\{([^}]+)\}/', subject: $path, matches: $matches);
 
         foreach ($matches[1] as $param) {
             // Remove optional (?) and wildcard (*) markers for validation
-            $cleanParam = preg_replace('/[?*]$/', '', $param);
+            $cleanParam = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $param);
 
-            if (! preg_match(self::VALID_PARAM_PATTERN, $cleanParam)) {
+            if (! preg_match(pattern: self::VALID_PARAM_PATTERN, subject: $cleanParam)) {
                 throw new InvalidArgumentException(
                     message: "Invalid parameter name '{$cleanParam}' in path '{$path}'. " .
                              'Parameter names must match: ' . self::VALID_PARAM_PATTERN
@@ -64,14 +64,14 @@ final class RoutePathValidator
             }
 
             // Check for nested modifiers
-            if (substr_count($param, '?') > 1 || substr_count($param, '*') > 1) {
+            if (substr_count(haystack: $param, needle: '?') > 1 || substr_count(haystack: $param, needle: '*') > 1) {
                 throw new InvalidArgumentException(
                     message: "Invalid parameter '{$param}' in path '{$path}': cannot have multiple ? or * modifiers"
                 );
             }
 
             // Check for invalid modifier combinations
-            if (str_contains($param, '?') && str_contains($param, '*')) {
+            if (str_contains(haystack: $param, needle: '?') && str_contains(haystack: $param, needle: '*')) {
                 throw new InvalidArgumentException(
                     message: "Invalid parameter '{$param}' in path '{$path}': cannot combine ? and * modifiers"
                 );
@@ -85,9 +85,9 @@ final class RoutePathValidator
     private static function validateWildcards(string $path) : void
     {
         // Find all wildcard parameters
-        preg_match_all('/\{([^}]*\*[^{}]*)\}/', $path, $matches);
+        preg_match_all(pattern: '/\{([^}]*\*[^{}]*)\}/', subject: $path, matches: $matches);
 
-        if (count($matches[0]) > 1) {
+        if (count(value: $matches[0]) > 1) {
             throw new InvalidArgumentException(
                 message: "Multiple wildcard parameters found in path '{$path}'. Only one wildcard (*) allowed per route."
             );
@@ -97,11 +97,11 @@ final class RoutePathValidator
             $wildcardParam = $matches[0][0];
 
             // Find position of wildcard in path
-            $wildcardPos       = strpos($path, $wildcardParam);
-            $pathAfterWildcard = substr($path, $wildcardPos + strlen($wildcardParam));
+            $wildcardPos       = strpos(haystack: $path, needle: $wildcardParam);
+            $pathAfterWildcard = substr(string: $path, offset: $wildcardPos + strlen(string: $wildcardParam));
 
             // Check if there's anything after the wildcard parameter
-            if (! empty(trim($pathAfterWildcard, '/'))) {
+            if (! empty(trim(string: $pathAfterWildcard, characters: '/'))) {
                 throw new InvalidArgumentException(
                     message: "Wildcard parameter '{$wildcardParam}' must be at the end of the path in '{$path}'"
                 );
@@ -115,19 +115,19 @@ final class RoutePathValidator
     private static function validateOptionalParameters(string $path) : void
     {
         // Find all optional parameters
-        preg_match_all('/\{([^}]*\?[^{}]*)\}/', $path, $matches);
+        preg_match_all(pattern: '/\{([^}]*\?[^{}]*)\}/', subject: $path, matches: $matches);
 
         foreach ($matches[0] as $optionalParam) {
             // Check if optional parameter is preceded by wildcard
-            $paramPos = strpos($path, $optionalParam);
+            $paramPos = strpos(haystack: $path, needle: $optionalParam);
 
             // Look backwards for wildcard in same path segment
-            $segmentStart = strrpos(substr($path, 0, $paramPos), '/');
+            $segmentStart = strrpos(haystack: substr(string: $path, offset: 0, length: $paramPos), needle: '/');
             $segmentStart = $segmentStart === false ? 0 : $segmentStart;
 
-            $segmentBefore = substr($path, $segmentStart, $paramPos - $segmentStart);
+            $segmentBefore = substr(string: $path, offset: $segmentStart, length: $paramPos - $segmentStart);
 
-            if (str_contains($segmentBefore, '*')) {
+            if (str_contains(haystack: $segmentBefore, needle: '*')) {
                 throw new InvalidArgumentException(
                     message: "Optional parameter '{$optionalParam}' cannot appear after wildcard in path '{$path}'"
                 );
@@ -140,7 +140,7 @@ final class RoutePathValidator
      */
     public static function hasParameters(string $segment) : bool
     {
-        return str_contains($segment, '{') && str_contains($segment, '}');
+        return str_contains(haystack: $segment, needle: '{') && str_contains(haystack: $segment, needle: '}');
     }
 
     /**
@@ -150,11 +150,11 @@ final class RoutePathValidator
      */
     public static function extractParameterNames(string $path) : array
     {
-        preg_match_all('/\{([^}]+)\}/', $path, $matches);
+        preg_match_all(pattern: '/\{([^}]+)\}/', subject: $path, matches: $matches);
 
-        return array_map(static function ($param) {
-            return preg_replace('/[?*]$/', '', $param);
-        }, $matches[1]);
+        return array_map(callback: static function ($param) {
+            return preg_replace(pattern: '/[?*]$/', replacement: '', subject: $param);
+        },               array   : $matches[1]);
     }
 
     /**
@@ -162,7 +162,7 @@ final class RoutePathValidator
      */
     public static function hasWildcard(string $path) : bool
     {
-        return str_contains($path, '*');
+        return str_contains(haystack: $path, needle: '*');
     }
 
     /**
@@ -170,6 +170,6 @@ final class RoutePathValidator
      */
     public static function hasOptional(string $path) : bool
     {
-        return str_contains($path, '?');
+        return str_contains(haystack: $path, needle: '?');
     }
 }

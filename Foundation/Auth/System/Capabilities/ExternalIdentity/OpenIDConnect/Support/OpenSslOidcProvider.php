@@ -41,7 +41,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $idTokenLifetime                 ??= 600;
         $this->subjectIdentifierStrategy = $subjectIdentifierStrategy;
         $this->idTokenLifetime           = $idTokenLifetime;
-        if (trim($this->issuer) === '') {
+        if (trim(string: $this->issuer) === '') {
             throw new InvalidArgumentException(message: 'OIDC issuer cannot be empty.');
         }
 
@@ -49,23 +49,23 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             throw new InvalidArgumentException(message: 'Only RS256 is currently supported for OIDC ID tokens.');
         }
 
-        if ($this->subjectIdentifierStrategy === SubjectIdentifierStrategy::PAIRWISE && trim((string) $this->pairwiseSalt) === '') {
+        if ($this->subjectIdentifierStrategy === SubjectIdentifierStrategy::PAIRWISE && trim(string: (string) $this->pairwiseSalt) === '') {
             throw new InvalidArgumentException(message: 'Pairwise OIDC subjects require a configured salt.');
         }
 
-        $privateKey = openssl_pkey_get_private($privateKeyPem);
+        $privateKey = openssl_pkey_get_private(private_key: $privateKeyPem);
 
         if (! $privateKey instanceof OpenSSLAsymmetricKey) {
             throw new InvalidArgumentException(message: 'OIDC private key could not be loaded.');
         }
 
-        $details = openssl_pkey_get_details($privateKey);
+        $details = openssl_pkey_get_details(key: $privateKey);
 
-        if (! is_array($details) || ! is_string($details['key'] ?? null)) {
+        if (! is_array(value: $details) || ! is_string(value: $details['key'] ?? null)) {
             throw new InvalidArgumentException(message: 'OIDC public key details could not be derived.');
         }
 
-        $publicKey = openssl_pkey_get_public($details['key']);
+        $publicKey = openssl_pkey_get_public(public_key: $details['key']);
 
         if (! $publicKey instanceof OpenSSLAsymmetricKey) {
             throw new InvalidArgumentException(message: 'OIDC public key could not be loaded.');
@@ -100,20 +100,20 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             'preferred_username' => $user->getUsername(),
         ];
 
-        if (in_array('email', $scopes, true)) {
+        if (in_array(needle: 'email', haystack: $scopes, strict: true)) {
             $claims['email'] = $user->getEmail()->value;
         }
 
-        if (in_array('profile', $scopes, true)) {
+        if (in_array(needle: 'profile', haystack: $scopes, strict: true)) {
             $claims['name'] = $user->getUsername();
         }
 
-        if ($nonce !== null && trim($nonce) !== '') {
-            $claims['nonce'] = trim($nonce);
+        if ($nonce !== null && trim(string: $nonce) !== '') {
+            $claims['nonce'] = trim(string: $nonce);
         }
 
-        if ($sessionId !== null && trim($sessionId) !== '') {
-            $claims['sid'] = trim($sessionId);
+        if ($sessionId !== null && trim(string: $sessionId) !== '') {
+            $claims['sid'] = trim(string: $sessionId);
         }
 
         if ($phishingResistant) {
@@ -158,7 +158,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $claimSegment  = $this->base64UrlEncode(value: $this->encodeJson(payload: $claims));
         $signature     = '';
 
-        if (! openssl_sign($headerSegment . '.' . $claimSegment, $signature, $this->privateKey, OPENSSL_ALGO_SHA256)) {
+        if (! openssl_sign(data: $headerSegment . '.' . $claimSegment, signature: $signature, private_key: $this->privateKey, algorithm: OPENSSL_ALGO_SHA256)) {
             throw new RuntimeException(message: 'OIDC ID token signing failed.');
         }
 
@@ -167,7 +167,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     private function base64UrlEncode(string $value) : string
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+        return rtrim(string: strtr(base64_encode(string: $value), '+/', '-_'), characters: '=');
     }
 
     /**
@@ -176,7 +176,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     private function encodeJson(array $payload) : string
     {
         try {
-            return json_encode($payload, JSON_THROW_ON_ERROR);
+            return json_encode(value: $payload, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new InvalidArgumentException(message: 'OIDC payload could not be encoded.', previous: $exception);
         }
@@ -209,9 +209,9 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     public function readJsonWebKeySet() : OidcJsonWebKeySet
     {
-        $details = openssl_pkey_get_details($this->publicKey);
+        $details = openssl_pkey_get_details(key: $this->publicKey);
 
-        if (! is_array($details) || ! isset($details['rsa']['n'], $details['rsa']['e'])) {
+        if (! is_array(value: $details) || ! isset($details['rsa']['n'], $details['rsa']['e'])) {
             throw new RuntimeException(message: 'OIDC RSA key details are not available.');
         }
 
@@ -231,7 +231,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     {
         $claims = $this->resolveJwt(jwt: $idToken);
 
-        if ($claims === null || ! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
+        if ($claims === null || ! is_string(value: $claims['aud'] ?? null) || trim(string: $claims['aud']) === '') {
             return null;
         }
 
@@ -240,9 +240,9 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
     {
-        $segments = explode('.', $jwt);
+        $segments = explode(separator: '.', string: $jwt);
 
-        if (count($segments) !== 3) {
+        if (count(value: $segments) !== 3) {
             return null;
         }
 
@@ -256,15 +256,15 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         try {
-            $header = json_decode($headerJson, true, 512, JSON_THROW_ON_ERROR);
-            $claims = json_decode($claimsJson, true, 512, JSON_THROW_ON_ERROR);
+            $header = json_decode(json: $headerJson, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+            $claims = json_decode(json: $claimsJson, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return null;
         }
 
         if (
-            ! is_array($header)
-            || ! is_array($claims)
+            ! is_array(value: $header)
+            || ! is_array(value: $claims)
             || ($header['alg'] ?? null) !== $this->algorithm
             || ($header['kid'] ?? null) !== $this->keyId
         ) {
@@ -272,10 +272,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         $verified = openssl_verify(
-            $headerSegment . '.' . $claimSegment,
-            $signature,
-            $this->publicKey,
-            OPENSSL_ALGO_SHA256
+            data      : $headerSegment . '.' . $claimSegment,
+            signature : $signature,
+            public_key: $this->publicKey,
+            algorithm : OPENSSL_ALGO_SHA256
         );
 
         if ($verified !== 1) {
@@ -285,7 +285,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $issuer    = $claims['iss'] ?? null;
         $expiresAt = $claims['exp'] ?? null;
 
-        if (! is_string($issuer) || $issuer !== $this->issuer || ! is_int($expiresAt) || $expiresAt <= time()) {
+        if (! is_string(value: $issuer) || $issuer !== $this->issuer || ! is_int(value: $expiresAt) || $expiresAt <= time()) {
             return null;
         }
 
@@ -294,13 +294,13 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     private function base64UrlDecode(string $value) : string|null
     {
-        $padding = strlen($value) % 4;
+        $padding = strlen(string: $value) % 4;
 
         if ($padding > 0) {
-            $value .= str_repeat('=', 4 - $padding);
+            $value .= str_repeat(string: '=', times: 4 - $padding);
         }
 
-        $decoded = base64_decode(strtr($value, '-_', '+/'), true);
+        $decoded = base64_decode(string: strtr($value, '-_', '+/'), strict: true);
 
         return $decoded === false ? null : $decoded;
     }

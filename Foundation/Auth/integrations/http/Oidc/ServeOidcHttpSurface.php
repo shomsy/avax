@@ -36,9 +36,9 @@ final readonly class ServeOidcHttpSurface
     {
         $metadata     = $this->auth->readOidcProviderMetadata();
         $path         = $this->normalizePath(path: $input->path);
-        $method       = strtoupper(trim($input->method));
-        $jwksPath     = $this->normalizePath(path: (string) parse_url($metadata->jsonWebKeySetUri, PHP_URL_PATH));
-        $userInfoPath = $this->normalizePath(path: (string) parse_url($metadata->userInfoEndpoint, PHP_URL_PATH));
+        $method       = strtoupper(string: trim(string: $input->method));
+        $jwksPath     = $this->normalizePath(path: (string) parse_url(url: $metadata->jsonWebKeySetUri, component: PHP_URL_PATH));
+        $userInfoPath = $this->normalizePath(path: (string) parse_url(url: $metadata->userInfoEndpoint, component: PHP_URL_PATH));
 
         if ($method === 'GET' && $path === '/.well-known/openid-configuration') {
             return new JsonHttpResponse(
@@ -78,7 +78,7 @@ final readonly class ServeOidcHttpSurface
                 statusCode: 200,
                 body      : [
                                 'keys' => array_map(
-                                    static fn ($key) : array => [
+                                    callback: static fn ($key) : array => [
                                         'kty' => $key->keyType,
                                         'kid' => $key->keyId,
                                         'alg' => $key->algorithm,
@@ -86,7 +86,7 @@ final readonly class ServeOidcHttpSurface
                                         'n'   => $key->modulus,
                                         'e'   => $key->exponent,
                                     ],
-                                    $jsonWebKeySet->keys
+                                    array   : $jsonWebKeySet->keys
                                 ),
                             ],
                 headers   : [
@@ -96,7 +96,7 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
-        if (in_array($method, ['GET', 'POST'], true) && $path === $userInfoPath) {
+        if (in_array(needle: $method, haystack: ['GET', 'POST'], strict: true) && $path === $userInfoPath) {
             $accessToken = $this->readBearerToken->execute(headers: $input->headers, server: $input->server);
 
             if ($accessToken === null) {
@@ -169,8 +169,8 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
-        if ($method === 'PUT' && preg_match('~^/oidc/register/([^/]+)$~', $path, $matches) === 1) {
-            $clientId = urldecode($matches[1]);
+        if ($method === 'PUT' && preg_match(pattern: '~^/oidc/register/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+            $clientId = urldecode(string: $matches[1]);
             $existing = $this->findOAuthClient(clientId: $clientId);
 
             if ($existing === null) {
@@ -205,8 +205,8 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
-        if ($method === 'DELETE' && preg_match('~^/oidc/register/([^/]+)$~', $path, $matches) === 1) {
-            $client = $this->auth->disableOAuthClient(clientId: urldecode($matches[1]));
+        if ($method === 'DELETE' && preg_match(pattern: '~^/oidc/register/([^/]+)$~', subject: $path, matches: $matches) === 1) {
+            $client = $this->auth->disableOAuthClient(clientId: urldecode(string: $matches[1]));
 
             return new JsonHttpResponse(
                 statusCode: 200,
@@ -218,7 +218,7 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
-        if (in_array($method, ['GET', 'POST'], true) && $path === '/oidc/logout') {
+        if (in_array(needle: $method, haystack: ['GET', 'POST'], strict: true) && $path === '/oidc/logout') {
             $result = $this->auth->oidcLogout(data: new OidcLogoutData(
                                                         sessionId            : $this->readString(input: $input, keys: ['session_id', 'sid']),
                                                         idTokenHint          : $this->readString(input: $input, keys: ['id_token_hint', 'idTokenHint']),
@@ -265,13 +265,13 @@ final readonly class ServeOidcHttpSurface
 
     private function normalizePath(string $path) : string
     {
-        $trimmed = trim($path);
+        $trimmed = trim(string: $path);
 
         if ($trimmed === '' || $trimmed === '/') {
             return '/';
         }
 
-        return '/' . trim($trimmed, '/');
+        return '/' . trim(string: $trimmed, characters: '/');
     }
 
     private function error(int $statusCode, #[SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
@@ -294,11 +294,11 @@ final readonly class ServeOidcHttpSurface
         foreach ($keys as $key) {
             $value = $this->readArrayValue(values: $input->query, key: $key) ?? $this->readArrayValue(values: $input->body, key: $key) ?? $this->readArrayValue(values: $input->routeParameters, key: $key);
 
-            if ($value === null || trim($value) === '') {
+            if ($value === null || trim(string: $value) === '') {
                 continue;
             }
 
-            return trim($value);
+            return trim(string: $value);
         }
 
         return null;
@@ -310,19 +310,19 @@ final readonly class ServeOidcHttpSurface
     private function readArrayValue(array $values, string $key) : string|null
     {
         foreach ($values as $candidateKey => $value) {
-            if (strcasecmp($candidateKey, $key) !== 0) {
+            if (strcasecmp(string1: $candidateKey, string2: $key) !== 0) {
                 continue;
             }
 
-            if (is_array($value)) {
-                $value = reset($value);
+            if (is_array(value: $value)) {
+                $value = reset(array: $value);
             }
 
-            if (is_string($value)) {
+            if (is_string(value: $value)) {
                 return $value;
             }
 
-            if (is_int($value) || is_float($value) || is_bool($value)) {
+            if (is_int(value: $value) || is_float(value: $value) || is_bool(value: $value)) {
                 return (string) $value;
             }
 
@@ -345,9 +345,9 @@ final readonly class ServeOidcHttpSurface
                 continue;
             }
 
-            $parts = preg_split(pattern: '/\s+/', subject: trim($value), flags: PREG_SPLIT_NO_EMPTY);
+            $parts = preg_split(pattern: '/\s+/', subject: trim(string: $value), flags: PREG_SPLIT_NO_EMPTY);
 
-            return $parts === false ? [] : array_values(array_unique($parts));
+            return $parts === false ? [] : array_values(array: array_unique(array: $parts));
         }
 
         return [];
@@ -371,11 +371,11 @@ final readonly class ServeOidcHttpSurface
     {
         $value = $server[$name] ?? null;
 
-        if (is_string($value)) {
+        if (is_string(value: $value)) {
             return $value;
         }
 
-        if (is_int($value) || is_float($value) || is_bool($value)) {
+        if (is_int(value: $value) || is_float(value: $value) || is_bool(value: $value)) {
             return (string) $value;
         }
 
@@ -406,20 +406,20 @@ final readonly class ServeOidcHttpSurface
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? null;
 
-            if (! is_array($value)) {
+            if (! is_array(value: $value)) {
                 continue;
             }
 
             $resolved = [];
 
             foreach ($value as $candidate) {
-                if (! is_scalar($candidate)) {
+                if (! is_scalar(value: $candidate)) {
                     continue;
                 }
 
-                $normalized = trim((string) $candidate);
+                $normalized = trim(string: (string) $candidate);
 
-                if ($normalized === '' || in_array($normalized, $resolved, true)) {
+                if ($normalized === '' || in_array(needle: $normalized, haystack: $resolved, strict: true)) {
                     continue;
                 }
 
@@ -444,7 +444,7 @@ final readonly class ServeOidcHttpSurface
         foreach ($this->readStringList(input: $input, keys: $keys) as $value) {
             $grantType = OAuthGrantType::tryFrom(value: $value);
 
-            if ($grantType === null || in_array($grantType, $resolved, true)) {
+            if ($grantType === null || in_array(needle: $grantType, haystack: $resolved, strict: true)) {
                 continue;
             }
 
@@ -462,12 +462,12 @@ final readonly class ServeOidcHttpSurface
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? null;
 
-            if (is_bool($value)) {
+            if (is_bool(value: $value)) {
                 return $value;
             }
 
-            if (is_string($value)) {
-                return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+            if (is_string(value: $value)) {
+                return in_array(needle: strtolower(string: trim(string: $value)), haystack: ['1', 'true', 'yes', 'on'], strict: true);
             }
         }
 
@@ -482,7 +482,7 @@ final readonly class ServeOidcHttpSurface
         foreach ($keys as $key) {
             $value = $input->body[$key] ?? $input->query[$key] ?? $input->routeParameters[$key] ?? null;
 
-            if (is_string($value)) {
+            if (is_string(value: $value)) {
                 return $value;
             }
         }
@@ -499,8 +499,8 @@ final readonly class ServeOidcHttpSurface
             'client_id'                           => $client->clientId,
             'client_name'                         => $client->name,
             'redirect_uris'                       => $client->redirectUris,
-            'grant_types'                         => array_map(static fn (OAuthGrantType $grantType) : string => $grantType->value, $client->allowedGrantTypes),
-            'scope'                               => implode(' ', $client->allowedScopes),
+            'grant_types'                         => array_map(callback: static fn (OAuthGrantType $grantType) : string => $grantType->value, array: $client->allowedGrantTypes),
+            'scope'                               => implode(separator: ' ', array: $client->allowedScopes),
             'token_endpoint_auth_method'          => $client->tokenEndpointAuthMethod->value,
             'request_object_signature_required'   => $client->requestObjectSignatureRequired,
             'request_object_verification_key_pem' => $client->requestObjectVerificationKeyPem,

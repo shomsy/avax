@@ -237,18 +237,18 @@ final readonly class CreateContainerConfig
      */
     private static function normalizePolicyProfiles(mixed $profiles) : array
     {
-        if (! is_array($profiles)) {
+        if (! is_array(value: $profiles)) {
             return [];
         }
 
         $normalized = [];
 
         foreach ($profiles as $environment => $profile) {
-            if (! is_string($environment) || ! is_string($profile)) {
+            if (! is_string(value: $environment) || ! is_string(value: $profile)) {
                 continue;
             }
 
-            $environment = trim($environment);
+            $environment = trim(string: $environment);
             if ($environment === '') {
                 continue;
             }
@@ -256,7 +256,7 @@ final readonly class CreateContainerConfig
             $normalized[$environment] = self::normalizePolicyProfile(profile: $profile);
         }
 
-        ksort($normalized);
+        ksort(array: $normalized);
 
         return $normalized;
     }
@@ -318,7 +318,7 @@ final readonly class CreateContainerConfig
             policyFailMode   : isset($overrides['policyFailMode'])
                                    ? self::normalizePolicyFailMode(mode: (string) $overrides['policyFailMode'])
                                    : $this->policyFailMode,
-            policyProfiles   : array_key_exists('policyProfiles', $overrides)
+            policyProfiles   : array_key_exists(key: 'policyProfiles', array: $overrides)
                                    ? self::normalizePolicyProfiles(profiles: $overrides['policyProfiles'])
                                    : $this->policyProfiles,
             sliceBoundaryMode: isset($overrides['sliceBoundaryMode'])
@@ -400,7 +400,7 @@ final readonly class CreateContainerConfig
 
     public function configHash() : string
     {
-        return sha1(serialize([
+        return sha1(string: serialize(value: [
                                   'cacheVersion'      => $this->cacheVersion,
                                   'debug'             => $this->debug,
                                   'strict'            => $this->strict,
@@ -424,13 +424,13 @@ final readonly class CreateContainerConfig
             ?? $this->settings['APP_ENV']
             ?? null;
 
-        if (is_string($configured) && $configured !== '') {
+        if (is_string(value: $configured) && $configured !== '') {
             return $configured;
         }
 
-        $environment = getenv('APP_ENV');
+        $environment = getenv(name: 'APP_ENV');
 
-        return is_string($environment) ? $environment : '';
+        return is_string(value: $environment) ? $environment : '';
     }
 
     public function effectivePolicyProfile() : string
@@ -443,7 +443,7 @@ final readonly class CreateContainerConfig
 
     public function settingsFingerprint() : string
     {
-        return sha1(serialize($this->settings));
+        return sha1(string: serialize(value: $this->settings));
     }
 
     public function benchmarkBuildMarker() : string
@@ -453,25 +453,25 @@ final readonly class CreateContainerConfig
             ?? $this->settings['BENCHMARK_BUILD_MARKER']
             ?? null;
 
-        if (is_string($configured) && $configured !== '') {
+        if (is_string(value: $configured) && $configured !== '') {
             return $configured;
         }
 
-        $environment = getenv('BENCHMARK_BUILD_MARKER');
+        $environment = getenv(name: 'BENCHMARK_BUILD_MARKER');
 
-        return is_string($environment) ? $environment : '';
+        return is_string(value: $environment) ? $environment : '';
     }
 
     public function usesDetailedDiagnostics() : bool
     {
-        if (in_array($this->diagnosticsMode, [self::DIAGNOSTICS_MODE_DETAILED, self::DIAGNOSTICS_MODE_CI], true)) {
+        if (in_array(needle: $this->diagnosticsMode, haystack: [self::DIAGNOSTICS_MODE_DETAILED, self::DIAGNOSTICS_MODE_CI], strict: true)) {
             return true;
         }
 
         return $this->debug || in_array(
-                $this->compileMode,
-                [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
-                true
+                needle  : $this->compileMode,
+                haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
+                strict  : true
             );
     }
 
@@ -483,18 +483,18 @@ final readonly class CreateContainerConfig
     public function validatesBeforeCompile() : bool
     {
         return $this->strict || in_array(
-                $this->compileMode,
-                [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
-                true
+                needle  : $this->compileMode,
+                haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
+                strict  : true
             );
     }
 
     public function failsClosedOnCompiledCorruption() : bool
     {
         return $this->strict || in_array(
-                $this->compileMode,
-                [self::COMPILE_MODE_CI, self::COMPILE_MODE_PRODUCTION, self::COMPILE_MODE_WARMUP],
-                true
+                needle  : $this->compileMode,
+                haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_PRODUCTION, self::COMPILE_MODE_WARMUP],
+                strict  : true
             );
     }
 
@@ -525,6 +525,6 @@ final readonly class CreateContainerConfig
 
     public function supportsAsyncTarget() : bool
     {
-        return in_array($this->asyncTarget, [self::ASYNC_TARGET_FPM, self::ASYNC_TARGET_WORKER], true);
+        return in_array(needle: $this->asyncTarget, haystack: [self::ASYNC_TARGET_FPM, self::ASYNC_TARGET_WORKER], strict: true);
     }
 }

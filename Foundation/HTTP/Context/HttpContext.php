@@ -39,7 +39,7 @@ final readonly class HttpContext implements HttpContextInterface
         $port   = $this->port();
 
         $authority = $host;
-        if ($port !== null && ! $this->isStandardPort(scheme: $scheme, port: $port) && ! str_contains($host, ':')) {
+        if ($port !== null && ! $this->isStandardPort(scheme: $scheme, port: $port) && ! str_contains(haystack: $host, needle: ':')) {
             $authority = $host . ':' . $port;
         }
 
@@ -115,8 +115,8 @@ final readonly class HttpContext implements HttpContextInterface
         }
 
         if (! empty($server['HTTP_X_FORWARDED_FOR'])) {
-            $parts = explode(',', (string) $server['HTTP_X_FORWARDED_FOR']);
-            $first = trim((string) ($parts[0] ?? ''));
+            $parts = explode(separator: ',', string: (string) $server['HTTP_X_FORWARDED_FOR']);
+            $first = trim(string: (string) ($parts[0] ?? ''));
 
             return $first !== '' ? $first : null;
         }

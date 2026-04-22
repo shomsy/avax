@@ -19,7 +19,7 @@ class KernelTest extends TestCase
 {
     public function test_database_configuration_builds_public_surface() : void
     {
-        $database = Database::configuration()->usingConfig([
+        $database = Database::configuration()->usingConfig(config: [
                                                                'default'     => 'sqlite',
                                                                'connections' => [
                                                                    'sqlite' => [

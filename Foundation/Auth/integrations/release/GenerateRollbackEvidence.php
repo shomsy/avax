@@ -28,12 +28,12 @@ final readonly class GenerateRollbackEvidence
 
         return [
             'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
+            'repository_root'     => realpath(path: $repositoryRoot) !== false ? realpath(path: $repositoryRoot) : $repositoryRoot,
             'current_commit'      => $this->readGitOutput->execute(repositoryRoot: $repositoryRoot, arguments: ['rev-parse', 'HEAD']),
             'rollback_target'     => $resolvedTarget,
             'rollback_ready'      => $resolvedTarget !== null,
             'rollback_command'    => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
-            'generated_at'        => gmdate(DATE_ATOM),
+            'generated_at'        => gmdate(format: DATE_ATOM),
             'validation_commands' => $validationCommands,
             'artifacts'           => $this->artifactEvidence(artifacts: $artifacts),
         ];
@@ -49,17 +49,17 @@ final readonly class GenerateRollbackEvidence
 
     private function detectPackageName(string $repositoryRoot) : string
     {
-        $composerJsonPath = rtrim($repositoryRoot, '/') . '/composer.json';
+        $composerJsonPath = rtrim(string: $repositoryRoot, characters: '/') . '/composer.json';
 
-        if (! is_file($composerJsonPath)) {
+        if (! is_file(filename: $composerJsonPath)) {
             return 'unknown';
         }
 
-        $contents = file_get_contents($composerJsonPath);
-        $decoded  = is_string($contents) ? json_decode($contents, true) : null;
-        $name     = is_array($decoded) ? ($decoded['name'] ?? null) : null;
+        $contents = file_get_contents(filename: $composerJsonPath);
+        $decoded  = is_string(value: $contents) ? json_decode(json: $contents, associative: true) : null;
+        $name     = is_array(value: $decoded) ? ($decoded['name'] ?? null) : null;
 
-        return is_string($name) ? $name : 'unknown';
+        return is_string(value: $name) ? $name : 'unknown';
     }
 
     /**
@@ -72,12 +72,12 @@ final readonly class GenerateRollbackEvidence
         $evidence = [];
 
         foreach ($artifacts as $artifact) {
-            if (trim($artifact) === '' || ! is_file($artifact)) {
+            if (trim(string: $artifact) === '' || ! is_file(filename: $artifact)) {
                 continue;
             }
 
-            $sha256 = hash_file('sha256', $artifact);
-            $bytes  = filesize($artifact);
+            $sha256 = hash_file(algo: 'sha256', filename: $artifact);
+            $bytes  = filesize(filename: $artifact);
 
             if ($sha256 === false || $bytes === false) {
                 continue;

@@ -17,18 +17,18 @@ $dirs = [
 
 function rrmdir($dir)
 {
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
+    if (is_dir(filename: $dir)) {
+        $objects = scandir(directory: $dir);
         foreach ($objects as $object) {
             if ($object != "." && $object != "..") {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && ! is_link($dir . DIRECTORY_SEPARATOR . $object)) {
+                if (is_dir(filename: $dir . DIRECTORY_SEPARATOR . $object) && ! is_link(filename: $dir . DIRECTORY_SEPARATOR . $object)) {
                     rrmdir(dir: $dir . DIRECTORY_SEPARATOR . $object);
                 } else {
-                    unlink($dir . DIRECTORY_SEPARATOR . $object);
+                    unlink(filename: $dir . DIRECTORY_SEPARATOR . $object);
                 }
             }
         }
-        rmdir($dir);
+        rmdir(directory: $dir);
 
         return true;
     }
@@ -42,6 +42,6 @@ foreach ($dirs as $dir) {
         echo "Deleted Legacy: {$dir}\n";
     }
 }
-unlink($base . DIRECTORY_SEPARATOR . 'Auth.txt');
-unlink($base . DIRECTORY_SEPARATOR . 'merge-files.sh');
-unlink(__FILE__);
+unlink(filename: $base . DIRECTORY_SEPARATOR . 'Auth.txt');
+unlink(filename: $base . DIRECTORY_SEPARATOR . 'merge-files.sh');
+unlink(filename: __FILE__);

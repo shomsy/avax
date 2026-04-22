@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace {
-    if (! function_exists('appInstance')) {
+    if (! function_exists(function: 'appInstance')) {
         function appInstance($instance = null)
         {
             static $container = null;
@@ -22,7 +22,7 @@ namespace {
         }
     }
 
-    if (! function_exists('app')) {
+    if (! function_exists(function: 'app')) {
         function app(string|null $abstract = null) : mixed
         {
             $container = appInstance();

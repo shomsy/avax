@@ -54,8 +54,8 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
 
     public function get() : PooledConnection
     {
-        while ( $conn = array_shift($this->connections) ) {
-            if ($this->validateConnection($conn)) {
+        while ( $conn = array_shift(array: $this->connections) ) {
+            if ($this->validateConnection(connection: $conn)) {
                 return $conn;
             }
             $this->createdCount--;
@@ -83,8 +83,8 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
     {
         return new PoolStats(
             totalConnections : $this->createdCount,
-            activeConnections: $this->createdCount - count($this->connections),
-            idleConnections  : count($this->connections),
+            activeConnections: $this->createdCount - count(value: $this->connections),
+            idleConnections  : count(value: $this->connections),
             waitingRequests  : 0,
             averageWaitTimeMs: 0.0,
         );
@@ -93,19 +93,19 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
     public function warmup(int $count) : void
     {
         for ($i = 0; $i < min($count, $this->minConnections); $i++) {
-            $this->release($this->createConnection());
+            $this->release(connection: $this->createConnection());
         }
     }
 
     public function release(PooledConnection $connection) : void
     {
-        if (! $this->validateConnection($connection)) {
+        if (! $this->validateConnection(connection: $connection)) {
             $this->createdCount--;
 
             return;
         }
 
-        if (count($this->connections) >= $this->maxConnections / 2) {
+        if (count(value: $this->connections) >= $this->maxConnections / 2) {
             $this->createdCount--;
 
             return;
@@ -136,16 +136,16 @@ final class PoolException extends RuntimeException
 {
     public static function poolExhausted() : self
     {
-        return new self('Connection pool exhausted');
+        return new self(message: 'Connection pool exhausted');
     }
 
     public static function invalidConnection() : self
     {
-        return new self('Invalid connection');
+        return new self(message: 'Invalid connection');
     }
 
     public static function timeout(int $timeoutMs) : self
     {
-        return new self("Connection timeout after {$timeoutMs}ms");
+        return new self(message: "Connection timeout after {$timeoutMs}ms");
     }
 }

@@ -349,7 +349,7 @@ final class AuthBuilder
 
     public function withAuditCorrelationId(string $correlationId) : self
     {
-        $this->auditCorrelationId = trim($correlationId) !== '' ? trim($correlationId) : null;
+        $this->auditCorrelationId = trim(string: $correlationId) !== '' ? trim(string: $correlationId) : null;
 
         return $this;
     }

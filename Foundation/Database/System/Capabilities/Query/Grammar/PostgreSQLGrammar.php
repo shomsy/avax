@@ -105,9 +105,9 @@ final class PostgreSQLGrammar extends BaseGrammar
         $sql = $function . '(';
 
         if ($partitionBy !== '') {
-            $partitionColumns = implode(', ', array_map(
-                fn ($col) => $this->wrap($col),
-                explode(',', $partitionBy)
+            $partitionColumns = implode(separator: ', ', array: array_map(
+                callback: fn ($col) => $this->wrap(value: $col),
+                array   : explode(separator: ',', string: $partitionBy)
             ));
             $sql              .= 'PARTITION BY ' . $partitionColumns;
         }

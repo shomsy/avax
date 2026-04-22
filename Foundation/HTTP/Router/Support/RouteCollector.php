@@ -146,7 +146,7 @@ final class RouteCollector
             ];
 
             // Extract variables for the DSL execution
-            extract($dslFunctions);
+            extract(array: $dslFunctions);
 
             // Execute the DSL code in isolated scope
             eval('?>' . $code);
@@ -237,6 +237,6 @@ final class RouteCollector
      */
     public function count() : int
     {
-        return count($this->routes);
+        return count(value: $this->routes);
     }
 }

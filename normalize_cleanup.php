@@ -21,18 +21,18 @@ $files = [
 
 function rrmdir($dir)
 {
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
+    if (is_dir(filename: $dir)) {
+        $objects = scandir(directory: $dir);
         foreach ($objects as $object) {
             if ($object != "." && $object != "..") {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && ! is_link($dir . DIRECTORY_SEPARATOR . $object)) {
+                if (is_dir(filename: $dir . DIRECTORY_SEPARATOR . $object) && ! is_link(filename: $dir . DIRECTORY_SEPARATOR . $object)) {
                     rrmdir(dir: $dir . DIRECTORY_SEPARATOR . $object);
                 } else {
-                    unlink($dir . DIRECTORY_SEPARATOR . $object);
+                    unlink(filename: $dir . DIRECTORY_SEPARATOR . $object);
                 }
             }
         }
-        rmdir($dir);
+        rmdir(directory: $dir);
 
         return true;
     }
@@ -49,9 +49,9 @@ foreach ($dirs as $dir) {
 
 foreach ($files as $file) {
     $path = $base . DIRECTORY_SEPARATOR . $file;
-    if (is_file($path)) {
-        unlink($path);
+    if (is_file(filename: $path)) {
+        unlink(filename: $path);
         echo "Deleted File: {$file}\n";
     }
 }
-unlink(__FILE__);
+unlink(filename: __FILE__);

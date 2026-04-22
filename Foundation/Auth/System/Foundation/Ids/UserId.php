@@ -13,10 +13,10 @@ final readonly class UserId implements Stringable
 
     public function __construct(string|int $value)
     {
-        $normalized = trim((string) $value);
+        $normalized = trim(string: (string) $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('UserId cannot be empty.');
+            throw new InvalidArgumentException(message: 'UserId cannot be empty.');
         }
 
         $this->value = $normalized;

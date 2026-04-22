@@ -36,10 +36,10 @@ final readonly class ReadWorkloadIdentities
         }
 
         usort(
-            $profiles,
-            static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right) : int => strcmp(
-                $left->clientId,
-                $right->clientId
+            array   : $profiles,
+            callback: static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right) : int => strcmp(
+                string1: $left->clientId,
+                string2: $right->clientId
             )
         );
 

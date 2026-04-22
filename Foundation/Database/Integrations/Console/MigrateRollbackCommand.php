@@ -26,7 +26,7 @@ final readonly class MigrateRollbackCommand
                 echo "  ✓ {$name}\n";
             }
 
-            echo "\033[32mRolled back " . count($rolledBack) . " migration(s).\033[0m\n";
+            echo "\033[32mRolled back " . count(value: $rolledBack) . " migration(s).\033[0m\n";
 
             return 0;
         } catch (Throwable $throwable) {

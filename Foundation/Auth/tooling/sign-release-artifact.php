@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(path: __DIR__) . '/vendor/autoload.php';
 
 $artifactPath   = $argv[1] ?? null;
 $privateKeyPath = $argv[2] ?? null;
 
-if (! is_string($artifactPath) || $artifactPath === '' || ! is_string($privateKeyPath) || $privateKeyPath === '') {
-    fwrite(STDERR, "Usage: php tooling/sign-release-artifact.php <artifact> <private-key.pem>\n");
+if (! is_string(value: $artifactPath) || $artifactPath === '' || ! is_string(value: $privateKeyPath) || $privateKeyPath === '') {
+    fwrite(stream: STDERR, data: "Usage: php tooling/sign-release-artifact.php <artifact> <private-key.pem>\n");
     exit(1);
 }
 
-$privateKey = file_get_contents($privateKeyPath);
+$privateKey = file_get_contents(filename: $privateKeyPath);
 
 if ($privateKey === false) {
-    fwrite(STDERR, "Could not read private key: {$privateKeyPath}\n");
+    fwrite(stream: STDERR, data: "Could not read private key: {$privateKeyPath}\n");
     exit(1);
 }
 

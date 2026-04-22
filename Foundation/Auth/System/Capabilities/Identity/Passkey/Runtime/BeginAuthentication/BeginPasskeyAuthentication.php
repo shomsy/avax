@@ -38,8 +38,8 @@ final readonly class BeginPasskeyAuthentication
      */
     public function execute(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {
-        $challengeId = 'pkauth_' . bin2hex(random_bytes(12));
-        $challenge   = bin2hex(random_bytes(32));
+        $challengeId = 'pkauth_' . bin2hex(string: random_bytes(length: 12));
+        $challenge   = bin2hex(string: random_bytes(length: 32));
         $userId      = null;
         $allowIds    = [];
 
@@ -49,8 +49,8 @@ final readonly class BeginPasskeyAuthentication
             if ($user !== null) {
                 $userId   = $user->getId()->value;
                 $allowIds = array_map(
-                    static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
-                    $this->credentialStore->forUser(userId: $userId)
+                    callback: static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
+                    array   : $this->credentialStore->forUser(userId: $userId)
                 );
             }
         }

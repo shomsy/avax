@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 final class DeferredRegularService
 {
@@ -36,4 +36,4 @@ assertSame(expected: 'deferred', actual: $deferred->id(), message: 'Deferred ser
 assertTrue(condition: $regularDescription['compiled'], message: 'Non-deferred warmable services should be compiled.');
 assertTrue(condition: ! $deferredDescription['compiled'], message: 'Deferred services should stay out of the default compile path.');
 
-echo basename(__FILE__) . " ok\n";
+echo basename(path: __FILE__) . " ok\n";

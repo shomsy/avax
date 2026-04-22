@@ -13,10 +13,10 @@ final readonly class TokenId implements Stringable
 
     public function __construct(string $value)
     {
-        $normalized = trim($value);
+        $normalized = trim(string: $value);
 
         if ($normalized === '') {
-            throw new InvalidArgumentException('TokenId cannot be empty.');
+            throw new InvalidArgumentException(message: 'TokenId cannot be empty.');
         }
 
         $this->value = $normalized;

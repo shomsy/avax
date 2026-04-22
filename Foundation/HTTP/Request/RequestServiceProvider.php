@@ -67,11 +67,11 @@ final readonly class RequestServiceProvider implements ServiceProviderInterface
             
             if ($this->app->has(id: 'config')) {
                 $config = $this->app->get(id: 'config');
-                $trustedProxies = method_exists($config, 'get') ? $config->get('request.trusted_proxies', []) : [];
+                $trustedProxies = method_exists(object_or_class: $config, method: 'get') ? $config->get('request.trusted_proxies', []) : [];
             }
 
             return new TrustedIpv4ProxyPolicy(
-                trustedProxies: is_array($trustedProxies) ? $trustedProxies : [],
+                trustedProxies: is_array(value: $trustedProxies) ? $trustedProxies : [],
             );
         });
 

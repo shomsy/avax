@@ -42,7 +42,7 @@ final readonly class UpdateClient
 
         $updated = new OAuthClient(
             clientId                       : $existing->clientId,
-            name                           : trim($data->name),
+            name                           : trim(string: $data->name),
             type                           : $data->type,
             redirectUris                   : $data->redirectUris,
             allowedScopes                  : $data->allowedScopes,

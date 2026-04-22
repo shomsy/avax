@@ -32,8 +32,8 @@ final class UnitOfWork
     {
         $metadata        = $this->metadata->for(entityClass: $entity::class);
         $identifier      = $metadata->identifierField();
-        $objectId        = spl_object_id($entity);
-        $identifierValue = $identifier === null ? null : $this->readProperty($entity, $identifier->property);
+        $objectId        = spl_object_id(object: $entity);
+        $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
 
         unset($this->removed[$objectId]);
 
@@ -48,10 +48,10 @@ final class UnitOfWork
 
     private function readProperty(object $entity, string $property) : mixed
     {
-        $reflection = new ReflectionProperty($entity, $property);
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionProperty(class: $entity, property: $property);
+        $reflection->setAccessible(accessible: true);
 
-        return $reflection->getValue($entity);
+        return $reflection->getValue(object: $entity);
     }
 
     /**
@@ -69,7 +69,7 @@ final class UnitOfWork
                 throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
             }
 
-            $identifierValue = $this->readProperty($entity, $identifier->property);
+            $identifierValue = $this->readProperty(entity: $entity, property: $identifier->property);
             if ($identifierValue !== null) {
                 $this->identityMap->put(entityClass: $entity::class, id: $identifierValue, entity: $entity);
             }
@@ -83,7 +83,7 @@ final class UnitOfWork
         foreach ($this->removed as $objectId => $entity) {
             $metadata        = $this->metadata->for(entityClass: $entity::class);
             $identifier      = $metadata->identifierField();
-            $identifierValue = $identifier === null ? null : $this->readProperty($entity, $identifier->property);
+            $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
 
             $this->persister->delete(entity: $entity, connectionName: $connectionName);
             unset($this->removed[$objectId]);
@@ -96,7 +96,7 @@ final class UnitOfWork
 
     public function remove(object $entity) : void
     {
-        $objectId = spl_object_id($entity);
+        $objectId = spl_object_id(object: $entity);
         unset($this->new[$objectId], $this->dirty[$objectId]);
         $this->removed[$objectId] = $entity;
     }

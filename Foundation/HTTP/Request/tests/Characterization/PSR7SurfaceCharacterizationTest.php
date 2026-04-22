@@ -187,7 +187,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
 
     public function test_getBody_returns_stream(): void
     {
-        $stream  = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream  = new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
         $request = $this->make()->withBody(body: $stream);
 
         $this->assertSame(expected: $stream, actual: $request->getBody());
@@ -195,8 +195,8 @@ class PSR7SurfaceCharacterizationTest extends TestCase
 
     public function test_withBody_replaces_stream(): void
     {
-        $stream1 = new Stream(stream: fopen('php://temp', 'r+'));
-        $stream2 = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream1 = new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
+        $stream2 = new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
 
         $r1 = $this->make()->withBody(body: $stream1);
         $r2 = $r1->withBody(body: $stream2);
@@ -384,7 +384,7 @@ class PSR7SurfaceCharacterizationTest extends TestCase
     public function test_all_with_methods_return_new_instances(): void
     {
         $request = $this->make();
-        $stream  = new Stream(stream: fopen('php://temp', 'r+'));
+        $stream  = new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
 
         $this->assertNotSame(expected: $request, actual: $request->withMethod(method: 'POST'));
         $this->assertNotSame(expected: $request, actual: $request->withUri(uri: UriBuilder::createFromString(uri: 'https://x.com')));

@@ -34,7 +34,7 @@ class AuthServiceProviderTest extends TestCase
      */
     public function testAuthServiceProviderResolvesAuthFacade() : void
     {
-        if (! class_exists(AppFactory::class)) {
+        if (! class_exists(class: AppFactory::class)) {
             self::markTestSkipped(message: 'Avax container is not installed in this environment.');
         }
 
@@ -79,7 +79,7 @@ class AuthServiceProviderTest extends TestCase
      */
     public function testAuthServiceProviderFailsWithoutIdentityBackend() : void
     {
-        if (! class_exists(AppFactory::class)) {
+        if (! class_exists(class: AppFactory::class)) {
             self::markTestSkipped(message: 'Avax container is not installed in this environment.');
         }
 
@@ -118,7 +118,7 @@ class AuthServiceProviderTest extends TestCase
      */
     public function testAuthServiceProviderUsesBoundClockAndAuditLog() : void
     {
-        if (! class_exists(AppFactory::class)) {
+        if (! class_exists(class: AppFactory::class)) {
             self::markTestSkipped(message: 'Avax container is not installed in this environment.');
         }
 

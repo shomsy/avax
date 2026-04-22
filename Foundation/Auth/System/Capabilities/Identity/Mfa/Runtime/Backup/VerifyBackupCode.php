@@ -46,7 +46,7 @@ final readonly class VerifyBackupCode
             $codes         = $method->backupCodes;
             $codes[$index] = $backupCode->markUsed(moment: $this->clock->now());
             $this->mfaStore->saveMethod(
-                record: $method->withBackupCodes(backupCodes: array_values($codes))
+                record: $method->withBackupCodes(backupCodes: array_values(array: $codes))
             );
             $this->auditLog->record(event: new AuditEvent(
                                                name      : 'auth.mfa.backup_code.used',

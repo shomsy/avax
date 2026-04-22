@@ -86,14 +86,14 @@ final class ResolveDependencies
         ResolveRequest|null $request
     ) : mixed
     {
-        if (array_key_exists($parameter['name'], $overrides)) {
+        if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
         }
 
         if (
             $request !== null
             && $parameter['serviceId'] === null
-            && array_key_exists($parameter['inputName'], $request->context)
+            && array_key_exists(key: $parameter['inputName'], array: $request->context)
         ) {
             return $request->context[$parameter['inputName']];
         }
@@ -106,7 +106,7 @@ final class ResolveDependencies
         }
 
         if ($parameter['hasDefault']) {
-            return unserialize(base64_decode($parameter['default']), ['allowed_classes' => false]);
+            return unserialize(data: base64_decode(string: $parameter['default']), options: ['allowed_classes' => false]);
         }
 
         if ($parameter['allowsNull']) {
@@ -160,7 +160,7 @@ final class ResolveDependencies
         $attributes = $parameter->getAttributes(name: Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
-            if (is_string($inject->abstract) && $inject->abstract !== '') {
+            if (is_string(value: $inject->abstract) && $inject->abstract !== '') {
                 return $inject->abstract;
             }
         }
@@ -193,8 +193,8 @@ final class ResolveDependencies
         }
 
         $input = $attributes[0]->newInstance();
-        if (is_string($input->name) && trim($input->name) !== '') {
-            return trim($input->name);
+        if (is_string(value: $input->name) && trim(string: $input->name) !== '') {
+            return trim(string: $input->name);
         }
 
         return $parameter->getName();

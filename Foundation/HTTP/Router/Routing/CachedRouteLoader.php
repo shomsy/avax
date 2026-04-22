@@ -58,18 +58,18 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
 
         try {
             /** @var array<array<string, mixed>> $routesData */
-            $routesData = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
+            $routesData = json_decode(json: $cacheContent, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Invalid cache JSON format', code: 0, previous: $exception);
         }
 
-        if (! is_array($routesData)) {
+        if (! is_array(value: $routesData)) {
             throw new RuntimeException(message: 'Cache file does not contain valid route array');
         }
 
         // Populate collection with cached routes
         foreach ($routesData as $routeData) {
-            if (! is_array($routeData)) {
+            if (! is_array(value: $routeData)) {
                 throw new RuntimeException(message: 'Invalid route data in cache');
             }
 
@@ -99,7 +99,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         // Verify cache integrity before considering it available
         if (! $this->manifest->validateSignatureFile(cachePath: $this->cachePath)) {
             // Log cache corruption but don't throw - allow fallback to disk loading
-            error_log("Route cache signature validation failed for {$this->cachePath} - cache may be corrupted");
+            error_log(message: "Route cache signature validation failed for {$this->cachePath} - cache may be corrupted");
 
             return false;
         }

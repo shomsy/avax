@@ -22,8 +22,8 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
      */
     public function issue(UserId $userId, DateTimeImmutable $expiresAt) : EmailVerificationChallenge
     {
-        $token                                 = bin2hex(random_bytes(32));
-        $this->records[hash('sha256', $token)] = [
+        $token                                 = bin2hex(string: random_bytes(length: 32));
+        $this->records[hash(algo: 'sha256', data: $token)] = [
             'user_id'    => $userId->value,
             'expires_at' => $expiresAt->getTimestamp(),
         ];
@@ -37,7 +37,7 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
 
     public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
     {
-        $key    = hash('sha256', $token);
+        $key    = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;
         unset($this->records[$key]);
 

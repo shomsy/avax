@@ -192,10 +192,10 @@ final class ServiceResolver
             serviceId   : $resolved,
             registration: $registration
         );
-        $blueprintClass    = is_string($registration?->concrete) && class_exists($registration->concrete)
+        $blueprintClass    = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
             ? $registration->concrete
-            : (class_exists($resolved) ? $resolved : null);
-        $blueprint         = is_string($blueprintClass)
+            : (class_exists(class: $resolved) ? $resolved : null);
+        $blueprint         = is_string(value: $blueprintClass)
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
         $compiledArtifact  = $this->compiledRuntime->report(serviceIds: [$resolved]);
@@ -216,7 +216,7 @@ final class ServiceResolver
             'resolvedId'         => $resolved,
             'registered'         => $registration !== null,
             'diagnosticsMode'    => $this->diagnosticsMode,
-            'concrete'           => is_object($concrete)
+            'concrete'           => is_object(value: $concrete)
                 ? $concrete::class
                 : $concrete,
             'lifetime'           => $lifetimePlan->name,
@@ -231,9 +231,9 @@ final class ServiceResolver
             'ownership'          => $ownership->toArray(),
             'conditions'         => $conditions,
             'overrides'          => $overrides,
-            'aliases'            => array_keys(array_filter(
-                                                   $this->registrations->allAliases(),
-                                                   static fn (string $target) : bool => $target === $resolved
+            'aliases'            => array_keys(array: array_filter(
+                                                   array   : $this->registrations->allAliases(),
+                                                   callback: static fn (string $target) : bool => $target === $resolved
                                                )),
             'aliasChain'         => $aliasChain,
             'decorationChain'    => $decorationChain,
@@ -371,7 +371,7 @@ final class ServiceResolver
                 ? $this->resolveCompiledRequest(request: $request)
                 : $this->resolveDynamicRequest(request: $request);
 
-            if (is_object($resolved)) {
+            if (is_object(value: $resolved)) {
                 $this->storeResolved(
                     abstract: $request->serviceId,
                     instance: $resolved,
@@ -426,7 +426,7 @@ final class ServiceResolver
             return $registration;
         }
 
-        if (! class_exists($request->serviceId)) {
+        if (! class_exists(class: $request->serviceId)) {
             return null;
         }
 
@@ -456,9 +456,9 @@ final class ServiceResolver
                 throw new ContainerException(
                     message: "Service [{$request->serviceId}] from slice [{$metadata->ownerSlice}] is inactive for the current composition. "
                              . 'Dependency path [' . $request->getPath() . ']. '
-                             . 'Environment [' . $conditions['environment'] . '], flags [' . implode(', ', $conditions['flags']) . '], '
+                             . 'Environment [' . $conditions['environment'] . '], flags [' . implode(separator: ', ', array: $conditions['flags']) . '], '
                              . 'tenant [' . $conditions['tenant'] . '], region [' . $conditions['region'] . '], mode [' . $conditions['mode'] . ']. '
-                             . 'Why: ' . implode('; ', $conditions['reasons']) . '. '
+                             . 'Why: ' . implode(separator: '; ', array: $conditions['reasons']) . '. '
                              . 'Likely fix: activate a matching profile, flag set, tenant, region, or mode, or request a compatible implementation.'
                 );
             }
@@ -476,7 +476,7 @@ final class ServiceResolver
         }
 
         $consumerId = $request->parent?->serviceId ?? $request->consumer;
-        if (is_string($consumerId) && $consumerId !== '') {
+        if (is_string(value: $consumerId) && $consumerId !== '') {
             $this->assertRestrictedRuntimeDependency(
                 consumerId: $consumerId,
                 request   : $request
@@ -568,23 +568,23 @@ final class ServiceResolver
         $reasons     = [];
 
         if (! $metadata->supportsEnvironment(environment: $environment)) {
-            $reasons[] = 'environment [' . $environment . '] is not in [' . implode(', ', $metadata->profiles) . ']';
+            $reasons[] = 'environment [' . $environment . '] is not in [' . implode(separator: ', ', array: $metadata->profiles) . ']';
         }
 
         if (! $metadata->supportsFlags(activeFlags: $flags)) {
-            $reasons[] = 'active flags [' . implode(', ', $flags) . '] do not satisfy required flags [' . implode(', ', $metadata->flags) . ']';
+            $reasons[] = 'active flags [' . implode(separator: ', ', array: $flags) . '] do not satisfy required flags [' . implode(separator: ', ', array: $metadata->flags) . ']';
         }
 
         if (! $metadata->supportsTenant(tenant: $tenant)) {
-            $reasons[] = 'tenant [' . $tenant . '] is not in [' . implode(', ', $metadata->tenants) . ']';
+            $reasons[] = 'tenant [' . $tenant . '] is not in [' . implode(separator: ', ', array: $metadata->tenants) . ']';
         }
 
         if (! $metadata->supportsRegion(region: $region)) {
-            $reasons[] = 'region [' . $region . '] is not in [' . implode(', ', $metadata->regions) . ']';
+            $reasons[] = 'region [' . $region . '] is not in [' . implode(separator: ', ', array: $metadata->regions) . ']';
         }
 
         if (! $metadata->supportsMode(mode: $mode)) {
-            $reasons[] = 'mode [' . $mode . '] is not in [' . implode(', ', $metadata->modes) . ']';
+            $reasons[] = 'mode [' . $mode . '] is not in [' . implode(separator: ', ', array: $metadata->modes) . ']';
         }
 
         return [
@@ -616,10 +616,10 @@ final class ServiceResolver
             ?? $this->settings()->get(key: 'APP_ENV')
             ?? null;
 
-        $environment = is_string($configured) && $configured !== ''
+        $environment = is_string(value: $configured) && $configured !== ''
             ? $configured
-            : getenv('APP_ENV');
-        $environment = is_string($environment) ? $environment : '';
+            : getenv(name: 'APP_ENV');
+        $environment = is_string(value: $environment) ? $environment : '';
 
         $mode = $this->settings()->get(key: 'composition.mode')
             ?? $this->settings()->get(key: 'app_mode')
@@ -642,24 +642,24 @@ final class ServiceResolver
             ?? [];
 
         $flags = [];
-        if (is_array($configuredFlags)) {
+        if (is_array(value: $configuredFlags)) {
             $flags = array_map(
-                    static fn (mixed $flag) : string => is_string($flag) ? trim($flag) : '',
-                    $configuredFlags
+                    callback: static fn (mixed $flag) : string => is_string(value: $flag) ? trim(string: $flag) : '',
+                    array   : $configuredFlags
                 )
-                    |> (static fn ($x) => array_filter($x, static fn (string $flag) : bool => $flag !== ''))
+                    |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $flag) : bool => $flag !== ''))
                     |> array_values(...);
 
-            $flags = array_values(array_unique($flags));
-            sort($flags);
+            $flags = array_values(array: array_unique(array: $flags));
+            sort(array: $flags);
         }
 
         return $this->compositionState = [
             'environment' => $environment,
             'flags'       => $flags,
-            'tenant'      => is_string($tenant) ? trim($tenant) : '',
-            'region'      => is_string($region) ? trim($region) : '',
-            'mode'        => is_string($mode) ? trim($mode) : '',
+            'tenant'      => is_string(value: $tenant) ? trim(string: $tenant) : '',
+            'region'      => is_string(value: $region) ? trim(string: $region) : '',
+            'mode'        => is_string(value: $mode) ? trim(string: $mode) : '',
         ];
     }
 
@@ -669,7 +669,7 @@ final class ServiceResolver
     public function settings() : ContainerSettings
     {
         $settings = $this->registrations->get(abstract: ContainerSettings::class);
-        if ($settings !== null && is_object($settings->concrete) && $settings->concrete instanceof ContainerSettings) {
+        if ($settings !== null && is_object(value: $settings->concrete) && $settings->concrete instanceof ContainerSettings) {
             return $settings->concrete;
         }
 
@@ -714,7 +714,7 @@ final class ServiceResolver
 
     private function isRestrictedDependency(string $serviceId) : bool
     {
-        return in_array($serviceId, [
+        return in_array(needle: $serviceId, haystack: [
             PsrContainerInterface::class,
             ContainerInterface::class,
             Container::class,
@@ -723,7 +723,7 @@ final class ServiceResolver
             ServiceRegistry::class,
             CreateContainerConfig::class,
             ContainerSettings::class,
-        ],              true);
+        ],              strict: true);
     }
 
     private function consumerMayUseRestrictedDependency(string $consumerId) : bool
@@ -736,7 +736,7 @@ final class ServiceResolver
                 || $metadata->category === RegistrationCategory::CONFIGURATION;
         }
 
-        if (class_exists($consumerId) && is_subclass_of($consumerId, ServiceProviderInterface::class)) {
+        if (class_exists(class: $consumerId) && is_subclass_of(object_or_class: $consumerId, class: ServiceProviderInterface::class)) {
             return true;
         }
 
@@ -791,7 +791,7 @@ final class ServiceResolver
             return true;
         }
 
-        if (! class_exists($id)) {
+        if (! class_exists(class: $id)) {
             return false;
         }
 
@@ -951,7 +951,7 @@ final class ServiceResolver
      */
     private function evaluateCandidate(mixed $candidate, ResolveRequest $request, ServiceRegistration|null $registration) : mixed
     {
-        if (is_object($candidate) && ! ($candidate instanceof Closure)) {
+        if (is_object(value: $candidate) && ! ($candidate instanceof Closure)) {
             return $candidate;
         }
 
@@ -962,7 +962,7 @@ final class ServiceResolver
             );
         }
 
-        if (is_string($candidate)) {
+        if (is_string(value: $candidate)) {
             if ($candidate !== $request->serviceId && $this->registrations->has(abstract: $candidate)) {
                 return $this->resolveRequest(request: $request->child(serviceId: $candidate));
             }
@@ -1087,7 +1087,7 @@ final class ServiceResolver
         $checkedOut = false;
 
         foreach ($snapshot['frames'] as $frame) {
-            if (in_array($serviceId, $frame['pooledServices'] ?? [], true)) {
+            if (in_array(needle: $serviceId, haystack: $frame['pooledServices'] ?? [], strict: true)) {
                 $checkedOut = true;
                 break;
             }
@@ -1097,15 +1097,15 @@ final class ServiceResolver
             'cached'           => $this->scopes->has(abstract: $serviceId),
             'lazy'             => isset($this->lazyServices[$serviceId]),
             'deferred'         => $this->deferredProviders->isDeferred(serviceId: $serviceId),
-            'scopeDepth'       => count($snapshot['scoped']),
+            'scopeDepth'       => count(value: $snapshot['scoped']),
             'pooled'           => [
                 'checkedOut' => $checkedOut,
-                'available'  => count($snapshot['pooledAvailable'][$serviceId] ?? []),
+                'available'  => count(value: $snapshot['pooledAvailable'][$serviceId] ?? []),
                 'stats'      => $snapshot['pooledStats'],
             ],
-            'activeScopeKinds' => array_values(array_map(
-                                                   static fn (array $frame) : string => $frame['kind'],
-                                                   $snapshot['frames']
+            'activeScopeKinds' => array_values(array: array_map(
+                                                   callback: static fn (array $frame) : string => $frame['kind'],
+                                                   array   : $snapshot['frames']
                                                )),
         ];
     }
@@ -1118,7 +1118,7 @@ final class ServiceResolver
     private function decorationDetailsFor(string $serviceId, array $chain) : array
     {
         return array_map(
-            function (string $descriptor) use ($serviceId) : array {
+            callback: function (string $descriptor) use ($serviceId) : array {
                 $metadata   = $this->registrations->ownership(abstract: $descriptor)
                     ?? RegistrationMetadata::for(unitId: $descriptor);
                 $registered = $this->registrations->has(abstract: $descriptor);
@@ -1139,7 +1139,7 @@ final class ServiceResolver
                         : null,
                 ];
             },
-            $chain
+            array   : $chain
         );
     }
 
@@ -1152,11 +1152,11 @@ final class ServiceResolver
     {
         $graph = [];
         $queue = $serviceIds !== []
-            ? array_values(array_unique($serviceIds))
-            : array_keys($this->registrations->all());
+            ? array_values(array: array_unique(array: $serviceIds))
+            : array_keys(array: $this->registrations->all());
 
         while ( $queue !== [] ) {
-            $serviceId = $this->registrations->resolveAlias(abstract: array_shift($queue));
+            $serviceId = $this->registrations->resolveAlias(abstract: array_shift(array: $queue));
             if ($serviceId === '' || isset($graph[$serviceId])) {
                 continue;
             }
@@ -1165,18 +1165,18 @@ final class ServiceResolver
             $registration      = $this->registrations->get(abstract: $serviceId);
             $candidate         = $registration?->concrete;
 
-            if ($candidate === null && class_exists($serviceId)) {
+            if ($candidate === null && class_exists(class: $serviceId)) {
                 $candidate = $serviceId;
             }
 
-            if (! is_string($candidate) || ! class_exists($candidate)) {
+            if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
                 continue;
             }
 
             try {
                 $blueprint    = $this->blueprints->createFor(class: $candidate);
                 $dependencies = $this->dependenciesForWarmup(blueprint: $blueprint);
-                sort($dependencies);
+                sort(array: $dependencies);
                 $graph[$serviceId] = $dependencies;
 
                 foreach ($dependencies as $dependency) {
@@ -1187,7 +1187,7 @@ final class ServiceResolver
             }
         }
 
-        ksort($graph);
+        ksort(array: $graph);
 
         return $graph;
     }
@@ -1200,26 +1200,26 @@ final class ServiceResolver
         $dependencies = [];
 
         foreach ($blueprint->constructor?->parameters ?? [] as $parameter) {
-            if (is_string($parameter['serviceId'] ?? null)) {
+            if (is_string(value: $parameter['serviceId'] ?? null)) {
                 $dependencies[] = $parameter['serviceId'];
             }
         }
 
         foreach ($blueprint->injectableProperties ?? [] as $property) {
-            if (is_string($property['serviceId'] ?? null)) {
+            if (is_string(value: $property['serviceId'] ?? null)) {
                 $dependencies[] = $property['serviceId'];
             }
         }
 
         foreach ($blueprint->injectableMethods ?? [] as $method) {
             foreach ($method['plan']->parameters as $parameter) {
-                if (is_string($parameter['serviceId'] ?? null)) {
+                if (is_string(value: $parameter['serviceId'] ?? null)) {
                     $dependencies[] = $parameter['serviceId'];
                 }
             }
         }
 
-        return array_values(array_unique($dependencies));
+        return array_values(array: array_unique(array: $dependencies));
     }
 
     /**
@@ -1241,12 +1241,12 @@ final class ServiceResolver
         }
 
         foreach ($dependents as $serviceId => $items) {
-            $items = array_values(array_unique($items));
-            sort($items);
+            $items = array_values(array: array_unique(array: $items));
+            sort(array: $items);
             $dependents[$serviceId] = $items;
         }
 
-        ksort($dependents);
+        ksort(array: $dependents);
 
         return $dependents;
     }
@@ -1294,14 +1294,14 @@ final class ServiceResolver
 
                 $matches[] = [
                     'consumer' => $consumer,
-                    'target'   => is_object($give) ? $give::class : (string) $give,
+                    'target'   => is_object(value: $give) ? $give::class : (string) $give,
                 ];
             }
         }
 
         usort(
-            $matches,
-            static fn (array $left, array $right) : int => [$left['consumer'], $left['target']] <=> [$right['consumer'], $right['target']]
+            array   : $matches,
+            callback: static fn (array $left, array $right) : int => [$left['consumer'], $left['target']] <=> [$right['consumer'], $right['target']]
         );
 
         return $matches;
@@ -1318,8 +1318,8 @@ final class ServiceResolver
         $impacted = [];
 
         while ( $queue !== [] ) {
-            $current = array_shift($queue);
-            if (! is_string($current) || isset($impacted[$current])) {
+            $current = array_shift(array: $queue);
+            if (! is_string(value: $current) || isset($impacted[$current])) {
                 continue;
             }
 
@@ -1330,8 +1330,8 @@ final class ServiceResolver
             }
         }
 
-        $ids = array_keys($impacted);
-        sort($ids);
+        $ids = array_keys(array: $impacted);
+        sort(array: $ids);
 
         return $ids;
     }
@@ -1396,13 +1396,13 @@ final class ServiceResolver
                 'requestedId' => $id,
                 'resolvedId'  => $resolvedId,
                 'chain'       => $aliasChain,
-                'reason'      => count($aliasChain) > 1
+                'reason'      => count(value: $aliasChain) > 1
                     ? 'requested id resolves through the alias chain shown here'
                     : 'requested id is already canonical',
             ],
             'decoration'       => [
                 'chain'  => $decorationChain,
-                'count'  => count($decorationChain),
+                'count'  => count(value: $decorationChain),
                 'reason' => $decorationChain === []
                     ? 'no decorators or extenders are registered for this service'
                     : 'decorators and extenders will run in the listed order',
@@ -1460,28 +1460,28 @@ final class ServiceResolver
     {
         $failures = [];
 
-        if ($registration === null && ! class_exists($resolvedId)) {
+        if ($registration === null && ! class_exists(class: $resolvedId)) {
             $failures[] = "service [{$resolvedId}] is not registered and cannot be autowired";
         }
 
-        if (($compiledState['decision'] ?? '') === 'dynamic' && is_string($compiledState['reason'] ?? null)) {
+        if (($compiledState['decision'] ?? '') === 'dynamic' && is_string(value: $compiledState['reason'] ?? null)) {
             $failures[] = $compiledState['reason'];
         }
 
         foreach ($compiledArtifact['compatibilityIssues'] ?? [] as $issue) {
-            if (is_string($issue) && $issue !== '') {
+            if (is_string(value: $issue) && $issue !== '') {
                 $failures[] = $issue;
             }
         }
 
         foreach ($compiledArtifact['warnings'] ?? [] as $warning) {
-            if (is_string($warning) && $warning !== '') {
+            if (is_string(value: $warning) && $warning !== '') {
                 $failures[] = $warning;
             }
         }
 
-        $failures = array_values(array_unique($failures));
-        sort($failures);
+        $failures = array_values(array: array_unique(array: $failures));
+        sort(array: $failures);
 
         return $failures;
     }
@@ -1495,7 +1495,7 @@ final class ServiceResolver
     private function dependencyChainFor(string $serviceId, array $seen) : array
     {
         $resolvedId = $this->registrations->resolveAlias(abstract: $serviceId);
-        if (in_array($resolvedId, $seen, true)) {
+        if (in_array(needle: $resolvedId, haystack: $seen, strict: true)) {
             return [
                 'serviceId'    => $resolvedId,
                 'cycle'        => true,
@@ -1506,29 +1506,29 @@ final class ServiceResolver
         $registration = $this->registrations->get(abstract: $resolvedId);
         $candidate    = $registration?->concrete;
 
-        if ($candidate === null && class_exists($resolvedId)) {
+        if ($candidate === null && class_exists(class: $resolvedId)) {
             $candidate = $resolvedId;
         }
 
         $node = [
             'serviceId'    => $resolvedId,
-            'class'        => is_object($candidate) ? $candidate::class : $candidate,
+            'class'        => is_object(value: $candidate) ? $candidate::class : $candidate,
             'dependencies' => [],
         ];
 
-        if (! is_string($candidate) || ! class_exists($candidate)) {
+        if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
             return $node;
         }
 
         $blueprint    = $this->blueprints->createFor(class: $candidate);
         $dependencies = $this->dependenciesForWarmup(blueprint: $blueprint);
-        sort($dependencies);
+        sort(array: $dependencies);
         $node['dependencies'] = array_map(
-            fn (string $dependency) : array => $this->dependencyChainFor(
+            callback: fn (string $dependency) : array => $this->dependencyChainFor(
                 serviceId: $dependency,
                 seen     : array_merge($seen, [$resolvedId])
             ),
-            $dependencies
+            array   : $dependencies
         );
 
         return $node;
@@ -1565,15 +1565,15 @@ final class ServiceResolver
      */
     public function runtimeReport() : RuntimeReport
     {
-        $lazyServices = array_keys($this->lazyServices);
-        sort($lazyServices);
+        $lazyServices = array_keys(array: $this->lazyServices);
+        sort(array: $lazyServices);
         $deferredProviders = $this->deferredProviders->services();
-        ksort($deferredProviders);
+        ksort(array: $deferredProviders);
         $scopeSnapshot      = $this->scopes->snapshot();
-        $sharedServiceCount = count($scopeSnapshot['shared']);
-        $scopedServiceCount = array_sum(array_map(
-                                            static fn (array $scope) : int => count($scope),
-                                            $scopeSnapshot['scoped']
+        $sharedServiceCount = count(value: $scopeSnapshot['shared']);
+        $scopedServiceCount = array_sum(array: array_map(
+                                            callback: static fn (array $scope) : int => count(value: $scope),
+                                            array   : $scopeSnapshot['scoped']
                                         ));
 
         return new RuntimeReport(
@@ -1595,14 +1595,14 @@ final class ServiceResolver
             timeline            : $this->telemetry->timeline()->all(),
             scopes              : [
                                       'shared'          => $this->summarizeScopeEntries(entries: $scopeSnapshot['shared']),
-                                      'scopedDepth'     => count($scopeSnapshot['scoped']),
+                                      'scopedDepth'     => count(value: $scopeSnapshot['scoped']),
                                       'frames'          => $scopeSnapshot['frames'],
                                       'pooled'          => $scopeSnapshot['pooled'],
                                       'pooledAvailable' => $scopeSnapshot['pooledAvailable'],
                                       'pooledStats'     => $scopeSnapshot['pooledStats'],
                                       'scoped'          => array_map(
-                                          fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
-                                          $scopeSnapshot['scoped']
+                                          callback: fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
+                                          array   : $scopeSnapshot['scoped']
                                       ),
                                   ],
             hotPath             : $this->compiledRuntime->summary(),
@@ -1620,10 +1620,10 @@ final class ServiceResolver
         $summary = [];
 
         foreach ($entries as $serviceId => $instance) {
-            $summary[$serviceId] = is_object($instance) ? $instance::class : get_debug_type($instance);
+            $summary[$serviceId] = is_object(value: $instance) ? $instance::class : get_debug_type(value: $instance);
         }
 
-        ksort($summary);
+        ksort(array: $summary);
 
         return $summary;
     }
@@ -1660,11 +1660,11 @@ final class ServiceResolver
     {
         $resolved       = $this->registrations->resolveAlias(abstract: $id);
         $registration   = $this->registrations->get(abstract: $resolved);
-        $blueprintClass = is_string($registration?->concrete) && class_exists($registration->concrete)
+        $blueprintClass = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
             ? $registration->concrete
-            : (class_exists($resolved) ? $resolved : null);
+            : (class_exists(class: $resolved) ? $resolved : null);
 
-        if ($resolved === '' || ! is_string($blueprintClass)) {
+        if ($resolved === '' || ! is_string(value: $blueprintClass)) {
             return ['id' => $id, 'resolvedId' => $resolved, 'constructor' => null, 'methods' => []];
         }
 
@@ -1707,7 +1707,7 @@ final class ServiceResolver
             );
         }
 
-        $visible             = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $visible             = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
         $report['findings']  = array_intersect_key($report['findings'] ?? [], $visible);
         $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
@@ -1766,9 +1766,9 @@ final class ServiceResolver
      */
     private function visibleServiceIdsForSlice(string $slice) : array
     {
-        return array_values(array_map(
-                                static fn (array $row) : string => $row['serviceId'],
-                                $this->registrations->sliceView(slice: $slice)['visible'] ?? []
+        return array_values(array: array_map(
+                                callback: static fn (array $row) : string => $row['serviceId'],
+                                array   : $this->registrations->sliceView(slice: $slice)['visible'] ?? []
                             ));
     }
 
@@ -1810,8 +1810,8 @@ final class ServiceResolver
                 $hidden[] = $row;
             }
 
-            usort($visible, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-            usort($hidden, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+            usort(array: $visible, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+            usort(array: $hidden, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
 
             return [
                 'slice'    => SliceContext::ROOT,
@@ -1820,21 +1820,21 @@ final class ServiceResolver
                     'slice'      => SliceContext::ROOT,
                     'category'   => 'root',
                     'categories' => ['root'],
-                    'services'   => array_column($visible, 'serviceId'),
-                    'exports'    => array_column($visible, 'serviceId'),
+                    'services'   => array_column(array: $visible, column_key: 'serviceId'),
+                    'exports'    => array_column(array: $visible, column_key: 'serviceId'),
                     'public'     => array_filter(
-                            $visible,
-                            static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC
+                            array   : $visible,
+                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC
                         )
                             |> array_values(...)
-                            |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                            |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
                             |> array_values(...),
                     'shared'     => array_filter(
-                            $visible,
-                            static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED
+                            array   : $visible,
+                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED
                         )
                             |> array_values(...)
-                            |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                            |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
                             |> array_values(...),
                     'private'    => [],
                     'internal'   => [],
@@ -1874,20 +1874,20 @@ final class ServiceResolver
                 'slice'          => $import,
                 'manifest'       => $this->registrations->sliceManifest(slice: $import),
                 'visibleExports' => array_filter(
-                        $view['visible'] ?? [],
-                        static fn (array $row) : bool => $row['ownerSlice'] === $import
+                        array   : $view['visible'] ?? [],
+                        callback: static fn (array $row) : bool => $row['ownerSlice'] === $import
                     )
                         |> array_values(...)
-                        |> (static fn ($x) => array_map(static fn (array $row) : string => $row['serviceId'], $x))
+                        |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
                         |> array_values(...),
             ];
         }
 
-        ksort($imports);
+        ksort(array: $imports);
 
         return [
             'slice'   => $view['slice'] ?? $slice,
-            'imports' => array_values($imports),
+            'imports' => array_values(array: $imports),
         ];
     }
 
@@ -1923,7 +1923,7 @@ final class ServiceResolver
             ];
         }
 
-        usort($exports, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $exports, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
 
         return [
             'slice'   => $view['slice'] ?? $slice,
@@ -1950,8 +1950,8 @@ final class ServiceResolver
         $targets    = $serviceIds === []
             ? $visibleIds
             : array_map(
-                fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                $serviceIds
+                callback: fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
+                array   : $serviceIds
             )
                 |> (static fn ($x) => array_intersect($visibleIds, $x))
                 |> array_values(...);
@@ -1961,7 +1961,7 @@ final class ServiceResolver
             $issues[] = "Slice [{$slice}] visibility violation for [{$violation['dependencyId']}]: {$violation['reason']}.";
         }
 
-        return array_values(array_unique($issues));
+        return array_values(array: array_unique(array: $issues));
     }
 
     /**
@@ -1998,8 +1998,8 @@ final class ServiceResolver
             if (
                 ! $this->registrations->has(abstract: $target)
                 && ! $this->deferredProviders->isDeferred(serviceId: $target)
-                && ! class_exists($target)
-                && ! interface_exists($target)
+                && ! class_exists(class: $target)
+                && ! interface_exists(interface: $target)
             ) {
                 $issues[] = "Alias [{$alias}] points to missing service [{$target}].";
             }
@@ -2025,7 +2025,7 @@ final class ServiceResolver
 
         $validationServiceIds = $graph
                 |> array_keys(...)
-                |> (fn ($x) => array_merge($x, $serviceIds !== [] ? array_map(fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId), $serviceIds) : array_keys($this->registrations->all())))
+                |> (fn ($x) => array_merge($x, $serviceIds !== [] ? array_map(callback: fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId), array: $serviceIds) : array_keys(array: $this->registrations->all())))
                 |> array_unique(...)
                 |> array_values(...);
 
@@ -2049,7 +2049,7 @@ final class ServiceResolver
             $issues[] = 'Policy governance blocked the current composition under fail-closed enforcement.';
         }
 
-        return array_values(array_unique($issues));
+        return array_values(array: array_unique(array: $issues));
     }
 
     /**
@@ -2075,7 +2075,7 @@ final class ServiceResolver
         $queue = [];
 
         if ($serviceIds !== []) {
-            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+            foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
                 $queue[] = $serviceId;
             }
         } else {
@@ -2088,7 +2088,7 @@ final class ServiceResolver
         $classes  = [];
 
         while ( $queue !== [] ) {
-            $serviceId = $this->registrations->resolveAlias(abstract: array_shift($queue));
+            $serviceId = $this->registrations->resolveAlias(abstract: array_shift(array: $queue));
             if (isset($compiled[$serviceId])) {
                 continue;
             }
@@ -2105,11 +2105,11 @@ final class ServiceResolver
             $registration = $this->registrations->get(abstract: $serviceId);
             $candidate    = $registration?->concrete;
 
-            if ($candidate === null && class_exists($serviceId)) {
+            if ($candidate === null && class_exists(class: $serviceId)) {
                 $candidate = $serviceId;
             }
 
-            if (! is_string($candidate) || ! class_exists($candidate)) {
+            if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
                 continue;
             }
 
@@ -2120,8 +2120,8 @@ final class ServiceResolver
         }
 
         return array_filter(
-                $classes,
-                static fn (string $class) : bool => class_exists($class)
+                array   : $classes,
+                callback: static fn (string $class) : bool => class_exists(class: $class)
             )
                 |> array_unique(...)
                 |> array_values(...);
@@ -2140,15 +2140,15 @@ final class ServiceResolver
         $registration = $this->registrations->get(abstract: $serviceId);
         $candidate    = $registration?->concrete;
 
-        if (is_string($candidate) && class_exists($candidate)) {
+        if (is_string(value: $candidate) && class_exists(class: $candidate)) {
             return true;
         }
 
-        if ($candidate instanceof Closure || is_object($candidate)) {
+        if ($candidate instanceof Closure || is_object(value: $candidate)) {
             return true;
         }
 
-        return class_exists($serviceId);
+        return class_exists(class: $serviceId);
     }
 
     /**
@@ -2161,64 +2161,64 @@ final class ServiceResolver
         $dependencies = [];
 
         foreach ($blueprint->constructor?->parameters ?? [] as $parameter) {
-            if (! is_string($parameter['serviceId'] ?? null)) {
+            if (! is_string(value: $parameter['serviceId'] ?? null)) {
                 continue;
             }
 
             $dependency     = $this->registrations->resolveAlias(abstract: $parameter['serviceId']);
             $dependencies[] = $dependency;
 
-            if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+            if (! $this->registrations->has(abstract: $dependency) && ! class_exists(class: $dependency)) {
                 $issues[] = "Service [{$serviceId}] depends on missing service [{$dependency}].";
             }
         }
 
         foreach ($blueprint->injectableProperties ?? [] as $property) {
-            if (! is_string($property['serviceId'] ?? null)) {
+            if (! is_string(value: $property['serviceId'] ?? null)) {
                 continue;
             }
 
             $dependency     = $this->registrations->resolveAlias(abstract: $property['serviceId']);
             $dependencies[] = $dependency;
 
-            if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+            if (! $this->registrations->has(abstract: $dependency) && ! class_exists(class: $dependency)) {
                 $issues[] = "Service [{$serviceId}] injects missing property dependency [{$dependency}].";
             }
         }
 
         foreach ($blueprint->injectableMethods ?? [] as $method) {
             foreach ($method['plan']->parameters as $parameter) {
-                if (! is_string($parameter['serviceId'] ?? null)) {
+                if (! is_string(value: $parameter['serviceId'] ?? null)) {
                     continue;
                 }
 
                 $dependency     = $this->registrations->resolveAlias(abstract: $parameter['serviceId']);
                 $dependencies[] = $dependency;
 
-                if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+                if (! $this->registrations->has(abstract: $dependency) && ! class_exists(class: $dependency)) {
                     $issues[] = "Service [{$serviceId}] injects missing method dependency [{$dependency}].";
                 }
             }
         }
 
-        return array_values(array_unique($dependencies));
+        return array_values(array: array_unique(array: $dependencies));
     }
 
     private function isResolvableBinding(mixed $binding) : bool
     {
-        if ($binding instanceof Closure || is_object($binding)) {
+        if ($binding instanceof Closure || is_object(value: $binding)) {
             return true;
         }
 
-        if (! is_string($binding) || $binding === '') {
+        if (! is_string(value: $binding) || $binding === '') {
             return false;
         }
 
-        return class_exists($binding)
-            || interface_exists($binding)
+        return class_exists(class: $binding)
+            || interface_exists(interface: $binding)
             || $this->registrations->has(abstract: $binding)
-            || str_contains($binding, '::')
-            || str_contains($binding, '@');
+            || str_contains(haystack: $binding, needle: '::')
+            || str_contains(haystack: $binding, needle: '@');
     }
 
     /**
@@ -2231,7 +2231,7 @@ final class ServiceResolver
         $issues = [];
         $state  = [];
 
-        foreach (array_keys($graph) as $serviceId) {
+        foreach (array_keys(array: $graph) as $serviceId) {
             $this->visitDependency(
                 serviceId: $serviceId,
                 graph    : $graph,
@@ -2241,7 +2241,7 @@ final class ServiceResolver
             );
         }
 
-        return array_values(array_unique($issues));
+        return array_values(array: array_unique(array: $issues));
     }
 
     /**
@@ -2264,10 +2264,10 @@ final class ServiceResolver
         }
 
         if ($currentState === 'visiting') {
-            $cycleStart = array_search($serviceId, $stack, true);
-            $path       = $cycleStart === false ? array_merge($stack, [$serviceId]) : array_slice($stack, $cycleStart);
+            $cycleStart = array_search(needle: $serviceId, haystack: $stack, strict: true);
+            $path       = $cycleStart === false ? array_merge($stack, [$serviceId]) : array_slice(array: $stack, offset: $cycleStart);
             $path[]     = $serviceId;
-            $issues[]   = 'Circular dependency detected: ' . implode(' -> ', $path);
+            $issues[]   = 'Circular dependency detected: ' . implode(separator: ' -> ', array: $path);
 
             return;
         }
@@ -2401,7 +2401,7 @@ final class ServiceResolver
 
         foreach ($manifests as $slice => $manifest) {
             if (($manifest['category'] ?? '') === 'mixed') {
-                $issues[] = "Slice [{$slice}] mixes multiple categories [" . implode(', ', $manifest['categories'] ?? []) . '].';
+                $issues[] = "Slice [{$slice}] mixes multiple categories [" . implode(separator: ', ', array: $manifest['categories'] ?? []) . '].';
             }
 
             foreach ($manifest['imports'] ?? [] as $import) {
@@ -2414,7 +2414,7 @@ final class ServiceResolver
                 $registration = $this->registrations->get(abstract: $serviceId);
                 $visibility   = $registration?->metadata->visibility ?? RegistrationVisibility::PUBLIC;
 
-                if (in_array($visibility, [RegistrationVisibility::PRIVATE, RegistrationVisibility::INTERNAL], true)) {
+                if (in_array(needle: $visibility, haystack: [RegistrationVisibility::PRIVATE, RegistrationVisibility::INTERNAL], strict: true)) {
                     $issues[] = "Service [{$serviceId}] is exported by slice [{$slice}] but keeps non-exportable visibility [{$visibility}].";
                 }
             }
@@ -2428,11 +2428,11 @@ final class ServiceResolver
     {
         foreach ($this->registrations->duplicateConcepts() as $duplicate) {
             $services = array_map(
-                static fn (array $service) : string => $service['serviceId'] . '@' . $service['ownerSlice'],
-                $duplicate['services']
+                callback: static fn (array $service) : string => $service['serviceId'] . '@' . $service['ownerSlice'],
+                array   : $duplicate['services']
             );
 
-            $issues[] = "Duplicate concept [{$duplicate['concept']}] is owned by multiple units: " . implode(', ', $services) . '.';
+            $issues[] = "Duplicate concept [{$duplicate['concept']}] is owned by multiple units: " . implode(separator: ', ', array: $services) . '.';
         }
     }
 
@@ -2442,10 +2442,10 @@ final class ServiceResolver
     private function validateOverrideCollisions(array &$issues) : void
     {
         foreach ($this->registrations->duplicateConcepts() as $duplicate) {
-            $services = array_column($duplicate['services'], 'serviceId');
+            $services = array_column(array: $duplicate['services'], column_key: 'serviceId');
 
-            for ($index = 0; $index < count($services); $index++) {
-                for ($next = $index + 1; $next < count($services); $next++) {
+            for ($index = 0; $index < count(value: $services); $index++) {
+                for ($next = $index + 1; $next < count(value: $services); $next++) {
                     $left  = $this->registrations->ownership(abstract: $services[$index]);
                     $right = $this->registrations->ownership(abstract: $services[$next]);
 
@@ -2476,7 +2476,7 @@ final class ServiceResolver
 
             foreach ($history as $previous) {
                 $previousMetadataState = $previous['metadata'] ?? null;
-                if (! is_array($previousMetadataState)) {
+                if (! is_array(value: $previousMetadataState)) {
                     continue;
                 }
 
@@ -2533,12 +2533,12 @@ final class ServiceResolver
                 continue;
             }
 
-            if (count($chain) !== count(array_unique($chain))) {
+            if (count(value: $chain) !== count(value: array_unique(array: $chain))) {
                 $issues[] = "Service [{$serviceId}] has duplicate decorator descriptors in its decoration chain.";
             }
 
             foreach ($chain as $descriptor) {
-                if (! is_string($descriptor) || ! $this->registrations->has(abstract: $descriptor)) {
+                if (! is_string(value: $descriptor) || ! $this->registrations->has(abstract: $descriptor)) {
                     continue;
                 }
 
@@ -2567,12 +2567,12 @@ final class ServiceResolver
             }
 
             foreach ($orders as $order => $serviceIds) {
-                if (count($serviceIds) <= 1) {
+                if (count(value: $serviceIds) <= 1) {
                     continue;
                 }
 
-                sort($serviceIds);
-                $issues[] = "Group [{$group}] uses duplicate order [{$order}] across services [" . implode(', ', $serviceIds) . '].';
+                sort(array: $serviceIds);
+                $issues[] = "Group [{$group}] uses duplicate order [{$order}] across services [" . implode(separator: ', ', array: $serviceIds) . '].';
             }
         }
     }
@@ -2583,7 +2583,7 @@ final class ServiceResolver
      */
     private function validateEnvironmentProfiles(array $serviceIds, array &$issues) : void
     {
-        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+        foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $registration = $this->registrations->get(abstract: $serviceId);
             $metadata     = $registration?->metadata;
 
@@ -2593,7 +2593,7 @@ final class ServiceResolver
 
             $conditions = $this->conditionStateFor(metadata: $metadata);
             if (! $conditions['active']) {
-                $issues[] = "Service [{$serviceId}] is inactive for the current composition: " . implode('; ', $conditions['reasons']) . '.';
+                $issues[] = "Service [{$serviceId}] is inactive for the current composition: " . implode(separator: '; ', array: $conditions['reasons']) . '.';
             }
         }
     }
@@ -2615,11 +2615,11 @@ final class ServiceResolver
                 }
 
                 $candidate = $registration->concrete;
-                if (is_object($candidate) && ! ($candidate instanceof Closure)) {
+                if (is_object(value: $candidate) && ! ($candidate instanceof Closure)) {
                     $issues[] = "Service [{$serviceId}] uses pooled lifetime but is already a prebuilt instance; pooled services must be container-owned builds.";
                 }
 
-                if (is_string($candidate) && class_exists($candidate) && $lifetime->poolResetBeforeReuse && ! is_subclass_of($candidate, ResettableInterface::class)) {
+                if (is_string(value: $candidate) && class_exists(class: $candidate) && $lifetime->poolResetBeforeReuse && ! is_subclass_of(object_or_class: $candidate, class: ResettableInterface::class)) {
                     $issues[] = "Service [{$serviceId}] uses pooled lifetime with reset-before-reuse enabled but class [{$candidate}] does not implement ResettableInterface.";
                 }
             }
@@ -2633,13 +2633,13 @@ final class ServiceResolver
             }
 
             $candidate = $registration->concrete;
-            if (! is_string($candidate) || ! class_exists($candidate)) {
+            if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
                 continue;
             }
 
             if (
-                ! is_subclass_of($candidate, DisposableInterface::class)
-                && ! method_exists($candidate, 'dispose')
+                ! is_subclass_of(object_or_class: $candidate, class: DisposableInterface::class)
+                && ! method_exists(object_or_class: $candidate, method: 'dispose')
             ) {
                 $issues[] = "Service [{$serviceId}] is marked disposable but class [{$candidate}] does not expose dispose() or implement DisposableInterface.";
             }
@@ -2661,9 +2661,9 @@ final class ServiceResolver
 
         $targets = $serviceIds !== []
             ? $serviceIds
-            : array_values(array_map(
-                               static fn (array $row) : string => $row['serviceId'],
-                               $this->debugSlice(slice: $slice)['visible'] ?? []
+            : array_values(array: array_map(
+                               callback: static fn (array $row) : string => $row['serviceId'],
+                               array   : $this->debugSlice(slice: $slice)['visible'] ?? []
                            ));
 
         $violations = [];
@@ -2692,7 +2692,7 @@ final class ServiceResolver
         return [
             'slice'      => $slice,
             'violations' => $violations,
-            'count'      => count($violations),
+            'count'      => count(value: $violations),
         ];
     }
 
@@ -2727,14 +2727,14 @@ final class ServiceResolver
         }
 
         usort(
-            $violations,
-            static fn (array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']]
+            array   : $violations,
+            callback: static fn (array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']]
                 <=> [$right['consumerId'], $right['dependencyId']]
         );
 
         return [
             'violations' => $violations,
-            'count'      => count($violations),
+            'count'      => count(value: $violations),
         ];
     }
 
@@ -2759,7 +2759,7 @@ final class ServiceResolver
             $aliases[$alias] = $target;
         }
 
-        ksort($aliases);
+        ksort(array: $aliases);
 
         return $aliases;
     }
@@ -2785,13 +2785,13 @@ final class ServiceResolver
             return $scope;
         }
 
-        $visibleIds               = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $visibleIds               = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
         $scope['shared']          = array_intersect_key($scope['shared'], $visibleIds);
         $scope['pooled']          = array_intersect_key($scope['pooled'], $visibleIds);
         $scope['pooledAvailable'] = array_intersect_key($scope['pooledAvailable'], $visibleIds);
         $scope['scoped']          = array_map(
-            static fn (array $frame) : array => array_intersect_key($frame, $visibleIds),
-            $scope['scoped']
+            callback: static fn (array $frame) : array => array_intersect_key($frame, $visibleIds),
+            array   : $scope['scoped']
         );
         $scope['sliceView']       = $this->registrations->sliceView(slice: $slice);
 
@@ -2806,15 +2806,15 @@ final class ServiceResolver
         $snapshot = $this->scopes->snapshot();
 
         return [
-            'depth'           => count($snapshot['scoped']),
+            'depth'           => count(value: $snapshot['scoped']),
             'frames'          => $snapshot['frames'],
             'shared'          => $this->summarizeScopeEntries(entries: $snapshot['shared']),
             'pooled'          => $snapshot['pooled'],
             'pooledAvailable' => $snapshot['pooledAvailable'],
             'pooledStats'     => $snapshot['pooledStats'],
             'scoped'          => array_map(
-                fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
-                $snapshot['scoped']
+                callback: fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
+                array   : $snapshot['scoped']
             ),
         ];
     }
@@ -2834,14 +2834,14 @@ final class ServiceResolver
             return $report;
         }
 
-        $visible             = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
-        $report['items']     = array_values(array_filter(
-                                                $report['items'],
-                                                static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
+        $visible             = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
+        $report['items']     = array_values(array: array_filter(
+                                                array   : $report['items'],
+                                                callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
                                             ));
-        $report['services']  = array_values(array_filter(
-                                                $report['services'],
-                                                static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')])
+        $report['services']  = array_values(array: array_filter(
+                                                array   : $report['services'],
+                                                callback: static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')])
                                             ));
         $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
@@ -2873,8 +2873,8 @@ final class ServiceResolver
             'group'    => $group,
             'items'    => $items,
             'services' => array_map(
-                fn (string $serviceId) : array => $this->describeService(id: $serviceId),
-                $serviceIds
+                callback: fn (string $serviceId) : array => $this->describeService(id: $serviceId),
+                array   : $serviceIds
             ),
         ];
     }
@@ -2922,8 +2922,8 @@ final class ServiceResolver
             'contextualBindings' => $description['contextualBindings'] ?? [],
             'group'              => $groupName !== null ? $this->debugGroup(group: $groupName) : null,
             'tags'               => array_map(
-                fn (string $tag) : array => $this->debugTags(tag: $tag),
-                $tags
+                callback: fn (string $tag) : array => $this->debugTags(tag: $tag),
+                array   : $tags
             ),
             'decorators'         => $description['decorationDetails'] ?? [],
             'compiledState'      => $description['compiledState'] ?? [],
@@ -2946,8 +2946,8 @@ final class ServiceResolver
             'ordered'  => true,
             'ids'      => $ids,
             'services' => array_map(
-                fn (string $id) => $this->describeService(id: $id),
-                $ids
+                callback: fn (string $id) => $this->describeService(id: $id),
+                array   : $ids
             ),
         ];
     }
@@ -2990,8 +2990,8 @@ final class ServiceResolver
             'sliceView' => $this->registrations->sliceView(slice: $slice),
             'ids'       => $visibleIds,
             'services'  => array_map(
-                fn (string $serviceId) : array => $this->describeServiceInContext(id: $serviceId, context: $context),
-                $visibleIds
+                callback: fn (string $serviceId) : array => $this->describeServiceInContext(id: $serviceId, context: $context),
+                array   : $visibleIds
             ),
             'hidden'    => $hidden,
         ];
@@ -3042,7 +3042,7 @@ final class ServiceResolver
     private function graphArtifact(string $kind, string|null $id = null, array $context = []) : array
     {
         $id             ??= '';
-        $normalizedKind = strtolower(trim($kind));
+        $normalizedKind = strtolower(string: trim(string: $kind));
         $slice          = SliceContext::from(context: $context);
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
             $slice = $id;
@@ -3091,7 +3091,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'usage',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'sliceView' => $slice !== '' ? $this->registrations->sliceView(slice: $slice) : null,
@@ -3106,7 +3106,7 @@ final class ServiceResolver
      */
     private function filterGraphToVisibleSlice(array $graph, string $slice) : array
     {
-        $visibleIds = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $visibleIds = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
         $filtered   = array_intersect_key($graph, $visibleIds);
 
         foreach ($filtered as $serviceId => $dependencies) {
@@ -3116,7 +3116,7 @@ final class ServiceResolver
                     |> array_values(...);
         }
 
-        ksort($filtered);
+        ksort(array: $filtered);
 
         return $filtered;
     }
@@ -3128,9 +3128,9 @@ final class ServiceResolver
     {
         $manifests = $slice !== ''
             ? array_filter(
-                $this->registrations->sliceManifests(),
-                static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
-                ARRAY_FILTER_USE_KEY
+                array   : $this->registrations->sliceManifests(),
+                callback: static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
+                mode    : ARRAY_FILTER_USE_KEY
             )
             : $this->registrations->sliceManifests();
         $nodes     = [];
@@ -3148,7 +3148,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'owner',
             'scope'         => $slice !== '' ? $slice : 'global',
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'slices' => $manifests,
@@ -3163,9 +3163,9 @@ final class ServiceResolver
     {
         $manifests = $slice !== ''
             ? array_filter(
-                $this->registrations->sliceManifests(),
-                static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
-                ARRAY_FILTER_USE_KEY
+                array   : $this->registrations->sliceManifests(),
+                callback: static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
+                mode    : ARRAY_FILTER_USE_KEY
             )
             : $this->registrations->sliceManifests();
         $nodes     = [];
@@ -3183,7 +3183,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'slice',
             'scope'         => $slice !== '' ? $slice : 'global',
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'slices' => $manifests,
@@ -3199,13 +3199,13 @@ final class ServiceResolver
         $history     = $this->registrations->overrideHistory();
         $nodes       = [];
         $edges       = [];
-        $filteredIds = $slice !== '' ? array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true) : null;
+        $filteredIds = $slice !== '' ? array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true) : null;
 
         foreach ($history as $serviceId => $items) {
             if ($id !== '' && $serviceId !== $id) {
                 continue;
             }
-            if (is_array($filteredIds) && ! isset($filteredIds[$serviceId])) {
+            if (is_array(value: $filteredIds) && ! isset($filteredIds[$serviceId])) {
                 continue;
             }
 
@@ -3223,7 +3223,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'override',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'overrides' => $history,
@@ -3294,7 +3294,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'architecture',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'governance'   => $governance,
@@ -3329,21 +3329,21 @@ final class ServiceResolver
             $metadata       = $registration->metadata;
             $consumers      = $dependents[$serviceId] ?? [];
             $consumerSlices = array_map(
-                    fn (string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
-                    $consumers
+                    callback: fn (string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
+                    array   : $consumers
                 )
                     |> array_unique(...)
                     |> array_values(...);
-            sort($consumerSlices);
+            sort(array: $consumerSlices);
 
             if (
                 $metadata->visibility === RegistrationVisibility::SHARED
-                && count($consumers) <= 1
+                && count(value: $consumers) <= 1
             ) {
                 $singleConsumerShared[] = [
                     'serviceId'     => $serviceId,
                     'ownerSlice'    => $metadata->ownerSlice,
-                    'consumerCount' => count($consumers),
+                    'consumerCount' => count(value: $consumers),
                     'consumers'     => $consumers,
                 ];
                 $speculativeShared[]    = [
@@ -3355,18 +3355,18 @@ final class ServiceResolver
 
             if (
                 $metadata->category === RegistrationCategory::FOUNDATION
-                && count($graph[$serviceId] ?? []) >= 5
+                && count(value: $graph[$serviceId] ?? []) >= 5
             ) {
                 $fakeFoundations[] = [
                     'serviceId'       => $serviceId,
                     'ownerSlice'      => $metadata->ownerSlice,
-                    'dependencyCount' => count($graph[$serviceId] ?? []),
+                    'dependencyCount' => count(value: $graph[$serviceId] ?? []),
                 ];
             }
 
             if (
-                count($consumerSlices) >= 2
-                && ! in_array($metadata->visibility, [RegistrationVisibility::SHARED, RegistrationVisibility::PUBLIC], true)
+                count(value: $consumerSlices) >= 2
+                && ! in_array(needle: $metadata->visibility, haystack: [RegistrationVisibility::SHARED, RegistrationVisibility::PUBLIC], strict: true)
             ) {
                 $promotionCandidates[] = [
                     'serviceId'      => $serviceId,
@@ -3396,12 +3396,12 @@ final class ServiceResolver
             ];
         }
 
-        usort($singleConsumerShared, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-        usort($fakeFoundations, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-        usort($speculativeShared, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-        usort($promotionCandidates, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-        usort($namingSmells, static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
-        usort($privateLeaks, static fn (array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']] <=> [$right['consumerId'], $right['dependencyId']]);
+        usort(array: $singleConsumerShared, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $fakeFoundations, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $speculativeShared, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $promotionCandidates, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $namingSmells, callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort(array: $privateLeaks, callback: static fn (array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']] <=> [$right['consumerId'], $right['dependencyId']]);
 
         return [
             'singleConsumerShared' => $singleConsumerShared,
@@ -3411,13 +3411,13 @@ final class ServiceResolver
             'privateLeaks'         => $privateLeaks,
             'namingSmells'         => $namingSmells,
             'structuralDrift'      => [
-                'changedDependencies' => count(array_filter(
-                                                   $structureDiff['dependencies'] ?? [],
-                                                   static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
+                'changedDependencies' => count(value: array_filter(
+                                                   array   : $structureDiff['dependencies'] ?? [],
+                                                   callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
                                                )),
-                'changedOwnership'    => count(array_filter(
-                                                   $structureDiff['ownership'] ?? [],
-                                                   static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
+                'changedOwnership'    => count(value: array_filter(
+                                                   array   : $structureDiff['ownership'] ?? [],
+                                                   callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
                                                )),
             ],
         ];
@@ -3438,11 +3438,11 @@ final class ServiceResolver
         $dependencyDiff = [];
         $ownershipDiff  = [];
 
-        foreach (array_values(array_unique(array_merge(array_keys($graph), array_keys($metadata?->dependencies ?? [])))) as $serviceId) {
+        foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $graph), array_keys(array: $metadata?->dependencies ?? [])))) as $serviceId) {
             $current  = $graph[$serviceId] ?? [];
             $compiled = $metadata?->dependencies[$serviceId] ?? [];
-            sort($current);
-            sort($compiled);
+            sort(array: $current);
+            sort(array: $compiled);
 
             $dependencyDiff[$serviceId] = [
                 'current'  => $current,
@@ -3451,7 +3451,7 @@ final class ServiceResolver
             ];
         }
 
-        foreach (array_values(array_unique(array_merge(array_keys($currentOwnership), array_keys($metadata?->ownership ?? [])))) as $serviceId) {
+        foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $currentOwnership), array_keys(array: $metadata?->ownership ?? [])))) as $serviceId) {
             $ownershipDiff[$serviceId] = [
                 'current'  => $currentOwnership[$serviceId] ?? [],
                 'compiled' => $metadata?->ownership[$serviceId] ?? [],
@@ -3511,7 +3511,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'policy',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'governance' => $governance,
@@ -3545,7 +3545,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'dependency',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'meta'          => [
                 'sliceView' => $slice !== '' ? $this->registrations->sliceView(slice: $slice) : null,
@@ -3607,14 +3607,14 @@ final class ServiceResolver
 
             $current  = $change['current'] ?? [];
             $compiled = $change['compiled'] ?? [];
-            foreach (array_values(array_diff($current, $compiled)) as $dependency) {
+            foreach (array_values(array: array_diff($current, $compiled)) as $dependency) {
                 $added[]            = ['from' => $serviceId, 'to' => $dependency];
                 $edges[]            = ['from' => $serviceId, 'to' => $dependency, 'label' => 'added'];
                 $nodes[$serviceId]  = ['id' => $serviceId, 'label' => $serviceId, 'type' => 'service'];
                 $nodes[$dependency] = ['id' => $dependency, 'label' => $dependency, 'type' => 'service'];
             }
 
-            foreach (array_values(array_diff($compiled, $current)) as $dependency) {
+            foreach (array_values(array: array_diff($compiled, $current)) as $dependency) {
                 $removed[]          = ['from' => $serviceId, 'to' => $dependency];
                 $edges[]            = ['from' => $serviceId, 'to' => $dependency, 'label' => 'removed'];
                 $nodes[$serviceId]  = ['id' => $serviceId, 'label' => $serviceId, 'type' => 'service'];
@@ -3661,7 +3661,7 @@ final class ServiceResolver
             'schemaVersion' => 1,
             'kind'          => 'diff',
             'scope'         => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
-            'nodes'         => array_values($nodes),
+            'nodes'         => array_values(array: $nodes),
             'edges'         => $edges,
             'changes'       => [
                 'addedEdges'          => $added,
@@ -3682,7 +3682,7 @@ final class ServiceResolver
     {
         $current        = $diff['current'] ?? [];
         $compiled       = $diff['compiled'] ?? [];
-        $slices         = array_values(array_unique(array_merge(array_keys($current), array_keys($compiled))));
+        $slices         = array_values(array: array_unique(array: array_merge(array_keys(array: $current), array_keys(array: $compiled))));
         $addedImports   = [];
         $removedImports = [];
         $addedExports   = [];
@@ -3693,16 +3693,16 @@ final class ServiceResolver
                 continue;
             }
 
-            foreach (array_values(array_diff($current[$sliceId]['imports'] ?? [], $compiled[$sliceId]['imports'] ?? [])) as $import) {
+            foreach (array_values(array: array_diff($current[$sliceId]['imports'] ?? [], $compiled[$sliceId]['imports'] ?? [])) as $import) {
                 $addedImports[] = ['slice' => $sliceId, 'import' => $import];
             }
-            foreach (array_values(array_diff($compiled[$sliceId]['imports'] ?? [], $current[$sliceId]['imports'] ?? [])) as $import) {
+            foreach (array_values(array: array_diff($compiled[$sliceId]['imports'] ?? [], $current[$sliceId]['imports'] ?? [])) as $import) {
                 $removedImports[] = ['slice' => $sliceId, 'import' => $import];
             }
-            foreach (array_values(array_diff($current[$sliceId]['exports'] ?? [], $compiled[$sliceId]['exports'] ?? [])) as $export) {
+            foreach (array_values(array: array_diff($current[$sliceId]['exports'] ?? [], $compiled[$sliceId]['exports'] ?? [])) as $export) {
                 $addedExports[] = ['slice' => $sliceId, 'serviceId' => $export];
             }
-            foreach (array_values(array_diff($compiled[$sliceId]['exports'] ?? [], $current[$sliceId]['exports'] ?? [])) as $export) {
+            foreach (array_values(array: array_diff($compiled[$sliceId]['exports'] ?? [], $current[$sliceId]['exports'] ?? [])) as $export) {
                 $removedExports[] = ['slice' => $sliceId, 'serviceId' => $export];
             }
         }
@@ -3848,9 +3848,9 @@ final class ServiceResolver
                 'dependencies' => $structureDiff['dependencies'][$resolved] ?? ['current' => $graph[$resolved] ?? [], 'compiled' => [], 'changed' => false],
                 'ownership'    => $structureDiff['ownership'][$resolved] ?? ['current' => $description['ownership'] ?? [], 'compiled' => [], 'changed' => false],
             ],
-            'duplicateConcepts' => array_values(array_filter(
-                                                    $duplicates,
-                                                    static fn (array $duplicate) : bool => in_array($resolved, array_column($duplicate['services'], 'serviceId'), true)
+            'duplicateConcepts' => array_values(array: array_filter(
+                                                    array   : $duplicates,
+                                                    callback: static fn (array $duplicate) : bool => in_array(needle: $resolved, haystack: array_column(array: $duplicate['services'], column_key: 'serviceId'), strict: true)
                                                 )),
             'governance'        => [
                 'profile'  => $governance['profile'],
@@ -3865,7 +3865,7 @@ final class ServiceResolver
             ),
             'policyFindings'    => $findings[$resolved] ?? [],
             'policyWarnings'    => $warnings[$resolved] ?? [],
-            'dead'              => in_array($resolved, $dead, true),
+            'dead'              => in_array(needle: $resolved, haystack: $dead, strict: true),
         ];
     }
 
@@ -3886,21 +3886,21 @@ final class ServiceResolver
 
         $view = $this->registrations->sliceView(slice: $slice);
         if ($id === '') {
-            $visibleIds         = array_column($view['visible'], 'serviceId');
-            $filteredGraph      = array_intersect_key($graph['graph'] ?? [], array_fill_keys($visibleIds, true));
-            $filteredDependents = array_intersect_key($graph['dependents'] ?? [], array_fill_keys($visibleIds, true));
+            $visibleIds         = array_column(array: $view['visible'], column_key: 'serviceId');
+            $filteredGraph      = array_intersect_key($graph['graph'] ?? [], array_fill_keys(keys: $visibleIds, value: true));
+            $filteredDependents = array_intersect_key($graph['dependents'] ?? [], array_fill_keys(keys: $visibleIds, value: true));
             foreach ($filteredGraph as $serviceId => $dependencies) {
-                $filteredGraph[$serviceId] = array_values(array_intersect($dependencies, $visibleIds));
+                $filteredGraph[$serviceId] = array_values(array: array_intersect($dependencies, $visibleIds));
             }
             foreach ($filteredDependents as $serviceId => $dependents) {
-                $filteredDependents[$serviceId] = array_values(array_intersect($dependents, $visibleIds));
+                $filteredDependents[$serviceId] = array_values(array: array_intersect($dependents, $visibleIds));
             }
-            $filteredFindings = array_intersect_key($graph['policyFindings'] ?? [], array_fill_keys($visibleIds, true));
+            $filteredFindings = array_intersect_key($graph['policyFindings'] ?? [], array_fill_keys(keys: $visibleIds, value: true));
             $filteredGroups   = [];
             foreach (($graph['groups'] ?? []) as $group => $items) {
-                $filteredItems = array_values(array_filter(
-                                                  $items,
-                                                  static fn (array $item) : bool => in_array((string) ($item['serviceId'] ?? ''), $visibleIds, true)
+                $filteredItems = array_values(array: array_filter(
+                                                  array   : $items,
+                                                  callback: static fn (array $item) : bool => in_array(needle: (string) ($item['serviceId'] ?? ''), haystack: $visibleIds, strict: true)
                                               ));
                 if ($filteredItems !== []) {
                     $filteredGroups[$group] = $filteredItems;
@@ -3959,16 +3959,16 @@ final class ServiceResolver
             );
         }
 
-        $visible = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $visible = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
         foreach (['singleConsumerShared', 'fakeFoundations', 'speculativeShared', 'promotionCandidates', 'namingSmells'] as $key) {
-            $report[$key] = array_values(array_filter(
-                                             $report[$key] ?? [],
-                                             static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
+            $report[$key] = array_values(array: array_filter(
+                                             array   : $report[$key] ?? [],
+                                             callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
                                          ));
         }
-        $report['privateLeaks'] = array_values(array_filter(
-                                                   $report['privateLeaks'] ?? [],
-                                                   static fn (array $item) : bool => isset($visible[(string) ($item['consumerId'] ?? '')])
+        $report['privateLeaks'] = array_values(array: array_filter(
+                                                   array   : $report['privateLeaks'] ?? [],
+                                                   callback: static fn (array $item) : bool => isset($visible[(string) ($item['consumerId'] ?? '')])
                                                ));
         $report['sliceView']    = $this->registrations->sliceView(slice: $slice);
 
@@ -4001,25 +4001,25 @@ final class ServiceResolver
 
         return [
             'service'              => $resolved,
-            'singleConsumerShared' => array_values(array_filter(
-                                                       $insights['singleConsumerShared'] ?? [],
-                                                       static fn (array $item) : bool => $item['serviceId'] === $resolved
+            'singleConsumerShared' => array_values(array: array_filter(
+                                                       array   : $insights['singleConsumerShared'] ?? [],
+                                                       callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
                                                    )),
-            'fakeFoundations'      => array_values(array_filter(
-                                                       $insights['fakeFoundations'] ?? [],
-                                                       static fn (array $item) : bool => $item['serviceId'] === $resolved
+            'fakeFoundations'      => array_values(array: array_filter(
+                                                       array   : $insights['fakeFoundations'] ?? [],
+                                                       callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
                                                    )),
-            'speculativeShared'    => array_values(array_filter(
-                                                       $insights['speculativeShared'] ?? [],
-                                                       static fn (array $item) : bool => $item['serviceId'] === $resolved
+            'speculativeShared'    => array_values(array: array_filter(
+                                                       array   : $insights['speculativeShared'] ?? [],
+                                                       callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
                                                    )),
-            'promotionCandidates'  => array_values(array_filter(
-                                                       $insights['promotionCandidates'] ?? [],
-                                                       static fn (array $item) : bool => $item['serviceId'] === $resolved
+            'promotionCandidates'  => array_values(array: array_filter(
+                                                       array   : $insights['promotionCandidates'] ?? [],
+                                                       callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
                                                    )),
-            'namingSmells'         => array_values(array_filter(
-                                                       $insights['namingSmells'] ?? [],
-                                                       static fn (array $item) : bool => $item['serviceId'] === $resolved
+            'namingSmells'         => array_values(array: array_filter(
+                                                       array   : $insights['namingSmells'] ?? [],
+                                                       callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
                                                    )),
             'governance'           => $governance['findings'][$resolved] ?? [],
         ];
@@ -4034,7 +4034,7 @@ final class ServiceResolver
     private function deadRegistrations(array $graph, array $dependents) : array
     {
         $dead         = [];
-        $aliasTargets = array_values($this->registrations->allAliases());
+        $aliasTargets = array_values(array: $this->registrations->allAliases());
         $taggedIds    = [];
 
         foreach ($this->registrations->tagIndex() as $ids) {
@@ -4056,7 +4056,7 @@ final class ServiceResolver
                 continue;
             }
 
-            if (in_array($serviceId, $aliasTargets, true)) {
+            if (in_array(needle: $serviceId, haystack: $aliasTargets, strict: true)) {
                 continue;
             }
 
@@ -4071,7 +4071,7 @@ final class ServiceResolver
             $dead[] = $serviceId;
         }
 
-        sort($dead);
+        sort(array: $dead);
 
         return $dead;
     }
@@ -4087,8 +4087,8 @@ final class ServiceResolver
         $warnings = [];
         foreach ($governance['findings'] ?? [] as $serviceId => $findings) {
             $warnings[$serviceId] = array_map(
-                static fn (array $finding) : string => $finding['message'],
-                $findings
+                callback: static fn (array $finding) : string => $finding['message'],
+                array   : $findings
             );
         }
 
@@ -4106,11 +4106,11 @@ final class ServiceResolver
         $filter = static fn (array $item) : bool => ($item['serviceId'] ?? null) === $serviceId;
 
         return [
-            'singleConsumerShared' => array_values(array_filter($architecture['singleConsumerShared'] ?? [], $filter)),
-            'fakeFoundations'      => array_values(array_filter($architecture['fakeFoundations'] ?? [], $filter)),
-            'speculativeShared'    => array_values(array_filter($architecture['speculativeShared'] ?? [], $filter)),
-            'promotionCandidates'  => array_values(array_filter($architecture['promotionCandidates'] ?? [], $filter)),
-            'namingSmells'         => array_values(array_filter($architecture['namingSmells'] ?? [], $filter)),
+            'singleConsumerShared' => array_values(array: array_filter(array: $architecture['singleConsumerShared'] ?? [], callback: $filter)),
+            'fakeFoundations'      => array_values(array: array_filter(array: $architecture['fakeFoundations'] ?? [], callback: $filter)),
+            'speculativeShared'    => array_values(array: array_filter(array: $architecture['speculativeShared'] ?? [], callback: $filter)),
+            'promotionCandidates'  => array_values(array: array_filter(array: $architecture['promotionCandidates'] ?? [], callback: $filter)),
+            'namingSmells'         => array_values(array: array_filter(array: $architecture['namingSmells'] ?? [], callback: $filter)),
             'governance'           => $governance['findings'][$serviceId] ?? [],
         ];
     }
@@ -4244,7 +4244,7 @@ final class ServiceResolver
             return true;
         }
 
-        if (! class_exists($serviceId)) {
+        if (! class_exists(class: $serviceId)) {
             return false;
         }
 
@@ -4297,19 +4297,19 @@ final class ServiceResolver
      */
     private function callableName(callable|string $callable) : string
     {
-        if (is_string($callable)) {
+        if (is_string(value: $callable)) {
             return 'call:' . $callable;
         }
 
-        if (is_array($callable)) {
+        if (is_array(value: $callable)) {
             $target = $callable[0] ?? null;
             $method = (string) ($callable[1] ?? '__invoke');
 
-            if (is_object($target)) {
+            if (is_object(value: $target)) {
                 return 'call:' . $target::class . '::' . $method;
             }
 
-            if (is_string($target)) {
+            if (is_string(value: $target)) {
                 return 'call:' . $target . '::' . $method;
             }
         }
@@ -4322,7 +4322,7 @@ final class ServiceResolver
                 . ':' . $reflection->getEndLine();
         }
 
-        if (is_object($callable)) {
+        if (is_object(value: $callable)) {
             return 'call:' . $callable::class;
         }
 
@@ -4414,15 +4414,15 @@ final class ServiceResolver
         return new InjectionReport(
             target            : $target,
             injectedProperties: array_map(
-                                    static fn (array $property) => $property['serviceId'],
-                                    $blueprint->injectableProperties
+                                    callback: static fn (array $property) => $property['serviceId'],
+                                    array   : $blueprint->injectableProperties
                                 ),
             injectedMethods   : array_map(
-                                    static fn (array $method) => array_map(
-                                        static fn (array $parameter) => $parameter['serviceId'],
-                                        $method['plan']->parameters
+                                    callback: static fn (array $method) => array_map(
+                                        callback: static fn (array $parameter) => $parameter['serviceId'],
+                                        array   : $method['plan']->parameters
                                     ),
-                                    $blueprint->injectableMethods
+                                    array   : $blueprint->injectableMethods
                                 ),
             success           : $blueprint->injectableProperties !== [] || $blueprint->injectableMethods !== []
         );
@@ -4483,7 +4483,7 @@ final class ServiceResolver
             $validationIssues = $this->validate(serviceIds: $serviceIds);
             if ($validationIssues !== []) {
                 throw new ContainerException(
-                    message: "Container compile failed:\n- " . implode("\n- ", $validationIssues)
+                    message: "Container compile failed:\n- " . implode(separator: "\n- ", array: $validationIssues)
                 );
             }
         }
@@ -4523,7 +4523,7 @@ final class ServiceResolver
         $queue = [];
 
         if ($serviceIds !== []) {
-            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+            foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
                 $queue[] = $serviceId;
             }
         } else {
@@ -4540,7 +4540,7 @@ final class ServiceResolver
         $classes  = [];
 
         while ( $queue !== [] ) {
-            $serviceId = $this->registrations->resolveAlias(abstract: array_shift($queue));
+            $serviceId = $this->registrations->resolveAlias(abstract: array_shift(array: $queue));
             if (isset($compiled[$serviceId])) {
                 continue;
             }
@@ -4557,11 +4557,11 @@ final class ServiceResolver
             $registration = $this->registrations->get(abstract: $serviceId);
             $candidate    = $registration?->concrete;
 
-            if ($candidate === null && class_exists($serviceId)) {
+            if ($candidate === null && class_exists(class: $serviceId)) {
                 $candidate = $serviceId;
             }
 
-            if (! is_string($candidate) || ! class_exists($candidate)) {
+            if (! is_string(value: $candidate) || ! class_exists(class: $candidate)) {
                 continue;
             }
 
@@ -4572,8 +4572,8 @@ final class ServiceResolver
         }
 
         return array_filter(
-                $classes,
-                static fn (string $class) : bool => class_exists($class)
+                array   : $classes,
+                callback: static fn (string $class) : bool => class_exists(class: $class)
             )
                 |> array_unique(...)
                 |> array_values(...);
@@ -4587,7 +4587,7 @@ final class ServiceResolver
     private function warmSharedServiceIds(array $serviceIds) : array
     {
         $selected = [];
-        $filter   = $serviceIds !== [] ? array_fill_keys($serviceIds, true) : null;
+        $filter   = $serviceIds !== [] ? array_fill_keys(keys: $serviceIds, value: true) : null;
 
         foreach ($this->registrations->all() as $abstract => $registration) {
             if ($filter !== null && ! isset($filter[$abstract])) {
@@ -4606,7 +4606,7 @@ final class ServiceResolver
             $selected[] = $abstract;
         }
 
-        sort($selected);
+        sort(array: $selected);
 
         return $selected;
     }
@@ -4685,8 +4685,8 @@ final class ServiceResolver
     public function tagged(string $tag) : array
     {
         return array_map(
-            fn (string $serviceId) => $this->get(id: $serviceId),
-            $this->registrations->getTaggedIds(tag: $tag)
+            callback: fn (string $serviceId) => $this->get(id: $serviceId),
+            array   : $this->registrations->getTaggedIds(tag: $tag)
         );
     }
 
@@ -4704,9 +4704,9 @@ final class ServiceResolver
         $serviceIds = $this->registrations->getTaggedIds(tag: $tag);
 
         if ($slice !== '') {
-            $serviceIds = array_values(array_filter(
-                                           $serviceIds,
-                                           fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
+            $serviceIds = array_values(array: array_filter(
+                                           array   : $serviceIds,
+                                           callback: fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
                                                    viewerSlice: $slice,
                                                    serviceId  : $serviceId
                                                )['allowed'] ?? false) === true
@@ -4714,8 +4714,8 @@ final class ServiceResolver
         }
 
         return array_map(
-            fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
-            $serviceIds
+            callback: fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
+            array   : $serviceIds
         );
     }
 
@@ -4744,8 +4744,8 @@ final class ServiceResolver
     public function grouped(string $group) : array
     {
         return array_map(
-            fn (string $serviceId) => $this->get(id: $serviceId),
-            $this->registrations->getGroupedIds(group: $group)
+            callback: fn (string $serviceId) => $this->get(id: $serviceId),
+            array   : $this->registrations->getGroupedIds(group: $group)
         );
     }
 
@@ -4763,9 +4763,9 @@ final class ServiceResolver
         $serviceIds = $this->registrations->getGroupedIds(group: $group);
 
         if ($slice !== '') {
-            $serviceIds = array_values(array_filter(
-                                           $serviceIds,
-                                           fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
+            $serviceIds = array_values(array: array_filter(
+                                           array   : $serviceIds,
+                                           callback: fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
                                                    viewerSlice: $slice,
                                                    serviceId  : $serviceId
                                                )['allowed'] ?? false) === true
@@ -4773,8 +4773,8 @@ final class ServiceResolver
         }
 
         return array_map(
-            fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
-            $serviceIds
+            callback: fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
+            array   : $serviceIds
         );
     }
 
@@ -4811,7 +4811,7 @@ final class ServiceResolver
                      )
         );
 
-        if (! is_object($resolved)) {
+        if (! is_object(value: $resolved)) {
             throw new ContainerException(message: "Service [{$id}] did not resolve to an object.");
         }
 
@@ -4851,7 +4851,7 @@ final class ServiceResolver
                    ))->withContext(context: $context)
         );
 
-        if (! is_object($resolved)) {
+        if (! is_object(value: $resolved)) {
             throw new ContainerException(message: "Service [{$id}] did not resolve to an object.");
         }
 
@@ -4930,7 +4930,7 @@ final class ServiceResolver
 
         $resolved = $this->applyExtenders(abstract: $serviceId, instance: $instance);
 
-        if (! is_object($resolved)) {
+        if (! is_object(value: $resolved)) {
             throw new ContainerException(message: "Compiled service [{$serviceId}] did not resolve to an object.");
         }
 

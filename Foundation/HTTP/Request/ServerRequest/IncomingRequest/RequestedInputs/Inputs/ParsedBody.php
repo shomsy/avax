@@ -32,7 +32,7 @@ final readonly class ParsedBody
     public static function fromParsedBody(array|object|null $data): self
     {
         return new self(
-            data: self::normalize($data),
+            data: self::normalize(data: $data),
         );
     }
 
@@ -61,10 +61,10 @@ final readonly class ParsedBody
             return [];
         }
 
-        if (is_array($data)) {
+        if (is_array(value: $data)) {
             return $data;
         }
 
-        return get_object_vars($data);
+        return get_object_vars(object: $data);
     }
 }

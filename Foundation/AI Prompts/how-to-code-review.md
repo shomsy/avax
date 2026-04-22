@@ -526,6 +526,53 @@ Check items and sum weights.
 
 ---
 
+## 13. Documentation Gates (Mandatory, Required for how-this-works.md)
+
+This section is **non-negotiable** for any code review that touches documentation files.
+All rules are defined in `how-to-document.md` - these are explicit enforcement checks.
+
+### Pre-Review: Document Validation
+
+Before reviewing any documentation, verify the documentation files meet quality gates:
+
+#### For all `how-this-works.md` files:
+
+- [ ] File contains **valid frontmatter** (title, owner, last_reviewed, classification)
+- [ ] Contains **mermaid diagram block** (```mermaid``` fence)
+- [ ] Mermaid uses **`sequenceDiagram`** or **`flowchart`** type
+- [ ] Uses `autonumber` where flow order matters
+- [ ] All participant names are **real** (file/function names, NOT "Upstream", "Main Handler", etc.)
+
+#### Ship Check (from how-to-document.md):
+
+- [ ] Reader can retell **one exact path** from command to result WITHOUT opening code
+- [ ] Uses **real** participant names (not generic placeholders)
+- [ ] Uses **real command or trigger** at the start
+- [ ] Explains **what gets written to disk** or left as evidence
+- [ ] Explains **what user sees** on screen
+- [ ] Contains **where to debug first** section
+
+### Quality Anti-Patterns (Explicitly Forbidden)
+
+DO NOT APPROVE if documentation contains:
+
+- [ ] Generic placeholders like "Upstream Flow", "Main Handler", "Data Handler"
+- [ ] "handles", "works with", "supports" without concrete behavior
+- [ ] No mermaid diagram when flow is sequential
+- [ ] No flowchart when topology is more important than sequence
+- [ ] Missing "what gets written" explanation
+- [ ] Missing failure/shutdown path
+
+### Deliverable for Documentation Review:
+
+- [ ] All checked items from Document Validation
+- [ ] Any anti-patterns found with specific file:line references
+- [ ] Clear pass/fail decision for documentation quality
+
+**If documentation fails any gate, the review FAILS.**
+
+---
+
 # FINAL DECISION (Required)
 
 Select exactly one:

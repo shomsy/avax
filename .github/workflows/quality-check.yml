@@ -43,6 +43,10 @@ jobs:
         run: composer audit
         continue-on-error: false
 
+      - name: Lint Mermaid in how-this-works.md
+        run: python3 scripts/lint-mermaid.py
+        continue-on-error: false
+
   security:
     runs-on: ubuntu-latest
 

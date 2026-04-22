@@ -24,7 +24,7 @@ Collect these facts first:
 
 If you do not know those answers yet, keep reading code before writing prose.
 
-## Optional Frontmatter
+## Required Frontmatter (MANDATORY)
 
 ```yaml
 ---
@@ -34,6 +34,8 @@ last_reviewed: YYYY-MM-DD
 classification: internal
 ---
 ```
+
+**This frontmatter is mandatory. Without it, the file fails CI lint.**
 
 ## Canonical Skeleton
 
@@ -70,10 +72,23 @@ When this trigger happens:
 
 the important path is:
 
-1. `<first file>` catches the trigger through `<first function>(...)`
-2. `<main decision>` happens here
-3. `<next handoff>` receives the concrete result
-4. the user or operator sees `<visible result or artifact>`
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Entry as <EntryFunction>
+    participant File as <Main file in this folder>
+    participant Next as <Next handoff>
+    participant Result as <Visible result>
+    Entry ->> File: Step 1: <real call with real behavior>
+    File ->> File: Step 2: <main decision, transform, or read>
+    File ->> Next: Step 3: <hand the result forward>
+    Next -->> Result: Step 4: <visible result or artifact>
+```
+
+- **Step 1:** <what catches the command>
+- **Step 2:** <what this folder really does>
+- **Step 3:** <who receives the result next>
+- **Step 4:** <what the user sees or what artifact exists>
 
 <add one or two plain sentences for failure or refusal>
 
@@ -136,4 +151,27 @@ Use it when the story includes:
 ## Dictionary
 
 - `<term>`: <plain meaning>
+
+## Quality Gates (MANDATORY - CI will fail if not met)
+
+This template MUST produce files that pass these checks:
+
+### Required Elements:
+
+- [ ] **Mermaid diagram** in "The first important path" section
+- [ ] **Real participant names** (file names, function names - NOT placeholders)
+- [ ] **Real command or trigger** at the start
+- [ ] **What gets written to disk** explained
+- [ ] **What user sees** explained
+- [ ] **Where to debug first** section
+
+### Explicitly Forbidden Patterns:
+
+- "handles", "works with", "supports" without concrete behavior
+- Generic placeholders: "Upstream Flow", "Main Handler", "Data Handler"
+- Generic participants: "Some Function", "Another File"
+- Missing mermaid when flow is sequential
+- Missing flowchart when topology is more important
+
+If you cannot fill a placeholder with a real name, you don't understand the code yet. Keep reading.
 ````

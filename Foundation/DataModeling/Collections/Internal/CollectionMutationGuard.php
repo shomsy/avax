@@ -34,6 +34,11 @@ final class CollectionMutationGuard
         }
     }
 
+    public function assertWritable() : void
+    {
+        $this->assertMutable();
+    }
+
     public function getLockedState() : bool
     {
         return $this->locked;

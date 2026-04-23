@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\Unit;
 
-use Avax\Database\System\Capabilities\ORM\Attributes\Column;
 use Avax\Database\System\Capabilities\ORM\Attributes\Entity;
 use Avax\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
 use Avax\Database\System\Capabilities\ORM\Attributes\Id;
@@ -15,6 +14,7 @@ use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionExcepti
 use Avax\Tests\TestCase;
 use Exception;
 use PDO;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -134,16 +134,16 @@ final class TestUserEntity
 {
     #[Id]
     #[GeneratedValue]
-    #[Column(name: 'id', type: 'integer')]
+    #[Attributes\Column(name: 'id', type: 'integer')]
     public int|null $id = null;
 
-    #[Column(name: 'name', type: 'string')]
+    #[Attributes\Column(name: 'name', type: 'string')]
     public string $name;
 
-    #[Column(name: 'email', type: 'string')]
+    #[Attributes\Column(name: 'email', type: 'string')]
     public string $email;
 
-    public function __construct(string $name, string $email)
+    public function __construct(string $name, #[SensitiveParameter] string $email)
     {
         $this->name  = $name;
         $this->email = $email;
@@ -152,7 +152,7 @@ final class TestUserEntity
 
 final class TestUserRepository extends EntityRepository
 {
-    public function findByEmail(string $email) : TestUserEntity|null
+    public function findByEmail(#[SensitiveParameter] string $email) : TestUserEntity|null
     {
         $entity = $this->findOneBy(criteria: ['email' => $email]);
 

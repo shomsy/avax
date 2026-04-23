@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Query\IR;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
 final class JoinNode
 {

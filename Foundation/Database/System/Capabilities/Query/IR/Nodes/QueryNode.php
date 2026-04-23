@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\Query\IR;
 
+use Avax\Database\System\Capabilities\Query\IR\Nodes\CTENode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\FromNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\OrderByNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
+
 final class QueryNode
 {
     private array $select = [];

@@ -60,7 +60,8 @@
     "wyndow/fuzzywuzzy": "^0.6.0",
     "rakibtg/sleekdb": "^2.15",
     "psr/simple-cache": "^3.0",
-    "ext-intl": "*"
+    "ext-intl": "*",
+    "ext-openssl": "*"
   },
   "scripts": {
     "analyse": [

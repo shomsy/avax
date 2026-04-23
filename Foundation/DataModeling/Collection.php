@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\DataModeling;
 
-use ArrayIterator;
-use Avax\DataModeling\Collection;
-use Avax\DataModeling\CollectionInterface;
-use Avax\DataModeling\Collections\Internal\CollectionMutationGuard;
-use Avax\DataModeling\Foundation\Exceptions\CollectionMutationException;
 use ArrayAccess;
+use ArrayIterator;
+use Avax\DataModeling\Collections\Internal\CollectionMutationGuard;
+use Avax\DataModeling\Contracts\CollectionInterface;
+use Avax\DataModeling\Foundation\Exceptions\CollectionMutationException;
 use Countable;
 use IteratorAggregate;
 use Traversable;

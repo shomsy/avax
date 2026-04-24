@@ -43,8 +43,10 @@ final readonly class DescribeLsmStorage
         return 'describes LSM tree storage strategy, compaction trigger, levels, and bloom filter config.';
     }
 
-    public static function levelBased(int $maxLevel = 7, int $bloomFpr = 1) : self
+    public static function levelBased(int|null $maxLevel = null, int $bloomFpr = 1) : self
     {
+        $maxLevel ??= 7;
+
         return new self(
             LsmStorageStrategy::LEVEL,
             LsmCompactionTrigger::SIZE,

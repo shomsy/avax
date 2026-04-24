@@ -20,13 +20,16 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
     private array   $stepResults;
 
     public function __construct(
-        array   $events = [],
-        array   $data = [],
-        ?string $currentStep = null,
-        int     $currentStepIndex = 0,
-        array   $stepResults = []
+        array|null $events = null,
+        array|null $data = null,
+        ?string    $currentStep = null,
+        int|null   $currentStepIndex = null,
+        array      $stepResults = []
     )
     {
+        $events           ??= [];
+        $data             ??= [];
+        $currentStepIndex ??= 0;
         $this->events           = $events;
         $this->data             = $data;
         $this->currentStep      = $currentStep;
@@ -151,10 +154,11 @@ final readonly class SagaEvent
         string             $sagaId,
         string             $sagaName,
         ?string            $stepName = null,
-        array              $payload = [],
+        array|null $payload = null,
         \DateTimeImmutable $occurredAt
     )
     {
+        $payload ??= [];
         $this->id         = $id;
         $this->type       = $type;
         $this->sagaId     = $sagaId;
@@ -165,13 +169,15 @@ final readonly class SagaEvent
     }
 
     public static function create(
-        string  $sagaId,
-        string  $sagaName,
-        string  $type,
-        array   $payload = [],
-        ?string $stepName = null
+        string     $sagaId,
+        string     $sagaName,
+        string     $type,
+        array|null $payload = null,
+        ?string    $stepName = null
     ) : self
     {
+        $payload ??= [];
+
         return new self(
             id        : self::generateId(),
             type      : $type,

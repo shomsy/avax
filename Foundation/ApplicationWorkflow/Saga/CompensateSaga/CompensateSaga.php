@@ -116,12 +116,14 @@ final readonly class CompensationStepResult
     private function __construct(
         string              $stepName,
         bool                $success,
-        array               $output = [],
+        array|null $output = null,
         ?string             $error = null,
-        float               $durationMs = 0.0,
+        float|null $durationMs = null,
         ?\DateTimeImmutable $completedAt = null
     )
     {
+        $output     ??= [];
+        $durationMs ??= 0.0;
         $this->stepName    = $stepName;
         $this->success     = $success;
         $this->output      = $output;
@@ -131,11 +133,13 @@ final readonly class CompensationStepResult
     }
 
     public static function success(
-        string $stepName,
-        array  $output = [],
-        float  $durationMs = 0.0
+        string     $stepName,
+        array|null $output = null,
+        float      $durationMs = 0.0
     ) : self
     {
+        $output ??= [];
+
         return new self(
             stepName   : $stepName,
             success    : true,

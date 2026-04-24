@@ -9,7 +9,7 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintVali
 use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\HTTP\URI\Uri;
 use Psr\Log\NullLogger;
 
 $router = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new RouteMatcher(logger: new NullLogger));
@@ -19,5 +19,5 @@ $ref = new ReflectionMethod(objectOrMethod: HttpRequestRouter::class, method: 'c
 $ref->setAccessible(accessible: true);
 $pattern = $ref->invoke($router, '/users/{id?}', []);
 
-$request = new Request(serverParams: ['REQUEST_METHOD' => 'GET'], uri: UriBuilder::createFromString(uri: 'https://example.com/users'));
+$request = new Request(serverParams: ['REQUEST_METHOD' => 'GET'], uri: Uri::fromString('https://example.com/users'));
 $route = $router->resolve(request: $request);

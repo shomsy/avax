@@ -91,15 +91,17 @@ final readonly class ReadPersistentData
     }
 
     public function paginate(
-        string $table,
-        array  $conditions = [],
-        int    $page = 1,
-        int    $perPage = 20
+        string     $table,
+        array|null $conditions = null,
+        int|null   $page = null,
+        int        $perPage = 20
     ) : array
     {
-        $page    = max(1, $page);
-        $perPage = min(100, max(1, $perPage));
-        $offset  = ($page - 1) * $perPage;
+        $conditions ??= [];
+        $page       ??= 1;
+        $page       = max(1, $page);
+        $perPage    = min(100, max(1, $perPage));
+        $offset     = ($page - 1) * $perPage;
 
         $conditions['_limit']  = $perPage;
         $conditions['_offset'] = $offset;

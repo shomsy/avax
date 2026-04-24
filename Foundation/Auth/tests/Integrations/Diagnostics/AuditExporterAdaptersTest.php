@@ -80,7 +80,7 @@ final class AuditExporterAdaptersTest extends TestCase
             correlationId: 'corr-2'
         );
 
-        (new SyslogAuditExporter(
+        new SyslogAuditExporter(
             sender: new class($capture) implements SendSyslogMessageInterface {
                       private stdClass $capture;
 
@@ -91,9 +91,9 @@ final class AuditExporterAdaptersTest extends TestCase
                           $this->capture->syslog[] = [$severity, json_decode(json: $message, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR)];
                       }
                   }
-        ))->export(events: [$event]);
+        )->export(events: [$event]);
 
-        (new WebhookAuditExporter(
+        new WebhookAuditExporter(
             sender: new class($capture) implements SendAuditWebhookInterface {
                       private stdClass $capture;
 
@@ -104,9 +104,9 @@ final class AuditExporterAdaptersTest extends TestCase
                           $this->capture->webhook[] = $payload;
                       }
                   }
-        ))->export(events: [$event]);
+        )->export(events: [$event]);
 
-        (new QueueAuditExporter(
+        new QueueAuditExporter(
             publisher: new class($capture) implements PublishAuditMessageInterface {
                          private stdClass $capture;
 
@@ -117,7 +117,7 @@ final class AuditExporterAdaptersTest extends TestCase
                              $this->capture->queue[] = [$topic, $message];
                          }
                      }
-        ))->export(events: [$event]);
+        )->export(events: [$event]);
 
         $this->assertSame(expected: 'info', actual: $capture->syslog[0][0]);
         $this->assertSame(expected: '[redacted]', actual: $capture->syslog[0][1]['context']['refresh_token']);

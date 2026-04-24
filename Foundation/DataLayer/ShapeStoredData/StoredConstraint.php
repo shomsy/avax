@@ -39,21 +39,24 @@ final readonly class StoredConstraint
     public ?int                    $version;
 
     private function __construct(
-        string                  $name,
-        ConstraintType          $type,
-        string                  $tableName,
-        array                   $columns = [],
-        ?string                 $referenceTable = null,
-        ?array                  $referenceColumns = null,
-        ?OnDeleteAction         $onDelete = null,
-        ?OnUpdateAction         $onUpdate = null,
-        ?string                 $checkExpression = null,
-        ConstraintDeferrability $deferrability = ConstraintDeferrability::IMMEDIATE,
-        bool                    $isEnabled = true,
-        ?string                 $comment = null,
-        ?int                    $version = null
+        string                       $name,
+        ConstraintType               $type,
+        string                       $tableName,
+        array|null                   $columns = null,
+        ?string                      $referenceTable = null,
+        ?array                       $referenceColumns = null,
+        ?OnDeleteAction              $onDelete = null,
+        ?OnUpdateAction              $onUpdate = null,
+        ?string                      $checkExpression = null,
+        ConstraintDeferrability|null $deferrability = null,
+        bool|null                    $isEnabled = null,
+        ?string                      $comment = null,
+        ?int                         $version = null
     )
     {
+        $columns       ??= [];
+        $deferrability ??= ConstraintDeferrability::IMMEDIATE;
+        $isEnabled     ??= true;
         $this->name             = $name;
         $this->type             = $type;
         $this->tableName        = $tableName;

@@ -61,10 +61,12 @@ class ConfigurationException extends AuthException
     }
 
     public static function missingIdentityBackend(
-        string $buildPath = 'AuthBuilder::ready()',
-        string $hint = 'Provide at least one session or JWT backend.'
+        string|null $buildPath = null,
+        string      $hint = 'Provide at least one session or JWT backend.'
     ) : self
     {
+        $buildPath ??= 'AuthBuilder::ready()';
+
         return new self(
             message  : "{$buildPath} requires at least one identity backend (session or JWT). {$hint}",
             errorCode: 'auth.configuration.identity_backend_missing',

@@ -8,9 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 
 final class BuildStreamResponse
 {
-    public function __invoke(mixed $stream, int $status = 200, array $headers = []) : ResponseInterface
+    public function __invoke(mixed $stream, int|null $status = null, array $headers = []) : ResponseInterface
     {
-        return (new BuildResponse())(
+        $status ??= 200;
+
+        return new BuildResponse()(
             status : $status,
             headers: $headers,
             body   : $stream,

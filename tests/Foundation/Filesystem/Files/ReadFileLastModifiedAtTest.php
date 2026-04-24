@@ -29,7 +29,7 @@ class ReadFileLastModifiedAtTest extends TestCase
 
     public function testExecuteReturnsNullForNonExistentFile() : void
     {
-        $result = (new ReadFileLastModifiedAt(disk: $this->disk))->execute(path: '/ne postoji.txt');
+        $result = new ReadFileLastModifiedAt(disk: $this->disk)->execute(path: '/ne postoji.txt');
 
         self::assertNull($result);
     }
@@ -38,7 +38,7 @@ class ReadFileLastModifiedAtTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
-        $result = (new ReadFileLastModifiedAt(disk: $this->disk))->execute(path: $this->testFile);
+        $result = new ReadFileLastModifiedAt(disk: $this->disk)->execute(path: $this->testFile);
 
         self::assertIsInt($result);
         self::assertGreaterThan(0, $result);

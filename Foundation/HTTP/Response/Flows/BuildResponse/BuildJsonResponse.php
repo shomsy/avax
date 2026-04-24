@@ -11,10 +11,11 @@ use RuntimeException;
 
 final class BuildJsonResponse
 {
-    public function __invoke(mixed $data, int $status = 200, array $headers = []) : ResponseInterface
+    public function __invoke(mixed $data, int|null $status = null, array $headers = []) : ResponseInterface
     {
+        $status ??= 200;
         try {
-            $payload = (new EncodeJsonBody())($data);
+            $payload = new EncodeJsonBody()($data);
         } catch (JsonException $exception) {
             throw new RuntimeException(
                 message : 'Unable to encode JSON response body.',
@@ -23,7 +24,7 @@ final class BuildJsonResponse
             );
         }
 
-        return (new BuildResponse())(
+        return new BuildResponse()(
             status : $status,
             headers: ['Content-Type' => 'application/json', ...$headers],
             body   : $payload,

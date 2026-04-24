@@ -32,7 +32,7 @@ final class RedisSessionRegistryTest extends TestCase
         $redis->expects($this->once())->method(constraint: 'expire')->with('auth:session:session-1', 86400)->willReturn(value: true);
         $redis->expects($this->once())->method(constraint: 'sAdd')->with('auth:user_sessions:7', 'session-1')->willReturn(value: 1);
 
-        (new RedisSessionRegistry(redis: $redis))->track(record: $record);
+        new RedisSessionRegistry(redis: $redis)->track(record: $record);
     }
 
     private function record() : SessionRecord

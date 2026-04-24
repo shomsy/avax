@@ -50,7 +50,7 @@ final class CleanupExpiredSessionsTest extends TestCase
                                      revokeReason     : 'manual'
                                  ));
 
-        $removed = (new CleanupExpiredSessions(sessionRegistry: $registry, clock: new Clock()))->execute();
+        $removed = new CleanupExpiredSessions(sessionRegistry: $registry, clock: new Clock())->execute();
 
         $this->assertSame(expected: 2, actual: $removed);
         $this->assertNotNull(actual: $registry->find(sessionId: 'active'));

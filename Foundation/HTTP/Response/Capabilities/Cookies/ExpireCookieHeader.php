@@ -8,9 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 
 final class ExpireCookieHeader
 {
-    public function __invoke(ResponseInterface $response, string $name, string $path = '/', string|null $domain = null) : ResponseInterface
+    public function __invoke(ResponseInterface $response, string $name, string|null $path = null, string|null $domain = null) : ResponseInterface
     {
-        return (new SetCookieHeader())(
+        $path ??= '/';
+
+        return new SetCookieHeader()(
             response: $response,
             cookie  : ResponseCookie::expired(name: $name, path: $path, domain: $domain),
         );

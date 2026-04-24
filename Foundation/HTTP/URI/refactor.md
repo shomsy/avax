@@ -1,4 +1,5 @@
-Da. Evo plan kako bih ovo radio bez šminke, nego kao pravi deep refactor.
+Da. Evo plan kako bih ovo radio bez šminke, nego kao pravi deep refactor. Doslovce uradi po pravilima iz AI Prompts
+foldera.
 
 Osnovna pretpostavka je ova: URI komponenta danas nema jednog poštenog owner-a. Odgovornost je rasuta između `BaseUri`,
 `UriBuilder`, `QueryParams`, `Protocol`, `Components/*` i trait-ova, a serializer i authority logika postoje na više

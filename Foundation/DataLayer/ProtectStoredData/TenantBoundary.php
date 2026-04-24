@@ -66,13 +66,15 @@ final readonly class TenantBoundary
     public array   $settings;
 
     private function __construct(
-        string  $id,
-        string  $column = 'tenant_id',
-        bool    $isRequired = true,
-        ?string $parentTenantId = null,
-        array   $settings = []
+        string      $id,
+        string|null $column = null,
+        bool|null   $isRequired = null,
+        ?string     $parentTenantId = null,
+        array       $settings = []
     )
     {
+        $column     ??= 'tenant_id';
+        $isRequired ??= true;
         $this->id             = $id;
         $this->column         = $column;
         $this->isRequired     = $isRequired;
@@ -142,12 +144,15 @@ final readonly class DataAccessPolicy
     private function __construct(
         string           $name,
         ?TenantBoundary  $tenantBoundary = null,
-        array            $allowedOperations = [],
-        array            $sensitiveFields = [],
-        bool             $enableAudit = false,
+        array|null $allowedOperations = null,
+        array|null $sensitiveFields = null,
+        bool|null  $enableAudit = null,
         ?RetentionPolicy $retentionPolicy = null
     )
     {
+        $allowedOperations ??= [];
+        $sensitiveFields   ??= [];
+        $enableAudit       ??= false;
         $this->name              = $name;
         $this->tenantBoundary    = $tenantBoundary;
         $this->allowedOperations = $allowedOperations;
@@ -272,21 +277,22 @@ final readonly class DataAuditEntry
         string             $actorId,
         ?string            $actorIp,
         \DateTimeImmutable $timestamp,
-        bool               $success = true,
+        bool|null $success = null,
         ?string            $errorMessage = null
     )
     {
-        $this->id           = $id;
-        $this->action       = $action;
-        $this->table        = $table;
-        $this->recordId     = $recordId;
-        $this->tenantId     = $tenantId;
-        $this->oldValues    = $oldValues;
-        $this->newValues    = $newValues;
-        $this->actorId      = $actorId;
-        $this->actorIp      = $actorIp;
-        $this->timestamp    = $timestamp;
-        $this->success      = $success;
+        $success         ??= true;
+        $this->id        = $id;
+        $this->action    = $action;
+        $this->table     = $table;
+        $this->recordId  = $recordId;
+        $this->tenantId  = $tenantId;
+        $this->oldValues = $oldValues;
+        $this->newValues = $newValues;
+        $this->actorId   = $actorId;
+        $this->actorIp   = $actorIp;
+        $this->timestamp = $timestamp;
+        $this->success   = $success;
         $this->errorMessage = $errorMessage;
     }
 

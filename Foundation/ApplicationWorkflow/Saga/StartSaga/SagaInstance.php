@@ -81,7 +81,7 @@ final readonly class SagaInstance
 
         $startedAt = new \DateTimeImmutable();
         $timeoutAt = isset($options['timeout_seconds'])
-            ? (new \DateTimeImmutable())->modify(sprintf('+%d seconds', $options['timeout_seconds']))
+            ? new \DateTimeImmutable()->modify(sprintf('+%d seconds', $options['timeout_seconds']))
             : null;
 
         return new self(
@@ -191,7 +191,7 @@ final readonly class SagaInstance
     public function fail(string $error) : self
     {
         $stepResults                               = $this->stepResults;
-        $stepResults[$this->currentStepName ?? ''] = ['error' => $error, 'failed_at' => (new \DateTimeImmutable())->format(\DateTimeInterface::ISO8601)];
+        $stepResults[$this->currentStepName ?? ''] = ['error' => $error, 'failed_at' => new \DateTimeImmutable()->format(\DateTimeInterface::ISO8601)];
 
         return new self(
             id              : $this->id,

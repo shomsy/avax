@@ -45,23 +45,31 @@ final readonly class SagaDefinition implements IteratorAggregate
     public ?\DateTimeImmutable $updatedAt;
 
     private function __construct(
-        string              $name,
-        string              $type,
-        array               $steps = [],
-        array               $stepOrder = [],
-        ?TenantBoundary     $tenantBoundary = null,
-        SagaStartCondition  $startCondition = SagaStartCondition::MANUAL,
-        ?string             $startTrigger = null,
-        int                 $timeoutSeconds = 3600,
-        int                 $maxDurationSeconds = 86400,
-        bool                $allowConcurrent = false,
-        bool                $allowRemoteCompensation = false,
-        ?string             $description = null,
-        SagaStatus          $status = SagaStatus::DRAFT,
-        ?\DateTimeImmutable $createdAt = null,
-        ?\DateTimeImmutable $updatedAt = null
+        string                  $name,
+        string                  $type,
+        array|null              $steps = null,
+        array|null              $stepOrder = null,
+        ?TenantBoundary         $tenantBoundary = null,
+        SagaStartCondition|null $startCondition = null,
+        ?string                 $startTrigger = null,
+        int|null                $timeoutSeconds = null,
+        int|null                $maxDurationSeconds = null,
+        bool|null               $allowConcurrent = null,
+        bool|null               $allowRemoteCompensation = null,
+        ?string                 $description = null,
+        SagaStatus|null         $status = null,
+        ?\DateTimeImmutable     $createdAt = null,
+        ?\DateTimeImmutable     $updatedAt = null
     )
     {
+        $steps                   ??= [];
+        $stepOrder               ??= [];
+        $startCondition          ??= SagaStartCondition::MANUAL;
+        $timeoutSeconds          ??= 3600;
+        $maxDurationSeconds      ??= 86400;
+        $allowConcurrent         ??= false;
+        $allowRemoteCompensation ??= false;
+        $status                  ??= SagaStatus::DRAFT;
         $this->name                    = $name;
         $this->type                    = $type;
         $this->steps                   = $steps;
@@ -80,11 +88,12 @@ final readonly class SagaDefinition implements IteratorAggregate
     }
 
     public static function create(
-        string $name,
-        string $type = 'long_running_process',
-        array  $options = []
+        string      $name,
+        string|null $type = null,
+        array       $options = []
     ) : self
     {
+        $type ??= 'long_running_process';
         if (empty(trim($name))) {
             throw new InvalidArgumentException('Saga name cannot be empty.');
         }

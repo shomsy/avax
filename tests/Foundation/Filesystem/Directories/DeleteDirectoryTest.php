@@ -33,7 +33,7 @@ class DeleteDirectoryTest extends TestCase
 
     public function testExecuteReturnsTrueForNonExistentDirectory() : void
     {
-        $result = (new DeleteDirectory(disk: $this->disk))->execute(path: '/ne postoji dir');
+        $result = new DeleteDirectory(disk: $this->disk)->execute(path: '/ne postoji dir');
 
         self::assertTrue(condition: $result);
     }
@@ -42,7 +42,7 @@ class DeleteDirectoryTest extends TestCase
     {
         file_put_contents(filename: $this->testDir . '/nested.txt', data: "content\n");
 
-        $result = (new DeleteDirectory(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new DeleteDirectory(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
         self::assertFalse(condition: is_dir(filename: $this->testDir));

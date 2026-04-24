@@ -25,7 +25,7 @@ final class DefineSagaTest extends TestCase
                            ]
         );
 
-        (new DefineSaga())->validate(definition: $definition);
+        new DefineSaga()->validate(definition: $definition);
 
         $this->assertSame('checkout', $definition->name);
     }
@@ -44,7 +44,7 @@ final class DefineSagaTest extends TestCase
         $this->expectException(InvalidSagaDefinition::class);
         $this->expectExceptionMessage('duplicate step');
 
-        (new DefineSaga())->validate(definition: $definition);
+        new DefineSaga()->validate(definition: $definition);
     }
 
     public function testUnknownNextStepFailsBeforeRuntime() : void
@@ -60,6 +60,6 @@ final class DefineSagaTest extends TestCase
         $this->expectException(InvalidSagaDefinition::class);
         $this->expectExceptionMessage('unknown next step');
 
-        (new DefineSaga())->validate(definition: $definition);
+        new DefineSaga()->validate(definition: $definition);
     }
 }

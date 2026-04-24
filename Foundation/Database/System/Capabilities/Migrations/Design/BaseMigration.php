@@ -99,7 +99,7 @@ abstract class BaseMigration
      */
     protected function table(string $table, Closure $callback) : void
     {
-        $blueprint = (new Blueprint(table: $table))->setAlterMode();
+        $blueprint = new Blueprint(table: $table)->setAlterMode();
         $callback($blueprint);
 
         $grammar = $this->getGrammar();

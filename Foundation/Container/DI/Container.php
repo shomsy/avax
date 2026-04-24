@@ -123,7 +123,7 @@ final readonly class Container implements ContainerInterface
      */
     public function bootProviders(array $providers) : void
     {
-        (new BootProviders(container: $this))->boot(providers: $providers);
+        new BootProviders(container: $this)->boot(providers: $providers);
     }
 
     /**

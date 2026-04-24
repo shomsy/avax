@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO;
+namespace Avax\DataHandling\ObjectHandling\DTO;
 
-use InvalidArgumentException;
+use Avax\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferViolation;
+use Avax\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferViolations;
+use Avax\DataHandling\DataTransfer\Capabilities\FieldValidation\DataValidationFailed;
+use JsonSerializable;
+use Throwable;
 
 /**
  * DTOValidationException
@@ -20,7 +24,7 @@ use InvalidArgumentException;
  *  - InvalidArgumentException: This base exception aligns with the concept of invalid
  *    arguments being passed to a DTO during validation, enhancing semantic meaning.
  */
-final class DTOValidationException extends InvalidArgumentException
+final class DTOValidationException extends DataValidationFailed implements JsonSerializable
 {
     /**
      * A collection of validation errors.
@@ -51,19 +55,17 @@ final class DTOValidationException extends InvalidArgumentException
     public function __construct(
         string $message,
         array  $errors,
+        DataTransferViolations|null $violations = null,
+        Throwable|null              $previous = null,
     ) {
-        $formattedErrors = [];
-
-        foreach ($errors as $field => $errorMsg) {
-            $formattedErrors[] = sprintf('%s: %s', $field, $errorMsg);
-        }
-
-        $message .= "\n" . implode("\n", $formattedErrors);
-
-        parent::__construct(message: $message);
         $this->errors = $errors;
-    }
 
+        parent::__construct(
+            message   : $message,
+            violations: $violations ?? $this->violationsFromLegacyErrors(errors: $errors),
+            previous  : $previous,
+        );
+    }
 
     public function jsonSerialize() : array
     {
@@ -92,4 +94,18 @@ final class DTOValidationException extends InvalidArgumentException
         return $this->errors;
     }
 
+    private function violationsFromLegacyErrors(array $errors) : DataTransferViolations
+    {
+        $violations = [];
+
+        foreach ($errors as $field => $message) {
+            $violations[] = new DataTransferViolation(
+                path   : (string) $field,
+                code   : 'legacy_dto_validation_failed',
+                message: (string) $message,
+            );
+        }
+
+        return DataTransferViolations::from(violations: $violations);
+    }
 }

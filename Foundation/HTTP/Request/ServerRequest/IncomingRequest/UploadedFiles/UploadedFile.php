@@ -35,7 +35,7 @@ final class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(message: 'Cannot retrieve stream for file with upload error.');
         }
 
-        return (new ResponseStreamFactory())->openFileStream(path: $this->tmpName);
+        return new ResponseStreamFactory()->openFileStream(path: $this->tmpName);
     }
 
     public function moveTo(string $targetPath) : void

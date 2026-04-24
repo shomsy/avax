@@ -20,10 +20,11 @@ final readonly class RetryChangePublication
     private RetryStrategy $strategy;
 
     public function __construct(
-        int           $maxRetries = 3,
+        int|null $maxRetries = null,
         RetryStrategy $strategy = RetryStrategy::EXPONENTIAL
     )
     {
+        $maxRetries ??= 3;
         if ($maxRetries < 0) {
             throw new InvalidArgumentException('Max retries cannot be negative.');
         }

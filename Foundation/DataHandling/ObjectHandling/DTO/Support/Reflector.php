@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO\Support;
+namespace Avax\DataHandling\ObjectHandling\DTO\Support;
 
-use Gemini\DataHandling\ObjectHandling\DTO\DTOValidationException;
-use Gemini\DataHandling\ObjectHandling\DTO\Traits\CastsTypes;
-use Gemini\DataHandling\ObjectHandling\DTO\Traits\HandlesAttributes;
-use Gemini\DataHandling\ObjectHandling\DTO\Traits\InspectsProperties;
-use Gemini\DataHandling\ObjectHandling\DTO\Traits\Serialization;
+use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
+use Avax\DataHandling\ObjectHandling\DTO\Traits\CastsTypes;
+use Avax\DataHandling\ObjectHandling\DTO\Traits\HandlesAttributes;
+use Avax\DataHandling\ObjectHandling\DTO\Traits\InspectsProperties;
+use Avax\DataHandling\ObjectHandling\DTO\Traits\Serialization;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
@@ -90,7 +90,7 @@ final class Reflector
      */
     public static function fromClass(string $className) : self
     {
-        return new self(target: (new ReflectionClass(objectOrClass: $className))->newInstanceWithoutConstructor());
+        return new self(target: new ReflectionClass(objectOrClass: $className)->newInstanceWithoutConstructor());
     }
 
     /**

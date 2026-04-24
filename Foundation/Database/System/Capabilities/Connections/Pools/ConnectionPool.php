@@ -91,11 +91,11 @@ final class ConnectionPool implements ConnectionPoolInterface
             throw new PoolLimitReachedException(name: $name, limit: (int) $limit);
         }
 
-        $connection = (new OpenConnection(
+        $connection = new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
             scope                  : $this->scope
-        ))->using(config: $this->config);
+        )->using(config: $this->config);
 
         $this->eventBus?->dispatch(event: new ConnectionAcquired(
                                               connectionName: $this->getName(),

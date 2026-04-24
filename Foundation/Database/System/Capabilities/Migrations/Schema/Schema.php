@@ -66,7 +66,7 @@ final readonly class Schema
      */
     public function table(string $table, callable $callback, string|null $connectionName = null) : void
     {
-        $blueprint = (new Blueprint(table: $table))->setAlterMode();
+        $blueprint = new Blueprint(table: $table)->setAlterMode();
         $callback($blueprint);
 
         $this->runStatements(

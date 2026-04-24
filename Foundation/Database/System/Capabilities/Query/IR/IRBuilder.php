@@ -38,8 +38,9 @@ final class IRBuilder
         return $this;
     }
 
-    public function join(string $table, string $type = 'inner', ?WhereNode $on = null, ?string $alias = null) : self
+    public function join(string $table, string|null $type = null, ?WhereNode $on = null, ?string $alias = null) : self
     {
+        $type ??= 'inner';
         $this->query->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $on));
 
         return $this;

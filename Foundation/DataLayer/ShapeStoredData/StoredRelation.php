@@ -48,20 +48,23 @@ final readonly class StoredRelation
     public ?string        $junctionTargetField;
 
     private function __construct(
-        string         $name,
-        RelationType   $type,
-        string         $sourceModel,
-        string         $sourceField,
-        string         $targetModel,
-        string         $targetField,
-        OnDeleteAction $onDelete = OnDeleteAction::RESTRICT,
-        OnUpdateAction $onUpdate = OnUpdateAction::RESTRICT,
-        bool           $isRequired = false,
-        ?string        $junctionTable = null,
-        ?string        $junctionSourceField = null,
-        ?string        $junctionTargetField = null
+        string              $name,
+        RelationType        $type,
+        string              $sourceModel,
+        string              $sourceField,
+        string              $targetModel,
+        string              $targetField,
+        OnDeleteAction|null $onDelete = null,
+        OnUpdateAction|null $onUpdate = null,
+        bool|null           $isRequired = null,
+        ?string             $junctionTable = null,
+        ?string             $junctionSourceField = null,
+        ?string             $junctionTargetField = null
     )
     {
+        $onDelete   ??= OnDeleteAction::RESTRICT;
+        $onUpdate   ??= OnUpdateAction::RESTRICT;
+        $isRequired ??= false;
         $this->name                = $name;
         $this->type                = $type;
         $this->sourceModel         = $sourceModel;
@@ -119,14 +122,16 @@ final readonly class StoredRelation
     }
 
     public static function belongsTo(
-        string $name,
-        string $sourceModel,
-        string $sourceField,
-        string $targetModel,
-        string $targetField = 'id',
-        array  $options = []
+        string      $name,
+        string      $sourceModel,
+        string      $sourceField,
+        string      $targetModel,
+        string|null $targetField = null,
+        array       $options = []
     ) : self
     {
+        $targetField ??= 'id';
+
         return self::create(
             name       : $name,
             type       : RelationType::MANY_TO_ONE,

@@ -3,4 +3,6 @@ Foundation/Container/Container.txt
 
 # Stakpak session files
 .stakpak/session*
-!/vendor/
+
+# Dependencies
+vendor/

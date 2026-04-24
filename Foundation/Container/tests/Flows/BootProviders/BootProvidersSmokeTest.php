@@ -184,7 +184,7 @@ final class CycleProviderB implements ServiceProviderInterface
 ProviderState::$events = [];
 $container             = makeTestContainer();
 
-(new BootProviders(container: $container))->boot(providers: [DemoProvider::class]);
+new BootProviders(container: $container)->boot(providers: [DemoProvider::class]);
 
 $state = $container->get(id: ProviderState::class);
 assertSame(
@@ -205,7 +205,7 @@ assertTrue(
 ProviderState::$events = [];
 $deferredContainer     = makeTestContainer();
 
-(new BootProviders(container: $deferredContainer))->boot(providers: [DeferredDemoProvider::class]);
+new BootProviders(container: $deferredContainer)->boot(providers: [DeferredDemoProvider::class]);
 
 $deferredDescription = $deferredContainer->describeService(id: DeferredProvidedContract::class);
 assertSame(expected: [], actual: ProviderState::$events, message: 'Deferred providers must not register or boot during eager provider boot flow.');
@@ -233,7 +233,7 @@ ProviderState::$events     = [];
 $compiledDeferredContainer = makeTestContainer();
 $compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class, concrete: DeferredProviderConsumer::class);
 
-(new BootProviders(container: $compiledDeferredContainer))->boot(providers: [DeferredDemoProvider::class]);
+new BootProviders(container: $compiledDeferredContainer)->boot(providers: [DeferredDemoProvider::class]);
 $compiledDeferredContainer->compileContainer(serviceIds: [DeferredProviderConsumer::class]);
 
 $compiledDeferredReport = $compiledDeferredContainer->compileReport(serviceIds: [
@@ -258,7 +258,7 @@ assertTrue(
 assertThrows(
     expectedClass: LogicException::class,
     callback     : static function () use ($container) : void {
-        (new BootProviders(container: $container))->boot(providers: [CycleProviderA::class]);
+        new BootProviders(container: $container)->boot(providers: [CycleProviderA::class]);
     },
     message      : 'Provider dependency cycles should fail fast.'
 );

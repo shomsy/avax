@@ -32,7 +32,7 @@ class ReadFileTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "test content\n");
 
-        $result = (new ReadFile(disk: $this->disk))->execute(path: $this->testFile);
+        $result = new ReadFile(disk: $this->disk)->execute(path: $this->testFile);
 
         self::assertSame("test content\n", $result);
     }
@@ -42,7 +42,7 @@ class ReadFileTest extends TestCase
         $this->expectException(exception: FileNotFound::class);
         $this->expectExceptionMessage(message: "File not found:");
 
-        (new ReadFile(disk: $this->disk))->execute(path: '/nonexistent/file.txt');
+        new ReadFile(disk: $this->disk)->execute(path: '/nonexistent/file.txt');
     }
 
     public function testExecuteThrowsExceptionForUnreadableFile() : void
@@ -57,7 +57,7 @@ class ReadFileTest extends TestCase
         chmod(filename: $this->testFile, permissions: 0000);
 
         try {
-            (new ReadFile(disk: $this->disk))->execute(path: $this->testFile);
+            new ReadFile(disk: $this->disk)->execute(path: $this->testFile);
         } finally {
             chmod(filename: $this->testFile, permissions: 0644);
         }

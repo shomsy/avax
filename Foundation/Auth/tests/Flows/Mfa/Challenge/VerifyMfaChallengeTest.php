@@ -255,10 +255,10 @@ final class VerifyMfaChallengeTest extends TestCase
     private function makeFlowWithBackupCode() : array
     {
         [$flow, $totp, $clock, $challengeStore, $currentAuthentication] = $this->makeFlow();
-        $generated        = (new GenerateBackupCodes(
+        $generated = new GenerateBackupCodes(
             passwordHasher: new PasswordHasher(),
             clock         : $clock
-        ))->execute();
+        )->execute();
         $mfaStoreProperty = new ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
         /** @var InMemoryMfaStore $mfaStore */
         $mfaStore = $mfaStoreProperty->getValue(object: $flow);

@@ -33,7 +33,7 @@ final class ListDirectoryFilesTest extends TestCase
 
     public function testExecuteReturnsEmptyArrayForNonExistentDirectory() : void
     {
-        $result = (new ListDirectoryFiles(disk: $this->disk))->execute(path: '/ne postoji dir');
+        $result = new ListDirectoryFiles(disk: $this->disk)->execute(path: '/ne postoji dir');
 
         self::assertSame([], $result);
     }
@@ -43,7 +43,7 @@ final class ListDirectoryFilesTest extends TestCase
         file_put_contents(filename: $this->testDir . '/file1.txt', data: "sadrzaj1\n");
         file_put_contents(filename: $this->testDir . '/file2.txt', data: "sadrzaj2\n");
 
-        $result = (new ListDirectoryFiles(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new ListDirectoryFiles(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertCount(2, $result);
     }

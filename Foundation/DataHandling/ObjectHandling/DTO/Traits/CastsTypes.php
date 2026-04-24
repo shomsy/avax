@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
 use BackedEnum;
-use Gemini\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use InvalidArgumentException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;

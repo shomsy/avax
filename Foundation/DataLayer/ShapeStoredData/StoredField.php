@@ -53,19 +53,22 @@ final readonly class StoredField
     public ?string            $checkConstraint;
 
     private function __construct(
-        string             $name,
-        StoredFieldType    $type,
-        FieldNullability   $nullability,
-        FieldGeneratedType $generatedType = FieldGeneratedType::NONE,
-        ?int               $length = null,
-        ?int               $precision = null,
-        ?int               $scale = null,
-        mixed              $defaultValue = null,
-        bool               $isPrimaryKey = false,
-        bool               $isUnique = false,
-        ?string            $checkConstraint = null
+        string                  $name,
+        StoredFieldType         $type,
+        FieldNullability        $nullability,
+        FieldGeneratedType|null $generatedType = null,
+        ?int                    $length = null,
+        ?int                    $precision = null,
+        ?int                    $scale = null,
+        mixed                   $defaultValue = null,
+        bool|null               $isPrimaryKey = null,
+        bool|null               $isUnique = null,
+        ?string                 $checkConstraint = null
     )
     {
+        $generatedType ??= FieldGeneratedType::NONE;
+        $isPrimaryKey  ??= false;
+        $isUnique      ??= false;
         $this->name            = $name;
         $this->type            = $type;
         $this->nullability     = $nullability;
@@ -80,12 +83,13 @@ final readonly class StoredField
     }
 
     public static function create(
-        string           $name,
-        StoredFieldType  $type,
-        FieldNullability $nullability = FieldNullability::NULLABLE,
-        array            $options = []
+        string                $name,
+        StoredFieldType       $type,
+        FieldNullability|null $nullability = null,
+        array                 $options = []
     ) : self
     {
+        $nullability ??= FieldNullability::NULLABLE;
         if (empty(trim($name))) {
             throw new InvalidArgumentException('Field name cannot be empty.');
         }

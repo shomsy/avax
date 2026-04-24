@@ -24,11 +24,11 @@ final class ResponseHeaders
     public function replace(string $name, mixed $value) : self
     {
         $clone                           = clone $this;
-        $originalName                    = (new ValidateHeaderName())($name);
+        $originalName = new ValidateHeaderName()($name);
         $normalizedName                  = strtolower(string: $originalName);
         $clone->headers[$normalizedName] = [
             'name'   => $originalName,
-            'values' => (new NormalizeHeaderValues())($value),
+            'values' => new NormalizeHeaderValues()($value),
         ];
 
         return $clone;
@@ -36,7 +36,7 @@ final class ResponseHeaders
 
     public function has(string $name) : bool
     {
-        $normalized = (new NormalizeHeaderName())($name);
+        $normalized = new NormalizeHeaderName()($name);
 
         return array_key_exists(key: $normalized, array: $this->headers);
     }
@@ -51,7 +51,7 @@ final class ResponseHeaders
      */
     public function read(string $name) : array
     {
-        $normalized = (new NormalizeHeaderName())($name);
+        $normalized = new NormalizeHeaderName()($name);
 
         return $this->headers[$normalized]['values'] ?? [];
     }
@@ -59,12 +59,12 @@ final class ResponseHeaders
     public function append(string $name, mixed $value) : self
     {
         $clone                           = clone $this;
-        $originalName                    = (new ValidateHeaderName())($name);
+        $originalName = new ValidateHeaderName()($name);
         $normalizedName                  = strtolower(string: $originalName);
         $existingValues                  = $clone->headers[$normalizedName]['values'] ?? [];
         $clone->headers[$normalizedName] = [
             'name'   => $clone->headers[$normalizedName]['name'] ?? $originalName,
-            'values' => array_merge($existingValues, (new NormalizeHeaderValues())($value)),
+            'values' => array_merge($existingValues, new NormalizeHeaderValues()($value)),
         ];
 
         return $clone;
@@ -73,7 +73,7 @@ final class ResponseHeaders
     public function remove(string $name) : self
     {
         $clone      = clone $this;
-        $normalized = (new NormalizeHeaderName())($name);
+        $normalized = new NormalizeHeaderName()($name);
         unset($clone->headers[$normalized]);
 
         return $clone;

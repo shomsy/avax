@@ -117,11 +117,12 @@ final readonly class SagaStartCommand
     }
 
     public static function create(
-        string $definitionName,
-        array  $initialData = [],
-        array  $options = []
+        string     $definitionName,
+        array|null $initialData = null,
+        array      $options = []
     ) : self
     {
+        $initialData ??= [];
         if (empty(trim($definitionName))) {
             throw new InvalidArgumentException('Definition name cannot be empty.');
         }

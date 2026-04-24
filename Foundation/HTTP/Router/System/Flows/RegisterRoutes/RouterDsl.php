@@ -156,7 +156,7 @@ final readonly class RouterDsl implements RouterInterface
      */
     public function registerAttributes(object|string $controller) : void
     {
-        (new AttributeRouteRegistrar(router: $this->router))->register(controller: $controller);
+        new AttributeRouteRegistrar(router: $this->router)->register(controller: $controller);
     }
 
     public function name(string $prefix) : self

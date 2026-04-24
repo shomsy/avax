@@ -54,7 +54,7 @@ final class DeploymentTrustBoundaryTest extends TestCase
 
     public function testUnsafeDeploymentWarningsAreReported() : void
     {
-        $warnings = (new DetectUnsafeDeploymentMode())->execute(
+        $warnings = new DetectUnsafeDeploymentMode()->execute(
             input                   : new HttpOAuthProofInput(
                                           method : 'POST',
                                           uri    : 'http://api.example.test/token',

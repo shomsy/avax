@@ -36,7 +36,7 @@ class CopyFileTest extends TestCase
     {
         file_put_contents(filename: $this->sourceFile, data: "source content\n");
 
-        $result = (new CopyFile(disk: $this->disk))->execute(source: $this->sourceFile, destination: $this->destFile);
+        $result = new CopyFile(disk: $this->disk)->execute(source: $this->sourceFile, destination: $this->destFile);
 
         self::assertTrue(condition: $result);
         self::assertFileExists(filename: $this->destFile);
@@ -46,6 +46,6 @@ class CopyFileTest extends TestCase
     {
         $this->expectException(exception: FileNotFound::class);
 
-        (new CopyFile(disk: $this->disk))->execute(source: '/nonexistent.txt', destination: $this->destFile);
+        new CopyFile(disk: $this->disk)->execute(source: '/nonexistent.txt', destination: $this->destFile);
     }
 }

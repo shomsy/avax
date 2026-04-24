@@ -26,18 +26,24 @@ final readonly class StoredModel implements IteratorAggregate
     private function __construct(
         string       $name,
         string       $tableName,
-        string       $schemaName = 'public',
-        array        $fields = [],
-        array        $relations = [],
-        array        $indexes = [],
-        array        $constraints = [],
+        string|null $schemaName = null,
+        array|null  $fields = null,
+        array|null  $relations = null,
+        array|null  $indexes = null,
+        array|null  $constraints = null,
         ?TenantShape $tenantShape = null,
         ?string      $comment = null,
-        string       $engine = 'InnoDB',
+        string|null $engine = null,
         ?string      $charset = null,
         ?string      $collation = null
     )
     {
+        $schemaName  ??= 'public';
+        $fields      ??= [];
+        $relations   ??= [];
+        $indexes     ??= [];
+        $constraints ??= [];
+        $engine      ??= 'InnoDB';
         $this->name        = $name;
         $this->tableName   = $tableName;
         $this->schemaName  = $schemaName;

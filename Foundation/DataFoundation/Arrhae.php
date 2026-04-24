@@ -40,14 +40,14 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
 
     public static function make(iterable $items = []) : static
     {
-        return new self(items: (new MakeCollection())->from(items: $items));
+        return new self(items: new MakeCollection()->from(items: $items));
     }
 
     public static function wrap(mixed $value) : static
     {
         return match (true) {
             $value instanceof static => $value,
-            default                  => new self(items: (new WrapValue())->intoArray(value: $value)),
+            default => new self(items: new WrapValue()->intoArray(value: $value)),
         };
     }
 

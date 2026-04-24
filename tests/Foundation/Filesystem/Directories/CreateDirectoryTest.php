@@ -36,7 +36,7 @@ class CreateDirectoryTest extends TestCase
 
     public function testExecuteCreatesDirectory() : void
     {
-        $result = (new CreateDirectory(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new CreateDirectory(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
         self::assertTrue(condition: is_dir(filename: $this->testDir));
@@ -46,7 +46,7 @@ class CreateDirectoryTest extends TestCase
     {
         mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
 
-        $result = (new CreateDirectory(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new CreateDirectory(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }
@@ -57,6 +57,6 @@ class CreateDirectoryTest extends TestCase
 
         $this->expectException(exception: DirectoryCreateFailed::class);
 
-        (new CreateDirectory(disk: $this->disk))->execute(path: $this->conflictingFile);
+        new CreateDirectory(disk: $this->disk)->execute(path: $this->conflictingFile);
     }
 }

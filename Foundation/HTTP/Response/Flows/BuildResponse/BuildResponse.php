@@ -14,13 +14,16 @@ use Psr\Http\Message\ResponseInterface;
 final class BuildResponse
 {
     public function __invoke(
-        int    $status = 200,
-        array  $headers = [],
-        mixed  $body = null,
-        string $reasonPhrase = '',
-        string $protocolVersion = '1.1',
+        int|null    $status = null,
+        array|null  $headers = null,
+        mixed       $body = null,
+        string|null $reasonPhrase = null,
+        string      $protocolVersion = '1.1',
     ) : ResponseInterface
     {
+        $status       ??= 200;
+        $headers      ??= [];
+        $reasonPhrase ??= '';
         if (in_array(needle: $status, haystack: [204, 304], strict: true)) {
             unset($headers['Content-Type'], $headers['content-type'], $headers['Content-Length'], $headers['content-length']);
             $body = '';
@@ -31,7 +34,7 @@ final class BuildResponse
             reasonPhrase   : $reasonPhrase,
             protocolVersion: $protocolVersion,
             headers        : $headers,
-            body           : (new NormalizeResponseBody())($body),
+            body           : new NormalizeResponseBody()($body),
         );
     }
 }

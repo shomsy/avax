@@ -39,7 +39,7 @@ final class CleanupExpiredPasskeyChallengesTest extends TestCase
                                   expiresAt  : new DateTimeImmutable(datetime: '+10 minutes')
                               ));
 
-        $removed = (new CleanupExpiredPasskeyChallenges(challengeStore: $store, clock: new Clock()))->execute();
+        $removed = new CleanupExpiredPasskeyChallenges(challengeStore: $store, clock: new Clock())->execute();
 
         $this->assertSame(expected: 2, actual: $removed);
         $this->assertNull(actual: $store->find(challengeId: 'expired'));

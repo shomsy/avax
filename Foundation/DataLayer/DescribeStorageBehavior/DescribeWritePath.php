@@ -41,8 +41,10 @@ final readonly class DescribeWritePath
         return new self(WritePathStrategy::DIRECT, 1, 0, $durable);
     }
 
-    public static function batch(int $batchSize = 1000, int $flushIntervalMs = 100) : self
+    public static function batch(int|null $batchSize = null, int $flushIntervalMs = 100) : self
     {
+        $batchSize ??= 1000;
+
         return new self(WritePathStrategy::BATCH, $batchSize, $flushIntervalMs, true);
     }
 

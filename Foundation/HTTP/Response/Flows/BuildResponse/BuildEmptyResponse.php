@@ -8,9 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 
 final class BuildEmptyResponse
 {
-    public function __invoke(int $status = 200, array $headers = [], string $reasonPhrase = '') : ResponseInterface
+    public function __invoke(int|null $status = null, array|null $headers = null, string $reasonPhrase = '') : ResponseInterface
     {
-        return (new BuildResponse())(
+        $status  ??= 200;
+        $headers ??= [];
+
+        return new BuildResponse()(
             status      : $status,
             headers     : $headers,
             body        : '',

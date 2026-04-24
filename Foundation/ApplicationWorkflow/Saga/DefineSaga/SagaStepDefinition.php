@@ -38,20 +38,26 @@ final readonly class SagaStepDefinition
     public ?string             $description;
 
     private function __construct(
-        string              $name,
-        string              $component,
-        SagaStepKind        $kind,
-        array               $input = [],
-        ?string             $compensationComponent = null,
-        ?array              $compensationInput = null,
-        int                 $maxRetries = 0,
-        int                 $retryDelayMs = 1000,
-        SagaStepRetryPolicy $retryPolicy = SagaStepRetryPolicy::NONE,
-        int                 $timeoutSeconds = 30,
-        bool                $optional = false,
-        ?string             $description = null
+        string                   $name,
+        string                   $component,
+        SagaStepKind             $kind,
+        array|null               $input = null,
+        ?string                  $compensationComponent = null,
+        ?array                   $compensationInput = null,
+        int|null                 $maxRetries = null,
+        int|null                 $retryDelayMs = null,
+        SagaStepRetryPolicy|null $retryPolicy = null,
+        int|null                 $timeoutSeconds = null,
+        bool|null                $optional = null,
+        ?string                  $description = null
     )
     {
+        $input          ??= [];
+        $maxRetries     ??= 0;
+        $retryDelayMs   ??= 1000;
+        $retryPolicy    ??= SagaStepRetryPolicy::NONE;
+        $timeoutSeconds ??= 30;
+        $optional       ??= false;
         $this->name                  = $name;
         $this->component             = $component;
         $this->kind                  = $kind;
@@ -99,12 +105,14 @@ final readonly class SagaStepDefinition
     }
 
     public static function action(
-        string $name,
-        string $component,
-        array  $input = [],
-        array  $options = []
+        string     $name,
+        string     $component,
+        array|null $input = null,
+        array      $options = []
     ) : self
     {
+        $input ??= [];
+
         return self::create($name, $component, array_merge($options, ['input' => $input, 'kind' => 'action']));
     }
 

@@ -32,7 +32,7 @@ class EnsureDirectoryExistsTest extends TestCase
 
     public function testExecuteCreatesDirectoryIfNotExists() : void
     {
-        $result = (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new EnsureDirectoryExists(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
         self::assertTrue(condition: is_dir(filename: $this->testDir));
@@ -42,7 +42,7 @@ class EnsureDirectoryExistsTest extends TestCase
     {
         mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
 
-        $result = (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new EnsureDirectoryExists(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }

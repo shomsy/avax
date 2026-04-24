@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO\Support;
+namespace Avax\DataHandling\ObjectHandling\DTO\Support;
 
 use ReflectionAttribute;
 use ReflectionProperty;

@@ -44,17 +44,22 @@ final readonly class DataTransactionPolicy
     public ?int                  $maxAffectedRows;
 
     private function __construct(
-        DataTransactionPolicy $policy,
-        IsolationLevel        $defaultIsolation = IsolationLevel::REPEATABLE_READ,
-        ?int                  $timeoutSeconds = null,
-        ?int                  $maxRetries = null,
-        int                   $retryDelayMs = 100,
-        bool                  $allowDeadlockRetries = true,
-        bool                  $checkForeignKeys = true,
-        TwoPhaseCommitPolicy  $twoPhaseCommit = TwoPhaseCommitPolicy::DISABLED,
-        ?int                  $maxAffectedRows = null
+        DataTransactionPolicy     $policy,
+        IsolationLevel|null       $defaultIsolation = null,
+        ?int                      $timeoutSeconds = null,
+        ?int                      $maxRetries = null,
+        int|null                  $retryDelayMs = null,
+        bool|null                 $allowDeadlockRetries = null,
+        bool|null                 $checkForeignKeys = null,
+        TwoPhaseCommitPolicy|null $twoPhaseCommit = null,
+        ?int                      $maxAffectedRows = null
     )
     {
+        $defaultIsolation     ??= IsolationLevel::REPEATABLE_READ;
+        $retryDelayMs         ??= 100;
+        $allowDeadlockRetries ??= true;
+        $checkForeignKeys     ??= true;
+        $twoPhaseCommit       ??= TwoPhaseCommitPolicy::DISABLED;
         $this->policy               = $policy;
         $this->defaultIsolation     = $defaultIsolation;
         $this->timeoutSeconds       = $timeoutSeconds;

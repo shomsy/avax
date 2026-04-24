@@ -21,7 +21,7 @@ final class EmitResponseTest extends TestCase
         header_remove();
 
         ob_start();
-        (new EmitResponse())(Response::text(content: 'emitted body', status: 202));
+        new EmitResponse()(Response::text(content: 'emitted body', status: 202));
         $output = (string) ob_get_clean();
 
         self::assertSame(202, http_response_code());

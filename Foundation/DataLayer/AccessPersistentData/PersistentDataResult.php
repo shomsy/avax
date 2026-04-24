@@ -24,18 +24,25 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
 
     private function __construct(
         PersistentDataOperation $operation,
-        int                     $rowCount = 0,
-        int                     $affectedRows = 0,
-        float                   $executionTimeMs = 0.0,
-        array                   $rows = [],
-        array                   $columnNames = [],
+        int|null   $rowCount = null,
+        int|null   $affectedRows = null,
+        float|null $executionTimeMs = null,
+        array|null $rows = null,
+        array|null $columnNames = null,
         ?string                 $lastInsertId = null,
         ?string                 $generatedSql = null,
-        array                   $warnings = [],
-        bool                    $success = true,
+        array|null $warnings = null,
+        bool|null  $success = null,
         ?PersistentDataFailure  $failure = null
     )
     {
+        $rowCount        ??= 0;
+        $affectedRows    ??= 0;
+        $executionTimeMs ??= 0.0;
+        $rows            ??= [];
+        $columnNames     ??= [];
+        $warnings        ??= [];
+        $success         ??= true;
         $this->operation       = $operation;
         $this->rowCount        = $rowCount;
         $this->affectedRows    = $affectedRows;
@@ -51,16 +58,20 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
 
     public static function success(
         PersistentDataOperation $operation,
-        array                   $rows = [],
-        int                     $rowCount = 0,
-        int                     $affectedRows = 0,
-        float                   $executionTimeMs = 0.0,
+        array|null $rows = null,
+        int|null   $rowCount = null,
+        int|null   $affectedRows = null,
+        float|null $executionTimeMs = null,
         ?string                 $lastInsertId = null,
         ?string                 $generatedSql = null,
         array                   $warnings = []
     ) : self
     {
-        $columnNames = [];
+        $rows            ??= [];
+        $rowCount        ??= 0;
+        $affectedRows    ??= 0;
+        $executionTimeMs ??= 0.0;
+        $columnNames     = [];
         if (! empty($rows)) {
             $firstRow = reset($rows);
             if (is_array($firstRow)) {

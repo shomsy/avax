@@ -30,10 +30,11 @@ final readonly class ExecutionResult
      */
     public function __construct(
         bool            $success,
-        int             $affectedRows = 0,
+        int|null $affectedRows = null,
         int|string|null $lastInsertId = null
     )
     {
+        $affectedRows ??= 0;
         $this->success      = $success;
         $this->affectedRows = $affectedRows;
         $this->lastInsertId = $lastInsertId;
@@ -42,8 +43,10 @@ final readonly class ExecutionResult
     /**
      * Create a success report.
      */
-    public static function success(int $affectedRows = 0, int|string|null $lastInsertId = null) : self
+    public static function success(int|null $affectedRows = null, int|string|null $lastInsertId = null) : self
     {
+        $affectedRows ??= 0;
+
         return new self(success: true, affectedRows: $affectedRows, lastInsertId: $lastInsertId);
     }
 

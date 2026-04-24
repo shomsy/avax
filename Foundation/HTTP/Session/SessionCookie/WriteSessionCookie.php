@@ -18,7 +18,7 @@ final class WriteSessionCookie
         $cookie = new SessionCookie(
             name    : $this->settings->name,
             value   : $value,
-            expires : (new SessionCookieLifetime($this->settings->lifetime))->expiresAt(),
+            expires : new SessionCookieLifetime($this->settings->lifetime)->expiresAt(),
             path    : $this->settings->path,
             domain  : $this->settings->domain,
             secure  : $this->settings->secure,

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
 use BackedEnum;
 use DateTimeInterface;
-use Gemini\DataHandling\ObjectHandling\Collections\Collection;
-use Gemini\DataHandling\Validation\Attributes\Hidden;
+use Avax\DataFoundation\Collection;
+use Avax\DataHandling\Validation\Attributes\Hidden;
 use JsonException;
 use JsonSerializable;
 use ReflectionException;

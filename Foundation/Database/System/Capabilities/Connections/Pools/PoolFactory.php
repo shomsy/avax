@@ -23,12 +23,14 @@ final class PoolFactory
     }
 
     public static function create(
-        string $driver,
-        array  $config,
-        int    $minConnections = 5,
-        int    $maxConnections = 20,
+        string   $driver,
+        array    $config,
+        int|null $minConnections = null,
+        int      $maxConnections = 20,
     ) : ConnectionPoolInterface
     {
+        $minConnections ??= 5;
+
         return match (Dialect::tryFrom(value: strtolower(string: $driver))) {
             Dialect::MYSQL         => new MySQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
             Dialect::POSTGRESQL    => new PostgreSQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),

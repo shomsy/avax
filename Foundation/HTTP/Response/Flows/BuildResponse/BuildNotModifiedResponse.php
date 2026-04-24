@@ -19,9 +19,9 @@ final class BuildNotModifiedResponse
         array             $headers = [],
     ) : ResponseInterface
     {
-        $response = (new BuildEmptyResponse())(status: 304);
+        $response = new BuildEmptyResponse()(status: 304);
 
-        return (new BuildNotModifiedHeaders())(
+        return new BuildNotModifiedHeaders()(
             response    : $response,
             etag        : $etag,
             lastModified: $lastModified,

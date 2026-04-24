@@ -34,13 +34,13 @@ final class ProjectionBuilder implements Projection
             return $this->fieldMappings;
         }
 
-        return (new ResultMapper(className: $this->targetClass))->getFieldMappings();
+        return new ResultMapper(className: $this->targetClass)->getFieldMappings();
     }
 
     public function map(array $row) : object
     {
         if ($this->fieldMappings === []) {
-            return (new ResultMapper(className: $this->targetClass))->map(row: $row);
+            return new ResultMapper(className: $this->targetClass)->map(row: $row);
         }
 
         $normalized = [];
@@ -50,6 +50,6 @@ final class ProjectionBuilder implements Projection
             }
         }
 
-        return (new ResultMapper(className: $this->targetClass))->map(row: $normalized);
+        return new ResultMapper(className: $this->targetClass)->map(row: $normalized);
     }
 }

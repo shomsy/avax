@@ -29,7 +29,7 @@ final class Hydrator
             );
         }
 
-        $entity ??= (new ReflectionClass(objectOrClass: $entityClass))->newInstanceWithoutConstructor();
+        $entity ??= new ReflectionClass(objectOrClass: $entityClass)->newInstanceWithoutConstructor();
 
         foreach ($metadata->fields as $field) {
             if (! array_key_exists(key: $field->column, array: $row)) {

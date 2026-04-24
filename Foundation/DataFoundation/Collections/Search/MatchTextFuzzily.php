@@ -21,13 +21,16 @@ final readonly class MatchTextFuzzily
         $this->fuzz = null;
     }
 
-    public function __invoke(string $query, int $threshold = 70, ?string $key = null) : array
+    public function __invoke(string $query, int|null $threshold = null, ?string $key = null) : array
     {
+        $threshold ??= 70;
+
         return $this->match(query: $query, threshold: $threshold, key: $key);
     }
 
-    public function match(string $query, int $threshold = 70, ?string $key = null) : array
+    public function match(string $query, int|null $threshold = null, ?string $key = null) : array
     {
+        $threshold ??= 70;
         new Threshold(value: $threshold);
 
         $filtered = array_filter(

@@ -28,14 +28,14 @@ class PathIsWritableTest extends TestCase
 
     public function testExecuteReturnsTrueForWritableDirectory() : void
     {
-        $result = (new PathIsWritable())->execute(path: $this->testDir);
+        $result = new PathIsWritable()->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }
 
     public function testExecuteReturnsFalseForNonExistentPath() : void
     {
-        $result = (new PathIsWritable())->execute(path: '/ne postoji put');
+        $result = new PathIsWritable()->execute(path: '/ne postoji put');
 
         self::assertFalse(condition: $result);
     }
@@ -46,7 +46,7 @@ class PathIsWritableTest extends TestCase
             $this->markTestSkipped(reason: 'Cannot test unwritable paths as root');
         }
 
-        $result = (new PathIsWritable())->execute(path: '/root');
+        $result = new PathIsWritable()->execute(path: '/root');
 
         self::assertFalse(condition: $result);
     }

@@ -21,13 +21,16 @@ final readonly class SagaStepResult
     private function __construct(
         string              $stepName,
         bool                $success,
-        array               $output = [],
+        array|null $output = null,
         ?string             $error = null,
-        int                 $attempt = 1,
-        float               $durationMs = 0.0,
+        int|null   $attempt = null,
+        float|null $durationMs = null,
         ?\DateTimeImmutable $completedAt = null
     )
     {
+        $output     ??= [];
+        $attempt    ??= 1;
+        $durationMs ??= 0.0;
         $this->stepName    = $stepName;
         $this->success     = $success;
         $this->output      = $output;
@@ -38,12 +41,15 @@ final readonly class SagaStepResult
     }
 
     public static function success(
-        string $stepName,
-        array  $output = [],
-        int    $attempt = 1,
-        float  $durationMs = 0.0
+        string     $stepName,
+        array|null $output = null,
+        int|null   $attempt = null,
+        float      $durationMs = 0.0
     ) : self
     {
+        $output  ??= [];
+        $attempt ??= 1;
+
         return new self(
             stepName   : $stepName,
             success    : true,
@@ -55,12 +61,14 @@ final readonly class SagaStepResult
     }
 
     public static function failure(
-        string $stepName,
-        string $error,
-        int    $attempt = 1,
-        float  $durationMs = 0.0
+        string   $stepName,
+        string   $error,
+        int|null $attempt = null,
+        float    $durationMs = 0.0
     ) : self
     {
+        $attempt ??= 1;
+
         return new self(
             stepName   : $stepName,
             success    : false,
@@ -94,13 +102,17 @@ final readonly class SagaStepExecutionPolicy
     public bool $isolationPerStep;
 
     private function __construct(
-        int  $maxRetries = 0,
-        int  $retryDelayMs = 1000,
-        int  $timeoutSeconds = 30,
-        bool $continueOnFailure = false,
-        bool $isolationPerStep = true
+        int|null  $maxRetries = null,
+        int|null  $retryDelayMs = null,
+        int|null  $timeoutSeconds = null,
+        bool|null $continueOnFailure = null,
+        bool      $isolationPerStep = true
     )
     {
+        $maxRetries        ??= 0;
+        $retryDelayMs      ??= 1000;
+        $timeoutSeconds    ??= 30;
+        $continueOnFailure ??= false;
         $this->maxRetries        = $maxRetries;
         $this->retryDelayMs      = $retryDelayMs;
         $this->timeoutSeconds    = $timeoutSeconds;

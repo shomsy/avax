@@ -19,7 +19,7 @@ final class MapAuthFailureTest extends TestCase
 {
     public function testMapAuthFailureReturnsSafeHttpOutcomeForAccessDenial() : void
     {
-        $failure = (new MapAuthFailure())->execute(failure: new PermissionDenied(requirement: new UserPermission(value: 'write')));
+        $failure = new MapAuthFailure()->execute(failure: new PermissionDenied(requirement: new UserPermission(value: 'write')));
 
         $this->assertSame(expected: 403, actual: $failure->statusCode);
         $this->assertSame(expected: 'access_denied', actual: $failure->errorCode);
@@ -28,7 +28,7 @@ final class MapAuthFailureTest extends TestCase
 
     public function testMapAuthFailureRedactsAuthenticationFailureDetails() : void
     {
-        $failure = (new MapAuthFailure())->execute(failure: AuthenticationFailed::invalidCredentials());
+        $failure = new MapAuthFailure()->execute(failure: AuthenticationFailed::invalidCredentials());
 
         $this->assertSame(expected: 401, actual: $failure->statusCode);
         $this->assertSame(expected: 'authentication_failed', actual: $failure->errorCode);
@@ -37,8 +37,8 @@ final class MapAuthFailureTest extends TestCase
 
     public function testMapAuthFailureCarriesRetryAfterForRateLimits() : void
     {
-        $loginFailure = (new MapAuthFailure())->execute(failure: new RateLimitException(message: 'Slow down.', retryAfter: 30));
-        $mfaFailure   = (new MapAuthFailure())->execute(failure: new MfaAttemptLimitReached(retryAfter: 45));
+        $loginFailure = new MapAuthFailure()->execute(failure: new RateLimitException(message: 'Slow down.', retryAfter: 30));
+        $mfaFailure   = new MapAuthFailure()->execute(failure: new MfaAttemptLimitReached(retryAfter: 45));
 
         $this->assertSame(expected: 429, actual: $loginFailure->statusCode);
         $this->assertSame(expected: 30, actual: $loginFailure->retryAfterSeconds);
@@ -48,7 +48,7 @@ final class MapAuthFailureTest extends TestCase
 
     public function testMapAuthFailureMarksFreshMfaBoundary() : void
     {
-        $failure = (new MapAuthFailure())->execute(failure: new FreshMfaRequired(maxAgeSeconds: 300));
+        $failure = new MapAuthFailure()->execute(failure: new FreshMfaRequired(maxAgeSeconds: 300));
 
         $this->assertSame(expected: 403, actual: $failure->statusCode);
         $this->assertSame(expected: 'fresh_mfa_required', actual: $failure->errorCode);
@@ -57,7 +57,7 @@ final class MapAuthFailureTest extends TestCase
 
     public function testMapAuthFailureFallsBackToInternalErrorForUnknownFailures() : void
     {
-        $failure = (new MapAuthFailure())->execute(failure: new RuntimeException(message: 'boom'));
+        $failure = new MapAuthFailure()->execute(failure: new RuntimeException(message: 'boom'));
 
         $this->assertSame(expected: 500, actual: $failure->statusCode);
         $this->assertSame(expected: 'auth_error', actual: $failure->errorCode);

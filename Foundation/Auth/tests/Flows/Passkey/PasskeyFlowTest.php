@@ -103,17 +103,17 @@ final class PasskeyFlowTest extends TestCase
                                                                  challengeId: $registration->challengeId,
                                                                  response   : ['credential_id' => 'cred-1', 'label' => 'Laptop']
                                                              ));
-        $renamed      = (new RenamePasskey(
+        $renamed = new RenamePasskey(
             currentAuthentication: $current,
             credentialStore      : $credentialStore
-        ))->execute(data: new RenamePasskeyData(
+        )->execute(data: new RenamePasskeyData(
                               credentialId: 'cred-1',
                               label       : 'Primary Laptop'
                           ));
 
         $this->assertSame(expected: 'cred-1', actual: $credential->credentialId);
         $this->assertSame(expected: 'Primary Laptop', actual: $renamed->label);
-        $this->assertCount(expectedCount: 1, haystack: (new ListPasskeys(currentAuthentication: $current, credentialStore: $credentialStore))->execute());
+        $this->assertCount(expectedCount: 1, haystack: new ListPasskeys(currentAuthentication: $current, credentialStore: $credentialStore)->execute());
 
         $current->clear();
         $identity               = new Identity(jwtIdentity: new JwtIdentity(
@@ -156,13 +156,13 @@ final class PasskeyFlowTest extends TestCase
 
         $this->assertTrue(condition: $result->isAuthenticated());
 
-        (new RevokePasskey(
+        new RevokePasskey(
             currentAuthentication: $current,
             requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             credentialStore      : $credentialStore,
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock
-        ))->execute(credentialId: 'cred-1');
+        )->execute(credentialId: 'cred-1');
 
         $this->assertTrue(condition: $credentialStore->find(credentialId: 'cred-1')?->isRevoked() ?? false);
     }
@@ -193,7 +193,7 @@ final class PasskeyFlowTest extends TestCase
                                            ));
 
         $runtime   = new FakePasskeyRuntime();
-        $challenge = (new BeginPasskeyAuthentication(
+        $challenge = new BeginPasskeyAuthentication(
             userSource     : $userSource,
             runtime        : $runtime,
             credentialStore: $credentialStore,
@@ -201,7 +201,7 @@ final class PasskeyFlowTest extends TestCase
             auditLog       : new InMemoryAuditLog(),
             clock          : $clock,
             rpId           : 'example.test'
-        ))->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
+        )->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
 
         $complete = new CompletePasskeyAuthentication(
             runtime                 : $runtime,

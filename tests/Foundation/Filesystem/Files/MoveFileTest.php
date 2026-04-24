@@ -35,7 +35,7 @@ class MoveFileTest extends TestCase
     {
         file_put_contents(filename: $this->sourceFile, data: "content\n");
 
-        $result = (new MoveFile(disk: $this->disk))->execute(source: $this->sourceFile, destination: $this->destFile);
+        $result = new MoveFile(disk: $this->disk)->execute(source: $this->sourceFile, destination: $this->destFile);
 
         self::assertTrue(condition: $result);
         self::assertFileDoesNotExist(filename: $this->sourceFile);
@@ -46,6 +46,6 @@ class MoveFileTest extends TestCase
     {
         $this->expectException(exception: FileNotFound::class);
 
-        (new MoveFile(disk: $this->disk))->execute(source: '/ne postoji.txt', destination: $this->destFile);
+        new MoveFile(disk: $this->disk)->execute(source: '/ne postoji.txt', destination: $this->destFile);
     }
 }

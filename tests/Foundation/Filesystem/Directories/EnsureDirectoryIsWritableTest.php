@@ -16,7 +16,7 @@ final class EnsureDirectoryIsWritableTest extends TestCase
 
     public function testExecuteCreatesDirectoryWhenMissing() : void
     {
-        $result = (new EnsureDirectoryIsWritable(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new EnsureDirectoryIsWritable(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue($result);
         self::assertTrue(is_dir(filename: $this->testDir));
@@ -33,7 +33,7 @@ final class EnsureDirectoryIsWritableTest extends TestCase
         chmod(filename: $this->testDir, permissions: 0555);
 
         self::assertFalse(is_writable(filename: $this->testDir));
-        self::assertTrue((new EnsureDirectoryIsWritable(disk: $this->disk))->execute(path: $this->testDir));
+        self::assertTrue(new EnsureDirectoryIsWritable(disk: $this->disk)->execute(path: $this->testDir));
         self::assertTrue(is_writable(filename: $this->testDir));
     }
 

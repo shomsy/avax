@@ -8,7 +8,7 @@ final class NormalizeHeaderName
 {
     public function __invoke(string $name) : string
     {
-        $validated = (new ValidateHeaderName())($name);
+        $validated = new ValidateHeaderName()($name);
 
         return strtolower(string: $validated);
     }

@@ -36,14 +36,14 @@ class ClearDirectoryTest extends TestCase
     {
         $this->expectException(exception: DirectoryClearFailed::class);
 
-        (new ClearDirectory(disk: $this->disk))->execute(path: '/ne postoji dir');
+        new ClearDirectory(disk: $this->disk)->execute(path: '/ne postoji dir');
     }
 
     public function testExecuteClearsDirectoryContents() : void
     {
         file_put_contents(filename: $this->testDir . '/file1.txt', data: "sadrzaj\n");
 
-        $result = (new ClearDirectory(disk: $this->disk))->execute(path: $this->testDir);
+        $result = new ClearDirectory(disk: $this->disk)->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
         self::assertSame(['.', '..'], scandir(directory: $this->testDir));

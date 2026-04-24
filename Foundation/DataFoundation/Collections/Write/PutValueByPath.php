@@ -23,7 +23,7 @@ final readonly class PutValueByPath
     public function put(string $path, mixed $value) : array
     {
         $items = $this->items;
-        (new DotPath(path: $path))->setValue(items: $items, value: $value);
+        new DotPath(path: $path)->setValue(items: $items, value: $value);
 
         return $items;
     }

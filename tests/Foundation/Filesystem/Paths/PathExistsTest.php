@@ -29,7 +29,7 @@ class PathExistsTest extends TestCase
 
     public function testExecuteReturnsFalseForNonExistentPath() : void
     {
-        $result = (new PathExists())->execute(path: '/ne postoji put');
+        $result = new PathExists()->execute(path: '/ne postoji put');
 
         self::assertFalse(condition: $result);
     }
@@ -38,7 +38,7 @@ class PathExistsTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
-        $result = (new PathExists())->execute(path: $this->testFile);
+        $result = new PathExists()->execute(path: $this->testFile);
 
         self::assertTrue(condition: $result);
     }
@@ -47,7 +47,7 @@ class PathExistsTest extends TestCase
     {
         @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
 
-        $result = (new PathExists())->execute(path: $this->testDir);
+        $result = new PathExists()->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }

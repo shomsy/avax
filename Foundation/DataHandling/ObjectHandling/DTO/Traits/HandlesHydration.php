@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
-use Gemini\DataHandling\ObjectHandling\DTO\DTOValidationException;
+use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionProperty;

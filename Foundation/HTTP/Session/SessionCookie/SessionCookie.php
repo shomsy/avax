@@ -15,15 +15,21 @@ final class SessionCookie
     private bool   $httpOnly;
 
     public function __construct(
-        string $name = 'SID',
-        string $value = '',
-        int    $expires = 0,
-        string $path = '/',
-        string $domain = '',
-        bool   $secure = false,
-        bool   $httpOnly = true
+        string|null $name = null,
+        string|null $value = null,
+        int|null    $expires = null,
+        string|null $path = null,
+        string|null $domain = null,
+        bool|null   $secure = null,
+        bool        $httpOnly = true
     )
     {
+        $name    ??= 'SID';
+        $value   ??= '';
+        $expires ??= 0;
+        $path    ??= '/';
+        $domain  ??= '';
+        $secure  ??= false;
         $this->name     = $name;
         $this->value    = $value;
         $this->expires  = $expires;

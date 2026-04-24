@@ -36,7 +36,7 @@ class DeleteFileTest extends TestCase
 
     public function testExecuteReturnsTrueForNonExistentFile() : void
     {
-        $result = (new DeleteFile(disk: $this->disk))->execute(path: '/ne postoji fajl.txt');
+        $result = new DeleteFile(disk: $this->disk)->execute(path: '/ne postoji fajl.txt');
 
         self::assertTrue(condition: $result);
     }
@@ -45,7 +45,7 @@ class DeleteFileTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "sadržaj\n");
 
-        $result = (new DeleteFile(disk: $this->disk))->execute(path: $this->testFile);
+        $result = new DeleteFile(disk: $this->disk)->execute(path: $this->testFile);
 
         self::assertTrue(condition: $result);
         self::assertFileDoesNotExist(filename: $this->testFile);
@@ -57,6 +57,6 @@ class DeleteFileTest extends TestCase
 
         $this->expectException(exception: FileDeleteFailed::class);
 
-        (new DeleteFile(disk: $this->disk))->execute(path: $this->testDirectory);
+        new DeleteFile(disk: $this->disk)->execute(path: $this->testDirectory);
     }
 }

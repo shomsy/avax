@@ -20,8 +20,9 @@ final readonly class DescribeBloomFilter
         return 'describes bloom filter including name, target table, columns, size, and FPR.';
     }
 
-    public static function forTable(string $table, array $columns, int $expectedKeys = 1000000, float $fpr = 0.01) : self
+    public static function forTable(string $table, array $columns, int|null $expectedKeys = null, float $fpr = 0.01) : self
     {
+        $expectedKeys ??= 1000000;
         $sizeBits      = (int) ceil(-($expectedKeys * log($fpr)) / (log(2) ** 2));
         $hashFunctions = (int) ceil(($sizeBits / $expectedKeys) * log(2));
         $name          = "bloom_{$table}_" . implode('_', $columns);

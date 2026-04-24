@@ -30,7 +30,7 @@ final class CollectionFamilyTest extends TestCase
 
     public function testMapStoresKeyValuePairs() : void
     {
-        $map = (new Map(items: ['name' => 'Alice']))->put(key: 'age', value: 30);
+        $map = new Map(items: ['name' => 'Alice'])->put(key: 'age', value: 30);
 
         $this->assertSame('Alice', $map->get(key: 'name'));
         $this->assertSame(30, $map->get(key: 'age'));
@@ -38,14 +38,14 @@ final class CollectionFamilyTest extends TestCase
 
     public function testMultiMapKeepsMultipleValuesPerKey() : void
     {
-        $map = (new MultiMap())->put(key: 'role', value: 'admin')->put(key: 'role', value: 'editor');
+        $map = new MultiMap()->put(key: 'role', value: 'admin')->put(key: 'role', value: 'editor');
 
         $this->assertSame(['admin', 'editor'], $map->get(key: 'role'));
     }
 
     public function testSequenceTransformsValuesInOrder() : void
     {
-        $sequence = (new Sequence(items: [1, 2, 3]))
+        $sequence = new Sequence(items: [1, 2, 3])
             ->map(static fn (int $value) : int => $value * 2)
             ->filter(static fn (int $value) : bool => $value > 2);
 

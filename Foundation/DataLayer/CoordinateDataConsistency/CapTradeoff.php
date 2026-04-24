@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CoordinateDataConsistency;
 
-use InvalidArgumentException;
-
 enum CapTradeoffPreference: string
 {
     case CONSISTENCY         = 'consistency';

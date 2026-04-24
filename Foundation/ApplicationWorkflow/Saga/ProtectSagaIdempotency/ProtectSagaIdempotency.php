@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency;
 
-use InvalidArgumentException;
-
 final readonly class ProtectSagaIdempotency
 {
     private array $commandKeys;

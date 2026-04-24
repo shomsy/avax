@@ -17,9 +17,17 @@ class ComposerStaticInitcd96ed280231a5dd2c1eccb61deddbac
         array (
             'Avax\\' => 5,
         ),
+        'P' => 
+        array (
+            'Psr\\Container\\' => 15,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Container\\' =>
+        array (
+            0 => __DIR__ . '/../psr/container/src',
+        ),
         'Avax\\' =>
         array (
             0 => __DIR__ . '/../..' . '/Foundation',
@@ -28,6 +36,7 @@ class ComposerStaticInitcd96ed280231a5dd2c1eccb61deddbac
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Psr\\Container\\ContainerInterface' => __DIR__ . '/../psr/container/src/ContainerInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

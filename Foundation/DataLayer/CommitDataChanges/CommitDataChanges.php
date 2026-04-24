@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CommitDataChanges;
 
-use Avax\DataLayer\ConfigureDataLayer\DataLayerRuntime;
 use Avax\DataLayer\AccessPersistentData\UseDatabaseRuntime;
+use Avax\DataLayer\ConfigureDataLayer\DataLayerRuntime;
+use InvalidArgumentException;
 use PDO;
 use Throwable;
-use InvalidArgumentException;
 
 final readonly class CommitDataChanges
 {

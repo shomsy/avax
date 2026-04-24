@@ -7,9 +7,9 @@ namespace Avax\HTTP\Session;
 final class SessionScope
 {
     private string $prefix;
-    private Session $session;
+    private SessionInterface $session;
 
-    public function __construct(string $namespace, Session $session)
+    public function __construct(string $namespace, SessionInterface $session)
     {
         $this->prefix  = rtrim($namespace, '.') . '.';
         $this->session = $session;

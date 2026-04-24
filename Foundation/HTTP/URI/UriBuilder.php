@@ -34,8 +34,8 @@ final class UriBuilder extends BaseUri implements UriInterface
     )
     {
         parent::__construct(
-            scheme  : (string) new Scheme(scheme: $scheme),
-            host    : (string) new Host(host: $host),
+            scheme  : $scheme === '' ? '' : (string) new Scheme(scheme: $scheme),
+            host    : $host === '' ? '' : (string) new Host(host: $host),
             path    : (string) new Path(path: $path),
             port    : $port,
             query   : '',

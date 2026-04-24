@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\WriteSessionValue;
 
-use Avax\HTTP\Session\Core\Lifecycle\SessionEngine;
+use Avax\HTTP\Session\SessionStore\SessionStore;
 
 final class WriteSessionValue
 {
-    private SessionEngine $engine;
+    private SessionStore $store;
 
-    public function __construct(SessionEngine $engine)
+    public function __construct(SessionStore $store)
     {
-        $this->engine = $engine;
+        $this->store = $store;
     }
 
     public function handle(string $key, mixed $value, int|null $ttl = null) : void
     {
-        $this->engine->put(key: $key, value: $value, ttl: $ttl);
+        $this->store->put(key: $key, value: $value, ttl: $ttl);
+
+        if ($ttl !== null) {
+            $this->store->put(key: '_ttl.' . $key, value: time() + $ttl);
+        }
     }
 }

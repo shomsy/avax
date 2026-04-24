@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Support\RouteExportValidator;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteExportValidator;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

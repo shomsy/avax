@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Avax\HTTP\Router\Routing\Exceptions\RouterExceptionInterface;
+use Avax\HTTP\Router\System\Foundation\Exceptions\RouterExceptionInterface;
 
 class DocsSync
 {
@@ -75,11 +75,11 @@ class DocsSync
         $diagram .= "    E --> F[Controller/Action]\n";
         $diagram .= "    F --> G[Response]\n\n";
         $diagram .= "    D --> H{No Match?}\n";
-        $diagram .= "    H --> I[FallbackManager]\n";
+        $diagram .= "    H --> I[RegisteredFallback]\n";
         $diagram .= "    I --> J[404 Response]\n\n";
         $diagram .= "    C --> K[Middleware Pipeline]\n";
         $diagram .= "    K --> L[RoutePipeline]\n\n";
-        $diagram .= "    M[RouteBootstrapper] --> N[RouteCollection]\n";
+        $diagram .= "    M[BootstrapRoutes] --> N[RouteCollection]\n";
         $diagram .= "    N --> O[CachedRouteLoader]\n";
         $diagram .= "    O --> P[DiskRouteLoader]\n\n";
         $diagram .= "    Q[RouterTrace] --> R[Performance Monitoring]\n";
@@ -130,11 +130,11 @@ class DocsSync
     private function scanExceptions() : array
     {
         $exceptions     = [];
-        $exceptionFiles = glob(pattern: $this->routerDir . '/Routing/Exceptions/*.php');
+        $exceptionFiles = glob(pattern: $this->routerDir . '/System/Foundation/Exceptions/*.php');
 
         foreach ($exceptionFiles as $file) {
             $className = basename(path: $file, suffix: '.php');
-            $fullClass = "Avax\\HTTP\\Router\\Routing\\Exceptions\\{$className}";
+            $fullClass = "Avax\\HTTP\\Router\\System\\Foundation\\Exceptions\\{$className}";
 
             if (class_exists(class: $fullClass)) {
                 try {
@@ -220,8 +220,8 @@ class DocsSync
         $interfaceFiles = [
             $this->routerDir . '/RouterInterface.php',
             $this->routerDir . '/RouterRuntimeInterface.php',
-            $this->routerDir . '/Routing/RouteSourceLoaderInterface.php',
-            $this->routerDir . '/Routing/Exceptions/RouterExceptionInterface.php',
+            $this->routerDir . '/System/Flows/BootstrapRoutes/Source/RouteSourceLoaderInterface.php',
+            $this->routerDir . '/System/Foundation/Exceptions/RouterExceptionInterface.php',
         ];
 
         foreach ($interfaceFiles as $file) {

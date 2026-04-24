@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Disks;
 
+use Avax\Filesystem\Configuration\FilesystemConfig;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 
-class ResolveDisk
+final readonly class ResolveDisk
 {
+    public function __construct(
+        private FilesystemConfig $config = new FilesystemConfig(default: 'local', disks: ['local' => ['driver' => 'local']]),
+    ) {}
+
     public function execute(string|null $name = null) : Disk
     {
-        $driver = 'local';
+        $name       ??= $this->config->default;
+        $diskConfig = $this->config->disk(name: $name)
+            ?? throw new UnsupportedDiskDriver(driver: $name);
+        $driver     = $diskConfig['driver'] ?? $name;
 
         return match ($driver) {
             'local' => new LocalDisk(),

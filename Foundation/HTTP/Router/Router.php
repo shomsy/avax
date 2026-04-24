@@ -8,27 +8,28 @@ namespace Avax\HTTP\Router;
  * @phpstan-type RouterConfig array{
  *     httpRouter: HttpRequestRouter,
  *     kernel: RouterKernel,
- *     fallbackManager: FallbackManager,
+ *     fallbackManager: RegisteredFallback,
  *     errorFactory: ErrorResponseFactory,
  *     dslRouter?: RouterInterface,
- *     groupStack?: RouteGroupStack,
+ *     groupStack?: RouteGroupFrames,
  *     routeRegistry?: RouteRegistry }
  */
 
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Kernel\RouterKernel;
-use Avax\HTTP\Router\Routing\ErrorResponseFactory;
-use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
-use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouteGroupStack;
-use Avax\HTTP\Router\Support\FallbackManager;
-use Avax\HTTP\Router\Support\RouteRegistry;
-use Avax\HTTP\Router\Tracing\RouterTrace;
-use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Capabilities\RouterTrace\RouterTrace;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteFileRegistrar;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponseFactory;
+use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
+use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use LogicException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -49,20 +50,20 @@ use Throwable;
 final readonly class Router implements RouterRuntimeInterface
 {
     private RouteRegistry|null   $routeRegistry;
-    private RouteGroupStack|null $groupStack;
+    private RouteGroupFrames|null $groupStack;
     private RouterInterface|null $dslRouter;
     private ErrorResponseFactory $errorFactory;
-    private FallbackManager      $fallbackManager;
+    private RegisteredFallback    $fallbackManager;
     private RouterKernel         $kernel;
     private HttpRequestRouter    $httpRequestRouter;
 
     public function __construct(
         HttpRequestRouter    $httpRequestRouter,
         RouterKernel         $kernel,
-        FallbackManager      $fallbackManager,
+        RegisteredFallback    $fallbackManager,
         ErrorResponseFactory $errorFactory,
         RouterInterface|null $dslRouter = null,
-        RouteGroupStack|null $groupStack = null,
+        RouteGroupFrames|null $groupStack = null,
         RouteRegistry|null   $routeRegistry = null
     )
     {
@@ -76,7 +77,7 @@ final readonly class Router implements RouterRuntimeInterface
     }
 
     /**
-     * @param Request $request
+     * @param ServerRequest $request
      *
      * @return ResponseInterface
      * @throws ContainerExceptionInterface
@@ -86,7 +87,7 @@ final readonly class Router implements RouterRuntimeInterface
      * @throws ReservedRouteNameException
      * @throws Throwable
      */
-    public function resolve(Request $request) : ResponseInterface
+    public function resolve(ServerRequest $request) : ResponseInterface
     {
         try {
             return $this->kernel->handle(request: $request);
@@ -151,8 +152,8 @@ final readonly class Router implements RouterRuntimeInterface
      * INTERNAL FLOW:
      * 1. Validates required dependencies (DSL router and group stack)
      * 2. Creates registry scoped closure for isolation
-     * 3. Instantiates RouteRegistrar within scope for loading
-     * 4. Delegates to RouteRegistrar::load() for actual file processing
+     * 3. Instantiates RouteFileRegistrar within scope for loading
+     * 4. Delegates to RouteFileRegistrar::load() for actual file processing
      * 5. Handles route registration and cleanup automatically
      *
      * @param string $routesPath Path to the routes file
@@ -175,7 +176,7 @@ final readonly class Router implements RouterRuntimeInterface
         $registry = $this->routeRegistry ?? new RouteRegistry;
 
         $registry->scoped(callback: function () use ($registry, $routesPath, $cacheDir) : void {
-            $registrar = new Bootstrap\RouteRegistrar(
+            $registrar = new RouteFileRegistrar(
                 dslRouter    : $this->dslRouter,
                 httpRouter   : $this->httpRequestRouter,
                 groupStack   : $this->groupStack,

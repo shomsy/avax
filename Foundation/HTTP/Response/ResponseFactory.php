@@ -176,7 +176,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
             ->cloneResponse()
             ->withStatus(code: $status)
             ->withBody(stream: $stream)
-            ->withHeader(header: 'Content-Type', value: 'text/html; charset=UTF-8');
+            ->withHeader(name: 'Content-Type', value: 'text/html; charset=UTF-8');
     }
 
     /**

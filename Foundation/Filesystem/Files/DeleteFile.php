@@ -6,22 +6,12 @@ namespace Avax\Filesystem\Files;
 
 use Avax\Filesystem\Disks\Disk;
 
-class DeleteFile
+final class DeleteFile
 {
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function execute(string $path) : bool
     {
-        if (! file_exists(filename: $path)) {
-            return true;
-        }
-
-        if (! unlink(filename: $path)) {
-            throw new FileDeleteFailed(path: $path);
-        }
-
-        return true;
+        return $this->disk->delete(path: $path);
     }
 }

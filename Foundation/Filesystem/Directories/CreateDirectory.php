@@ -6,22 +6,12 @@ namespace Avax\Filesystem\Directories;
 
 use Avax\Filesystem\Disks\Disk;
 
-class CreateDirectory
+final class CreateDirectory
 {
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function execute(string $path, int $permissions = 0755) : bool
     {
-        if (is_dir(filename: $path)) {
-            return true;
-        }
-
-        if (! mkdir(directory: $path, permissions: $permissions, recursive: true)) {
-            throw new DirectoryCreateFailed(path: $path);
-        }
-
-        return true;
+        return $this->disk->createDirectory(path: $path, permissions: $permissions);
     }
 }

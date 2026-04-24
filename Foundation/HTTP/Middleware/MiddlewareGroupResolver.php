@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\HTTP\Middleware;
 
 use Avax\Container\Config\Settings;
-use JakubOnderka\PhpParallelLint\Settings;
 use RuntimeException;
 
 /**

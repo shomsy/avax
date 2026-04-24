@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity;
 
-use Avax\HTTP\Session\Core\Lifecycle\SessionEngine;
 use Throwable;
 
 final class SessionSecurity
 {
-    private SessionEngine $engine;
+    /**
+     * @var array<int, callable(string, array): bool>
+     */
+    private array $policies;
 
-    public function __construct(SessionEngine $engine)
+    public function __construct(array $policies = [])
     {
-        $this->engine = $engine;
+        $this->policies = $policies;
     }
 
     public function verifyPolicy(string $action, array $context = []) : bool
     {
-        $policies = $this->engine->policies();
-        if ($policies === null) {
-            return true;
+        foreach ($this->policies as $policy) {
+            try {
+                if ($policy($action, $context) !== true) {
+                    return false;
+                }
+            } catch (Throwable) {
+                return false;
+            }
         }
 
-        try {
-            $policies->enforce(data: $context + ['action' => $action]);
-            return true;
-        } catch (Throwable) {
-            return false;
-        }
+        return true;
     }
 }

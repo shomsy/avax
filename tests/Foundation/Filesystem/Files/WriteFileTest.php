@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Files\WriteFile;
-use Avax\Filesystem\Files\FileWriteFailed;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Filesystem\Files\WriteFile;
 use PHPUnit\Framework\TestCase;
 
 class WriteFileTest extends TestCase
@@ -55,6 +54,6 @@ class WriteFileTest extends TestCase
         (new WriteFile(disk: $this->disk))->execute(path: $this->testFile, content: 'test');
 
         $content = file_get_contents(filename: $this->testFile);
-        self::assertStringEndsWith(haystack: $content, needdle: "\n");
+        self::assertStringEndsWith("\n", $content);
     }
 }

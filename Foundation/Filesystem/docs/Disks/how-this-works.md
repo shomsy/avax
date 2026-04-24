@@ -9,12 +9,14 @@ frontmatter:
 
 # Disks Capability
 
-| File | Responsibility |
-|------|----------------|
-| `Disk.php` | Disk interface |
-| `DiskDefinition.php` | Disk configuration |
-| `ResolveDisk.php` | Resolve disk by name |
-| `UnsupportedDiskDriver.php` | Unsupported driver error |
+`Disks/*` owns backend resolution. The rest of the component should not guess storage drivers directly.
+
+| File                        | Responsibility                                             |
+|-----------------------------|------------------------------------------------------------|
+| `Disk.php`                  | Backend contract used by action owners and the root facade |
+| `DiskDefinition.php`        | Named disk definition value object                         |
+| `ResolveDisk.php`           | Resolve configured disk by name or default                 |
+| `UnsupportedDiskDriver.php` | Unsupported driver error                                   |
 
 ## Local Subfolder
 | File | Responsibility |

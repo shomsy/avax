@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session;
 
-use Avax\HTTP\Session\SessionStore\SessionStore;
 use Avax\HTTP\Session\Audit\Audit;
 use Avax\HTTP\Session\Events\Events;
 use Avax\HTTP\Session\Recovery\Recovery;
+use Avax\HTTP\Session\SessionStore\SessionStore;
 
 /**
  * Lightweight Session facade — delegates to concrete capabilities.
  * This replaces manager-heavy ownership with direct capability usage.
  */
-final class Session
+final class Session implements SessionInterface
 {
     private SessionStore $store;
     private Audit|null $audit;
     private Events $events;
     private Recovery|null $recovery;
+    private string $sessionId;
 
     public function __construct(
         SessionStore $store,
@@ -31,6 +32,7 @@ final class Session
         $this->audit    = $audit;
         $this->events   = $events ?? new Events();
         $this->recovery = $recovery;
+        $this->sessionId = session_id() !== '' ? session_id() : uniqid(prefix: 'session_', more_entropy: true);
     }
 
     public function put(string $key, mixed $value, int|null $ttl = null) : void
@@ -65,6 +67,16 @@ final class Session
         $this->forget(key: $key);
     }
 
+    public function set(string $key, mixed $value, int|null $ttl = null) : void
+    {
+        $this->put(key: $key, value: $value, ttl: $ttl);
+    }
+
+    public function remove(string $key) : void
+    {
+        $this->forget(key: $key);
+    }
+
     public function all() : array
     {
         return $this->store->all();
@@ -75,6 +87,11 @@ final class Session
         $this->store->flush();
         $this->audit?->record(event: 'session.flush');
         $this->events->dispatch(event: 'session.flushed');
+    }
+
+    public function clear() : void
+    {
+        $this->flush();
     }
 
     public function remember(string $key, callable $callback, int|null $ttl = null) : mixed
@@ -92,9 +109,28 @@ final class Session
     // Minimal session lifecycle helpers — best-effort implementations
     public function regenerate() : void
     {
-        // No-op by default. If recovery or store requires explicit rotation,
-        // provide custom id provider or extend this facade.
+        $this->sessionId = uniqid(prefix: 'session_', more_entropy: true);
         $this->audit?->record(event: 'session.regenerated');
+    }
+
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        $this->regenerate();
+    }
+
+    public function getId() : string
+    {
+        return $this->sessionId;
+    }
+
+    public function start() : bool
+    {
+        return true;
+    }
+
+    public function isStarted() : bool
+    {
+        return true;
     }
 
     public function login(string $userId, array $data = []) : void
@@ -111,6 +147,11 @@ final class Session
         $this->audit?->record(event: 'session.terminated', data: ['user_id' => $userId, 'reason' => $reason]);
         $this->events->dispatch(event: 'session.terminated', data: ['user_id' => $userId, 'reason' => $reason]);
         $this->flush();
+    }
+
+    public function destroy() : void
+    {
+        $this->terminate(reason: 'destroy');
     }
 
     // Recovery helpers

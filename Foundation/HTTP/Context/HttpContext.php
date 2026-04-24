@@ -48,7 +48,7 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function scheme() : string
     {
-        $uri    = $this->request;
+        $uri = $this->request?->getUri();
         $scheme = $uri instanceof UriInterface ? $uri->getScheme() : '';
         if ($scheme !== '') {
             return $scheme;
@@ -59,14 +59,14 @@ final readonly class HttpContext implements HttpContextInterface
         return (! empty($server['HTTPS']) && $server['HTTPS'] !== 'off') ? 'https' : 'http';
     }
 
-    public function serverParams() : ServerRequestInterface
+    public function serverParams() : array
     {
-        return $this->request ?? $this->globals->server();
+        return $this->request?->getServerParams() ?? $this->globals->server();
     }
 
     public function host() : string
     {
-        $uri  = $this->request;
+        $uri = $this->request?->getUri();
         $host = $uri instanceof UriInterface ? $uri->getHost() : '';
         if ($host !== '') {
             return $host;
@@ -79,7 +79,7 @@ final readonly class HttpContext implements HttpContextInterface
 
     private function port() : int|null
     {
-        $uri  = $this->request;
+        $uri = $this->request?->getUri();
         $port = $uri instanceof UriInterface ? $uri->getPort() : null;
         if ($port !== null) {
             return $port;

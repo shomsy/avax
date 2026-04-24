@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Support\RouterBootstrapState;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Routing\RouteGroupContext;
-use Avax\HTTP\Router\Routing\RouteGroupStack;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for instance-based RouteGroupStack functionality.
+ * Tests for instance-based RouteGroupFrames functionality.
  *
  * Ensures proper stack management and exception safety.
  */
-class RouteGroupStackTest extends TestCase
+class RouteGroupFramesTest extends TestCase
 {
-    private RouteGroupStack $stack;
+    private RouteGroupFrames $stack;
 
     /**
      * @test
@@ -128,8 +128,8 @@ class RouteGroupStackTest extends TestCase
      */
     public function multiple_instances_are_isolated() : void
     {
-        $stack1 = new RouteGroupStack;
-        $stack2 = new RouteGroupStack;
+        $stack1 = new RouteGroupFrames;
+        $stack2 = new RouteGroupFrames;
 
         $context = new RouteGroupContext;
 
@@ -147,6 +147,6 @@ class RouteGroupStackTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->stack = new RouteGroupStack;
+        $this->stack = new RouteGroupFrames;
     }
 }

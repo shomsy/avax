@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem;
 
+use Avax\Filesystem\Directories\ClearDirectory;
+use Avax\Filesystem\Directories\CreateDirectory;
+use Avax\Filesystem\Directories\DeleteDirectory;
+use Avax\Filesystem\Directories\EnsureDirectoryExists;
+use Avax\Filesystem\Directories\EnsureDirectoryIsWritable;
+use Avax\Filesystem\Directories\ListDirectoryFiles;
 use Avax\Filesystem\Disks\Disk;
 use Avax\Filesystem\Disks\ResolveDisk;
-use Avax\Filesystem\Files\ReadFile;
-use Avax\Filesystem\Files\WriteFile;
 use Avax\Filesystem\Files\AppendToFile;
+use Avax\Filesystem\Files\CopyFile;
 use Avax\Filesystem\Files\DeleteFile;
+use Avax\Filesystem\Files\MoveFile;
+use Avax\Filesystem\Files\ReadFile;
 use Avax\Filesystem\Files\ReadFileLastModifiedAt;
-use Avax\Filesystem\Directories\EnsureDirectoryExists;
-use Avax\Filesystem\Paths\PathExists;
-use Exception;
+use Avax\Filesystem\Files\WriteFile;
 
 /**
  * Root public facade for filesystem operations.
@@ -21,11 +26,9 @@ use Exception;
  * This is the single entry point for all filesystem operations.
  * Delegates to capability-specific action owners.
  */
-class Filesystem implements FilesystemInterface
+final class Filesystem implements FilesystemInterface
 {
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function get(string $path) : string
     {
@@ -37,9 +40,24 @@ class Filesystem implements FilesystemInterface
         (new WriteFile(disk: $this->disk))->execute(path: $path, content: $content);
     }
 
+    public function append(string $path, string $content) : void
+    {
+        (new AppendToFile(disk: $this->disk))->execute(path: $path, content: $content);
+    }
+
+    public function copy(string $source, string $destination) : void
+    {
+        (new CopyFile(disk: $this->disk))->execute(source: $source, destination: $destination);
+    }
+
+    public function move(string $source, string $destination) : void
+    {
+        (new MoveFile(disk: $this->disk))->execute(source: $source, destination: $destination);
+    }
+
     public function exists(string $path) : bool
     {
-        return (new PathExists())->execute(path: $path);
+        return $this->disk->exists(path: $path);
     }
 
     public function delete(string $path) : void
@@ -57,9 +75,44 @@ class Filesystem implements FilesystemInterface
         (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $path);
     }
 
-    public function append(string $path, string $content) : void
+    public function ensureDirectoryIsWritable(string $path) : bool
     {
-        (new AppendToFile(disk: $this->disk))->execute(path: $path, content: $content);
+        return (new EnsureDirectoryIsWritable(disk: $this->disk))->execute(path: $path);
+    }
+
+    public function createDirectory(string $path, int $permissions = 0755) : void
+    {
+        (new CreateDirectory(disk: $this->disk))->execute(path: $path, permissions: $permissions);
+    }
+
+    public function deleteDirectory(string $path) : void
+    {
+        (new DeleteDirectory(disk: $this->disk))->execute(path: $path);
+    }
+
+    public function clearDirectory(string $path) : void
+    {
+        (new ClearDirectory(disk: $this->disk))->execute(path: $path);
+    }
+
+    public function listFiles(string $path) : array
+    {
+        return (new ListDirectoryFiles(disk: $this->disk))->execute(path: $path);
+    }
+
+    public function isWritable(string $path) : bool
+    {
+        return $this->disk->isWritable(path: $path);
+    }
+
+    public function setPermissions(string $path, int $permissions) : bool
+    {
+        return $this->disk->setPermissions(path: $path, permissions: $permissions);
+    }
+
+    public function hasPermission(string $path, int $permissions) : bool
+    {
+        return $this->disk->hasPermission(path: $path, permissions: $permissions);
     }
 
     public static function disk(string|null $name = null) : Disk

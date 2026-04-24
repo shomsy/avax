@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Files\AppendToFile;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Filesystem\Files\AppendToFile;
 use PHPUnit\Framework\TestCase;
 
 class AppendToFileTest extends TestCase
@@ -33,8 +33,8 @@ class AppendToFileTest extends TestCase
         (new AppendToFile(disk: $this->disk))->execute(path: $this->testFile, content: 'line2');
 
         $content = file_get_contents(filename: $this->testFile);
-        self::assertStringContainsString(haystack: $content, needdle: 'line1');
-        self::assertStringContainsString(haystack: $content, needdle: 'line2');
+        self::assertStringContainsString('line1', $content);
+        self::assertStringContainsString('line2', $content);
     }
 
     public function testExecuteCreatesParentDirectory() : void

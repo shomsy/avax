@@ -13,17 +13,23 @@ class CreateDirectoryTest extends TestCase
 {
     private LocalDisk $disk;
     private string $testDir;
+    private string $conflictingFile;
 
     protected function setUp() : void
     {
         parent::setUp();
         $this->disk = new LocalDisk();
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_test';
+        $this->conflictingFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_conflict.txt';
     }
 
     protected function tearDown() : void
     {
-        @rmdir(directory: $this->testDir);
+        if (is_dir(filename: $this->testDir)) {
+            $this->disk->deleteDirectory(path: $this->testDir);
+        }
+
+        @unlink(filename: $this->conflictingFile);
         parent::tearDown();
     }
 
@@ -46,8 +52,10 @@ class CreateDirectoryTest extends TestCase
 
     public function testExecuteThrowsExceptionOnFailure() : void
     {
+        file_put_contents(filename: $this->conflictingFile, data: "conflict\n");
+
         $this->expectException(exception: DirectoryCreateFailed::class);
 
-        (new CreateDirectory(disk: $this->disk))->execute(path: '/root/nemoguce');
+        (new CreateDirectory(disk: $this->disk))->execute(path: $this->conflictingFile);
     }
 }

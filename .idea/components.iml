@@ -4,8 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/Foundation" isTestSource="false" packagePrefix="Avax\" />
-      <sourceFolder url="file://$MODULE_DIR$/Foundation/Container/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests/Feature" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Avax\\Tests\\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System" isTestSource="false" packagePrefix="Avax\Auth\System\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests" isTestSource="true" />
@@ -23,14 +22,12 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support/AvaxContainer/Core" isTestSource="true" packagePrefix="Avax\Container\Core\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support/AvaxContainer/Providers" isTestSource="true" packagePrefix="Avax\Container\Providers\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/System" isTestSource="true" packagePrefix="Avax\Auth\Tests\System\" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/http" isTestSource="true" packagePrefix="Avax\Auth\Examples\Http\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/jobs" isTestSource="true" packagePrefix="Avax\Auth\Examples\Jobs\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/persistence" isTestSource="true" packagePrefix="Avax\Auth\Examples\Persistence\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/policies" isTestSource="true" packagePrefix="Avax\Auth\Examples\Policies\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/diagnostics" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Diagnostics\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/release" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Release\" />
-      <sourceFolder url="file://$MODULE_DIR$/Foundation/HTTP/Request/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System/Capabilities" isTestSource="false" packagePrefix="Avax\Auth\System\Capabilities\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System/Flows" isTestSource="false" packagePrefix="Avax\Auth\System\Flows\" />
       <excludeFolder url="file://$MODULE_DIR$/storage/cache" />

@@ -4,26 +4,32 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
+use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\DeleteFile;
 use Avax\Filesystem\Files\FileDeleteFailed;
-use Avax\Filesystem\Disks\Local\LocalDisk;
 use PHPUnit\Framework\TestCase;
 
 class DeleteFileTest extends TestCase
 {
     private LocalDisk $disk;
     private string $testFile;
+    private string $testDirectory;
 
     protected function setUp() : void
     {
         parent::setUp();
         $this->disk = new LocalDisk();
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test.txt';
+        $this->testDirectory = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test_dir';
     }
 
     protected function tearDown() : void
     {
         @unlink(filename: $this->testFile);
+        if (is_dir(filename: $this->testDirectory)) {
+            $this->disk->deleteDirectory(path: $this->testDirectory);
+        }
+
         parent::tearDown();
     }
 
@@ -46,12 +52,10 @@ class DeleteFileTest extends TestCase
 
     public function testExecuteThrowsExceptionOnFailure() : void
     {
-        if (posix_getuid() === 0) {
-            $this->markTestSkipped(reason: 'Cannot test delete failure as root');
-        }
+        mkdir(directory: $this->testDirectory, permissions: 0755, recursive: true);
 
         $this->expectException(exception: FileDeleteFailed::class);
 
-        (new DeleteFile(disk: $this->disk))->execute(path: '/root/nemoguce');
+        (new DeleteFile(disk: $this->disk))->execute(path: $this->testDirectory);
     }
 }

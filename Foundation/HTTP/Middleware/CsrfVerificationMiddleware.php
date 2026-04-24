@@ -44,7 +44,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
     public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // Skip CSRF verification for safe methods
-        if ($this->isSafeMethod(method: $request->method)) {
+        if ($this->isSafeMethod(method: $request->getMethod())) {
             return $handler->handle(request: $request);
         }
 

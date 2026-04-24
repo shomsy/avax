@@ -24,7 +24,10 @@ class ClearDirectoryTest extends TestCase
 
     protected function tearDown() : void
     {
-        @rmdir(directory: $this->testDir);
+        if (is_dir(filename: $this->testDir)) {
+            $this->disk->deleteDirectory(path: $this->testDir);
+        }
+
         parent::tearDown();
     }
 
@@ -42,6 +45,6 @@ class ClearDirectoryTest extends TestCase
         $result = (new ClearDirectory(disk: $this->disk))->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
-        self::assertCount(expected: 0, haystack: scandir(directory: $this->testDir));
+        self::assertSame(['.', '..'], scandir(directory: $this->testDir));
     }
 }

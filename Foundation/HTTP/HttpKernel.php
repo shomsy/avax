@@ -8,15 +8,16 @@ use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareInterface;
 use Avax\HTTP\Middleware\Psr15MiddlewarePipeline;
 use Avax\HTTP\Middleware\RequestHandlerInterface;
-use Avax\HTTP\Response\Classes\Response;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
-use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
-use Avax\HTTP\Router\Validation\Exceptions\ConstraintValidationException;
+use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -35,7 +36,7 @@ final readonly class HttpKernel implements Kernel
     private ResponseFactory      $responseFactory;
     private array                $globalMiddleware;
     private ControllerDispatcher $dispatcher;
-    private RouterInterface      $router;
+    private RouterRuntimeInterface $router;
 
     /**
      * @param RouterInterface       $router           The router for route resolution
@@ -44,7 +45,7 @@ final readonly class HttpKernel implements Kernel
      * @param ResponseFactory       $responseFactory  For error responses
      */
     public function __construct(
-        RouterInterface      $router,
+        RouterRuntimeInterface $router,
         ControllerDispatcher $dispatcher,
         array                $globalMiddleware,
         ResponseFactory      $responseFactory
@@ -71,21 +72,14 @@ final readonly class HttpKernel implements Kernel
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         try {
-            // Create the final handler (controller execution)
-            $controllerHandler = new ControllerRequestHandler(router: $this->router, dispatcher: $this->dispatcher);
-
-            // Build middleware pipeline: global → route → controller
-            $pipeline = Psr15MiddlewarePipeline::create(finalHandler: $controllerHandler);
+            $pipeline = Psr15MiddlewarePipeline::create(
+                finalHandler: new RouterRequestHandler(router: $this->router)
+            );
 
             // Add global middleware (always executed)
             foreach ($this->globalMiddleware as $middleware) {
                 $pipeline = $pipeline->withMiddleware(middleware: $middleware);
             }
-
-            // Add route-aware middleware wrapper
-            $pipeline = $pipeline->withMiddleware(
-                middleware: new RouteMiddlewareHandler(router: $this->router)
-            );
 
             // Execute the complete pipeline
             return $pipeline->handle(request: $request);
@@ -103,10 +97,10 @@ final readonly class HttpKernel implements Kernel
     {
         // Map common exceptions to HTTP status codes
         $statusCode = match (true) {
-            $exception instanceof RouteNotFoundException        => 404,
-            $exception instanceof MethodNotAllowedException     => 405,
-            $exception instanceof ConstraintValidationException => 400,
-            default                                             => 500
+            $exception instanceof RouteNotFoundException     => 404,
+            $exception instanceof MethodNotAllowedException  => 405,
+            $exception instanceof InvalidConstraintException => 400,
+            default                                          => 500
         };
 
         return $this->responseFactory->createErrorResponse(statusCode: $statusCode, message: $exception->getMessage());
@@ -118,55 +112,18 @@ final readonly class HttpKernel implements Kernel
  *
  * @internal
  */
-final readonly class ControllerRequestHandler implements RequestHandlerInterface
+final readonly class RouterRequestHandler implements RequestHandlerInterface
 {
-    private ControllerDispatcher $dispatcher;
-    private RouterInterface      $router;
-
-    public function __construct(
-        RouterInterface      $router,
-        ControllerDispatcher $dispatcher
-    )
-    {
-        $this->router     = $router;
-        $this->dispatcher = $dispatcher;
-    }
+    public function __construct(private RouterRuntimeInterface $router) {}
 
     public function handle(RequestInterface $request) : ResponseInterface
     {
-        // Router should have already resolved and set route parameters
-        // We assume the request has been processed by RouteMiddlewareHandler
+        if (! $request instanceof ServerRequest) {
+            throw new RuntimeException(
+                message: 'HttpKernel requires an internal Avax HTTP ServerRequest instance for router execution.'
+            );
+        }
 
-        // For now, return a simple response
-        // In full implementation, this would dispatch to the actual controller
-        return new Response(
-            status : 200,
-            headers: ['Content-Type' => 'application/json'],
-            body   : json_encode(value: ['message' => 'Controller executed'])
-        );
-    }
-}
-
-/**
- * Middleware that resolves routes and applies route-specific middleware.
- *
- * @internal
- */
-final readonly class RouteMiddlewareHandler implements MiddlewareInterface
-{
-    private RouterInterface $router;
-
-    public function __construct(RouterInterface $router) { $this->router = $router; }
-
-    public function process(
-        RequestInterface        $request,
-        RequestHandlerInterface $handler
-    ) : ResponseInterface
-    {
-        // Resolve the route (this will set parameters as request attributes)
-        // In a full implementation, this would call Router::resolve()
-
-        // For now, just pass through
-        return $handler->handle(request: $request);
+        return $this->router->resolve(request: $request);
     }
 }

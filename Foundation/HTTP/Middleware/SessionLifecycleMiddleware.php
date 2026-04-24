@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\HTTP\Session\SessionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -32,8 +32,9 @@ final readonly class SessionLifecycleMiddleware implements MiddlewareInterface
 
     public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        // Ensure PHP session is started with the configured cookie policy.
-        $this->session->start();
+        if (method_exists(object_or_class: $this->session, method: 'start')) {
+            $this->session->start();
+        }
 
         $response = $handler->handle(request: $request);
 

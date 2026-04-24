@@ -79,7 +79,7 @@ readonly class JsonResponse
         $response = app(abstract: ResponseFactory::class)->createResponse(code: $this->status);
 
         foreach ($this->headers as $header => $value) {
-            $response = $response->withHeader(header: $header, value: $value);
+            $response = $response->withHeader(name: $header, value: $value);
         }
 
         $response->getBody()->write(string: $this->toJson());

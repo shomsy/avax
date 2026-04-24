@@ -6,23 +6,12 @@ namespace Avax\Filesystem\Files;
 
 use Avax\Filesystem\Disks\Disk;
 
-class AppendToFile
+final class AppendToFile
 {
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function execute(string $path, string $content) : bool
     {
-        $directory = dirname(path: $path);
-        if (! is_dir(filename: $directory)) {
-            mkdir(directory: $directory, permissions: 0755, recursive: true);
-        }
-
-        if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: FILE_APPEND | LOCK_EX) === false) {
-            throw new FileWriteFailed(path: $path);
-        }
-
-        return true;
+        return $this->disk->write(path: $path, content: $content, append: true);
     }
 }

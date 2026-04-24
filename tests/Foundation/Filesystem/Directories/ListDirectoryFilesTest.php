@@ -8,7 +8,7 @@ use Avax\Filesystem\Directories\ListDirectoryFiles;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use PHPUnit\Framework\TestCase;
 
-class ListDirectoryTest extends TestCase
+final class ListDirectoryFilesTest extends TestCase
 {
     private LocalDisk $disk;
     private string $testDir;
@@ -23,7 +23,10 @@ class ListDirectoryTest extends TestCase
 
     protected function tearDown() : void
     {
-        @rmdir(directory: $this->testDir);
+        if (is_dir(filename: $this->testDir)) {
+            $this->disk->deleteDirectory(path: $this->testDir);
+        }
+
         parent::tearDown();
     }
 
@@ -31,7 +34,7 @@ class ListDirectoryTest extends TestCase
     {
         $result = (new ListDirectoryFiles(disk: $this->disk))->execute(path: '/ne postoji dir');
 
-        self::assertSame(expected: [], actual: $result);
+        self::assertSame([], $result);
     }
 
     public function testExecuteReturnsFilePaths() : void
@@ -41,6 +44,6 @@ class ListDirectoryTest extends TestCase
 
         $result = (new ListDirectoryFiles(disk: $this->disk))->execute(path: $this->testDir);
 
-        self::assertCount(expected: 2, haystack: $result);
+        self::assertCount(2, $result);
     }
 }

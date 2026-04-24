@@ -4,31 +4,37 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Closure;
+use Avax\HTTP\Response\ResponseFactory;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Middleware to add CORS headers for cross-origin requests.
  */
-class CorsMiddleware
+final readonly class CorsMiddleware implements MiddlewareInterface
 {
+    public function __construct(
+        private ResponseFactory|null $responseFactory = null,
+    ) {}
+
     /**
      * Process the request and add CORS headers to the response.
      *
-     * @param ServerRequestInterface $serverRequest The incoming request.
-     * @param Closure                $next          The next middleware or handler.
+     * @param RequestInterface        $request The incoming request.
+     * @param RequestHandlerInterface $handler The next middleware or handler.
      *
      * @return ResponseInterface The response with CORS headers.
      */
-    public function handle(ServerRequestInterface $serverRequest, Closure $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        $response = $next($serverRequest);
+        $response = strtoupper(string: $request->getMethod()) === 'OPTIONS' && $this->responseFactory !== null
+            ? $this->responseFactory->createResponse(code: 204)
+            : $handler->handle(request: $request);
 
         return $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-            ->withHeader('Access-Control-Allow-Credentials', 'true');
+            ->withHeader(name: 'Access-Control-Allow-Origin', value: '*')
+            ->withHeader(name: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS')
+            ->withHeader(name: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization, X-CSRF-Token')
+            ->withHeader(name: 'Access-Control-Allow-Credentials', value: 'true');
     }
 }

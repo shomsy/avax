@@ -31,6 +31,6 @@ This folder owns all file-level operations.
 
 ## Usage
 ```php
-$filesystem = Filesystem::disk();
-$content = (new ReadFile($filesystem))->execute('/path/to/file');
+$disk = Filesystem::disk();
+$content = (new ReadFile(disk: $disk))->execute(path: '/path/to/file');
 ```

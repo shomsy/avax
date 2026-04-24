@@ -36,10 +36,19 @@ readonly class JsonResponseMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle(request: $request);
 
-        // Enforce JSON response if necessary
-        return $this->responseFactory->response(
-            data  : $response->getBody()->getContents(),
-            status: $response->statusCode
+        if (str_contains(
+            haystack: strtolower(string: $response->getHeaderLine(name: 'Content-Type')),
+            needle  : 'application/json'
+        )) {
+            return $response;
+        }
+
+        $payload = (string) $response->getBody();
+        $data    = $payload === '' ? ['data' => null] : ['data' => $payload];
+
+        return $this->responseFactory->createJsonResponse(
+            data  : $data,
+            status: $response->getStatusCode()
         );
     }
 }

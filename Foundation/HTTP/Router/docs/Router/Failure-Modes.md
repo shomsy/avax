@@ -7,14 +7,14 @@
 **Trigger**: `GET /nonexistent-path`
 **Expected**: `RouteNotFoundException` → 404 response
 **Verified**: `HttpRequestRouter::resolve()` checks `RouteMatcher::match()` result
-**Fallback**: `FallbackManager` invoked if configured
+**Fallback**: `RegisteredFallback` invoked by `Router::resolve()` if configured
 
 ### ❌ Wrong HTTP Method for Existing Path
 
 **Trigger**: `POST /users` (when only `GET /users` exists)
 **Expected**: `MethodNotAllowedException` with `allowedMethods` → 405 response + `Allow` header
 **Verified**: `findAllowedMethodsForPath()` identifies available methods
-**Edge Case**: `HEAD` requests auto-fallback to `GET` via `HeadRequestFallback`
+**Edge Case**: `HEAD` requests auto-fallback to `GET` via `ApplyHeadRequestFallback`
 
 ### ❌ Route Parameter Constraint Failure
 

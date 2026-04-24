@@ -30,7 +30,7 @@ provides a clean separation between route registration (DSL), runtime resolution
 - Behavior is documented and stable
 - Exceptions are well-defined
 
-### 2. DSL Registration Layer (`RouterDsl`)
+### 2. DSL Registration Layer (`System/Flows/RegisterRoutes/RouterDsl`)
 
 **Purpose**: Fluent interface for defining routes and groups.
 
@@ -44,10 +44,11 @@ provides a clean separation between route registration (DSL), runtime resolution
 **Key Classes**:
 
 - `RouterDsl`: Implements `RouterInterface`
-- `RouteBuilder`: Immutable route construction
-- `RouteGroupContext`: Group state management
+- `RouteBuilder`: Route construction
+- `RouteGroupFrames`: Scoped group state
+- `RouteRegistry`: Buffered route-file registration
 
-### 3. Runtime Resolution Layer (`HttpRequestRouter`, `RouteMatcher`)
+### 3. Runtime Resolution Layer (`System/Flows/ResolveRequest`)
 
 **Purpose**: Match HTTP requests to registered routes.
 
@@ -64,7 +65,7 @@ provides a clean separation between route registration (DSL), runtime resolution
 - `RouteMatcher`: Pure matching algorithm
 - `RouteConstraintValidator`: Parameter validation
 
-### 4. Execution Pipeline Layer (`RouterKernel`, `RoutePipeline`)
+### 4. Execution Pipeline Layer (`System/Flows/RunRoute`)
 
 **Purpose**: Execute matched routes through middleware and dispatch.
 
@@ -85,10 +86,10 @@ provides a clean separation between route registration (DSL), runtime resolution
 
 ```
 1. DSL Registration Phase
-   Application → RouterInterface → RouterDsl → RouteBuilder → RouteRegistry
+   Application → RouterInterface → RegisterRoutes/RouterDsl → RouteBuilder → RouteRegistry
 
 2. Bootstrap Phase
-   RouteRegistry → HttpRequestRouter.add() → Internal route table
+   BootstrapRoutes → RouteRegistry → HttpRequestRouter.add() → Internal route table
 
 3. Runtime Resolution Phase
    HTTP Request → Router.resolve() → RouterKernel.handle()
@@ -210,7 +211,7 @@ Extend `RouteExecutor` for specialized dispatching.
 
 ### From Laravel Router
 
-- Replace `Route::get()` with `$router->get()`
+- Prefer injected `RouterInterface`/`RouterDsl`; facade wrappers should delegate to the same public contract
 - Route groups work identically
 - Middleware syntax: `middleware(['auth'])` instead of `middleware('auth')`
 

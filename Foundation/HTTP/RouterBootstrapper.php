@@ -7,11 +7,10 @@ namespace Avax\HTTP;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareInterface;
 use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\RouteCollection;
-use Avax\HTTP\Router\Routing\RouteDefinition;
+use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use InvalidArgumentException;
+use LogicException;
 use ReflectionException;
 
 /**
@@ -30,7 +29,7 @@ final class RouterBootstrapper
 {
     private RouterInterface $router;
 
-    private RouteCollection $routeCollection;
+    private RouterRuntimeInterface|null $runtimeRouter;
 
     public array $globalMiddleware = [] {
         get {
@@ -46,13 +45,19 @@ final class RouterBootstrapper
 
     private array $middlewareGroups = [];
 
+    private array $activeMiddleware = [];
+
+    private array $groupPrefixes = [];
+
+    private array $routes = [];
+
     /**
      * Create bootstrapper with router and route collection.
      */
-    public function __construct(RouterInterface $router, RouteCollection $routeCollection)
+    public function __construct(RouterInterface $router, RouterRuntimeInterface|null $runtimeRouter = null)
     {
-        $this->router          = $router;
-        $this->routeCollection = $routeCollection;
+        $this->router        = $router;
+        $this->runtimeRouter = $runtimeRouter ?? ($router instanceof RouterRuntimeInterface ? $router : null);
     }
 
     /**
@@ -63,8 +68,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function match(array $methods, string $path, callable|array|string $handler) : self
     {
@@ -78,19 +81,28 @@ final class RouterBootstrapper
     /**
      * Register a route with optional middleware.
      *
-     * @throws ReservedRouteNameException
-     * @throws DuplicateRouteException
      */
     public function route(string $method, string $path, callable|array|string $handler) : self
     {
-        $route = new RouteDefinition(method: $method, path: $path, action: $handler);
+        $method          = strtoupper(string: $method);
+        $fullPath        = $this->qualifyPath(path: $path);
+        $routeKey        = $this->routeKey(method: $method, path: $fullPath);
+        $proxy           = $this->registerWithDsl(method: $method, path: $fullPath, handler: $handler);
+        $routeMiddleware = array_values(array_merge(
+                                            $this->activeMiddleware,
+                                            $this->routeMiddleware[$routeKey] ?? []
+                                        ));
 
-        // Apply route-specific middleware if configured
-        if (isset($this->routeMiddleware[$method . ' ' . $path])) {
-            $route = $route->withMiddleware($this->routeMiddleware[$method . ' ' . $path]);
+        if ($routeMiddleware !== []) {
+            $proxy->middleware(middleware: $routeMiddleware);
         }
 
-        $this->routeCollection->addRoute(route: $route);
+        $this->routes[$routeKey] = [
+            'method'     => $method,
+            'path'       => $fullPath,
+            'handler'    => $handler,
+            'middleware' => $routeMiddleware,
+        ];
 
         return $this;
     }
@@ -102,8 +114,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function get(string $path, callable|array|string $handler) : self
     {
@@ -117,8 +127,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function post(string $path, callable|array|string $handler) : self
     {
@@ -132,8 +140,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function put(string $path, callable|array|string $handler) : self
     {
@@ -147,8 +153,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function delete(string $path, callable|array|string $handler) : self
     {
@@ -162,8 +166,6 @@ final class RouterBootstrapper
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
-     * @throws DuplicateRouteException
-     * @throws ReservedRouteNameException
      */
     public function patch(string $path, callable|array|string $handler) : self
     {
@@ -176,18 +178,19 @@ final class RouterBootstrapper
     public function group(callable $routes, array|null $middleware = null, string $prefix = '') : self
     {
         $middleware         ??= [];
-        $previousMiddleware = $this->routeMiddleware;
+        $previousMiddleware = $this->activeMiddleware;
+        $previousPrefixes = $this->groupPrefixes;
 
-        // Add group middleware to current middleware stack
-        foreach ($middleware as $mw) {
-            $this->routeMiddleware[] = $mw;
-        }
+        $this->activeMiddleware = array_values(array_merge(
+                                                   $this->activeMiddleware,
+                                                   $middleware
+                                               ));
+        $this->groupPrefixes[]  = $prefix;
 
-        // Execute routes in group
         $routes($this);
 
-        // Restore previous middleware stack
-        $this->routeMiddleware = $previousMiddleware;
+        $this->activeMiddleware = $previousMiddleware;
+        $this->groupPrefixes    = $previousPrefixes;
 
         return $this;
     }
@@ -211,7 +214,10 @@ final class RouterBootstrapper
             throw new InvalidArgumentException(message: "Middleware group '{$name}' not defined.");
         }
 
-        $this->routeMiddleware = array_merge($this->routeMiddleware, $this->middlewareGroups[$name]);
+        $this->activeMiddleware = array_values(array_merge(
+                                                   $this->activeMiddleware,
+                                                   $this->middlewareGroups[$name]
+                                               ));
 
         return $this;
     }
@@ -245,7 +251,7 @@ final class RouterBootstrapper
      */
     public function getRoutes() : array
     {
-        return $this->routeCollection->getRoutes();
+        return array_values(array: $this->routes);
     }
 
     /**
@@ -271,10 +277,50 @@ final class RouterBootstrapper
     /**
      * Bootstrap the router with registered routes.
      */
-    public function bootstrap() : RouterInterface
+    public function bootstrap() : RouterRuntimeInterface
     {
-        // In a full implementation, this would configure the router
-        // with the route collection and middleware
-        return $this->router;
+        if ($this->runtimeRouter === null) {
+            throw new LogicException(
+                message: 'RouterBootstrapper requires a runtime router instance to build an AppKernel.'
+            );
+        }
+
+        return $this->runtimeRouter;
+    }
+
+    private function qualifyPath(string $path) : string
+    {
+        $prefix = '';
+
+        foreach ($this->groupPrefixes as $groupPrefix) {
+            if ($groupPrefix === '') {
+                continue;
+            }
+
+            $prefix .= '/' . trim(string: $groupPrefix, characters: '/');
+        }
+
+        $qualifiedPath = trim(string: $prefix . '/' . ltrim(string: $path, characters: '/'), characters: '/');
+
+        return '/' . $qualifiedPath;
+    }
+
+    private function routeKey(string $method, string $path) : string
+    {
+        return $method . ' ' . $path;
+    }
+
+    private function registerWithDsl(string $method, string $path, callable|array|string $handler) : RouteRegistrarProxy
+    {
+        return match ($method) {
+            'GET'     => $this->router->get(path: $path, action: $handler),
+            'POST'    => $this->router->post(path: $path, action: $handler),
+            'PUT'     => $this->router->put(path: $path, action: $handler),
+            'PATCH'   => $this->router->patch(path: $path, action: $handler),
+            'DELETE'  => $this->router->delete(path: $path, action: $handler),
+            'OPTIONS' => $this->router->options(path: $path, action: $handler),
+            'HEAD'    => $this->router->head(path: $path, action: $handler),
+            default   => throw new InvalidArgumentException(message: "Unsupported HTTP method '{$method}'."),
+        };
     }
 }

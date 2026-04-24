@@ -7,7 +7,6 @@ namespace Avax\HTTP\Middleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * PSR-15 Abstract base class for middleware that restricts access based on IP addresses.
@@ -15,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Concrete subclasses can define specific business logic for allowable IPs,
  * such as office IPs or other access-controlled networks.
  */
-abstract class IpRestrictionMiddleware implements MiddlewareInterface
+class IpRestrictionMiddleware implements MiddlewareInterface
 {
     protected ResponseFactory $responseFactory;
 
@@ -33,13 +32,12 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
     {
         // Extract client IP from server parameters (PSR-7 compatible)
         $clientIp = 'unknown';
-        if ($request instanceof ServerRequestInterface) {
-            $serverParams = $request->serverParams;
-            $clientIp     = $serverParams['REMOTE_ADDR'] ??
-                $serverParams['HTTP_X_FORWARDED_FOR'] ??
-                $serverParams['HTTP_X_REAL_IP'] ??
-                'unknown';
-        }
+        $serverParams = method_exists($request, 'getServerParams') ? $request->getServerParams() : [];
+        $forwardedFor = (string) ($serverParams['HTTP_X_FORWARDED_FOR'] ?? '');
+        $clientIp = $serverParams['REMOTE_ADDR']
+            ?? ($forwardedFor !== '' ? trim(string: explode(separator: ',', string: $forwardedFor)[0]) : null)
+            ?? $serverParams['HTTP_X_REAL_IP']
+            ?? 'unknown';
 
         if (! $this->isAllowedIp(ipAddress: $clientIp)) {
             return $this->createAccessDeniedResponse();
@@ -55,7 +53,10 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
      *
      * @return bool True if the IP is allowed, false otherwise.
      */
-    abstract protected function isAllowedIp(string $ipAddress) : bool;
+    protected function isAllowedIp(string $ipAddress) : bool
+    {
+        return true;
+    }
 
     /**
      * Generates a 403 Forbidden response for disallowed IPs.
@@ -64,10 +65,9 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
      */
     protected function createAccessDeniedResponse() : ResponseInterface
     {
-        return $this->responseFactory->view(
-            template: 'errors.403',
-            data    : ['message' => 'Access from your IP address is not allowed.'],
-            status  : 403
+        return $this->responseFactory->createErrorResponse(
+            statusCode: 403,
+            message   : 'Access from your IP address is not allowed.'
         );
     }
 }

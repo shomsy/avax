@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests\Unit;
 
-use Avax\HTTP\Router\Support\RouteCollector;
-use Avax\HTTP\Router\Support\RouterBootstrapState;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
  * Tests for route bootstrap determinism and security.
  */
-final class RouteBootstrapperTest extends TestCase
+final class BootstrapRoutesTest extends TestCase
 {
 
     /**
@@ -70,7 +70,7 @@ final class RouteBootstrapperTest extends TestCase
     public function test_route_collector_has_security_guard() : void
     {
         // This test documents that RouteCollector::flush() has security measures
-        // The actual guard is tested through integration with RouteBootstrapper
+        // The actual guard is tested through integration with BootstrapRoutes
 
         $this->assertTrue(
             condition: method_exists(object_or_class: RouteCollector::class, method: 'flush'),

@@ -29,8 +29,8 @@ final readonly class MiddlewarePipelineLogger
     public function logStart(RequestInterface $request) : void
     {
         $this->logger->info(
-            message: '⚙️ Starting middleware pipeline',
-            context: ['uri' => (string) $request->uri]
+            message: 'Starting middleware pipeline',
+            context: ['uri' => (string) $request->getUri()]
         );
     }
 
@@ -42,7 +42,7 @@ final readonly class MiddlewarePipelineLogger
     public function logMiddleware(string $middlewareClass) : void
     {
         $this->logger->debug(
-            message: sprintf('⛓ Executing middleware: %s', $middlewareClass)
+            message: sprintf('Executing middleware: %s', $middlewareClass)
         );
     }
 
@@ -51,6 +51,6 @@ final readonly class MiddlewarePipelineLogger
      */
     public function logEnd() : void
     {
-        $this->logger->info(message: '✅ Finished middleware pipeline');
+        $this->logger->info(message: 'Finished middleware pipeline');
     }
 }

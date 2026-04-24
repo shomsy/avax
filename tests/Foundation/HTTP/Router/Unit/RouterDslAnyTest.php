@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\RouterDsl;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteCollection;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouteMatcher;
-use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
-use Avax\HTTP\Router\Routing\RouterRegistrar;
-use Avax\HTTP\Router\Support\FallbackManager;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -136,7 +136,7 @@ class RouterDslAnyTest extends TestCase
             registrar           : $this->createMock(RouterRegistrar::class),
             router              : $router,
             controllerDispatcher: $this->createMock(ControllerDispatcher::class),
-            fallbackManager     : $this->createMock(FallbackManager::class)
+            fallbackManager     : $this->createMock(RegisteredFallback::class)
         );
     }
 }

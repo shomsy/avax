@@ -10,9 +10,15 @@ interface Disk
 
     public function write(string $path, string $content, bool $append = false) : bool;
 
+    public function copy(string $source, string $destination) : bool;
+
+    public function move(string $source, string $destination) : bool;
+
     public function delete(string $path) : bool;
 
     public function exists(string $path) : bool;
+
+    public function lastModified(string $path) : int|null;
 
     public function createDirectory(string $path, int $permissions = 0755) : bool;
 

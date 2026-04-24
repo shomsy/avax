@@ -112,7 +112,8 @@ Route::middleware(['auth']);
 Route::get('/users', 'UserController@index'); // Implicit grouping
 ```
 
-**Explicit is better than implicit** - no global state, clear scope.
+**Explicit is better than implicit** - registration scope is owned by `RouteGroupFrames` and `RouteRegistry`, not a
+process-wide route stack.
 
 ### Why PSR-7 Request Attributes for Parameters?
 
@@ -160,7 +161,7 @@ If you have 1000+ routes in global functions that "just work".
 - ✅ Same fluent API (`$router->get()->middleware()->name()`)
 - ✅ Route groups work identically
 - ✅ Named routes with `route('name')` helper
-- ❌ No global `Route` facade (by design - explicit dependency injection)
+- ✅ Facades can exist as thin adapters, but route ownership stays in the injected Router contract
 
 ### From Symfony Router
 

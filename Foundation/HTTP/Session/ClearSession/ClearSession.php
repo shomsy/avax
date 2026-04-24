@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\ClearSession;
 
-use Avax\HTTP\Session\Core\Lifecycle\SessionEngine;
+use Avax\HTTP\Session\SessionStore\SessionStore;
 
 final class ClearSession
 {
-    private SessionEngine $engine;
+    private SessionStore $store;
 
-    public function __construct(SessionEngine $engine)
+    public function __construct(SessionStore $store)
     {
-        $this->engine = $engine;
+        $this->store = $store;
     }
 
     public function handle() : void
     {
-        $this->engine->flush();
+        $this->store->flush();
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccelerateDataReads;
 
-use InvalidArgumentException;
-
 final readonly class ChooseDataIndexResult
 {
     public function __construct(

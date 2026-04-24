@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\OperateDataLayer;
 
-use InvalidArgumentException;
-
 final readonly class RestorePlan
 {
     public function __construct(

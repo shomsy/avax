@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CoordinateDataConsistency;
 
-use InvalidArgumentException;
-
 enum ConflictResolutionStrategy: string
 {
     case LAST_WRITE_WINS = 'last_write_wins';

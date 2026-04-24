@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccessPersistentData;
 
-use PDO;
-use PDOStatement;
-use Throwable;
-
 final readonly class ReadPersistentData
 {
     public function __construct(private ExecuteRawDataQuery $executeRawDataQuery) {}

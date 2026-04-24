@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ResumeSaga;
 
-use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
 
 final readonly class ResumeSaga

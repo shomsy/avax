@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\RunSagaStep;
 
-use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 
 final readonly class ExecuteSagaStep
 {

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\PropagateDataChanges;
 
-use InvalidArgumentException;
-
 final readonly class ChangeStreamCursor
 {
     public function __construct(

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\ProtectStoredData;
 
-use InvalidArgumentException;
-
 enum MaskingAlgorithm: string
 {
     case PARTIAL           = 'partial';

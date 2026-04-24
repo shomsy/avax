@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccelerateDataReads;
 
-use InvalidArgumentException;
-
 final readonly class AccelerateDataReads
 {
     public function __construct(

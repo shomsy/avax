@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\ProtectStoredData;
 
-use InvalidArgumentException;
-
 enum TenantBoundaryType: string
 {
     case SCHEMA   = 'schema';

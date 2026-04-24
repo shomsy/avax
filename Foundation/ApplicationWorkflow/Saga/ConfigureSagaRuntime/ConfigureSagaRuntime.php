@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime;
 
-use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
-use Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\InspectSaga;
+use Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
+use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
 
 final readonly class ConfigureSagaRuntime
 {

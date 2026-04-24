@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CommitDataChanges;
 
-use InvalidArgumentException;
-
 enum IsolationLevel: string
 {
     case READ_UNCOMMITTED = 'READ UNCOMMITTED';

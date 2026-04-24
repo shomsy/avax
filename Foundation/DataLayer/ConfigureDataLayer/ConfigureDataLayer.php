@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\ConfigureDataLayer;
 
+use Avax\DataLayer\AccelerateDataReads\AccelerateDataReads;
 use Avax\DataLayer\AccessPersistentData\AccessPersistentData;
 use Avax\DataLayer\AccessPersistentData\ExecuteRawDataQuery;
 use Avax\DataLayer\AccessPersistentData\ReadPersistentData;
 use Avax\DataLayer\AccessPersistentData\RunDataTransaction;
 use Avax\DataLayer\AccessPersistentData\UseDatabaseRuntime;
 use Avax\DataLayer\AccessPersistentData\WritePersistentData;
-use Avax\DataLayer\AccelerateDataReads\AccelerateDataReads;
 use Avax\DataLayer\CommitDataChanges\CommitDataChanges;
 use Avax\DataLayer\CoordinateDataConsistency\CoordinateDataConsistency;
 use Avax\DataLayer\DataLayer;

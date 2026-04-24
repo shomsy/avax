@@ -7,6 +7,7 @@ namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Steps;
 use Avax\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\ResolveInstanceStep;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

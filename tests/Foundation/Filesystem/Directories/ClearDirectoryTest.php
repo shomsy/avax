@@ -7,6 +7,7 @@ namespace Avax\Tests\Foundation\Filesystem\Directories;
 use Avax\Filesystem\Directories\ClearDirectory;
 use Avax\Filesystem\Directories\DirectoryClearFailed;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class ClearDirectoryTest extends TestCase

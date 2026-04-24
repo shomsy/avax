@@ -15,6 +15,7 @@ use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
 use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

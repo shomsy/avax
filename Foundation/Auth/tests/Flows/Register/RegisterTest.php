@@ -16,6 +16,7 @@ use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Tests\TestCase;
 use Exception;
 use Mockery;
 use Override;

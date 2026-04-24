@@ -37,6 +37,7 @@ use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Auth\Tests\Support\FakePasskeyRuntime;
 use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Tests\TestCase;
 use BadMethodCallException;
 use DateTimeImmutable;
 use Exception;

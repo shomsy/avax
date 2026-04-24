@@ -6,6 +6,9 @@ use Avax\Container\Features\Think\Model\ServicePrototype;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
 use Avax\HTTP\Router\Support\RouteRegistry;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RouterRegistrar::class,

@@ -9,6 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
 use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionAllowed;
 use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionBlocked;
 use Avax\Container\DependencyInjection\Capability\Policies\StrictResolutionPolicy;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

@@ -7,9 +7,11 @@ namespace Avax\Tests\Regression\Foundation\HTTP\Request;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Avax\HTTP\URI\Uri;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
+use Uri\Rfc3986\Uri;
 
 /**
  * Regression tests for the old ServerRequest object to ensure we eliminate

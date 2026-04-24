@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Session\Audit\Audit;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

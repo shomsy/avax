@@ -27,6 +27,7 @@ use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\ArraySessionStore;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\Filesystem\Files;
 
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\WriteFile;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class WriteFileTest extends TestCase

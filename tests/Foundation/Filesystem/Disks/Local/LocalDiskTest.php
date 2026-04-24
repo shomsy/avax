@@ -7,6 +7,7 @@ namespace Avax\Tests\Foundation\Filesystem\Disks\Local;
 use Avax\Filesystem\Directories\DirectoryClearFailed;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\FileNotFound;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class LocalDiskTest extends TestCase

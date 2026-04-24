@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Capabilities\Oidc;
 
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifier;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifierStrategy;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class SubjectIdentifierTest extends TestCase

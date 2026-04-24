@@ -14,6 +14,7 @@ use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Mockery;

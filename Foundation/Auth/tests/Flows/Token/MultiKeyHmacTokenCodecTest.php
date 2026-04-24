@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Flows\Token;
 
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\MultiKeyHmacTokenCodec;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class MultiKeyHmacTokenCodecTest extends TestCase

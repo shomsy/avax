@@ -20,6 +20,7 @@ use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStor
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
 use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Tests\TestCase;
 use DateInterval;
 use DateInvalidOperationException;
 use DateTimeImmutable;

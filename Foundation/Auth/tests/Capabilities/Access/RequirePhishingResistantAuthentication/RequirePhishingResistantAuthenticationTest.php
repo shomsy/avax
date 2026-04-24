@@ -11,6 +11,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticated
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class RequirePhishingResistantAuthenticationTest extends TestCase

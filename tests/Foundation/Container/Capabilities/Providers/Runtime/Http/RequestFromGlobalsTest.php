@@ -40,6 +40,7 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
     use Avax\HTTP\Request\Request;
     use Avax\HTTP\Session\NullSession;
     use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+    use Avax\Tests\TestCase;
     use Override;
     use PHPUnit\Framework\TestCase;
     use ReflectionProperty;

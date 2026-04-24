@@ -5,6 +5,7 @@ use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Router\Routing\RouteExecutor;
+use Avax\HTTP\Router\System\Flows\RunRoute\Dispatch\RouteExecutor;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RouteExecutor::class,

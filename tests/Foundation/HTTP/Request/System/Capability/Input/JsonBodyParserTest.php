@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\Input;
 
 use Avax\HTTP\Request\System\Capability\Input\JsonBodyParser;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

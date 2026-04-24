@@ -8,6 +8,7 @@ use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
 use Avax\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestHeaders;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

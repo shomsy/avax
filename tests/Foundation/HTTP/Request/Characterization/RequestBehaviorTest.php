@@ -6,6 +6,7 @@ namespace Avax\HTTP\Tests\Foundation\Request\Characterization;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

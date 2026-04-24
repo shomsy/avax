@@ -13,6 +13,7 @@ use Avax\DataFoundation\Interop\Json\FromJson;
 use Avax\DataFoundation\Interop\Json\ToJson;
 use Avax\DataFoundation\Interop\Xml\FromXml;
 use Avax\DataFoundation\Interop\Xml\ToXml;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class InteropFamilyTest extends TestCase

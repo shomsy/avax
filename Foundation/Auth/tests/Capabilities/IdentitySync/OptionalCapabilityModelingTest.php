@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\IdentitySync;
 use Avax\Auth\System\Capabilities\IdentitySync\IdentitySyncCapabilityUnavailable;
 use Avax\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class OptionalCapabilityModelingTest extends TestCase

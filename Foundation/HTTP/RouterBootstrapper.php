@@ -6,6 +6,7 @@ namespace Avax\HTTP;
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareInterface;
+use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;

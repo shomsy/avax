@@ -7,6 +7,7 @@ use Avax\HTTP\Router\Router;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 

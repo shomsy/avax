@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
 
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class UserRegistrationDTOTest extends TestCase

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Tests\Session\Capabilities;
 
 use Avax\HTTP\Session\SessionAudit\SessionAudit;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class SessionAuditTest extends TestCase

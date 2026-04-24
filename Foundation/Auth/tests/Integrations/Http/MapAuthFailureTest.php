@@ -11,6 +11,7 @@ use Avax\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

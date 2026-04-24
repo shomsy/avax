@@ -6,6 +6,7 @@ namespace Avax\Container\Tests\Capability\Scopes;
 
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

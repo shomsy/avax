@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RoutePathValidator;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

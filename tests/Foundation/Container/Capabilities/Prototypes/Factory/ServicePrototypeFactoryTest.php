@@ -9,6 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionT
 use Avax\Container\DependencyInjection\Capability\Prototypes\Cache\PrototypeCache;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

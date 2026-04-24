@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions;
 
 use Avax\HTTP\Router\HttpMethod;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use InvalidArgumentException;
 

@@ -19,6 +19,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthen
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use Mockery;
 use Override;

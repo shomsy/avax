@@ -14,6 +14,7 @@ use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;

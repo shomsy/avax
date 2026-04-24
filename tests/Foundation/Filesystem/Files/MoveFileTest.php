@@ -7,6 +7,7 @@ namespace Avax\Tests\Foundation\Filesystem\Files;
 use Avax\Filesystem\Files\MoveFile;
 use Avax\Filesystem\Files\FileNotFound;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class MoveFileTest extends TestCase

@@ -24,6 +24,7 @@ use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\SuspendMember\SuspendTe
 use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
 use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TransferOwnership\TransferTenantOwnershipData;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class TenantFlowTest extends TestCase

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capabilities\Explainability;
 
 use Avax\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class AuthIssueExplainerTest extends TestCase

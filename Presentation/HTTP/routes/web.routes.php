@@ -6,6 +6,7 @@ use Avax\Facade\Facades\Route;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
+use http\Encoding\Stream;
 use Psr\Http\Message\ResponseInterface;
 
 Route::get('/', static function (Request $request) : ResponseInterface {

@@ -6,6 +6,7 @@ namespace Avax\HTTP\Router\Tests\Unit;
 
 use Avax\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

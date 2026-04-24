@@ -23,6 +23,7 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ScimFlowTest extends TestCase

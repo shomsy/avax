@@ -10,6 +10,7 @@ use Avax\HTTP\Middleware\Psr15MiddlewarePipeline;
 use Avax\HTTP\Middleware\RequestHandlerInterface;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\ResponseFactory;
+use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;

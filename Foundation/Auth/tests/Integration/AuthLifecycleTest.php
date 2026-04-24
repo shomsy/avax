@@ -28,6 +28,7 @@ use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificationData;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use Exception;
 use Override;

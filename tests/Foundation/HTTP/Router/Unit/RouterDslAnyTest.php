@@ -13,6 +13,7 @@ use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;

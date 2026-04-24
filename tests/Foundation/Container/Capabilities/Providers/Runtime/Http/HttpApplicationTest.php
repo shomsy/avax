@@ -12,6 +12,8 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Response;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\Routing\RouteDefinition;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Tests\TestCase;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

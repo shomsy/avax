@@ -15,6 +15,7 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRev
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ServeScimHttpSurfaceTest extends TestCase

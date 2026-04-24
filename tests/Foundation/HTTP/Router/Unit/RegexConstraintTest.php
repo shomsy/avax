@@ -7,6 +7,7 @@ use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
 use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

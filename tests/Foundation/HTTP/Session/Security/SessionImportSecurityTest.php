@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Avax\HTTP\Session\Recovery\Recovery;
 use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class SessionImportSecurityTest extends TestCase

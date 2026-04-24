@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

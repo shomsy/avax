@@ -19,6 +19,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcPro
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\User\User;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use BadMethodCallException;
 use DateMalformedStringException;
 use DateTimeImmutable;

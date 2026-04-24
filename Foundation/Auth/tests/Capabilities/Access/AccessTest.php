@@ -42,6 +42,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

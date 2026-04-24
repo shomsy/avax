@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryAuthori
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

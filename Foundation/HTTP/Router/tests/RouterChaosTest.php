@@ -12,6 +12,7 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherInterface;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use Exception;
 use Override;
 use PHPUnit\Framework\TestCase;

@@ -10,6 +10,7 @@ use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyProto
 use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

@@ -24,6 +24,7 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 use Avax\Auth\System\Capabilities\Tenancy\Security\Security;
 use Avax\Auth\System\Capabilities\Tenancy\Tenancy;
 use Avax\Auth\System\Capabilities\Tenancy\Tenants\Tenants;
+use Avax\Tests\TestCase;
 use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;

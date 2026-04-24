@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\Filesystem\Directories;
 
 use Avax\Filesystem\Directories\EnsureDirectoryExists;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class EnsureDirectoryExistsTest extends TestCase

@@ -12,6 +12,7 @@ use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequest;
 use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequestData;
 use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequestResult;
 use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ReadRequestTest extends TestCase

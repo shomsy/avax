@@ -13,6 +13,7 @@ use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\Tests\Support\ArraySessionStore;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class LegacySessionBehaviorTest extends TestCase

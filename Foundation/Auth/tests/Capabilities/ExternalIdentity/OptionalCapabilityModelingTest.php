@@ -8,6 +8,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUna
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
 use Avax\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class OptionalCapabilityModelingTest extends TestCase

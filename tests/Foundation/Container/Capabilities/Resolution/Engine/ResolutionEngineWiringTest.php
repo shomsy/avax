@@ -13,6 +13,8 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Engine\Instantiator
 use Avax\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

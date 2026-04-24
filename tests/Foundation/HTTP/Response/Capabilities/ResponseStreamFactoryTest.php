@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Response\Capabilities;
 
 use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ResponseStreamFactoryTest extends TestCase

@@ -19,6 +19,13 @@ use Avax\Database\QueryBuilder\Core\Executor\PDOExecutor;
 use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
 use Avax\Database\QueryBuilder\Core\Grammar\MySQLGrammar;
 use Avax\Database\Support\ExecutionScope;
+use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Execution\PDOExecutor;
+use Avax\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Avax\Database\Transaction\Transaction;
 use Avax\Database\Transaction\TransactionManager;
 

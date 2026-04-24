@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\Filesystem;
 
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Filesystem;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class FilesystemTest extends TestCase

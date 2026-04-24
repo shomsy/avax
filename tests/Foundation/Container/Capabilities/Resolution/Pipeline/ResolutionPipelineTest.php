@@ -8,6 +8,8 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerExc
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Contracts\KernelStep;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\ResolutionPipeline;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;

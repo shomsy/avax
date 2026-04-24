@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\Access;
 use Avax\Auth\System\Capabilities\Access\Policy\AuthenticationFactor;
 use Avax\Auth\System\Capabilities\Access\Policy\IdentityActor;
 use Avax\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class IdentityPolicyCatalogTest extends TestCase

@@ -8,6 +8,7 @@ use Avax\Filesystem\Configuration\FilesystemConfig;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Disks\ResolveDisk;
 use Avax\Filesystem\Disks\UnsupportedDiskDriver;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class ResolveDiskTest extends TestCase

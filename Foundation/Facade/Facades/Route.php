@@ -10,6 +10,9 @@ use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 

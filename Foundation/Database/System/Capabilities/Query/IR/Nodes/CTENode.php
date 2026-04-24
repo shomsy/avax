@@ -2,15 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
+namespace Avax\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-
-enum CTEType
-{
-    case SIMPLE;
-    case RECURSIVE;
-}
 
 final class CTENode
 {
@@ -30,8 +24,6 @@ final class CTENode
                 array   : $this->columns
             )) . ')';
 
-        $recursive = $this->type === CTEType::RECURSIVE ? 'RECURSIVE ' : '';
-
-        return "WITH {$recursive}{$this->name}{$columns} AS ({$this->query})";
+        return "{$this->name}{$columns} AS ({$this->query})";
     }
 }

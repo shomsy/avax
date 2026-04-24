@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Disks\Local;
 
-use Avax\Filesystem\Disks\Disk;
+use Avax\Filesystem\Directories\DirectoryClearFailed;
 use Avax\Filesystem\Directories\DirectoryCreateFailed;
 use Avax\Filesystem\Directories\DirectoryDeleteFailed;
-use Avax\Filesystem\Directories\DirectoryClearFailed;
+use Avax\Filesystem\Disks\Disk;
+use Avax\Filesystem\Files\FileCopyFailed;
+use Avax\Filesystem\Files\FileDeleteFailed as FileDeleteFailedException;
+use Avax\Filesystem\Files\FileMoveFailed;
 use Avax\Filesystem\Files\FileNotFound;
 use Avax\Filesystem\Files\FileWriteFailed;
-use Avax\Filesystem\Files\FileDeleteFailed as FileDeleteFailedException;
 use FilesystemIterator;
 use RuntimeException;
 use SplFileInfo;
+use Throwable;
 
 readonly class LocalDisk implements Disk
 {
@@ -38,13 +41,49 @@ readonly class LocalDisk implements Disk
     public function write(string $path, string $content, bool $append = false) : bool
     {
         $directory = dirname(path: $path);
-        if (! is_dir(filename: $directory)) {
-            mkdir(directory: $directory, permissions: 0755, recursive: true);
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
+            throw new DirectoryCreateFailed(path: $directory);
         }
 
         $flags = $append ? FILE_APPEND | LOCK_EX : 0;
         if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: $flags) === false) {
             throw new FileWriteFailed(path: $path);
+        }
+
+        return true;
+    }
+
+    public function copy(string $source, string $destination) : bool
+    {
+        if (! file_exists(filename: $source)) {
+            throw new FileNotFound(path: $source);
+        }
+
+        $directory = dirname(path: $destination);
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
+            throw new DirectoryCreateFailed(path: $directory);
+        }
+
+        if (! copy(from: $source, to: $destination)) {
+            throw new FileCopyFailed(path: $destination);
+        }
+
+        return true;
+    }
+
+    public function move(string $source, string $destination) : bool
+    {
+        if (! file_exists(filename: $source)) {
+            throw new FileNotFound(path: $source);
+        }
+
+        $directory = dirname(path: $destination);
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
+            throw new DirectoryCreateFailed(path: $directory);
+        }
+
+        if (! rename(from: $source, to: $destination)) {
+            throw new FileMoveFailed(path: $destination);
         }
 
         return true;
@@ -66,6 +105,17 @@ readonly class LocalDisk implements Disk
     public function exists(string $path) : bool
     {
         return file_exists(filename: $path);
+    }
+
+    public function lastModified(string $path) : int|null
+    {
+        if (! file_exists(filename: $path)) {
+            return null;
+        }
+
+        $mtime = filemtime(filename: $path);
+
+        return $mtime !== false ? $mtime : null;
     }
 
     public function createDirectory(string $path, int $permissions = 0755) : bool
@@ -162,7 +212,7 @@ readonly class LocalDisk implements Disk
                 callback: static fn (SplFileInfo $file) => $file->getPathname(),
                 array   : iterator_to_array(iterator: $iterator, preserve_keys: false)
             );
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return [];
         }
     }

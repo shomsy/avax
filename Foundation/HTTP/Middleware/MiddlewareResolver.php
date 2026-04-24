@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\HTTP\Router\Exceptions\UnresolvableMiddlewareException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\UnresolvableMiddlewareException;
 
 /**
  * MiddlewareResolver

@@ -6,24 +6,6 @@ namespace Avax\Database\System\Capabilities\Query\Advanced\WindowFunctions;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-enum WindowFunction: string
-{
-    case ROW_NUMBER  = 'ROW_NUMBER()';
-    case RANK        = 'RANK()';
-    case DENSE_RANK  = 'DENSE_RANK()';
-    case NTILE       = 'NTILE';
-    case LAG         = 'LAG';
-    case LEAD        = 'LEAD';
-    case FIRST_VALUE = 'FIRST_VALUE';
-    case LAST_VALUE  = 'LAST_VALUE';
-    case NTH_VALUE   = 'NTH_VALUE';
-    case COUNT       = 'COUNT';
-    case SUM         = 'SUM';
-    case AVG         = 'AVG';
-    case MIN         = 'MIN';
-    case MAX         = 'MAX';
-}
-
 final class WindowBuilder
 {
     public function __construct(
@@ -99,32 +81,10 @@ final class WindowBuilder
 
     public function getSql(string $alias = '') : string
     {
-        $sql = $this->function . '(';
+        $sql   = $this->function . ' OVER';
+        $parts = [];
 
-        if (! empty($this->partitionBy)) {
-            $partition = implode(separator: ', ', array: array_map(
-                callback: fn ($col) => $this->grammar->wrap(value: $col),
-                array   : $this->partitionBy
-            ));
-            $sql       .= 'PARTITION BY ' . $partition;
-        }
-
-        if ($this->orderBy !== '') {
-            $sql .= ' ORDER BY ' . $this->orderBy;
-        }
-
-        $sql .= ') ';
-
-        if ($this->frame !== '') {
-            $sql .= $this->frame . ' ';
-        }
-
-        $sql .= 'OVER';
-
-        if (! empty($this->partitionBy) || $this->orderBy !== '') {
-            $sql   .= ' (';
-            $parts = [];
-
+        if (! empty($this->partitionBy) || $this->orderBy !== '' || $this->frame !== '') {
             if (! empty($this->partitionBy)) {
                 $partition = implode(separator: ', ', array: array_map(
                     callback: fn ($col) => $this->grammar->wrap(value: $col),
@@ -137,10 +97,12 @@ final class WindowBuilder
                 $parts[] = 'ORDER BY ' . $this->orderBy;
             }
 
-            $parts[] = $this->frame;
-            $sql     .= implode(separator: ' ', array: $parts);
-            $sql     .= ')';
+            if ($this->frame !== '') {
+                $parts[] = $this->frame;
+            }
         }
+
+        $sql .= ' (' . implode(separator: ' ', array: $parts) . ')';
 
         if ($alias !== '') {
             $sql .= ' AS ' . $this->grammar->wrap(value: $alias);

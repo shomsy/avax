@@ -2,27 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
+namespace Avax\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-
-enum ComparisonOperator: string
-{
-    case EQUAL                 = '=';
-    case NOT_EQUAL             = '!=';
-    case LESS_THAN             = '<';
-    case LESS_THAN_OR_EQUAL    = '<=';
-    case GREATER_THAN          = '>';
-    case GREATER_THAN_OR_EQUAL = '>=';
-    case LIKE                  = 'LIKE';
-    case NOT_LIKE              = 'NOT LIKE';
-    case ILIKE                 = 'ILIKE';
-    case IN                    = 'IN';
-    case NOT_IN                = 'NOT IN';
-    case BETWEEN               = 'BETWEEN';
-    case IS_NULL               = 'IS NULL';
-    case IS_NOT_NULL           = 'IS NOT NULL';
-}
 
 final class WhereNode
 {
@@ -38,7 +20,7 @@ final class WhereNode
     {
         $column   = $grammar->wrap(value: $this->column);
         $operator = $this->operator->value;
-        $boolean  = $this->boolean;
+        $boolean = strtoupper(string: $this->boolean);
 
         if ($this->operator === ComparisonOperator::IS_NULL || $this->operator === ComparisonOperator::IS_NOT_NULL) {
             return "{$boolean} {$column} {$operator}";

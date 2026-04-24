@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\HTTP;
 
-use Avax\Auth\Application\Service\RateLimiterService;
-use Avax\Auth\Session\Shared\Contracts\SessionInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\IpRestrictionMiddleware;
 use Avax\HTTP\Middleware\MiddlewareInterface;
 use Avax\HTTP\Middleware\MiddlewareRegistry;
+use Avax\HTTP\Middleware\RateLimiterInterface;
 use Avax\HTTP\Middleware\RateLimiterMiddleware;
 use Avax\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Session\NullSession;
 use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -40,7 +40,7 @@ final readonly class AppKernel implements Kernel
 {
     private HttpKernel $kernel;
 
-    private RouterInterface $router;
+    private RouterRuntimeInterface $router;
 
     private ControllerDispatcher $dispatcher;
 
@@ -59,7 +59,7 @@ final readonly class AppKernel implements Kernel
      * @throws ReflectionException
      */
     public function __construct(
-        RouterInterface      $router,
+        RouterRuntimeInterface $router,
         ControllerDispatcher $dispatcher,
         ResponseFactory      $responseFactory,
         array                $globalMiddleware = []
@@ -161,41 +161,8 @@ final readonly class AppKernel implements Kernel
     private function createSessionMiddleware() : MiddlewareInterface
     {
         // In real implementation, this would inject SessionInterface
-        // For now, create with mock/null dependencies
         return new SessionLifecycleMiddleware(
-            session: new class implements SessionInterface {
-                       public function start() : void {}
-
-                       public function getId() : string
-                       {
-                           return 'mock';
-                       }
-
-                       public function has(string $key) : bool
-                       {
-                           return false;
-                       }
-
-                       public function get(string $key, mixed $default = null) : mixed
-                       {
-                           return $default;
-                       }
-
-                       public function set(string $key, mixed $value) : void {}
-
-                       public function remove(string $key) : void {}
-
-                       public function clear() : void {}
-
-                       public function destroy() : void {}
-
-                       public function regenerateId() : void {}
-
-                       public function isStarted() : bool
-                       {
-                           return true;
-                       }
-                   }
+            session: new NullSession()
         );
     }
 
@@ -262,7 +229,7 @@ final readonly class AppKernel implements Kernel
     {
         // In real implementation, this would inject RateLimiterService
         return new RateLimiterMiddleware(
-            rateLimiterService: new class implements RateLimiterService {
+            rateLimiterService: new class implements RateLimiterInterface {
                                   public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
                                   {
                                       return true;
@@ -319,7 +286,7 @@ final readonly class AppKernel implements Kernel
     /**
      * Get the router for route management.
      */
-    public function getRouter() : RouterInterface
+    public function getRouter() : RouterRuntimeInterface
     {
         return $this->router;
     }

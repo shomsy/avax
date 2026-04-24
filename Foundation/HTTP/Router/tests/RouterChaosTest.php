@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
-use Avax\HTTP\Router\Matching\RouteMatcherInterface;
-use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteCollection;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouteSourceLoaderInterface;
-use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Source\RouteSourceLoaderInterface;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherInterface;
+use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Exception;
 use Override;
 use PHPUnit\Framework\TestCase;

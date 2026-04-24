@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Files\ReadFile;
-use Avax\Filesystem\Files\FileNotFound;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Filesystem\Files\FileNotFound;
+use Avax\Filesystem\Files\ReadFile;
 use PHPUnit\Framework\TestCase;
 
 class ReadFileTest extends TestCase
@@ -33,7 +33,7 @@ class ReadFileTest extends TestCase
 
         $result = (new ReadFile(disk: $this->disk))->execute(path: $this->testFile);
 
-        self::assertSame(expected: "test content\n", actual: $result);
+        self::assertSame("test content\n", $result);
     }
 
     public function testExecuteThrowsExceptionForNonExistentFile() : void
@@ -52,6 +52,13 @@ class ReadFileTest extends TestCase
 
         $this->expectException(exception: FileNotFound::class);
 
-        (new ReadFile(disk: $this->disk))->execute(path: $this->testFile);
+        file_put_contents(filename: $this->testFile, data: "content\n");
+        chmod(filename: $this->testFile, permissions: 0000);
+
+        try {
+            (new ReadFile(disk: $this->disk))->execute(path: $this->testFile);
+        } finally {
+            chmod(filename: $this->testFile, permissions: 0644);
+        }
     }
 }

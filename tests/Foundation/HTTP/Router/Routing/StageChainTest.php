@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Tests\Unit;
 
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Routing\RouteStage;
+use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RouteStage;
 use Closure;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Psr\Http\Message\ResponseInterface;

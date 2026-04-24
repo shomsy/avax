@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Routing\RouteBuilder;
-use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
-use Avax\HTTP\Router\Support\RouteCollector;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use Avax\Text\Pattern;
 use Avax\Text\RegexException;
 
@@ -175,38 +175,28 @@ if (! function_exists(function: 'route_compile_pattern')) {
      */
     function route_compile_pattern(string $template, array $constraints = []) : string
     {
-        // Start with the template
-        $pattern = $template;
+        route_validate_path(path: $template);
 
-        // Replace {param} placeholders with regex groups
-        $pattern = Pattern::of(raw: '\{([^}]+)\}')->replaceCallback(subject: $pattern, fn: static function ($match) use ($constraints) {
-            $paramName = $match[1];
+        if ($template === '/') {
+            return '#^/$#u';
+        }
 
-            // Check for optional parameter (ends with ?)
-            $isOptional = str_ends_with(haystack: $paramName, needle: '?');
-            $isWildcard = str_ends_with(haystack: $paramName, needle: '*');
-
-            // Remove modifiers from parameter name
-            $cleanName = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $paramName);
-
-            // Get constraint or default
-            $constraint = $constraints[$cleanName] ?? '[^/]+';
-
-            // Build the regex group
-            if ($isWildcard) {
-                $group = "(?<{$cleanName}>.*)";
-            } else {
-                $group = "(?<{$cleanName}>{$constraint})";
+        $pattern = '';
+        foreach (explode(separator: '/', string: trim(string: $template, characters: '/')) as $segment) {
+            if (preg_match(pattern: '/^\{([^}]+)\}$/', subject: $segment, matches: $matches) !== 1) {
+                $pattern .= '/' . preg_quote(str: $segment, delimiter: '#');
+                continue;
             }
 
-            if ($isOptional) {
-                $group = "(?:/{$group})?";
-            } else {
-                $group = "/{$group}";
-            }
+            $parameter  = $matches[1];
+            $isOptional = str_ends_with(haystack: $parameter, needle: '?');
+            $isWildcard = str_ends_with(haystack: $parameter, needle: '*');
+            $name       = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $parameter);
+            $constraint = $isWildcard ? '.*' : ($constraints[$name] ?? '[^/]+');
+            $group      = "(?<{$name}>{$constraint})";
 
-            return $group;
-        });
+            $pattern .= $isOptional ? "(?:/{$group})?" : "/{$group}";
+        }
 
         return '#^' . $pattern . '$#u';
     }
@@ -279,23 +269,13 @@ if (! function_exists(function: 'route_path')) {
      */
     function route_path(string $path) : string
     {
-        return route_validate_path(path: $path);
-    }
-}
+        $normalizedPath = $path === '/'
+            ? '/'
+            : '/' . trim(string: $path, characters: '/');
 
-if (! function_exists(function: 'route_constraint')) {
-    /**
-     * Validate and compile a route parameter constraint.
-     *
-     * Ensures regex patterns are syntactically correct and safe.
-     *
-     * @param string $pattern The regex constraint pattern
-     *
-     * @throws InvalidArgumentException If pattern is invalid
-     */
-    function route_constraint(string $pattern) : void
-    {
-        route_validate_constraint(pattern: $pattern);
+        route_validate_path(path: $normalizedPath);
+
+        return $normalizedPath;
     }
 }
 

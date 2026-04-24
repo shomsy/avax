@@ -38,4 +38,13 @@ final class ArraySessionStore implements SessionStore
     {
         $this->data = [];
     }
+
+    public function flushNamespace(string $prefix) : void
+    {
+        foreach (array_keys(array: $this->data) as $key) {
+            if (str_starts_with(haystack: $key, needle: $prefix)) {
+                unset($this->data[$key]);
+            }
+        }
+    }
 }

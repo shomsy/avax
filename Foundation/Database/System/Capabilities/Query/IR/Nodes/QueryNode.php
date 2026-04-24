@@ -2,13 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
-
-use Avax\Database\System\Capabilities\Query\IR\Nodes\CTENode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\FromNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\OrderByNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
+namespace Avax\Database\System\Capabilities\Query\IR\Nodes;
 
 final class QueryNode
 {
@@ -39,9 +33,9 @@ final class QueryNode
         return $this;
     }
 
-    public function from(string $table) : self
+    public function from(string $table, ?string $alias = null) : self
     {
-        $this->from = new FromNode(table: $table);
+        $this->from = new FromNode(table: $table, alias: $alias);
 
         return $this;
     }

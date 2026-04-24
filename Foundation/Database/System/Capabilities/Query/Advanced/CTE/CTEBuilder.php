@@ -33,17 +33,23 @@ final class CTEBuilder
 
     public function getSQL(string $dialect) : string
     {
-        $sql = [];
+        $definitions = [];
+        $isRecursive = false;
 
         foreach ($this->ctes as $name => $cte) {
             if ($cte['type'] === 'recursive') {
-                $sql[] = "WITH RECURSIVE {$name} AS ({$this->buildCTE(query:$cte['initial'])} UNION ALL {$this->buildCTE(query:$cte['recursive'])})";
+                $definitions[] = "{$name} AS ({$this->buildCTE(query: $cte['initial'])} UNION ALL {$this->buildCTE(query: $cte['recursive'])})";
+                $isRecursive   = true;
             } else {
-                $sql[] = "WITH {$name} AS ({$this->buildCTE(query:$cte['query'])})";
+                $definitions[] = "{$name} AS ({$this->buildCTE(query: $cte['query'])})";
             }
         }
 
-        return implode(separator: ', ', array: $sql);
+        if ($definitions === []) {
+            return '';
+        }
+
+        return 'WITH ' . ($isRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $definitions);
     }
 
     private function buildCTE(QueryState $query) : string

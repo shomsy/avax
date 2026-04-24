@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\RouteBuilder;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouteGroupContext;
-use Avax\HTTP\Router\Routing\RouteGroupStack;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Core functionality tests - ensures basic components work without full DI.
  *
- * Focuses on the critical bug: RouteBuilder::make() calling static RouteGroupStack::apply().
+ * Focuses on the critical bug: RouteBuilder::make() calling static RouteGroupFrames::apply().
  * This catches issues that integration tests miss due to mocking limitations.
  */
 class RouterDslIntegrationTest extends TestCase
@@ -22,8 +22,8 @@ class RouterDslIntegrationTest extends TestCase
      */
     public function route_builder_make_does_not_call_static_methods() : void
     {
-        // This is the critical test - RouteBuilder::make() should NOT call RouteGroupStack::apply()
-        // If it does, we'll get a fatal error since RouteGroupStack is now instance-based
+        // This is the critical test - RouteBuilder::make() should NOT call RouteGroupFrames::apply()
+        // If it does, we'll get a fatal error since RouteGroupFrames is now instance-based
 
         $builder = RouteBuilder::make(method: 'GET', path: '/test');
 
@@ -38,7 +38,7 @@ class RouterDslIntegrationTest extends TestCase
      */
     public function route_group_stack_has_applyTo_method() : void
     {
-        $stack = new RouteGroupStack();
+        $stack = new RouteGroupFrames();
 
         $builder = RouteBuilder::make(method: 'GET', path: '/test');
         $result  = $stack->applyTo(builder: $builder);
@@ -52,7 +52,7 @@ class RouterDslIntegrationTest extends TestCase
      */
     public function route_group_stack_snapshot_restore_works() : void
     {
-        $stack = new RouteGroupStack();
+        $stack = new RouteGroupFrames();
 
         $initialState = $stack->snapshot();
 

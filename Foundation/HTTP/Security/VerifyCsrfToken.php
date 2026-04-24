@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Security;
 
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\ResponseFactory;
 use Closure;
 use Exception;
@@ -37,13 +37,13 @@ class VerifyCsrfToken
     /**
      * Handles CSRF validation for incoming requests.
      *
-     * @param Request $request The incoming request.
+     * @param ServerRequest $request The incoming request.
      * @param Closure $next    The next middleware in the pipeline.
      *
      * @throws Exception
      * @throws Exception
      */
-    public function handle(Request $request, Closure $next) : ResponseInterface
+    public function handle(ServerRequest $request, Closure $next) : ResponseInterface
     {
         if ($this->isSafeMethod(request: $request)) {
             return $next($request);
@@ -61,25 +61,27 @@ class VerifyCsrfToken
     /**
      * Determines if the request method is safe (e.g., GET, OPTIONS).
      *
-     * @param Request $request The incoming request.
+     * @param ServerRequest $request The incoming request.
      *
      * @return bool True if the method is safe, false otherwise.
      */
-    private function isSafeMethod(Request $request) : bool
+    private function isSafeMethod(ServerRequest $request) : bool
     {
-        return $request->getMethod()
-                |> strtoupper(...)
-                |> (static fn ($x) => in_array(needle: $x, haystack: self::SAFE_METHODS, strict: true));
+        return in_array(
+            needle  : strtoupper(string: $request->getMethod()),
+            haystack: self::SAFE_METHODS,
+            strict  : true
+        );
     }
 
     /**
      * Extracts the CSRF token from the request.
      *
-     * @param Request $request The incoming request.
+     * @param ServerRequest $request The incoming request.
      *
      * @return string|null The extracted token.
      */
-    private function extractToken(Request $request) : string|null
+    private function extractToken(ServerRequest $request) : string|null
     {
         $headerToken = $request->getHeaderLine(name: 'X-CSRF-TOKEN');
 
@@ -105,7 +107,7 @@ class VerifyCsrfToken
             }
         }
 
-        $inputToken = $request->input(key: '_csrf_token') ?? $request->input(key: '_token');
+        $inputToken = $request->inputs()->get(key: '_csrf_token') ?? $request->inputs()->get(key: '_token');
 
         return is_string(value: $inputToken) && $inputToken !== '' ? $inputToken : null;
     }

@@ -22,7 +22,10 @@ class EnsureDirectoryExistsTest extends TestCase
 
     protected function tearDown() : void
     {
-        @rmdir(directory: $this->testDir);
+        if (is_dir(filename: $this->testDir)) {
+            $this->disk->deleteDirectory(path: $this->testDir);
+        }
+
         parent::tearDown();
     }
 

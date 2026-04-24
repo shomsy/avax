@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Random\RandomException;
 use SensitiveParameter;
@@ -38,7 +38,7 @@ class TracingMiddleware implements MiddlewareInterface
      * @throws Throwable
      * @throws RandomException
      */
-    public function process(ServerRequestInterface $request, callable $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         $requestId = $this->generateRequestId();
         $startTime = microtime(as_float: true);
@@ -46,16 +46,16 @@ class TracingMiddleware implements MiddlewareInterface
         // Add request ID to request
         $request = $request->withHeader(name: $this->requestIdHeader, value: $requestId);
 
-        $this->logger->info(message: 'ServerRequest started', context: [
+        $this->logger->info(message: 'Request started', context: [
             'request_id' => $requestId,
-            'method'     => $request->method,
-            'path'       => $request->uri->getPath(),
-            'query'      => $request->uri->getQuery(),
+            'method' => $request->getMethod(),
+            'path'   => $request->getUri()->getPath(),
+            'query'  => $request->getUri()->getQuery(),
             'headers'    => $this->getSafeHeaders(request: $request),
         ]);
 
         try {
-            $response = $next($request);
+            $response = $handler->handle(request: $request);
 
             $latency = (microtime(as_float: true) - $startTime) * 1000; // ms
 
@@ -64,10 +64,10 @@ class TracingMiddleware implements MiddlewareInterface
             $this->metrics['total_latency_ms'] += $latency;
             $this->metrics['uptime_seconds']   = microtime(as_float: true) - $this->startTime;
 
-            $this->logger->info(message: 'ServerRequest completed', context: [
+            $this->logger->info(message: 'Request completed', context: [
                 'request_id'          => $requestId,
-                'method'              => $request->method,
-                'path'                => $request->uri->getPath(),
+                'method' => $request->getMethod(),
+                'path'   => $request->getUri()->getPath(),
                 'status'              => $response->getStatusCode(),
                 'latency_ms'          => round(num: $latency, precision: 2),
                 'response_size_bytes' => strlen(string: (string) $response->getBody()),
@@ -79,10 +79,10 @@ class TracingMiddleware implements MiddlewareInterface
         } catch (Throwable $e) {
             $latency = (microtime(as_float: true) - $startTime) * 1000;
 
-            $this->logger->error(message: 'ServerRequest failed', context: [
+            $this->logger->error(message: 'Request failed', context: [
                 'request_id' => $requestId,
-                'method'     => $request->method,
-                'path'       => $request->uri->getPath(),
+                'method' => $request->getMethod(),
+                'path'   => $request->getUri()->getPath(),
                 'latency_ms' => round(num: $latency, precision: 2),
                 'error'      => $e->getMessage(),
                 'trace'      => $e->getTraceAsString(),
@@ -105,7 +105,7 @@ class TracingMiddleware implements MiddlewareInterface
         );
     }
 
-    private function getSafeHeaders(ServerRequestInterface $request) : array
+    private function getSafeHeaders(RequestInterface $request) : array
     {
         $headers = $request->getHeaders();
 

@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\DeleteSessionValue;
 
-use Avax\HTTP\Session\Core\Lifecycle\SessionEngine;
+use Avax\HTTP\Session\SessionStore\SessionStore;
 
 final class DeleteSessionValue
 {
-    private SessionEngine $engine;
+    private SessionStore $store;
 
-    public function __construct(SessionEngine $engine)
+    public function __construct(SessionStore $store)
     {
-        $this->engine = $engine;
+        $this->store = $store;
     }
 
     public function handle(string $key) : void
     {
-        $this->engine->storage()->delete(key: $key);
+        $this->store->delete(key: $key);
+        $this->store->delete(key: '_ttl.' . $key);
     }
 }

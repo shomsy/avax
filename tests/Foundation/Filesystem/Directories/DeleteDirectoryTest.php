@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Directories;
 
 use Avax\Filesystem\Directories\DeleteDirectory;
-use Avax\Filesystem\Directories\DirectoryDeleteFailed;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +23,10 @@ class DeleteDirectoryTest extends TestCase
 
     protected function tearDown() : void
     {
-        @rmdir(directory: $this->testDir);
+        if (is_dir(filename: $this->testDir)) {
+            $this->disk->deleteDirectory(path: $this->testDir);
+        }
+
         parent::tearDown();
     }
 
@@ -37,6 +39,8 @@ class DeleteDirectoryTest extends TestCase
 
     public function testExecuteDeletesExistingDirectory() : void
     {
+        file_put_contents(filename: $this->testDir . '/nested.txt', data: "content\n");
+
         $result = (new DeleteDirectory(disk: $this->disk))->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);

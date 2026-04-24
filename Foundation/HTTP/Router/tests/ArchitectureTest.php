@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
-use Avax\HTTP\Router\Bootstrap\RouteRegistrar;
-use Avax\HTTP\Router\Cache\RouteCacheLoader;
-use Avax\HTTP\Router\Cache\RouteCacheManifest;
-use Avax\HTTP\Router\Kernel\RouterKernel;
 use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\RouterDsl;
 use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\DomainAwareMatcher;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouteGroupStack;
-use Avax\HTTP\Router\Routing\RouteMatcher;
-use Avax\HTTP\Router\Routing\RoutePipeline;
-use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
-use Avax\HTTP\Router\Routing\StageChain;
-use Avax\HTTP\Router\Support\FallbackManager;
-use Avax\HTTP\Router\Support\RouteRegistry;
-use Avax\HTTP\Router\Tracing\RouterTrace;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Capabilities\RouterTrace\RouterTrace;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteFileRegistrar;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RoutePipeline;
+use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
+use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -50,11 +50,11 @@ final class ArchitectureTest extends TestCase
             RoutePipeline::class,
             StageChain::class,
             RouteRegistry::class,
-            RouteGroupStack::class,
-            FallbackManager::class,
+            RouteGroupFrames::class,
+            RegisteredFallback::class,
             RouteCacheLoader::class,
             RouteCacheManifest::class,
-            RouteRegistrar::class,
+            RouteFileRegistrar::class,
             RouterTrace::class,
         ];
 

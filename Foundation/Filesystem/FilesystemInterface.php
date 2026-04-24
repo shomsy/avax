@@ -4,70 +4,42 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem;
 
-use Avax\Contracts\FilesystemException;
-
 /**
- * Filesystem abstraction for clean architecture.
- *
- * Replaces framework-specific Storage facades with proper dependency injection.
- * Enables testability and framework-agnostic file operations.
+ * Public filesystem facade contract.
  */
 interface FilesystemInterface
 {
-    /**
-     * Get the contents of a file.
-     *
-     * @param string $path The file path
-     *
-     * @return string The file contents
-     *
-     * @throws FilesystemException If file cannot be read
-     */
     public function get(string $path) : string;
 
-    /**
-     * Write contents to a file.
-     *
-     * @param string $path    The file path
-     * @param string $content The content to write
-     *
-     * @throws FilesystemException If file cannot be written
-     */
     public function put(string $path, string $content) : void;
 
-    /**
-     * Check if a file exists.
-     *
-     * @param string $path The file path
-     *
-     * @return bool True if file exists and is readable
-     */
+    public function append(string $path, string $content) : void;
+
+    public function copy(string $source, string $destination) : void;
+
+    public function move(string $source, string $destination) : void;
+
     public function exists(string $path) : bool;
 
-    /**
-     * Delete a file.
-     *
-     * @param string $path The file path
-     *
-     * @throws FilesystemException If file cannot be deleted
-     */
     public function delete(string $path) : void;
 
-    /**
-     * Get file modification time.
-     *
-     * @param string $path The file path
-     *
-     * @return int|null Unix timestamp or null if file doesn't exist
-     */
     public function lastModified(string $path) : int|null;
 
-    /**
-     * Ensure directory exists, creating it if necessary.
-     *
-     * @param string $path Directory path
-     *
-     * @throws FilesystemException If directory cannot be created
-     */
     public function ensureDirectory(string $path) : void;
+
+    public function ensureDirectoryIsWritable(string $path) : bool;
+
+    public function createDirectory(string $path, int $permissions = 0755) : void;
+
+    public function deleteDirectory(string $path) : void;
+
+    public function clearDirectory(string $path) : void;
+
+    public function listFiles(string $path) : array;
+
+    public function isWritable(string $path) : bool;
+
+    public function setPermissions(string $path, int $permissions) : bool;
+
+    public function hasPermission(string $path, int $permissions) : bool;
 }

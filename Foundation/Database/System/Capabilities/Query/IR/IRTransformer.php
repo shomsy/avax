@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Query\IR;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\CTENode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\CTEType;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\OrderByNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
+use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
 final class IRTransformer
 {
@@ -18,11 +24,15 @@ final class IRTransformer
 
         $ctes = $query->getCTEs();
         if (! empty($ctes)) {
+            $hasRecursive = array_any(
+                array   : $ctes,
+                callback: fn (CTENode $cte) => $cte->type === CTEType::RECURSIVE
+            );
             $cteSql       = array_map(
                 callback: fn (CTENode $cte) => $cte->getSql(grammar: $this->grammar),
                 array   : $ctes
             );
-            $components[] = implode(separator: ', ', array: $cteSql);
+            $components[] = 'WITH ' . ($hasRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $cteSql);
         }
 
         $components[] = $this->compileSelect(query: $query);
@@ -68,7 +78,8 @@ final class IRTransformer
                 callback: fn (WhereNode $where) => $where->getSql(grammar: $this->grammar),
                 array   : $wheres
             );
-            $components[] = implode(separator: ' ', array: $whereSql);
+            $whereSql[0] = preg_replace(pattern: '/^(AND|OR)\s+/i', replacement: '', subject: $whereSql[0]);
+            $components[] = 'WHERE ' . implode(separator: ' ', array: $whereSql);
         }
 
         $groups = $query->getGroups();

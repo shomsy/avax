@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Files\ReadFileLastModifiedAt;
 use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Filesystem\Files\ReadFileLastModifiedAt;
 use PHPUnit\Framework\TestCase;
 
 class ReadFileLastModifiedAtTest extends TestCase
@@ -30,7 +30,7 @@ class ReadFileLastModifiedAtTest extends TestCase
     {
         $result = (new ReadFileLastModifiedAt(disk: $this->disk))->execute(path: '/ne postoji.txt');
 
-        self::assertNull(actual: $result);
+        self::assertNull($result);
     }
 
     public function testExecuteReturnsTimestampForExistingFile() : void
@@ -39,7 +39,7 @@ class ReadFileLastModifiedAtTest extends TestCase
 
         $result = (new ReadFileLastModifiedAt(disk: $this->disk))->execute(path: $this->testFile);
 
-        self::assertIsInt(actual: $result);
-        self::assertGreaterThan(value: 0, actual: $result);
+        self::assertIsInt($result);
+        self::assertGreaterThan(0, $result);
     }
 }

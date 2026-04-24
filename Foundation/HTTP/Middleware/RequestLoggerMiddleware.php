@@ -6,7 +6,6 @@ namespace Avax\HTTP\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -42,18 +41,17 @@ readonly class RequestLoggerMiddleware implements MiddlewareInterface
     {
         // Extract client IP from server parameters (PSR-7 compatible)
         $clientIp = 'unknown';
-        if ($request instanceof ServerRequestInterface) {
-            $serverParams = $request->serverParams;
-            $clientIp     = $serverParams['REMOTE_ADDR'] ??
-                $serverParams['HTTP_X_FORWARDED_FOR'] ??
-                $serverParams['HTTP_X_REAL_IP'] ??
-                'unknown';
-        }
+        $serverParams = method_exists($request, 'getServerParams') ? $request->getServerParams() : [];
+        $forwardedFor = (string) ($serverParams['HTTP_X_FORWARDED_FOR'] ?? '');
+        $clientIp = $serverParams['REMOTE_ADDR']
+            ?? ($forwardedFor !== '' ? trim(string: explode(separator: ',', string: $forwardedFor)[0]) : null)
+            ?? $serverParams['HTTP_X_REAL_IP']
+            ?? 'unknown';
 
         // Log the request details: method, URI, and client IP.
         $this->logger->info(message: 'Incoming request', context: [
-            'method' => $request->method,
-            'uri'    => (string) $request->uri,
+            'method' => $request->getMethod(),
+            'uri'    => (string) $request->getUri(),
             'ip'     => $clientIp,
         ]);
 

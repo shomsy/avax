@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests\Unit;
 
-use Avax\Contracts\FilesystemException;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Cache\RouteCacheLoader;
-use Avax\HTTP\Router\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Routing\RouterRegistrar;
-use Avax\HTTP\Router\Support\RouteRegistry;
-use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherRegistry;
+use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\NullLogger;
@@ -29,7 +28,6 @@ final class RouteCacheTest extends TestCase
     }
 
     /**
-     * @throws FilesystemException
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Routing\RouteDefinition;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +24,7 @@ interface RouterRuntimeInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    public function resolve(Request $request) : ResponseInterface;
+    public function resolve(ServerRequest $request) : ResponseInterface;
 
     /**
      * Retrieves a route definition by name.

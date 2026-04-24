@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\RouteDefinition;
-use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
-use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use PHPUnit\Framework\TestCase;
 
 /**

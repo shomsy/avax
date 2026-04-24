@@ -6,33 +6,30 @@ namespace Avax\Filesystem\Directories;
 
 use Avax\Filesystem\Disks\Disk;
 
-class EnsureDirectoryIsWritable
+final class EnsureDirectoryIsWritable
 {
     private const int RETRY_ATTEMPTS = 3;
     private const int RETRY_DELAY = 100000;
 
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function execute(string $path) : bool
     {
-        if (! is_dir(filename: $path)) {
-            throw new DirectoryCreateFailed(path: $path);
-        }
+        (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $path);
 
-        if (is_writable(filename: $path)) {
+        if ($this->disk->isWritable(path: $path)) {
             return true;
         }
 
-        if (! chmod(filename: $path, permissions: 0755)) {
+        if (! $this->disk->setPermissions(path: $path, permissions: 0755)) {
             return false;
         }
 
         for ($attempt = 1; $attempt <= self::RETRY_ATTEMPTS; $attempt++) {
-            if (is_writable(filename: $path)) {
+            if ($this->disk->isWritable(path: $path)) {
                 return true;
             }
+
             usleep(microseconds: self::RETRY_DELAY);
         }
 

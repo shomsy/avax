@@ -6,18 +6,6 @@ namespace Avax\Database\System\Capabilities\ORM\DataLoader;
 
 use RuntimeException;
 
-interface DataLoaderInterface
-{
-    public function load(array $keys) : array;
-
-    public function for(string $relation) : self;
-}
-
-interface LoaderCallback
-{
-    public function __invoke(array $keys) : array;
-}
-
 final class BatchLoader
 {
     private array $loaders = [];
@@ -33,8 +21,10 @@ final class BatchLoader
 
     public function load(string $name, array $keys) : array
     {
-        if (isset($this->cache[$name])) {
-            return $this->cache[$name];
+        $cacheKey = $name . ':' . md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
 
         $callback = $this->loaders[$name] ?? null;
@@ -43,8 +33,8 @@ final class BatchLoader
             throw new RuntimeException(message: "No loader registered for: {$name}");
         }
 
-        $results            = $callback($keys);
-        $this->cache[$name] = $results;
+        $results                = $callback($keys);
+        $this->cache[$cacheKey] = $results;
 
         return $results;
     }
@@ -69,6 +59,6 @@ final class BatchLoader
 
     public function has(string $name) : bool
     {
-        return isset($this->cache[$name]);
+        return isset($this->loaders[$name]);
     }
 }

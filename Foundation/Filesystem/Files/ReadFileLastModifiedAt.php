@@ -6,20 +6,12 @@ namespace Avax\Filesystem\Files;
 
 use Avax\Filesystem\Disks\Disk;
 
-class ReadFileLastModifiedAt
+final class ReadFileLastModifiedAt
 {
-    private Disk $disk;
-
-    public function __construct(Disk $disk) { $this->disk = $disk; }
+    public function __construct(private readonly Disk $disk) {}
 
     public function execute(string $path) : int|null
     {
-        if (! file_exists(filename: $path)) {
-            return null;
-        }
-
-        $mtime = filemtime(filename: $path);
-
-        return $mtime !== false ? $mtime : null;
+        return $this->disk->lastModified(path: $path);
     }
 }

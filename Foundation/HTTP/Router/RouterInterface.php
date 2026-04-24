@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
-use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 
 /**
  * Public API Contract: Router DSL Interface
@@ -96,9 +96,9 @@ interface RouterInterface
      * @param string                $path   The URL path for the route.
      * @param callable|array|string $action The action to be executed for any HTTP method.
      *
-     * @return RouteRegistrarProxy[] Array of proxies, each corresponding to the registered method.
+     * @return RouteRegistrarProxy Proxy for the wildcard ANY route.
      */
-    public function any(string $path, callable|array|string $action) : array;
+    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy;
 
     public function anyExpanded(string $path, callable|array|string $action) : array;
 

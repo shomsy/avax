@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\Auth\Application\Service\RateLimiterService;
 use Avax\HTTP\Response\ResponseFactory;
 use DateMalformedStringException;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * PSR-15 Middleware that enforces rate limiting per client identifier (e.g., IP address) to
@@ -27,14 +25,14 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
     private int                $maxRequests;
     private string             $identifierType;
     private ResponseFactory    $responseFactory;
-    private RateLimiterService $rateLimiterService;
+    private RateLimiterInterface $rateLimiterService;
 
     public function __construct(
-        RateLimiterService $rateLimiterService,
-        ResponseFactory    $responseFactory,
-        string|null        $identifierType = null,
-        int|null           $maxRequests = null,
-        int                $timeWindow = self::DEFAULT_TIME_WINDOW
+        RateLimiterInterface $rateLimiterService,
+        ResponseFactory      $responseFactory,
+        string|null          $identifierType = null,
+        int|null             $maxRequests = null,
+        int                  $timeWindow = self::DEFAULT_TIME_WINDOW
     )
     {
         $identifierType           ??= self::DEFAULT_IDENTIFIER_TYPE;
@@ -83,17 +81,13 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
     private function extractIdentifier(RequestInterface $request) : string
     {
         if ($this->identifierType === 'ip') {
-            // Extract IP from PSR-7 ServerRequestInterface
-            if ($request instanceof ServerRequestInterface) {
-                $serverParams = $request->serverParams;
-
-                return $serverParams['REMOTE_ADDR'] ??
-                    $serverParams['HTTP_X_FORWARDED_FOR'] ??
-                    $serverParams['HTTP_X_REAL_IP'] ??
-                    'unknown';
+            $serverParams = method_exists($request, 'getServerParams') ? $request->getServerParams() : [];
+            $forwardedFor = (string) ($serverParams['HTTP_X_FORWARDED_FOR'] ?? '');
+            if ($forwardedFor !== '') {
+                return trim(string: explode(separator: ',', string: $forwardedFor)[0]);
             }
 
-            return 'unknown';
+            return $serverParams['REMOTE_ADDR'] ?? $serverParams['HTTP_X_REAL_IP'] ?? 'unknown';
         }
 
         return 'default';
@@ -124,9 +118,8 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
      */
     private function createRateLimitExceededResponse() : ResponseInterface
     {
-        return $this->responseFactory->createResponse(
-            code        : 429,
-            reasonPhrase: 'Too Many Requests'
-        )->withHeader(name: 'Retry-After', value: (string) $this->timeWindow);
+        return $this->responseFactory
+            ->createErrorResponse(statusCode: 429, message: 'Too Many Requests')
+            ->withHeader(name: 'Retry-After', value: (string) $this->timeWindow);
     }
 }

@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
+namespace Avax\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
 final class JoinNode
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\Support\RoutePathValidator;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RoutePathValidator;
 use PHPUnit\Framework\TestCase;
 
 /**

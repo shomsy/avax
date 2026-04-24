@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
-use Avax\HTTP\Router\Cache\RouteCacheLoader;
-use Avax\HTTP\Router\Routing\DomainAwareMatcher;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteMatcher;
-use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

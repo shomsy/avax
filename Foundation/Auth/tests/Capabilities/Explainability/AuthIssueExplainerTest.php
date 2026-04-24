@@ -12,7 +12,7 @@ final class AuthIssueExplainerTest extends TestCase
 {
     public function testExplainerProvidesStructuredAccessDeniedExplanation() : void
     {
-        $explanation = (new AuthIssueExplainer())->explainAccessDenied(
+        $explanation = new AuthIssueExplainer()->explainAccessDenied(
             resource          : 'tenant_security_change',
             requiredPermission: 'tenant.security.approve',
             tenant            : 'acme',
@@ -26,7 +26,7 @@ final class AuthIssueExplainerTest extends TestCase
 
     public function testExplainerMakesTrustedDeviceNonGoalExplicit() : void
     {
-        $explanation = (new AuthIssueExplainer())->explainTrustedDeviceDecision(deviceId: 'device-1');
+        $explanation = new AuthIssueExplainer()->explainTrustedDeviceDecision(deviceId: 'device-1');
 
         $this->assertSame(expected: 'trusted_device_not_supported', actual: $explanation->code);
         $this->assertStringContainsString(needle: 'not provided by this package', haystack: $explanation->message);

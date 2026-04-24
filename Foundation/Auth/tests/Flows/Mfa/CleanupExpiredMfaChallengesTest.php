@@ -34,7 +34,7 @@ final class CleanupExpiredMfaChallengesTest extends TestCase
                                   expiresAt  : new DateTimeImmutable(datetime: '+5 minutes')
                               ));
 
-        $removed = (new CleanupExpiredMfaChallenges(challengeStore: $store, clock: new Clock()))->execute();
+        $removed = new CleanupExpiredMfaChallenges(challengeStore: $store, clock: new Clock())->execute();
 
         $this->assertSame(expected: 1, actual: $removed);
         $this->assertNull(actual: $store->find(challengeId: 'expired'));

@@ -54,17 +54,23 @@ final readonly class DataTransaction
         string         $id,
         ?string        $connectionName,
         IsolationLevel $isolationLevel,
-        bool           $isActive = false,
-        bool           $isCommitted = false,
-        bool           $isRolledBack = false,
-        float          $startedAt = 0.0,
+        bool|null  $isActive = null,
+        bool|null  $isCommitted = null,
+        bool|null  $isRolledBack = null,
+        float|null $startedAt = null,
         ?float         $finishedAt = null,
         ?float         $durationMs = null,
-        array          $affectedRows = [],
-        array          $sideEffects = [],
+        array|null $affectedRows = null,
+        array|null $sideEffects = null,
         ?string        $savepointName = null
     )
     {
+        $isActive     ??= false;
+        $isCommitted  ??= false;
+        $isRolledBack ??= false;
+        $startedAt    ??= 0.0;
+        $affectedRows ??= [];
+        $sideEffects  ??= [];
         $this->id             = $id;
         $this->connectionName = $connectionName;
         $this->isolationLevel = $isolationLevel;

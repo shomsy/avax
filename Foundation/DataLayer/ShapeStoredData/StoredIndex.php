@@ -45,13 +45,15 @@ final readonly class StoredIndex
         string    $tableName,
         array     $columns,
         ?int      $length = null,
-        bool      $isVisible = true,
-        bool      $isPartial = false,
+        bool|null $isVisible = null,
+        bool|null $isPartial = null,
         ?string   $partialExpression = null,
         ?string   $comment = null,
         ?int      $priority = null
     )
     {
+        $isVisible ??= true;
+        $isPartial ??= false;
         $this->name              = $name;
         $this->kind              = $kind;
         $this->type              = $type;

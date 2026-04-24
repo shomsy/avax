@@ -32,27 +32,27 @@ final class Filesystem implements FilesystemInterface
 
     public function get(string $path) : string
     {
-        return (new ReadFile(disk: $this->disk))->execute(path: $path);
+        return new ReadFile(disk: $this->disk)->execute(path: $path);
     }
 
     public function put(string $path, string $content) : void
     {
-        (new WriteFile(disk: $this->disk))->execute(path: $path, content: $content);
+        new WriteFile(disk: $this->disk)->execute(path: $path, content: $content);
     }
 
     public function append(string $path, string $content) : void
     {
-        (new AppendToFile(disk: $this->disk))->execute(path: $path, content: $content);
+        new AppendToFile(disk: $this->disk)->execute(path: $path, content: $content);
     }
 
     public function copy(string $source, string $destination) : void
     {
-        (new CopyFile(disk: $this->disk))->execute(source: $source, destination: $destination);
+        new CopyFile(disk: $this->disk)->execute(source: $source, destination: $destination);
     }
 
     public function move(string $source, string $destination) : void
     {
-        (new MoveFile(disk: $this->disk))->execute(source: $source, destination: $destination);
+        new MoveFile(disk: $this->disk)->execute(source: $source, destination: $destination);
     }
 
     public function exists(string $path) : bool
@@ -62,42 +62,42 @@ final class Filesystem implements FilesystemInterface
 
     public function delete(string $path) : void
     {
-        (new DeleteFile(disk: $this->disk))->execute(path: $path);
+        new DeleteFile(disk: $this->disk)->execute(path: $path);
     }
 
     public function lastModified(string $path) : int|null
     {
-        return (new ReadFileLastModifiedAt(disk: $this->disk))->execute(path: $path);
+        return new ReadFileLastModifiedAt(disk: $this->disk)->execute(path: $path);
     }
 
     public function ensureDirectory(string $path) : void
     {
-        (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $path);
+        new EnsureDirectoryExists(disk: $this->disk)->execute(path: $path);
     }
 
     public function ensureDirectoryIsWritable(string $path) : bool
     {
-        return (new EnsureDirectoryIsWritable(disk: $this->disk))->execute(path: $path);
+        return new EnsureDirectoryIsWritable(disk: $this->disk)->execute(path: $path);
     }
 
     public function createDirectory(string $path, int $permissions = 0755) : void
     {
-        (new CreateDirectory(disk: $this->disk))->execute(path: $path, permissions: $permissions);
+        new CreateDirectory(disk: $this->disk)->execute(path: $path, permissions: $permissions);
     }
 
     public function deleteDirectory(string $path) : void
     {
-        (new DeleteDirectory(disk: $this->disk))->execute(path: $path);
+        new DeleteDirectory(disk: $this->disk)->execute(path: $path);
     }
 
     public function clearDirectory(string $path) : void
     {
-        (new ClearDirectory(disk: $this->disk))->execute(path: $path);
+        new ClearDirectory(disk: $this->disk)->execute(path: $path);
     }
 
     public function listFiles(string $path) : array
     {
-        return (new ListDirectoryFiles(disk: $this->disk))->execute(path: $path);
+        return new ListDirectoryFiles(disk: $this->disk)->execute(path: $path);
     }
 
     public function isWritable(string $path) : bool
@@ -117,6 +117,6 @@ final class Filesystem implements FilesystemInterface
 
     public static function disk(string|null $name = null) : Disk
     {
-        return (new ResolveDisk())->execute(name: $name);
+        return new ResolveDisk()->execute(name: $name);
     }
 }

@@ -10,6 +10,6 @@ final class BuildNoContentResponse
 {
     public function __invoke(array $headers = []) : ResponseInterface
     {
-        return (new BuildEmptyResponse())(status: 204, headers: $headers);
+        return new BuildEmptyResponse()(status: 204, headers: $headers);
     }
 }

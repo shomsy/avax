@@ -184,8 +184,10 @@ final readonly class EntityPersister
      * @return list<object>
      * @throws Throwable
      */
-    public function findAll(string $entityClass, array $criteria = [], string|null $connectionName = null) : array
+    public function findAll(string $entityClass, array|null $criteria = null, string|null $connectionName = null) : array
     {
+        $criteria ??= [];
+
         return $this->findBy(entityClass: $entityClass, criteria: $criteria, connectionName: $connectionName);
     }
 

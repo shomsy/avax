@@ -222,7 +222,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
                                                            allowedScopes                 : ['openid'],
                                                            requestObjectSignatureRequired: true
                                                        ));
-        $requestJwt = (new HmacTokenCodec(secret: $client->plainTextSecret ?? ''))->encode(claims: [
+        $requestJwt = new HmacTokenCodec(secret: $client->plainTextSecret ?? '')->encode(claims: [
                                                                                                        'client_id'    => $client->client->clientId,
                                                                                                        'redirect_uri' => 'https://rp.example.test/callback',
                                                                                                        'scope'        => 'openid',

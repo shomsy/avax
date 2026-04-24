@@ -27,7 +27,7 @@ final class ReleaseToolingTest extends TestCase
     public function testSbomContainsPackageMetadata() : void
     {
         $root = dirname(path: __DIR__, levels: 3);
-        $sbom = (new GenerateReleaseSbom())->execute(composerJsonPath: $root . '/composer.json', composerLockPath: $root . '/composer.lock');
+        $sbom = new GenerateReleaseSbom()->execute(composerJsonPath: $root . '/composer.json', composerLockPath: $root . '/composer.lock');
 
         $this->assertSame(expected: 'CycloneDX', actual: $sbom['bomFormat']);
         $this->assertSame(expected: 'avax/auth', actual: $sbom['metadata']['component']['name']);
@@ -36,7 +36,7 @@ final class ReleaseToolingTest extends TestCase
     public function testReleaseProvenanceCapturesRepositoryState() : void
     {
         $root       = dirname(path: __DIR__, levels: 3);
-        $provenance = (new CreateReleaseProvenance())->execute(repositoryRoot: $root, validationCommands: ['php composer.phar test']);
+        $provenance = new CreateReleaseProvenance()->execute(repositoryRoot: $root, validationCommands: ['php composer.phar test']);
 
         $this->assertSame(expected: 'avax/auth', actual: $provenance['package']);
         $this->assertArrayHasKey(key: 'git_commit', array: $provenance);
@@ -51,7 +51,7 @@ final class ReleaseToolingTest extends TestCase
         self::assertIsString(actual: $artifact);
         file_put_contents(filename: $artifact, data: 'rollback-artifact');
 
-        $evidence = (new GenerateRollbackEvidence())->execute(
+        $evidence = new GenerateRollbackEvidence()->execute(
             repositoryRoot    : $root,
             rollbackTarget    : 'HEAD',
             artifacts         : [$artifact],
@@ -73,7 +73,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $directory);
         file_put_contents(filename: $directory . '/keys.txt', data: 'AKIA' . "IOSFODNN7EXAMPLE\n");
 
-        $findings = (new ScanCommittedSecrets())->execute(rootPath: $directory, ignoredDirectories: []);
+        $findings = new ScanCommittedSecrets()->execute(rootPath: $directory, ignoredDirectories: []);
 
         $this->assertCount(expectedCount: 1, haystack: $findings);
         $this->assertSame(expected: 'aws_access_key_id', actual: $findings[0]['pattern']);
@@ -82,7 +82,7 @@ final class ReleaseToolingTest extends TestCase
     public function testDependencyReviewApprovesCurrentLockPolicy() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $review = (new ReviewComposerDependencies())->execute(
+        $review = new ReviewComposerDependencies()->execute(
             composerLockPath: $root . '/composer.lock',
             policyPath      : $root . '/tooling/dependency-review-policy.json'
         );
@@ -121,7 +121,7 @@ final class ReleaseToolingTest extends TestCase
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 'allowed_source_hosts' => ['github.com'],
                                                    ],              flags: JSON_THROW_ON_ERROR));
 
-        $review = (new ReviewComposerDependencies())->execute(composerLockPath: $lockPath, policyPath: $policyPath);
+        $review = new ReviewComposerDependencies()->execute(composerLockPath: $lockPath, policyPath: $policyPath);
 
         $this->assertFalse(condition: $review['approved']);
         $this->assertSame(expected: ['new/plugin-package'], actual: $review['unreviewed_packages']);
@@ -146,7 +146,7 @@ final class ReleaseToolingTest extends TestCase
         self::assertIsArray(actual: $details);
         $publicKeyPem = $details['key'];
 
-        $signature = (new SignReleaseArtifact())->execute(artifactPath: $artifact, privateKeyPem: $privateKeyPem);
+        $signature = new SignReleaseArtifact()->execute(artifactPath: $artifact, privateKeyPem: $privateKeyPem);
 
         $verification = openssl_verify(
             data      : 'release-artifact',
@@ -194,8 +194,8 @@ final class ReleaseToolingTest extends TestCase
                                                                       'verification' => [],
                                                                   ]);
 
-        $rolloverResult   = (new RunKeyRolloverDrill())->execute(keyRingPath: $rollover);
-        $compromiseResult = (new RunKeyCompromiseDrill())->execute(preRotationKeyRingPath: $before, postCompromiseKeyRingPath: $postCompromise);
+        $rolloverResult   = new RunKeyRolloverDrill()->execute(keyRingPath: $rollover);
+        $compromiseResult = new RunKeyCompromiseDrill()->execute(preRotationKeyRingPath: $before, postCompromiseKeyRingPath: $postCompromise);
 
         $this->assertSame(expected: '2026-05', actual: $rolloverResult['issued_kid']);
         $this->assertTrue(condition: $rolloverResult['rollover_verified']);
@@ -220,7 +220,7 @@ final class ReleaseToolingTest extends TestCase
     public function testConformanceHarnessReportsPassedAndFailedChecks() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $report = (new RunConformanceHarness())->execute(
+        $report = new RunConformanceHarness()->execute(
             repositoryRoot: $root,
             checks        : [
                                 [
@@ -244,7 +244,7 @@ final class ReleaseToolingTest extends TestCase
     public function testConformanceHarnessDoesNotDeadlockOnHighOutputCommands() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $report = (new RunConformanceHarness())->execute(
+        $report = new RunConformanceHarness()->execute(
             repositoryRoot: $root,
             checks        : [[
                                  'name'        => 'noisy-pass',
@@ -310,7 +310,7 @@ final class ReleaseToolingTest extends TestCase
     public function testProductionSourcesPassPhpStanAnalysisWithoutInternalErrors() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $report = (new RunConformanceHarness())->execute(
+        $report = new RunConformanceHarness()->execute(
             repositoryRoot: $root,
             checks        : [[
                                  'name'        => 'phpstan',
@@ -334,7 +334,7 @@ final class ReleaseToolingTest extends TestCase
     public function testProductionSourcesPassStrictPhpStanAnalysis() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $report = (new RunConformanceHarness())->execute(
+        $report = new RunConformanceHarness()->execute(
             repositoryRoot: $root,
             checks        : [[
                                  'name'        => 'phpstan-strict',
@@ -394,7 +394,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/composer.json', data: json_encode(value: ['name' => 'avax/auth'], flags: JSON_THROW_ON_ERROR));
         file_put_contents(filename: $root . '/build/conformance-report.json', data: '{"ok":true}');
 
-        $bundle = (new GenerateEvidenceBundle())->execute(
+        $bundle = new GenerateEvidenceBundle()->execute(
             repositoryRoot: $root,
             artifactPaths : [
                                 'conformance' => 'build/conformance-report.json',
@@ -421,7 +421,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/composer.json', data: json_encode(value: ['name' => 'avax/auth'], flags: JSON_THROW_ON_ERROR));
         file_put_contents(filename: $root . '/System/Configuration/Legacy.php', data: "<?php\nuse Avax\\Auth\\System\\Configuration\\AuthServiceProvider;\n");
 
-        $result = (new CheckMigrationPath())->execute(repositoryRoot: $root);
+        $result = new CheckMigrationPath()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['clean']);
         $this->assertFalse(condition: $result['migration_documented']);
@@ -448,7 +448,7 @@ final class ReleaseToolingTest extends TestCase
             data    : "still does not ship OIDC provider behavior, client-credentials, SCIM runtime\n"
         );
 
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertNotEmpty(actual: $result['issues']);
@@ -477,7 +477,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
         $this->writeOwnershipHowThisWorksDocs(root: $root);
 
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertStringContainsString(
@@ -516,7 +516,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
         $this->writeOwnershipHowThisWorksDocs(root: $root);
 
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
     }
@@ -540,7 +540,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
         file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
 
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(
@@ -570,7 +570,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/Auth.txt', data: "non-canonical merged artifact\n");
         file_put_contents(filename: $root . '/.agents/management/evidence/RISK_REGISTER.md', data: "# Risks\n");
 
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(
@@ -582,7 +582,7 @@ final class ReleaseToolingTest extends TestCase
     public function testSourceTruthCheckApprovesCurrentRepository() : void
     {
         $root   = dirname(path: __DIR__, levels: 3);
-        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+        $result = new CheckSourceTruth()->execute(repositoryRoot: $root);
 
         $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
     }
@@ -603,7 +603,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
         file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
-        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+        $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertSame(
@@ -644,7 +644,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
         file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
-        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+        $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
         $this->assertTrue(condition: $result['approved'], message: implode(separator: "\n", array: $result['issues']));
         $this->assertSame(expected: [], actual: $result['unexpected_top_level']);
@@ -685,7 +685,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
         file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
-        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+        $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertSame(expected: ['System/Flows/OAuth'], actual: $result['unexpected_flow_top_level']);
@@ -706,7 +706,7 @@ final class ReleaseToolingTest extends TestCase
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
         file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
 
-        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+        $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(needle: 'System/Capability', haystack: $result['unexpected_top_level']);
@@ -729,7 +729,7 @@ final class ReleaseToolingTest extends TestCase
         symlink(target: $root . '/System/Flows', link: $root . '/System/Flow');
         symlink(target: $root . '/System/Capabilities', link: $root . '/System/Capability');
 
-        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+        $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
         $this->assertFalse(condition: $result['approved']);
         $this->assertContains(needle: 'System/Capability', haystack: $result['unexpected_top_level']);

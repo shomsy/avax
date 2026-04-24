@@ -26,7 +26,7 @@ class PathHasPermissionsTest extends TestCase
 
     public function testExecuteReturnsFalseForNonExistentPath() : void
     {
-        $result = (new PathHasPermissions())->execute(path: '/ne postoji put', permissions: 0755);
+        $result = new PathHasPermissions()->execute(path: '/ne postoji put', permissions: 0755);
 
         self::assertFalse(condition: $result);
     }
@@ -36,7 +36,7 @@ class PathHasPermissionsTest extends TestCase
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
         chmod(filename: $this->testFile, permissions: 0644);
 
-        $result = (new PathHasPermissions())->execute(path: $this->testFile, permissions: 0644);
+        $result = new PathHasPermissions()->execute(path: $this->testFile, permissions: 0644);
 
         self::assertTrue(condition: $result);
     }
@@ -46,7 +46,7 @@ class PathHasPermissionsTest extends TestCase
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
         chmod(filename: $this->testFile, permissions: 0644);
 
-        $result = (new PathHasPermissions())->execute(path: $this->testFile, permissions: 0755);
+        $result = new PathHasPermissions()->execute(path: $this->testFile, permissions: 0755);
 
         self::assertFalse(condition: $result);
     }

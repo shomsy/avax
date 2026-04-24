@@ -9,12 +9,14 @@ use Psr\Http\Message\ResponseInterface;
 
 final class BuildXmlResponse
 {
-    public function __invoke(string|array $xml, int $status = 200, array $headers = []) : ResponseInterface
+    public function __invoke(string|array $xml, int|null $status = null, array $headers = []) : ResponseInterface
     {
-        return (new BuildResponse())(
+        $status ??= 200;
+
+        return new BuildResponse()(
             status : $status,
             headers: ['Content-Type' => 'application/xml; charset=UTF-8', ...$headers],
-            body   : (new EncodeXmlBody())($xml),
+            body   : new EncodeXmlBody()($xml),
         );
     }
 }

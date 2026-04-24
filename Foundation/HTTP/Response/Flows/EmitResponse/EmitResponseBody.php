@@ -11,7 +11,7 @@ final class EmitResponseBody
 {
     public function __invoke(ResponseInterface $response) : void
     {
-        $stream = (new RewindStream())($response->getBody());
+        $stream = new RewindStream()($response->getBody());
 
         while ( ! $stream->eof() ) {
             echo $stream->read(length: 8192);

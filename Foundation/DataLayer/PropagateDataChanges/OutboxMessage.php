@@ -30,12 +30,13 @@ final readonly class OutboxMessage
         string              $causationId,
         string              $correlationId,
         \DateTimeImmutable  $occurredAt,
-        int                 $attempt = 0,
+        int|null $attempt = null,
         ?string             $lastError = null,
         ?\DateTimeImmutable $lastAttemptAt = null,
         OutboxStatus        $status = OutboxStatus::PENDING
     )
     {
+        $attempt ??= 0;
         $this->id            = $id;
         $this->aggregateType = $aggregateType;
         $this->aggregateId   = $aggregateId;

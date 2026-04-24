@@ -24,7 +24,7 @@ final class CleanupExpiredPasswordResetsTest extends TestCase
         $store->issue(userId: new UserId(value: 1), expiresAt: new DateTimeImmutable(datetime: '-1 minute'));
         $store->issue(userId: new UserId(value: 2), expiresAt: new DateTimeImmutable(datetime: '+10 minutes'));
 
-        $removed = (new CleanupExpiredPasswordResets(passwordResetStore: $store, clock: new Clock()))->execute();
+        $removed = new CleanupExpiredPasswordResets(passwordResetStore: $store, clock: new Clock())->execute();
 
         $this->assertSame(expected: 1, actual: $removed);
     }

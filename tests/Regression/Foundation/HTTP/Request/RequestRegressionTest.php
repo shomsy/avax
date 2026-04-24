@@ -44,7 +44,7 @@ class RequestRegressionTest extends TestCase
             session      : null,
             serverParams : $serverParams,
             uri          : new Uri('http://localhost'),
-            body         : (new ResponseStreamFactory())->createEmptyStream(),
+            body         : new ResponseStreamFactory()->createEmptyStream(),
             queryParams  : [],
             parsedBody   : [],
             cookies      : [],

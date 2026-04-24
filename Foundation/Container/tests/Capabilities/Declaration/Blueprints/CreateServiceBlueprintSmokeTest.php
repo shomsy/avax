@@ -32,10 +32,10 @@ $factory  = new CreateServiceBlueprint(
 );
 $first    = $factory->createFor(class: BlueprintTarget::class);
 $second   = $factory->createFor(class: BlueprintTarget::class);
-$reloaded = (new CreateServiceBlueprint(
+$reloaded = new CreateServiceBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
     dependencies: new ResolveDependencies()
-))->createFor(class: BlueprintTarget::class);
+)->createFor(class: BlueprintTarget::class);
 
 assertTrue(condition: $first->shared, message: 'Singleton attribute should mark a blueprint as shared.');
 assertTrue(condition: $first->instantiable, message: 'Blueprint should mark instantiable classes.');

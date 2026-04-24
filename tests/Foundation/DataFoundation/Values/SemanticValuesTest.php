@@ -56,7 +56,7 @@ final class SemanticValuesTest extends TestCase
 
     public function testMoneyAddsOnlySameCurrency() : void
     {
-        $money = (new Money(amount: 100, currency: new Currency(code: 'EUR')))
+        $money = new Money(amount: 100, currency: new Currency(code: 'EUR'))
             ->add(new Money(amount: 50, currency: new Currency(code: 'EUR')));
 
         $this->assertSame(150, $money->amount());

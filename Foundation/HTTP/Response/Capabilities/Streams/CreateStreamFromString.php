@@ -10,7 +10,7 @@ final class CreateStreamFromString
 {
     public function __invoke(string $content = '') : StreamInterface
     {
-        $stream = (new CreateTemporaryStream())(estimatedSize: strlen(string: $content));
+        $stream = new CreateTemporaryStream()(estimatedSize: strlen(string: $content));
         $stream->write(string: $content);
         $stream->rewind();
 

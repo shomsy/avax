@@ -66,14 +66,14 @@ try {
                 echo "Database name required.\n";
                 exit(1);
             }
-            exit((new DatabaseCreateCommand(builder: $builder))->handle(name: $arg1));
+            exit(new DatabaseCreateCommand(builder: $builder)->handle(name: $arg1));
 
         case 'db:drop':
             if (! $arg1) {
                 echo "Database name required.\n";
                 exit(1);
             }
-            exit((new DatabaseDropCommand(builder: $builder))->handle(name: $arg1));
+            exit(new DatabaseDropCommand(builder: $builder)->handle(name: $arg1));
 
         case 'db:export':
             $table = null;
@@ -84,29 +84,29 @@ try {
             } else {
                 $path = $arg1 ?? $exportPath;
             }
-            exit((new DatabaseExportCommand(exporter: $exporter))->handle(path: $path, table: $table));
+            exit(new DatabaseExportCommand(exporter: $exporter)->handle(path: $path, table: $table));
 
         case 'db:seed':
-            exit((new DatabaseSeedCommand())->handle(seedersPath: $seedersPath, class: $arg1));
+            exit(new DatabaseSeedCommand()->handle(seedersPath: $seedersPath, class: $arg1));
 
         case 'table:drop':
             if (! $arg1) {
                 echo "Table name(s) required. Separate multiple with comma.\n";
                 exit(1);
             }
-            exit((new TableDropCommand(builder: $builder))->handle(tables: $arg1));
+            exit(new TableDropCommand(builder: $builder)->handle(tables: $arg1));
 
         case 'table:truncate':
             if (! $arg1) {
                 echo "Table name(s) required. Separate multiple with comma.\n";
                 exit(1);
             }
-            exit((new TableTruncateCommand(builder: $builder))->handle(tables: $arg1));
+            exit(new TableTruncateCommand(builder: $builder)->handle(tables: $arg1));
 
         case 'migrate':
         case 'run':
             $dryRun = ($arg1 === '--dry' || $arg2 === '--dry');
-            exit((new MigrateCommand(repository: $repository, runner: $runner, loader: $loader))->handle(path: $migrationsPath, dryRun: $dryRun));
+        exit(new MigrateCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, dryRun: $dryRun));
 
         case 'make':
             $options = [];
@@ -116,13 +116,13 @@ try {
             } elseif ($arg2 && str_starts_with(haystack: $arg2, needle: '--table=')) {
                 $options['table'] = substr(string: $arg2, offset: 8);
             }
-            exit((new MigrateMakeCommand(generator: $generator))->handle(name: $arg1, path: $migrationsPath, options: $options));
+            exit(new MigrateMakeCommand(generator: $generator)->handle(name: $arg1, path: $migrationsPath, options: $options));
 
         case 'rollback':
-            exit((new MigrateRollbackCommand(repository: $repository, runner: $runner, loader: $loader))->handle(path: $migrationsPath, steps: (int) ($arg1 ?? 1)));
+            exit(new MigrateRollbackCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, steps: (int) ($arg1 ?? 1)));
 
         case 'status':
-            exit((new MigrateStatusCommand(repository: $repository, loader: $loader))->handle(path: $migrationsPath));
+            exit(new MigrateStatusCommand(repository: $repository, loader: $loader)->handle(path: $migrationsPath));
 
         case 'help':
         default:

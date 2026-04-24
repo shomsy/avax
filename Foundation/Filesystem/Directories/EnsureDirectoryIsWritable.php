@@ -15,7 +15,7 @@ final class EnsureDirectoryIsWritable
 
     public function execute(string $path) : bool
     {
-        (new EnsureDirectoryExists(disk: $this->disk))->execute(path: $path);
+        new EnsureDirectoryExists(disk: $this->disk)->execute(path: $path);
 
         if ($this->disk->isWritable(path: $path)) {
             return true;

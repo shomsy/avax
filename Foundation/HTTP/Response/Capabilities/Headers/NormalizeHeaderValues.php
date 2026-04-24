@@ -26,6 +26,6 @@ final class NormalizeHeaderValues
             throw new InvalidArgumentException(message: 'HTTP header values must be scalar or stringable.');
         }
 
-        return (new ValidateHeaderValues())($normalized);
+        return new ValidateHeaderValues()($normalized);
     }
 }

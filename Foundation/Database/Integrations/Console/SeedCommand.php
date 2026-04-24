@@ -15,7 +15,7 @@ final readonly class SeedCommand
     public function handle(string $seederClass) : int
     {
         try {
-            (new $seederClass())->run();
+            new $seederClass()->run();
             echo "\033[32mSeed completed.\033[0m\n";
 
             return 0;

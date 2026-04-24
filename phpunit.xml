@@ -16,6 +16,10 @@
         <testsuite name="DataLayer">
             <directory>tests/Foundation/DataLayer</directory>
         </testsuite>
+        <testsuite name="DataHandling">
+            <directory>tests/Unit/Foundation/DataHandling</directory>
+            <directory>tests/Foundation/DataHandling</directory>
+        </testsuite>
         <testsuite name="ApplicationWorkflow">
             <directory>tests/Foundation/ApplicationWorkflow</directory>
         </testsuite>

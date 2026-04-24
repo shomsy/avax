@@ -15,7 +15,7 @@ final class FlowFamilyTest extends TestCase
 {
     public function testPipelineProcessesStagesInOrder() : void
     {
-        $pipeline = (new Pipeline())
+        $pipeline = new Pipeline()
             ->pipe(callback: static fn (int $value) : int => $value + 1, name: 'plus-one')
             ->pipe(callback: static fn (int $value) : int => $value * 2, name: 'times-two');
 

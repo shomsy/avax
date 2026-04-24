@@ -32,21 +32,21 @@ class PathIsDirectoryTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
-        $result = (new PathIsDirectory())->execute(path: $this->testFile);
+        $result = new PathIsDirectory()->execute(path: $this->testFile);
 
         self::assertFalse(condition: $result);
     }
 
     public function testExecuteReturnsTrueForDirectory() : void
     {
-        $result = (new PathIsDirectory())->execute(path: $this->testDir);
+        $result = new PathIsDirectory()->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }
 
     public function testExecuteReturnsFalseForNonExistentPath() : void
     {
-        $result = (new PathIsDirectory())->execute(path: '/ne postoji put');
+        $result = new PathIsDirectory()->execute(path: '/ne postoji put');
 
         self::assertFalse(condition: $result);
     }

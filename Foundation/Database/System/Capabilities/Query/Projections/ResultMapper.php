@@ -51,7 +51,7 @@ final class ResultMapper
                 if (method_exists(object_or_class: ($this->className), method: '__set')) {
                     $instance->$propertyName = $value;
                 } else {
-                    $property = (new ReflectionClass(objectOrClass: $this->className))
+                    $property = new ReflectionClass(objectOrClass: $this->className)
                         ->getProperty(name: $propertyName);
                     $property->setValue(object: $instance, value: $value);
                 }

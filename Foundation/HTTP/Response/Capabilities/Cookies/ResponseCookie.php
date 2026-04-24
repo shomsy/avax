@@ -26,8 +26,10 @@ final readonly class ResponseCookie
         }
     }
 
-    public static function expired(string $name, string $path = '/', string|null $domain = null) : self
+    public static function expired(string $name, string|null $path = null, string|null $domain = null) : self
     {
+        $path ??= '/';
+
         return new self(
             name     : $name,
             value    : '',

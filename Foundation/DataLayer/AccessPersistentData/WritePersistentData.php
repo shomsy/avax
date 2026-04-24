@@ -145,17 +145,22 @@ final readonly class WritePersistentData
         return $this->write(PersistentDataRequest::raw($sql, array_values($ids)));
     }
 
-    public function increment(string $table, string $column, mixed $amount = 1, string $where = '1=1', array $bindings = []) : PersistentDataResult
+    public function increment(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
     {
-        $sql = sprintf('UPDATE %s SET %s = %s + :amount WHERE %s', $table, $column, $column, $where);
+        $amount ??= 1;
+        $where  ??= '1=1';
+        $sql    = sprintf('UPDATE %s SET %s = %s + :amount WHERE %s', $table, $column, $column, $where);
 
         $allBindings = array_merge(['amount' => $amount], $bindings);
 
         return $this->write(PersistentDataRequest::raw($sql, $allBindings));
     }
 
-    public function decrement(string $table, string $column, mixed $amount = 1, string $where = '1=1', array $bindings = []) : PersistentDataResult
+    public function decrement(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
     {
+        $amount ??= 1;
+        $where  ??= '1=1';
+
         return $this->increment($table, $column, -$amount, $where, $bindings);
     }
 

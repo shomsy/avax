@@ -47,10 +47,11 @@ final readonly class RunDataTransaction
 
     public function runWithIsolation(
         callable $callback,
-        int      $isolationLevel = self::DEFAULT_ISOLATION,
+        int|null $isolationLevel = null,
         ?string  $connectionName = null
     ) : mixed
     {
+        $isolationLevel ??= self::DEFAULT_ISOLATION;
         $pdo               = $this->useDatabaseRuntime->connection($connectionName);
         $previousIsolation = $this->getCurrentIsolation($pdo);
 
@@ -88,11 +89,13 @@ final readonly class RunDataTransaction
 
     public function runWithRetry(
         callable $callback,
-        int      $maxRetries = 3,
-        int      $delayMs = 100,
+        int|null $maxRetries = null,
+        int|null $delayMs = null,
         ?string  $connectionName = null
     ) : mixed
     {
+        $maxRetries ??= 3;
+        $delayMs    ??= 100;
         $attempt       = 0;
         $lastException = null;
 

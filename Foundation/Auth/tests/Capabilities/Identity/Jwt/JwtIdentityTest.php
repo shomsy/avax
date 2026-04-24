@@ -247,7 +247,7 @@ class JwtIdentityTest extends TestCase
             clock     : new Clock()
         );
 
-        $token = (new HmacTokenCodec(secret: 'super-secret-key'))->encode(claims: [
+        $token = new HmacTokenCodec(secret: 'super-secret-key')->encode(claims: [
             'iss' => 'different-issuer',
             'sub' => $user->getId()->value,
             'iat' => 1,

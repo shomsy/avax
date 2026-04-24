@@ -99,6 +99,6 @@ namespace {
         CreateContainerConfig|null $config = null
     ) : Container
     {
-        return (new CreateContainer())->create(config: $config);
+        return new CreateContainer()->create(config: $config);
     }
 }

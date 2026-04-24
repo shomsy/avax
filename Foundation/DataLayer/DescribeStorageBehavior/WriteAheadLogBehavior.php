@@ -45,8 +45,10 @@ final readonly class WriteAheadLogBehavior
         return new self(WriteAheadLogMode::ASYNC, $flushIntervalMs, 10000, true);
     }
 
-    public static function groupCommit(int $flushIntervalMs = 50, int $maxBufferSize = 1000) : self
+    public static function groupCommit(int|null $flushIntervalMs = null, int $maxBufferSize = 1000) : self
     {
+        $flushIntervalMs ??= 50;
+
         return new self(WriteAheadLogMode::GROUP_COMMIT, $flushIntervalMs, $maxBufferSize, true);
     }
 

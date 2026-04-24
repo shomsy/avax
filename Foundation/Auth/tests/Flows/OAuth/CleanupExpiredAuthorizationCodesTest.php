@@ -51,7 +51,7 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
         );
         $store->markUsed(codeId: $used->codeId, usedAt: new DateTimeImmutable());
 
-        $removed = (new CleanupExpiredAuthorizationCodes(codeStore: $store, clock: new Clock()))->execute();
+        $removed = new CleanupExpiredAuthorizationCodes(codeStore: $store, clock: new Clock())->execute();
 
         $this->assertSame(expected: 2, actual: $removed);
         $this->assertNull(actual: $store->find(plainCode: $expired->code));

@@ -100,9 +100,10 @@ final class PostgreSQLGrammar extends BaseGrammar
         return 'RETURNING ' . implode(separator: ', ', array: $cols);
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = '', string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
     {
-        $sql = $function . '(';
+        $partitionBy ??= '';
+        $sql         = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(

@@ -31,7 +31,7 @@ trait Macroable
      */
     public static function mixin(object|string $mixin) : void
     {
-        $methods = (new ReflectionClass(objectOrClass: $mixin))->getMethods(
+        $methods = new ReflectionClass(objectOrClass: $mixin)->getMethods(
             filter: ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
         );
 

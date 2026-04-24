@@ -11,10 +11,14 @@ final class WindowBuilder
     public function __construct(
         private GrammarInterface $grammar,
         private string           $function,
-        private array            $partitionBy = [],
-        private string           $orderBy = '',
+        private array|null  $partitionBy = null,
+        private string|null $orderBy = null,
         private string           $frame = 'ROWS UNBOUNDED PRECEDING'
-    ) {}
+    )
+    {
+        $this->partitionBy ??= [];
+        $this->orderBy     ??= '';
+    }
 
     public static function rowNumber(GrammarInterface $grammar) : self
     {

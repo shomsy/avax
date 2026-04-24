@@ -15,7 +15,7 @@ final class HttpContextTest extends TestCase
 {
     public function test_prefers_request_values_over_globals() : void
     {
-        $request = (new ServerRequest(
+        $request = new ServerRequest(
             'GET',
             'https://example.com:8443/demo?x=1',
             [
@@ -27,7 +27,7 @@ final class HttpContextTest extends TestCase
             [
                 'REMOTE_ADDR' => '203.0.113.10',
             ],
-        ))->withCookieParams(['theme' => 'dark']);
+        )->withCookieParams(['theme' => 'dark']);
 
         $context = new HttpContext(
             request: $request,
@@ -41,8 +41,10 @@ final class HttpContextTest extends TestCase
         self::assertSame(['theme' => 'dark'], $context->cookies());
     }
 
-    private function globals(array $server = [], array $cookies = []) : GlobalsProviderInterface
+    private function globals(array|null $server = null, array $cookies = []) : GlobalsProviderInterface
     {
+        $server ??= [];
+
         return new class($server, $cookies) implements GlobalsProviderInterface {
             public function __construct(
                 private array $server,

@@ -18,7 +18,7 @@ final class ConfigureSagaRuntimeTest extends TestCase
         $this->expectException(SagaRuntimeConfigurationFailure::class);
         $this->expectExceptionMessage('StoreSagaState');
 
-        (new ConfigureSagaRuntime())->validate(config: new SagaRuntimeConfig());
+        new ConfigureSagaRuntime()->validate(config: new SagaRuntimeConfig());
     }
 
     public function testMissingStepRunnerFailsBeforeRuntime() : void

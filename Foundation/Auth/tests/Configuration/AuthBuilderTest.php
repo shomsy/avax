@@ -152,7 +152,7 @@ class AuthBuilderTest extends TestCase
         $auditLog = new InMemoryAuditLog();
         $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-20T10:00:00+00:00'));
 
-        $auth = (new AuthBuilder())
+        $auth = new AuthBuilder()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: $identity)
             ->usingHasher(passwordHasher: new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]))
@@ -231,7 +231,7 @@ class AuthBuilderTest extends TestCase
 
     public function testAuthBuilderBuildsUsableKernelFromStableIdentityBackendSeam() : void
     {
-        $auth = (new AuthBuilder())
+        $auth = new AuthBuilder()
             ->forUser(userSource: new InMemoryUserSource())
             ->withIdentityBackends(sessionIdentity: new SessionIdentity(store: new ArraySessionStore()))
             ->ready();
@@ -253,7 +253,7 @@ class AuthBuilderTest extends TestCase
         $refreshTokens   = new InMemoryRefreshTokenStore();
         $sessionRegistry = new InMemorySessionRegistry();
 
-        $auth = (new AuthBuilder())
+        $auth = new AuthBuilder()
             ->forUser(userSource: $userSource)
             ->withIdentityBackends(
                 sessionIdentity: new SessionIdentity(
@@ -285,7 +285,7 @@ class AuthBuilderTest extends TestCase
         $exception = null;
 
         try {
-            (new AuthBuilder())
+            new AuthBuilder()
                 ->forUser(userSource: new InMemoryUserSource())
                 ->withIdentityBackends(sessionIdentity: new SessionIdentity(store: new ArraySessionStore()))
                 ->withPasskeyCredentialStore(passkeyCredentialStore: new InMemoryPasskeyCredentialStore())
@@ -305,7 +305,7 @@ class AuthBuilderTest extends TestCase
         $exception = null;
 
         try {
-            (new AuthBuilder())
+            new AuthBuilder()
                 ->forUser(userSource: new InMemoryUserSource())
                 ->withIdentityBackends(sessionIdentity: new SessionIdentity(store: new ArraySessionStore()))
                 ->withOidcRequestObjectStore(oidcRequestObjectStore: new InMemoryOidcRequestObjectStore())
@@ -326,7 +326,7 @@ class AuthBuilderTest extends TestCase
         $exception  = null;
 
         try {
-            (new AuthBuilder())
+            new AuthBuilder()
                 ->forUser(userSource: $userSource)
                 ->withIdentityBackends(jwtIdentity: $this->jwtIdentity(
                     userSource   : $userSource,
@@ -350,7 +350,7 @@ class AuthBuilderTest extends TestCase
         $exception  = null;
 
         try {
-            (new AuthBuilder())
+            new AuthBuilder()
                 ->forUser(userSource: $userSource)
                 ->withIdentityBackends(jwtIdentity: $this->jwtIdentity(
                     userSource   : $userSource,
@@ -380,7 +380,7 @@ class AuthBuilderTest extends TestCase
         $exception = null;
 
         try {
-            (new AuthBuilder())
+            new AuthBuilder()
                 ->forUser(userSource: $userSource)
                 ->withIdentity(identity: $identity)
                 ->withScimDirectoryStore(scimDirectoryStore: new InMemoryScimDirectoryStore(

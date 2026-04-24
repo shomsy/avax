@@ -31,12 +31,12 @@ final class ResponseHeadersTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new ResponseHeaders())->replace(name: "Bad Header", value: "test\r\ninjection");
+        new ResponseHeaders()->replace(name: "Bad Header", value: "test\r\ninjection");
     }
 
     public function test_set_cookie_header_appends_cookie_lines() : void
     {
-        $response = (new SetCookieHeader())(
+        $response = new SetCookieHeader()(
             response: Response::empty(),
             cookie  : new ResponseCookie(name: 'session', value: 'abc'),
         );

@@ -15,12 +15,14 @@ final class SessionAuditPayload
     ) {}
 
     public static function create(
-        string  $event,
-        array   $data = [],
-        ?string $sessionId = null,
-        ?string $actorId = null
+        string     $event,
+        array|null $data = null,
+        ?string    $sessionId = null,
+        ?string    $actorId = null
     ) : self
     {
+        $data ??= [];
+
         return new self(
             event    : $event,
             data     : $data,

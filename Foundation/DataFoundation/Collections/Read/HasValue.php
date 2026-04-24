@@ -27,7 +27,7 @@ final readonly class HasValue
         }
 
         if (str_contains(haystack: $key, needle: '.')) {
-            return (new DotPath(path: $key))->exists(items: $this->items);
+            return new DotPath(path: $key)->exists(items: $this->items);
         }
 
         return false;

@@ -25,19 +25,22 @@ final class ResponseMessage implements ResponseInterface
     private ResponseBody $body;
 
     public function __construct(
-        int                        $statusCode = 200,
-        string                     $reasonPhrase = '',
-        string                     $protocolVersion = '1.1',
+        int|null    $statusCode = null,
+        string|null $reasonPhrase = null,
+        string|null $protocolVersion = null,
         array|ResponseHeaders|null $headers = null,
         ResponseBody|null          $body = null,
     )
     {
-        $headers ??= new ResponseHeaders();
-        $body    ??= new ResponseBody();
+        $statusCode      ??= 200;
+        $reasonPhrase    ??= '';
+        $protocolVersion ??= '1.1';
+        $headers         ??= new ResponseHeaders();
+        $body            ??= new ResponseBody();
 
-        $this->statusCode      = (new ValidateStatusCode())($statusCode);
-        $this->reasonPhrase    = (new ResolveReasonPhrase())($this->statusCode, $reasonPhrase);
-        $this->protocolVersion = (new NormalizeProtocolVersion())($protocolVersion);
+        $this->statusCode      = new ValidateStatusCode()($statusCode);
+        $this->reasonPhrase    = new ResolveReasonPhrase()($this->statusCode, $reasonPhrase);
+        $this->protocolVersion = new NormalizeProtocolVersion()($protocolVersion);
         $this->headers         = $headers instanceof ResponseHeaders ? $headers : new ResponseHeaders($headers);
         $this->body            = $body;
     }
@@ -50,7 +53,7 @@ final class ResponseMessage implements ResponseInterface
     public function withProtocolVersion(string $version) : ResponseInterface
     {
         $clone                  = clone $this;
-        $clone->protocolVersion = (new NormalizeProtocolVersion())($version);
+        $clone->protocolVersion = new NormalizeProtocolVersion()($version);
 
         return $clone;
     }
@@ -120,8 +123,8 @@ final class ResponseMessage implements ResponseInterface
     public function withStatus(int $code, string $reasonPhrase = '') : ResponseInterface
     {
         $clone               = clone $this;
-        $clone->statusCode   = (new ValidateStatusCode())($code);
-        $clone->reasonPhrase = (new ResolveReasonPhrase())($clone->statusCode, $reasonPhrase);
+        $clone->statusCode = new ValidateStatusCode()($code);
+        $clone->reasonPhrase = new ResolveReasonPhrase()($clone->statusCode, $reasonPhrase);
 
         return $clone;
     }

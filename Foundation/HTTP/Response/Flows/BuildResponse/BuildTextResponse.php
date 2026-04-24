@@ -8,9 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 
 final class BuildTextResponse
 {
-    public function __invoke(string $content, int $status = 200, array $headers = []) : ResponseInterface
+    public function __invoke(string $content, int|null $status = null, array $headers = []) : ResponseInterface
     {
-        return (new BuildResponse())(
+        $status ??= 200;
+
+        return new BuildResponse()(
             status : $status,
             headers: ['Content-Type' => 'text/plain; charset=UTF-8', ...$headers],
             body   : $content,

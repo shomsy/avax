@@ -4271,7 +4271,7 @@ final class ServiceResolver
         return $this->caller->call(
             target    : $callable,
             parameters: $parameters,
-            request   : (new ResolveRequest(serviceId: $this->callableName(callable: $callable)))->withContext(context: $context)
+            request   : new ResolveRequest(serviceId: $this->callableName(callable: $callable))->withContext(context: $context)
         );
     }
 
@@ -4386,7 +4386,7 @@ final class ServiceResolver
     {
         return $this->injectTarget(
             target : $target,
-            request: (new ResolveRequest(serviceId: $target::class, manualInjection: true))->withContext(context: $context)
+            request: new ResolveRequest(serviceId: $target::class, manualInjection: true)->withContext(context: $context)
         );
     }
 
@@ -4729,7 +4729,7 @@ final class ServiceResolver
     public function getInContext(string $id, array $context) : mixed
     {
         return $this->resolveRequest(
-            request: (new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id)))->withContext(context: $context)
+            request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id))->withContext(context: $context)
         );
     }
 
@@ -4845,10 +4845,10 @@ final class ServiceResolver
     public function makeInContext(string $id, array $parameters, array $context) : object
     {
         $resolved = $this->resolveRequest(
-            request: (new ResolveRequest(
+            request: new ResolveRequest(
                        serviceId: $this->registrations->resolveAlias(abstract: $id),
                        overrides: $parameters
-                   ))->withContext(context: $context)
+                     )->withContext(context: $context)
         );
 
         if (! is_object(value: $resolved)) {
@@ -4883,10 +4883,10 @@ final class ServiceResolver
     public function resolveInContext(string $id, array $context, array $parameters = []) : mixed
     {
         return $this->resolveRequest(
-            request: (new ResolveRequest(
+            request: new ResolveRequest(
                        serviceId: $this->registrations->resolveAlias(abstract: $id),
                        overrides: $parameters
-                   ))->withContext(context: $context)
+                     )->withContext(context: $context)
         );
     }
 

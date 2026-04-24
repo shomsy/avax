@@ -19,7 +19,7 @@ final class ContainerConfigTest extends TestCase
 
     public function test_with_settings_returns_new_config() : void
     {
-        $config = (new ContainerConfig(cacheDir: '/tmp/cache', debug: true))->withSettings(settings: [
+        $config = new ContainerConfig(cacheDir: '/tmp/cache', debug: true)->withSettings(settings: [
                                                                                                          'app.name' => 'container',
                                                                                                      ]);
 

@@ -110,13 +110,15 @@ final readonly class SagaRuntimeEvent
     }
 
     public static function create(
-        string  $sagaId,
-        string  $sagaName,
-        string  $type,
-        array   $payload = [],
-        ?string $stepName = null
+        string     $sagaId,
+        string     $sagaName,
+        string     $type,
+        array|null $payload = null,
+        ?string    $stepName = null
     ) : self
     {
+        $payload ??= [];
+
         return new self(
             id        : self::generateId(),
             sagaId    : $sagaId,

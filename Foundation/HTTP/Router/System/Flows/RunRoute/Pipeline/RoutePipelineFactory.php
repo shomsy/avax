@@ -77,11 +77,11 @@ final readonly class RoutePipelineFactory
 
         // Constructing a new RoutePipeline with the resolved dependencies and injecting middleware.
         // This step prepares the pipeline to handle HTTP requests for the given route.
-        return (new RoutePipeline(
+        return new RoutePipeline(
             route     : $route,
             dispatcher: $this->dispatcher,
             container : $this->container,
             stageChain: $this->stageChain
-        ))->through(middleware: $resolvedMiddleware);
+        )->through(middleware: $resolvedMiddleware);
     }
 }

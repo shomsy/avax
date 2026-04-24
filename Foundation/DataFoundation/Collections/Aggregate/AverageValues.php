@@ -33,7 +33,7 @@ final readonly class AverageValues
         $count = count(value: $this->items);
 
         return $count !== 0
-            ? (new SumValues(items: $this->items))->sum(key: $key) / $count
+            ? new SumValues(items: $this->items)->sum(key: $key) / $count
             : 0.0;
     }
 

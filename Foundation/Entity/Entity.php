@@ -28,7 +28,7 @@ abstract class Entity
     {
         // Using reflection to acquire the short name of the class.
         // Allows automatic table name determination based on class naming conventions.
-        $shortName = (new ReflectionClass(objectOrClass: static::class))->getShortName();
+        $shortName = new ReflectionClass(objectOrClass: static::class)->getShortName();
 
         // Converting to lowercase and appending 's' to standardize table naming.
         return strtolower(string: $shortName) . 's';

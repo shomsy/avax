@@ -36,13 +36,17 @@ final readonly class UseBloomFilter
         return 'configures bloom filter parameters including type, expected elements, and FPR.';
     }
 
-    public static function standard(int $expectedElements = 1000000, float $fpr = 0.01) : self
+    public static function standard(int|null $expectedElements = null, float $fpr = 0.01) : self
     {
+        $expectedElements ??= 1000000;
+
         return new self(BloomFilterType::STANDARD, $expectedElements, $fpr, true);
     }
 
-    public static function scalable(int $expectedElements = 10000000, float $fpr = 0.001) : self
+    public static function scalable(int|null $expectedElements = null, float $fpr = 0.001) : self
     {
+        $expectedElements ??= 10000000;
+
         return new self(BloomFilterType::SCALABLE, $expectedElements, $fpr, true);
     }
 

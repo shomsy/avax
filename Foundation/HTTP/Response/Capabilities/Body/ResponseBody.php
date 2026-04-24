@@ -13,7 +13,7 @@ final class ResponseBody
 
     public function __construct(StreamInterface|null $stream = null)
     {
-        $this->stream = $stream ?? (new ResponseStreamFactory())->createEmptyStream();
+        $this->stream = $stream ?? new ResponseStreamFactory()->createEmptyStream();
     }
 
     public function stream() : StreamInterface

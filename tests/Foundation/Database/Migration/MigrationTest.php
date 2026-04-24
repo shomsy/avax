@@ -33,7 +33,7 @@ class MigrationTest extends TestCase
     public function test_column_renderer_generates_sql() : void
     {
         $renderer = new ColumnSQLRenderer();
-        $column   = (new ColumnDefinition(name: 'name', type: 'VARCHAR(255)'))
+        $column = new ColumnDefinition(name: 'name', type: 'VARCHAR(255)')
             ->nullable()
             ->unique();
 

@@ -333,7 +333,7 @@ final class ProductBoundaryTest extends TestCase
         ];
 
         foreach ($expectedConstructorTypes as $class => $expectedTypes) {
-            $constructor = (new ReflectionClass(objectOrClass: $class))->getConstructor();
+            $constructor = new ReflectionClass(objectOrClass: $class)->getConstructor();
 
             self::assertNotNull(actual: $constructor, message: "Facade constructor missing: {$class}");
 

@@ -11,10 +11,10 @@ final class EmitResponse
     public function __invoke(ResponseInterface $response) : void
     {
         if (! headers_sent()) {
-            (new EmitResponseStatus())($response);
-            (new EmitResponseHeaders())($response);
+            new EmitResponseStatus()($response);
+            new EmitResponseHeaders()($response);
         }
 
-        (new EmitResponseBody())($response);
+        new EmitResponseBody()($response);
     }
 }

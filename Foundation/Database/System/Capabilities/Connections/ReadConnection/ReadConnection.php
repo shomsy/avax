@@ -112,10 +112,10 @@ final class ReadConnection
      */
     private function open(array $config) : DatabaseConnection
     {
-        return (new OpenConnection(
+        return new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
             scope                  : $this->scope
-        ))->using(config: $config);
+        )->using(config: $config);
     }
 }

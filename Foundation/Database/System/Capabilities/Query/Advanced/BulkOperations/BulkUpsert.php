@@ -26,12 +26,12 @@ final class BulkUpsert
         $statements = [];
 
         foreach (array_chunk(array: $rows, size: $this->batchSize) as $batch) {
-            $statements[] = (new UpsertBuilder(
+            $statements[] = new UpsertBuilder(
                 grammar : $this->grammar,
                 table   : $this->table,
                 columns : $this->columns,
                 conflict: $this->conflict,
-            ))->build(rows: $batch);
+            )->build(rows: $batch);
         }
 
         return $statements;

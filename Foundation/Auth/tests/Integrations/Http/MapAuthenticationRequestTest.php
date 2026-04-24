@@ -13,7 +13,7 @@ final class MapAuthenticationRequestTest extends TestCase
 {
     public function testMapAuthenticationRequestReadsBearerTokenAndClientMetadata() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
+        $request = new MapAuthenticationRequest()->execute(input: new HttpAuthenticationInput(
                                                                         headers          : ['authorization' => 'Bearer token-123'],
                                                                         cookies          : ['PHPSESSID' => 'session-1'],
                                                                         server           : [
@@ -31,7 +31,7 @@ final class MapAuthenticationRequestTest extends TestCase
 
     public function testMapAuthenticationRequestDisablesSessionWhenCookieIsMissing() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
+        $request = new MapAuthenticationRequest()->execute(input: new HttpAuthenticationInput(
                                                                         headers          : ['Authorization' => 'Basic abc'],
                                                                         cookies          : [],
                                                                         server           : ['HTTP_AUTHORIZATION' => 'Bearer server-token'],
@@ -44,7 +44,7 @@ final class MapAuthenticationRequestTest extends TestCase
 
     public function testMapAuthenticationRequestKeepsSessionDisabledWhenTransportRejectsIt() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
+        $request = new MapAuthenticationRequest()->execute(input: new HttpAuthenticationInput(
                                                                         headers          : ['User-Agent' => 'header-agent'],
                                                                         cookies          : ['PHPSESSID' => 'session-1'],
                                                                         allowSession     : false,

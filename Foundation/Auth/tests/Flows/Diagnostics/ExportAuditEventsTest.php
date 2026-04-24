@@ -23,7 +23,7 @@ final class ExportAuditEventsTest extends TestCase
         $capture         = new stdClass();
         $capture->events = [];
 
-        $count = (new ExportAuditEvents(
+        $count = new ExportAuditEvents(
             auditLog: $log,
             exporter: new class($capture) implements AuditExporterInterface {
                           private stdClass $capture;
@@ -41,7 +41,7 @@ final class ExportAuditEventsTest extends TestCase
                               $this->capture->events = $events;
                           }
                       }
-        ))->execute();
+        )->execute();
 
         $this->assertSame(expected: 2, actual: $count);
         $this->assertCount(expectedCount: 2, haystack: $capture->events);

@@ -20,15 +20,15 @@ final class DataLayerConfigurationTest extends TestCase
     {
         $this->expectException(DataLayerConfigurationFailure::class);
 
-        (new ResolveDataLayerRuntime())->resolve(config: new DataLayerConfig());
+        new ResolveDataLayerRuntime()->resolve(config: new DataLayerConfig());
     }
 
     public function testDatabaseRuntimeIsRegisteredExplicitly() : void
     {
         $runtime = new stdClass();
-        $config  = (new RegisterDataLayerRuntime())->register(databaseRuntime: $runtime);
+        $config = new RegisterDataLayerRuntime()->register(databaseRuntime: $runtime);
 
-        $resolved = (new ResolveDataLayerRuntime())->resolve(config: $config);
+        $resolved = new ResolveDataLayerRuntime()->resolve(config: $config);
 
         $this->assertSame($runtime, $resolved->databaseRuntime);
     }

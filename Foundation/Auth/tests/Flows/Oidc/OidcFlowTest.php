@@ -225,7 +225,7 @@ final class OidcFlowTest extends TestCase
                                                            allowedScopes                 : ['openid', 'profile'],
                                                            requestObjectSignatureRequired: true
                                                        ));
-        $requestJwt = (new HmacTokenCodec(secret: $client->plainTextSecret ?? ''))->encode(claims: [
+        $requestJwt = new HmacTokenCodec(secret: $client->plainTextSecret ?? '')->encode(claims: [
                                                                                                        'client_id'    => $client->client->clientId,
                                                                                                        'redirect_uri' => 'https://rp.example.test/callback',
                                                                                                        'scope'        => 'openid profile',

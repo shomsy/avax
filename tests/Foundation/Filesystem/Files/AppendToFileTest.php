@@ -31,7 +31,7 @@ class AppendToFileTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "line1\n");
 
-        (new AppendToFile(disk: $this->disk))->execute(path: $this->testFile, content: 'line2');
+        new AppendToFile(disk: $this->disk)->execute(path: $this->testFile, content: 'line2');
 
         $content = file_get_contents(filename: $this->testFile);
         self::assertStringContainsString('line1', $content);
@@ -43,7 +43,7 @@ class AppendToFileTest extends TestCase
         $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_dir/test.txt';
 
         try {
-            (new AppendToFile(disk: $this->disk))->execute(path: $file, content: 'test');
+            new AppendToFile(disk: $this->disk)->execute(path: $file, content: 'test');
         } finally {
             @unlink(filename: $file);
             @rmdir(directory: '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_dir');

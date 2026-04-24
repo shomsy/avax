@@ -15,13 +15,16 @@ final readonly class MatchTextByLevenshtein
         private array $items = [],
     ) {}
 
-    public function __invoke(string $query, int $maxDistance = 2, ?string $key = null) : array
+    public function __invoke(string $query, int|null $maxDistance = null, ?string $key = null) : array
     {
+        $maxDistance ??= 2;
+
         return $this->match(query: $query, maxDistance: $maxDistance, key: $key);
     }
 
-    public function match(string $query, int $maxDistance = 2, ?string $key = null) : array
+    public function match(string $query, int|null $maxDistance = null, ?string $key = null) : array
     {
+        $maxDistance ??= 2;
         if ($maxDistance < 0) {
             throw new InvalidArgumentException(message: 'Maximum distance cannot be negative.');
         }

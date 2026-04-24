@@ -36,7 +36,7 @@ final class ValidateRequestObjectTest extends TestCase
                             'code_challenge'        => 'challenge-1',
                             'code_challenge_method' => 'S256',
                         ],
-            expiresAt : (new DateTimeImmutable())->modify(modifier: '+5 minutes')
+            expiresAt : new DateTimeImmutable()->modify(modifier: '+5 minutes')
         );
         $validator = new ValidateRequestObject(requestObjectStore: $store);
 
@@ -62,7 +62,7 @@ final class ValidateRequestObjectTest extends TestCase
             claims    : [
                             'redirect_uri' => 'https://rp.example.test/callback',
                         ],
-            expiresAt : (new DateTimeImmutable())->modify(modifier: '+5 minutes')
+            expiresAt : new DateTimeImmutable()->modify(modifier: '+5 minutes')
         );
         $validator = new ValidateRequestObject(requestObjectStore: $store);
 
@@ -96,7 +96,7 @@ final class ValidateRequestObjectTest extends TestCase
                             'redirect_uri' => 'https://rp.example.test/callback',
                             'scope'        => 'openid',
                         ],
-            expiresAt : (new DateTimeImmutable())->modify(modifier: '+5 minutes')
+            expiresAt : new DateTimeImmutable()->modify(modifier: '+5 minutes')
         );
         $validator = new ValidateRequestObject(requestObjectStore: $store, clientRegistry: $registry);
 

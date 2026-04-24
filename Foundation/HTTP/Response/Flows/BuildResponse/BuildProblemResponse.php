@@ -13,15 +13,18 @@ use RuntimeException;
 final class BuildProblemResponse
 {
     public function __invoke(
-        string $title,
-        int    $status = 400,
-        string $detail = '',
-        string $type = 'about:blank',
-        array  $extensions = [],
+        string      $title,
+        int|null    $status = null,
+        string|null $detail = null,
+        string|null $type = null,
+        array       $extensions = [],
     ) : ResponseInterface
     {
+        $status ??= 400;
+        $detail ??= '';
+        $type   ??= 'about:blank';
         try {
-            $payload = (new EncodeProblemDetails())(
+            $payload = new EncodeProblemDetails()(
                 new ProblemDetails(
                     title     : $title,
                     status    : $status,
@@ -38,7 +41,7 @@ final class BuildProblemResponse
             );
         }
 
-        return (new BuildResponse())(
+        return new BuildResponse()(
             status : $status,
             headers: ['Content-Type' => 'application/problem+json'],
             body   : $payload,

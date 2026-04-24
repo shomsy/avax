@@ -29,7 +29,7 @@ class WriteFileTest extends TestCase
 
     public function testExecuteCreatesFile() : void
     {
-        $result = (new WriteFile(disk: $this->disk))->execute(path: $this->testFile, content: 'test');
+        $result = new WriteFile(disk: $this->disk)->execute(path: $this->testFile, content: 'test');
 
         self::assertTrue(condition: $result);
         self::assertFileExists(filename: $this->testFile);
@@ -40,7 +40,7 @@ class WriteFileTest extends TestCase
         $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir/nested/test.txt';
 
         try {
-            (new WriteFile(disk: $this->disk))->execute(path: $file, content: 'test');
+            new WriteFile(disk: $this->disk)->execute(path: $file, content: 'test');
         } finally {
             @unlink(filename: $file);
             @rmdir(directory: '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir/nested');
@@ -52,7 +52,7 @@ class WriteFileTest extends TestCase
 
     public function testExecuteAddsNewlineAutomatically() : void
     {
-        (new WriteFile(disk: $this->disk))->execute(path: $this->testFile, content: 'test');
+        new WriteFile(disk: $this->disk)->execute(path: $this->testFile, content: 'test');
 
         $content = file_get_contents(filename: $this->testFile);
         self::assertStringEndsWith("\n", $content);

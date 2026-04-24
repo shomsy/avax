@@ -32,14 +32,14 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
 
     public static function make(iterable $items = []) : static
     {
-        return new self(items: (new MakeCollection())->from(items: $items));
+        return new self(items: new MakeCollection()->from(items: $items));
     }
 
     public static function wrap(mixed $value) : static
     {
         return match (true) {
             $value instanceof static => $value,
-            default                  => new self(items: (new WrapValue())->intoArray(value: $value)),
+            default => new self(items: new WrapValue()->intoArray(value: $value)),
         };
     }
 
@@ -88,7 +88,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         }
 
         if (str_contains(haystack: $key, needle: '.')) {
-            return (new Collections\Read\ReadValueByPath(items: $this->items))->get(path: $key, default: $default);
+            return new Collections\Read\ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
         }
 
         return $default;
@@ -97,7 +97,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
     public function has(string $key) : bool
     {
         return array_key_exists(key: $key, array: $this->items)
-            || (new Collections\Read\HasValue(items: $this->items))->check(key: $key);
+            || new Collections\Read\HasValue(items: $this->items)->check(key: $key);
     }
 
     public function set(string $key, mixed $value) : static
@@ -107,7 +107,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         $items = $this->items;
 
         if (str_contains(haystack: $key, needle: '.')) {
-            (new Collections\Write\PutValueByPath(items: $items))->put(path: $key, value: $value);
+            new Collections\Write\PutValueByPath(items: $items)->put(path: $key, value: $value);
         } else {
             $items[$key] = $value;
         }
@@ -120,7 +120,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         $this->guard->assertMutable();
 
         return new self(
-            items: (new Collections\Write\ForgetValue(items: $this->items))->forget(key: $key)
+            items: new Collections\Write\ForgetValue(items: $this->items)->forget(key: $key)
         );
     }
 
@@ -129,7 +129,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         $this->guard->assertMutable();
 
         return new self(
-            items: (new Collections\Write\AppendValue(items: $this->items))->append(value: $value)
+            items: new Collections\Write\AppendValue(items: $this->items)->append(value: $value)
         );
     }
 
@@ -137,7 +137,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
     {
         $this->guard->assertMutable();
 
-        [$value, $items] = (new Collections\Write\PullValue(items: $this->items))->pull(key: $key);
+        [$value, $items] = new Collections\Write\PullValue(items: $this->items)->pull(key: $key);
 
         return new Pair(
             first : $value,
@@ -148,52 +148,52 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
     public function map(callable $callback) : static
     {
         return new self(
-            items: (new Collections\Transform\MapValues(items: $this->items))->map(callback: $callback)
+            items: new Collections\Transform\MapValues(items: $this->items)->map(callback: $callback)
         );
     }
 
     public function filter(callable $callback) : static
     {
         return new self(
-            items: (new Collections\Transform\FilterValues(items: $this->items))->filter(callback: $callback)
+            items: new Collections\Transform\FilterValues(items: $this->items)->filter(callback: $callback)
         );
     }
 
     public function reduce(callable $callback, mixed $initial = null) : mixed
     {
-        return (new Collections\Transform\ReduceValues(items: $this->items))->reduce(callback: $callback, initial: $initial);
+        return new Collections\Transform\ReduceValues(items: $this->items)->reduce(callback: $callback, initial: $initial);
     }
 
     public function sum(string|callable $key) : int|float
     {
-        return (new Collections\Aggregate\SumValues(items: $this->items))->sum(key: $key);
+        return new Collections\Aggregate\SumValues(items: $this->items)->sum(key: $key);
     }
 
     public function average(string|callable $key) : float
     {
-        return (new Collections\Aggregate\AverageValues(items: $this->items))->average(key: $key);
+        return new Collections\Aggregate\AverageValues(items: $this->items)->average(key: $key);
     }
 
     public function min(string|callable $key) : mixed
     {
-        return (new Collections\Aggregate\FindMinValue(items: $this->items))->min(key: $key);
+        return new Collections\Aggregate\FindMinValue(items: $this->items)->min(key: $key);
     }
 
     public function max(string|callable $key) : mixed
     {
-        return (new Collections\Aggregate\FindMaxValue(items: $this->items))->max(key: $key);
+        return new Collections\Aggregate\FindMaxValue(items: $this->items)->max(key: $key);
     }
 
     public function chunk(int $size) : static
     {
         return new self(
-            items: (new Collections\Transform\ChunkValues(items: $this->items))->chunk(size: $size)
+            items: new Collections\Transform\ChunkValues(items: $this->items)->chunk(size: $size)
         );
     }
 
     public function groupBy(string|callable $key) : array
     {
-        return (new Collections\Transform\GroupValues(items: $this->items))->group(key: $key);
+        return new Collections\Transform\GroupValues(items: $this->items)->group(key: $key);
     }
 
     public function keyBy(string|callable $key) : static
@@ -210,19 +210,19 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
 
     public function partition(callable $callback) : array
     {
-        [$pass, $fail] = (new Collections\Transform\PartitionValues(items: $this->items))->partition(callback: $callback);
+        [$pass, $fail] = new Collections\Transform\PartitionValues(items: $this->items)->partition(callback: $callback);
 
         return [new self(items: $pass), new self(items: $fail)];
     }
 
     public function contains(mixed $value) : bool
     {
-        return (new Collections\Search\ContainsValue(items: $this->items))->contains(value: $value);
+        return new Collections\Search\ContainsValue(items: $this->items)->contains(value: $value);
     }
 
     public function search(mixed $value) : int|false
     {
-        return (new Collections\Search\SearchValue(items: $this->items))->search(value: $value);
+        return new Collections\Search\SearchValue(items: $this->items)->search(value: $value);
     }
 
     public function whereIn(string $key, array $values) : static
@@ -275,51 +275,51 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
     public function sort(?callable $callback = null) : static
     {
         return new self(
-            items: (new Collections\Order\SortValues(items: $this->items))->sort(callback: $callback)
+            items: new Collections\Order\SortValues(items: $this->items)->sort(callback: $callback)
         );
     }
 
     public function sortBy(string|callable $key, bool $descending = false) : static
     {
         return new self(
-            items: (new Collections\Order\SortValuesBy(items: $this->items))->sortBy(key: $key, options: SORT_REGULAR, descending: $descending)
+            items: new Collections\Order\SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending)
         );
     }
 
     public function reverse() : static
     {
         return new self(
-            items: (new Collections\Order\ReverseValues(items: $this->items))->reverse()
+            items: new Collections\Order\ReverseValues(items: $this->items)->reverse()
         );
     }
 
     public function shuffle() : static
     {
         return new self(
-            items: (new Collections\Order\ShuffleValues(items: $this->items))->shuffle()
+            items: new Collections\Order\ShuffleValues(items: $this->items)->shuffle()
         );
     }
 
     public function unique() : static
     {
         return new self(
-            items: (new Collections\Transform\UniqueValues(items: $this->items))->unique()
+            items: new Collections\Transform\UniqueValues(items: $this->items)->unique()
         );
     }
 
     public function toArray() : array
     {
-        return (new Collections\Convert\ConvertCollectionToArray(items: $this->items))->toArray();
+        return new Collections\Convert\ConvertCollectionToArray(items: $this->items)->toArray();
     }
 
     public function toJson(int $flags = 0) : string
     {
-        return (new Collections\Convert\ConvertCollectionToJson(items: $this->items))->toJson(flags: $flags);
+        return new Collections\Convert\ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
     }
 
     public function toXml(string $rootElement = 'root') : string
     {
-        return (new Collections\Convert\ConvertCollectionToXml(items: $this->items))->toXml(rootElement: $rootElement);
+        return new Collections\Convert\ConvertCollectionToXml(items: $this->items)->toXml(rootElement: $rootElement);
     }
 
     public function only(array $keys) : static
@@ -346,7 +346,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
 
     public function pluck(string|callable $key) : array
     {
-        return (new Collections\Read\PluckValues(items: $this->items))->pluck(key: $key);
+        return new Collections\Read\PluckValues(items: $this->items)->pluck(key: $key);
     }
 
     public function keys() : array
@@ -362,7 +362,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
     public function flip() : static
     {
         return new self(
-            items: (new Collections\Transform\FlipValues(items: $this->items))->flip()
+            items: new Collections\Transform\FlipValues(items: $this->items)->flip()
         );
     }
 

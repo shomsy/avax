@@ -15,7 +15,7 @@ class ResolveDiskTest extends TestCase
 {
     public function testExecuteReturnsLocalDisk() : void
     {
-        $result = (new ResolveDisk())->execute(name: 'local');
+        $result = new ResolveDisk()->execute(name: 'local');
 
         self::assertInstanceOf(LocalDisk::class, $result);
     }
@@ -25,12 +25,12 @@ class ResolveDiskTest extends TestCase
         $this->expectException(exception: UnsupportedDiskDriver::class);
         $this->expectExceptionMessage(message: 'Unsupported disk driver:');
 
-        (new ResolveDisk())->execute(name: 'unknown');
+        new ResolveDisk()->execute(name: 'unknown');
     }
 
     public function testExecuteWithNullReturnsLocalDisk() : void
     {
-        $result = (new ResolveDisk())->execute(name: null);
+        $result = new ResolveDisk()->execute(name: null);
 
         self::assertInstanceOf(LocalDisk::class, $result);
     }

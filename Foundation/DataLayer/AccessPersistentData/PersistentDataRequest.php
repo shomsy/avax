@@ -35,17 +35,19 @@ final readonly class PersistentDataRequest
     private function __construct(
         string                  $sql,
         PersistentDataOperation $operation,
-        array                   $bindings = [],
+        array|null $bindings = null,
         ?string                 $connectionName = null,
         ?int                    $fetchMode = null,
         ?int                    $fetchCtorArg1 = null,
         ?string                 $fetchCtorArg2 = null,
-        bool                    $useTransaction = false,
+        bool|null  $useTransaction = null,
         ?int                    $transactionIsolation = null,
         ?int                    $timeout = null,
         array                   $options = []
     )
     {
+        $bindings       ??= [];
+        $useTransaction ??= false;
         $this->sql                  = $sql;
         $this->operation            = $operation;
         $this->bindings             = $bindings;
@@ -60,11 +62,12 @@ final readonly class PersistentDataRequest
     }
 
     public static function create(
-        string $sql,
-        array  $bindings = [],
-        array  $options = []
+        string     $sql,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
+        $bindings ??= [];
         if (empty(trim($sql))) {
             throw new InvalidArgumentException('SQL cannot be empty.');
         }
@@ -87,11 +90,13 @@ final readonly class PersistentDataRequest
     }
 
     public static function select(
-        string $sql,
-        array  $bindings = [],
-        array  $options = []
+        string     $sql,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
+        $bindings ??= [];
+
         return self::create($sql, $bindings, array_merge($options, ['operation' => 'SELECT']));
     }
 
@@ -114,15 +119,16 @@ final readonly class PersistentDataRequest
     }
 
     public static function update(
-        string $table,
-        array  $values,
-        string $where,
-        array  $bindings = [],
-        array  $options = []
+        string     $table,
+        array      $values,
+        string     $where,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
-        $set = implode(', ', array_map(fn ($col) => "{$col} = :{$col}", array_keys($values)));
-        $sql = sprintf('UPDATE %s SET %s WHERE %s', $table, $set, $where);
+        $bindings ??= [];
+        $set      = implode(', ', array_map(fn ($col) => "{$col} = :{$col}", array_keys($values)));
+        $sql      = sprintf('UPDATE %s SET %s WHERE %s', $table, $set, $where);
 
         $allBindings = array_merge($values, $bindings);
 
@@ -130,34 +136,38 @@ final readonly class PersistentDataRequest
     }
 
     public static function delete(
-        string $table,
-        string $where,
-        array  $bindings = [],
-        array  $options = []
+        string     $table,
+        string     $where,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
-        $sql = sprintf('DELETE FROM %s WHERE %s', $table, $where);
+        $bindings ??= [];
+        $sql      = sprintf('DELETE FROM %s WHERE %s', $table, $where);
 
         return self::create($sql, $bindings, array_merge($options, ['operation' => 'DELETE']));
     }
 
     public static function call(
-        string $procedure,
-        array  $bindings = [],
-        array  $options = []
+        string     $procedure,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
-        $sql = sprintf('CALL %s(%s)', $procedure, implode(', ', array_keys($bindings)));
+        $bindings ??= [];
+        $sql      = sprintf('CALL %s(%s)', $procedure, implode(', ', array_keys($bindings)));
 
         return self::create($sql, $bindings, array_merge($options, ['operation' => 'CALL']));
     }
 
     public static function raw(
-        string $sql,
-        array  $bindings = [],
-        array  $options = []
+        string     $sql,
+        array|null $bindings = null,
+        array      $options = []
     ) : self
     {
+        $bindings ??= [];
+
         return self::create($sql, $bindings, $options);
     }
 

@@ -155,12 +155,12 @@ final readonly class PrepareRequest
 
     private function createEmptyBodyStream() : StreamInterface
     {
-        return (new ResponseStreamFactory())->createEmptyStream();
+        return new ResponseStreamFactory()->createEmptyStream();
     }
 
     private function createBodyStreamFromRaw(string $rawBody) : StreamInterface
     {
-        return (new ResponseStreamFactory())->createStreamFromString(content: $rawBody);
+        return new ResponseStreamFactory()->createStreamFromString(content: $rawBody);
     }
 
     private function stageParseBody(string $rawBody, #[SensitiveParameter] RequestHeaders $requestHeaders) : ParsedBody

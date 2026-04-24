@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\DataHandling\DataTransfer\SerializeDataObject;
+
+use Avax\DataHandling\DataTransfer\Configuration\DataTransferConfig;
+
+final readonly class ConvertDataObjectToJsonApi
+{
+    public function __construct(private DataTransferConfig|null $config = null) {}
+
+    public function convert(object $object, string $type) : array
+    {
+        $array = new ConvertDataObjectToArray(config: $this->config)->convert(object: $object);
+
+        return [
+            'data' => [
+                'type'       => $type,
+                'id'         => $array['id'] ?? null,
+                'attributes' => $array,
+            ],
+        ];
+    }
+}

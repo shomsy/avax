@@ -17,8 +17,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploa
 use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -116,9 +115,7 @@ class ControllerDispatcherUnitTest extends TestCase
                 $this->assertEquals('POST', $request->method());
                 $this->assertEquals('example.com', $request->uri()->getHost());
 
-                return new Response(
-                    stream: Stream::fromString(content: 'success')
-                );
+                return Response::text(content: 'success');
             }
         };
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Regression\Foundation\HTTP\Request;
 
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Avax\HTTP\URI\Uri;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -42,7 +42,7 @@ class RequestRegressionTest extends TestCase
             session      : null,
             serverParams : $serverParams,
             uri          : new Uri('http://localhost'),
-            body         : new Stream(stream: fopen(filename: 'php://temp', mode: 'r+')),
+            body         : (new ResponseStreamFactory())->createEmptyStream(),
             queryParams  : [],
             parsedBody   : [],
             cookies      : [],

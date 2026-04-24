@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Response;
 
+use Avax\HTTP\Response\Capabilities\Caching\CacheControl;
+use Avax\HTTP\Response\Capabilities\Caching\Etag;
+use Avax\HTTP\Response\Capabilities\Caching\LastModified;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildFileDownloadResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
@@ -14,113 +17,92 @@ use Avax\HTTP\Response\Flows\BuildResponse\BuildProblemResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildStreamResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
-use Avax\HTTP\Response\Flows\EmitResponse\EmitResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildXmlResponse;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Public facade for creating and emitting HTTP responses.
- *
- * This class provides a simple, predictable API for building common response types.
- * It delegates the actual building to specialized builders and emission to the emitter.
+ * Small public facade for building and emitting HTTP responses.
  */
 final class Response
 {
-    /**
-     * Create an empty response.
-     */
-    public static function empty() : ResponseInterface
+    public static function empty(int $status = 200, array $headers = [], string $reasonPhrase = '') : ResponseInterface
     {
-        return (new BuildEmptyResponse)();
+        return (new BuildEmptyResponse())(
+            status      : $status,
+            headers     : $headers,
+            reasonPhrase: $reasonPhrase,
+        );
     }
 
-    /**
-     * Create a text response.
-     */
-    public static function text(string $content, int $status = 200) : ResponseInterface
+    public static function text(string $content, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new BuildTextResponse)($content, $status);
+        return (new BuildTextResponse())($content, $status, $headers);
     }
 
-    /**
-     * Create an HTML response.
-     */
-    public static function html(string $content, int $status = 200) : ResponseInterface
+    public static function html(string $content, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new BuildHtmlResponse)($content, $status);
+        return (new BuildHtmlResponse())($content, $status, $headers);
     }
 
-    /**
-     * Create a JSON response.
-     */
-    public static function json(mixed $data, int $status = 200) : ResponseInterface
+    public static function json(mixed $data, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new BuildJsonResponse)($data, $status);
+        return (new BuildJsonResponse())($data, $status, $headers);
     }
 
-    /**
-     * Create an XML response.
-     */
-    public static function xml(string $xml, int $status = 200) : ResponseInterface
+    public static function xml(string|array $xml, int $status = 200, array $headers = []) : ResponseInterface
     {
-        // Note: This assumes $xml is a well-formed XML string.
-        return (new BuildXmlResponse)($xml, $status);
+        return (new BuildXmlResponse())($xml, $status, $headers);
     }
 
-    /**
-     * Create a problem details response (RFC 7807).
-     */
-    public static function problem(string $title, int $status = 400, string $detail = '', string $type = 'about:blank') : ResponseInterface
+    public static function problem(
+        string $title,
+        int    $status = 400,
+        string $detail = '',
+        string $type = 'about:blank',
+        array  $extensions = []
+    ) : ResponseInterface
     {
-        return (new BuildProblemResponse)($title, $status, $detail, $type);
+        return (new BuildProblemResponse())(
+            title     : $title,
+            status    : $status,
+            detail    : $detail,
+            type      : $type,
+            extensions: $extensions,
+        );
     }
 
-    /**
-     * Create a redirect response.
-     */
-    public static function redirect(string $url, int $status = 302) : ResponseInterface
+    public static function redirect(string $url, int $status = 302, array $headers = []) : ResponseInterface
     {
-        return (new BuildRedirectResponse)($url, $status);
+        return (new BuildRedirectResponse())($url, $status, $headers);
     }
 
-    /**
-     * Create a file download response.
-     */
-    public static function download(string $filePath, string $downloadName = null, int $status = 200) : ResponseInterface
+    public static function download(string $filePath, ?string $downloadName = null, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new BuildFileDownloadResponse)($filePath, $downloadName, $status);
+        return (new BuildFileDownloadResponse())($filePath, $downloadName, $status, $headers);
     }
 
-    /**
-     * Create a stream response.
-     */
-    public static function stream(resource $stream, int $status = 200) : ResponseInterface
+    public static function stream(mixed $stream, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new BuildStreamResponse)($stream, $status);
+        return (new BuildStreamResponse())($stream, $status, $headers);
     }
 
-    /**
-     * Create a no-content response (status 204).
-     */
-    public static function noContent() : ResponseInterface
+    public static function noContent(array $headers = []) : ResponseInterface
     {
-        return (new BuildNoContentResponse)();
+        return (new BuildNoContentResponse())($headers);
     }
 
-    /**
-     * Create a not-modified response (status 304).
-     */
-    public static function notModified() : ResponseInterface
+    public static function notModified(
+        ?Etag         $etag = null,
+        ?LastModified $lastModified = null,
+        ?CacheControl $cacheControl = null,
+        array         $headers = []
+    ) : ResponseInterface
     {
-        return (new BuildNotModifiedResponse)();
+        return (new BuildNotModifiedResponse())($etag, $lastModified, $cacheControl, $headers);
     }
 
-    /**
-     * Emit a response.
-     *
-     * This method sends the response to the client and terminates script execution.
-     */
     public static function emit(ResponseInterface $response) : void
     {
-        (new EmitResponse)($response);
+        (new ResponseEmitter())->emit(response: $response);
     }
 }

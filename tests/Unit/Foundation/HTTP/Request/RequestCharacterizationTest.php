@@ -6,7 +6,7 @@ namespace Avax\Tests\Unit\Foundation\HTTP\Request;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +34,7 @@ class RequestCharacterizationTest extends TestCase
     {
         $uri     = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
         $request = new ServerRequest(
-            body: new RequestBody(stream: new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'))),
+            body           : new RequestBody(stream: (new ResponseStreamFactory())->createEmptyStream()),
             method: 'GET',
             uri: $uri,
             requestHeaders: null,
@@ -75,7 +75,7 @@ class RequestCharacterizationTest extends TestCase
     private function createBlankRequest(array $serverParams = []) : ServerRequest
     {
         return new ServerRequest(
-            body: new RequestBody(stream: new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'))),
+            body           : new RequestBody(stream: (new ResponseStreamFactory())->createEmptyStream()),
             method: 'GET',
             uri: UriBuilder::createFromString(uri: 'http://localhost'),
             requestHeaders: null,

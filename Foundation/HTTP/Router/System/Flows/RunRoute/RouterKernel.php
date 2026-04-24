@@ -127,7 +127,7 @@ final readonly class RouterKernel
             // Trace: ServerRequest handled successfully
             $this->trace?->log(event: 'kernel.request.complete', context: [
                 'route'    => $route->name ?? $route->path,
-                'status'   => $response->statusCode,
+                'status' => $response->getStatusCode(),
                 'duration' => round(num: (microtime(as_float: true) - $startTime) * 1000, precision: 2) . 'ms',
             ]);
 

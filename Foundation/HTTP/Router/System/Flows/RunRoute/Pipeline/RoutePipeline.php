@@ -7,8 +7,7 @@ namespace Avax\HTTP\Router\System\Flows\RunRoute\Pipeline;
 use Avax\Container\DI\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Laravel\SerializableClosure\SerializableClosure;
 use Psr\Container\ContainerExceptionInterface;
@@ -174,10 +173,7 @@ final class RoutePipeline
             return $stack($request);
         } catch (Throwable $e) {
             // Return 500 Response on exceptions
-            return new Response(
-                stream    : Stream::fromString(content: 'Internal Server Error'),
-                statusCode: 500
-            );
+            return Response::text(content: 'Internal Server Error', status: 500);
         }
     }
 }

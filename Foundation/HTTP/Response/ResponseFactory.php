@@ -4,194 +4,88 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Response;
 
-use InvalidArgumentException;
-use JsonException;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildResponse;
+use Avax\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
+use JsonSerializable;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use SensitiveParameter;
+use Stringable;
 
 /**
- * Factory for creating standardized PSR-7 HTTP responses.
+ * PSR-17 entrypoint plus compatibility facade for legacy response helpers.
  */
-readonly class ResponseFactory implements ResponseFactoryInterface
+final class ResponseFactory implements ResponseFactoryInterface
 {
-    private ResponseInterface      $response;
-    private StreamFactoryInterface $streamFactory;
-
     public function __construct(
-        StreamFactoryInterface $streamFactory,
-        ResponseInterface      $response
-    )
-    {
-        $this->streamFactory = $streamFactory;
-        $this->response      = $response;
-    }
+        private StreamFactoryInterface|null $streamFactory = null,
+        private ResponseInterface|null      $response = null,
+    ) {}
 
-    /**
-     * Generates and returns an HTTP Response object based on the provided data and status code.
-     *
-     * This method delegates to the `send` method to decide the appropriate response format (JSON, plain text, etc.)
-     * based on the type of `$data`. It provides a flexible mechanism to handle various types of responses, keeping the
-     * controller concise and focused on defining only high-level response creation.
-     *
-     * @param mixed $data    The data to be sent in the response. Supports different types such as arrays, objects,
-     *                       plain strings, or already-prepared `ResponseInterface` instances.
-     * @param int   $status  The HTTP status code to be associated with the response. Defaults to 200 (OK).
-     *
-     * @return ResponseInterface Returns a fully constructed HTTP response object.
-     */
     public function response(mixed $data, int $status = 200) : ResponseInterface
     {
-        // Delegate the task of creating a response object to the `send` method.
-        // The `send` method handles different data types accordingly (e.g., JSON encoding, plain string content, etc.).
         return $this->send(data: $data, status: $status);
     }
 
     /**
-     * Generates a response based on data type.
+     * Compatibility wrapper for the legacy mixed-dispatch API.
      */
     public function send(mixed $data, int $status = 200) : ResponseInterface
     {
         return match (true) {
-            $data instanceof ResponseInterface                => $data,
-            is_array(value: $data) || is_object(value: $data) => $this->createJsonResponse(data: (array) $data, status: $status),
-            is_string(value: $data)                           => $this->createTextResponse(content: $data, status: $status),
-            default                                           => $this->createResponseWithBody(
-                content: (string) ($data ?? ''),
-                status : $status
-            ),
+            $data instanceof ResponseInterface                       => $data,
+            is_array(value: $data)                                   => $this->createJsonResponse(data: $data, status: $status),
+            $data instanceof JsonSerializable                       => Response::json(data: $data, status: $status),
+            is_object(value: $data) && ! $data instanceof Stringable => Response::json(data: (array) $data, status: $status),
+            is_string(value: $data), $data instanceof Stringable     => $this->createTextResponse(content: (string) $data, status: $status),
+            default                                                  => $this->createResponseWithBody(content: (string) ($data ?? ''), status: $status),
         };
     }
 
-    /**
-     * Creates a JSON response with proper encoding.
-     */
     public function createJsonResponse(array $data, int $status = 200) : ResponseInterface
     {
-        try {
-            $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-        } catch (JsonException $jsonException) {
-            return $this->createErrorResponse(statusCode: 500, message: 'JSON encoding failed: ' . $jsonException->getMessage());
-        }
-
-        $stream = $this->streamFactory->createStream(content: $json);
-
-        return $this
-            ->cloneResponse()
-            ->withStatus(code: $status)
-            ->withBody(stream: $stream)
-            ->withHeader(name: 'Content-Type', value: 'application/json');
+        return (new BuildJsonResponse())($data, $status);
     }
 
-
-    /**
-     * Creates an error response with custom status code.
-     *
-     * @param int    $statusCode HTTP status code
-     * @param string $message    Error message
-     */
     public function createErrorResponse(int $statusCode, string $message) : ResponseInterface
     {
         return $this->createJsonResponse(data: ['error' => $message], status: $statusCode);
     }
 
-    /**
-     * Clones the base response to ensure immutability.
-     */
-    private function cloneResponse() : ResponseInterface
-    {
-        return clone $this->response;
-    }
-
-    /**
-     * Creates a plain text response.
-     */
     public function createTextResponse(string $content, int $status = 200) : ResponseInterface
     {
-        $stream = $this->streamFactory->createStream(content: $content);
-
-        return $this
-            ->cloneResponse()
-            ->withStatus(code: $status)
-            ->withBody(stream: $stream)
-            ->withHeader(name: 'Content-Type', value: 'text/plain');
+        return (new BuildTextResponse())($content, $status);
     }
 
-    /**
-     * Creates a generic response with body content.
-     */
     public function createResponseWithBody(string $content, int $status, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
-        $stream   = $this->streamFactory->createStream(content: $content);
-        $response = $this
-            ->cloneResponse()
-            ->withStatus(code: $status)
-            ->withBody(stream: $stream);
-
-        foreach ($headers as $header => $value) {
-            $response = $response->withHeader(name: $header, value: $value);
-        }
-
-        return $response;
+        return (new BuildResponse())(
+            status : $status,
+            headers: $headers,
+            body   : $content,
+        );
     }
 
-    /**
-     * Creates a new empty response with a status code and reason phrase.
-     */
-    public function createResponse(int|null $code = null, string $reasonPhrase = '') : ResponseInterface
+    public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
     {
-        $code   ??= 200;
-        $stream = $this->streamFactory->createStream();
-
-        return $this
-            ->cloneResponse()
-            ->withStatus(code: $code, reasonPhrase: $reasonPhrase)
-            ->withBody(stream: $stream);
+        return (new BuildEmptyResponse())(
+            status      : $code,
+            reasonPhrase: $reasonPhrase,
+        );
     }
 
-    /**
-     * Creates a redirect response (supports absolute and relative URLs).
-     */
     public function createRedirectResponse(string $url, int $status = 302) : ResponseInterface
     {
-        if (! filter_var(value: $url, filter: FILTER_VALIDATE_URL) && ! str_starts_with(haystack: $url, needle: '/')) {
-            throw new InvalidArgumentException(message: 'Invalid URL for redirection.');
-        }
-
-        return $this
-            ->cloneResponse()
-            ->withStatus(code: $status)
-            ->withHeader(name: 'Location', value: $url);
+        return (new BuildRedirectResponse())($url, $status);
     }
 
-    /**
-     * Creates an HTML response.
-     */
     public function createHtmlResponse(string $html, int $status = 200) : ResponseInterface
     {
-        $stream = $this->streamFactory->createStream(content: $html);
-
-        return $this
-            ->cloneResponse()
-            ->withStatus(code: $status)
-            ->withBody(stream: $stream)
-            ->withHeader(name: 'Content-Type', value: 'text/html; charset=UTF-8');
-    }
-
-    /**
-     * Renders a view template with the provided data and returns a response.
-     *
-     * @param string     $template The name of the template to render.
-     * @param array|null $data     Optional data to pass to the template. Defaults to an empty array if null.
-     * @param int        $status   The HTTP status code for the response. Defaults to 200.
-     *
-     * @return ResponseInterface The generated HTTP response containing the rendered view.
-     */
-    public function view(string $template, array|null $data = null, int $status = 200) : ResponseInterface
-    {
-        $data ??= [];
-
-        return view(template: $template, data: $data);
+        return (new BuildHtmlResponse())($html, $status);
     }
 }

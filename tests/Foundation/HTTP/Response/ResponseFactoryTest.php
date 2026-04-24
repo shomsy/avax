@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Response;
 
 use Avax\HTTP\Response\ResponseFactory;
+use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 
@@ -38,5 +39,40 @@ final class ResponseFactoryTest extends TestCase
         self::assertSame(429, $response->getStatusCode());
         self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
         self::assertStringContainsString('Too Many Requests', (string) $response->getBody());
+    }
+
+    public function test_response_dispatches_strings_arrays_and_existing_responses() : void
+    {
+        $factory = $this->factory();
+
+        $textResponse = $factory->response(data: 'hello');
+        $jsonResponse = $factory->response(data: ['name' => 'Alice']);
+        $sameResponse = $factory->response(data: $textResponse);
+
+        self::assertSame('text/plain; charset=UTF-8', $textResponse->getHeaderLine('Content-Type'));
+        self::assertSame('hello', (string) $textResponse->getBody());
+        self::assertSame('application/json', $jsonResponse->getHeaderLine('Content-Type'));
+        self::assertSame(['name' => 'Alice'], json_decode(json: (string) $jsonResponse->getBody(), associative: true));
+        self::assertSame($textResponse, $sameResponse);
+    }
+
+    public function test_create_response_with_body_applies_headers() : void
+    {
+        $response = $this->factory()->createResponseWithBody(
+            content: 'payload',
+            status : 202,
+            headers: ['X-Test' => 'present'],
+        );
+
+        self::assertSame(202, $response->getStatusCode());
+        self::assertSame('present', $response->getHeaderLine('X-Test'));
+        self::assertSame('payload', (string) $response->getBody());
+    }
+
+    public function test_create_redirect_response_rejects_invalid_targets() : void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->factory()->createRedirectResponse('invalid target');
     }
 }

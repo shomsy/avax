@@ -146,7 +146,7 @@ final class FaultInjection
                     $results[$faultName]['tests'][] = [
                         'request'         => $this->summarizeRequest(request: $request),
                         'result'          => 'passed',
-                        'response_status' => $response->statusCode,
+                        'response_status' => $response->getStatusCode(),
                     ];
                     $results[$faultName]['passed']++;
                 } catch (Throwable $e) {

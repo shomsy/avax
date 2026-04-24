@@ -153,7 +153,7 @@ class RouterHardeningTest extends TestCase
 
                 // Basic validation that response is valid
                 $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-                $this->assertIsInt(actual: $response->statusCode);
+                $this->assertIsInt(actual: $response->getStatusCode());
                 $this->assertIsString(actual: (string) $response->getBody());
             }
         }
@@ -177,9 +177,9 @@ class RouterHardeningTest extends TestCase
             $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
 
             // Validate response has required methods
-            $this->assertIsInt(actual: $response->statusCode);
-            $this->assertIsString(actual: $response->reasonPhrase);
-            $this->assertIsArray(actual: $response->headers);
+            $this->assertIsInt(actual: $response->getStatusCode());
+            $this->assertIsString(actual: $response->getReasonPhrase());
+            $this->assertIsArray(actual: $response->getHeaders());
             $this->assertIsString(actual: (string) $response->getBody());
         }
     }
@@ -210,7 +210,7 @@ class RouterHardeningTest extends TestCase
 
         // Validate final response
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        $this->assertEquals(expected: 200, actual: $response->statusCode);
+        $this->assertEquals(expected: 200, actual: $response->getStatusCode());
         $this->assertStringContainsString(needle: 'Router is Working!', haystack: (string) $response->getBody());
     }
 
@@ -242,7 +242,7 @@ class RouterHardeningTest extends TestCase
 
         // If middleware is working, we should get a valid response
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        $this->assertEquals(expected: 200, actual: $response->statusCode);
+        $this->assertEquals(expected: 200, actual: $response->getStatusCode());
     }
 
     #[Override]

@@ -20,8 +20,9 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Avax\HTTP\URI\UriBuilder;
+use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use SensitiveParameter;
 
@@ -143,7 +144,7 @@ final readonly class PrepareRequest
         return new RequestHeaders(headersInput: $headers);
     }
 
-    private function stageResolveBodyStream(string $rawBody) : Stream
+    private function stageResolveBodyStream(string $rawBody) : StreamInterface
     {
         if ($rawBody === '') {
             return $this->createEmptyBodyStream();
@@ -152,28 +153,14 @@ final readonly class PrepareRequest
         return $this->createBodyStreamFromRaw(rawBody: $rawBody);
     }
 
-    private function createEmptyBodyStream() : Stream
+    private function createEmptyBodyStream() : StreamInterface
     {
-        $handle = fopen(filename: 'php://temp', mode: 'r+');
-        if ($handle === false) {
-            return new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
-        }
-
-        return new Stream(stream: $handle);
+        return (new ResponseStreamFactory())->createEmptyStream();
     }
 
-    private function createBodyStreamFromRaw(string $rawBody) : Stream
+    private function createBodyStreamFromRaw(string $rawBody) : StreamInterface
     {
-        $handle = fopen(filename: 'php://temp', mode: 'r+');
-        if ($handle === false) {
-            return new Stream(stream: fopen(filename: 'php://temp', mode: 'r+'));
-        }
-
-        $stream = new Stream(stream: $handle);
-        $stream->write(string: $rawBody);
-        $stream->rewind();
-
-        return $stream;
+        return (new ResponseStreamFactory())->createStreamFromString(content: $rawBody);
     }
 
     private function stageParseBody(string $rawBody, #[SensitiveParameter] RequestHeaders $requestHeaders) : ParsedBody

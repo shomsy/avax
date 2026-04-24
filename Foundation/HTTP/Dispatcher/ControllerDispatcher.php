@@ -7,8 +7,7 @@ namespace Avax\HTTP\Dispatcher;
 use Avax\HTTP\Request\Request as RequestDto;
 use Avax\HTTP\Request\RequestDtoFactory;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -85,11 +84,11 @@ final readonly class ControllerDispatcher
         $result = $callable($request);
 
         if ($result === null) {
-            $result = new Response(stream: Stream::fromString(content: 'Callable returned null. Must return a ResponseInterface.'));
+            $result = Response::text(content: 'Callable returned null. Must return a ResponseInterface.');
         }
 
         if (is_string(value: $result)) {
-            return new Response(stream: Stream::fromString(content: $result));
+            return Response::text(content: $result);
         }
 
         if (! $result instanceof ResponseInterface) {
@@ -207,11 +206,11 @@ final readonly class ControllerDispatcher
         $result = $reflection->invokeArgs(object: $instance, args: $arguments);
 
         if ($result === null) {
-            return new Response(stream: Stream::fromString(content: "Controller returned null"));
+            return Response::text(content: 'Controller returned null');
         }
 
         if (is_string(value: $result)) {
-            return new Response(stream: Stream::fromString(content: $result));
+            return Response::text(content: $result);
         }
 
         if (! $result instanceof ResponseInterface) {
@@ -274,11 +273,11 @@ final readonly class ControllerDispatcher
         $result = $instance($request);
 
         if ($result === null) {
-            return new Response(stream: Stream::fromString(content: "Controller returned null"));
+            return Response::text(content: 'Controller returned null');
         }
 
         if (is_string(value: $result)) {
-            return new Response(stream: Stream::fromString(content: $result));
+            return Response::text(content: $result);
         }
 
         if (! $result instanceof ResponseInterface) {

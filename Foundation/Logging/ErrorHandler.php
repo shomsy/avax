@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Logging;
 
 use Avax\Exceptions\ValidationException;
-use Avax\HTTP\Response\JsonResponse;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
@@ -142,7 +141,11 @@ final readonly class ErrorHandler
                 context: ['file' => $e->getFile(), 'line' => $e->getLine(), 'exception' => $e]
             );
 
-            echo (new JsonResponse(status: 500, message: 'Internal Server Error'))->toJson();
+            echo $this->encodeJsonPayload(payload: [
+                                                       'status'  => 500,
+                                                       'message' => 'Internal Server Error',
+                                                       'data'    => [],
+                                                   ]);
         }
 
         if (ob_get_length() > 0) {
@@ -186,15 +189,23 @@ final readonly class ErrorHandler
     private function renderJson(Throwable $throwable) : void
     {
         $response = $throwable instanceof ValidationException
-            ? new JsonResponse(status: 422, message: 'Validation failed', data: $throwable->getErrors())
-            : new JsonResponse(status: 500, message: 'An unexpected error occurred');
+            ? [
+                'status'  => 422,
+                'message' => 'Validation failed',
+                'data'    => $throwable->getErrors(),
+            ]
+            : [
+                'status'  => 500,
+                'message' => 'An unexpected error occurred',
+                'data'    => [],
+            ];
 
         if (! headers_sent()) {
-            http_response_code(response_code: $response->status);
+            http_response_code(response_code: $response['status']);
             header(header: 'Content-Type: application/json');
         }
 
-        echo $response->toJson();
+        echo $this->encodeJsonPayload(payload: $response);
     }
 
     /**
@@ -207,5 +218,13 @@ final readonly class ErrorHandler
             ->setTheme(theme: 'dark')
             ->register()
             ->handleException(throwable: $throwable);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function encodeJsonPayload(array $payload) : string
+    {
+        return json_encode(value: $payload, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
     }
 }

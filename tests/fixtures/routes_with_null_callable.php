@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use Avax\Facade\Facades\Route;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use Psr\Http\Message\ResponseInterface;
 
 Route::get('/null-test', static function (Request $request) : ResponseInterface|null {
@@ -20,9 +19,5 @@ Route::fallback(static function (Request $request) : ResponseInterface {
         $request->getUri()->getPath()
     );
 
-    return new Response(
-        stream    : Stream::fromString(content: $message),
-        statusCode: 404,
-        headers   : ['Content-Type' => 'text/plain'],
-    );
+    return Response::text(content: $message, status: 404);
 });

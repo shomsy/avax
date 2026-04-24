@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Tests\Unit;
 
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
@@ -32,7 +31,7 @@ final class RouteResolutionTest extends TestCase
         $routes = ['GET' => ['/users/{id?}' => new RouteDefinition(
             method       : 'GET',
             path         : '/users/{id?}',
-            action       : static fn () => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
+            action       : static fn () => Response::text(content: ''),
             middleware   : [],
             name         : 'test',
             constraints  : [],
@@ -62,7 +61,7 @@ final class RouteResolutionTest extends TestCase
         $routes = ['GET' => ['/files/{path*}' => new RouteDefinition(
             method       : 'GET',
             path         : '/files/{path*}',
-            action       : static fn () => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
+            action       : static fn () => Response::text(content: ''),
             middleware   : [],
             name         : 'test',
             constraints  : [],

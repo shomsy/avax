@@ -9,8 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\Middlew
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
 use Avax\Container\DependencyInjection\Configuration\AppFactory;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Response;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use LogicException;
@@ -70,7 +69,7 @@ final class HttpApplicationTest extends TestCase
         }
 
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        $this->assertSame(expected: 200, actual: $response->statusCode);
+        $this->assertSame(expected: 200, actual: $response->getStatusCode());
         $this->assertStringContainsString(needle: 'Avax components router is up.', haystack: $content);
     }
 
@@ -91,11 +90,7 @@ final class FakeRouter implements RouterRuntimeInterface
 {
     public function resolve(Request $request) : ResponseInterface
     {
-        return new Response(
-            stream    : Stream::fromString(content: 'Avax components router is up.'),
-            statusCode: 200,
-            headers   : ['Content-Type' => 'text/plain']
-        );
+        return Response::text(content: 'Avax components router is up.');
     }
 
     public function getRouteByName(string $name) : RouteDefinition

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles;
 
-use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -35,7 +35,7 @@ final class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(message: 'Cannot retrieve stream for file with upload error.');
         }
 
-        return new Stream(stream: fopen(filename: $this->tmpName, mode: 'r'));
+        return (new ResponseStreamFactory())->openFileStream(path: $this->tmpName);
     }
 
     public function moveTo(string $targetPath) : void

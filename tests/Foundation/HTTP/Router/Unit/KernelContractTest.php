@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Kernel;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

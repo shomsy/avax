@@ -14,6 +14,7 @@ use Avax\Database\Integrations\Console\MigrateRefreshCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Avax\Database\Integrations\Console\MigrateStatusCommand;
 use Avax\Database\Integrations\Console\SeedCommand;
+use Composer\Command\InstallCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand;
 
 class CommandDefinitions

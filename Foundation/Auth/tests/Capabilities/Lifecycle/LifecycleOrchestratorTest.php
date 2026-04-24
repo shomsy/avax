@@ -16,6 +16,7 @@ use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
 use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleState;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class LifecycleOrchestratorTest extends TestCase

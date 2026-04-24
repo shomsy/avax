@@ -6,6 +6,7 @@ namespace Avax\HTTP\Router\System\Flows\RegisterRoutes\Attributes;
 
 use Avax\HTTP\Router\HttpMethod;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Attributes\Route as RouteAttribute;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use ReflectionAttribute;

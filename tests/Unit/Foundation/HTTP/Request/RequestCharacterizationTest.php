@@ -8,6 +8,7 @@ use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

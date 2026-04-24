@@ -8,6 +8,7 @@ use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServiceProt
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

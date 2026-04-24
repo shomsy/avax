@@ -18,6 +18,7 @@ use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ServeTenantSecurityHttpSurfaceTest extends TestCase

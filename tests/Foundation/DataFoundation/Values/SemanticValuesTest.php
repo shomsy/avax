@@ -11,6 +11,7 @@ use Avax\DataFoundation\Values\Numbers\PositiveInt;
 use Avax\DataFoundation\Values\Option\Option;
 use Avax\DataFoundation\Values\Result\Result;
 use Avax\DataFoundation\Values\Text\NonEmptyString;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

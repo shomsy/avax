@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\Http;
 
 use Avax\Auth\Examples\Http\RequireCsrfProtection;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class RequireCsrfProtectionTest extends TestCase

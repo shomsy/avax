@@ -8,6 +8,7 @@ use Avax\Auth\System\Flows\Login\RateLimit\InMemoryLoginRateLimitStorage;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

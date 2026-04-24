@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Foundation;
 
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

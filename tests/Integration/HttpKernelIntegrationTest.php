@@ -12,6 +12,7 @@ use Avax\HTTP\Middleware\RateLimiterMiddleware;
 use Avax\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
+use Avax\Tests\TestCase;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

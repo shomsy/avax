@@ -8,6 +8,7 @@ use Avax\HTTP\Response\Capabilities\Cookies\ResponseCookie;
 use Avax\HTTP\Response\Capabilities\Cookies\SetCookieHeader;
 use Avax\HTTP\Response\Capabilities\Headers\ResponseHeaders;
 use Avax\HTTP\Response\Response;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

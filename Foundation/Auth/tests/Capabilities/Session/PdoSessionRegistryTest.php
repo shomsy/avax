@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\Session;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\PdoSessionRegistry;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PDO;

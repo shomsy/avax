@@ -26,6 +26,7 @@ use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use Avax\Container\DependencyInjection\Configuration\KernelConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use stdClass;

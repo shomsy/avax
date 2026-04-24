@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container\Tests\Configuration;
 
 use Avax\Container\DependencyInjection\Configuration\ContainerConfig;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ContainerConfigTest extends TestCase

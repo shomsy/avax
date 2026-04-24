@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\SessionBridge;
 
 use Avax\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge;
 use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

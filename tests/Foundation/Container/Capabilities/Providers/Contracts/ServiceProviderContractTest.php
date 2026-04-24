@@ -6,6 +6,7 @@ namespace Avax\Container\Tests\Capability\Providers\Contracts;
 
 use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 

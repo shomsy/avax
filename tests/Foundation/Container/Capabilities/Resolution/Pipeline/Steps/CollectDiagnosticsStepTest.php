@@ -9,6 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\Ste
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepSucceeded;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\CollectDiagnosticsStep;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Telemetry\StepTelemetryRecorder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class CollectDiagnosticsStepTest extends TestCase

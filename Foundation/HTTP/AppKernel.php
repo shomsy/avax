@@ -13,6 +13,7 @@ use Avax\HTTP\Middleware\RateLimiterMiddleware;
 use Avax\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
+use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Session\NullSession;
 use Override;

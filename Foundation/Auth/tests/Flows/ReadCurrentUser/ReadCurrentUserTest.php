@@ -9,6 +9,7 @@ use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\Authenticatio
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

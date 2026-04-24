@@ -17,6 +17,7 @@ use Avax\Auth\Integrations\Diagnostics\SendSyslogMessageInterface;
 use Avax\Auth\Integrations\Diagnostics\SyslogAuditExporter;
 use Avax\Auth\Integrations\Diagnostics\WebhookAuditExporter;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use JsonException;
 use PHPUnit\Framework\TestCase;

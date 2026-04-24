@@ -9,6 +9,7 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintVali
 use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

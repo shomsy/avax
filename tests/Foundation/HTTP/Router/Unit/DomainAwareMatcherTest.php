@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;

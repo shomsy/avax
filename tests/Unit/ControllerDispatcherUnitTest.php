@@ -19,6 +19,7 @@ use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Response\Response;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

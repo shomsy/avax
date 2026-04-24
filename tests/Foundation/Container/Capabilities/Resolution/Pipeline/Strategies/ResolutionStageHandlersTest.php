@@ -8,6 +8,8 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerExc
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStageHandlers;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionStageHandlersTest extends TestCase

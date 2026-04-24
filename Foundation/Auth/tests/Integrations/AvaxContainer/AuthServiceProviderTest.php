@@ -19,6 +19,7 @@ use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\ServiceProvider;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use Override;
 use PHPUnit\Framework\TestCase;

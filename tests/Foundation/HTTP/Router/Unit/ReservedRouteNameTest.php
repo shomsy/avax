@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

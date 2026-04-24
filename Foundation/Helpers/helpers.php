@@ -8,6 +8,7 @@ use Avax\Auth\System\AuthInterface;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Config\Service\Config;
 use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\DataFoundation\Arrhae;
 use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\DataHandling\ObjectHandling\Collections\Collection;
 use Avax\DumpDebugger;

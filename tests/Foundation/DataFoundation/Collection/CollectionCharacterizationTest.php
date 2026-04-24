@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\DataFoundation\Collection;
 
 use Avax\DataFoundation\Collection;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

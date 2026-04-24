@@ -11,6 +11,7 @@ use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthCl
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
 use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 

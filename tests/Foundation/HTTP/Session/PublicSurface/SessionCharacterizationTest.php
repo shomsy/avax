@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Session\NullSession;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class SessionCharacterizationTest extends TestCase

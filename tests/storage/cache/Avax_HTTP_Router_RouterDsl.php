@@ -8,6 +8,9 @@ use Avax\HTTP\Router\RouterDsl;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
 use Avax\HTTP\Router\Support\FallbackManager;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
+use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RouterDsl::class,

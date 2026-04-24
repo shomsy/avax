@@ -16,7 +16,16 @@ while ( ! file_exists(filename: $rootDir . '/bootstrap.php') && $rootDir !== dir
 // Bootstrap application
 require_once $rootDir . '/bootstrap.php';
 
+use Avax\Database\Integrations\Console\MigrateCommand;
+use Avax\Database\Integrations\Console\MigrateRollbackCommand;
+use Avax\Database\Integrations\Console\MigrateStatusCommand;
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Migrations\Execution\Console\DatabaseCreateCommand;
 use Avax\Migrations\Execution\Console\DatabaseDropCommand;
 use Avax\Migrations\Execution\Console\DatabaseExportCommand;

@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\OAuth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethodPolicy;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

@@ -16,6 +16,7 @@ use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyProto
 use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

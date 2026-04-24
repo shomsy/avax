@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\HTTP\Response\Flows;
 
 use Avax\HTTP\Response\Flows\EmitResponse\EmitResponse;
 use Avax\HTTP\Response\Response;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;

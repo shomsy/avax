@@ -9,6 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\
 use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use stdClass;

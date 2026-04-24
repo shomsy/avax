@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionLifetime;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Tests\TestCase;
 use DateInterval;
 use DateMalformedStringException;
 use DateTimeImmutable;

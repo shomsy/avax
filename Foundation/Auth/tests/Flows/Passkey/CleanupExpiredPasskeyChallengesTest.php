@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\Identity\Passkey\Support\InMemoryPasskeyChalle
 use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
 use Avax\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

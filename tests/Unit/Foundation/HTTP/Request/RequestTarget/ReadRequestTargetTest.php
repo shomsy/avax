@@ -6,6 +6,7 @@ namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

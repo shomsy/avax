@@ -15,6 +15,7 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\NullLogger;

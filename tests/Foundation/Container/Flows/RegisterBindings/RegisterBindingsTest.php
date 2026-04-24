@@ -12,6 +12,8 @@ use Avax\Container\DependencyInjection\Configuration\AppFactory;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Tests\TestCase;
 use LogicException;
 use Override;
 use PHPUnit\Framework\TestCase;

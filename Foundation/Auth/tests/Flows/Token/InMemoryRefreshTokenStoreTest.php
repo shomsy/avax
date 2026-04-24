@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Flows\Token;
 
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

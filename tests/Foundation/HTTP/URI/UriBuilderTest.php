@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\URI;
 
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class UriBuilderTest extends TestCase

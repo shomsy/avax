@@ -12,6 +12,7 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\Container
 use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Container\InjectionReport;
 use Avax\Container\ScopeManagerInterface;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 

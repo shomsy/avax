@@ -17,6 +17,7 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshT
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ApproveClientRegistrationTest extends TestCase

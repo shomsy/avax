@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\DataFoundation\Arrhae;
 
 use ArrayIterator;
 use Avax\DataFoundation\Arrhae;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

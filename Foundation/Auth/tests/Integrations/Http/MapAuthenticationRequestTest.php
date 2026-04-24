@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Integrations\Http;
 
 use Avax\Auth\Integrations\Http\HttpAuthenticationInput;
 use Avax\Auth\Integrations\Http\MapAuthenticationRequest;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class MapAuthenticationRequestTest extends TestCase

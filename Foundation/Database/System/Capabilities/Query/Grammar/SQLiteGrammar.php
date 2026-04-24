@@ -8,6 +8,7 @@ use Avax\Database\System\Capabilities\Query\State\QueryState;
 use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Override;
 use RuntimeException;
+use SQLite3;
 
 /**
  * SQLite Grammar with support for:

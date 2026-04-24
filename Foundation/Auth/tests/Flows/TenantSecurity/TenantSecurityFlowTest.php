@@ -20,6 +20,7 @@ use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestSt
 use Avax\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class TenantSecurityFlowTest extends TestCase

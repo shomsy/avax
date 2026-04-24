@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

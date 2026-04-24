@@ -6,6 +6,7 @@ namespace Avax\Logging;
 
 use Avax\Exceptions\ValidationException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
+use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
 use JsonException;

@@ -16,6 +16,7 @@ use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use InvalidArgumentException;
 use Mockery;

@@ -22,6 +22,7 @@ use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use Avax\Container\DependencyInjection\Configuration\KernelConfigFactory;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class KernelConfigFactoryTest extends TestCase

@@ -6,6 +6,7 @@ namespace Avax\HTTP\Tests\Foundation\Request;
 
 use Avax\HTTP\Request\AbsoluteServerRequest;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;

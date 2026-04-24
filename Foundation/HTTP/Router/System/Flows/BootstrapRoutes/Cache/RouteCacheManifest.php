@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
 
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Disk\RouteFileLocator;
 use JsonException;
 use RuntimeException;
 use SensitiveParameter;

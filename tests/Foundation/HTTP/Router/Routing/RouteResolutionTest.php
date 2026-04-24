@@ -10,6 +10,7 @@ use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\URI\UriBuilder;
+use Avax\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;

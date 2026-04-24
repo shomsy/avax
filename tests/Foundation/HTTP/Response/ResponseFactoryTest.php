@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Response;
 
 use Avax\HTTP\Response\ResponseFactory;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;

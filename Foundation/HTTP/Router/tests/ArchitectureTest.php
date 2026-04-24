@@ -22,6 +22,7 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RoutePipeline;
 use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
 use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionNamedType;

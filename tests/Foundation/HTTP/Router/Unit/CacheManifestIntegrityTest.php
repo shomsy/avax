@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Paths;
 
 use Avax\Filesystem\Paths\ChangePathPermissions;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

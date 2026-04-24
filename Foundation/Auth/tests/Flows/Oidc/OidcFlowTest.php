@@ -30,6 +30,7 @@ use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 

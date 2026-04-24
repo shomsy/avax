@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\Session;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\RedisSessionRegistry;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Redis;

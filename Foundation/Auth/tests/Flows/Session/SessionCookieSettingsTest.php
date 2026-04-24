@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Flows\Session;
 
 use Avax\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings;
+use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

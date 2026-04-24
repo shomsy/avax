@@ -7,6 +7,8 @@ namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Strategies;
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStateMachine;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionStateMachineTest extends TestCase

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\Stress;
 
+use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 

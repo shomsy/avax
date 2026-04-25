@@ -18,13 +18,13 @@ final readonly class Scheme implements Stringable
 
     public function __construct(string $scheme)
     {
-        $this->scheme = $this->validate($scheme);
+        $this->scheme = $this->validate(scheme: $scheme);
     }
 
     private function validate(string $scheme) : string
     {
         if ($scheme === '' || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
-            throw new InvalidArgumentException('Invalid scheme: ' . $scheme);
+            throw new InvalidArgumentException(message: 'Invalid scheme: ' . $scheme);
         }
 
         return strtolower($scheme);

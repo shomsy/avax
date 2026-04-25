@@ -18,7 +18,7 @@ final readonly class Pipeline
         private array $pipes = [],
     ) {}
 
-    public function pipe(callable $callback, ?string $name = null) : self
+    public function pipe(callable $callback, string|null $name = null) : self
     {
         $pipes   = $this->pipes;
         $pipes[] = Pipe::from(callback: $callback, name: $name);
@@ -35,7 +35,7 @@ final readonly class Pipeline
         $value = $input;
 
         foreach ($this->pipes as $pipe) {
-            $value = $pipe($value);
+            $value = $pipe(value: $value);
         }
 
         return $value;

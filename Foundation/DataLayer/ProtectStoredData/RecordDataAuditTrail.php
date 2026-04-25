@@ -37,7 +37,7 @@ final readonly class RecordDataAuditTrail
     ) : DataAuditEntry
     {
         if (! $this->policy->auditEnabled) {
-            throw new InvalidArgumentException('Auditing is not enabled.');
+            throw new InvalidArgumentException(message: 'Auditing is not enabled.');
         }
 
         return DataAuditEntry::create(

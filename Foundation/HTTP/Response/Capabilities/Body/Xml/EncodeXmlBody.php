@@ -15,7 +15,7 @@ final class EncodeXmlBody
             return $xml;
         }
 
-        $rootElement = new ValidateXmlElementName()($rootElement);
+        $rootElement = new ValidateXmlElementName()(elementName: $rootElement);
         $document    = new SimpleXMLElement(data: "<{$rootElement}/>");
         $this->append(node: $document, payload: $xml);
 
@@ -31,7 +31,7 @@ final class EncodeXmlBody
     {
         foreach ($payload as $key => $value) {
             $elementName = is_string(value: $key)
-                ? new ValidateXmlElementName()($key)
+                ? new ValidateXmlElementName()(elementName: $key)
                 : 'item';
 
             if (is_array(value: $value)) {

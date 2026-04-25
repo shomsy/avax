@@ -12,9 +12,9 @@ final class SessionAuditTest extends TestCase
 {
     public function test_record_does_nothing_without_logger() : void
     {
-        $audit = new SessionAudit(null);
+        $audit = new SessionAudit(logger: null);
 
-        $audit->record('test.event');
+        $audit->record(event: 'test.event');
 
         $this->assertTrue(true);
     }
@@ -22,7 +22,7 @@ final class SessionAuditTest extends TestCase
     public function test_record_with_mock_logger() : void
     {
         $logger = new class {
-            public ?string $message = null;
+            public string|null $message = null;
 
             public function info($message, $context = [])
             {
@@ -30,8 +30,8 @@ final class SessionAuditTest extends TestCase
             }
         };
 
-        $audit = new SessionAudit($logger);
-        $audit->record('session.test', ['key' => 'value']);
+        $audit = new SessionAudit(logger: $logger);
+        $audit->record(event: 'session.test', data: ['key' => 'value']);
 
         $this->assertNotNull($logger->message);
     }

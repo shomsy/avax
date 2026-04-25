@@ -20,22 +20,22 @@ final readonly class AccelerateDataReads
 
     public function accelerate(array $queryContext) : ReadAccelerationPlan
     {
-        $index = $this->chooseDataIndex->choose($queryContext);
+        $index = $this->chooseDataIndex->choose(queryContext: $queryContext);
 
-        $cachePlan  = $this->useReadCache->plan($queryContext);
-        $bloomPlan  = $this->useBloomFilter->plan($queryContext);
-        $projection = $this->chooseReadProjection->choose($queryContext);
+        $cachePlan  = $this->useReadCache->plan(queryContext: $queryContext);
+        $bloomPlan  = $this->useBloomFilter->plan(queryContext: $queryContext);
+        $projection = $this->chooseReadProjection->choose(queryContext: $queryContext);
 
         return new ReadAccelerationPlan(
             recommendedIndex: $index,
             cachePlan       : $cachePlan,
             bloomFilterPlan : $bloomPlan,
             projection      : $projection,
-            estimatedSpeedup: $this->estimateSpeedup($index, $cachePlan, $bloomPlan)
+            estimatedSpeedup: $this->estimateSpeedup(index: $index, cache: $cachePlan, bloom: $bloomPlan)
         );
     }
 
-    private function estimateSpeedup(?ChooseDataIndex $index, UseReadCache $cache, UseBloomFilter $bloom) : float
+    private function estimateSpeedup(ChooseDataIndex|null $index, UseReadCache $cache, UseBloomFilter $bloom) : float
     {
         $speedup = 1.0;
 

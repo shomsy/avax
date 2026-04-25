@@ -26,12 +26,12 @@ final readonly class CapTradeoff
 
     public static function availabilityFirst(int $timeoutMs = 5000) : self
     {
-        return new self(CapTradeoffPreference::AVAILABILITY, $timeoutMs, true);
+        return new self(preference: CapTradeoffPreference::AVAILABILITY, timeoutMs: $timeoutMs, allowStaleReads: true);
     }
 
     public static function consistencyFirst() : self
     {
-        return new self(CapTradeoffPreference::CONSISTENCY, 0, false);
+        return new self(preference: CapTradeoffPreference::CONSISTENCY, timeoutMs: 0, allowStaleReads: false);
     }
 
     public function shouldFailover(int $partitionDurationMs) : bool

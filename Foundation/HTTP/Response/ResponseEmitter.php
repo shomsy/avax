@@ -19,6 +19,6 @@ final class ResponseEmitter
 
     public function emit(ResponseInterface $response) : void
     {
-        new EmitResponse()($response);
+        new EmitResponse()(response: $response);
     }
 }

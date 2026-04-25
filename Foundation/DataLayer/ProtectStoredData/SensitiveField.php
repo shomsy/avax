@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\ProtectStoredData;
 
-use InvalidArgumentException;
-
 enum SensitivityLevel: string
 {
     case PUBLIC       = 'public';
@@ -30,17 +28,17 @@ final readonly class SensitiveField
 
     public static function password() : self
     {
-        return new self('password', SensitivityLevel::RESTRICTED, 'authentication', true);
+        return new self(name: 'password', level: SensitivityLevel::RESTRICTED, category: 'authentication', requiresAudit: true);
     }
 
     public static function ssn() : self
     {
-        return new self('ssn', SensitivityLevel::RESTRICTED, 'personally_identifiable', true);
+        return new self(name: 'ssn', level: SensitivityLevel::RESTRICTED, category: 'personally_identifiable', requiresAudit: true);
     }
 
     public static function email() : self
     {
-        return new self('email', SensitivityLevel::CONFIDENTIAL, 'contact', false);
+        return new self(name: 'email', level: SensitivityLevel::CONFIDENTIAL, category: 'contact', requiresAudit: false);
     }
 
     public function isRestricted() : bool

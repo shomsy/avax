@@ -21,7 +21,7 @@ final readonly class ChooseCompensationSteps
      */
     public function choose(SagaInstance $saga, CompensationPlan $plan) : array
     {
-        $this->validateSagaInstance($saga);
+        $this->validateSagaInstance(saga: $saga);
 
         $completedSteps = $saga->completedSteps;
 
@@ -31,18 +31,18 @@ final readonly class ChooseCompensationSteps
 
         $definitions = $plan->getStepDefinitions();
 
-        return $this->selectCompensationSteps($completedSteps, $definitions);
+        return $this->selectCompensationSteps(completedSteps: $completedSteps, definitions: $definitions);
     }
 
     private function validateSagaInstance(SagaInstance $saga) : void
     {
         if (empty($saga->id)) {
-            throw new InvalidArgumentException('Saga instance ID cannot be empty.');
+            throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 
         if ($saga->status->value === SagaInstanceStatus::PENDING->value) {
             throw new InvalidArgumentException(
-                sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id)
+                message: sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id)
             );
         }
     }
@@ -66,7 +66,7 @@ final readonly class ChooseCompensationSteps
                 continue;
             }
 
-            if (! $this->stepHasCompensation($stepDef)) {
+            if (! $this->stepHasCompensation(stepDef: $stepDef)) {
                 continue;
             }
 

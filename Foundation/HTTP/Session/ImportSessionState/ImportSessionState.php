@@ -10,5 +10,6 @@ final class ImportSessionState
 {
     private SessionRecovery $recovery;
     public function __construct(SessionRecovery $recovery) { $this->recovery = $recovery; }
-    public function handle(string $payload) : bool { return $this->recovery->import($payload); }
+
+    public function handle(string $payload) : bool { return $this->recovery->import(payload: $payload); }
 }

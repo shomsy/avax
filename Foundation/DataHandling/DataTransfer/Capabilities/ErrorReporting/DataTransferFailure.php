@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataHandling\DataTransfer\Capabilities\ErrorReporting;
 
 use Avax\DataHandling\DataTransfer\DataTransferException;
+use SensitiveParameter;
 use Throwable;
 
 class DataTransferFailure extends DataTransferException
@@ -30,17 +31,17 @@ class DataTransferFailure extends DataTransferException
     }
 
     public static function withViolation(
-        string         $path,
-        string         $code,
-        string         $message,
-        string|null    $expectedType = null,
-        string|null    $actualType = null,
-        string|null    $failedRule = null,
-        Throwable|null $previous = null,
+        string                       $path,
+        #[SensitiveParameter] string $code,
+        string                       $message,
+        string|null                  $expectedType = null,
+        string|null                  $actualType = null,
+        string|null                  $failedRule = null,
+        Throwable|null               $previous = null,
     ) : self
     {
         return new self(
-            violations: DataTransferViolations::from([
+            violations: DataTransferViolations::from(violations: [
                                                          new DataTransferViolation(
                                                              path        : $path,
                                                              code        : $code,

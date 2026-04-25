@@ -24,7 +24,7 @@ final readonly class RetentionPolicy
     )
     {
         if ($this->period < 0) {
-            throw new InvalidArgumentException('Retention period cannot be negative.');
+            throw new InvalidArgumentException(message: 'Retention period cannot be negative.');
         }
     }
 
@@ -35,17 +35,17 @@ final readonly class RetentionPolicy
 
     public static function standard() : self
     {
-        return new self(7, RetentionPeriodUnit::YEARS, true, false);
+        return new self(period: 7, unit: RetentionPeriodUnit::YEARS, archiveAfter: true, permanent: false);
     }
 
     public static function compliant() : self
     {
-        return new self(10, RetentionPeriodUnit::YEARS, true, false);
+        return new self(period: 10, unit: RetentionPeriodUnit::YEARS, archiveAfter: true, permanent: false);
     }
 
     public static function permanent() : self
     {
-        return new self(0, RetentionPeriodUnit::YEARS, false, true);
+        return new self(period: 0, unit: RetentionPeriodUnit::YEARS, archiveAfter: false, permanent: true);
     }
 
     public function calculateRetentionDays() : int

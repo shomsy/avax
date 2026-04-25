@@ -45,7 +45,7 @@ final class RouteGroupContext
     public function applyTo(RouteBuilder $builder) : RouteBuilder
     {
         if (! empty($this->prefix)) {
-            $builder->prefix($this->prefix);
+            $builder->prefix(prefix: $this->prefix);
         }
 
         if (! empty($this->namePrefix)) {
@@ -53,7 +53,7 @@ final class RouteGroupContext
         }
 
         if ($this->domain !== null) {
-            $builder->domain($this->domain);
+            $builder->domain(domain: $this->domain);
         }
 
         if ($this->authorization !== null) {

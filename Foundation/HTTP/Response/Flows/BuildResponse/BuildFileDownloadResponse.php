@@ -9,10 +9,11 @@ use Avax\HTTP\Response\Capabilities\Downloads\DetectDownloadMediaType;
 use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use SensitiveParameter;
 
 final class BuildFileDownloadResponse
 {
-    public function __invoke(string $filePath, string|null $downloadName = null, int|null $status = null, array $headers = []) : ResponseInterface
+    public function __invoke(string $filePath, string|null $downloadName = null, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
         if (! is_file(filename: $filePath) || ! is_readable(filename: $filePath)) {
@@ -24,8 +25,8 @@ final class BuildFileDownloadResponse
         return new BuildResponse()(
             status : $status,
             headers: [
-                         'Content-Type'        => new DetectDownloadMediaType()($filePath),
-                         'Content-Disposition' => new BuildAttachmentDisposition()($downloadName),
+                         'Content-Type'        => new DetectDownloadMediaType()(path: $filePath),
+                         'Content-Disposition' => new BuildAttachmentDisposition()(downloadName: $downloadName),
                          'Content-Length'      => (string) filesize(filename: $filePath),
                          ...$headers,
                      ],

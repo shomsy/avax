@@ -43,7 +43,7 @@ class RequestRegressionTest extends TestCase
         return new Request(
             session      : null,
             serverParams : $serverParams,
-            uri          : new Uri('http://localhost'),
+            uri          : new Uri(uri: 'http://localhost'),
             body         : new ResponseStreamFactory()->createEmptyStream(),
             queryParams  : [],
             parsedBody   : [],
@@ -80,7 +80,7 @@ class RequestRegressionTest extends TestCase
     public function test_request_target_must_not_blindly_follow_uri_path_mutation() : void
     {
         $request = $this->createBlankOldRequest()->withRequestTarget(requestTarget: '/explicit-target');
-        $newUri  = new Uri('https://example.com/new-path');
+        $newUri = new Uri(scheme: 'https://example.com/new-path');
 
         $requestWithNewUri = $request->withUri(uri: $newUri);
 

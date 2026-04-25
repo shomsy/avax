@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccessPersistentData;
 
+use DateTimeInterface;
 use PDO;
 use PDOStatement;
 use Throwable;
@@ -21,29 +22,29 @@ final readonly class ExecuteRawDataQuery
         $pdo       = null;
 
         try {
-            $pdo = $this->useDatabaseRuntime->connection($request->connectionName);
+            $pdo = $this->useDatabaseRuntime->connection(name: $request->connectionName);
 
             if ($request->timeout !== null) {
-                $pdo->setAttribute(PDO::ATTR_TIMEOUT, $request->timeout);
+                $pdo->setAttribute(attribute: PDO::ATTR_TIMEOUT, value: $request->timeout);
             }
 
             if ($request->useTransaction && $request->transactionIsolation !== null) {
-                $pdo->exec(sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql($request->transactionIsolation)));
+                $pdo->exec(statement: sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql(level: $request->transactionIsolation)));
                 $pdo->beginTransaction();
             }
 
-            $sql       = $this->prepareSql($request);
-            $statement = $pdo->prepare($sql);
-            $statement = $this->configureStatement($statement, $request);
+            $sql       = $this->prepareSql(request: $request);
+            $statement = $pdo->prepare(query: $sql);
+            $statement = $this->configureStatement(statement: $statement, request: $request);
 
-            $bound = $statement->execute($this->normalizeBindings($request->bindings));
+            $bound = $statement->execute(params: $this->normalizeBindings(bindings: $request->bindings));
 
             if (! $bound) {
                 $error = $statement->errorInfo();
                 throw new PersistentDataFailure(
-                    sprintf('SQL execution failed: %s', $error[2] ?? 'Unknown error'),
-                    $error[0] ?? 'HY000',
-                    $error[1] ?? 0
+                    message : sprintf('SQL execution failed: %s', $error[2] ?? 'Unknown error'),
+                    code    : $error[0] ?? 'HY000',
+                    previous: $error[1] ?? 0
                 );
             }
 
@@ -62,7 +63,7 @@ final readonly class ExecuteRawDataQuery
             $affectedRows = $statement->rowCount();
             $lastInsertId = $pdo->lastInsertId();
 
-            $warnings = $this->fetchWarnings($statement);
+            $warnings = $this->fetchWarnings(statement: $statement);
 
             if ($request->useTransaction && $pdo->inTransaction()) {
                 if ($request->operation === PersistentDataOperation::INSERT ||
@@ -95,15 +96,15 @@ final readonly class ExecuteRawDataQuery
             $executionTime = (microtime(true) - $startTime) * 1000;
 
             return PersistentDataResult::failure(
-                $request->operation,
-                new PersistentDataFailure(
+                operation      : $request->operation,
+                failure        : new PersistentDataFailure(
                              $e->getMessage(),
                              (string) ($e->getCode() ?? 'HY000'),
                              $e->getLine(),
                              $e,
                     request: $request
                 ),
-                $executionTime
+                executionTimeMs: $executionTime
             );
         }
     }
@@ -130,8 +131,8 @@ final readonly class ExecuteRawDataQuery
         foreach ($bindings as $key => $value) {
             if (is_bool($value)) {
                 $normalized[$key] = $value ? 1 : 0;
-            } elseif ($value instanceof \DateTimeInterface) {
-                $normalized[$key] = $value->format('Y-m-d H:i:s');
+            } elseif ($value instanceof DateTimeInterface) {
+                $normalized[$key] = $value->format(format: 'Y-m-d H:i:s');
             } elseif (is_array($value)) {
                 $normalized[$key] = json_encode($value);
             } else {
@@ -147,7 +148,7 @@ final readonly class ExecuteRawDataQuery
         if ($request->fetchMode !== null) {
             $statement->setFetchMode($request->fetchMode, $request->fetchCtorArg1, $request->fetchCtorArg2);
         } else {
-            $statement->setFetchMode(self::DEFAULT_FETCH_MODE);
+            $statement->setFetchMode(mode: self::DEFAULT_FETCH_MODE);
         }
 
         return $statement;

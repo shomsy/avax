@@ -168,7 +168,7 @@ final class Session implements SessionInterface
     public function transaction(callable $callback) : void
     {
         if ($this->recovery !== null) {
-            $this->recovery->transaction($callback);
+            $this->recovery->transaction(operation: $callback);
             return;
         }
 
@@ -184,6 +184,6 @@ final class Session implements SessionInterface
 
     public function for(string $context) : SessionScope
     {
-        return $this->scope($context);
+        return $this->scope(namespace: $context);
     }
 }

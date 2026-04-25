@@ -14,32 +14,32 @@ final class ReadWriteFlowTest extends TestCase
     public function test_read_value_from_store() : void
     {
         $store = new ArraySessionStore();
-        $store->put('user_id', 42);
+        $store->put(key: 'user_id', value: 42);
 
-        $reader = new ReadSessionValue($store);
-        $result = $reader->handle('user_id');
+        $reader = new ReadSessionValue(store: $store);
+        $result = $reader->handle(key: 'user_id');
 
-        $this->assertSame(42, $result);
+        $this->assertSame(expected: 42, actual: $result);
     }
 
     public function test_write_value_to_store() : void
     {
         $store = new ArraySessionStore();
 
-        $writer = new WriteSessionValue($store);
-        $writer->handle('user_id', 42);
+        $writer = new WriteSessionValue(store: $store);
+        $writer->handle(key: 'user_id', value: 42);
 
-        $this->assertSame(42, $store->get('user_id'));
+        $this->assertSame(expected: 42, actual: $store->get(key: 'user_id'));
     }
 
     public function test_write_with_ttl() : void
     {
         $store = new ArraySessionStore();
 
-        $writer = new WriteSessionValue($store);
-        $writer->handle('token', 'abc', 3600);
+        $writer = new WriteSessionValue(store: $store);
+        $writer->handle(key: 'token', value: 'abc', ttl: 3600);
 
-        $this->assertSame('abc', $store->get('token'));
-        $this->assertIsInt($store->get('_ttl.token'));
+        $this->assertSame(expected: 'abc', actual: $store->get(key: 'token'));
+        $this->assertIsInt(actual: $store->get(key: '_ttl.token'));
     }
 }

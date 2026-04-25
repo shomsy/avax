@@ -15,7 +15,7 @@ final readonly class DataPartitionRoute
     )
     {
         if ($this->partitionCount < 1) {
-            throw new InvalidArgumentException('Partition count must be at least 1.');
+            throw new InvalidArgumentException(message: 'Partition count must be at least 1.');
         }
     }
 
@@ -28,19 +28,19 @@ final readonly class DataPartitionRoute
     {
         $map = range(0, $partitions - 1);
 
-        return new self($key, $partitions, $map);
+        return new self(partitionKey: $key, partitionCount: $partitions, partitionMap: $map);
     }
 
     public function route(string $key) : PartitionRouteResult
     {
-        $hash        = $this->hashKey($key);
+        $hash = $this->hashKey(key: $key);
         $index       = $hash % $this->partitionCount;
         $partitionId = $this->partitionMap[$index] ?? $index;
 
         return new PartitionRouteResult(
             partitionId: (string) $partitionId,
             index      : $index,
-            replicas   : $this->getReplicas($partitionId)
+            replicas   : $this->getReplicas(partitionId: $partitionId)
         );
     }
 

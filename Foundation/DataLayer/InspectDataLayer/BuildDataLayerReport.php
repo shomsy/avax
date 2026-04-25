@@ -15,7 +15,7 @@ final readonly class BuildDataLayerReport
 
     public function build(array $events, array $measurements) : DataLayerReport
     {
-        return DataLayerReport::create($events, $measurements);
+        return DataLayerReport::create(events: $events, measurements: $measurements);
     }
 
     public function toMetadata() : array

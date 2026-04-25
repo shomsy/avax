@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity\SessionFingerprint;
 
+use SensitiveParameter;
+
 final class SessionFingerprint
 {
     public function __construct(
-        private string $userAgent,
-        private string $ipAddress,
-        private string $acceptLanguage
+        private string                       $userAgent,
+        #[SensitiveParameter] private string $ipAddress,
+        private string                       $acceptLanguage
     ) {}
 
     public static function generate() : self
     {
         return new self(
-            $_SERVER['HTTP_USER_AGENT'] ?? '',
-            $_SERVER['REMOTE_ADDR'] ?? '',
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''
+            userAgent     : $_SERVER['HTTP_USER_AGENT'] ?? '',
+            ipAddress     : $_SERVER['REMOTE_ADDR'] ?? '',
+            acceptLanguage: $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''
         );
     }
 

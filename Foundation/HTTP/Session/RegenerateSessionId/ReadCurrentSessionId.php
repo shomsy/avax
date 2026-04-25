@@ -17,7 +17,7 @@ final class ReadCurrentSessionId
 
     public function handle() : string
     {
-        return $this->store->get('_session_id', '') ?: $this->generate();
+        return $this->store->get(key: '_session_id', default: '') ?: $this->generate();
     }
 
     private function generate() : string

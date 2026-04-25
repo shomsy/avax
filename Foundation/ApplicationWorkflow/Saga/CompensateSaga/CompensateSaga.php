@@ -6,9 +6,13 @@ namespace Avax\ApplicationWorkflow\Saga\CompensateSaga;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\InspectSaga;
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use DateTimeImmutable;
+use DateTimeInterface;
+use Throwable;
 
 final readonly class CompensateSaga
 {
@@ -30,11 +34,11 @@ final readonly class CompensateSaga
         if ($instance->status !== SagaInstanceStatus::FAILED &&
             $instance->status !== SagaInstanceStatus::COMPENSATING) {
             throw new SagaCompensationFailure(
-                sprintf('Saga %s is not in failed state, cannot compensate.', $instance->id)
+                message: sprintf('Saga %s is not in failed state, cannot compensate.', $instance->id)
             );
         }
 
-        $compensationSteps = $this->chooseCompensationSteps($definition, $instance);
+        $compensationSteps = $this->chooseCompensationSteps(definition: $definition, instance: $instance);
 
         $results = [];
         foreach ($compensationSteps as $stepName => $stepDef) {
@@ -43,22 +47,22 @@ final readonly class CompensateSaga
             try {
                 $compensationResult = $compensationRunner($stepDef, $previousResult);
                 $results[$stepName] = CompensationStepResult::success($stepName, $compensationResult);
-            } catch (\Throwable $e) {
-                $results[$stepName] = CompensationStepResult::failure($stepName, $e->getMessage());
+            } catch (Throwable $e) {
+                $results[$stepName] = CompensationStepResult::failure(stepName: $stepName, error: $e->getMessage());
             }
         }
 
-        if ($this->hasFailedCompensations($results)) {
-            return $this->markAsUnrecoverable($instance);
+        if ($this->hasFailedCompensations(results: $results)) {
+            return $this->markAsUnrecoverable(instance: $instance);
         }
 
         $compensated = $instance->compensate();
-        $this->storeSagaState->save($compensated);
+        $this->storeSagaState->save(instance: $compensated);
 
         $this->inspectSaga->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::compensated(
-                $instance->id,
-                $instance->definitionName
+            event: SagaRuntimeEvent::compensated(
+                     sagaId  : $instance->id,
+                     sagaName: $instance->definitionName
             )
         );
 
@@ -73,8 +77,8 @@ final readonly class CompensateSaga
         $steps = [];
 
         foreach (array_reverse($definition->stepOrder) as $stepName) {
-            $stepDef = $definition->getStep($stepName);
-            if ($stepDef?->hasCompensation() && $this->wasCompleted($instance, $stepName)) {
+            $stepDef = $definition->getStep(name: $stepName);
+            if ($stepDef?->hasCompensation() && $this->wasCompleted(instance: $instance, stepName: $stepName)) {
                 $steps[$stepName] = $stepDef;
             }
         }
@@ -100,7 +104,7 @@ final readonly class CompensateSaga
 
     private function markAsUnrecoverable(SagaInstance $instance) : SagaInstance
     {
-        return $instance->fail('COMPENSATION_FAILED');
+        return $instance->fail(error: 'COMPENSATION_FAILED');
     }
 }
 
@@ -108,18 +112,18 @@ final readonly class CompensationStepResult
 {
     public string              $stepName;
     public bool                $success;
-    public array               $output;
-    public ?string             $error;
-    public float               $durationMs;
-    public ?\DateTimeImmutable $completedAt;
+    public array                  $output;
+    public string|null            $error;
+    public float                  $durationMs;
+    public DateTimeImmutable|null $completedAt;
 
     private function __construct(
-        string              $stepName,
-        bool                $success,
-        array|null $output = null,
-        ?string             $error = null,
-        float|null $durationMs = null,
-        ?\DateTimeImmutable $completedAt = null
+        string                 $stepName,
+        bool                   $success,
+        array|null             $output = null,
+        string|null            $error = null,
+        float|null             $durationMs = null,
+        DateTimeImmutable|null $completedAt = null
     )
     {
         $output     ??= [];
@@ -145,7 +149,7 @@ final readonly class CompensationStepResult
             success    : true,
             output     : $output,
             durationMs : $durationMs,
-            completedAt: new \DateTimeImmutable()
+            completedAt: new DateTimeImmutable()
         );
     }
 
@@ -160,7 +164,7 @@ final readonly class CompensationStepResult
             success    : false,
             error      : $error,
             durationMs : $durationMs,
-            completedAt: new \DateTimeImmutable()
+            completedAt: new DateTimeImmutable()
         );
     }
 
@@ -172,7 +176,7 @@ final readonly class CompensationStepResult
             'output'       => $this->output,
             'error'        => $this->error,
             'duration_ms'  => $this->durationMs,
-            'completed_at' => $this->completedAt?->format(\DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }
@@ -180,15 +184,15 @@ final readonly class CompensationStepResult
 final readonly class CompensationPlan
 {
     public string  $sagaId;
-    public array   $steps;
-    public ?string $failedOnStep;
-    public bool    $isRecoverable;
+    public array       $steps;
+    public string|null $failedOnStep;
+    public bool        $isRecoverable;
 
     private function __construct(
-        string  $sagaId,
-        array   $steps,
-        ?string $failedOnStep,
-        bool    $isRecoverable
+        string      $sagaId,
+        array       $steps,
+        string|null $failedOnStep,
+        bool        $isRecoverable
     )
     {
         $this->sagaId        = $sagaId;
@@ -200,7 +204,7 @@ final readonly class CompensationPlan
     public static function create(
         string  $sagaId,
         array   $steps,
-        ?string $failedOnStep
+        string|null $failedOnStep
     ) : self
     {
         return new self(

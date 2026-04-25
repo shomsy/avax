@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataLayer\ProtectStoredData;
 
 use InvalidArgumentException;
+use SensitiveParameter;
 
 final readonly class ProtectStoredData
 {
@@ -12,14 +13,14 @@ final readonly class ProtectStoredData
     {
         if ($boundary->isRequired && $tenantId === null) {
             throw new InvalidArgumentException(
-                sprintf('Tenant ID is required for boundary %s', $boundary->id)
+                message: sprintf('Tenant ID is required for boundary %s', $boundary->id)
             );
         }
 
-        return $boundary->toWhereClause($tenantId);
+        return $boundary->toWhereClause(tenantId: $tenantId);
     }
 
-    public function classifySensitiveField(string $fieldName) : ?SensitiveField
+    public function classifySensitiveField(string $fieldName) : SensitiveField|null
     {
         $normalized = strtolower($fieldName);
 
@@ -53,17 +54,17 @@ final readonly class ProtectStoredData
         $mask = $field->maskPattern();
 
         if ($field === SensitiveField::EMAIL && is_string($value)) {
-            return $this->maskEmail($value);
+            return $this->maskEmail(email: $value);
         }
 
         if ($field === SensitiveField::PHONE && is_string($value)) {
-            return $this->maskPhone($value);
+            return $this->maskPhone(phone: $value);
         }
 
         return $mask;
     }
 
-    public function maskEmail(string $email) : string
+    public function maskEmail(#[SensitiveParameter] string $email) : string
     {
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return '****';
@@ -89,7 +90,7 @@ final readonly class ProtectStoredData
         return sprintf('%s@%s', $maskedLocal, $maskedDomain);
     }
 
-    public function maskPhone(string $phone) : string
+    public function maskPhone(#[SensitiveParameter] string $phone) : string
     {
         $digits = preg_replace('/\D/', '', $phone);
 
@@ -101,21 +102,21 @@ final readonly class ProtectStoredData
     }
 
     public function recordAuditEntry(
-        string  $action,
-        string  $table,
-        ?string $recordId,
-        array   $oldValues,
-        array   $newValues,
-        string  $actorId,
-        array   $options = []
+        string      $action,
+        string      $table,
+        string|null $recordId,
+        array       $oldValues,
+        array       $newValues,
+        string      $actorId,
+        array       $options = []
     ) : DataAuditEntry
     {
         return DataAuditEntry::create(
             action   : $action,
             table    : $table,
             recordId : $recordId,
-            oldValues: $this->filterSensitiveValues($oldValues),
-            newValues: $this->filterSensitiveValues($newValues),
+            oldValues: $this->filterSensitiveValues(values: $oldValues),
+            newValues: $this->filterSensitiveValues(values: $newValues),
             actorId  : $actorId,
             options  : $options
         );
@@ -126,10 +127,10 @@ final readonly class ProtectStoredData
         $filtered = [];
 
         foreach ($values as $key => $value) {
-            $sensitive = $this->classifySensitiveField($key);
+            $sensitive = $this->classifySensitiveField(fieldName: $key);
 
             if ($sensitive !== null) {
-                $filtered[$key] = $this->maskSensitiveData($value, $sensitive);
+                $filtered[$key] = $this->maskSensitiveData(value: $value, field: $sensitive);
             } else {
                 $filtered[$key] = $value;
             }
@@ -140,9 +141,9 @@ final readonly class ProtectStoredData
 
     public function requireDataAccessPolicy(DataAccessPolicy $policy, string $operation) : void
     {
-        if (! $policy->isOperationAllowed($operation)) {
+        if (! $policy->isOperationAllowed(operation: $operation)) {
             throw new InvalidArgumentException(
-                sprintf('Operation %s is not allowed by policy %s', $operation, $policy->name)
+                message: sprintf('Operation %s is not allowed by policy %s', $operation, $policy->name)
             );
         }
     }

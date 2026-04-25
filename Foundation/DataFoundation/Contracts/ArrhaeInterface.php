@@ -83,7 +83,7 @@ interface ArrhaeInterface extends ArrayAccess, IteratorAggregate, Countable
 
     public function whereNotNull(string $key) : static;
 
-    public function sort(?callable $callback = null) : static;
+    public function sort(callable|null $callback = null) : static;
 
     public function reverse() : static;
 

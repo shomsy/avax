@@ -19,12 +19,12 @@ final readonly class RequireDataAccessPolicy
 
     public static function readOnly() : self
     {
-        return new self('read_only', ['read'], true);
+        return new self(policyName: 'read_only', requiredPermissions: ['read'], enforce: true);
     }
 
     public static function admin() : self
     {
-        return new self('admin', ['read', 'write', 'delete', 'admin'], true);
+        return new self(policyName: 'admin', requiredPermissions: ['read', 'write', 'delete', 'admin'], enforce: true);
     }
 
     public function checkPermissions(array $userPermissions) : bool

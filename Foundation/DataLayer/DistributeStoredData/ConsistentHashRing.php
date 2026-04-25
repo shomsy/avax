@@ -15,7 +15,7 @@ final readonly class ConsistentHashRing
     )
     {
         if ($this->virtualNodes < 1) {
-            throw new InvalidArgumentException('Virtual nodes must be at least 1.');
+            throw new InvalidArgumentException(message: 'Virtual nodes must be at least 1.');
         }
     }
 
@@ -31,14 +31,14 @@ final readonly class ConsistentHashRing
         foreach ($nodes as $node) {
             for ($i = 0; $i < $virtualNodes; $i++) {
                 $key         = sprintf('%s-%d', $node, $i);
-                $hash        = $this->hash($key);
+                $hash = $this->hash(key: $key);
                 $ring[$hash] = $node;
             }
         }
 
         ksort($ring, SORT_NUMERIC);
 
-        return new self($virtualNodes, $nodes, $ring);
+        return new self(virtualNodes: $virtualNodes, nodes: $nodes, ring: $ring);
     }
 
     private function hash(string $key) : int
@@ -48,7 +48,7 @@ final readonly class ConsistentHashRing
 
     public function getNode(string $key) : string
     {
-        $hash = $this->hash($key);
+        $hash = $this->hash(key: $key);
 
         foreach ($this->ring as $ringHash => $node) {
             if ($ringHash >= $hash) {
@@ -63,14 +63,14 @@ final readonly class ConsistentHashRing
     {
         $newNodes = [...$this->nodes, $node];
 
-        return self::create($newNodes, $this->virtualNodes);
+        return self::create(nodes: $newNodes, virtualNodes: $this->virtualNodes);
     }
 
     public function removeNode(string $node) : self
     {
         $newNodes = array_filter($this->nodes, fn ($n) => $n !== $node);
 
-        return self::create(array_values($newNodes), $this->virtualNodes);
+        return self::create(nodes: array_values($newNodes), virtualNodes: $this->virtualNodes);
     }
 
     public function toMetadata() : array

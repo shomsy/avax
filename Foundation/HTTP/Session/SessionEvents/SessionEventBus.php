@@ -12,10 +12,10 @@ final class SessionEventBus
     {
         $wrapper = function (...$args) use ($callback, $event, &$wrapper) {
             $callback(...$args);
-            $this->removeListener($event, $wrapper);
+            $this->removeListener(event: $event, callback: $wrapper);
         };
 
-        $this->listen($event, $wrapper);
+        $this->listen(event: $event, callback: $wrapper);
     }
 
     public function removeListener(string $event, callable $callback) : void
@@ -42,7 +42,7 @@ final class SessionEventBus
         }
 
         foreach ($this->listeners[$event] as $callback) {
-            $callback(new SessionEvent($event, $data));
+            $callback(new SessionEvent(name: $event, data: $data));
         }
     }
 }

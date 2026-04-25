@@ -17,6 +17,6 @@ final class RefreshSessionActivity
 
     public function handle() : void
     {
-        $this->store->put('_last_activity', time());
+        $this->store->put(key: '_last_activity', value: time());
     }
 }

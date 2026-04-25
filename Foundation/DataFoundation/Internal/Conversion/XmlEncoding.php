@@ -16,7 +16,7 @@ final readonly class XmlEncoding
     public static function encode(array $value, string $rootElement = 'root') : string
     {
         try {
-            $xml = new SimpleXMLElement("<{$rootElement}/>");
+            $xml = new SimpleXMLElement(data: "<{$rootElement}/>");
             self::append(data: $value, xml: $xml);
 
             return $xml->asXML() ?: '';
@@ -31,12 +31,12 @@ final readonly class XmlEncoding
             $nodeName = is_string($key) ? $key : 'item';
 
             if (is_array($item)) {
-                $child = $xml->addChild($nodeName);
+                $child = $xml->addChild(qualifiedName: $nodeName);
                 self::append(data: $item, xml: $child);
                 continue;
             }
 
-            $xml->addChild($nodeName, htmlspecialchars((string) $item));
+            $xml->addChild(qualifiedName: $nodeName, value: htmlspecialchars((string) $item));
         }
     }
 }

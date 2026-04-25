@@ -22,7 +22,7 @@ final readonly class ChooseConsistentHashRing
 
     public function getNode(string $key) : string
     {
-        return $this->ring->getNode($key);
+        return $this->ring->getNode(key: $key);
     }
 
     public function toMetadata() : array

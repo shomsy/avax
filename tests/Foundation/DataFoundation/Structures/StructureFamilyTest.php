@@ -57,7 +57,7 @@ final class StructureFamilyTest extends TestCase
 
     public function testTreeAddsChildrenImmutably() : void
     {
-        $tree = new Tree(value: 'root')->addChild(new Tree(value: 'leaf'));
+        $tree = new Tree(value: 'root')->addChild(child: new Tree(value: 'leaf'));
 
         $this->assertCount(1, $tree->children());
         $this->assertSame('leaf', $tree->children()[0]->value());

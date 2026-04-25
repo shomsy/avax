@@ -8,7 +8,7 @@ final class SessionStateChecksum
 {
     public function verify(string $expected, array $data) : bool
     {
-        return hash_equals($expected, $this->compute($data));
+        return hash_equals($expected, $this->compute(data: $data));
     }
 
     public function compute(array $data) : string

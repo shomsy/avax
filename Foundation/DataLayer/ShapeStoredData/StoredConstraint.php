@@ -28,30 +28,30 @@ final readonly class StoredConstraint
     public ConstraintType          $type;
     public string                  $tableName;
     public array                   $columns;
-    public ?string                 $referenceTable;
-    public ?array                  $referenceColumns;
-    public ?OnDeleteAction         $onDelete;
-    public ?OnUpdateAction         $onUpdate;
-    public ?string                 $checkExpression;
+    public string|null         $referenceTable;
+    public array|null          $referenceColumns;
+    public OnDeleteAction|null $onDelete;
+    public OnUpdateAction|null $onUpdate;
+    public string|null         $checkExpression;
     public ConstraintDeferrability $deferrability;
     public bool                    $isEnabled;
-    public ?string                 $comment;
-    public ?int                    $version;
+    public string|null         $comment;
+    public int|null            $version;
 
     private function __construct(
         string                       $name,
         ConstraintType               $type,
         string                       $tableName,
         array|null                   $columns = null,
-        ?string                      $referenceTable = null,
-        ?array                       $referenceColumns = null,
-        ?OnDeleteAction              $onDelete = null,
-        ?OnUpdateAction              $onUpdate = null,
-        ?string                      $checkExpression = null,
+        string|null         $referenceTable = null,
+        array|null          $referenceColumns = null,
+        OnDeleteAction|null $onDelete = null,
+        OnUpdateAction|null $onUpdate = null,
+        string|null         $checkExpression = null,
         ConstraintDeferrability|null $deferrability = null,
         bool|null                    $isEnabled = null,
-        ?string                      $comment = null,
-        ?int                         $version = null
+        string|null         $comment = null,
+        int|null            $version = null
     )
     {
         $columns       ??= [];
@@ -80,20 +80,20 @@ final readonly class StoredConstraint
     ) : self
     {
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Constraint name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Constraint name cannot be empty.');
         }
 
         if ($type === ConstraintType::FOREIGN_KEY) {
             if (empty($options['reference_table'])) {
-                throw new InvalidArgumentException('Foreign key constraint requires reference_table.');
+                throw new InvalidArgumentException(message: 'Foreign key constraint requires reference_table.');
             }
             if (empty($options['reference_columns'])) {
-                throw new InvalidArgumentException('Foreign key constraint requires reference_columns.');
+                throw new InvalidArgumentException(message: 'Foreign key constraint requires reference_columns.');
             }
         }
 
         if ($type === ConstraintType::CHECK && empty($options['check'])) {
-            throw new InvalidArgumentException('Check constraint requires check expression.');
+            throw new InvalidArgumentException(message: 'Check constraint requires check expression.');
         }
 
         return new self(
@@ -104,14 +104,14 @@ final readonly class StoredConstraint
             referenceTable  : $options['reference_table'] ?? null,
             referenceColumns: $options['reference_columns'] ?? null,
             onDelete        : isset($options['on_delete'])
-                                  ? OnDeleteAction::from($options['on_delete'])
+                                  ? OnDeleteAction::from(value: $options['on_delete'])
                                   : null,
             onUpdate        : isset($options['on_update'])
-                                  ? OnUpdateAction::from($options['on_update'])
+                                  ? OnUpdateAction::from(value: $options['on_update'])
                                   : null,
             checkExpression : $options['check'] ?? null,
             deferrability   : ConstraintDeferrability::from(
-                                  $options['deferrable'] ?? 'IMMEDIATE'
+                                  value: $options['deferrable'] ?? 'IMMEDIATE'
                               ),
             isEnabled       : $options['enabled'] ?? true,
             comment         : $options['comment'] ?? null,

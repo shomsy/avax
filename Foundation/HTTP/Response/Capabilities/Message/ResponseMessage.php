@@ -8,6 +8,7 @@ use Avax\HTTP\Response\Capabilities\Body\ResponseBody;
 use Avax\HTTP\Response\Capabilities\Headers\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use SensitiveParameter;
 
 /**
  * Immutable PSR-7 response state owner.
@@ -25,11 +26,11 @@ final class ResponseMessage implements ResponseInterface
     private ResponseBody $body;
 
     public function __construct(
-        int|null    $statusCode = null,
-        string|null $reasonPhrase = null,
-        string|null $protocolVersion = null,
-        array|ResponseHeaders|null $headers = null,
-        ResponseBody|null          $body = null,
+        int|null                                         $statusCode = null,
+        string|null                                      $reasonPhrase = null,
+        string|null                                      $protocolVersion = null,
+        #[SensitiveParameter] array|ResponseHeaders|null $headers = null,
+        ResponseBody|null                                $body = null,
     )
     {
         $statusCode      ??= 200;
@@ -38,10 +39,10 @@ final class ResponseMessage implements ResponseInterface
         $headers         ??= new ResponseHeaders();
         $body            ??= new ResponseBody();
 
-        $this->statusCode      = new ValidateStatusCode()($statusCode);
-        $this->reasonPhrase    = new ResolveReasonPhrase()($this->statusCode, $reasonPhrase);
-        $this->protocolVersion = new NormalizeProtocolVersion()($protocolVersion);
-        $this->headers         = $headers instanceof ResponseHeaders ? $headers : new ResponseHeaders($headers);
+        $this->statusCode      = new ValidateStatusCode()(statusCode: $statusCode);
+        $this->reasonPhrase    = new ResolveReasonPhrase()(statusCode: $this->statusCode, reasonPhrase: $reasonPhrase);
+        $this->protocolVersion = new NormalizeProtocolVersion()(version: $protocolVersion);
+        $this->headers         = $headers instanceof ResponseHeaders ? $headers : new ResponseHeaders(headers: $headers);
         $this->body            = $body;
     }
 
@@ -53,7 +54,7 @@ final class ResponseMessage implements ResponseInterface
     public function withProtocolVersion(string $version) : ResponseInterface
     {
         $clone                  = clone $this;
-        $clone->protocolVersion = new NormalizeProtocolVersion()($version);
+        $clone->protocolVersion = new NormalizeProtocolVersion()(version: $version);
 
         return $clone;
     }
@@ -123,8 +124,8 @@ final class ResponseMessage implements ResponseInterface
     public function withStatus(int $code, string $reasonPhrase = '') : ResponseInterface
     {
         $clone               = clone $this;
-        $clone->statusCode = new ValidateStatusCode()($code);
-        $clone->reasonPhrase = new ResolveReasonPhrase()($clone->statusCode, $reasonPhrase);
+        $clone->statusCode = new ValidateStatusCode()(statusCode: $code);
+        $clone->reasonPhrase = new ResolveReasonPhrase()(statusCode: $clone->statusCode, reasonPhrase: $reasonPhrase);
 
         return $clone;
     }

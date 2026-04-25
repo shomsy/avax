@@ -19,28 +19,28 @@ final class FragmentTest extends TestCase
     public function test_it_accepts_simple_fragment() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('section');
+        $fragment = new Fragment(fragment: 'section');
 
         // Assert
-        self::assertStringContainsString('section', (string) $fragment);
+        self::assertStringContainsString(needle: 'section', haystack: (string) $fragment);
     }
 
     public function test_it_accepts_fragment_with_dashes() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('main-section');
+        $fragment = new Fragment(fragment: 'main-section');
 
         // Assert
-        self::assertStringContainsString('main-section', (string) $fragment);
+        self::assertStringContainsString(needle: 'main-section', haystack: (string) $fragment);
     }
 
     public function test_it_accepts_fragment_with_numbers() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('section-1-2-3');
+        $fragment = new Fragment(fragment: 'section-1-2-3');
 
         // Assert
-        self::assertStringContainsString('section-1-2-3', (string) $fragment);
+        self::assertStringContainsString(needle: 'section-1-2-3', haystack: (string) $fragment);
     }
 
     // ========== ENCODING: Special characters ==========
@@ -48,36 +48,36 @@ final class FragmentTest extends TestCase
     public function test_it_encodes_spaces() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('my section');
+        $fragment = new Fragment(fragment: 'my section');
 
         // Assert
-        self::assertStringContainsString('%20', (string) $fragment);
+        self::assertStringContainsString(needle: '%20', haystack: (string) $fragment);
         // Check that literal space is not in output
         $str = (string) $fragment;
-        self::assertFalse(strpos($str, ' ') !== false);
+        self::assertFalse(condition: strpos($str, ' ') !== false);
     }
 
     public function test_it_encodes_special_characters() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('section!@#$%');
+        $fragment = new Fragment(fragment: 'section!@#$%');
 
         // Assert
         // Special characters should be percent-encoded
         $rendered = (string) $fragment;
-        self::assertStringContainsString('%', $rendered);
+        self::assertStringContainsString(needle: '%', haystack: $rendered);
     }
 
     public function test_it_encodes_unicode_characters() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('café');
+        $fragment = new Fragment(fragment: 'café');
 
         // Assert
         // UTF-8 should be percent-encoded
         $rendered = (string) $fragment;
-        self::assertNotSame('café', $rendered);
-        self::assertStringContainsString('%', $rendered);
+        self::assertNotSame(expected: 'café', actual: $rendered);
+        self::assertStringContainsString(needle: '%', haystack: $rendered);
     }
 
     // ========== EDGE CASES ==========
@@ -85,29 +85,29 @@ final class FragmentTest extends TestCase
     public function test_it_handles_empty_fragment() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('');
+        $fragment = new Fragment(fragment: '');
 
         // Assert
-        self::assertSame('', (string) $fragment);
+        self::assertSame(expected: '', actual: (string) $fragment);
     }
 
     public function test_it_handles_fragment_with_only_numbers() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('12345');
+        $fragment = new Fragment(fragment: '12345');
 
         // Assert
-        self::assertStringContainsString('12345', (string) $fragment);
+        self::assertStringContainsString(needle: '12345', haystack: (string) $fragment);
     }
 
     public function test_it_encodes_percentage_signs() : void
     {
         // Arrange & Act
-        $fragment = new Fragment('100%');
+        $fragment = new Fragment(fragment: '100%');
 
         // Assert
         $rendered = (string) $fragment;
-        self::assertStringContainsString('%', $rendered);
+        self::assertStringContainsString(needle: '%', haystack: $rendered);
     }
 
     // ========== REGRESSION ==========
@@ -118,9 +118,9 @@ final class FragmentTest extends TestCase
         $original = 'section-with-anchor';
 
         // Act
-        $fragment = new Fragment($original);
+        $fragment = new Fragment(fragment: $original);
 
         // Assert
-        self::assertStringContainsString($original, (string) $fragment);
+        self::assertStringContainsString(needle: $original, haystack: (string) $fragment);
     }
 }

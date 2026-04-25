@@ -15,25 +15,25 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
     public int                     $affectedRows;
     public float                   $executionTimeMs;
     public array                   $rows;
-    public array                   $columnNames;
-    public ?string                 $lastInsertId;
-    public ?string                 $generatedSql;
-    public array                   $warnings;
-    public bool                    $success;
-    public ?PersistentDataFailure  $failure;
+    public array                      $columnNames;
+    public string|null                $lastInsertId;
+    public string|null                $generatedSql;
+    public array                      $warnings;
+    public bool                       $success;
+    public PersistentDataFailure|null $failure;
 
     private function __construct(
-        PersistentDataOperation $operation,
-        int|null   $rowCount = null,
-        int|null   $affectedRows = null,
-        float|null $executionTimeMs = null,
-        array|null $rows = null,
-        array|null $columnNames = null,
-        ?string                 $lastInsertId = null,
-        ?string                 $generatedSql = null,
-        array|null $warnings = null,
-        bool|null  $success = null,
-        ?PersistentDataFailure  $failure = null
+        PersistentDataOperation    $operation,
+        int|null                   $rowCount = null,
+        int|null                   $affectedRows = null,
+        float|null                 $executionTimeMs = null,
+        array|null                 $rows = null,
+        array|null                 $columnNames = null,
+        string|null                $lastInsertId = null,
+        string|null                $generatedSql = null,
+        array|null                 $warnings = null,
+        bool|null                  $success = null,
+        PersistentDataFailure|null $failure = null
     )
     {
         $rowCount        ??= 0;
@@ -58,12 +58,12 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
 
     public static function success(
         PersistentDataOperation $operation,
-        array|null $rows = null,
-        int|null   $rowCount = null,
-        int|null   $affectedRows = null,
-        float|null $executionTimeMs = null,
-        ?string                 $lastInsertId = null,
-        ?string                 $generatedSql = null,
+        array|null  $rows = null,
+        int|null    $rowCount = null,
+        int|null    $affectedRows = null,
+        float|null  $executionTimeMs = null,
+        string|null $lastInsertId = null,
+        string|null $generatedSql = null,
         array                   $warnings = []
     ) : self
     {
@@ -119,7 +119,7 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
         );
     }
 
-    public function first() : ?array
+    public function first() : array|null
     {
         return $this->rows[0] ?? null;
     }
@@ -127,13 +127,13 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
     public function firstOrFail() : array
     {
         if (empty($this->rows)) {
-            throw new PersistentDataFailure('Expected at least one row but got none.');
+            throw new PersistentDataFailure(message: 'Expected at least one row but got none.');
         }
 
         return $this->rows[0];
     }
 
-    public function at(int $index) : ?array
+    public function at(int $index) : array|null
     {
         return $this->rows[$index] ?? null;
     }
@@ -142,7 +142,7 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
     {
         if (! isset($this->rows[$index])) {
             $msg = sprintf('Expected row at index %d but only %d rows exist.', $index, count($this->rows));
-            throw new PersistentDataFailure($msg);
+            throw new PersistentDataFailure(message: $msg);
         }
 
         return $this->rows[$index];
@@ -153,7 +153,7 @@ final readonly class PersistentDataResult implements Countable, IteratorAggregat
         return array_column($this->rows, $name);
     }
 
-    public function find(string $field, mixed $value) : ?array
+    public function find(string $field, mixed $value) : array|null
     {
         foreach ($this->rows as $row) {
             if (($row[$field] ?? null) === $value) {

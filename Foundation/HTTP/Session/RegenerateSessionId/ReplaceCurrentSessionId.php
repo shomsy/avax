@@ -17,6 +17,6 @@ final class ReplaceCurrentSessionId
 
     public function handle(string $newId) : void
     {
-        $this->store->put('_session_id', $newId);
+        $this->store->put(key: '_session_id', value: $newId);
     }
 }

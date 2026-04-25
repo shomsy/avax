@@ -11,7 +11,7 @@ final class OrderByNode
     public function __construct(
         public readonly string $column,
         public readonly string $direction = 'ASC',
-        public readonly ?int   $nulls = null
+        public readonly int|null $nulls = null
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string

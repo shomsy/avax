@@ -28,10 +28,10 @@ final readonly class MarkSagaAsUnrecoverable
     public function mark(array $sagaData, array $failureReasons) : SagaRecoveryResult
     {
         if (empty($failureReasons)) {
-            throw new InvalidArgumentException('Failure reasons cannot be empty.');
+            throw new InvalidArgumentException(message: 'Failure reasons cannot be empty.');
         }
 
-        $shouldAbandon = $this->shouldAbandon($failureReasons);
+        $shouldAbandon = $this->shouldAbandon(reasons: $failureReasons);
 
         return new SagaRecoveryResult(
             sagaId     : $sagaData['id'],

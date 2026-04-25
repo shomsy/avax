@@ -13,6 +13,6 @@ final class DataLayerConfigurationFailure extends RuntimeException
 {
     public static function missingDatabaseRuntime() : self
     {
-        return new self('DataLayer requires an explicit Foundation/Database runtime. Pass it through DataLayerConfig::withDatabaseRuntime() or DataLayer::fromDatabaseRuntime().');
+        return new self(message: 'DataLayer requires an explicit Foundation/Database runtime. Pass it through DataLayerConfig::withDatabaseRuntime() or DataLayer::fromDatabaseRuntime().');
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\DistributeStoredData;
 
-use InvalidArgumentException;
-
 enum ShardKeyType: string
 {
     case HASH   = 'hash';
@@ -18,7 +16,7 @@ final readonly class ShardKey
     public function __construct(
         public ShardKeyType $type,
         public array        $columns,
-        public ?int         $shardCount
+        public int|null $shardCount
     ) {}
 
     public function describeResponsibility() : string
@@ -28,22 +26,22 @@ final readonly class ShardKey
 
     public static function hash(array $columns, int $shardCount = 256) : self
     {
-        return new self(ShardKeyType::HASH, $columns, $shardCount);
+        return new self(type: ShardKeyType::HASH, columns: $columns, shardCount: $shardCount);
     }
 
     public static function range(string $column, int $shardCount = 16) : self
     {
-        return new self(ShardKeyType::RANGE, [$column], $shardCount);
+        return new self(type: ShardKeyType::RANGE, columns: [$column], shardCount: $shardCount);
     }
 
     public function calculateShard(mixed $value) : int
     {
         if ($this->type === ShardKeyType::HASH) {
-            return $this->hashShard($value);
+            return $this->hashShard(value: $value);
         }
 
         if ($this->type === ShardKeyType::RANGE) {
-            return $this->rangeShard($value);
+            return $this->rangeShard(value: $value);
         }
 
         return 0;

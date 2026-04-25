@@ -7,6 +7,7 @@ namespace Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\InspectSaga;
 use Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use stdClass;
 
 final readonly class ConfigureSagaRuntime
 {
@@ -18,17 +19,17 @@ final readonly class ConfigureSagaRuntime
 
     public function configure(SagaRuntimeConfig $config) : SagaRuntime
     {
-        $validation = new ValidateSagaRuntimeConfig($config);
+        $validation = new ValidateSagaRuntimeConfig(config: $config);
         if (! $validation->isValid()) {
             $errors = implode(', ', $validation->getErrors());
             throw new SagaRuntimeConfigurationFailure(
-                sprintf('Invalid saga runtime configuration: %s', $errors)
+                message: sprintf('Invalid saga runtime configuration: %s', $errors)
             );
         }
 
-        $store      = $this->registerSagaStore->register($config->storeType, $config->storeConfig);
+        $store      = $this->registerSagaStore->register(type: $config->storeType, config: $config->storeConfig);
         $stepRunner = $this->registerSagaStepRunner->register();
-        $messageBus = $this->registerSagaMessageBus->register($config->messageBusType, $config->messageBusConfig);
+        $messageBus = $this->registerSagaMessageBus->register($config->messageBusType, config: $config->messageBusConfig);
 
         return new SagaRuntime(
             store      : $store,
@@ -54,8 +55,8 @@ final readonly class SagaRuntime
     {
         return new self(
             store      : StoreSagaState::inMemory(),
-            stepRunner : new \stdClass(),
-            messageBus : new \stdClass(),
+            stepRunner : new stdClass(),
+            messageBus : new stdClass(),
             idempotency: ProtectSagaIdempotency::inMemory(),
             inspect    : InspectSaga::inMemory()
         );
@@ -67,17 +68,17 @@ final readonly class SagaRuntimeConfig
     public string $storeType;
     public array  $storeConfig;
     public string $messageBusType;
-    public array  $messageBusConfig;
-    public ?int   $timeoutSeconds;
-    public ?int   $maxRetries;
+    public array    $messageBusConfig;
+    public int|null $timeoutSeconds;
+    public int|null $maxRetries;
 
     private function __construct(
-        string $storeType,
-        array  $storeConfig,
-        string $messageBusType,
-        array  $messageBusConfig,
-        ?int   $timeoutSeconds,
-        ?int   $maxRetries
+        string   $storeType,
+        array    $storeConfig,
+        string   $messageBusType,
+        array    $messageBusConfig,
+        int|null $timeoutSeconds,
+        int|null $maxRetries
     )
     {
         $this->storeType        = $storeType;

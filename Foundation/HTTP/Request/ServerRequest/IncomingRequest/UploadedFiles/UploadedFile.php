@@ -18,11 +18,11 @@ final class UploadedFile implements UploadedFileInterface
     private bool $moved = false;
 
     public function __construct(
-        private readonly string  $tmpName,
-        private readonly int     $size,
-        private readonly int     $error,
-        private readonly ?string $name = null,
-        private readonly ?string $type = null
+        private readonly string      $tmpName,
+        private readonly int         $size,
+        private readonly int         $error,
+        private readonly string|null $name = null,
+        private readonly string|null $type = null
     ) {}
 
     public function getStream() : StreamInterface
@@ -65,7 +65,7 @@ final class UploadedFile implements UploadedFileInterface
         $this->moved = true;
     }
 
-    public function getSize() : ?int
+    public function getSize() : int|null
     {
         return $this->size;
     }
@@ -75,12 +75,12 @@ final class UploadedFile implements UploadedFileInterface
         return $this->error;
     }
 
-    public function getClientFilename() : ?string
+    public function getClientFilename() : string|null
     {
         return $this->name;
     }
 
-    public function getClientMediaType() : ?string
+    public function getClientMediaType() : string|null
     {
         return $this->type;
     }

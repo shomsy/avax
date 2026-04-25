@@ -19,5 +19,5 @@ $ref = new ReflectionMethod(objectOrMethod: HttpRequestRouter::class, method: 'c
 $ref->setAccessible(accessible: true);
 $pattern = $ref->invoke($router, '/users/{id?}', []);
 
-$request = new Request(serverParams: ['REQUEST_METHOD' => 'GET'], uri: Uri::fromString('https://example.com/users'));
+$request = new Request(serverParams: ['REQUEST_METHOD' => 'GET'], uri: Uri::fromString(uri: 'https://example.com/users'));
 $route = $router->resolve(request: $request);

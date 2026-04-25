@@ -24,7 +24,7 @@ final readonly class ConsistencyModel
     )
     {
         if ($this->maxStalenessMs < 0) {
-            throw new InvalidArgumentException('Max staleness must be non-negative.');
+            throw new InvalidArgumentException(message: 'Max staleness must be non-negative.');
         }
     }
 
@@ -35,17 +35,17 @@ final readonly class ConsistencyModel
 
     public static function strong() : self
     {
-        return new self(ConsistencyModelType::STRONG, 0, true);
+        return new self(type: ConsistencyModelType::STRONG, maxStalenessMs: 0, readYourWrites: true);
     }
 
     public static function eventual() : self
     {
-        return new self(ConsistencyModelType::EVENTUAL, PHP_INT_MAX, false);
+        return new self(type: ConsistencyModelType::EVENTUAL, maxStalenessMs: PHP_INT_MAX, readYourWrites: false);
     }
 
     public static function boundedStaleness(int $maxStalenessMs = 5000) : self
     {
-        return new self(ConsistencyModelType::BOUNDED_STALENESS, $maxStalenessMs, false);
+        return new self(type: ConsistencyModelType::BOUNDED_STALENESS, maxStalenessMs: $maxStalenessMs, readYourWrites: false);
     }
 
     public function toMetadata() : array

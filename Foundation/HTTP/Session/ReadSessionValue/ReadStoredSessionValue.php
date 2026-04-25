@@ -17,6 +17,6 @@ final class ReadStoredSessionValue
 
     public function handle(string $key, mixed $default = null) : mixed
     {
-        return $this->store->get($key, $default);
+        return $this->store->get(key: $key, default: $default);
     }
 }

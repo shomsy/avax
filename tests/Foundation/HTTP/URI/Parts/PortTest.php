@@ -6,6 +6,7 @@ namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
 use Avax\HTTP\URI\Parts\Port;
 use Avax\HTTP\URI\Parts\Scheme;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,64 +21,64 @@ final class PortTest extends TestCase
     public function test_it_accepts_valid_port_number() : void
     {
         // Arrange & Act
-        $port = new Port(8080, new Scheme('https'));
+        $port = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(8080, $port->value());
+        self::assertSame(expected: 8080, actual: $port->value());
     }
 
     public function test_it_accepts_high_port_number() : void
     {
         // Arrange & Act
-        $port = new Port(65535, new Scheme('https'));
+        $port = new Port(port: 65535, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(65535, $port->value());
+        self::assertSame(expected: 65535, actual: $port->value());
     }
 
     public function test_it_accepts_low_port_number() : void
     {
         // Arrange & Act
-        $port = new Port(1, new Scheme('https'));
+        $port = new Port(port: 1, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(1, $port->value());
+        self::assertSame(expected: 1, actual: $port->value());
     }
 
     public function test_it_returns_null_for_default_http_port() : void
     {
         // Arrange & Act
-        $port = new Port(80, new Scheme('http'));
+        $port = new Port(port: 80, scheme: new Scheme(scheme: 'http'));
 
         // Assert
-        self::assertNull($port->value());
+        self::assertNull(actual: $port->value());
     }
 
     public function test_it_returns_null_for_default_https_port() : void
     {
         // Arrange & Act
-        $port = new Port(443, new Scheme('https'));
+        $port = new Port(port: 443, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertNull($port->value());
+        self::assertNull(actual: $port->value());
     }
 
     public function test_it_accepts_non_default_port_for_http() : void
     {
         // Arrange & Act
-        $port = new Port(8080, new Scheme('http'));
+        $port = new Port(port: 8080, scheme: new Scheme(scheme: 'http'));
 
         // Assert
-        self::assertSame(8080, $port->value());
+        self::assertSame(expected: 8080, actual: $port->value());
     }
 
     public function test_it_accepts_non_default_port_for_https() : void
     {
         // Arrange & Act
-        $port = new Port(8443, new Scheme('https'));
+        $port = new Port(port: 8443, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(8443, $port->value());
+        self::assertSame(expected: 8443, actual: $port->value());
     }
 
     // ========== HAPPY PATH: Null port ==========
@@ -85,10 +86,10 @@ final class PortTest extends TestCase
     public function test_it_handles_null_port() : void
     {
         // Arrange & Act
-        $port = new Port(null, new Scheme('https'));
+        $port = new Port(port: null, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertNull($port->value());
+        self::assertNull(actual: $port->value());
     }
 
     // ========== FAILURE: Invalid ports ==========
@@ -96,29 +97,29 @@ final class PortTest extends TestCase
     public function test_it_throws_when_port_is_zero() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Port(0, new Scheme('https'));
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Port(port: 0, scheme: new Scheme(scheme: 'https'));
     }
 
     public function test_it_throws_when_port_is_negative() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Port(-1, new Scheme('https'));
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Port(port: -1, scheme: new Scheme(scheme: 'https'));
     }
 
     public function test_it_throws_when_port_exceeds_maximum() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Port(65536, new Scheme('https'));
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Port(port: 65536, scheme: new Scheme(scheme: 'https'));
     }
 
     public function test_it_throws_when_port_way_beyond_maximum() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Port(99999, new Scheme('https'));
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Port(port: 99999, scheme: new Scheme(scheme: 'https'));
     }
 
     // ========== EDGE CASES: FTP scheme ==========
@@ -126,11 +127,11 @@ final class PortTest extends TestCase
     public function test_it_handles_non_http_schemes() : void
     {
         // Arrange & Act
-        $port = new Port(21, new Scheme('ftp'));
+        $port = new Port(port: 21, scheme: new Scheme(scheme: 'ftp'));
 
         // Assert
         // FTP doesn't have default port handling, so it should accept it
-        self::assertSame(21, $port->value());
+        self::assertSame(expected: 21, actual: $port->value());
     }
 
     // ========== REGRESSION: Port boundary conditions ==========
@@ -138,29 +139,29 @@ final class PortTest extends TestCase
     public function test_it_accepts_min_valid_port() : void
     {
         // Arrange & Act
-        $port = new Port(1, new Scheme('https'));
+        $port = new Port(port: 1, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(1, $port->value());
+        self::assertSame(expected: 1, actual: $port->value());
     }
 
     public function test_it_accepts_max_valid_port() : void
     {
         // Arrange & Act
-        $port = new Port(65535, new Scheme('https'));
+        $port = new Port(port: 65535, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertSame(65535, $port->value());
+        self::assertSame(expected: 65535, actual: $port->value());
     }
 
     public function test_it_distinguishes_http_from_https_defaults() : void
     {
         // Arrange & Act
-        $httpPort  = new Port(80, new Scheme('http'));
-        $httpsPort = new Port(80, new Scheme('https'));
+        $httpPort  = new Port(port: 80, scheme: new Scheme(scheme: 'http'));
+        $httpsPort = new Port(port: 80, scheme: new Scheme(scheme: 'https'));
 
         // Assert
-        self::assertNull($httpPort->value());
-        self::assertSame(80, $httpsPort->value()); // 80 is not default for https
+        self::assertNull(actual: $httpPort->value());
+        self::assertSame(expected: 80, actual: $httpsPort->value()); // 80 is not default for https
     }
 }

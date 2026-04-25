@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\StartSaga;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
+use RuntimeException;
+use Throwable;
 
 final readonly class CreateSagaInstance
 {
@@ -50,7 +53,7 @@ final readonly class CreateSagaInstance
 
 final readonly class CreateSagaCorrelationId
 {
-    public function create(?string $prefix = null, ?string $suffix = null) : string
+    public function create(string|null $prefix = null, string|null $suffix = null) : string
     {
         $parts = array_filter([
                                   $prefix,
@@ -85,9 +88,9 @@ final readonly class RecordSagaStarted
         $this->store->set("saga_{$instance->id}", $instance->toArray());
 
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::started(
-                $instance->id,
-                $instance->definitionName
+            SagaRuntimeEvent::started(
+                sagaId  : $instance->id,
+                sagaName: $instance->definitionName
             )
         );
     }
@@ -101,18 +104,18 @@ final readonly class ScheduleFirstSagaStep
 
         if ($firstStep === null) {
             throw new SagaStartFailure(
-                sprintf('Saga %s has no steps to execute.', $definition->name)
+                message: sprintf('Saga %s has no steps to execute.', $definition->name)
             );
         }
 
-        return $instance->start($firstStep->name);
+        return $instance->start(firstStepName: $firstStep->name);
     }
 }
 
-final class SagaStartFailure extends \RuntimeException
+final class SagaStartFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Failed to start saga.', ?\Throwable $previous = null)
+    public function __construct(string $message = 'Failed to start saga.', Throwable|null $previous = null)
     {
-        parent::__construct($message, previous: $previous);
+        parent::__construct(message: $message, previous: $previous);
     }
 }

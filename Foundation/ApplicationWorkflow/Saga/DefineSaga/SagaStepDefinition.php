@@ -27,29 +27,29 @@ final readonly class SagaStepDefinition
     public string              $name;
     public string              $component;
     public SagaStepKind        $kind;
-    public array               $input;
-    public ?string             $compensationComponent;
-    public ?array              $compensationInput;
-    public int                 $maxRetries;
+    public array       $input;
+    public string|null $compensationComponent;
+    public array|null  $compensationInput;
+    public int         $maxRetries;
     public int                 $retryDelayMs;
     public SagaStepRetryPolicy $retryPolicy;
     public int                 $timeoutSeconds;
-    public bool                $optional;
-    public ?string             $description;
+    public bool        $optional;
+    public string|null $description;
 
     private function __construct(
         string                   $name,
         string                   $component,
         SagaStepKind             $kind,
         array|null               $input = null,
-        ?string                  $compensationComponent = null,
-        ?array                   $compensationInput = null,
+        string|null $compensationComponent = null,
+        array|null  $compensationInput = null,
         int|null                 $maxRetries = null,
         int|null                 $retryDelayMs = null,
         SagaStepRetryPolicy|null $retryPolicy = null,
         int|null                 $timeoutSeconds = null,
         bool|null                $optional = null,
-        ?string                  $description = null
+        string|null $description = null
     )
     {
         $input          ??= [];
@@ -79,14 +79,14 @@ final readonly class SagaStepDefinition
     ) : self
     {
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Step name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Step name cannot be empty.');
         }
 
         if (empty(trim($component))) {
-            throw new InvalidArgumentException('Component cannot be empty.');
+            throw new InvalidArgumentException(message: 'Component cannot be empty.');
         }
 
-        $kind = SagaStepKind::from($options['kind'] ?? 'action');
+        $kind = SagaStepKind::from(value: $options['kind'] ?? 'action');
 
         return new self(
             name                 : $name,
@@ -97,7 +97,7 @@ final readonly class SagaStepDefinition
             compensationInput    : $options['compensation_input'] ?? null,
             maxRetries           : $options['max_retries'] ?? 0,
             retryDelayMs         : $options['retry_delay'] ?? 1000,
-            retryPolicy          : SagaStepRetryPolicy::from($options['retry_policy'] ?? 'none'),
+            retryPolicy          : SagaStepRetryPolicy::from(value: $options['retry_policy'] ?? 'none'),
             timeoutSeconds       : $options['timeout'] ?? 30,
             optional             : $options['optional'] ?? false,
             description          : $options['description'] ?? null
@@ -113,7 +113,7 @@ final readonly class SagaStepDefinition
     {
         $input ??= [];
 
-        return self::create($name, $component, array_merge($options, ['input' => $input, 'kind' => 'action']));
+        return self::create(name: $name, component: $component, options: array_merge($options, ['input' => $input, 'kind' => 'action']));
     }
 
     public static function withCompensation(
@@ -125,7 +125,7 @@ final readonly class SagaStepDefinition
         array  $options = []
     ) : self
     {
-        return self::create($name, $component, array_merge($options, [
+        return self::create(name: $name, component: $component, options: array_merge($options, [
             'input'              => $input,
             'compensation'       => $compensationComponent,
             'compensation_input' => $compensationInput,

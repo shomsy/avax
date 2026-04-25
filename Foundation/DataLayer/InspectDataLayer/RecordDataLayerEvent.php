@@ -17,7 +17,7 @@ final readonly class RecordDataLayerEvent
 
     public function record(DataLayerEventType $type, array $metadata = []) : DataLayerEvent
     {
-        return DataLayerEvent::create($type, $metadata);
+        return DataLayerEvent::create(type: $type, metadata: $metadata);
     }
 
     public function toMetadata() : array

@@ -26,7 +26,7 @@ final readonly class RetryChangePublication
     {
         $maxRetries ??= 3;
         if ($maxRetries < 0) {
-            throw new InvalidArgumentException('Max retries cannot be negative.');
+            throw new InvalidArgumentException(message: 'Max retries cannot be negative.');
         }
         $this->maxRetries = $maxRetries;
         $this->strategy   = $strategy;
@@ -50,7 +50,7 @@ final readonly class RetryChangePublication
             RetryStrategy::IMMEDIATE   => 0,
             RetryStrategy::LINEAR      => $attempt * $baseDelay,
             RetryStrategy::EXPONENTIAL => $baseDelay * (2 ** $attempt),
-            RetryStrategy::FIBONACCI   => $baseDelay * $this->fibonacci($attempt + 1),
+            RetryStrategy::FIBONACCI => $baseDelay * $this->fibonacci(n: $attempt + 1),
         };
     }
 
@@ -60,7 +60,7 @@ final readonly class RetryChangePublication
             return $n;
         }
 
-        return $this->fibonacci($n - 1) + $this->fibonacci($n - 2);
+        return $this->fibonacci(n: $n - 1) + $this->fibonacci(n: $n - 2);
     }
 
     public function toMetadata() : array

@@ -27,17 +27,17 @@ final readonly class DescribeWriteAheadLog
 
     public static function forRecovery(int $retentionDays = 7) : self
     {
-        return new self(WriteAheadLogPurpose::RECOVERY, $retentionDays, false, false);
+        return new self(purpose: WriteAheadLogPurpose::RECOVERY, retentionDays: $retentionDays, compressionEnabled: false, encrypted: false);
     }
 
     public static function forReplication(int $retentionDays = 30) : self
     {
-        return new self(WriteAheadLogPurpose::REPLICATION, $retentionDays, true, true);
+        return new self(purpose: WriteAheadLogPurpose::REPLICATION, retentionDays: $retentionDays, compressionEnabled: true, encrypted: true);
     }
 
     public static function forAudit(int $retentionDays = 365) : self
     {
-        return new self(WriteAheadLogPurpose::AUDIT, $retentionDays, true, true);
+        return new self(purpose: WriteAheadLogPurpose::AUDIT, retentionDays: $retentionDays, compressionEnabled: true, encrypted: true);
     }
 
     public function toMetadata() : array

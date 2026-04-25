@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Avax\HTTP\Response\Capabilities\Caching;
 
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 final class BuildNotModifiedHeaders
 {
     public function __invoke(
-        ResponseInterface $response,
-        Etag|null         $etag = null,
-        LastModified|null $lastModified = null,
-        CacheControl|null $cacheControl = null,
-        array             $headers = []
+        ResponseInterface           $response,
+        Etag|null                   $etag = null,
+        LastModified|null           $lastModified = null,
+        CacheControl|null           $cacheControl = null,
+        #[SensitiveParameter] array $headers = []
     ) : ResponseInterface
     {
         $response = $response
@@ -31,7 +32,7 @@ final class BuildNotModifiedHeaders
         if ($cacheControl !== null && $cacheControl->directives !== []) {
             $response = $response->withHeader(
                 name : 'Cache-Control',
-                value: new BuildCacheControlHeader()($cacheControl),
+                value: new BuildCacheControlHeader()(cacheControl: $cacheControl),
             );
         }
 

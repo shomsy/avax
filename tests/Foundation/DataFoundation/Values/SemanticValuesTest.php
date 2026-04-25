@@ -19,7 +19,7 @@ final class SemanticValuesTest extends TestCase
 {
     public function testOptionMapsPresentValue() : void
     {
-        $option = Option::some(value: 10)->map(static fn (int $value) : int => $value * 2);
+        $option = Option::some(value: 10)->map(callback: static fn (int $value) : int => $value * 2);
 
         $this->assertTrue($option->isSome());
         $this->assertSame(20, $option->unwrap());
@@ -27,7 +27,7 @@ final class SemanticValuesTest extends TestCase
 
     public function testResultMapsSuccessfulValue() : void
     {
-        $result = Result::ok(value: 5)->map(static fn (int $value) : int => $value + 1);
+        $result = Result::ok(value: 5)->map(callback: static fn (int $value) : int => $value + 1);
 
         $this->assertTrue($result->isOk());
         $this->assertSame(6, $result->unwrap());
@@ -57,7 +57,7 @@ final class SemanticValuesTest extends TestCase
     public function testMoneyAddsOnlySameCurrency() : void
     {
         $money = new Money(amount: 100, currency: new Currency(code: 'EUR'))
-            ->add(new Money(amount: 50, currency: new Currency(code: 'EUR')));
+            ->add(other: new Money(amount: 50, currency: new Currency(code: 'EUR')));
 
         $this->assertSame(150, $money->amount());
         $this->assertSame('EUR', $money->currency()->code());

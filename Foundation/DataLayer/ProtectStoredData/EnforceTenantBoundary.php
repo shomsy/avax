@@ -27,12 +27,12 @@ final readonly class EnforceTenantBoundary
 
     public static function rowLevel(string $tenantIdColumn = 'tenant_id') : self
     {
-        return new self(TenantBoundaryType::ROW, $tenantIdColumn, true);
+        return new self(type: TenantBoundaryType::ROW, tenantIdColumn: $tenantIdColumn, strict: true);
     }
 
     public static function schemaLevel(string $tenantIdColumn = 'tenant_id') : self
     {
-        return new self(TenantBoundaryType::SCHEMA, $tenantIdColumn, true);
+        return new self(type: TenantBoundaryType::SCHEMA, tenantIdColumn: $tenantIdColumn, strict: true);
     }
 
     public function enforceForQuery(string $tenantId) : WhereClause

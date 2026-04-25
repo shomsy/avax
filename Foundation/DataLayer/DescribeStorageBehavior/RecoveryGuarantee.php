@@ -33,7 +33,7 @@ final readonly class RecoveryGuarantee
     )
     {
         if ($this->recoveryPointMinutes < 0) {
-            throw new InvalidArgumentException('Recovery point minutes cannot be negative.');
+            throw new InvalidArgumentException(message: 'Recovery point minutes cannot be negative.');
         }
     }
 
@@ -44,17 +44,17 @@ final readonly class RecoveryGuarantee
 
     public static function strict() : self
     {
-        return new self(RecoveryGuaranteeLevel::STRICT, 0, false);
+        return new self(level: RecoveryGuaranteeLevel::STRICT, recoveryPointMinutes: 0, allowDataLossTolerance: false);
     }
 
     public static function durable() : self
     {
-        return new self(RecoveryGuaranteeLevel::DURABLE, 5, false);
+        return new self(level: RecoveryGuaranteeLevel::DURABLE, recoveryPointMinutes: 5, allowDataLossTolerance: false);
     }
 
     public static function bestEffort() : self
     {
-        return new self(RecoveryGuaranteeLevel::BEST_EFFORT, 60, true);
+        return new self(level: RecoveryGuaranteeLevel::BEST_EFFORT, recoveryPointMinutes: 60, allowDataLossTolerance: true);
     }
 
     public function toMetadata() : array

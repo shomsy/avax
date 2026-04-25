@@ -7,10 +7,10 @@ namespace Avax\DataLayer\InspectDataLayer;
 final readonly class TraceDataTransaction
 {
     public function __construct(
-        public string $transactionId,
-        public float  $startedAt,
-        public ?float $finishedAt,
-        public array  $operations
+        public string     $transactionId,
+        public float      $startedAt,
+        public float|null $finishedAt,
+        public array      $operations
     ) {}
 
     public function describeResponsibility() : string

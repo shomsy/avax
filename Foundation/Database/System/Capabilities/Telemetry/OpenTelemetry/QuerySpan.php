@@ -7,13 +7,13 @@ namespace Avax\Database\System\Capabilities\Telemetry\OpenTelemetry;
 final class QuerySpan
 {
     public function __construct(
-        public readonly string  $query,
-        public readonly array   $bindings = [],
-        public readonly float   $startTime = 0.0,
-        public readonly float   $endTime = 0.0,
-        public readonly ?string $connection = null,
-        public readonly ?int    $rows = null,
-        public readonly ?string $error = null
+        public readonly string      $query,
+        public readonly array       $bindings = [],
+        public readonly float       $startTime = 0.0,
+        public readonly float       $endTime = 0.0,
+        public readonly string|null $connection = null,
+        public readonly int|null    $rows = null,
+        public readonly string|null $error = null
     ) {}
 
     public function isSlow(int $thresholdMs = 1000) : bool

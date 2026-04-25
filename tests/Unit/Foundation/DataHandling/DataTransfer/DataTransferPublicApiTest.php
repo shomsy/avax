@@ -12,6 +12,7 @@ use Avax\DataHandling\DataTransfer\Configuration\DataTransferConfig;
 use Avax\DataHandling\DataTransfer\Configuration\UnknownFieldPolicy;
 use Avax\DataHandling\DataTransfer\DataTransfer;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class DataTransferPublicApiTest extends TestCase
 {
@@ -169,12 +170,12 @@ final readonly class UnitProfileData
      */
     public function __construct(
         #[MapFrom(name: 'user_name')]
-        public string          $name,
-        public UnitRole        $role,
-        public UnitAddressData $address,
-        #[ListOf(class: UnitAddressData::class)]
-        public array           $addresses,
-        #[Hidden]
-        public string          $secret,
+        public string                                $name,
+        public UnitRole                              $role,
+        #[SensitiveParameter] public UnitAddressData $address,
+        #[SensitiveParameter] #[ListOf(class: UnitAddressData::class)]
+        public array                                 $addresses,
+        #[SensitiveParameter] #[Hidden]
+        public string                                $secret,
     ) {}
 }

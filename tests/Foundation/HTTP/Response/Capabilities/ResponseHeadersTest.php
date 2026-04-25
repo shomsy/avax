@@ -16,7 +16,7 @@ final class ResponseHeadersTest extends TestCase
 {
     public function test_headers_are_case_insensitive_and_immutable() : void
     {
-        $headers = new ResponseHeaders(['Content-Type' => 'text/plain']);
+        $headers = new ResponseHeaders(headers: ['Content-Type' => 'text/plain']);
         $changed = $headers
             ->append(name: 'X-Test', value: 'one')
             ->append(name: 'x-test', value: 'two');
@@ -41,6 +41,6 @@ final class ResponseHeadersTest extends TestCase
             cookie  : new ResponseCookie(name: 'session', value: 'abc'),
         );
 
-        self::assertStringContainsString('session=abc', $response->getHeaderLine('Set-Cookie'));
+        self::assertStringContainsString('session=abc', $response->getHeaderLine(name: 'Set-Cookie'));
     }
 }

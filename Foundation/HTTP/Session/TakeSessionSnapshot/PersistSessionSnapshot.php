@@ -18,6 +18,6 @@ final class PersistSessionSnapshot
     public function handle(string $name, array $snapshot) : void
     {
         $key = '_snapshot.' . $name;
-        $this->store->put($key, $snapshot);
+        $this->store->put(key: $key, value: $snapshot);
     }
 }

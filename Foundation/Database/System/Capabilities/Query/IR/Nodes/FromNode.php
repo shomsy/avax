@@ -9,8 +9,8 @@ use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 final class FromNode
 {
     public function __construct(
-        public readonly string  $table,
-        public readonly ?string $alias = null,
+        public readonly string      $table,
+        public readonly string|null $alias = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string

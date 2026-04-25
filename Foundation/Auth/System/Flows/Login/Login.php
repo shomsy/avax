@@ -26,17 +26,17 @@ use SensitiveParameter;
 final readonly class Login
 {
     public function __construct(
-        private UserSourceInterface $userSource,
+        private UserSourceInterface          $userSource,
         #[SensitiveParameter] private PasswordHasher $passwordHasher,
         #[SensitiveParameter] private IdentityInterface $identity,
-        private ProjectAuthenticatedUser $projectAuthenticatedUser,
+        private ProjectAuthenticatedUser     $projectAuthenticatedUser,
         #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface $auditLog,
-        private MfaStoreInterface $mfaStore,
-        private StartMfaChallenge $startMfaChallenge,
-        private Clock $clock,
-        private ?LoginRateLimit $rateLimit = null,
-        private ?DeterministicRiskEngine $riskEngine = null,
+        private AuditLogInterface            $auditLog,
+        private MfaStoreInterface            $mfaStore,
+        private StartMfaChallenge            $startMfaChallenge,
+        private Clock                        $clock,
+        private LoginRateLimit|null          $rateLimit = null,
+        private DeterministicRiskEngine|null $riskEngine = null,
     ) {}
 
     /**

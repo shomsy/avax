@@ -15,9 +15,9 @@ final class SessionId
     public static function generate() : self
     {
         return new self(
-            bin2hex(random_bytes(32)),
-            time(),
-            time()
+            value       : bin2hex(random_bytes(32)),
+            createdAt   : time(),
+            lastActivity: time()
         );
     }
 

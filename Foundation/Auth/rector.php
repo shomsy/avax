@@ -8,14 +8,14 @@ use Rector\Set\ValueObject\SetList;
 use Rector\ValueObject\PhpVersion;
 
 return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->paths([
+    $rectorConfig->paths(paths: [
                              __DIR__ . '/System',
                              __DIR__ . '/integrations',
                              __DIR__ . '/examples',
                              __DIR__ . '/tooling',
                          ]);
 
-    $rectorConfig->skip([
+    $rectorConfig->skip(skip: [
                             __DIR__ . '/build',
                             __DIR__ . '/vendor',
                             NullToStrictStringFuncCallArgRector::class => [
@@ -27,8 +27,8 @@ return static function (RectorConfig $rectorConfig) : void {
                             ],
                         ]);
 
-    $rectorConfig->phpVersion(PhpVersion::PHP_85);
-    $rectorConfig->sets([
+    $rectorConfig->phpVersion(phpVersion: PhpVersion::PHP_85);
+    $rectorConfig->sets(sets: [
                             SetList::PHP_80,
                             SetList::PHP_81,
                             SetList::PHP_82,

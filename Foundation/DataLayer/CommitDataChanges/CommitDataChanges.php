@@ -14,27 +14,27 @@ final readonly class CommitDataChanges
 {
     public function __construct(
         private UseDatabaseRuntime     $useDatabaseRuntime,
-        private ?DataTransactionPolicy $policy = null
+        private DataTransactionPolicy|null $policy = null
     )
     {
         $this->policy ??= DataTransactionPolicy::strict();
     }
 
-    public static function withRuntime(DataLayerRuntime $runtime, ?DataTransactionPolicy $policy = null) : self
+    public static function withRuntime(DataLayerRuntime $runtime, DataTransactionPolicy|null $policy = null) : self
     {
         return new self(
-            useDatabaseRuntime: new UseDatabaseRuntime($runtime),
+            useDatabaseRuntime: new UseDatabaseRuntime(runtime: $runtime),
             policy            : $policy
         );
     }
 
-    public function begin(?string $connectionName = null) : DataTransaction
+    public function begin(string|null $connectionName = null) : DataTransaction
     {
         $id  = $this->generateTransactionId();
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         if ($this->policy->defaultIsolation !== IsolationLevel::READ_COMMITTED) {
-            $pdo->exec(sprintf(
+            $pdo->exec(statement: sprintf(
                            'SET TRANSACTION ISOLATION LEVEL %s',
                            $this->policy->defaultIsolation->value
                        ));
@@ -51,12 +51,12 @@ final readonly class CommitDataChanges
 
     public function commit(DataTransaction $transaction) : DataTransaction
     {
-        $pdo = $this->useDatabaseRuntime->connection($transaction->connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $transaction->connectionName);
 
         if (! $pdo->inTransaction()) {
             throw new DataTransactionFailure(
-                      'Cannot commit: no active transaction.',
-                code: '25000'
+                message: 'Cannot commit: no active transaction.',
+                code   : '25000'
             );
         }
 
@@ -73,7 +73,7 @@ final readonly class CommitDataChanges
 
     public function rollback(DataTransaction $transaction) : DataTransaction
     {
-        $pdo = $this->useDatabaseRuntime->connection($transaction->connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $transaction->connectionName);
 
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
@@ -88,9 +88,9 @@ final readonly class CommitDataChanges
         );
     }
 
-    public function execute(callable $operations, ?string $connectionName = null) : DataTransaction
+    public function execute(callable $operations, string|null $connectionName = null) : DataTransaction
     {
-        $pdo          = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
         $startedAt    = microtime(true);
         $id           = $this->generateTransactionId();
         $affectedRows = [];
@@ -124,7 +124,7 @@ final readonly class CommitDataChanges
             }
 
             throw new DataTransactionFailure(
-                          sprintf('Transaction failed: %s', $e->getMessage()),
+                message : sprintf('Transaction failed: %s', $e->getMessage()),
                 code    : $e->getCode() ?: 'HY000',
                 previous: $e
             );
@@ -132,9 +132,9 @@ final readonly class CommitDataChanges
     }
 
     public function executeWithRetry(
-        callable $operations,
-        ?string  $connectionName = null,
-        ?int     $maxRetries = null
+        callable    $operations,
+        string|null $connectionName = null,
+        int|null    $maxRetries = null
     ) : DataTransaction
     {
         $maxRetries    ??= $this->policy->maxRetries ?? 3;
@@ -143,11 +143,11 @@ final readonly class CommitDataChanges
 
         while ( $attempt < $maxRetries ) {
             try {
-                return $this->execute($operations, $connectionName);
+                return $this->execute(operations: $operations, connectionName: $connectionName);
             } catch (DataTransactionFailure $e) {
                 $lastException = $e;
 
-                if (! $this->isRetryable($e)) {
+                if (! $this->isRetryable(failure: $e)) {
                     throw $e;
                 }
 
@@ -161,18 +161,18 @@ final readonly class CommitDataChanges
         }
 
         throw $lastException ?? new DataTransactionFailure(
-            'Transaction failed after maximum retries.'
+            message: 'Transaction failed after maximum retries.'
         );
     }
 
     public function createSavepoint(string $name) : string
     {
         if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
-            throw new InvalidArgumentException('Invalid savepoint name.');
+            throw new InvalidArgumentException(message: 'Invalid savepoint name.');
         }
 
         $pdo = $this->useDatabaseRuntime->connection();
-        $pdo->exec("SAVEPOINT {$name}");
+        $pdo->exec(statement: "SAVEPOINT {$name}");
 
         return $name;
     }
@@ -180,13 +180,13 @@ final readonly class CommitDataChanges
     public function releaseSavepoint(string $name) : void
     {
         $pdo = $this->useDatabaseRuntime->connection();
-        $pdo->exec("RELEASE SAVEPOINT {$name}");
+        $pdo->exec(statement: "RELEASE SAVEPOINT {$name}");
     }
 
     public function rollbackToSavepoint(string $name) : void
     {
         $pdo = $this->useDatabaseRuntime->connection();
-        $pdo->exec("ROLLBACK TO SAVEPOINT {$name}");
+        $pdo->exec(statement: "ROLLBACK TO SAVEPOINT {$name}");
     }
 
     public function getIsolationLevel() : IsolationLevel
@@ -194,25 +194,25 @@ final readonly class CommitDataChanges
         return $this->policy->defaultIsolation;
     }
 
-    public function setIsolationLevel(IsolationLevel $level, ?string $connectionName = null) : void
+    public function setIsolationLevel(IsolationLevel $level, string|null $connectionName = null) : void
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
-        $pdo->exec(sprintf('SET TRANSACTION ISOLATION LEVEL %s', $level->value));
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
+        $pdo->exec(statement: sprintf('SET TRANSACTION ISOLATION LEVEL %s', $level->value));
     }
 
-    public function inTransaction(?string $connectionName = null) : bool
+    public function inTransaction(string|null $connectionName = null) : bool
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         return $pdo->inTransaction();
     }
 
-    public function isLocked(?string $connectionName = null) : bool
+    public function isLocked(string|null $connectionName = null) : bool
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         try {
-            $pdo->exec('SELECT 1 FOR UPDATE');
+            $pdo->exec(statement: 'SELECT 1 FOR UPDATE');
 
             return true;
         } catch (Throwable) {
@@ -220,13 +220,13 @@ final readonly class CommitDataChanges
         }
     }
 
-    public function getTransactionCount(?string $connectionName = null) : int
+    public function getTransactionCount(string|null $connectionName = null) : int
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         try {
-            $stmt   = $pdo->query('SELECT @@GLOBAL.trx_count');
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt   = $pdo->query(query: 'SELECT @@GLOBAL.trx_count');
+            $result = $stmt->fetch(mode: PDO::FETCH_ASSOC);
 
             return (int) ($result['trx_count'] ?? 0);
         } catch (Throwable) {

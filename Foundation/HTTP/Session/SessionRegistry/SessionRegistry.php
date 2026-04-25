@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionRegistry;
 
+use SensitiveParameter;
+
 final class SessionRegistry
 {
     private array $registry = [];
 
-    public function register(string $sessionId, array $metadata = []) : void
+    public function register(#[SensitiveParameter] string $sessionId, array $metadata = []) : void
     {
         $this->registry[$sessionId] = [
             'registered_at' => time(),
@@ -17,12 +19,12 @@ final class SessionRegistry
         ];
     }
 
-    public function has(string $sessionId) : bool
+    public function has(#[SensitiveParameter] string $sessionId) : bool
     {
         return isset($this->registry[$sessionId]);
     }
 
-    public function get(string $sessionId) : ?array
+    public function get(#[SensitiveParameter] string $sessionId) : array|null
     {
         return $this->registry[$sessionId] ?? null;
     }
@@ -37,12 +39,12 @@ final class SessionRegistry
         return count($this->registry);
     }
 
-    public function revoke(string $sessionId) : bool
+    public function revoke(#[SensitiveParameter] string $sessionId) : bool
     {
-        return $this->unregister($sessionId);
+        return $this->unregister(sessionId: $sessionId);
     }
 
-    public function unregister(string $sessionId) : bool
+    public function unregister(#[SensitiveParameter] string $sessionId) : bool
     {
         if (! isset($this->registry[$sessionId])) {
             return false;
@@ -53,7 +55,7 @@ final class SessionRegistry
         return true;
     }
 
-    public function refreshActivity(string $sessionId) : void
+    public function refreshActivity(#[SensitiveParameter] string $sessionId) : void
     {
         if (isset($this->registry[$sessionId])) {
             $this->registry[$sessionId]['last_activity'] = time();

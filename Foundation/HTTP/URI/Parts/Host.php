@@ -16,14 +16,14 @@ final readonly class Host implements Stringable
 
     public function __construct(string $host)
     {
-        $this->host = $this->validate($host);
+        $this->host = $this->validate(host: $host);
     }
 
     private function validate(string $host) : string
     {
         $normalized = trim($host);
         if ($normalized === '') {
-            throw new InvalidArgumentException('Host cannot be empty.');
+            throw new InvalidArgumentException(message: 'Host cannot be empty.');
         }
 
         if (str_contains($normalized, ':') && ! str_starts_with($normalized, '[')) {
@@ -44,7 +44,7 @@ final readonly class Host implements Stringable
         }
 
         if (! filter_var($ascii, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) && ! filter_var($ascii, FILTER_VALIDATE_IP)) {
-            throw new InvalidArgumentException('Invalid host: ' . $normalized);
+            throw new InvalidArgumentException(message: 'Invalid host: ' . $normalized);
         }
 
         return strtolower($ascii);

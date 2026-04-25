@@ -18,6 +18,7 @@ use Avax\DataHandling\Validation\Attributes\Rules\EmailRule;
 use Avax\DataHandling\Validation\Attributes\Rules\MinLengthRule;
 use JsonException;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class DataTransferRuntimeTest extends TestCase
 {
@@ -87,7 +88,7 @@ final class DataTransferRuntimeTest extends TestCase
         $stdClass = DataTransfer::toStdClass(object: $profile);
 
         // Assert
-        $this->assertJson($json);
+        $this->assertJson(actual: $json);
         $this->assertSame(expected: 'runtime-profile', actual: $jsonApi['data']['type']);
         $this->assertSame(expected: 'Mira', actual: $stdClass->name);
     }
@@ -194,13 +195,13 @@ final readonly class RuntimeProfileData
     public function __construct(
         #[MapFrom(name: 'user_name')]
         #[CastWith(casterClass: TrimStringCaster::class)]
-        public string             $name,
-        public RuntimeRole        $role,
-        public RuntimeAddressData $address,
-        #[ListOf(class: RuntimeAddressData::class)]
-        public array              $addresses,
-        #[Hidden]
-        public string             $secret,
+        public string                                   $name,
+        public RuntimeRole                              $role,
+        #[SensitiveParameter] public RuntimeAddressData $address,
+        #[SensitiveParameter] #[ListOf(class: RuntimeAddressData::class)]
+        public array                                    $addresses,
+        #[SensitiveParameter] #[Hidden]
+        public string                                   $secret,
     ) {}
 }
 

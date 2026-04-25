@@ -21,7 +21,7 @@ final readonly class PublishOutboxMessage
         public OutboxMessageStatus $status,
         public int                 $retryCount,
         public float               $createdAt,
-        public ?float              $publishedAt
+        public float|null $publishedAt
     ) {}
 
     public function describeResponsibility() : string

@@ -15,7 +15,7 @@ final readonly class UseMaterializedView
         return 'determines whether to use a materialized view for query acceleration.';
     }
 
-    public function shouldUse(array $queryContext, array $availableViews) : ?UseMaterializedViewResult
+    public function shouldUse(array $queryContext, array $availableViews) : UseMaterializedViewResult|null
     {
         $queryFingerprint = $queryContext['fingerprint'] ?? '';
         $targetTable      = $queryContext['target_table'] ?? '';
@@ -33,7 +33,7 @@ final readonly class UseMaterializedView
         }
 
         $lastRefresh = $matchingView['last_refresh'] ?? 0;
-        $isStale     = $this->isStale($lastRefresh);
+        $isStale = $this->isStale(lastRefreshTimestamp: $lastRefresh);
 
         return new UseMaterializedViewResult(
             viewName        : $matchingView['name'],

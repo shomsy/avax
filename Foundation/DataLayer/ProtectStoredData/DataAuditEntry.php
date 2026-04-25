@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataLayer\ProtectStoredData;
 
 use InvalidArgumentException;
+use SensitiveParameter;
 
 enum AuditAction: string
 {
@@ -27,11 +28,11 @@ final readonly class DataAuditEntry
         public string      $resourceId,
         public array       $changes,
         public float       $timestamp,
-        public string      $ipAddress
+        #[SensitiveParameter] public string $ipAddress
     )
     {
         if (empty($this->id)) {
-            throw new InvalidArgumentException('Audit entry ID cannot be empty.');
+            throw new InvalidArgumentException(message: 'Audit entry ID cannot be empty.');
         }
     }
 

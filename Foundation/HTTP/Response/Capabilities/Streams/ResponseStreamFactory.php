@@ -18,7 +18,7 @@ final class ResponseStreamFactory
 
     public function createStreamFromString(string $content = '') : StreamInterface
     {
-        return new CreateStreamFromString()($content);
+        return new CreateStreamFromString()(content: $content);
     }
 
     public function createStreamFromResource(mixed $resource) : StreamInterface
@@ -32,6 +32,6 @@ final class ResponseStreamFactory
 
     public function openFileStream(string $path, string $mode = 'r') : StreamInterface
     {
-        return new OpenFileStream()($path, $mode);
+        return new OpenFileStream()(path: $path, mode: $mode);
     }
 }

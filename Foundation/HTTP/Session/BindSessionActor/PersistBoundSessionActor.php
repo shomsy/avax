@@ -17,6 +17,6 @@ final class PersistBoundSessionActor
 
     public function handle(SessionActor $actor) : void
     {
-        $this->store->put('_actor', ['id' => $actor->id(), 'data' => $actor->data()]);
+        $this->store->put(key: '_actor', value: ['id' => $actor->id(), 'data' => $actor->data()]);
     }
 }

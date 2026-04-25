@@ -130,6 +130,6 @@ final readonly class Set implements IteratorAggregate, Countable
 
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator(array: $this->items);
     }
 }

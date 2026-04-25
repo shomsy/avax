@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\InspectDataLayer;
 
+use Throwable;
+
 final readonly class MeasureDataQuery
 {
     public function __construct(
@@ -23,8 +25,8 @@ final readonly class MeasureDataQuery
             $result   = $query();
             $duration = (microtime(true) - $start) * 1000;
 
-            return DataQueryMeasurement::create($duration, 'SELECT');
-        } catch (\Throwable $e) {
+            return DataQueryMeasurement::create(durationMs: $duration, queryType: 'SELECT');
+        } catch (Throwable $e) {
             $duration = (microtime(true) - $start) * 1000;
 
             return new DataQueryMeasurement(

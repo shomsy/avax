@@ -23,7 +23,7 @@ final readonly class InvalidateReadCache
     )
     {
         if ($this->delayMs < 0) {
-            throw new InvalidArgumentException('Delay must be non-negative.');
+            throw new InvalidArgumentException(message: 'Delay must be non-negative.');
         }
     }
 
@@ -34,17 +34,17 @@ final readonly class InvalidateReadCache
 
     public static function immediate() : self
     {
-        return new self(InvalidationStrategy::IMMEDIATE, 0, true);
+        return new self(strategy: InvalidationStrategy::IMMEDIATE, delayMs: 0, cascade: true);
     }
 
     public static function lazy() : self
     {
-        return new self(InvalidationStrategy::LAZY, 0, false);
+        return new self(strategy: InvalidationStrategy::LAZY, delayMs: 0, cascade: false);
     }
 
     public static function delayed(int $delayMs = 1000) : self
     {
-        return new self(InvalidationStrategy::DELAYED, $delayMs, false);
+        return new self(strategy: InvalidationStrategy::DELAYED, delayMs: $delayMs, cascade: false);
     }
 
     public function shouldInvalidate(string $cacheKey, array $recentWrites) : bool

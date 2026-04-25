@@ -31,7 +31,7 @@ final readonly class Register
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private bool $emailVerificationRequired = false,
-        private ?LoginRateLimit $rateLimit = null
+        private LoginRateLimit|null $rateLimit = null
     ) {}
 
     /**

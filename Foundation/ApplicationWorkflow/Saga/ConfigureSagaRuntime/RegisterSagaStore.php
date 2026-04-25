@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime;
 
+use RuntimeException;
+use Throwable;
+
 final readonly class RegisterSagaStore
 {
     public function register(string $type, array $config) : object
     {
         return match ($type) {
-            'memory'   => $this->createInMemoryStore($config),
-            'database' => $this->createDatabaseStore($config),
-            'redis'    => $this->createRedisStore($config),
+            'memory'   => $this->createInMemoryStore(config: $config),
+            'database' => $this->createDatabaseStore(config: $config),
+            'redis'    => $this->createRedisStore(config: $config),
             default    => throw new SagaRuntimeConfigurationFailure(
-                sprintf('Unknown saga store type: %s', $type)
+                message: sprintf('Unknown saga store type: %s', $type)
             ),
         };
     }
@@ -23,7 +26,7 @@ final readonly class RegisterSagaStore
         return new class {
             public array $data = [];
 
-            public function get(string $key) : ?array { return $this->data[$key] ?? null; }
+            public function get(string $key) : array|null { return $this->data[$key] ?? null; }
 
             public function set(string $key, array $value) : void { $this->data[$key] = $value; }
 
@@ -38,7 +41,7 @@ final readonly class RegisterSagaStore
         return new class($config) {
             public function __construct(private array $config) {}
 
-            public function get(string $key) : ?array { return null; }
+            public function get(string $key) : array|null { return null; }
 
             public function set(string $key, array $value) : void {}
 
@@ -53,7 +56,7 @@ final readonly class RegisterSagaStore
         return new class($config) {
             public function __construct(private array $config) {}
 
-            public function get(string $key) : ?array { return null; }
+            public function get(string $key) : array|null { return null; }
 
             public function set(string $key, array $value) : void {}
 
@@ -71,12 +74,12 @@ final readonly class RegisterSagaStepRunner
         return new class {
             public function run(array $stepDefinition, array $sagaData) : mixed
             {
-                throw new \RuntimeException('Step runner not configured.');
+                throw new RuntimeException(message: 'Step runner not configured.');
             }
 
             public function compensate(array $compensationDefinition, array $previousResult) : mixed
             {
-                throw new \RuntimeException('Compensation runner not configured.');
+                throw new RuntimeException(message: 'Compensation runner not configured.');
             }
         };
     }
@@ -87,10 +90,10 @@ final readonly class RegisterSagaMessageBus
     public function register(string $type, array $config) : object
     {
         return match ($type) {
-            'memory' => $this->createInMemoryBus($config),
-            'async'  => $this->createAsyncBus($config),
+            'memory' => $this->createInMemoryBus(config: $config),
+            'async'  => $this->createAsyncBus(config: $config),
             default  => throw new SagaRuntimeConfigurationFailure(
-                sprintf('Unknown message bus type: %s', $type)
+                message: sprintf('Unknown message bus type: %s', $type)
             ),
         };
     }
@@ -157,10 +160,10 @@ final readonly class ValidateSagaRuntimeConfig
     }
 }
 
-final class SagaRuntimeConfigurationFailure extends \RuntimeException
+final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null)
+    public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct(message: $message, code: $code, previous: $previous);
     }
 }

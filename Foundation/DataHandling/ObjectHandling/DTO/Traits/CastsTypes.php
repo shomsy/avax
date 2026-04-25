@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
-use BackedEnum;
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use BackedEnum;
 use InvalidArgumentException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
@@ -39,7 +39,7 @@ trait CastsTypes
      */
     public function castTo(ReflectionProperty $property, mixed $value) : mixed
     {
-        return $this->castToExpectedType($property, $value);
+        return $this->castToExpectedType(property: $property, value: $value);
     }
 
     /**
@@ -60,10 +60,10 @@ trait CastsTypes
     protected function castToExpectedType(ReflectionProperty $property, mixed $value) : mixed
     {
         return match (true) {
-            $this->isDTOType($property)    => $this->castToDTO($property, $value),
-            $this->isDTOArray($property)   => $this->castToDTOArray($property, $value),
-            $this->isBackedEnum($property) => $this->castToEnum($property, $value),
-            default                        => $value,
+            $this->isDTOType(property: $property)    => $this->castToDTO(property: $property, value: $value),
+            $this->isDTOArray(property: $property)   => $this->castToDTOArray(property: $property, value: $value),
+            $this->isBackedEnum(property: $property) => $this->castToEnum(property: $property, value: $value),
+            default                                  => $value,
         };
     }
 
@@ -76,7 +76,7 @@ trait CastsTypes
      */
     protected function isDTOType(ReflectionProperty $property) : bool
     {
-        $type = $this->resolvePropertyType($property);
+        $type = $this->resolvePropertyType(property: $property);
 
         return $type !== null && is_subclass_of($type, AbstractDTO::class);
     }
@@ -143,10 +143,10 @@ trait CastsTypes
      */
     protected function castToDTO(ReflectionProperty $property, mixed $value) : object
     {
-        $class = $this->resolvePropertyType($property);
-        $this->assertDTOClass($class, $property);
+        $class = $this->resolvePropertyType(property: $property);
+        $this->assertDTOClass(class: $class, property: $property);
 
-        return new $class($this->normalizeToArray($value));
+        return new $class($this->normalizeToArray(value: $value));
     }
 
     /**
@@ -161,7 +161,7 @@ trait CastsTypes
     {
         if ($class === null || ! class_exists($class) || ! is_subclass_of($class, AbstractDTO::class)) {
             throw new InvalidArgumentException(
-                sprintf(
+                message: sprintf(
                     "Invalid DTO class '%s' for property '%s'.",
                     $class ?? 'null',
                     $property->getName()
@@ -194,8 +194,8 @@ trait CastsTypes
      */
     protected function isDTOArray(ReflectionProperty $property) : bool
     {
-        return $this->resolvePropertyType($property) === 'array'
-               && $this->resolveDTOClassFromAnnotationsOrAttributes($property) !== null;
+        return $this->resolvePropertyType(property: $property) === 'array'
+            && $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property) !== null;
     }
 
     /**
@@ -234,11 +234,11 @@ trait CastsTypes
      */
     protected function castToDTOArray(ReflectionProperty $property, mixed $value) : array
     {
-        $class = $this->resolveDTOClassFromAnnotationsOrAttributes($property);
-        $this->assertDTOClass($class, $property);
+        $class = $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property);
+        $this->assertDTOClass(class: $class, property: $property);
 
         return array_map(
-            fn($item) => new $class($this->normalizeToArray($item)),
+            fn ($item) => new $class($this->normalizeToArray(value: $item)),
             is_array($value) ? $value : []
         );
     }
@@ -252,7 +252,7 @@ trait CastsTypes
      */
     protected function isBackedEnum(ReflectionProperty $property) : bool
     {
-        $type = $this->resolvePropertyType($property);
+        $type = $this->resolvePropertyType(property: $property);
 
         return $type !== null
                && enum_exists($type)
@@ -275,19 +275,19 @@ trait CastsTypes
             return null;
         }
 
-        $type = $this->resolvePropertyType($property);
-        $this->assertEnumClass($type, $property);
+        $type = $this->resolvePropertyType(property: $property);
+        $this->assertEnumClass(class: $type, property: $property);
 
         /** @var class-string<BackedEnum> $type */
         if ($value instanceof $type) {
             return $value;
         }
 
-        $enum = $type::tryFrom($value);
+        $enum = $type::tryFrom(value: $value);
 
         if (! $enum) {
             throw new InvalidArgumentException(
-                sprintf(
+                message: sprintf(
                     "Invalid enum value '%s' for '%s' on property '%s'. Valid: [%s]",
                     is_scalar($value) ? $value : gettype($value),
                     $type,
@@ -312,7 +312,7 @@ trait CastsTypes
     {
         if ($class === null || ! enum_exists($class) || ! is_subclass_of($class, BackedEnum::class)) {
             throw new InvalidArgumentException(
-                sprintf(
+                message: sprintf(
                     "Invalid enum type '%s' for property '%s'. Must be a backed enum.",
                     $class ?? 'null',
                     $property->getName()

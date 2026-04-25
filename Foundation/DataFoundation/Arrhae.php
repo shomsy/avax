@@ -376,7 +376,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
         return new self(items: $filtered);
     }
 
-    public function sort(?callable $callback = null) : static
+    public function sort(callable|null $callback = null) : static
     {
         $items = $this->items;
 

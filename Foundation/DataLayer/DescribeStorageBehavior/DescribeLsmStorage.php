@@ -31,10 +31,10 @@ final readonly class DescribeLsmStorage
     )
     {
         if ($this->maxLevel < 1) {
-            throw new InvalidArgumentException('Max level must be at least 1.');
+            throw new InvalidArgumentException(message: 'Max level must be at least 1.');
         }
         if ($this->bloomFilterFalsePositiveRate < 0 || $this->bloomFilterFalsePositiveRate > 100) {
-            throw new InvalidArgumentException('Bloom filter false positive rate must be between 0 and 100.');
+            throw new InvalidArgumentException(message: 'Bloom filter false positive rate must be between 0 and 100.');
         }
     }
 
@@ -48,11 +48,11 @@ final readonly class DescribeLsmStorage
         $maxLevel ??= 7;
 
         return new self(
-            LsmStorageStrategy::LEVEL,
-            LsmCompactionTrigger::SIZE,
-            $maxLevel,
-            $bloomFpr,
-            true
+            strategy                    : LsmStorageStrategy::LEVEL,
+            compactionTrigger           : LsmCompactionTrigger::SIZE,
+            maxLevel                    : $maxLevel,
+            bloomFilterFalsePositiveRate: $bloomFpr,
+            compactionEnabled           : true
         );
     }
 

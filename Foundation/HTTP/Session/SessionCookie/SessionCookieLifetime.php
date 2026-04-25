@@ -10,7 +10,7 @@ final class SessionCookieLifetime
 
     public static function default() : self
     {
-        return new self(0);
+        return new self(value: 0);
     }
 
     public function value() : int

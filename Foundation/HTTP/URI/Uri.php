@@ -6,10 +6,14 @@ namespace Avax\HTTP\URI;
 
 use Avax\HTTP\URI\Parts\Authority;
 use Avax\HTTP\URI\Parts\Fragment;
+use Avax\HTTP\URI\Parts\Host;
 use Avax\HTTP\URI\Parts\Path;
+use Avax\HTTP\URI\Parts\Port;
 use Avax\HTTP\URI\Parts\Query;
 use Avax\HTTP\URI\Parts\Scheme;
+use Avax\HTTP\URI\Parts\UserInfo;
 use Psr\Http\Message\UriInterface;
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -17,18 +21,18 @@ use Stringable;
  */
 final readonly class Uri implements UriInterface, Stringable
 {
-    private ?Scheme    $scheme;
-    private ?Authority $authority;
-    private Path       $path;
-    private Query      $query;
-    private ?Fragment  $fragment;
+    private Scheme|null    $scheme;
+    private Authority|null $authority;
+    private Path           $path;
+    private Query          $query;
+    private Fragment|null  $fragment;
 
     public function __construct(
-        ?Scheme    $scheme = null,
-        ?Authority $authority = null,
-        Path       $path,
-        Query      $query,
-        ?Fragment  $fragment = null
+        Scheme|null    $scheme = null,
+        Authority|null $authority = null,
+        Path           $path,
+        Query          $query,
+        Fragment|null  $fragment = null
     )
     {
         $this->scheme    = $scheme;
@@ -40,14 +44,14 @@ final readonly class Uri implements UriInterface, Stringable
 
     public static function fromString(string $uri) : self
     {
-        $parts = ParseUriString::parse($uri);
+        $parts = ParseUriString::parse(uri: $uri);
 
         return new self(
-            $parts['scheme'],
-            $parts['authority'],
-            $parts['path'],
-            $parts['query'],
-            $parts['fragment']
+            scheme   : $parts['scheme'],
+            authority: $parts['authority'],
+            path     : $parts['path'],
+            query    : $parts['query'],
+            fragment : $parts['fragment']
         );
     }
 
@@ -71,7 +75,7 @@ final readonly class Uri implements UriInterface, Stringable
         return $this->authority ? (string) $this->authority->host() : '';
     }
 
-    public function getPort() : ?int
+    public function getPort() : int|null
     {
         return $this->authority && $this->authority->port() ? $this->authority->port()->value() : null;
     }
@@ -93,50 +97,50 @@ final readonly class Uri implements UriInterface, Stringable
 
     public function withScheme(string $scheme) : UriInterface
     {
-        $newScheme = $scheme !== '' ? new Scheme($scheme) : null;
+        $newScheme = $scheme !== '' ? new Scheme(scheme: $scheme) : null;
 
-        return new self($newScheme, $this->authority, $this->path, $this->query, $this->fragment);
+        return new self(scheme: $newScheme, authority: $this->authority, path: $this->path, query: $this->query, fragment: $this->fragment);
     }
 
-    public function withUserInfo(string $user, ?string $password = null) : UriInterface
+    public function withUserInfo(string $user, #[SensitiveParameter] string|null $password = null) : UriInterface
     {
-        $userInfo  = $user !== '' ? new \Avax\HTTP\URI\Parts\UserInfo($user, $password) : null;
-        $authority = $this->authority ? new Authority($this->authority->host(), $this->authority->port(), $userInfo) : null;
+        $userInfo  = $user !== '' ? new UserInfo(user: $user, password: $password) : null;
+        $authority = $this->authority ? new Authority(host: $this->authority->host(), port: $this->authority->port(), userInfo: $userInfo) : null;
 
-        return new self($this->scheme, $authority, $this->path, $this->query, $this->fragment);
+        return new self(scheme: $this->scheme, authority: $authority, path: $this->path, query: $this->query, fragment: $this->fragment);
     }
 
     public function withHost(string $host) : UriInterface
     {
-        $newHost   = new \Avax\HTTP\URI\Parts\Host($host);
-        $authority = new Authority($newHost, $this->authority ? $this->authority->port() : null, $this->authority ? $this->authority->userInfo() : null);
+        $newHost   = new Host(host: $host);
+        $authority = new Authority(host: $newHost, port: $this->authority ? $this->authority->port() : null, userInfo: $this->authority ? $this->authority->userInfo() : null);
 
-        return new self($this->scheme, $authority, $this->path, $this->query, $this->fragment);
+        return new self(scheme: $this->scheme, authority: $authority, path: $this->path, query: $this->query, fragment: $this->fragment);
     }
 
-    public function withPort(?int $port) : UriInterface
+    public function withPort(int|null $port) : UriInterface
     {
-        $newPort   = $port !== null && $this->scheme ? new \Avax\HTTP\URI\Parts\Port($port, $this->scheme) : null;
-        $authority = $this->authority ? new Authority($this->authority->host(), $newPort, $this->authority->userInfo()) : null;
+        $newPort   = $port !== null && $this->scheme ? new Port(port: $port, scheme: $this->scheme) : null;
+        $authority = $this->authority ? new Authority(host: $this->authority->host(), port: $newPort, userInfo: $this->authority->userInfo()) : null;
 
-        return new self($this->scheme, $authority, $this->path, $this->query, $this->fragment);
+        return new self(scheme: $this->scheme, authority: $authority, path: $this->path, query: $this->query, fragment: $this->fragment);
     }
 
     public function withPath(string $path) : UriInterface
     {
-        return new self($this->scheme, $this->authority, new Path($path), $this->query, $this->fragment);
+        return new self(scheme: $this->scheme, authority: $this->authority, path: new Path(path: $path), query: $this->query, fragment: $this->fragment);
     }
 
     public function withQuery(string $query) : UriInterface
     {
-        return new self($this->scheme, $this->authority, $this->path, new Query($query), $this->fragment);
+        return new self(scheme: $this->scheme, authority: $this->authority, path: $this->path, query: new Query(queryString: $query), fragment: $this->fragment);
     }
 
     public function withFragment(string $fragment) : UriInterface
     {
-        $newFragment = $fragment !== '' ? new Fragment($fragment) : null;
+        $newFragment = $fragment !== '' ? new Fragment(fragment: $fragment) : null;
 
-        return new self($this->scheme, $this->authority, $this->path, $this->query, $newFragment);
+        return new self(scheme: $this->scheme, authority: $this->authority, path: $this->path, query: $this->query, fragment: $newFragment);
     }
 
     public function __toString() : string

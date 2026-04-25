@@ -17,10 +17,10 @@ final readonly class FailoverPlan
     )
     {
         if ($this->healthCheckIntervalMs < 100) {
-            throw new InvalidArgumentException('Health check interval must be at least 100ms.');
+            throw new InvalidArgumentException(message: 'Health check interval must be at least 100ms.');
         }
         if ($this->failoverTimeoutMs < 1000) {
-            throw new InvalidArgumentException('Failover timeout must be at least 1000ms.');
+            throw new InvalidArgumentException(message: 'Failover timeout must be at least 1000ms.');
         }
     }
 

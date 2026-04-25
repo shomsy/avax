@@ -20,10 +20,10 @@ final readonly class LazySequence implements IteratorAggregate
      * @param array<int, callable(mixed): bool>  $filters
      */
     private function __construct(
-        private Closure $factory,
-        private array   $maps = [],
-        private array   $filters = [],
-        private ?int    $limit = null,
+        private Closure  $factory,
+        private array    $maps = [],
+        private array    $filters = [],
+        private int|null $limit = null,
     ) {}
 
     public static function from(iterable $items) : self

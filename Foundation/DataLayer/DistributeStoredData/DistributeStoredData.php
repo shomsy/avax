@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\DistributeStoredData;
 
+use SensitiveParameter;
+
 final readonly class DistributeStoredData
 {
     public function __construct(
-        private DataPartitionRoute $partitionRoute,
-        private ChooseReadReplica  $readReplica,
-        private ConsistentHashRing $hashRing
+        private DataPartitionRoute                       $partitionRoute,
+        private ChooseReadReplica                        $readReplica,
+        #[SensitiveParameter] private ConsistentHashRing $hashRing
     ) {}
 
     public function describeResponsibility() : string
@@ -19,8 +21,8 @@ final readonly class DistributeStoredData
 
     public function routeWrite(string $key) : DataRouteResult
     {
-        $partition = $this->partitionRoute->route($key);
-        $replica   = $this->readReplica->selectReplica($partition->replicas);
+        $partition = $this->partitionRoute->route(key: $key);
+        $replica   = $this->readReplica->selectReplica(replicas: $partition->replicas);
 
         return new DataRouteResult(
             targetKey  : $key,
@@ -33,8 +35,8 @@ final readonly class DistributeStoredData
 
     public function routeRead(string $key) : DataRouteResult
     {
-        $partition = $this->partitionRoute->route($key);
-        $replica   = $this->readReplica->selectReadReplica($partition->replicas);
+        $partition = $this->partitionRoute->route(key: $key);
+        $replica   = $this->readReplica->selectReadReplica(replicas: $partition->replicas);
 
         return new DataRouteResult(
             targetKey  : $key,

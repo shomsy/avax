@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\DefineSaga;
 
 use Avax\DataLayer\ProtectStoredData\TenantBoundary;
+use DateTimeImmutable;
+use DateTimeInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
@@ -31,35 +33,35 @@ final readonly class SagaDefinition implements IteratorAggregate
     public string              $name;
     public string              $type;
     public array               $steps;
-    public array               $stepOrder;
-    public ?TenantBoundary     $tenantBoundary;
-    public SagaStartCondition  $startCondition;
-    public ?string             $startTrigger;
-    public int                 $timeoutSeconds;
+    public array                  $stepOrder;
+    public TenantBoundary|null    $tenantBoundary;
+    public SagaStartCondition     $startCondition;
+    public string|null            $startTrigger;
+    public int                    $timeoutSeconds;
     public int                 $maxDurationSeconds;
     public bool                $allowConcurrent;
-    public bool                $allowRemoteCompensation;
-    public ?string             $description;
-    public SagaStatus          $status;
-    public ?\DateTimeImmutable $createdAt;
-    public ?\DateTimeImmutable $updatedAt;
+    public bool                   $allowRemoteCompensation;
+    public string|null            $description;
+    public SagaStatus             $status;
+    public DateTimeImmutable|null $createdAt;
+    public DateTimeImmutable|null $updatedAt;
 
     private function __construct(
         string                  $name,
         string                  $type,
         array|null              $steps = null,
         array|null              $stepOrder = null,
-        ?TenantBoundary         $tenantBoundary = null,
+        TenantBoundary|null    $tenantBoundary = null,
         SagaStartCondition|null $startCondition = null,
-        ?string                 $startTrigger = null,
+        string|null            $startTrigger = null,
         int|null                $timeoutSeconds = null,
         int|null                $maxDurationSeconds = null,
         bool|null               $allowConcurrent = null,
         bool|null               $allowRemoteCompensation = null,
-        ?string                 $description = null,
+        string|null            $description = null,
         SagaStatus|null         $status = null,
-        ?\DateTimeImmutable     $createdAt = null,
-        ?\DateTimeImmutable     $updatedAt = null
+        DateTimeImmutable|null $createdAt = null,
+        DateTimeImmutable|null $updatedAt = null
     )
     {
         $steps                   ??= [];
@@ -95,11 +97,11 @@ final readonly class SagaDefinition implements IteratorAggregate
     {
         $type ??= 'long_running_process';
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Saga name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Saga name cannot be empty.');
         }
 
         if (empty(trim($type))) {
-            throw new InvalidArgumentException('Saga type cannot be empty.');
+            throw new InvalidArgumentException(message: 'Saga type cannot be empty.');
         }
 
         return new self(
@@ -108,9 +110,9 @@ final readonly class SagaDefinition implements IteratorAggregate
             steps                  : [],
             stepOrder              : [],
             tenantBoundary         : isset($options['tenant'])
-                                         ? \Avax\DataLayer\ProtectStoredData\TenantBoundary::create($options['tenant'])
+                                         ? TenantBoundary::create(id: $options['tenant'])
                                          : null,
-            startCondition         : SagaStartCondition::from($options['start_condition'] ?? 'manual'),
+            startCondition         : SagaStartCondition::from(value: $options['start_condition'] ?? 'manual'),
             startTrigger           : $options['start_trigger'] ?? null,
             timeoutSeconds         : $options['timeout'] ?? 3600,
             maxDurationSeconds     : $options['max_duration'] ?? 86400,
@@ -118,19 +120,19 @@ final readonly class SagaDefinition implements IteratorAggregate
             allowRemoteCompensation: $options['remote_compensation'] ?? false,
             description            : $options['description'] ?? null,
             status                 : SagaStatus::DRAFT,
-            createdAt              : new \DateTimeImmutable(),
-            updatedAt              : new \DateTimeImmutable()
+            createdAt              : new DateTimeImmutable(),
+            updatedAt              : new DateTimeImmutable()
         );
     }
 
     public static function linear(string $name, array $options = []) : self
     {
-        return self::create($name, 'linear', $options);
+        return self::create(name: $name, type: 'linear', options: $options);
     }
 
     public static function stateMachine(string $name, array $options = []) : self
     {
-        return self::create($name, 'state_machine', $options);
+        return self::create(name: $name, type: 'state_machine', options: $options);
     }
 
     public function withStep(SagaStepDefinition $step) : self
@@ -158,7 +160,7 @@ final readonly class SagaDefinition implements IteratorAggregate
             description            : $this->description,
             status                 : SagaStatus::DRAFT,
             createdAt              : $this->createdAt,
-            updatedAt              : new \DateTimeImmutable()
+            updatedAt              : new DateTimeImmutable()
         );
     }
 
@@ -166,7 +168,7 @@ final readonly class SagaDefinition implements IteratorAggregate
     {
         $result = $this;
         foreach ($steps as $step) {
-            $result = $result->withStep($step);
+            $result = $result->withStep(step: $step);
         }
 
         return $result;
@@ -174,7 +176,7 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     public function validate() : ValidateSagaDefinition
     {
-        return new ValidateSagaDefinition($this);
+        return new ValidateSagaDefinition(definition: $this);
     }
 
     public function isValid() : bool
@@ -187,12 +189,12 @@ final readonly class SagaDefinition implements IteratorAggregate
         return $this->validate()->getErrors();
     }
 
-    public function getStep(string $name) : ?SagaStepDefinition
+    public function getStep(string $name) : SagaStepDefinition|null
     {
         return $this->steps[$name] ?? null;
     }
 
-    public function getFirstStep() : ?SagaStepDefinition
+    public function getFirstStep() : SagaStepDefinition|null
     {
         $name = $this->stepOrder[0] ?? null;
 
@@ -241,8 +243,8 @@ final readonly class SagaDefinition implements IteratorAggregate
             'remote_compensation' => $this->allowRemoteCompensation,
             'description'         => $this->description,
             'status'              => $this->status->value,
-            'created_at'          => $this->createdAt?->format(\DateTimeInterface::ISO8601),
-            'updated_at'          => $this->updatedAt?->format(\DateTimeInterface::ISO8601),
+            'created_at' => $this->createdAt?->format(format: DateTimeInterface::ISO8601),
+            'updated_at' => $this->updatedAt?->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }

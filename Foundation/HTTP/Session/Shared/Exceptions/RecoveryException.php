@@ -10,26 +10,26 @@ final class RecoveryException extends RuntimeException
 {
     public static function transactionAlreadyStarted() : self
     {
-        return new self('A session recovery transaction is already active.');
+        return new self(message: 'A session recovery transaction is already active.');
     }
 
     public static function noActiveTransaction(string $operation) : self
     {
-        return new self("Cannot {$operation} because no session recovery transaction is active.");
+        return new self(message: "Cannot {$operation} because no session recovery transaction is active.");
     }
 
     public static function invalidTransactionState() : self
     {
-        return new self('Session recovery transaction state is invalid.');
+        return new self(message: 'Session recovery transaction state is invalid.');
     }
 
     public static function integrityCheckFailed(string $name) : self
     {
-        return new self("Session recovery snapshot '{$name}' failed integrity validation.");
+        return new self(message: "Session recovery snapshot '{$name}' failed integrity validation.");
     }
 
     public static function transactionFailed(string $reason) : self
     {
-        return new self('Session recovery transaction failed: ' . $reason);
+        return new self(message: 'Session recovery transaction failed: ' . $reason);
     }
 }

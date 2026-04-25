@@ -64,6 +64,6 @@ final readonly class Window implements IteratorAggregate, Countable
 
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->windows);
+        return new ArrayIterator(array: $this->windows);
     }
 }

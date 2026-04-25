@@ -17,6 +17,6 @@ final class PersistSessionTtl
 
     public function handle(string $key, int $ttl) : void
     {
-        $this->store->put('_ttl.' . $key, time() + $ttl);
+        $this->store->put(key: '_ttl.' . $key, value: time() + $ttl);
     }
 }

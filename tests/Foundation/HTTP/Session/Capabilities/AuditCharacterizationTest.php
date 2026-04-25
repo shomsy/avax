@@ -34,7 +34,7 @@ final class AuditCharacterizationTest extends TestCase
         };
 
         $audit = new Audit(logger: $logger);
-        $audit->record('user_login', ['user_id' => 7, 'token' => 'secret']);
+        $audit->record(event: 'user_login', data: ['user_id' => 7, 'token' => 'secret']);
 
         $this->assertNotEmpty($logger->calls, 'logger should have been called');
         $found = false;

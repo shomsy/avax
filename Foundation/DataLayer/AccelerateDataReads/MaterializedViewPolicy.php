@@ -20,11 +20,11 @@ final readonly class MaterializedViewPolicy
         public MaterializedViewRefreshType $refreshType,
         public int                         $refreshIntervalSeconds,
         public bool                        $fastRefreshEnabled,
-        public ?int                        $maxStalenessSeconds
+        public int|null $maxStalenessSeconds
     )
     {
         if ($this->refreshIntervalSeconds < 0) {
-            throw new InvalidArgumentException('Refresh interval must be non-negative.');
+            throw new InvalidArgumentException(message: 'Refresh interval must be non-negative.');
         }
     }
 
@@ -35,12 +35,12 @@ final readonly class MaterializedViewPolicy
 
     public static function scheduled(int $intervalSeconds = 3600) : self
     {
-        return new self(MaterializedViewRefreshType::SCHEDULED, $intervalSeconds, true, $intervalSeconds * 2);
+        return new self(refreshType: MaterializedViewRefreshType::SCHEDULED, refreshIntervalSeconds: $intervalSeconds, fastRefreshEnabled: true, maxStalenessSeconds: $intervalSeconds * 2);
     }
 
     public static function incremental(int $intervalSeconds = 300) : self
     {
-        return new self(MaterializedViewRefreshType::INCREMENTAL, $intervalSeconds, true, null);
+        return new self(refreshType: MaterializedViewRefreshType::INCREMENTAL, refreshIntervalSeconds: $intervalSeconds, fastRefreshEnabled: true, maxStalenessSeconds: null);
     }
 
     public function shouldRefresh(int $lastRefreshTimestamp) : bool

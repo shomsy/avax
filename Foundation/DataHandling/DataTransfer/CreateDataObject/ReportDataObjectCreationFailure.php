@@ -19,7 +19,7 @@ final readonly class ReportDataObjectCreationFailure
 
         return new DataTransferFailure(
             message   : 'Data object creation failed.',
-            violations: DataTransferViolations::from([
+            violations: DataTransferViolations::from(violations: [
                                                          new DataTransferViolation(
                                                              path      : '$',
                                                              code      : 'data_object_creation_failed',

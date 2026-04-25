@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CoordinateDataConsistency;
 
+use RuntimeException;
+
 enum ConflictResolutionStrategy: string
 {
     case LAST_WRITE_WINS = 'last_write_wins';
@@ -27,12 +29,12 @@ final readonly class ConflictResolution
 
     public static function lastWriteWins() : self
     {
-        return new self(ConflictResolutionStrategy::LAST_WRITE_WINS, [], true);
+        return new self(strategy: ConflictResolutionStrategy::LAST_WRITE_WINS, fieldPolicies: [], automatic: true);
     }
 
     public static function fieldBased(array $fieldPolicies) : self
     {
-        return new self(ConflictResolutionStrategy::MERGE, $fieldPolicies, true);
+        return new self(strategy: ConflictResolutionStrategy::MERGE, fieldPolicies: $fieldPolicies, automatic: true);
     }
 
     public function resolve(array $conflictingValues) : mixed
@@ -42,7 +44,7 @@ final readonly class ConflictResolution
         }
 
         if ($this->strategy === ConflictResolutionStrategy::REJECT) {
-            throw new ConflictResolutionException('Conflict detected, manual resolution required.');
+            throw new ConflictResolutionException(message: 'Conflict detected, manual resolution required.');
         }
 
         return $conflictingValues[0] ?? null;
@@ -58,4 +60,4 @@ final readonly class ConflictResolution
     }
 }
 
-class ConflictResolutionException extends \RuntimeException {}
+class ConflictResolutionException extends RuntimeException {}

@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 final class EmitResponseTest extends TestCase
 {
     #[RunInSeparateProcess]
-    #[PreserveGlobalState(false)]
+    #[PreserveGlobalState(enabled: false)]
     public function test_emit_response_writes_status_headers_and_body() : void
     {
         http_response_code(response_code: 200);
         header_remove();
 
         ob_start();
-        new EmitResponse()(Response::text(content: 'emitted body', status: 202));
+        new EmitResponse()(response: Response::text(content: 'emitted body', status: 202));
         $output = (string) ob_get_clean();
 
         self::assertSame(202, http_response_code());

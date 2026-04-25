@@ -23,13 +23,13 @@ final readonly class QuorumPolicy
     )
     {
         if ($this->totalReplicas < 1) {
-            throw new InvalidArgumentException('Total replicas must be at least 1.');
+            throw new InvalidArgumentException(message: 'Total replicas must be at least 1.');
         }
         if ($this->readQuorum < 1 || $this->readQuorum > $this->totalReplicas) {
-            throw new InvalidArgumentException('Read quorum must be between 1 and total replicas.');
+            throw new InvalidArgumentException(message: 'Read quorum must be between 1 and total replicas.');
         }
         if ($this->writeQuorum < 1 || $this->writeQuorum > $this->totalReplicas) {
-            throw new InvalidArgumentException('Write quorum must be between 1 and total replicas.');
+            throw new InvalidArgumentException(message: 'Write quorum must be between 1 and total replicas.');
         }
     }
 
@@ -40,17 +40,17 @@ final readonly class QuorumPolicy
 
     public static function majority() : self
     {
-        return new self(3, 2, 2, true);
+        return new self(totalReplicas: 3, readQuorum: 2, writeQuorum: 2, strict: true);
     }
 
     public static function all() : self
     {
-        return new self(3, 3, 3, true);
+        return new self(totalReplicas: 3, readQuorum: 3, writeQuorum: 3, strict: true);
     }
 
     public static function one(int $totalReplicas = 3) : self
     {
-        return new self($totalReplicas, 1, 1, false);
+        return new self(totalReplicas: $totalReplicas, readQuorum: 1, writeQuorum: 1, strict: false);
     }
 
     public function isQuorumMet(int $ackedReplicas, QuorumType $type) : bool

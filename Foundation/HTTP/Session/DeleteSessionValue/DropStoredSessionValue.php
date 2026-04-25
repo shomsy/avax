@@ -17,6 +17,6 @@ final class DropStoredSessionValue
 
     public function handle(string $key) : void
     {
-        $this->store->delete($key);
+        $this->store->delete(key: $key);
     }
 }

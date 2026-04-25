@@ -15,10 +15,10 @@ final class ReadSessionSnapshot
         $this->store = $store;
     }
 
-    public function handle(string $name) : ?array
+    public function handle(string $name) : array|null
     {
         $key = '_snapshot.' . $name;
 
-        return $this->store->get($key);
+        return $this->store->get(key: $key);
     }
 }

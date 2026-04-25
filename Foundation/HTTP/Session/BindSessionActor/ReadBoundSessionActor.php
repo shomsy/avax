@@ -15,14 +15,14 @@ final class ReadBoundSessionActor
         $this->store = $store;
     }
 
-    public function handle() : ?SessionActor
+    public function handle() : SessionActor|null
     {
-        $data = $this->store->get('_actor');
+        $data = $this->store->get(key: '_actor');
 
         if (! is_array($data) || ! isset($data['id'])) {
             return null;
         }
 
-        return new SessionActor($data['id'], $data['data'] ?? []);
+        return new SessionActor(id: $data['id'], data: $data['data'] ?? []);
     }
 }

@@ -30,26 +30,26 @@ final readonly class StoredIndex
     public IndexKind $kind;
     public IndexType $type;
     public string    $tableName;
-    public array     $columns;
-    public ?int      $length;
-    public bool      $isVisible;
-    public bool      $isPartial;
-    public ?string   $partialExpression;
-    public ?string   $comment;
-    public ?int      $priority;
+    public array       $columns;
+    public int|null    $length;
+    public bool        $isVisible;
+    public bool        $isPartial;
+    public string|null $partialExpression;
+    public string|null $comment;
+    public int|null    $priority;
 
     private function __construct(
-        string    $name,
-        IndexKind $kind,
-        IndexType $type,
-        string    $tableName,
-        array     $columns,
-        ?int      $length = null,
-        bool|null $isVisible = null,
-        bool|null $isPartial = null,
-        ?string   $partialExpression = null,
-        ?string   $comment = null,
-        ?int      $priority = null
+        string      $name,
+        IndexKind   $kind,
+        IndexType   $type,
+        string      $tableName,
+        array       $columns,
+        int|null    $length = null,
+        bool|null   $isVisible = null,
+        bool|null   $isPartial = null,
+        string|null $partialExpression = null,
+        string|null $comment = null,
+        int|null    $priority = null
     )
     {
         $isVisible ??= true;
@@ -75,27 +75,27 @@ final readonly class StoredIndex
     ) : self
     {
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Index name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Index name cannot be empty.');
         }
 
         if (empty($columns)) {
-            throw new InvalidArgumentException('Index must have at least one column.');
+            throw new InvalidArgumentException(message: 'Index must have at least one column.');
         }
 
         if (! is_array($columns)) {
-            throw new InvalidArgumentException('Columns must be an array.');
+            throw new InvalidArgumentException(message: 'Columns must be an array.');
         }
 
         foreach ($columns as $column) {
             if (! is_string($column) || empty(trim($column))) {
-                throw new InvalidArgumentException('All column names must be non-empty strings.');
+                throw new InvalidArgumentException(message: 'All column names must be non-empty strings.');
             }
         }
 
         return new self(
             name             : $name,
-            kind             : IndexKind::from($options['kind'] ?? 'index'),
-            type             : IndexType::from($options['type'] ?? 'BTREE'),
+            kind             : IndexKind::from(value: $options['kind'] ?? 'index'),
+            type             : IndexType::from(value: $options['type'] ?? 'BTREE'),
             tableName        : $tableName,
             columns          : $columns,
             length           : $options['length'] ?? null,
@@ -144,7 +144,7 @@ final readonly class StoredIndex
     ) : self
     {
         if (! in_array($options['kind'] ?? '', ['fulltext', 'spatial'], true)) {
-            throw new InvalidArgumentException('Full-text index requires specific database engine support.');
+            throw new InvalidArgumentException(message: 'Full-text index requires specific database engine support.');
         }
 
         return self::create(
@@ -163,14 +163,14 @@ final readonly class StoredIndex
     ) : self
     {
         if (count($columns) < 2) {
-            throw new InvalidArgumentException('Composite index requires at least two columns.');
+            throw new InvalidArgumentException(message: 'Composite index requires at least two columns.');
         }
 
         return self::create(
             name     : $name,
             tableName: $tableName,
             columns  : $columns,
-                       $options
+            options  : $options
         );
     }
 

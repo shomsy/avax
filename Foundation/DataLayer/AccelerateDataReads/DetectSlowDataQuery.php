@@ -13,7 +13,7 @@ final readonly class DetectSlowDataQuery
     public function __construct(int $thresholdMs = 1000)
     {
         if ($thresholdMs < 0) {
-            throw new InvalidArgumentException('Threshold must be non-negative.');
+            throw new InvalidArgumentException(message: 'Threshold must be non-negative.');
         }
         $this->thresholdMs = $thresholdMs;
     }
@@ -34,8 +34,8 @@ final readonly class DetectSlowDataQuery
         $rowsExamined  = $queryMetrics['rows_examined'] ?? 0;
         $rowsReturned  = $queryMetrics['rows_returned'] ?? 0;
 
-        $isSlow   = $this->isSlow($executionTime);
-        $severity = $this->calculateSeverity($executionTime, $rowsExamined, $rowsReturned);
+        $isSlow   = $this->isSlow(executionTimeMs: $executionTime);
+        $severity = $this->calculateSeverity(executionTime: $executionTime, rowsExamined: $rowsExamined, rowsReturned: $rowsReturned);
 
         return new SlowDataQueryReport(
             isSlow          : $isSlow,
@@ -58,7 +58,7 @@ final readonly class DetectSlowDataQuery
         if ($executionTime > $this->thresholdMs * 2 || $ratio > 100) {
             return 'warning';
         }
-        if ($this->isSlow($executionTime)) {
+        if ($this->isSlow(executionTimeMs: $executionTime)) {
             return 'notice';
         }
 
@@ -67,7 +67,7 @@ final readonly class DetectSlowDataQuery
 
     public function withThreshold(int $thresholdMs) : self
     {
-        return new self($thresholdMs);
+        return new self(thresholdMs: $thresholdMs);
     }
 
     public function toMetadata() : array

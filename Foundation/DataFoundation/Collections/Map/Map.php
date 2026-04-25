@@ -100,6 +100,6 @@ final readonly class Map implements IteratorAggregate, Countable
 
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator(array: $this->items);
     }
 }

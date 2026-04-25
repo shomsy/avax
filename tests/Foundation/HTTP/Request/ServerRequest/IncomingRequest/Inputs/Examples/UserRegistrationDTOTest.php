@@ -31,7 +31,7 @@ final class UserRegistrationDTOTest extends TestCase
      */
     public function test_validates_email_format(): void
     {
-        $this->expectException(DTOValidationException::class);
+        $this->expectException(exception: DTOValidationException::class);
 
         new UserRegistrationDTO(data: [
             'name' => 'John Doe',
@@ -44,7 +44,7 @@ final class UserRegistrationDTOTest extends TestCase
      */
     public function test_validates_password_min_length(): void
     {
-        $this->expectException(DTOValidationException::class);
+        $this->expectException(exception: DTOValidationException::class);
 
         new UserRegistrationDTO(data: [
             'name' => 'John Doe',
@@ -57,7 +57,7 @@ final class UserRegistrationDTOTest extends TestCase
      */
     public function test_validates_password_complexity(): void
     {
-        $this->expectException(DTOValidationException::class);
+        $this->expectException(exception: DTOValidationException::class);
 
         new UserRegistrationDTO(data: [
             'name' => 'John Doe',
@@ -70,7 +70,7 @@ final class UserRegistrationDTOTest extends TestCase
      */
     public function test_validates_age_minimum(): void
     {
-        $this->expectException(DTOValidationException::class);
+        $this->expectException(exception: DTOValidationException::class);
 
         new UserRegistrationDTO(data: [
             'name' => 'John Doe',

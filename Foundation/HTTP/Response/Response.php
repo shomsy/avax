@@ -19,13 +19,14 @@ use Avax\HTTP\Response\Flows\BuildResponse\BuildStreamResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
 use Avax\HTTP\Response\Flows\BuildResponse\BuildXmlResponse;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * Small public facade for building and emitting HTTP responses.
  */
 final class Response
 {
-    public static function empty(int|null $status = null, array|null $headers = null, string $reasonPhrase = '') : ResponseInterface
+    public static function empty(int|null $status = null, #[SensitiveParameter] array|null $headers = null, string $reasonPhrase = '') : ResponseInterface
     {
         $status  ??= 200;
         $headers ??= [];
@@ -37,32 +38,32 @@ final class Response
         );
     }
 
-    public static function text(string $content, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function text(string $content, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildTextResponse()($content, $status, $headers);
+        return new BuildTextResponse()(content: $content, status: $status, headers: $headers);
     }
 
-    public static function html(string $content, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function html(string $content, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildHtmlResponse()($content, $status, $headers);
+        return new BuildHtmlResponse()(content: $content, status: $status, headers: $headers);
     }
 
-    public static function json(mixed $data, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function json(mixed $data, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildJsonResponse()($data, $status, $headers);
+        return new BuildJsonResponse()(data: $data, status: $status, headers: $headers);
     }
 
-    public static function xml(string|array $xml, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function xml(string|array $xml, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildXmlResponse()($xml, $status, $headers);
+        return new BuildXmlResponse()(xml: $xml, status: $status, headers: $headers);
     }
 
     public static function problem(
@@ -86,40 +87,40 @@ final class Response
         );
     }
 
-    public static function redirect(string $url, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function redirect(string $url, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 302;
 
-        return new BuildRedirectResponse()($url, $status, $headers);
+        return new BuildRedirectResponse()(target: $url, status: $status, headers: $headers);
     }
 
-    public static function download(string $filePath, ?string $downloadName = null, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function download(string $filePath, string|null $downloadName = null, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildFileDownloadResponse()($filePath, $downloadName, $status, $headers);
+        return new BuildFileDownloadResponse()(filePath: $filePath, downloadName: $downloadName, status: $status, headers: $headers);
     }
 
-    public static function stream(mixed $stream, int|null $status = null, array $headers = []) : ResponseInterface
+    public static function stream(mixed $stream, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
 
-        return new BuildStreamResponse()($stream, $status, $headers);
+        return new BuildStreamResponse()(stream: $stream, status: $status, headers: $headers);
     }
 
-    public static function noContent(array $headers = []) : ResponseInterface
+    public static function noContent(#[SensitiveParameter] array $headers = []) : ResponseInterface
     {
-        return new BuildNoContentResponse()($headers);
+        return new BuildNoContentResponse()(headers: $headers);
     }
 
     public static function notModified(
-        ?Etag         $etag = null,
-        ?LastModified $lastModified = null,
-        ?CacheControl $cacheControl = null,
-        array         $headers = []
+        Etag|null                   $etag = null,
+        LastModified|null           $lastModified = null,
+        CacheControl|null           $cacheControl = null,
+        #[SensitiveParameter] array $headers = []
     ) : ResponseInterface
     {
-        return new BuildNotModifiedResponse()($etag, $lastModified, $cacheControl, $headers);
+        return new BuildNotModifiedResponse()(etag: $etag, lastModified: $lastModified, cacheControl: $cacheControl, headers: $headers);
     }
 
     public static function emit(ResponseInterface $response) : void

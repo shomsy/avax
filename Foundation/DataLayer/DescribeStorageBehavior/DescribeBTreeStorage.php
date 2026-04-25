@@ -16,13 +16,13 @@ final readonly class DescribeBTreeStorage
     )
     {
         if ($this->order < 2) {
-            throw new InvalidArgumentException('B-tree order must be at least 2.');
+            throw new InvalidArgumentException(message: 'B-tree order must be at least 2.');
         }
         if ($this->fanout < 2) {
-            throw new InvalidArgumentException('Fanout must be at least 2.');
+            throw new InvalidArgumentException(message: 'Fanout must be at least 2.');
         }
         if ($this->maxDepth < 1) {
-            throw new InvalidArgumentException('Max depth must be at least 1.');
+            throw new InvalidArgumentException(message: 'Max depth must be at least 1.');
         }
     }
 
@@ -33,12 +33,12 @@ final readonly class DescribeBTreeStorage
 
     public static function standard(int $order = 1024) : self
     {
-        return new self($order, $order - 1, false, 4);
+        return new self(order: $order, fanout: $order - 1, compressionEnabled: false, maxDepth: 4);
     }
 
     public static function compressed(int $order = 256) : self
     {
-        return new self($order, $order - 1, true, 4);
+        return new self(order: $order, fanout: $order - 1, compressionEnabled: true, maxDepth: 4);
     }
 
     public function estimatePages(int $keys) : float

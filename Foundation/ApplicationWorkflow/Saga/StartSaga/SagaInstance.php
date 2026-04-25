@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\StartSaga;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use InvalidArgumentException;
 
 enum SagaInstanceStatus: string
@@ -23,32 +25,32 @@ final readonly class SagaInstance
     public string              $definitionName;
     public string              $type;
     public SagaInstanceStatus  $status;
-    public int                 $currentStepIndex;
-    public ?string             $currentStepName;
-    public array               $data;
+    public int                    $currentStepIndex;
+    public string|null            $currentStepName;
+    public array                  $data;
     public array               $completedSteps;
-    public array               $stepResults;
-    public ?\DateTimeImmutable $startedAt;
-    public ?\DateTimeImmutable $completedAt;
-    public ?\DateTimeImmutable $timeoutAt;
-    public ?string             $correlationId;
-    public ?string             $tenantId;
+    public array                  $stepResults;
+    public DateTimeImmutable|null $startedAt;
+    public DateTimeImmutable|null $completedAt;
+    public DateTimeImmutable|null $timeoutAt;
+    public string|null            $correlationId;
+    public string|null            $tenantId;
 
     private function __construct(
-        string              $id,
-        string              $definitionName,
-        string              $type,
-        SagaInstanceStatus  $status,
-        int                 $currentStepIndex,
-        ?string             $currentStepName,
-        array               $data,
-        array               $completedSteps,
-        array               $stepResults,
-        ?\DateTimeImmutable $startedAt,
-        ?\DateTimeImmutable $completedAt,
-        ?\DateTimeImmutable $timeoutAt,
-        ?string             $correlationId,
-        ?string             $tenantId
+        string                 $id,
+        string                 $definitionName,
+        string                 $type,
+        SagaInstanceStatus     $status,
+        int                    $currentStepIndex,
+        string|null            $currentStepName,
+        array                  $data,
+        array                  $completedSteps,
+        array                  $stepResults,
+        DateTimeImmutable|null $startedAt,
+        DateTimeImmutable|null $completedAt,
+        DateTimeImmutable|null $timeoutAt,
+        string|null            $correlationId,
+        string|null            $tenantId
     )
     {
         $this->id               = $id;
@@ -76,12 +78,12 @@ final readonly class SagaInstance
     ) : self
     {
         if (empty(trim($id))) {
-            throw new InvalidArgumentException('Saga instance ID cannot be empty.');
+            throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 
-        $startedAt = new \DateTimeImmutable();
+        $startedAt = new DateTimeImmutable();
         $timeoutAt = isset($options['timeout_seconds'])
-            ? new \DateTimeImmutable()->modify(sprintf('+%d seconds', $options['timeout_seconds']))
+            ? new DateTimeImmutable()->modify(modifier: sprintf('+%d seconds', $options['timeout_seconds']))
             : null;
 
         return new self(
@@ -108,15 +110,15 @@ final readonly class SagaInstance
             id              : $row['id'],
             definitionName  : $row['definition_name'],
             type            : $row['type'],
-            status          : SagaInstanceStatus::from($row['status']),
+            status          : SagaInstanceStatus::from(value: $row['status']),
             currentStepIndex: (int) ($row['current_step_index'] ?? 0),
             currentStepName : $row['current_step_name'] ?? null,
             data            : json_decode($row['data'] ?? '{}', true),
             completedSteps  : json_decode($row['completed_steps'] ?? '[]', true),
             stepResults     : json_decode($row['step_results'] ?? '{}', true),
-            startedAt       : isset($row['started_at']) ? new \DateTimeImmutable($row['started_at']) : null,
-            completedAt     : isset($row['completed_at']) ? new \DateTimeImmutable($row['completed_at']) : null,
-            timeoutAt       : isset($row['timeout_at']) ? new \DateTimeImmutable($row['timeout_at']) : null,
+            startedAt       : isset($row['started_at']) ? new DateTimeImmutable(datetime: $row['started_at']) : null,
+            completedAt     : isset($row['completed_at']) ? new DateTimeImmutable(datetime: $row['completed_at']) : null,
+            timeoutAt       : isset($row['timeout_at']) ? new DateTimeImmutable(datetime: $row['timeout_at']) : null,
             correlationId   : $row['correlation_id'] ?? null,
             tenantId        : $row['tenant_id'] ?? null
         );
@@ -181,7 +183,7 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $this->stepResults,
             startedAt       : $this->startedAt,
-            completedAt     : new \DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId
@@ -191,7 +193,7 @@ final readonly class SagaInstance
     public function fail(string $error) : self
     {
         $stepResults                               = $this->stepResults;
-        $stepResults[$this->currentStepName ?? ''] = ['error' => $error, 'failed_at' => new \DateTimeImmutable()->format(\DateTimeInterface::ISO8601)];
+        $stepResults[$this->currentStepName ?? ''] = ['error' => $error, 'failed_at' => new DateTimeImmutable()->format(format: DateTimeInterface::ISO8601)];
 
         return new self(
             id              : $this->id,
@@ -204,7 +206,7 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $stepResults,
             startedAt       : $this->startedAt,
-            completedAt     : new \DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId
@@ -224,7 +226,7 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $compensationResults,
             startedAt       : $this->startedAt,
-            completedAt     : new \DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId
@@ -263,9 +265,9 @@ final readonly class SagaInstance
             'data'               => $this->data,
             'completed_steps'    => $this->completedSteps,
             'step_results'       => $this->stepResults,
-            'started_at'         => $this->startedAt?->format(\DateTimeInterface::ISO8601),
-            'completed_at'       => $this->completedAt?->format(\DateTimeInterface::ISO8601),
-            'timeout_at'         => $this->timeoutAt?->format(\DateTimeInterface::ISO8601),
+            'started_at'   => $this->startedAt?->format(format: DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'timeout_at'   => $this->timeoutAt?->format(format: DateTimeInterface::ISO8601),
             'correlation_id'     => $this->correlationId,
             'tenant_id'          => $this->tenantId,
         ];

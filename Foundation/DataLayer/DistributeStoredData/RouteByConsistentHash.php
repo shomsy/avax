@@ -17,8 +17,8 @@ final readonly class RouteByConsistentHash
 
     public function route(mixed $key) : HashRouteResult
     {
-        $keyString = $this->serializeKey($key);
-        $node      = $this->ring->getNode($keyString);
+        $keyString = $this->serializeKey(key: $key);
+        $node      = $this->ring->getNode(key: $keyString);
 
         return new HashRouteResult(
             key : $keyString,

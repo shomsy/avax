@@ -7,6 +7,7 @@ namespace Avax\HTTP\Middleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * PSR-15 Abstract base class for middleware that restricts access based on IP addresses.
@@ -53,7 +54,7 @@ class IpRestrictionMiddleware implements MiddlewareInterface
      *
      * @return bool True if the IP is allowed, false otherwise.
      */
-    protected function isAllowedIp(string $ipAddress) : bool
+    protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
     {
         return true;
     }

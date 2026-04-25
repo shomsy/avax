@@ -76,7 +76,7 @@ interface CollectionInterface extends ArrayAccess, IteratorAggregate, Countable
 
     public function whereNotNull(string $key) : static;
 
-    public function sort(?callable $callback = null) : static;
+    public function sort(callable|null $callback = null) : static;
 
     public function sortBy(string|callable $key, bool $descending = false) : static;
 

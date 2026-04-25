@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\RunSagaStep;
 
-use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
-use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 final readonly class SagaStepResult
 {
-    public string              $stepName;
-    public bool                $success;
-    public array               $output;
-    public ?string             $error;
-    public int                 $attempt;
-    public float               $durationMs;
-    public ?\DateTimeImmutable $completedAt;
+    public string                 $stepName;
+    public bool                   $success;
+    public array                  $output;
+    public string|null            $error;
+    public int                    $attempt;
+    public float                  $durationMs;
+    public DateTimeImmutable|null $completedAt;
 
     private function __construct(
-        string              $stepName,
-        bool                $success,
-        array|null $output = null,
-        ?string             $error = null,
-        int|null   $attempt = null,
-        float|null $durationMs = null,
-        ?\DateTimeImmutable $completedAt = null
+        string                 $stepName,
+        bool                   $success,
+        array|null             $output = null,
+        string|null            $error = null,
+        int|null               $attempt = null,
+        float|null             $durationMs = null,
+        DateTimeImmutable|null $completedAt = null
     )
     {
         $output     ??= [];
@@ -56,7 +56,7 @@ final readonly class SagaStepResult
             output     : $output,
             attempt    : $attempt,
             durationMs : $durationMs,
-            completedAt: new \DateTimeImmutable()
+            completedAt: new DateTimeImmutable()
         );
     }
 
@@ -75,7 +75,7 @@ final readonly class SagaStepResult
             error      : $error,
             attempt    : $attempt,
             durationMs : $durationMs,
-            completedAt: new \DateTimeImmutable()
+            completedAt: new DateTimeImmutable()
         );
     }
 
@@ -88,7 +88,7 @@ final readonly class SagaStepResult
             'error'        => $this->error,
             'attempt'      => $this->attempt,
             'duration_ms'  => $this->durationMs,
-            'completed_at' => $this->completedAt?->format(\DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }

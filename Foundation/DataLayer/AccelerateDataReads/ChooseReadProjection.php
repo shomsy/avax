@@ -14,19 +14,19 @@ final readonly class ChooseReadProjectionResult
 
     public static function full() : self
     {
-        return new self(['*'], false, false);
+        return new self(columns: ['*'], aggregated: false, coverable: false);
     }
 
     public static function minimal(array $columns, array $availableCovering) : self
     {
         $isCoverable = count(array_diff($columns, $availableCovering)) === 0;
 
-        return new self($columns, false, $isCoverable);
+        return new self(columns: $columns, aggregated: false, coverable: $isCoverable);
     }
 
     public static function aggregate() : self
     {
-        return new self([], true, true);
+        return new self(columns: [], aggregated: true, coverable: true);
     }
 
     public function estimateReduction(int $totalColumns) : float
@@ -72,6 +72,6 @@ final readonly class ChooseReadProjection
             return ChooseReadProjectionResult::aggregate();
         }
 
-        return ChooseReadProjectionResult::minimal($requestedColumns, $availableCovering);
+        return ChooseReadProjectionResult::minimal(columns: $requestedColumns, availableCovering: $availableCovering);
     }
 }

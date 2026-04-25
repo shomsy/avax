@@ -13,11 +13,11 @@ final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
     public static function missingSagaStore() : self
     {
-        return new self('Saga runtime requires an explicit StoreSagaState dependency before workflow state can be written.');
+        return new self(message: 'Saga runtime requires an explicit StoreSagaState dependency before workflow state can be written.');
     }
 
     public static function missingSagaStepRunner() : self
     {
-        return new self('Saga runtime requires an explicit step runner before workflow steps can execute.');
+        return new self(message: 'Saga runtime requires an explicit step runner before workflow steps can execute.');
     }
 }

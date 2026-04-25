@@ -88,9 +88,9 @@ final readonly class RouteDefinition
         string|null $name = null,
         array|null  $constraints = null,
         array|null  $defaults = null,
-        ?string     $domain = null,
+        string|null $domain = null,
         array|null  $attributes = null,
-        ?string     $authorization = null,
+        string|null $authorization = null,
         array|null  $parameters = null,
         array       $metadata = []
     )

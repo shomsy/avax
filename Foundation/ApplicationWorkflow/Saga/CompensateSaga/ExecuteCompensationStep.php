@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\CompensateSaga;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
+use RuntimeException;
+use Throwable;
 
 final readonly class ExecuteCompensationStep
 {
@@ -17,7 +20,7 @@ final readonly class ExecuteCompensationStep
     {
         if ($step->compensationComponent === null) {
             throw new SagaCompensationFailure(
-                sprintf('No compensation defined for step %s.', $step->name)
+                message: sprintf('No compensation defined for step %s.', $step->name)
             );
         }
 
@@ -47,7 +50,7 @@ final readonly class RecordCompensationCompleted
     ) : void
     {
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::create(
+            SagaRuntimeEvent::create(
                 sagaId  : $sagaId,
                 sagaName: '',
                 type    : 'compensation_completed',
@@ -69,7 +72,7 @@ final readonly class RecordCompensationFailed
     ) : void
     {
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::create(
+            SagaRuntimeEvent::create(
                 sagaId  : $sagaId,
                 sagaName: '',
                 type    : 'compensation_failed',
@@ -100,10 +103,10 @@ final readonly class PublishSagaCompensated
     }
 }
 
-class SagaCompensationFailure extends \RuntimeException
+class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', ?\Throwable $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', Throwable|null $previous = null)
     {
-        parent::__construct($message, previous: $previous);
+        parent::__construct(message: $message, previous: $previous);
     }
 }

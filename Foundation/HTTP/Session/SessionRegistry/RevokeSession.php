@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionRegistry;
 
+use SensitiveParameter;
+
 final class RevokeSession
 {
     private $registry;
@@ -13,7 +15,7 @@ final class RevokeSession
         $this->registry = $registry;
     }
 
-    public function handle(string $sessionId) : bool
+    public function handle(#[SensitiveParameter] string $sessionId) : bool
     {
         return $this->registry->revoke($sessionId);
     }

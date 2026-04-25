@@ -8,10 +8,10 @@ use JsonException;
 
 final class JsonCodec
 {
-    public function tryEncode(mixed $value) : ?string
+    public function tryEncode(mixed $value) : string|null
     {
         try {
-            return $this->encode($value);
+            return $this->encode(value: $value);
         } catch (JsonException) {
             return null;
         }
@@ -25,7 +25,7 @@ final class JsonCodec
     public function tryDecode(string $data) : mixed
     {
         try {
-            return $this->decode($data);
+            return $this->decode(data: $data);
         } catch (JsonException) {
             return null;
         }

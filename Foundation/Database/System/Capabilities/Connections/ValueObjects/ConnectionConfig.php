@@ -31,13 +31,13 @@ final readonly class ConnectionConfig
      * @param string $name     A simple nickname to identify this specific config.
      */
     public function __construct(
-        ?string                       $driver = null,
-        ?string                       $host = null,
-        ?string                       $database = null,
-        ?string                       $username = null,
-        #[SensitiveParameter] ?string $password = null,
-        ?string                       $charset = null,
-        string                       $name = 'default',
+        string|null                       $driver = null,
+        string|null                       $host = null,
+        string|null                       $database = null,
+        string|null                       $username = null,
+        #[SensitiveParameter] string|null $password = null,
+        string|null                       $charset = null,
+        string                            $name = 'default',
     )
     {
         $driver         ??= 'mysql';

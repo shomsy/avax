@@ -15,10 +15,10 @@ final class ResponseFactoryTest extends TestCase
     public function test_creates_html_response_with_expected_content_type() : void
     {
         $factory  = $this->factory();
-        $response = $factory->createHtmlResponse('<h1>Hello</h1>', 201);
+        $response = $factory->createHtmlResponse(html: '<h1>Hello</h1>', status: 201);
 
         self::assertSame(201, $response->getStatusCode());
-        self::assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame('text/html; charset=UTF-8', $response->getHeaderLine(header: 'Content-Type'));
         self::assertSame('<h1>Hello</h1>', (string) $response->getBody());
     }
 
@@ -35,10 +35,10 @@ final class ResponseFactoryTest extends TestCase
     public function test_creates_error_response_as_json() : void
     {
         $factory  = $this->factory();
-        $response = $factory->createErrorResponse(429, 'Too Many Requests');
+        $response = $factory->createErrorResponse(statusCode: 429, message: 'Too Many Requests');
 
         self::assertSame(429, $response->getStatusCode());
-        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        self::assertSame('application/json', $response->getHeaderLine(header: 'Content-Type'));
         self::assertStringContainsString('Too Many Requests', (string) $response->getBody());
     }
 
@@ -50,9 +50,9 @@ final class ResponseFactoryTest extends TestCase
         $jsonResponse = $factory->response(data: ['name' => 'Alice']);
         $sameResponse = $factory->response(data: $textResponse);
 
-        self::assertSame('text/plain; charset=UTF-8', $textResponse->getHeaderLine('Content-Type'));
+        self::assertSame('text/plain; charset=UTF-8', $textResponse->getHeaderLine(header: 'Content-Type'));
         self::assertSame('hello', (string) $textResponse->getBody());
-        self::assertSame('application/json', $jsonResponse->getHeaderLine('Content-Type'));
+        self::assertSame('application/json', $jsonResponse->getHeaderLine(header: 'Content-Type'));
         self::assertSame(['name' => 'Alice'], json_decode(json: (string) $jsonResponse->getBody(), associative: true));
         self::assertSame($textResponse, $sameResponse);
     }
@@ -66,7 +66,7 @@ final class ResponseFactoryTest extends TestCase
         );
 
         self::assertSame(202, $response->getStatusCode());
-        self::assertSame('present', $response->getHeaderLine('X-Test'));
+        self::assertSame('present', $response->getHeaderLine(header: 'X-Test'));
         self::assertSame('payload', (string) $response->getBody());
     }
 
@@ -74,6 +74,6 @@ final class ResponseFactoryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->factory()->createRedirectResponse('invalid target');
+        $this->factory()->createRedirectResponse(url: 'invalid target');
     }
 }

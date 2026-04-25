@@ -9,12 +9,12 @@ use InvalidArgumentException;
 
 final class LazyConnectionPool implements ConnectionPoolInterface
 {
-    private ?ConnectionPoolInterface $pool = null;
+    private ConnectionPoolInterface|null $pool = null;
 
     public function __construct(
-        private readonly array    $config,
-        private readonly int      $maxConnections = 20,
-        private readonly ?Closure $factory = null,
+        private readonly array        $config,
+        private readonly int          $maxConnections = 20,
+        private readonly Closure|null $factory = null,
     )
     {
         if ($this->factory === null) {

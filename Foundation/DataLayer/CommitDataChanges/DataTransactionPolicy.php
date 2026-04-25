@@ -33,26 +33,26 @@ enum TwoPhaseCommitPolicy: string
 
 final readonly class DataTransactionPolicy
 {
-    public DataTransactionPolicy $policy;
-    public IsolationLevel        $defaultIsolation;
-    public ?int                  $timeoutSeconds;
-    public ?int                  $maxRetries;
-    public int                   $retryDelayMs;
+    public self                 $policy;
+    public IsolationLevel       $defaultIsolation;
+    public int|null             $timeoutSeconds;
+    public int|null             $maxRetries;
+    public int                  $retryDelayMs;
     public bool                  $allowDeadlockRetries;
     public bool                  $checkForeignKeys;
-    public TwoPhaseCommitPolicy  $twoPhaseCommit;
-    public ?int                  $maxAffectedRows;
+    public TwoPhaseCommitPolicy $twoPhaseCommit;
+    public int|null             $maxAffectedRows;
 
     private function __construct(
-        DataTransactionPolicy     $policy,
+        self     $policy,
         IsolationLevel|null       $defaultIsolation = null,
-        ?int                      $timeoutSeconds = null,
-        ?int                      $maxRetries = null,
+        int|null $timeoutSeconds = null,
+        int|null $maxRetries = null,
         int|null                  $retryDelayMs = null,
         bool|null                 $allowDeadlockRetries = null,
         bool|null                 $checkForeignKeys = null,
         TwoPhaseCommitPolicy|null $twoPhaseCommit = null,
-        ?int                      $maxAffectedRows = null
+        int|null $maxAffectedRows = null
     )
     {
         $defaultIsolation     ??= IsolationLevel::REPEATABLE_READ;
@@ -74,7 +74,7 @@ final readonly class DataTransactionPolicy
     public static function strict() : self
     {
         return new self(
-            policy              : DataTransactionPolicy::MANUAL,
+            policy              : self::MANUAL,
             timeoutSeconds      : 30,
             maxRetries          : 3,
             retryDelayMs        : 100,
@@ -87,7 +87,7 @@ final readonly class DataTransactionPolicy
     public static function relaxed() : self
     {
         return new self(
-            policy              : DataTransactionPolicy::AUTO_COMMIT,
+            policy              : self::AUTO_COMMIT,
             defaultIsolation    : IsolationLevel::READ_COMMITTED,
             timeoutSeconds      : 60,
             allowDeadlockRetries: false,
@@ -98,7 +98,7 @@ final readonly class DataTransactionPolicy
     public static function batch() : self
     {
         return new self(
-            policy              : DataTransactionPolicy::MANUAL,
+            policy              : self::MANUAL,
             defaultIsolation    : IsolationLevel::REPEATABLE_READ,
             timeoutSeconds      : 300,
             maxRetries          : 1,
@@ -111,14 +111,14 @@ final readonly class DataTransactionPolicy
     public static function create(array $options = []) : self
     {
         return new self(
-            policy              : DataTransactionPolicy::from($options['policy'] ?? 'manual'),
-            defaultIsolation    : IsolationLevel::from($options['isolation'] ?? 'REPEATABLE READ'),
+            policy              : self::from($options['policy'] ?? 'manual'),
+            defaultIsolation    : IsolationLevel::from(value: $options['isolation'] ?? 'REPEATABLE READ'),
             timeoutSeconds      : $options['timeout'] ?? null,
             maxRetries          : $options['max_retries'] ?? null,
             retryDelayMs        : $options['retry_delay'] ?? 100,
             allowDeadlockRetries: $options['deadlock_retries'] ?? true,
             checkForeignKeys    : $options['foreign_keys'] ?? true,
-            twoPhaseCommit      : TwoPhaseCommitPolicy::from($options['two_phase'] ?? 'disabled'),
+            twoPhaseCommit      : TwoPhaseCommitPolicy::from(value: $options['two_phase'] ?? 'disabled'),
             maxAffectedRows     : $options['max_affected'] ?? null
         );
     }

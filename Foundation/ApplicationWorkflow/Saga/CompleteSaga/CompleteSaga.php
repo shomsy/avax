@@ -6,9 +6,12 @@ namespace Avax\ApplicationWorkflow\Saga\CompleteSaga;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\InspectSaga;
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 final readonly class CompleteSaga
 {
@@ -25,18 +28,18 @@ final readonly class CompleteSaga
 
         if ($instance->status === SagaInstanceStatus::FAILED) {
             throw new SagaCompletionFailure(
-                sprintf('Cannot complete failed saga %s.', $instance->id)
+                message: sprintf('Cannot complete failed saga %s.', $instance->id)
             );
         }
 
         $completed = $instance->complete();
 
-        $this->storeSagaState->save($completed);
+        $this->storeSagaState->save(instance: $completed);
 
         $this->inspectSaga->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::completed(
-                $instance->id,
-                $instance->definitionName
+            event: SagaRuntimeEvent::completed(
+                     sagaId  : $instance->id,
+                     sagaName: $instance->definitionName
             )
         );
 
@@ -64,15 +67,15 @@ final readonly class CompleteSaga
             'definition_name' => $instance->definitionName,
             'data'            => $instance->data,
             'completed_steps' => $instance->completedSteps,
-            'completed_at'    => $instance->completedAt?->format(\DateTimeInterface::ISO8601),
+            'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
 
         $this->inspectSaga->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::create(
-                $instance->id,
-                $instance->definitionName,
-                'saga_completed',
-                $payload
+            event: SagaRuntimeEvent::create(
+                     sagaId  : $instance->id,
+                     sagaName: $instance->definitionName,
+                     type    : 'saga_completed',
+                     payload : $payload
             )
         );
     }
@@ -84,7 +87,7 @@ final readonly class SagaCompletion
     public string             $definitionName;
     public array              $finalData;
     public array              $completedSteps;
-    public \DateTimeImmutable $completedAt;
+    public DateTimeImmutable $completedAt;
     public float              $totalDurationMs;
 
     private function __construct(
@@ -92,7 +95,7 @@ final readonly class SagaCompletion
         string             $definitionName,
         array              $finalData,
         array              $completedSteps,
-        \DateTimeImmutable $completedAt,
+        DateTimeImmutable $completedAt,
         float              $totalDurationMs
     )
     {
@@ -114,7 +117,7 @@ final readonly class SagaCompletion
             definitionName : $instance->definitionName,
             finalData      : $instance->data,
             completedSteps : $instance->completedSteps,
-            completedAt    : new \DateTimeImmutable(),
+            completedAt    : new DateTimeImmutable(),
             totalDurationMs: (microtime(true) * 1000) - $startTimeMs
         );
     }
@@ -126,7 +129,7 @@ final readonly class SagaCompletion
             'definition_name'   => $this->definitionName,
             'final_data'        => $this->finalData,
             'completed_steps'   => $this->completedSteps,
-            'completed_at'      => $this->completedAt->format(\DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt->format(format: DateTimeInterface::ISO8601),
             'total_duration_ms' => $this->totalDurationMs,
         ];
     }

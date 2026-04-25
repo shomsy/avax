@@ -12,14 +12,14 @@ final class ReadWriteCharacterizationTest extends TestCase
     {
         $s = new NullSession();
 
-        $this->assertFalse($s->has('k'));
-        $this->assertNull($s->get('k'));
+        $this->assertFalse($s->has(key: 'k'));
+        $this->assertNull($s->get(key: 'k'));
 
-        $s->put('k', ['x' => 1]);
-        $this->assertTrue($s->has('k'));
-        $this->assertSame(['x' => 1], $s->get('k'));
+        $s->put(key: 'k', value: ['x' => 1]);
+        $this->assertTrue($s->has(key: 'k'));
+        $this->assertSame(['x' => 1], $s->get(key: 'k'));
 
-        $s->delete('k');
-        $this->assertFalse($s->has('k'));
+        $s->delete(key: 'k');
+        $this->assertFalse($s->has(key: 'k'));
     }
 }

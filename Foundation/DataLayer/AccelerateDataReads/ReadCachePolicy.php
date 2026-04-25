@@ -31,10 +31,10 @@ final readonly class ReadCachePolicy
     )
     {
         if ($this->maxSizeBytes < 0) {
-            throw new InvalidArgumentException('Max size must be non-negative.');
+            throw new InvalidArgumentException(message: 'Max size must be non-negative.');
         }
         if ($this->ttlSeconds < 0) {
-            throw new InvalidArgumentException('TTL must be non-negative.');
+            throw new InvalidArgumentException(message: 'TTL must be non-negative.');
         }
     }
 
@@ -45,12 +45,12 @@ final readonly class ReadCachePolicy
 
     public static function standard() : self
     {
-        return new self(ReadCacheType::RESULT, CacheEvictionPolicy::LRU, 1073741824, 300, 0.8);
+        return new self(type: ReadCacheType::RESULT, evictionPolicy: CacheEvictionPolicy::LRU, maxSizeBytes: 1073741824, ttlSeconds: 300, hitRateTarget: 0.8);
     }
 
     public static function aggressive() : self
     {
-        return new self(ReadCacheType::FULL, CacheEvictionPolicy::LFU, 2147483648, 3600, 0.9);
+        return new self(type: ReadCacheType::FULL, evictionPolicy: CacheEvictionPolicy::LFU, maxSizeBytes: 2147483648, ttlSeconds: 3600, hitRateTarget: 0.9);
     }
 
     public function shouldEvict(float $currentSizeBytes, int $accessCount) : bool

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\CommitDataChanges;
 
+use PDO;
+
 enum IsolationLevel: string
 {
     case READ_UNCOMMITTED = 'READ UNCOMMITTED';
@@ -15,21 +17,21 @@ enum IsolationLevel: string
     public function toPdo() : int
     {
         return match ($this) {
-            self::READ_UNCOMMITTED => \PDO::TRANSACTION_READ_UNCOMMITTED,
-            self::READ_COMMITTED   => \PDO::TRANSACTION_READ_COMMITTED,
-            self::REPEATABLE_READ  => \PDO::TRANSACTION_REPEATABLE_READ,
-            self::SERIALIZABLE     => \PDO::TRANSACTION_SERIALIZABLE,
-            self::SNAPSHOT         => \PDO::TRANSACTION_REPEATABLE_READ,
+            self::READ_UNCOMMITTED => PDO::TRANSACTION_READ_UNCOMMITTED,
+            self::READ_COMMITTED   => PDO::TRANSACTION_READ_COMMITTED,
+            self::REPEATABLE_READ  => PDO::TRANSACTION_REPEATABLE_READ,
+            self::SERIALIZABLE     => PDO::TRANSACTION_SERIALIZABLE,
+            self::SNAPSHOT         => PDO::TRANSACTION_REPEATABLE_READ,
         };
     }
 
     public static function fromPdo(int $level) : self
     {
         return match ($level) {
-            \PDO::TRANSACTION_READ_UNCOMMITTED => self::READ_UNCOMMITTED,
-            \PDO::TRANSACTION_READ_COMMITTED   => self::READ_COMMITTED,
-            \PDO::TRANSACTION_REPEATABLE_READ  => self::REPEATABLE_READ,
-            \PDO::TRANSACTION_SERIALIZABLE     => self::SERIALIZABLE,
+            PDO::TRANSACTION_READ_UNCOMMITTED => self::READ_UNCOMMITTED,
+            PDO::TRANSACTION_READ_COMMITTED   => self::READ_COMMITTED,
+            PDO::TRANSACTION_REPEATABLE_READ  => self::REPEATABLE_READ,
+            PDO::TRANSACTION_SERIALIZABLE     => self::SERIALIZABLE,
             default                            => self::REPEATABLE_READ,
         };
     }
@@ -38,31 +40,31 @@ enum IsolationLevel: string
 final readonly class DataTransaction
 {
     public string         $id;
-    public ?string        $connectionName;
+    public string|null $connectionName;
     public IsolationLevel $isolationLevel;
     public bool           $isActive;
     public bool           $isCommitted;
     public bool           $isRolledBack;
     public float          $startedAt;
-    public ?float         $finishedAt;
-    public ?float         $durationMs;
+    public float|null  $finishedAt;
+    public float|null  $durationMs;
     public array          $affectedRows;
     public array          $sideEffects;
-    public ?string        $savepointName;
+    public string|null $savepointName;
 
     private function __construct(
         string         $id,
-        ?string        $connectionName,
+        string|null $connectionName,
         IsolationLevel $isolationLevel,
-        bool|null  $isActive = null,
-        bool|null  $isCommitted = null,
-        bool|null  $isRolledBack = null,
-        float|null $startedAt = null,
-        ?float         $finishedAt = null,
-        ?float         $durationMs = null,
-        array|null $affectedRows = null,
-        array|null $sideEffects = null,
-        ?string        $savepointName = null
+        bool|null   $isActive = null,
+        bool|null   $isCommitted = null,
+        bool|null   $isRolledBack = null,
+        float|null  $startedAt = null,
+        float|null  $finishedAt = null,
+        float|null  $durationMs = null,
+        array|null  $affectedRows = null,
+        array|null  $sideEffects = null,
+        string|null $savepointName = null
     )
     {
         $isActive     ??= false;
@@ -87,9 +89,9 @@ final readonly class DataTransaction
 
     public static function started(
         string         $id,
-        ?string        $connectionName,
+        string|null $connectionName,
         IsolationLevel $isolationLevel,
-        ?string        $savepointName = null
+        string|null $savepointName = null
     ) : self
     {
         return new self(
@@ -104,7 +106,7 @@ final readonly class DataTransaction
 
     public static function committed(
         string         $id,
-        ?string        $connectionName,
+        string|null $connectionName,
         IsolationLevel $isolationLevel,
         array          $affectedRows,
         float          $startedAt
@@ -127,7 +129,7 @@ final readonly class DataTransaction
 
     public static function rolledBack(
         string         $id,
-        ?string        $connectionName,
+        string|null $connectionName,
         IsolationLevel $isolationLevel,
         array          $affectedRows,
         float          $startedAt

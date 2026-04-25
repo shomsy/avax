@@ -63,13 +63,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-    * Cache format: JSON + SHA256 signature.
+    * System format: JSON + SHA256 signature.
     * Verifikacija pre učitavanja.
 
 * ✅ *Acceptance:*
 
     * Loader više ne koristi `require` ni `eval`.
-    * Cache signature validacija prolazi.
+  * System signature validacija prolazi.
 
 ---
 
@@ -224,7 +224,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ---
 
-### ✅ **M4. Cache Signature Verification**
+### ✅ **M4. System Signature Verification**
 
 * 🔧 *Fajlovi:* `RouteCacheLoader.php`, `RouteCacheManifest.php`
 * 🧠 *Rešenje:* Validacija SHA256 pre hydrate.
@@ -368,7 +368,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ---
 
-### ✅ **X6. Cache manifest trust boundary**
+### ✅ **X6. System manifest trust boundary**
 
 **Opis:** Uvesti SHA256 cache manifest i fallback loader.
 
@@ -380,7 +380,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
     * Ako hash ne odgovara, fallback na disk + log upozorenje.
     * Integrisati u bootstrap proces.
 
-* ✅ *Acceptance:* Cache poisoning eliminisan, determinističko ponašanje.
+* ✅ *Acceptance:* System poisoning eliminisan, determinističko ponašanje.
 
 ---
 
@@ -491,10 +491,10 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ## 🟧 **PHASE 2 — PERFORMANCE & VALIDATION OPTIMIZATION (HIGH)**
 
-### ☐ **[R3] Reflection Metadata Cache**
+### ☐ **[R3] Reflection Metadata System**
 
 * **Problem:** `RouteDefinitionValidator` koristi reflection za svaku proveru.
-* **Goal:** Cache reflektovanih metoda/atributa za višestruku upotrebu.
+* **Goal:** System reflektovanih metoda/atributa za višestruku upotrebu.
 
 * 🔧 *Fajlovi:* `RouteDefinitionValidator.php`, `ReflectionCache.php`
 
@@ -502,7 +502,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
     * Uvedi `private static array $reflectionCache` unutar validatora.
     * Koristi `spl_object_id()` ili `className::methodName` kao ključ.
-    * Cache resetuj na `RouterBootstrapState::reset()`.
+  * System resetuj na `RouterBootstrapState::reset()`.
 
 * ✅ *Success Criteria:*
 
@@ -528,7 +528,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * ✅ *Success Criteria:*
 
-    * Cache generacija vreme smanjeno ≥40%
+    * System generacija vreme smanjeno ≥40%
     * Funkcionalnost identična
 
 * ⚡ *Impact:* Brži bootstrap, niže I/O troškove
@@ -648,7 +648,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
     * U `tests/RouterChaosTest.php` dodaj simulacije:
 
-        * Cache corruption
+        * System corruption
         * Concurrent bootstrap
         * Middleware chain interruption
     * Uporedi latenciju i logiku fallback-a.
@@ -689,8 +689,8 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 1. 🟥 R1 — RouteGroupStack Refactor
 2. 🟥 R2 — Exception Taxonomy Cleanup
-3. 🟧 R3 — Reflection Cache
-4. 🟧 R4 — Cache Hash Optimization
+3. 🟧 R3 — Reflection System
+4. 🟧 R4 — System Hash Optimization
 5. 🟨 R5 — Metrics Alerts
 6. 🟨 R6 — Trace Enrichment
 7. 🟩 R7 — Static Analysis Gate

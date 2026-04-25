@@ -25,7 +25,7 @@ interface CacheBackendInterface extends CacheInterface
     /**
      * Increments a stored integer value atomically.
      *
-     * @param string $key   Cache key.
+     * @param string $key System key.
      * @param int    $value The amount to increment by.
      *
      * @return int New incremented value.
@@ -35,7 +35,7 @@ interface CacheBackendInterface extends CacheInterface
     /**
      * Decrements a stored integer value atomically.
      *
-     * @param string $key   Cache key.
+     * @param string $key System key.
      * @param int    $value The amount to decrement by.
      *
      * @return int New decremented value.

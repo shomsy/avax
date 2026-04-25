@@ -99,7 +99,7 @@ Contract (Interface)
     ↓
 Adapter (Implementation)
     ↓
-External (DB, Session, Cache)
+External (DB, Session, System)
 ```
 
 ---

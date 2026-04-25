@@ -17,7 +17,7 @@ enum Avax: string
     // Foundation core directories
     case AUTH = 'Foundation/Auth/';
 
-    case CACHE = 'Foundation/Cache/';
+    case CACHE = 'Foundation/System/';
 
     case CONFIG = 'Foundation/Config/';
 

@@ -2582,12 +2582,12 @@ class RoleMiddleware
     }
 }
 
-=== Cache/CacheBackendInterface.php ===
+=== System/CacheBackendInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Cache;
+namespace Gemini\System;
 
 use Psr\SimpleCache\CacheInterface;
 
@@ -2610,7 +2610,7 @@ interface CacheBackendInterface extends CacheInterface
     /**
      * Increments a stored integer value atomically.
      *
-     * @param string $key   Cache key.
+     * @param string $key   System key.
      * @param int    $value The amount to increment by.
      *
      * @return int New incremented value.
@@ -2620,7 +2620,7 @@ interface CacheBackendInterface extends CacheInterface
     /**
      * Decrements a stored integer value atomically.
      *
-     * @param string $key   Cache key.
+     * @param string $key   System key.
      * @param int    $value The amount to decrement by.
      *
      * @return int New decremented value.
@@ -2628,12 +2628,12 @@ interface CacheBackendInterface extends CacheInterface
     public function decrement(string $key, int $value = 1) : int;
 }
 
-=== Cache/CacheManager.php ===
+=== System/CacheManager.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Cache;
+namespace Gemini\System;
 
 use DateInterval;
 use Psr\Log\LoggerInterface;
@@ -2657,7 +2657,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->get(key: $key, default: $default);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache get failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System get failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return $default;
         }
@@ -2668,7 +2668,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->set(key: $key, value: $value, ttl: $ttl);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache set failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System set failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }
@@ -2679,7 +2679,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->delete($key);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache delete failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System delete failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }
@@ -2690,7 +2690,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->clear();
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache clear failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System clear failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -2701,7 +2701,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->getMultiple(keys: $keys, default: $default);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache getMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System getMultiple failed', context: ['error' => $e->getMessage()]);
 
             return [];
         }
@@ -2712,7 +2712,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->setMultiple(values: $values, ttl: $ttl);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache setMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System setMultiple failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -2723,7 +2723,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->deleteMultiple($keys);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache deleteMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System deleteMultiple failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -2734,7 +2734,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->has($key);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache has failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System has failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }
@@ -2746,12 +2746,12 @@ readonly class CacheManager implements CacheInterface
     }
 }
 
-=== Cache/Exception/InMemoryInvalidArgumentException.php ===
+=== System/Exception/InMemoryInvalidArgumentException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Cache\Exception;
+namespace Gemini\System\Exception;
 
 use InvalidArgumentException as BaseInvalidArgumentException;
 use Psr\SimpleCache\InvalidArgumentException as CacheInvalidArgumentException;
@@ -2763,16 +2763,16 @@ use Psr\SimpleCache\InvalidArgumentException as CacheInvalidArgumentException;
  */
 class InMemoryInvalidArgumentException extends BaseInvalidArgumentException implements CacheInvalidArgumentException {}
 
-=== Cache/InMemoryCache.php ===
+=== System/InMemoryCache.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Cache;
+namespace Gemini\System;
 
 use DateInterval;
 use DateTimeImmutable;
-use Gemini\Cache\Exception\InMemoryInvalidArgumentException;
+use Gemini\System\Exception\InMemoryInvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
@@ -2849,7 +2849,7 @@ class InMemoryCache implements CacheInterface
     private function validateKey(string $key) : void
     {
         if (! is_string($key) || trim($key) === '') {
-            throw new InMemoryInvalidArgumentException('Cache key must be a non-empty string.');
+            throw new InMemoryInvalidArgumentException('System key must be a non-empty string.');
         }
     }
 
@@ -3621,7 +3621,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     private function loadFreshConfigAndCache() : Collection
     {
         $collection = $this->loadConfigurationFiles();
-        // Cache the configuration for the current instance in WeakMap
+        // System the configuration for the current instance in WeakMap
         self::$weakMap[$this] = $collection;
 
         return $collection;
@@ -4400,7 +4400,7 @@ declare(strict_types=1);
 namespace Gemini\Container\Containers;
 
 use Closure;
-use Gemini\Cache\InMemoryCache;
+use Gemini\System\InMemoryCache;
 use Gemini\Config\Architecture\DDD\AppPath;
 use Gemini\Container\Containers\Proxy\LazyProxy;
 use Gemini\Container\Containers\Registry\Bindings;
@@ -7155,8 +7155,8 @@ use Gemini\Container\ServiceProviders\ServiceProvider;
 use Gemini\HTTP\Dispatcher\ControllerDispatcher;
 use Gemini\HTTP\Middleware\MiddlewareResolver;
 use Gemini\HTTP\Router\Bootstrap\RouteBootstrapper;
-use Gemini\HTTP\Router\Cache\RouteCacheCompiler;
-use Gemini\HTTP\Router\Cache\RouteCacheLoader;
+use Gemini\HTTP\Router\System\RouteCacheCompiler;
+use Gemini\HTTP\Router\System\RouteCacheLoader;
 use Gemini\HTTP\Router\Kernel\RouterKernel;
 use Gemini\HTTP\Router\Router;
 use Gemini\HTTP\Router\RouterInterface;
@@ -13353,12 +13353,12 @@ trait TransformationTrait
     }
 }
 
-=== DataHandling/Cache/ReflectionCache.php ===
+=== DataHandling/System/ReflectionCache.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\Cache;
+namespace Gemini\DataHandling\System;
 
 use ReflectionClass;
 
@@ -15757,7 +15757,7 @@ declare(strict_types=1);
 
 namespace Gemini\DataHandling\DataTransformers\Mapper;
 
-use Gemini\DataHandling\Cache\ReflectionCache;
+use Gemini\DataHandling\System\ReflectionCache;
 use Gemini\DataHandling\DTO\DTOCollection;
 use Gemini\DataHandling\DTO\DTOInterface;
 use Gemini\DataHandling\DTO\Validation\Casting\ValueCaster;
@@ -32530,7 +32530,7 @@ use Psr\SimpleCache\CacheInterface;
  * Trait SelectQueryTrait
  *
  * Provides functionality for handling SELECT queries, including:
- * - 🔥 Built-in caching (In-Memory + External Cache)
+ * - 🔥 Built-in caching (In-Memory + External System)
  * - 🚀 Query performance optimization
  * - 📌 Pagination & indexing
  * - 💾 Hybrid cache system with cache invalidation
@@ -32601,16 +32601,16 @@ trait SelectQueryTrait
      * Affects cache invalidation strategy.
      *
      * @readonly
-     * @var positive-int Cache time-to-live in seconds, defaults to 300 (5 minutes)
+     * @var positive-int System time-to-live in seconds, defaults to 300 (5 minutes)
      */
     protected int $cacheTTL = 300;
 
     /**
-     * Cache implementation for storing query results.
+     * System implementation for storing query results.
      * Supports PSR-16 compatible cache interfaces.
      *
      * @readonly
-     * @var CacheInterface|null Cache implementation or null if caching is disabled
+     * @var CacheInterface|null System implementation or null if caching is disabled
      */
     protected CacheInterface|null $cache = null;
 
@@ -35853,7 +35853,7 @@ enum Gemini: string
     // Framework core directories
     case AUTH          = 'Framework/Auth/';
 
-    case CACHE         = 'Framework/Cache/';
+    case CACHE         = 'Framework/System/';
 
     case CONFIG        = 'Framework/Config/';
 
@@ -38445,7 +38445,7 @@ readonly class RateLimiterMiddleware
      *
      * @return ResponseInterface The processed response or a rate-limit-exceeded response.
      *
-     * @throws \Psr\Cache\InvalidArgumentException|\DateMalformedStringException If the cache is unavailable or invalid.
+     * @throws \Psr\System\InvalidArgumentException|\DateMalformedStringException If the cache is unavailable or invalid.
      */
     public function handle(Request $request, Closure $next) : ResponseInterface
     {
@@ -38483,7 +38483,7 @@ readonly class RateLimiterMiddleware
      *
      * @return bool True if rate limit is exceeded, false otherwise.
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \Psr\System\InvalidArgumentException
      */
     private function isRateLimitExceeded(string $identifier) : bool
     {
@@ -41638,7 +41638,7 @@ namespace Gemini\HTTP\Router\Bootstrap;
 
 use FilesystemIterator;
 use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\HTTP\Router\Cache\RouteCacheLoader;
+use Gemini\HTTP\Router\System\RouteCacheLoader;
 use Gemini\HTTP\Router\Routing\HttpRequestRouter;
 use Gemini\HTTP\Router\Support\RouteCollector;
 use Psr\Log\LoggerInterface;
@@ -41891,12 +41891,12 @@ final readonly class RouteBootstrapper
         ]);
     }
 }
-=== HTTP/Router/Cache/RouteCacheCompiler.php ===
+=== HTTP/Router/System/RouteCacheCompiler.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\HTTP\Router\Cache;
+namespace Gemini\HTTP\Router\System;
 
 use Gemini\HTTP\Router\Support\RouteCollector;
 use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
@@ -42031,12 +42031,12 @@ final readonly class RouteCacheCompiler
         return $code;
     }
 }
-=== HTTP/Router/Cache/RouteCacheLoader.php ===
+=== HTTP/Router/System/RouteCacheLoader.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\HTTP\Router\Cache;
+namespace Gemini\HTTP\Router\System;
 
 use Gemini\Facade\Facades\Storage;
 use Gemini\HTTP\Router\Router;

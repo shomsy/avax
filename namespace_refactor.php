@@ -12,7 +12,7 @@ $mapping = [
     'Avax\\Container\\Runtime\\Engine'          => 'Avax\\Container\\Actions\\Resolve',
     'Avax\\Container\\Runtime\\Build'           => 'Avax\\Container\\Actions\\Invoke',
     'Avax\\Container\\Planning\\MakePlan'       => 'Avax\\Container\\Think\\Prototype',
-    'Avax\\Container\\Planning\\Cache'          => 'Avax\\Container\\Think\\Cache',
+    'Avax\\Container\\Planning\\System' => 'Avax\\Container\\Think\\System',
     'Avax\\Container\\Diagnostics\\Telemetry'   => 'Avax\\Container\\Observe\\Metrics',
     'Avax\\Container\\Diagnostics\\Debug'       => 'Avax\\Container\\Observe\\Inspect',
     'Avax\\Container\\Policy\\Security'         => 'Avax\\Container\\Guard\\Enforce',
@@ -28,7 +28,7 @@ $mapping = [
     'Avax\\Container\\Execution\\Proxy'         => 'Avax\\Container\\Actions\\Lazy',
     'Avax\\Container\\Execution\\Invoker'       => 'Avax\\Container\\Actions\\Invoke',
     'Avax\\Container\\Analysis\\Dumper'         => 'Avax\\Container\\Think\\Prototype',
-    'Avax\\Container\\Analysis\\Cache'          => 'Avax\\Container\\Think\\Cache',
+    'Avax\\Container\\Analysis\\System' => 'Avax\\Container\\Think\\System',
     'Avax\\Container\\Application\\Provider'    => 'Avax\\Container\\Operate\\Boot',
     'Avax\\Container\\Kernel\\Bootstrap'        => 'Avax\\Container\\Operate\\Boot',
 

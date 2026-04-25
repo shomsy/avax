@@ -252,7 +252,7 @@
         "code": 0,
         "previous": {
             "message": "rename(C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php.tmp.3b8a998f460276aa,C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php): Access is denied (code: 5)",
-            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Think\\Cache\\FilePrototypeCache.php",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Think\\System\\FilePrototypeCache.php",
             "line": 97
         }
     }

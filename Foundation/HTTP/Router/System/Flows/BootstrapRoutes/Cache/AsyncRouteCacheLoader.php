@@ -122,11 +122,11 @@ final readonly class AsyncRouteCacheLoader
 
                 // Validate signature for immutable routing guarantees (v2.1 feature)
                 if (! $storedManifest->validateSignatureFile($cachePath)) {
-                    $this->logger->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+                    $this->logger->warning(message: 'Route cache signature validation failed. System may be compromised.', context: [
                         'cache_path'  => $cachePath,
                         'routes_path' => $routesPath,
                     ]);
-                    throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+                    throw new RuntimeException(message: 'Route cache signature validation failed. System integrity compromised.');
                 }
 
                 // Load and register routes
@@ -190,11 +190,11 @@ final readonly class AsyncRouteCacheLoader
 
         // Validate signature for immutable routing guarantees (v2.1 feature)
         if (! $storedManifest->validateSignatureFile(cachePath: $cachePath)) {
-            $this->logger->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+            $this->logger->warning(message: 'Route cache signature validation failed. System may be compromised.', context: [
                 'cache_path'  => $cachePath,
                 'routes_path' => $routesPath,
             ]);
-            throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+            throw new RuntimeException(message: 'Route cache signature validation failed. System integrity compromised.');
         }
 
         /** @var array<array<string, mixed>> $routes */

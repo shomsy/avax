@@ -66,7 +66,7 @@ final readonly class ServeOidcHttpSurface
                             ],
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'public, max-age=300',
+                                'System-Control' => 'public, max-age=300',
                             ]
             );
         }
@@ -91,7 +91,7 @@ final readonly class ServeOidcHttpSurface
                             ],
                 headers   : [
                                 'Content-Type'  => 'application/jwk-set+json',
-                                'Cache-Control' => 'public, max-age=300',
+                                'System-Control' => 'public, max-age=300',
                             ]
             );
         }
@@ -114,7 +114,7 @@ final readonly class ServeOidcHttpSurface
                 body      : $userInfo->claims,
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -142,7 +142,7 @@ final readonly class ServeOidcHttpSurface
                             ],
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -164,7 +164,7 @@ final readonly class ServeOidcHttpSurface
                 body      : $this->oidcClientResource(client: $registered->client),
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -200,7 +200,7 @@ final readonly class ServeOidcHttpSurface
                 body      : $this->oidcClientResource(client: $updated),
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -213,7 +213,7 @@ final readonly class ServeOidcHttpSurface
                 body      : $this->oidcClientResource(client: $client) + ['active' => $client->active],
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -237,7 +237,7 @@ final readonly class ServeOidcHttpSurface
                             ],
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }
@@ -255,7 +255,7 @@ final readonly class ServeOidcHttpSurface
                             ],
                 headers   : [
                                 'Content-Type'  => 'application/json',
-                                'Cache-Control' => 'no-store',
+                                'System-Control' => 'no-store',
                             ]
             );
         }

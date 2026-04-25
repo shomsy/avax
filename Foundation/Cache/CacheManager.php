@@ -33,7 +33,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->get(key: $key, default: $default);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache get failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System get failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return $default;
         }
@@ -44,7 +44,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->set(key: $key, value: $value, ttl: $ttl);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache set failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System set failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }
@@ -55,7 +55,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->delete(key: $key);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache delete failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System delete failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }
@@ -66,7 +66,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->clear();
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache clear failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System clear failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -77,7 +77,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->getMultiple(keys: $keys, default: $default);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache getMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System getMultiple failed', context: ['error' => $e->getMessage()]);
 
             return [];
         }
@@ -88,7 +88,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->setMultiple(values: $values, ttl: $ttl);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache setMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System setMultiple failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -99,7 +99,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->deleteMultiple(keys: $keys);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache deleteMultiple failed', context: ['error' => $e->getMessage()]);
+            $this->logger->error(message: 'System deleteMultiple failed', context: ['error' => $e->getMessage()]);
 
             return false;
         }
@@ -110,7 +110,7 @@ readonly class CacheManager implements CacheInterface
         try {
             return $this->cacheBackend->has(key: $key);
         } catch (Throwable $e) {
-            $this->logger->error(message: 'Cache has failed', context: ['key' => $key, 'error' => $e->getMessage()]);
+            $this->logger->error(message: 'System has failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
             return false;
         }

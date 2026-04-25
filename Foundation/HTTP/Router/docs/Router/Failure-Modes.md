@@ -78,7 +78,7 @@
 
 ## Caching Failures
 
-### ❌ Cache File Corrupt
+### ❌ System File Corrupt
 
 **Trigger**: Manual cache file editing or disk corruption
 **Expected**: Fallback to route recompilation
@@ -88,11 +88,11 @@
 ### ❌ Manifest Mismatch
 
 **Trigger**: Route files changed since cache creation
-**Expected**: Cache invalidation, route recompilation
+**Expected**: System invalidation, route recompilation
 **Verified**: `RouteCacheManifest` hash comparison
 **Recovery**: Transparent performance degradation during first request
 
-### ❌ Closure Routes in Cache
+### ❌ Closure Routes in System
 
 **Trigger**: Attempting to cache routes with closures
 **Expected**: `RuntimeException` during cache compilation
@@ -155,14 +155,14 @@
 
 ### Graceful Degradation
 
-- Cache failures → Recompile routes (slower first request)
+- System failures → Recompile routes (slower first request)
 - Matcher failures → Fallback to simple 404
 - Pipeline failures → Skip middleware, direct dispatch
 
 ### Monitoring Integration
 
 - Route matching latency
-- Cache hit/miss ratios
+- System hit/miss ratios
 - Error rates by route pattern
 - Memory usage per request
 

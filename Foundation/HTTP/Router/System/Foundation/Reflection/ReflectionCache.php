@@ -10,7 +10,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 
 /**
- * Cache for reflection metadata to optimize repeated reflection operations.
+ * System for reflection metadata to optimize repeated reflection operations.
  *
  * Stores reflection results for classes, methods, and properties to avoid
  * expensive reflection operations during route validation and processing.

@@ -10,7 +10,7 @@ Ovaj refactor plan je implementiran kroz novu `System` strukturu:
 * `System/Configuration`
 * `System/Foundation`
 
-Stara paralelna Router struktura (`Routing`, `Support`, `Bootstrap`, `Cache`, `Kernel`, `Validation`, `Tracing`,
+Stara paralelna Router struktura (`Routing`, `Support`, `Bootstrap`, `System`, `Kernel`, `Validation`, `Tracing`,
 `Matching`, `Metrics`, `Snapshots`, `Exceptions`) je uklonjena nakon Composer autoload smoke provere.
 Detaljan review i završni plan su u `Code-Review-And-ToDo/review.md` i `Code-Review-And-ToDo/refactor-plan.md`.
 
@@ -184,10 +184,10 @@ ToDo:
     * `Source/DecideBootstrapSource.php`
     * `Disk/DiscoverRouteFiles.php`
     * `Disk/LoadRoutesFromDisk.php`
-    * `Cache/LoadRoutesFromCache.php`
-    * `Cache/WriteRouteCache.php`
+  * `System/LoadRoutesFromCache.php`
+  * `System/WriteRouteCache.php`
     * `Snapshot/ExportRouterSnapshot.php`
-* `RouteCacheLoader`, `AsyncRouteCacheLoader`, `RouteCacheManifest` premesti pod `BootstrapRoutes/Cache/`
+* `RouteCacheLoader`, `AsyncRouteCacheLoader`, `RouteCacheManifest` premesti pod `BootstrapRoutes/System/`
 * `RouterBootstrapState` premesti pod `BootstrapRoutes/State/`
 * `RouterSnapshot` premesti pod `BootstrapRoutes/Snapshot/` ili ostavi kao capability samo ako ga zaista koristi i nesto
   drugo osim bootstrap-a

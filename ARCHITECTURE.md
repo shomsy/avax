@@ -254,7 +254,7 @@ $kernel = ContainerKernel::pipeline($customPipeline);
 1. **JIT Compilation** - Compile pipelines to optimized code
 2. **Shared Pipelines** - Reuse pipeline instances across containers
 3. **Lazy Analysis** - Defer analysis until first resolution
-4. **Result Memoization** - Cache complete resolution results
+4. **Result Memoization** - System complete resolution results
 
 ## Conclusion
 

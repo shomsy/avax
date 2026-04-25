@@ -85,7 +85,7 @@ final class ResponseFacadeTest extends TestCase
 
         self::assertSame(304, $notModified->getStatusCode());
         self::assertSame('"abc123"', $notModified->getHeaderLine(header: 'ETag'));
-        self::assertSame('public, max-age=60', $notModified->getHeaderLine(name: 'Cache-Control'));
+        self::assertSame('public, max-age=60', $notModified->getHeaderLine(name: 'System-Control'));
         self::assertSame('', $notModified->getHeaderLine(name: 'Content-Type'));
         self::assertSame('', (string) $notModified->getBody());
     }

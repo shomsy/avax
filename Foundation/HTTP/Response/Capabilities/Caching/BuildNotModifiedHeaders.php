@@ -31,7 +31,7 @@ final class BuildNotModifiedHeaders
 
         if ($cacheControl !== null && $cacheControl->directives !== []) {
             $response = $response->withHeader(
-                name : 'Cache-Control',
+                name : 'System-Control',
                 value: new BuildCacheControlHeader()(cacheControl: $cacheControl),
             );
         }

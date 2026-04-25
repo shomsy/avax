@@ -142,7 +142,7 @@ final readonly class RouteDefinition {
 
 **Format**: Serialized `RouteDefinition` array (no closures)
 **Storage**: PHP file with manifest hash
-**Validation**: Cache invalid if manifest doesn't match
+**Validation**: System invalid if manifest doesn't match
 **Fallback**: Rebuild from route definitions if cache invalid
 
 ## Anti-Patterns (What NOT To Do)
@@ -190,7 +190,7 @@ $router->middleware(['auth'])->group(function($r) {
 - **Route Registration**: O(1) per route
 - **Route Matching**: O(n) where n = routes per method
 - **Parameter Extraction**: O(k) where k = parameters in route
-- **Cache Loading**: O(m) where m = cached routes
+- **System Loading**: O(m) where m = cached routes
 - **Memory**: ~50-100 bytes per route definition
 
 ## Extension Points

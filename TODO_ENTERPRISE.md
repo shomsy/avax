@@ -183,14 +183,14 @@ $container->inject($service);
 
 Vision: Avax Container v2.0 (Enterprise Kernel)
 
-| Tema                    | Opis                                                      |
-|-------------------------|-----------------------------------------------------------|
-| Async Container         | Dodaj FiberLoop i resolveAsync() (vec postoji stub)       |
-| Distributed Metrics     | Eksport u Prometheus / OpenTelemetry                      |
-| Container CLI           | container:profile, container:graph, container:policy      |
-| Service Graph Explorer  | Generisi graf svih bindings (Graphviz export)             |
-| Multi-tenant Containers | Scoped ContainerContext sa izolovanim binding store-ovima |
-| Reflection Cache Warmup | CLI komanda za pre-kompajliranje reflection meta-podataka |
+| Tema                     | Opis                                                      |
+|--------------------------|-----------------------------------------------------------|
+| Async Container          | Dodaj FiberLoop i resolveAsync() (vec postoji stub)       |
+| Distributed Metrics      | Eksport u Prometheus / OpenTelemetry                      |
+| Container CLI            | container:profile, container:graph, container:policy      |
+| Service Graph Explorer   | Generisi graf svih bindings (Graphviz export)             |
+| Multi-tenant Containers  | Scoped ContainerContext sa izolovanim binding store-ovima |
+| Reflection System Warmup | CLI komanda za pre-kompajliranje reflection meta-podataka |
 
 ## TL;DR za malog
 

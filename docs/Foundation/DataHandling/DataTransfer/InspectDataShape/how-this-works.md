@@ -35,12 +35,12 @@ This folder turns PHP reflection into immutable `DataShape`, `DataField`, and `D
 sequenceDiagram
     autonumber
     participant Inspect as InspectDataShape::inspect
-    participant Cache as CacheDataShape::remember
+    participant System as CacheDataShape::remember
     participant ClassShape as ReadClassDataShape::read
     participant Ctor as ReadConstructorDataFields::read
     participant Public as ReadPublicDataFields::read
-    Inspect ->> Cache: lookup class + config key
-    Cache ->> ClassShape: build on miss
+    Inspect ->> System: lookup class + config key
+    System ->> ClassShape: build on miss
     ClassShape ->> Ctor: read constructor fields
     ClassShape ->> Public: read public fields
     ClassShape -->> Inspect: immutable DataShape

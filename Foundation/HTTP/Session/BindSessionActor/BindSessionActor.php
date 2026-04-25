@@ -10,5 +10,6 @@ final class BindSessionActor
 {
     private SessionStore $store;
     public function __construct(SessionStore $store) { $this->store = $store; }
-    public function handle(string $actorId) : void { $this->store->put('actor_id', $actorId); }
+
+    public function handle(string $actorId) : void { $this->store->put(key: 'actor_id', value: $actorId); }
 }

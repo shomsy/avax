@@ -21,7 +21,7 @@ final readonly class EntityManager
     /**
      * @param class-string $entityClass
      */
-    public function find(string $entityClass, mixed $id, string|null $connection = null) : ?object
+    public function find(string $entityClass, mixed $id, string|null $connection = null) : object|null
     {
         return $this->persister->find(entityClass: $entityClass, id: $id, connectionName: $connection);
     }
@@ -33,13 +33,13 @@ final readonly class EntityManager
      * @return list<object>
      */
     public function findBy(
-        string  $entityClass,
-        array   $criteria,
-        ?string $orderBy = null,
-        ?string $direction = null,
-        ?int    $limit = null,
-        ?int    $offset = null,
-        ?string $connection = null
+        string      $entityClass,
+        array       $criteria,
+        string|null $orderBy = null,
+        string|null $direction = null,
+        int|null    $limit = null,
+        int|null    $offset = null,
+        string|null $connection = null
     ) : array
     {
         return $this->persister->findBy(
@@ -53,22 +53,22 @@ final readonly class EntityManager
         );
     }
 
-    public function insert(object $entity, ?string $connection = null) : void
+    public function insert(object $entity, string|null $connection = null) : void
     {
         $this->persister->insert(entity: $entity, connectionName: $connection);
     }
 
-    public function update(object $entity, ?string $connection = null) : void
+    public function update(object $entity, string|null $connection = null) : void
     {
         $this->persister->update(entity: $entity, connectionName: $connection);
     }
 
-    public function delete(object $entity, ?string $connection = null) : void
+    public function delete(object $entity, string|null $connection = null) : void
     {
         $this->persister->delete(entity: $entity, connectionName: $connection);
     }
 
-    public function refresh(object $entity, ?string $connection = null) : object
+    public function refresh(object $entity, string|null $connection = null) : object
     {
         return $this->persister->refresh(entity: $entity, connectionName: $connection);
     }

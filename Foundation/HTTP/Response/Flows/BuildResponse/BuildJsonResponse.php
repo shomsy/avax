@@ -8,14 +8,15 @@ use Avax\HTTP\Response\Capabilities\Body\Json\EncodeJsonBody;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use SensitiveParameter;
 
 final class BuildJsonResponse
 {
-    public function __invoke(mixed $data, int|null $status = null, array $headers = []) : ResponseInterface
+    public function __invoke(mixed $data, int|null $status = null, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $status ??= 200;
         try {
-            $payload = new EncodeJsonBody()($data);
+            $payload = new EncodeJsonBody()(data: $data);
         } catch (JsonException $exception) {
             throw new RuntimeException(
                 message : 'Unable to encode JSON response body.',

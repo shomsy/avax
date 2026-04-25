@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Avax\HTTP\Response\Flows\BuildResponse;
 
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 final class BuildEmptyResponse
 {
-    public function __invoke(int|null $status = null, array|null $headers = null, string $reasonPhrase = '') : ResponseInterface
+    public function __invoke(int|null $status = null, #[SensitiveParameter] array|null $headers = null, string $reasonPhrase = '') : ResponseInterface
     {
         $status  ??= 200;
         $headers ??= [];

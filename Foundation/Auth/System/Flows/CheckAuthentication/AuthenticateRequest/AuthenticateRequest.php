@@ -21,13 +21,13 @@ use SensitiveParameter;
 final readonly class AuthenticateRequest
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private ProjectAuthenticatedUser $projectAuthenticatedUser,
-        private UserSourceInterface $userSource,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        #[SensitiveParameter] private ?SessionIdentityInterface $sessionIdentity = null,
-        #[SensitiveParameter] private ?JwtIdentityInterface $jwtIdentity = null
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private ProjectAuthenticatedUser                            $projectAuthenticatedUser,
+        private UserSourceInterface                                 $userSource,
+        private AuditLogInterface                                   $auditLog,
+        private Clock                                               $clock,
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {}
 
     public function execute(AuthenticationRequest $request) : AuthenticationContext

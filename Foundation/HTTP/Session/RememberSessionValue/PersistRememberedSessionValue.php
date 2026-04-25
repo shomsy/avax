@@ -17,10 +17,10 @@ final class PersistRememberedSessionValue
 
     public function handle(string $key, mixed $value, int|null $ttl = null) : void
     {
-        $this->store->put($key, $value);
+        $this->store->put(key: $key, value: $value);
 
         if ($ttl !== null) {
-            $this->store->put('_ttl.' . $key, time() + $ttl);
+            $this->store->put(key: '_ttl.' . $key, value: time() + $ttl);
         }
     }
 }

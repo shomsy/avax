@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ResumeSaga;
 
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus;
+use RuntimeException;
 
 final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(?string $tenantId = null, int $limit = 100) : array
+    public function find(string|null $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas    = $this->store->all();
 
         foreach ($allSagas as $sagaId => $data) {
-            if ($this->isRecoverable($data, $tenantId)) {
+            if ($this->isRecoverable(data: $data, tenantId: $tenantId)) {
                 $recoverable[] = $sagaId;
                 if (count($recoverable) >= $limit) {
                     break;
@@ -27,7 +30,7 @@ final readonly class FindRecoverableSaga
         return $recoverable;
     }
 
-    private function isRecoverable(array $data, ?string $tenantId) : bool
+    private function isRecoverable(array $data, string|null $tenantId) : bool
     {
         if (($data['status'] ?? '') !== 'failed') {
             return false;
@@ -102,8 +105,8 @@ final readonly class ContinueSagaAfterFailure
         array        $definition
     ) : array
     {
-        if ($instance->status !== \Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus::FAILED) {
-            throw new SagaRecoveryFailure('Saga is not in failed state.');
+        if ($instance->status !== SagaInstanceStatus::FAILED) {
+            throw new SagaRecoveryFailure(message: 'Saga is not in failed state.');
         }
 
         $definitionSteps = $definition['steps'] ?? [];
@@ -111,17 +114,17 @@ final readonly class ContinueSagaAfterFailure
 
         $currentIndex = $instance->currentStepIndex;
         if ($currentIndex >= count($stepOrder)) {
-            throw new SagaRecoveryFailure('No more steps to retry.');
+            throw new SagaRecoveryFailure(message: 'No more steps to retry.');
         }
 
         $nextStepName = $stepOrder[$currentIndex] ?? null;
         if ($nextStepName === null) {
-            throw new SagaRecoveryFailure('Could not determine next step.');
+            throw new SagaRecoveryFailure(message: 'Could not determine next step.');
         }
 
         $nextStep = $definitionSteps[$nextStepName] ?? null;
         if ($nextStep === null) {
-            throw new SagaRecoveryFailure(sprintf('Next step %s not found.', $nextStepName));
+            throw new SagaRecoveryFailure(message: sprintf('Next step %s not found.', $nextStepName));
         }
 
         return [
@@ -141,7 +144,7 @@ final readonly class MarkSagaAsUnrecoverable
     ) : void
     {
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::create(
+            SagaRuntimeEvent::create(
                 sagaId  : $instance->id,
                 sagaName: $instance->definitionName,
                 type    : 'saga_unrecoverable',
@@ -151,10 +154,10 @@ final readonly class MarkSagaAsUnrecoverable
     }
 }
 
-class SagaRecoveryFailure extends \RuntimeException
+class SagaRecoveryFailure extends RuntimeException
 {
     public function __construct(string $message = 'Saga recovery failed.')
     {
-        parent::__construct($message);
+        parent::__construct(message: $message);
     }
 }

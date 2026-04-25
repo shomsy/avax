@@ -13,7 +13,7 @@ final class WhereNode
         public readonly ComparisonOperator $operator,
         public readonly mixed              $value,
         public readonly string             $boolean = 'AND',
-        public readonly ?string            $connector = null
+        public readonly string|null $connector = null
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string

@@ -272,7 +272,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         return new self(items: $filtered);
     }
 
-    public function sort(?callable $callback = null) : static
+    public function sort(callable|null $callback = null) : static
     {
         return new self(
             items: new Collections\Order\SortValues(items: $this->items)->sort(callback: $callback)
@@ -459,7 +459,7 @@ final readonly class Collection implements CollectionInterface, IteratorAggregat
         $this->guard->assertMutable();
     }
 
-    public function collect() : Collection
+    public function collect() : self
     {
         return $this;
     }

@@ -18,7 +18,7 @@ final readonly class MaskSensitiveData
     public function __construct(
         public MaskingAlgorithm $algorithm,
         public bool             $preserveLength,
-        public ?int             $visibleChars
+        public int|null $visibleChars
     ) {}
 
     public function describeResponsibility() : string
@@ -28,12 +28,12 @@ final readonly class MaskSensitiveData
 
     public static function partial(int $visibleChars = 4) : self
     {
-        return new self(MaskingAlgorithm::PARTIAL, true, $visibleChars);
+        return new self(algorithm: MaskingAlgorithm::PARTIAL, preserveLength: true, visibleChars: $visibleChars);
     }
 
     public static function full() : self
     {
-        return new self(MaskingAlgorithm::FULL, false, 0);
+        return new self(algorithm: MaskingAlgorithm::FULL, preserveLength: false, visibleChars: 0);
     }
 
     public function mask(string $value) : string
@@ -44,7 +44,7 @@ final readonly class MaskSensitiveData
 
         return match ($this->algorithm) {
             MaskingAlgorithm::FULL    => str_repeat('*', strlen($value)),
-            MaskingAlgorithm::PARTIAL => $this->maskPartial($value),
+            MaskingAlgorithm::PARTIAL => $this->maskPartial(value: $value),
             MaskingAlgorithm::HASH    => hash('sha256', $value),
             default                   => str_repeat('*', strlen($value)),
         };

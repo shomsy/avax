@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\InspectSaga;
 
 use Countable;
+use DateTimeImmutable;
+use DateTimeInterface;
 use IteratorAggregate;
 use Traversable;
 
@@ -19,7 +21,7 @@ final readonly class InspectSaga implements IteratorAggregate, Countable
 
     public static function inMemory() : self
     {
-        return new self([]);
+        return new self(events: []);
     }
 
     public function record(SagaRuntimeEvent $event) : void
@@ -38,29 +40,29 @@ final readonly class InspectSaga implements IteratorAggregate, Countable
     public function buildTimeline(string $sagaId) : SagaTimeline
     {
         return SagaTimeline::fromEvents(
-            $sagaId,
-            $this->getEvents($sagaId)
+            sagaId: $sagaId,
+            events: $this->getEvents(sagaId: $sagaId)
         );
     }
 
     public function buildReport(string $sagaId) : SagaReport
     {
-        $events   = $this->getEvents($sagaId);
-        $timeline = SagaTimeline::fromEvents($sagaId, $events);
+        $events   = $this->getEvents(sagaId: $sagaId);
+        $timeline = SagaTimeline::fromEvents(sagaId: $sagaId, events: $events);
 
         return new SagaReport(
             sagaId     : $sagaId,
             timeline   : $timeline,
             events     : $events,
-            generatedAt: new \DateTimeImmutable()
+            generatedAt: new DateTimeImmutable()
         );
     }
 
-    public function traceFailure(string $sagaId) : ?SagaTimeline
+    public function traceFailure(string $sagaId) : SagaTimeline|null
     {
-        foreach (array_reverse($this->getEvents($sagaId)) as $event) {
+        foreach (array_reverse($this->getEvents(sagaId: $sagaId)) as $event) {
             if ($event->type === 'step_failed' || $event->type === 'saga_failed') {
-                return $this->buildTimeline($sagaId);
+                return $this->buildTimeline(sagaId: $sagaId);
             }
         }
 
@@ -85,19 +87,19 @@ final readonly class SagaRuntimeEvent
     public string             $id;
     public string             $sagaId;
     public string             $sagaName;
-    public string             $type;
-    public ?string            $stepName;
-    public array              $payload;
-    public \DateTimeImmutable $occurredAt;
+    public string            $type;
+    public string|null       $stepName;
+    public array             $payload;
+    public DateTimeImmutable $occurredAt;
 
     private function __construct(
-        string             $id,
-        string             $sagaId,
-        string             $sagaName,
-        string             $type,
-        ?string            $stepName,
-        array              $payload,
-        \DateTimeImmutable $occurredAt
+        string            $id,
+        string            $sagaId,
+        string            $sagaName,
+        string            $type,
+        string|null       $stepName,
+        array             $payload,
+        DateTimeImmutable $occurredAt
     )
     {
         $this->id         = $id;
@@ -114,7 +116,7 @@ final readonly class SagaRuntimeEvent
         string     $sagaName,
         string     $type,
         array|null $payload = null,
-        ?string    $stepName = null
+        string|null $stepName = null
     ) : self
     {
         $payload ??= [];
@@ -126,13 +128,13 @@ final readonly class SagaRuntimeEvent
             type      : $type,
             stepName  : $stepName,
             payload   : $payload,
-            occurredAt: new \DateTimeImmutable()
+            occurredAt: new DateTimeImmutable()
         );
     }
 
     public static function started(string $sagaId, string $sagaName) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_started');
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_started');
     }
 
     public static function stepCompleted(
@@ -142,7 +144,7 @@ final readonly class SagaRuntimeEvent
         array  $output = []
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'step_completed', $output, $stepName);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_completed', payload: $output, stepName: $stepName);
     }
 
     public static function stepFailed(
@@ -152,17 +154,17 @@ final readonly class SagaRuntimeEvent
         string $error
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'step_failed', ['error' => $error], $stepName);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_failed', payload: ['error' => $error], stepName: $stepName);
     }
 
     public static function completed(string $sagaId, string $sagaName) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_completed');
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_completed');
     }
 
     public static function compensated(string $sagaId, string $sagaName) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_compensated');
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_compensated');
     }
 
     public function toArray() : array
@@ -174,7 +176,7 @@ final readonly class SagaRuntimeEvent
             'type'        => $this->type,
             'step_name'   => $this->stepName,
             'payload'     => $this->payload,
-            'occurred_at' => $this->occurredAt->format(\DateTimeInterface::ISO8601),
+            'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
 
@@ -188,20 +190,20 @@ final readonly class SagaTimeline
 {
     public string  $sagaId;
     public array   $events;
-    public array   $steps;
-    public ?string $startedAt;
-    public ?string $completedAt;
-    public ?float  $durationMs;
-    public ?string $finalStatus;
+    public array       $steps;
+    public string|null $startedAt;
+    public string|null $completedAt;
+    public float|null  $durationMs;
+    public string|null $finalStatus;
 
     private function __construct(
-        string  $sagaId,
-        array   $events,
-        array   $steps,
-        ?string $startedAt,
-        ?string $completedAt,
-        ?float  $durationMs,
-        ?string $finalStatus
+        string      $sagaId,
+        array       $events,
+        array       $steps,
+        string|null $startedAt,
+        string|null $completedAt,
+        float|null  $durationMs,
+        string|null $finalStatus
     )
     {
         $this->sagaId      = $sagaId;
@@ -223,18 +225,18 @@ final readonly class SagaTimeline
         foreach ($events as $event) {
             if ($event instanceof SagaRuntimeEvent) {
                 if ($startedAt === null) {
-                    $startedAt = $event->occurredAt->format(\DateTimeInterface::ISO8601);
+                    $startedAt = $event->occurredAt->format(format: DateTimeInterface::ISO8601);
                 }
 
                 if (in_array($event->type, ['step_completed', 'step_failed'], true)) {
                     $steps[$event->stepName ?? 'unknown'] = [
                         'type' => $event->type,
-                        'at'   => $event->occurredAt->format(\DateTimeInterface::ISO8601),
+                        'at' => $event->occurredAt->format(format: DateTimeInterface::ISO8601),
                     ];
                 }
 
                 if (in_array($event->type, ['saga_completed', 'saga_compensated', 'saga_failed'], true)) {
-                    $completedAt = $event->occurredAt->format(\DateTimeInterface::ISO8601);
+                    $completedAt = $event->occurredAt->format(format: DateTimeInterface::ISO8601);
                     $finalStatus = $event->type;
                 }
             }
@@ -242,8 +244,8 @@ final readonly class SagaTimeline
 
         $durationMs = null;
         if ($startedAt && $completedAt) {
-            $start      = new \DateTimeImmutable($startedAt);
-            $end        = new \DateTimeImmutable($completedAt);
+            $start = new DateTimeImmutable(datetime: $startedAt);
+            $end   = new DateTimeImmutable(datetime: $completedAt);
             $durationMs = ($end->getTimestamp() - $start->getTimestamp()) * 1000;
         }
 
@@ -276,13 +278,13 @@ final readonly class SagaReport
     public string             $sagaId;
     public SagaTimeline       $timeline;
     public array              $events;
-    public \DateTimeImmutable $generatedAt;
+    public DateTimeImmutable $generatedAt;
 
     private function __construct(
         string             $sagaId,
         SagaTimeline       $timeline,
         array              $events,
-        \DateTimeImmutable $generatedAt
+        DateTimeImmutable $generatedAt
     )
     {
         $this->sagaId      = $sagaId;
@@ -297,7 +299,7 @@ final readonly class SagaReport
             'saga_id'      => $this->sagaId,
             'timeline'     => $this->timeline->toArray(),
             'event_count'  => count($this->events),
-            'generated_at' => $this->generatedAt->format(\DateTimeInterface::ISO8601),
+            'generated_at' => $this->generatedAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }

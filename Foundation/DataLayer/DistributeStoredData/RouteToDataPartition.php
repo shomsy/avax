@@ -21,13 +21,13 @@ final readonly class RouteToDataPartition
     public function route(mixed $keyValue) : PartitionRouteResult
     {
         if ($keyValue === null) {
-            throw new InvalidArgumentException('Partition key value cannot be null.');
+            throw new InvalidArgumentException(message: 'Partition key value cannot be null.');
         }
 
-        $shard = $this->shardKey->calculateShard($keyValue);
-        $key   = $this->buildKey($shard, $keyValue);
+        $shard = $this->shardKey->calculateShard(value: $keyValue);
+        $key   = $this->buildKey(shard: $shard, value: $keyValue);
 
-        return $this->route->route($key);
+        return $this->route->route(key: $key);
     }
 
     private function buildKey(int $shard, mixed $value) : string

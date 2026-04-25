@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
-use BackedEnum;
-use DateTimeInterface;
 use Avax\DataFoundation\Collection;
 use Avax\DataHandling\Validation\Attributes\Hidden;
+use BackedEnum;
+use DateTimeInterface;
 use JsonException;
 use JsonSerializable;
 use ReflectionException;
@@ -69,7 +69,7 @@ trait Serialization
     {
         return $this->normalizeValue(
             value: $excludeHidden
-                       ? $this->filterHiddenFields(get_object_vars($this))
+                       ? $this->filterHiddenFields(properties: get_object_vars($this))
                        : get_object_vars($this),
             depth: $depth
         );

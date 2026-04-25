@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity\SessionSignature;
 
+use SensitiveParameter;
+
 final class SignSessionState
 {
     private string $secret;
 
-    public function __construct(string $secret)
+    public function __construct(#[SensitiveParameter] string $secret)
     {
         $this->secret = $secret;
     }

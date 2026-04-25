@@ -17,7 +17,7 @@ final readonly class FingerprintDataQuery
 
     public function fingerprint(string $query, array $params = []) : string
     {
-        $normalized = $this->normalize($query);
+        $normalized = $this->normalize(query: $query);
         $key        = hash('xxh64', $normalized . serialize($params));
 
         return $key;

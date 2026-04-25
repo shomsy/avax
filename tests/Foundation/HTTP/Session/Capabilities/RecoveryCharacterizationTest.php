@@ -37,35 +37,35 @@ final class RecoveryCharacterizationTest extends TestCase
 
         $recovery = new Recovery(store: $store, audit: null);
 
-        $store->put('a', 1);
-        $recovery->backup('one');
-        $this->assertTrue($recovery->hasBackup('one'));
+        $store->put(key: 'a', value: 1);
+        $recovery->backup(name: 'one');
+        $this->assertTrue($recovery->hasBackup(name: 'one'));
 
         // modify store, then restore
-        $store->put('a', 2);
-        $this->assertSame(2, $store->get('a'));
+        $store->put(key: 'a', value: 2);
+        $this->assertSame(2, $store->get(key: 'a'));
 
-        $recovery->restore('one');
-        $this->assertSame(1, $store->get('a'));
+        $recovery->restore(name: 'one');
+        $this->assertSame(1, $store->get(key: 'a'));
 
         // transaction commit
-        $store->put('x', 'orig');
+        $store->put(key: 'x', value: 'orig');
         $recovery->beginTransaction();
-        $store->put('x', 'changed');
+        $store->put(key: 'x', value: 'changed');
         $recovery->commit();
-        $this->assertSame('changed', $store->get('x'));
+        $this->assertSame('changed', $store->get(key: 'x'));
 
         // transaction rollback
-        $store->put('y', 'origY');
+        $store->put(key: 'y', value: 'origY');
         try {
-            $recovery->transaction(function () use ($store) {
-                $store->put('y', 'inTx');
-                throw new RuntimeException('boom');
+            $recovery->transaction(operation: function () use ($store) {
+                $store->put(key: 'y', value: 'inTx');
+                throw new RuntimeException(message: 'boom');
             });
             $this->fail('Expected RecoveryException');
         } catch (Throwable $e) {
             // after rollback, original value restored
-            $this->assertSame('origY', $store->get('y'));
+            $this->assertSame('origY', $store->get(key: 'y'));
         }
     }
 
@@ -96,18 +96,18 @@ final class RecoveryCharacterizationTest extends TestCase
 
         $recovery = new Recovery(store: $store, audit: null);
 
-        $store->put('p', 123);
+        $store->put(key: 'p', value: 123);
         $exported = $recovery->export();
         $this->assertIsString($exported);
 
         $store->flush();
         $this->assertEmpty($store->all());
 
-        $ok = $recovery->import($exported);
+        $ok = $recovery->import(data: $exported);
         $this->assertTrue($ok);
-        $this->assertSame(123, $store->get('p'));
+        $this->assertSame(123, $store->get(key: 'p'));
 
         // invalid import
-        $this->assertFalse($recovery->import('not a serialized array'));
+        $this->assertFalse($recovery->import(data: 'not a serialized array'));
     }
 }

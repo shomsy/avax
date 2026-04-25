@@ -38,9 +38,9 @@ final class SessionImportSecurityTest extends TestCase
 
         // safe unserialize should reject data that unserializes to an object
         $malicious = 'O:8:"stdClass":0:{}';
-        $this->assertFalse($recovery->import($malicious));
+        $this->assertFalse($recovery->import(data: $malicious));
 
         // malformed string
-        $this->assertFalse($recovery->import('not serialized'));
+        $this->assertFalse($recovery->import(data: 'not serialized'));
     }
 }

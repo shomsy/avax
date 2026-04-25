@@ -13,7 +13,7 @@ final class ReadSessionFingerprint
         $this->store = $store;
     }
 
-    public function handle() : ?string
+    public function handle() : string|null
     {
         return $this->store->get('_fingerprint');
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\RunSagaStep;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 
 final readonly class ExecuteSagaStep
@@ -18,7 +19,7 @@ final readonly class ExecuteSagaStep
     {
         $startTime = microtime(true);
 
-        $input = $this->prepareInput($step->input, $sagaData);
+        $input = $this->prepareInput(stepInput: $step->input, sagaData: $sagaData);
 
         $result = ($this->stepRunner)($step->component, $input);
 
@@ -51,14 +52,14 @@ final readonly class LoadSagaInstance
 {
     public function __construct(private object $store) {}
 
-    public function load(string $sagaId) : ?SagaInstance
+    public function load(string $sagaId) : SagaInstance|null
     {
         $data = $this->store->get("saga_{$sagaId}");
         if ($data === null) {
             return null;
         }
 
-        return SagaInstance::fromArray($data);
+        return SagaInstance::fromArray(row: $data);
     }
 
     public function exists(string $sagaId) : bool
@@ -86,11 +87,11 @@ final readonly class RecordSagaStepCompleted
         $this->store->set("saga_{$instance->id}", $instance->toArray());
 
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::stepCompleted(
-                $instance->id,
-                $instance->definitionName,
-                $stepName,
-                $result['output'] ?? []
+            SagaRuntimeEvent::stepCompleted(
+                sagaId  : $instance->id,
+                sagaName: $instance->definitionName,
+                stepName: $stepName,
+                output  : $result['output'] ?? []
             )
         );
     }
@@ -106,16 +107,16 @@ final readonly class RecordSagaStepFailed
         string       $error
     ) : void
     {
-        $instance = $instance->fail($error);
+        $instance = $instance->fail(error: $error);
 
         $this->store->set("saga_{$instance->id}", $instance->toArray());
 
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::stepFailed(
-                $instance->id,
-                $instance->definitionName,
-                $stepName,
-                $error
+            SagaRuntimeEvent::stepFailed(
+                sagaId  : $instance->id,
+                sagaName: $instance->definitionName,
+                stepName: $stepName,
+                error   : $error
             )
         );
     }
@@ -137,7 +138,7 @@ final readonly class ChooseNextSagaStep
     public function choose(
         SagaInstance $instance,
         array        $definition
-    ) : ?SagaStepDefinition
+    ) : SagaStepDefinition|null
     {
         $currentIndex = $instance->currentStepIndex;
         $nextIndex    = $currentIndex + 1;

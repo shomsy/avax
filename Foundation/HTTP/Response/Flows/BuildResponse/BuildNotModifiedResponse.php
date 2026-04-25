@@ -9,14 +9,15 @@ use Avax\HTTP\Response\Capabilities\Caching\CacheControl;
 use Avax\HTTP\Response\Capabilities\Caching\Etag;
 use Avax\HTTP\Response\Capabilities\Caching\LastModified;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 final class BuildNotModifiedResponse
 {
     public function __invoke(
-        Etag|null         $etag = null,
-        LastModified|null $lastModified = null,
-        CacheControl|null $cacheControl = null,
-        array             $headers = [],
+        Etag|null                   $etag = null,
+        LastModified|null           $lastModified = null,
+        CacheControl|null           $cacheControl = null,
+        #[SensitiveParameter] array $headers = [],
     ) : ResponseInterface
     {
         $response = new BuildEmptyResponse()(status: 304);

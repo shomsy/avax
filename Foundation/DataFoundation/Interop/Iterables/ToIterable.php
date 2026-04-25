@@ -19,6 +19,6 @@ final readonly class ToIterable
             return $value;
         }
 
-        return new ArrayIterator(ToArray::from(value: $value));
+        return new ArrayIterator(array: ToArray::from(value: $value));
     }
 }

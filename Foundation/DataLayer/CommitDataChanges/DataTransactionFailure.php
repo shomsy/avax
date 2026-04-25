@@ -13,11 +13,11 @@ final class DataTransactionFailure extends RuntimeException
 {
     public static function unsafeRetryPolicy() : self
     {
-        return new self('Transient retry is allowed only for idempotent data work. Mark the policy idempotent or disable retry.');
+        return new self(message: 'Transient retry is allowed only for idempotent data work. Mark the policy idempotent or disable retry.');
     }
 
     public static function alreadyClosed(string $status) : self
     {
-        return new self("Transaction cannot be changed because it is already {$status}.");
+        return new self(message: "Transaction cannot be changed because it is already {$status}.");
     }
 }

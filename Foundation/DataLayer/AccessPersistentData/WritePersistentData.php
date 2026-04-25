@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\DataLayer\AccessPersistentData;
 
 use InvalidArgumentException;
-use Throwable;
 
 final readonly class WritePersistentData
 {
@@ -15,28 +14,28 @@ final readonly class WritePersistentData
     {
         if ($request->isSelect()) {
             return PersistentDataResult::failure(
-                $request->operation,
-                new PersistentDataFailure(
-                    sprintf('WritePersistentData::write() does not support SELECT operations. Use ReadPersistentData instead.')
+                operation: $request->operation,
+                failure  : new PersistentDataFailure(
+                               message: sprintf('WritePersistentData::write() does not support SELECT operations. Use ReadPersistentData instead.')
                 )
             );
         }
 
-        return $this->executeRawDataQuery->execute($request);
+        return $this->executeRawDataQuery->execute(request: $request);
     }
 
     public function insert(string $table, array $values) : PersistentDataResult
     {
-        return $this->write(PersistentDataRequest::insert($table, $values));
+        return $this->write(request: PersistentDataRequest::insert(table: $table, values: $values));
     }
 
-    public function insertGetId(string $table, array $values, string $idColumn = 'id') : ?string
+    public function insertGetId(string $table, array $values, string $idColumn = 'id') : string|null
     {
-        $result = $this->insert($table, $values);
+        $result = $this->insert(table: $table, values: $values);
 
         if (! $result->success) {
             throw new PersistentDataFailure(
-                sprintf('Insert failed: %s', $result->failure?->getMessage() ?? 'Unknown error')
+                message: sprintf('Insert failed: %s', $result->failure?->getMessage() ?? 'Unknown error')
             );
         }
 
@@ -45,22 +44,22 @@ final readonly class WritePersistentData
 
     public function update(string $table, array $values, string $where, array $bindings = []) : PersistentDataResult
     {
-        return $this->write(PersistentDataRequest::update($table, $values, $where, $bindings));
+        return $this->write(request: PersistentDataRequest::update(table: $table, values: $values, where: $where, bindings: $bindings));
     }
 
     public function updateById(string $table, array $values, mixed $id, string $idColumn = 'id') : PersistentDataResult
     {
-        return $this->update($table, $values, "{$idColumn} = :id", ['id' => $id]);
+        return $this->update(table: $table, values: $values, where: "{$idColumn} = :id", bindings: ['id' => $id]);
     }
 
     public function delete(string $table, string $where, array $bindings = []) : PersistentDataResult
     {
-        return $this->write(PersistentDataRequest::delete($table, $where, $bindings));
+        return $this->write(request: PersistentDataRequest::delete(table: $table, where: $where, bindings: $bindings));
     }
 
     public function deleteById(string $table, mixed $id, string $idColumn = 'id') : PersistentDataResult
     {
-        return $this->delete($table, "{$idColumn} = :id", ['id' => $id]);
+        return $this->delete(table: $table, where: "{$idColumn} = :id", bindings: ['id' => $id]);
     }
 
     public function upsert(
@@ -71,7 +70,7 @@ final readonly class WritePersistentData
     ) : PersistentDataResult
     {
         if (empty($uniqueColumns)) {
-            throw new InvalidArgumentException('Upsert requires at least one unique column.');
+            throw new InvalidArgumentException(message: 'Upsert requires at least one unique column.');
         }
 
         $columns      = array_keys($values);
@@ -98,13 +97,13 @@ final readonly class WritePersistentData
             implode(', ', $onDuplicate)
         );
 
-        return $this->write(PersistentDataRequest::raw($sql, $values));
+        return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: $values));
     }
 
     public function bulkInsert(string $table, array $rows) : PersistentDataResult
     {
         if (empty($rows)) {
-            return PersistentDataResult::empty(PersistentDataOperation::INSERT);
+            return PersistentDataResult::empty(operation: PersistentDataOperation::INSERT);
         }
 
         $firstRow = reset($rows);
@@ -130,19 +129,19 @@ final readonly class WritePersistentData
             implode(', ', $values_sql)
         );
 
-        return $this->write(PersistentDataRequest::raw($sql, $allBindings));
+        return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: $allBindings));
     }
 
     public function bulkDelete(string $table, array $ids, string $idColumn = 'id') : PersistentDataResult
     {
         if (empty($ids)) {
-            return PersistentDataResult::empty(PersistentDataOperation::DELETE);
+            return PersistentDataResult::empty(operation: PersistentDataOperation::DELETE);
         }
 
         $placeholders = implode(', ', array_fill(0, count($ids), '?'));
         $sql          = sprintf('DELETE FROM %s WHERE %s IN (%s)', $table, $idColumn, $placeholders);
 
-        return $this->write(PersistentDataRequest::raw($sql, array_values($ids)));
+        return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: array_values($ids)));
     }
 
     public function increment(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
@@ -153,7 +152,7 @@ final readonly class WritePersistentData
 
         $allBindings = array_merge(['amount' => $amount], $bindings);
 
-        return $this->write(PersistentDataRequest::raw($sql, $allBindings));
+        return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: $allBindings));
     }
 
     public function decrement(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
@@ -161,11 +160,11 @@ final readonly class WritePersistentData
         $amount ??= 1;
         $where  ??= '1=1';
 
-        return $this->increment($table, $column, -$amount, $where, $bindings);
+        return $this->increment(table: $table, column: $column, amount: -$amount, where: $where, bindings: $bindings);
     }
 
     public function execute(string $sql, array $bindings = []) : PersistentDataResult
     {
-        return $this->write(PersistentDataRequest::raw($sql, $bindings));
+        return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: $bindings));
     }
 }

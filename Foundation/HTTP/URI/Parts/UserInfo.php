@@ -11,10 +11,10 @@ use SensitiveParameter;
  */
 final readonly class UserInfo
 {
-    private string  $user;
-    private ?string $password;
+    private string      $user;
+    private string|null $password;
 
-    public function __construct(string $user, #[SensitiveParameter] ?string $password = null)
+    public function __construct(string $user, #[SensitiveParameter] string|null $password = null)
     {
         $this->user     = $user;
         $this->password = $password;
@@ -25,7 +25,7 @@ final readonly class UserInfo
         return $this->user;
     }
 
-    public function password() : ?string
+    public function password() : string|null
     {
         return $this->password;
     }

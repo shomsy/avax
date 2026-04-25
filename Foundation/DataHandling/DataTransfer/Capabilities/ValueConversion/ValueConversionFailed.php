@@ -21,7 +21,7 @@ final class ValueConversionFailed extends DataTransferFailure
     {
         return new self(
             message   : 'Data value conversion failed.',
-            violations: DataTransferViolations::from([
+            violations: DataTransferViolations::from(violations: [
                                                          new DataTransferViolation(
                                                              path        : $path,
                                                              code        : 'value_conversion_failed',

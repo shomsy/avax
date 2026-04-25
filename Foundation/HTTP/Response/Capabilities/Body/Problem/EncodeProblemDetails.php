@@ -14,6 +14,6 @@ final class EncodeProblemDetails
      */
     public function __invoke(ProblemDetails $problemDetails) : string
     {
-        return new EncodeJsonBody()($problemDetails->toArray());
+        return new EncodeJsonBody()(data: $problemDetails->toArray());
     }
 }

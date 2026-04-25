@@ -24,10 +24,10 @@ final readonly class UseBloomFilter
     )
     {
         if ($this->expectedElements < 1) {
-            throw new InvalidArgumentException('Expected elements must be at least 1.');
+            throw new InvalidArgumentException(message: 'Expected elements must be at least 1.');
         }
         if ($this->falsePositiveRate <= 0 || $this->falsePositiveRate >= 1) {
-            throw new InvalidArgumentException('False positive rate must be between 0 and 1.');
+            throw new InvalidArgumentException(message: 'False positive rate must be between 0 and 1.');
         }
     }
 
@@ -40,14 +40,14 @@ final readonly class UseBloomFilter
     {
         $expectedElements ??= 1000000;
 
-        return new self(BloomFilterType::STANDARD, $expectedElements, $fpr, true);
+        return new self(type: BloomFilterType::STANDARD, expectedElements: $expectedElements, falsePositiveRate: $fpr, enabled: true);
     }
 
     public static function scalable(int|null $expectedElements = null, float $fpr = 0.001) : self
     {
         $expectedElements ??= 10000000;
 
-        return new self(BloomFilterType::SCALABLE, $expectedElements, $fpr, true);
+        return new self(type: BloomFilterType::SCALABLE, expectedElements: $expectedElements, falsePositiveRate: $fpr, enabled: true);
     }
 
     public function calculateOptimalSize() : int

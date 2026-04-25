@@ -50,7 +50,7 @@ final class InteropFamilyTest extends TestCase
         });
 
         $this->assertSame(0, $calls);
-        $this->assertSame([2, 4], $lazy->map(static fn (int $value) : int => $value * 2)->take(limit: 2)->toArray());
+        $this->assertSame([2, 4], $lazy->map(callback: static fn (int $value) : int => $value * 2)->take(limit: 2)->toArray());
         $this->assertSame(1, $calls);
     }
 

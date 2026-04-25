@@ -33,7 +33,7 @@ final readonly class ResponseCookie
         return new self(
             name     : $name,
             value    : '',
-            expiresAt: new DateTimeImmutable('@1'),
+            expiresAt: new DateTimeImmutable(datetime: '@1'),
             path     : $path,
             domain   : $domain,
         );

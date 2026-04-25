@@ -20,7 +20,7 @@ final class ReplaceImportedSessionState
         $this->store->flush();
 
         foreach ($data as $key => $value) {
-            $this->store->put($key, $value);
+            $this->store->put(key: $key, value: $value);
         }
     }
 }

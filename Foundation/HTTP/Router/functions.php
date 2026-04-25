@@ -335,7 +335,7 @@ if (! function_exists(function: 'get')) {
     function get(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
         );
     }
 }
@@ -352,7 +352,7 @@ if (! function_exists(function: 'post')) {
     function post(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
         );
     }
 }
@@ -369,7 +369,7 @@ if (! function_exists(function: 'put')) {
     function put(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
         );
     }
 }
@@ -386,7 +386,7 @@ if (! function_exists(function: 'patch')) {
     function patch(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
         );
     }
 }
@@ -403,7 +403,7 @@ if (! function_exists(function: 'delete')) {
     function delete(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
         );
     }
 }
@@ -420,7 +420,7 @@ if (! function_exists(function: 'options')) {
     function options(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
         );
     }
 }
@@ -437,7 +437,7 @@ if (! function_exists(function: 'head')) {
     function head(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
         );
     }
 }
@@ -454,7 +454,7 @@ if (! function_exists(function: 'any')) {
     function any(string $path, callable|array|string $action)
     {
         return RouteCollector::current()->addRouteBuilder(
-            RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
+            routeBuilder: RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
         );
     }
 }
@@ -467,7 +467,7 @@ if (! function_exists(function: 'fallback')) {
      */
     function fallback(callable|array|string $handler) : void
     {
-        RouteCollector::current()->setFallback($handler);
+        RouteCollector::current()->setFallback(fallback: $handler);
     }
 }
 
@@ -599,7 +599,7 @@ if (! function_exists(function: 'route_resource')) {
                 // Apply constraints for ID parameters
                 $constraints = [];
                 if (str_contains(haystack: $path, needle: "_id}")) {
-                    $constraints["{$resource}_id"] = route_constraint(['id' => 'id'])['id'];
+                    $constraints["{$resource}_id"] = route_constraint(constraints: ['id' => 'id'])['id'];
                 }
 
                 $routes[] = match (strtolower(string: $method)) {

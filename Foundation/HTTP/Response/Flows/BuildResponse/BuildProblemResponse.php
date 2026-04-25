@@ -25,7 +25,7 @@ final class BuildProblemResponse
         $type   ??= 'about:blank';
         try {
             $payload = new EncodeProblemDetails()(
-                new ProblemDetails(
+                problemDetails: new ProblemDetails(
                     title     : $title,
                     status    : $status,
                     detail    : $detail,

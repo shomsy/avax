@@ -21,10 +21,10 @@ final class ResponseFacadeTest extends TestCase
         $xml     = Response::xml(xml: ['name' => 'Alice', 'meta' => ['city' => 'Belgrade']]);
 
         self::assertSame(201, $json->getStatusCode());
-        self::assertSame('application/json', $json->getHeaderLine('Content-Type'));
+        self::assertSame('application/json', $json->getHeaderLine(header: 'Content-Type'));
         self::assertSame(['name' => 'Alice'], json_decode(json: (string) $json->getBody(), associative: true));
 
-        self::assertSame('application/problem+json', $problem->getHeaderLine('Content-Type'));
+        self::assertSame('application/problem+json', $problem->getHeaderLine(header: 'Content-Type'));
         self::assertSame(422, $problem->getStatusCode());
         self::assertSame(
             [
@@ -36,7 +36,7 @@ final class ResponseFacadeTest extends TestCase
             json_decode(json: (string) $problem->getBody(), associative: true),
         );
 
-        self::assertSame('application/xml; charset=UTF-8', $xml->getHeaderLine('Content-Type'));
+        self::assertSame('application/xml; charset=UTF-8', $xml->getHeaderLine(header: 'Content-Type'));
         self::assertStringContainsString('<name>Alice</name>', (string) $xml->getBody());
         self::assertStringContainsString('<city>Belgrade</city>', (string) $xml->getBody());
     }
@@ -58,13 +58,13 @@ final class ResponseFacadeTest extends TestCase
             $download = Response::download(filePath: $path, downloadName: 'report.txt');
 
             self::assertSame(303, $redirect->getStatusCode());
-            self::assertSame('/dashboard', $redirect->getHeaderLine('Location'));
+            self::assertSame('/dashboard', $redirect->getHeaderLine(header: 'Location'));
 
             self::assertSame(206, $stream->getStatusCode());
             self::assertSame('streamed', (string) $stream->getBody());
 
             self::assertSame(200, $download->getStatusCode());
-            self::assertSame('attachment; filename="report.txt"', $download->getHeaderLine('Content-Disposition'));
+            self::assertSame('attachment; filename="report.txt"', $download->getHeaderLine(header: 'Content-Disposition'));
             self::assertSame('download payload', (string) $download->getBody());
         } finally {
             @unlink(filename: $path);
@@ -75,18 +75,18 @@ final class ResponseFacadeTest extends TestCase
     {
         $noContent   = Response::noContent();
         $notModified = Response::notModified(
-            etag        : new Etag('abc123'),
-            lastModified: new LastModified(new DateTimeImmutable('2026-01-01T00:00:00+00:00')),
-            cacheControl: new CacheControl(['public' => true, 'max-age' => 60]),
+            etag        : new Etag(value: 'abc123'),
+            lastModified: new LastModified(value: new DateTimeImmutable(datetime: '2026-01-01T00:00:00+00:00')),
+            cacheControl: new CacheControl(directives: ['public' => true, 'max-age' => 60]),
         );
 
         self::assertSame(204, $noContent->getStatusCode());
         self::assertSame('', (string) $noContent->getBody());
 
         self::assertSame(304, $notModified->getStatusCode());
-        self::assertSame('"abc123"', $notModified->getHeaderLine('ETag'));
-        self::assertSame('public, max-age=60', $notModified->getHeaderLine('Cache-Control'));
-        self::assertSame('', $notModified->getHeaderLine('Content-Type'));
+        self::assertSame('"abc123"', $notModified->getHeaderLine(header: 'ETag'));
+        self::assertSame('public, max-age=60', $notModified->getHeaderLine(name: 'Cache-Control'));
+        self::assertSame('', $notModified->getHeaderLine(name: 'Content-Type'));
         self::assertSame('', (string) $notModified->getBody());
     }
 }

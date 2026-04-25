@@ -16,7 +16,7 @@ final readonly class Query implements Stringable
 
     public function __construct(string $queryString = '')
     {
-        $this->params = $queryString !== '' ? $this->parse($queryString) : [];
+        $this->params = $queryString !== '' ? $this->parse(queryString: $queryString) : [];
     }
 
     private function parse(string $queryString) : array
@@ -38,7 +38,7 @@ final readonly class Query implements Stringable
             $params[$key] = [$params[$key], $value];
         }
 
-        return new self($this->buildQuery($params));
+        return new self(queryString: $this->buildQuery(params: $params));
     }
 
     public function set(string $key, string $value) : self
@@ -46,7 +46,7 @@ final readonly class Query implements Stringable
         $params       = $this->params;
         $params[$key] = $value;
 
-        return new self($this->buildQuery($params));
+        return new self(queryString: $this->buildQuery(params: $params));
     }
 
     public function remove(string $key) : self
@@ -54,7 +54,7 @@ final readonly class Query implements Stringable
         $params = $this->params;
         unset($params[$key]);
 
-        return new self($this->buildQuery($params));
+        return new self(queryString: $this->buildQuery(params: $params));
     }
 
     public function clear() : self
@@ -79,6 +79,6 @@ final readonly class Query implements Stringable
 
     public function __toString() : string
     {
-        return $this->buildQuery($this->params);
+        return $this->buildQuery(params: $this->params);
     }
 }

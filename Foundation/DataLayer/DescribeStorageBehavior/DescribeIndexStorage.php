@@ -18,7 +18,7 @@ final readonly class DescribeIndexStorage
     public function __construct(
         public IndexStorageType $type,
         public bool             $unique,
-        public ?int             $maxSizeBytes,
+        public int|null $maxSizeBytes,
         public array            $includedColumns
     ) {}
 
@@ -29,17 +29,17 @@ final readonly class DescribeIndexStorage
 
     public static function btree(bool $unique = false) : self
     {
-        return new self(IndexStorageType::BTREE, $unique, null, []);
+        return new self(type: IndexStorageType::BTREE, unique: $unique, maxSizeBytes: null, includedColumns: []);
     }
 
     public static function hash() : self
     {
-        return new self(IndexStorageType::HASH, false, null, []);
+        return new self(type: IndexStorageType::HASH, unique: false, maxSizeBytes: null, includedColumns: []);
     }
 
     public static function gin(array $includedColumns = []) : self
     {
-        return new self(IndexStorageType::GIN, false, null, $includedColumns);
+        return new self(type: IndexStorageType::GIN, unique: false, maxSizeBytes: null, includedColumns: $includedColumns);
     }
 
     public function toMetadata() : array

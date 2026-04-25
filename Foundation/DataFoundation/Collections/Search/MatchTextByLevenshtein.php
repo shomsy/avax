@@ -15,14 +15,14 @@ final readonly class MatchTextByLevenshtein
         private array $items = [],
     ) {}
 
-    public function __invoke(string $query, int|null $maxDistance = null, ?string $key = null) : array
+    public function __invoke(string $query, int|null $maxDistance = null, string|null $key = null) : array
     {
         $maxDistance ??= 2;
 
         return $this->match(query: $query, maxDistance: $maxDistance, key: $key);
     }
 
-    public function match(string $query, int|null $maxDistance = null, ?string $key = null) : array
+    public function match(string $query, int|null $maxDistance = null, string|null $key = null) : array
     {
         $maxDistance ??= 2;
         if ($maxDistance < 0) {

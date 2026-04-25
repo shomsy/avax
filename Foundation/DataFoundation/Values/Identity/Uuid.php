@@ -17,7 +17,7 @@ final readonly class Uuid implements Stringable
         private string $value,
     )
     {
-        if (! RamseyUuid::isValid($value)) {
+        if (! RamseyUuid::isValid(uuid: $value)) {
             throw InvalidValueException::because(message: "Invalid UUID value '{$value}'.");
         }
     }

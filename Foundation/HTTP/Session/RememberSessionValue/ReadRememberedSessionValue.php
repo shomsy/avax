@@ -17,6 +17,6 @@ final class ReadRememberedSessionValue
 
     public function handle(string $key) : mixed
     {
-        return $this->store->get($key);
+        return $this->store->get(key: $key);
     }
 }

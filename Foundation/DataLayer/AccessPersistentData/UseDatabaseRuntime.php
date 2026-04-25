@@ -6,7 +6,6 @@ namespace Avax\DataLayer\AccessPersistentData;
 
 use Avax\DataLayer\ConfigureDataLayer\DataLayerRuntime;
 use PDO;
-use PDOException;
 use Throwable;
 
 final readonly class UseDatabaseRuntime
@@ -18,7 +17,7 @@ final readonly class UseDatabaseRuntime
         return $this->runtime->databaseRuntime;
     }
 
-    public function connection(?string $name = null) : PDO
+    public function connection(string|null $name = null) : PDO
     {
         $runtime = $this->databaseRuntime();
 
@@ -35,7 +34,7 @@ final readonly class UseDatabaseRuntime
         }
 
         throw new PersistentDataFailure(
-            sprintf('Database runtime does not expose PDO connection. Expected PDO or getConnection() method.')
+            message: sprintf('Database runtime does not expose PDO connection. Expected PDO or getConnection() method.')
         );
     }
 
@@ -77,7 +76,7 @@ final readonly class UseDatabaseRuntime
     public function isConnected() : bool
     {
         try {
-            $this->connection()->query('SELECT 1');
+            $this->connection()->query(query: 'SELECT 1');
 
             return true;
         } catch (Throwable) {

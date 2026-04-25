@@ -12,23 +12,23 @@ final class SessionCharacterizationTest extends TestCase
     {
         $s = new NullSession();
 
-        $this->assertFalse($s->has('foo'));
+        $this->assertFalse($s->has(key: 'foo'));
 
-        $s->put('foo', 'bar');
-        $this->assertTrue($s->has('foo'));
-        $this->assertSame('bar', $s->get('foo'));
+        $s->put(key: 'foo', value: 'bar');
+        $this->assertTrue($s->has(key: 'foo'));
+        $this->assertSame('bar', $s->get(key: 'foo'));
 
-        $val = $s->remember('baz', function () { return 42; });
+        $val = $s->remember(key: 'baz', callback: function () { return 42; });
         $this->assertSame(42, $val);
 
-        $s->forget('foo');
-        $this->assertFalse($s->has('foo'));
+        $s->forget(key: 'foo');
+        $this->assertFalse($s->has(key: 'foo'));
 
-        $s->put('a', 1);
+        $s->put(key: 'a', value: 1);
         $s->flush();
         $this->assertSame([], $s->all());
 
-        $s->put('u', 'user');
+        $s->put(key: 'u', value: 'user');
         $s->terminate();
         $this->assertSame([], $s->all());
     }

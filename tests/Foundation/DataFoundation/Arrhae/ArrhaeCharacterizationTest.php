@@ -29,23 +29,23 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     private function arrhae(array $items = []) : Arrhae
     {
-        return new Arrhae($items);
+        return new Arrhae(items: $items);
     }
 
     public function testGetReturnsValueByKey() : void
     {
         $arrh = $this->arrhae(items: ['name' => 'Alice', 'age' => 30]);
 
-        $this->assertSame('Alice', $arrh->get('name'));
-        $this->assertSame(30, $arrh->get('age'));
+        $this->assertSame('Alice', $arrh->get(key: 'name'));
+        $this->assertSame(30, $arrh->get(key: 'age'));
     }
 
     public function testGetReturnsDefaultForMissingKey() : void
     {
         $arrh = $this->arrhae(items: ['name' => 'Alice']);
 
-        $this->assertSame('unknown', $arrh->get('missing', 'unknown'));
-        $this->assertNull($arrh->get('missing'));
+        $this->assertSame('unknown', $arrh->get(key: 'missing', default: 'unknown'));
+        $this->assertNull($arrh->get(key: 'missing'));
     }
 
     public function testGetSupportsDotNotation() : void
@@ -57,17 +57,17 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ],
                                      ]);
 
-        $this->assertSame('Alice', $arrh->get('user.name'));
-        $this->assertSame('Wonderland', $arrh->get('user.address.city'));
-        $this->assertNull($arrh->get('user.missing'));
+        $this->assertSame('Alice', $arrh->get(key: 'user.name'));
+        $this->assertSame('Wonderland', $arrh->get(key: 'user.address.city'));
+        $this->assertNull($arrh->get(key: 'user.missing'));
     }
 
     public function testHasReturnsTrueForExistingKey() : void
     {
         $arrh = $this->arrhae(items: ['name' => 'Alice']);
 
-        $this->assertTrue($arrh->has('name'));
-        $this->assertFalse($arrh->has('missing'));
+        $this->assertTrue($arrh->has(key: 'name'));
+        $this->assertFalse($arrh->has(key: 'missing'));
     }
 
     public function testHasSupportsDotNotation() : void
@@ -76,9 +76,9 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          'user' => ['name' => 'Alice'],
                                      ]);
 
-        $this->assertTrue($arrh->has('user.name'));
-        $this->assertFalse($arrh->has('user.missing'));
-        $this->assertFalse($arrh->has('user'));
+        $this->assertTrue($arrh->has(key: 'user.name'));
+        $this->assertFalse($arrh->has(key: 'user.missing'));
+        $this->assertFalse($arrh->has(key: 'user'));
     }
 
     public function testFirstReturnsFirstItem() : void
@@ -93,7 +93,7 @@ final class ArrhaeCharacterizationTest extends TestCase
         $arrh = $this->arrhae(items: []);
 
         $this->assertNull($arrh->first());
-        $this->assertSame('default', $arrh->first('default'));
+        $this->assertSame('default', $arrh->first(default: 'default'));
     }
 
     public function testLastReturnsLastItem() : void
@@ -110,8 +110,8 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['name' => 'Bob', 'age' => 25],
                                      ]);
 
-        $this->assertSame(['Alice', 'Bob'], $arrh->pluck('name'));
-        $this->assertSame([30, 25], $arrh->pluck('age'));
+        $this->assertSame(['Alice', 'Bob'], $arrh->pluck(key: 'name'));
+        $this->assertSame([30, 25], $arrh->pluck(key: 'age'));
     }
 
     public function testPluckWithCallable() : void
@@ -121,7 +121,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['amount' => 200],
                                      ]);
 
-        $plucked = $arrh->pluck(fn (array $item) : int => $item['amount'] * 2);
+        $plucked = $arrh->pluck(key: fn (array $item) : int => $item['amount'] * 2);
         $this->assertSame([200, 400], $plucked);
     }
 
@@ -130,7 +130,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testSetAddsValue() : void
     {
         $arrh   = $this->arrhae(items: ['name' => 'Alice']);
-        $result = $arrh->set('age', 30);
+        $result = $arrh->set(key: 'age', value: 30);
 
         $this->assertSame(['name' => 'Alice', 'age' => 30], $result->all());
         $this->assertNotSame($arrh, $result);
@@ -139,7 +139,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testSetSupportsDotNotation() : void
     {
         $arrh   = $this->arrhae(items: []);
-        $result = $arrh->set('user.name', 'Alice');
+        $result = $arrh->set(key: 'user.name', value: 'Alice');
 
         $this->assertSame(['user' => ['name' => 'Alice']], $result->all());
     }
@@ -147,7 +147,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testSetCreatesIntermediateArrays() : void
     {
         $arrh   = $this->arrhae(items: []);
-        $result = $arrh->set('a.b.c', 'deep');
+        $result = $arrh->set(key: 'a.b.c', value: 'deep');
 
         $this->assertSame(['a' => ['b' => ['c' => 'deep']]], $result->all());
     }
@@ -155,7 +155,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testForgetRemovesValue() : void
     {
         $arrh   = $this->arrhae(items: ['name' => 'Alice', 'age' => 30]);
-        $result = $arrh->forget('name');
+        $result = $arrh->forget(key: 'name');
 
         $this->assertSame(['age' => 30], $result->all());
     }
@@ -165,7 +165,7 @@ final class ArrhaeCharacterizationTest extends TestCase
         $arrh   = $this->arrhae(items: [
                                            'user' => ['name' => 'Alice', 'age' => 30],
                                        ]);
-        $result = $arrh->forget('user.name');
+        $result = $arrh->forget(key: 'user.name');
 
         $this->assertSame(['user' => ['age' => 30]], $result->all());
     }
@@ -173,7 +173,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testAddAppendsValue() : void
     {
         $arrh   = $this->arrhae(items: [1, 2]);
-        $result = $arrh->add(3);
+        $result = $arrh->add(value: 3);
 
         $this->assertSame([1, 2, 3], $result->all());
     }
@@ -181,7 +181,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testPullRemovesAndReturnsValue() : void
     {
         $arrh   = $this->arrhae(items: ['name' => 'Alice']);
-        $result = $arrh->pull('name');
+        $result = $arrh->pull(key: 'name');
 
         $this->assertSame('Alice', $result->first());
         $this->assertSame([], $result->second()->all());
@@ -191,7 +191,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testMergeCombinesArrays() : void
     {
         $arrh   = $this->arrhae(items: [1, 2]);
-        $result = $arrh->merge([3, 4]);
+        $result = $arrh->merge(items: [3, 4]);
 
         $this->assertSame([1, 2, 3, 4], $result->all());
     }
@@ -199,7 +199,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testUnionPreservesExistingKeys() : void
     {
         $arrh   = $this->arrhae(items: [1 => 'one', 2 => 'two']);
-        $result = $arrh->union([2 => 'TWO', 3 => 'three']);
+        $result = $arrh->union(items: [2 => 'TWO', 3 => 'three']);
 
         $this->assertSame([1 => 'one', 2 => 'two', 3 => 'three'], $result->all());
     }
@@ -209,7 +209,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testMapTransformsValues() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3]);
-        $result = $arrh->map(fn (int $n) : int => $n * 2);
+        $result = $arrh->map(callback: fn (int $n) : int => $n * 2);
 
         $this->assertSame([2, 4, 6], $result->all());
     }
@@ -217,7 +217,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testFilterKeepsMatchingValues() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
-        $result = $arrh->filter(fn (int $n) : bool => $n % 2 === 0);
+        $result = $arrh->filter(callback: fn (int $n) : bool => $n % 2 === 0);
 
         $this->assertSame([1 => 2, 3 => 4], $result->all());
     }
@@ -226,8 +226,8 @@ final class ArrhaeCharacterizationTest extends TestCase
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
         $result = $arrh->reduce(
-            fn (int $carry, int $n) : int => $carry + $n,
-            0
+            callback: fn (int $carry, int $n) : int => $carry + $n,
+            initial : 0
         );
 
         $this->assertSame(10, $result);
@@ -236,7 +236,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testChunkSplitsArray() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4, 5]);
-        $result = $arrh->chunk(2);
+        $result = $arrh->chunk(size: 2);
 
         $this->assertSame([[1, 2], [3, 4], [5 => 5]], $result->all());
     }
@@ -247,16 +247,16 @@ final class ArrhaeCharacterizationTest extends TestCase
     {
         $arrh = $this->arrhae(items: ['apple', 'banana', 'cherry']);
 
-        $this->assertTrue($arrh->contains('banana'));
-        $this->assertFalse($arrh->contains('date'));
+        $this->assertTrue($arrh->contains(value: 'banana'));
+        $this->assertFalse($arrh->contains(value: 'date'));
     }
 
     public function testSearchReturnsIndex() : void
     {
         $arrh = $this->arrhae(items: ['apple', 'banana', 'cherry']);
 
-        $this->assertSame(1, $arrh->search('banana'));
-        $this->assertFalse($arrh->search('date'));
+        $this->assertSame(1, $arrh->search(value: 'banana'));
+        $this->assertFalse($arrh->search(value: 'date'));
     }
 
     public function testWhereFiltersByKey() : void
@@ -265,7 +265,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                            ['name' => 'Alice', 'active' => true],
                                            ['name' => 'Bob', 'active' => false],
                                        ]);
-        $result = $arrh->where('active', true);
+        $result = $arrh->where(key: 'active', value: true);
 
         $this->assertCount(1, $result->all());
         $this->assertSame('Alice', $result->first()['name']);
@@ -278,7 +278,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                            ['name' => 'Bob', 'role' => 'editor'],
                                            ['name' => 'Charlie', 'role' => 'subscriber'],
                                        ]);
-        $result = $arrh->whereIn('role', ['admin', 'editor']);
+        $result = $arrh->whereIn(key: 'role', values: ['admin', 'editor']);
 
         $this->assertCount(2, $result->all());
     }
@@ -290,7 +290,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                            ['name' => 'Bob', 'score' => 90],
                                            ['name' => 'Charlie', 'score' => 75],
                                        ]);
-        $result = $arrh->whereBetween('score', [80, 90]);
+        $result = $arrh->whereBetween(key: 'score', range: [80, 90]);
 
         $this->assertCount(2, $result->all());
     }
@@ -301,7 +301,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                            ['name' => 'Alice', 'age' => null],
                                            ['name' => 'Bob', 'age' => 30],
                                        ]);
-        $result = $arrh->whereNull('age');
+        $result = $arrh->whereNull(key: 'age');
 
         $this->assertCount(1, $result->all());
     }
@@ -316,7 +316,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['amount' => 150],
                                      ]);
 
-        $this->assertSame(450, $arrh->sum('amount'));
+        $this->assertSame(450, $arrh->sum(key: 'amount'));
     }
 
     public function testAverageCalculatesMean() : void
@@ -327,7 +327,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['score' => 70],
                                      ]);
 
-        $this->assertSameWithDelta(expected: 80.0, actual: $arrh->average('score'), delta: 0.01);
+        $this->assertSameWithDelta(expected: 80.0, actual: $arrh->average(key: 'score'), delta: 0.01);
     }
 
     private function assertSameWithDelta(float $expected, float $actual, float $delta) : void
@@ -344,7 +344,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['score' => 70],
                                      ]);
 
-        $this->assertSame(70, $arrh->min('score'));
+        $this->assertSame(70, $arrh->min(key: 'score'));
     }
 
     public function testMaxFindsMaximum() : void
@@ -355,7 +355,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['score' => 70],
                                      ]);
 
-        $this->assertSame(90, $arrh->max('score'));
+        $this->assertSame(90, $arrh->max(key: 'score'));
     }
 
     public function testCountByTalliesValues() : void
@@ -366,7 +366,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['category' => 'A'],
                                      ]);
 
-        $counts = $arrh->countBy('category');
+        $counts = $arrh->countBy(key: 'category');
         $this->assertSame(['A' => 2, 'B' => 1], $counts);
     }
 
@@ -378,7 +378,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['category' => 'A', 'name' => 'Charlie'],
                                      ]);
 
-        $grouped = $arrh->aggregateGroupBy('category');
+        $grouped = $arrh->aggregateGroupBy(key: 'category');
         $this->assertCount(2, $grouped['A']);
         $this->assertCount(1, $grouped['B']);
     }
@@ -396,7 +396,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testSortWithCallback() : void
     {
         $arrh   = $this->arrhae(items: [3, 1, 2]);
-        $result = $arrh->sort(fn (int $a, int $b) : int => $b <=> $a);
+        $result = $arrh->sort(callback: fn (int $a, int $b) : int => $b <=> $a);
 
         $this->assertSame([3, 2, 1], $result->all());
     }
@@ -432,7 +432,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                            ['id' => 'a', 'name' => 'Alice'],
                                            ['id' => 'b', 'name' => 'Bob'],
                                        ]);
-        $result = $arrh->keyBy('id');
+        $result = $arrh->keyBy(key: 'id');
 
         $this->assertArrayHasKey('a', $result->all());
         $this->assertArrayHasKey('b', $result->all());
@@ -460,7 +460,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testToXmlEncodesToXml() : void
     {
         $arrh = $this->arrhae(items: ['name' => 'Alice']);
-        $xml  = $arrh->toXml('user');
+        $xml = $arrh->toXml(rootElement: 'user');
 
         $this->assertStringContainsString('<name>Alice</name>', $xml);
     }
@@ -468,7 +468,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testOnlyKeepsSpecifiedKeys() : void
     {
         $arrh   = $this->arrhae(items: ['name' => 'Alice', 'age' => 30, 'city' => 'Wonderland']);
-        $result = $arrh->only(['name', 'city']);
+        $result = $arrh->only(keys: ['name', 'city']);
 
         $this->assertSame(['name' => 'Alice', 'city' => 'Wonderland'], $result->all());
     }
@@ -476,7 +476,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testExceptRemovesSpecifiedKeys() : void
     {
         $arrh   = $this->arrhae(items: ['name' => 'Alice', 'age' => 30, 'city' => 'Wonderland']);
-        $result = $arrh->except(['age']);
+        $result = $arrh->except(keys: ['age']);
 
         $this->assertSame(['name' => 'Alice', 'city' => 'Wonderland'], $result->all());
     }
@@ -498,7 +498,7 @@ final class ArrhaeCharacterizationTest extends TestCase
         $locked = $arrh->lock();
 
         $this->expectException(RuntimeException::class);
-        $locked->set('age', 30);
+        $locked->set(key: 'age', value: 30);
     }
 
     public function testToImmutableCreatesLockedClone() : void
@@ -513,36 +513,36 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testMakeCreatesInstance() : void
     {
-        $arrh = Arrhae::make(['name' => 'Alice']);
+        $arrh = Arrhae::make(items: ['name' => 'Alice']);
 
         $this->assertSame(['name' => 'Alice'], $arrh->all());
     }
 
     public function testMakeHandlesTraversable() : void
     {
-        $arrh = Arrhae::make(new ArrayIterator(array: ['name' => 'Alice']));
+        $arrh = Arrhae::make(items: new ArrayIterator(array: ['name' => 'Alice']));
 
         $this->assertSame(['name' => 'Alice'], $arrh->all());
     }
 
     public function testWrapWrapsValue() : void
     {
-        $arrh = Arrhae::wrap('single');
+        $arrh = Arrhae::wrap(value: 'single');
 
         $this->assertSame(['single'], $arrh->all());
     }
 
     public function testWrapPreservesArray() : void
     {
-        $arrh = Arrhae::wrap(['name' => 'Alice']);
+        $arrh = Arrhae::wrap(value: ['name' => 'Alice']);
 
         $this->assertSame(['name' => 'Alice'], $arrh->all());
     }
 
     public function testWrapPreservesInstance() : void
     {
-        $original = Arrhae::make(['name' => 'Alice']);
-        $wrapped  = Arrhae::wrap($original);
+        $original = Arrhae::make(items: ['name' => 'Alice']);
+        $wrapped  = Arrhae::wrap(value: $original);
 
         $this->assertSame($original, $wrapped);
     }
@@ -597,7 +597,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testDiffReturnsDifference() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
-        $result = $arrh->diff([2, 3]);
+        $result = $arrh->diff(items: [2, 3]);
 
         $this->assertSame([1 => 1, 3 => 4], $result->all());
     }
@@ -605,7 +605,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testIntersectReturnsIntersection() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
-        $result = $arrh->intersect([2, 3, 5]);
+        $result = $arrh->intersect(items: [2, 3, 5]);
 
         $this->assertSame([1 => 2, 2 => 3], $result->all());
     }

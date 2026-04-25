@@ -17,7 +17,7 @@ final readonly class RebuildSagaState
             return $storedState;
         }
 
-        return $this->rebuildFromEvents($events);
+        return $this->rebuildFromEvents(events: $events);
     }
 
     private function rebuildFromEvents(array $events) : array
@@ -29,7 +29,7 @@ final readonly class RebuildSagaState
         ];
 
         foreach ($events as $event) {
-            $state = $this->applyEvent($state, $event);
+            $state = $this->applyEvent(state: $state, event: $event);
         }
 
         return $state;

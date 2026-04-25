@@ -7,6 +7,7 @@ namespace Avax\HTTP\Response\Flows\BuildResponse;
 use Avax\HTTP\Response\Capabilities\Body\NormalizeResponseBody;
 use Avax\HTTP\Response\Capabilities\Message\ResponseMessage;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * Canonical response assembly entrypoint.
@@ -14,11 +15,11 @@ use Psr\Http\Message\ResponseInterface;
 final class BuildResponse
 {
     public function __invoke(
-        int|null    $status = null,
-        array|null  $headers = null,
-        mixed       $body = null,
-        string|null $reasonPhrase = null,
-        string      $protocolVersion = '1.1',
+        int|null                         $status = null,
+        #[SensitiveParameter] array|null $headers = null,
+        mixed                            $body = null,
+        string|null                      $reasonPhrase = null,
+        string                           $protocolVersion = '1.1',
     ) : ResponseInterface
     {
         $status       ??= 200;
@@ -34,7 +35,7 @@ final class BuildResponse
             reasonPhrase   : $reasonPhrase,
             protocolVersion: $protocolVersion,
             headers        : $headers,
-            body           : new NormalizeResponseBody()($body),
+            body           : new NormalizeResponseBody()(body: $body),
         );
     }
 }

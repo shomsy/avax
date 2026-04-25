@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccelerateDataReads;
 
-use InvalidArgumentException;
-
 enum DataCacheType: string
 {
     case IN_MEMORY   = 'in_memory';
@@ -43,7 +41,7 @@ final readonly class ReadCacheKeyBuilder
         return hash('xxh64', serialize($parts));
     }
 
-    public function buildPrefix(?string $tenantId = null, ?string $table = null) : string
+    public function buildPrefix(string|null $tenantId = null, string|null $table = null) : string
     {
         return sprintf(
             'cache:%s:%s',
@@ -79,9 +77,9 @@ final readonly class UseReadCache
 
         return new UseReadCacheResult(
             willCache       : $willCache,
-            cacheKey        : $willCache ? $this->generateCacheKey($queryContext) : null,
+            cacheKey        : $willCache ? $this->generateCacheKey(queryContext: $queryContext) : null,
             ttlSeconds      : $willCache ? $this->policy->ttlSeconds : 0,
-            estimatedHitRate: $this->estimateHitRate($queryContext)
+            estimatedHitRate: $this->estimateHitRate(queryContext: $queryContext)
         );
     }
 
@@ -119,9 +117,9 @@ final readonly class UseReadCache
 final readonly class UseReadCacheResult
 {
     public function __construct(
-        public bool    $willCache,
-        public ?string $cacheKey,
-        public int     $ttlSeconds,
-        public float   $estimatedHitRate
+        public bool        $willCache,
+        public string|null $cacheKey,
+        public int         $ttlSeconds,
+        public float       $estimatedHitRate
     ) {}
 }

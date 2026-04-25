@@ -24,7 +24,7 @@ final readonly class IndexStorageKind
         public array     $columns,
         public bool      $unique,
         public bool      $clustered,
-        public ?int      $maxSizeBytes
+        public int|null $maxSizeBytes
     ) {}
 
     public function describeResponsibility() : string
@@ -34,22 +34,22 @@ final readonly class IndexStorageKind
 
     public static function primary(array $columns) : self
     {
-        return new self(IndexKind::PRIMARY, $columns, true, true, null);
+        return new self(kind: IndexKind::PRIMARY, columns: $columns, unique: true, clustered: true, maxSizeBytes: null);
     }
 
     public static function unique(array $columns) : self
     {
-        return new self(IndexKind::UNIQUE, $columns, true, false, null);
+        return new self(kind: IndexKind::UNIQUE, columns: $columns, unique: true, clustered: false, maxSizeBytes: null);
     }
 
     public static function composite(array $columns) : self
     {
-        return new self(IndexKind::COMPOSITE, $columns, false, false, null);
+        return new self(kind: IndexKind::COMPOSITE, columns: $columns, unique: false, clustered: false, maxSizeBytes: null);
     }
 
     public static function fullText(array $columns) : self
     {
-        return new self(IndexKind::FULL_TEXT, $columns, false, false, null);
+        return new self(kind: IndexKind::FULL_TEXT, columns: $columns, unique: false, clustered: false, maxSizeBytes: null);
     }
 
     public function toMetadata() : array

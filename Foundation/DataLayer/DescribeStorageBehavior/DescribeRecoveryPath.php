@@ -29,9 +29,9 @@ final readonly class DescribeRecoveryPath
     public function addRecoveryStep(string $step) : self
     {
         return new self(
-            $this->recoveryType,
-            $this->restoreProcedure,
-            [...$this->recoverySteps, $step]
+            recoveryType    : $this->recoveryType,
+            restoreProcedure: $this->restoreProcedure,
+            recoverySteps   : [...$this->recoverySteps, $step]
         );
     }
 

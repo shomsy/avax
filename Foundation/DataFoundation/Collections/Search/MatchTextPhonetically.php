@@ -13,12 +13,12 @@ final readonly class MatchTextPhonetically
         private array $items = [],
     ) {}
 
-    public function __invoke(string $query, ?string $key = null) : array
+    public function __invoke(string $query, string|null $key = null) : array
     {
         return $this->match(query: $query, key: $key);
     }
 
-    public function match(string $query, ?string $key = null) : array
+    public function match(string $query, string|null $key = null) : array
     {
         $queryPhonetic = metaphone(string: strtolower(string: $query));
 

@@ -25,7 +25,7 @@ final class FlowFamilyTest extends TestCase
     public function testLazySequenceDefersMapUntilIteration() : void
     {
         $sequence = LazySequence::from(items: [1, 2, 3])
-            ->map(static fn (int $value) : int => $value * 2)
+            ->map(callback: static fn (int $value) : int => $value * 2)
             ->take(limit: 2);
 
         $this->assertSame([2, 4], $sequence->toArray());

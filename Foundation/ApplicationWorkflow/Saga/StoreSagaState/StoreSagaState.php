@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\StoreSagaState;
 
-use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
-use InvalidArgumentException;
 use ArrayAccess;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Countable;
+use DateTimeImmutable;
+use DateTimeInterface;
 use IteratorAggregate;
 use Traversable;
 
 final readonly class SagaState implements ArrayAccess, Countable, IteratorAggregate
 {
     private array   $events;
-    private array   $data;
-    private ?string $currentStep;
-    private int     $currentStepIndex;
+    private array       $data;
+    private string|null $currentStep;
+    private int         $currentStepIndex;
     private array   $stepResults;
 
     public function __construct(
-        array|null $events = null,
-        array|null $data = null,
-        ?string    $currentStep = null,
-        int|null   $currentStepIndex = null,
-        array      $stepResults = []
+        array|null  $events = null,
+        array|null  $data = null,
+        string|null $currentStep = null,
+        int|null    $currentStepIndex = null,
+        array       $stepResults = []
     )
     {
         $events           ??= [];
@@ -100,7 +101,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         return $this->stepResults;
     }
 
-    public function getStepResult(string $stepName) : ?array
+    public function getStepResult(string $stepName) : array|null
     {
         return $this->stepResults[$stepName] ?? null;
     }
@@ -143,19 +144,19 @@ final readonly class SagaEvent
     public string             $id;
     public string             $type;
     public string             $sagaId;
-    public string             $sagaName;
-    public ?string            $stepName;
-    public array              $payload;
-    public \DateTimeImmutable $occurredAt;
+    public string            $sagaName;
+    public string|null       $stepName;
+    public array             $payload;
+    public DateTimeImmutable $occurredAt;
 
     private function __construct(
-        string             $id,
-        string             $type,
-        string             $sagaId,
-        string             $sagaName,
-        ?string            $stepName = null,
-        array|null $payload = null,
-        \DateTimeImmutable $occurredAt
+        string            $id,
+        string            $type,
+        string            $sagaId,
+        string            $sagaName,
+        string|null       $stepName = null,
+        array|null        $payload = null,
+        DateTimeImmutable $occurredAt
     )
     {
         $payload ??= [];
@@ -173,7 +174,7 @@ final readonly class SagaEvent
         string     $sagaName,
         string     $type,
         array|null $payload = null,
-        ?string    $stepName = null
+        string|null $stepName = null
     ) : self
     {
         $payload ??= [];
@@ -185,7 +186,7 @@ final readonly class SagaEvent
             sagaName  : $sagaName,
             stepName  : $stepName,
             payload   : $payload,
-            occurredAt: new \DateTimeImmutable()
+            occurredAt: new DateTimeImmutable()
         );
     }
 
@@ -195,7 +196,7 @@ final readonly class SagaEvent
         array  $initialData = []
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_started', $initialData);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_started', payload: $initialData);
     }
 
     public static function stepCompleted(
@@ -205,7 +206,7 @@ final readonly class SagaEvent
         array  $output = []
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'step_completed', $output, $stepName);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_completed', payload: $output, stepName: $stepName);
     }
 
     public static function stepFailed(
@@ -215,7 +216,7 @@ final readonly class SagaEvent
         string $error
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'step_failed', ['error' => $error], $stepName);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_failed', payload: ['error' => $error], stepName: $stepName);
     }
 
     public static function completed(
@@ -224,7 +225,7 @@ final readonly class SagaEvent
         array  $finalData = []
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_completed', $finalData);
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_completed', payload: $finalData);
     }
 
     public static function compensated(
@@ -232,7 +233,7 @@ final readonly class SagaEvent
         string $sagaName
     ) : self
     {
-        return self::create($sagaId, $sagaName, 'saga_compensated');
+        return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_compensated');
     }
 
     public function toArray() : array
@@ -244,7 +245,7 @@ final readonly class SagaEvent
             'saga_name'   => $this->sagaName,
             'step_name'   => $this->stepName,
             'payload'     => $this->payload,
-            'occurred_at' => $this->occurredAt->format(\DateTimeInterface::ISO8601),
+            'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
 
@@ -265,19 +266,19 @@ final readonly class StoreSagaState
 
     public static function inMemory() : self
     {
-        return new self(['default' => []]);
+        return new self(stores: ['default' => []]);
     }
 
     public function save(SagaInstance $instance) : void
     {
-        $store                   = $this->getStore('default');
+        $store = $this->getStore(name: 'default');
         $store[$instance->id]    = $instance;
         $this->stores['default'] = $store;
     }
 
-    public function load(string $id) : ?SagaInstance
+    public function load(string $id) : SagaInstance|null
     {
-        $store = $this->getStore('default');
+        $store = $this->getStore(name: 'default');
 
         return $store[$id] ?? null;
     }
@@ -285,7 +286,7 @@ final readonly class StoreSagaState
     public function appendEvent(string $sagaId, SagaEvent $event) : void
     {
         $key   = "events_{$sagaId}";
-        $store = $this->getStore($key);
+        $store = $this->getStore(name: $key);
 
         if (! isset($store['events'])) {
             $store['events'] = [];
@@ -298,21 +299,21 @@ final readonly class StoreSagaState
     public function getEvents(string $sagaId) : array
     {
         $key   = "events_{$sagaId}";
-        $store = $this->getStore($key);
+        $store = $this->getStore(name: $key);
 
         return $store['events'] ?? [];
     }
 
     public function exists(string $id) : bool
     {
-        $store = $this->getStore('default');
+        $store = $this->getStore(name: 'default');
 
         return isset($store[$id]);
     }
 
     public function delete(string $id) : void
     {
-        $store = $this->getStore('default');
+        $store = $this->getStore(name: 'default');
         unset($store[$id]);
         $this->stores['default'] = $store;
     }

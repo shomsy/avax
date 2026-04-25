@@ -31,7 +31,7 @@ final readonly class DescribeReadPath
     )
     {
         if ($this->prefetchSize < 0) {
-            throw new InvalidArgumentException('Prefetch size must be non-negative.');
+            throw new InvalidArgumentException(message: 'Prefetch size must be non-negative.');
         }
     }
 
@@ -42,12 +42,12 @@ final readonly class DescribeReadPath
 
     public static function pointWithCache() : self
     {
-        return new self(ReadPathStrategy::POINT, CacheMode::CACHE, 100, false);
+        return new self(strategy: ReadPathStrategy::POINT, cacheMode: CacheMode::CACHE, prefetchSize: 100, parallelRead: false);
     }
 
     public static function indexScanWithPrefetch(int $prefetchSize = 1000) : self
     {
-        return new self(ReadPathStrategy::INDEX_SCAN, CacheMode::CACHE, $prefetchSize, true);
+        return new self(strategy: ReadPathStrategy::INDEX_SCAN, cacheMode: CacheMode::CACHE, prefetchSize: $prefetchSize, parallelRead: true);
     }
 
     public function shouldPrefetch() : bool

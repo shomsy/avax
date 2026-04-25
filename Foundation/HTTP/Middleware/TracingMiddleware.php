@@ -74,7 +74,7 @@ class TracingMiddleware implements MiddlewareInterface
             ]);
 
             // Add request ID to response
-            return $response->withHeader($this->requestIdHeader, $requestId);
+            return $response->withHeader(header: $this->requestIdHeader, value: $requestId);
 
         } catch (Throwable $e) {
             $latency = (microtime(as_float: true) - $startTime) * 1000;

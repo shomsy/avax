@@ -15,12 +15,12 @@ final readonly class MatchTextByPattern
         private array $items = [],
     ) {}
 
-    public function __invoke(string $pattern, ?string $key = null) : array
+    public function __invoke(string $pattern, string|null $key = null) : array
     {
         return $this->match(pattern: $pattern, key: $key);
     }
 
-    public function match(string $pattern, ?string $key = null) : array
+    public function match(string $pattern, string|null $key = null) : array
     {
         if (@preg_match(pattern: $pattern, subject: '') === false) {
             throw new InvalidArgumentException(message: 'Invalid regular expression pattern.');

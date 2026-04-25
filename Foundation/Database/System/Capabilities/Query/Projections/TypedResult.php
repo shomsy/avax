@@ -32,7 +32,7 @@ final class TypedResult
      *
      * @return T|null
      */
-    public static function fromRow(string $className, array $row) : ?object
+    public static function fromRow(string $className, array $row) : object|null
     {
         if (empty($row)) {
             return null;

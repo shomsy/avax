@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
 use Avax\HTTP\URI\Parts\Scheme;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,55 +20,55 @@ final class SchemeTest extends TestCase
     public function test_it_accepts_http_scheme() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('http');
+        $scheme = new Scheme(scheme: 'http');
 
         // Assert
-        self::assertSame('http', (string) $scheme);
+        self::assertSame(expected: 'http', actual: (string) $scheme);
     }
 
     public function test_it_accepts_https_scheme() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('https');
+        $scheme = new Scheme(scheme: 'https');
 
         // Assert
-        self::assertSame('https', (string) $scheme);
+        self::assertSame(expected: 'https', actual: (string) $scheme);
     }
 
     public function test_it_accepts_ftp_scheme() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('ftp');
+        $scheme = new Scheme(scheme: 'ftp');
 
         // Assert
-        self::assertSame('ftp', (string) $scheme);
+        self::assertSame(expected: 'ftp', actual: (string) $scheme);
     }
 
     public function test_it_accepts_file_scheme() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('file');
+        $scheme = new Scheme(scheme: 'file');
 
         // Assert
-        self::assertSame('file', (string) $scheme);
+        self::assertSame(expected: 'file', actual: (string) $scheme);
     }
 
     public function test_it_normalizes_scheme_to_lowercase() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('HTTPS');
+        $scheme = new Scheme(scheme: 'HTTPS');
 
         // Assert
-        self::assertSame('https', (string) $scheme);
+        self::assertSame(expected: 'https', actual: (string) $scheme);
     }
 
     public function test_it_normalizes_mixed_case_scheme() : void
     {
         // Arrange & Act
-        $scheme = new Scheme('HtTpS');
+        $scheme = new Scheme(scheme: 'HtTpS');
 
         // Assert
-        self::assertSame('https', (string) $scheme);
+        self::assertSame(expected: 'https', actual: (string) $scheme);
     }
 
     // ========== FAILURE: Invalid schemes ==========
@@ -75,29 +76,29 @@ final class SchemeTest extends TestCase
     public function test_it_throws_when_scheme_is_empty() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Scheme('');
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Scheme(scheme: '');
     }
 
     public function test_it_throws_when_scheme_is_not_allowed() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Scheme('gopher');
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Scheme(scheme: 'gopher');
     }
 
     public function test_it_throws_when_scheme_is_unknown_protocol() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Scheme('custom-protocol');
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Scheme(scheme: 'custom-protocol');
     }
 
     public function test_it_throws_when_scheme_contains_invalid_characters() : void
     {
         // Arrange & Act & Assert
-        $this->expectException(\InvalidArgumentException::class);
-        new Scheme('http!');
+        $this->expectException(exception: InvalidArgumentException::class);
+        new Scheme(scheme: 'http!');
     }
 
     // ========== PORT DEFAULTS ==========
@@ -105,45 +106,45 @@ final class SchemeTest extends TestCase
     public function test_it_recognizes_http_default_port_80() : void
     {
         // Arrange
-        $scheme = new Scheme('http');
+        $scheme = new Scheme(scheme: 'http');
 
         // Act & Assert
-        self::assertTrue($scheme->isDefaultPort(80));
+        self::assertTrue(condition: $scheme->isDefaultPort(port: 80));
     }
 
     public function test_it_recognizes_https_default_port_443() : void
     {
         // Arrange
-        $scheme = new Scheme('https');
+        $scheme = new Scheme(scheme: 'https');
 
         // Act & Assert
-        self::assertTrue($scheme->isDefaultPort(443));
+        self::assertTrue(condition: $scheme->isDefaultPort(port: 443));
     }
 
     public function test_it_rejects_wrong_default_port_for_http() : void
     {
         // Arrange
-        $scheme = new Scheme('http');
+        $scheme = new Scheme(scheme: 'http');
 
         // Act & Assert
-        self::assertFalse($scheme->isDefaultPort(443));
+        self::assertFalse(condition: $scheme->isDefaultPort(port: 443));
     }
 
     public function test_it_rejects_wrong_default_port_for_https() : void
     {
         // Arrange
-        $scheme = new Scheme('https');
+        $scheme = new Scheme(scheme: 'https');
 
         // Act & Assert
-        self::assertFalse($scheme->isDefaultPort(80));
+        self::assertFalse(condition: $scheme->isDefaultPort(port: 80));
     }
 
     public function test_it_rejects_non_standard_port_as_default() : void
     {
         // Arrange
-        $scheme = new Scheme('https');
+        $scheme = new Scheme(scheme: 'https');
 
         // Act & Assert
-        self::assertFalse($scheme->isDefaultPort(8443));
+        self::assertFalse(condition: $scheme->isDefaultPort(port: 8443));
     }
 }

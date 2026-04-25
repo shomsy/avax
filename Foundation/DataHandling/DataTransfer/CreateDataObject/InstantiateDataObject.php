@@ -42,7 +42,7 @@ final readonly class InstantiateDataObject
         } catch (Throwable $exception) {
             throw new DataValidationFailed(
                 message   : 'Data object instantiation failed.',
-                violations: DataTransferViolations::from([
+                violations: DataTransferViolations::from(violations: [
                                                              new DataTransferViolation(
                                                                  path        : '$',
                                                                  code        : 'data_object_instantiation_failed',

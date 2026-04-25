@@ -37,22 +37,22 @@ final readonly class BackupPolicy
     public static function standard() : self
     {
         return new self(
-            BackupType::FULL,
-            BackupStorage::CLOUD,
-            30,
-            24,
-            true
+            type         : BackupType::FULL,
+            storage      : BackupStorage::CLOUD,
+            retentionDays: 30,
+            intervalHours: 24,
+            compressed   : true
         );
     }
 
     public static function aggressive() : self
     {
         return new self(
-            BackupType::INCREMENTAL,
-            BackupStorage::REMOTE,
-            90,
-            6,
-            true
+            type         : BackupType::INCREMENTAL,
+            storage      : BackupStorage::REMOTE,
+            retentionDays: 90,
+            intervalHours: 6,
+            compressed   : true
         );
     }
 

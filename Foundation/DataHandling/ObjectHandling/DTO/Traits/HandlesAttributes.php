@@ -42,7 +42,7 @@ trait HandlesAttributes
     protected function applyFieldAttributes(string $fieldName, mixed &$value, array $attributes) : mixed
     {
         foreach ($attributes as $attribute) {
-            $instance = $this->instantiateAttribute($attribute);
+            $instance = $this->instantiateAttribute(attribute: $attribute);
 
             if (method_exists($instance, 'apply')) {
                 $value = $this->applyAttribute(instance: $instance, value: $value, fieldName: $fieldName);

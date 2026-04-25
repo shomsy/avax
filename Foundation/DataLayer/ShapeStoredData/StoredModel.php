@@ -16,26 +16,26 @@ final readonly class StoredModel implements IteratorAggregate
     public array        $fields;
     public array        $relations;
     public array        $indexes;
-    public array        $constraints;
-    public ?TenantShape $tenantShape;
-    public ?string      $comment;
-    public string       $engine;
-    public ?string      $charset;
-    public ?string      $collation;
+    public array            $constraints;
+    public TenantShape|null $tenantShape;
+    public string|null      $comment;
+    public string           $engine;
+    public string|null      $charset;
+    public string|null      $collation;
 
     private function __construct(
-        string       $name,
-        string       $tableName,
-        string|null $schemaName = null,
-        array|null  $fields = null,
-        array|null  $relations = null,
-        array|null  $indexes = null,
-        array|null  $constraints = null,
-        ?TenantShape $tenantShape = null,
-        ?string      $comment = null,
-        string|null $engine = null,
-        ?string      $charset = null,
-        ?string      $collation = null
+        string           $name,
+        string           $tableName,
+        string|null      $schemaName = null,
+        array|null       $fields = null,
+        array|null       $relations = null,
+        array|null       $indexes = null,
+        array|null       $constraints = null,
+        TenantShape|null $tenantShape = null,
+        string|null      $comment = null,
+        string|null      $engine = null,
+        string|null      $charset = null,
+        string|null      $collation = null
     )
     {
         $schemaName  ??= 'public';
@@ -65,17 +65,17 @@ final readonly class StoredModel implements IteratorAggregate
     ) : self
     {
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Model name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Model name cannot be empty.');
         }
 
         if (! preg_match('/^[A-Z][a-zA-Z0-9]*$/', $name)) {
             throw new InvalidArgumentException(
-                sprintf('Invalid model name "%s". Must start with uppercase and contain only alphanumeric characters.', $name)
+                message: sprintf('Invalid model name "%s". Must start with uppercase and contain only alphanumeric characters.', $name)
             );
         }
 
         if (empty(trim($tableName))) {
-            throw new InvalidArgumentException('Table name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Table name cannot be empty.');
         }
 
         return new self(
@@ -110,7 +110,7 @@ final readonly class StoredModel implements IteratorAggregate
     {
         $result = $this;
         foreach ($fields as $field) {
-            $result = $result->withField($field);
+            $result = $result->withField(field: $field);
         }
 
         return $result;
@@ -233,7 +233,7 @@ final readonly class StoredModel implements IteratorAggregate
         );
     }
 
-    public function getField(string $name) : ?StoredField
+    public function getField(string $name) : StoredField|null
     {
         return $this->fields[$name] ?? null;
     }
@@ -246,17 +246,17 @@ final readonly class StoredModel implements IteratorAggregate
         );
     }
 
-    public function getRelation(string $name) : ?StoredRelation
+    public function getRelation(string $name) : StoredRelation|null
     {
         return $this->relations[$name] ?? null;
     }
 
-    public function getIndex(string $name) : ?StoredIndex
+    public function getIndex(string $name) : StoredIndex|null
     {
         return $this->indexes[$name] ?? null;
     }
 
-    public function getConstraint(string $name) : ?StoredConstraint
+    public function getConstraint(string $name) : StoredConstraint|null
     {
         return $this->constraints[$name] ?? null;
     }

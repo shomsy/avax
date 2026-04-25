@@ -38,9 +38,9 @@ final readonly class SyncDownstreamProjection
         }
 
         return DownstreamSyncResult::success(
-            $this->projectionName,
-            $syncedIds,
-            0
+            targetSystem: $this->projectionName,
+            syncedIds   : $syncedIds,
+            durationMs  : 0
         );
     }
 

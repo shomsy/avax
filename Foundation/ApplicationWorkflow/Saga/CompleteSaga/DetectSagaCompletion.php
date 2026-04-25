@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\CompleteSaga;
 
+use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
+use DateTimeInterface;
+use RuntimeException;
+use Throwable;
 
 final readonly class DetectSagaCompletion
 {
@@ -26,7 +30,7 @@ final readonly class DetectSagaCompletion
     public function getNextStep(
         SagaInstance $instance,
         array        $definition
-    ) : ?string
+    ) : string|null
     {
         $nextIndex = $instance->currentStepIndex + 1;
         $stepOrder = $definition['stepOrder'] ?? [];
@@ -59,9 +63,9 @@ final readonly class RecordSagaCompleted
         $this->store->set("saga_{$completed->id}", $completed->toArray());
 
         $this->inspect->record(
-            \Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent::completed(
-                $completed->id,
-                $completed->definitionName
+            SagaRuntimeEvent::completed(
+                sagaId  : $completed->id,
+                sagaName: $completed->definitionName
             )
         );
     }
@@ -82,15 +86,15 @@ final readonly class PublishSagaCompleted
             'completed_steps' => $instance->completedSteps,
             'correlation_id'  => $instance->correlationId,
             'tenant_id'       => $instance->tenantId,
-            'completed_at'    => $instance->completedAt?->format(\DateTimeInterface::ISO8601),
+            'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ]);
     }
 }
 
-final class SagaCompletionFailure extends \RuntimeException
+final class SagaCompletionFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga completion failed.', ?\Throwable $previous = null)
+    public function __construct(string $message = 'Saga completion failed.', Throwable|null $previous = null)
     {
-        parent::__construct($message, previous: $previous);
+        parent::__construct(message: $message, previous: $previous);
     }
 }

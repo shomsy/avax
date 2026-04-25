@@ -12,37 +12,37 @@ final readonly class ReadPersistentData
     {
         if (! $request->isSelect()) {
             return PersistentDataResult::failure(
-                $request->operation,
-                new PersistentDataFailure(
-                    sprintf('ReadPersistentData::read() only supports SELECT operations. Got: %s', $request->operation->value)
+                operation: $request->operation,
+                failure  : new PersistentDataFailure(
+                               message: sprintf('ReadPersistentData::read() only supports SELECT operations. Got: %s', $request->operation->value)
                 )
             );
         }
 
-        return $this->executeRawDataQuery->execute($request);
+        return $this->executeRawDataQuery->execute(request: $request);
     }
 
     public function findById(string $table, mixed $id, string $idColumn = 'id') : PersistentDataResult
     {
         $request = PersistentDataRequest::select(
-            sprintf('SELECT * FROM %s WHERE %s = :id', $table, $idColumn),
-            ['id' => $id]
+            sql     : sprintf('SELECT * FROM %s WHERE %s = :id', $table, $idColumn),
+            bindings: ['id' => $id]
         );
 
-        return $this->read($request);
+        return $this->read(request: $request);
     }
 
     public function findOne(string $table, array $conditions) : PersistentDataResult
     {
-        [$sql, $bindings] = $this->buildWhereClause($table, $conditions, 1);
-        $request = PersistentDataRequest::select($sql, $bindings);
+        [$sql, $bindings] = $this->buildWhereClause(table: $table, conditions: $conditions, limit: 1);
+        $request = PersistentDataRequest::select(sql: $sql, bindings: $bindings);
 
-        return $this->read($request);
+        return $this->read(request: $request);
     }
 
     public function findAll(string $table, array $conditions = []) : PersistentDataResult
     {
-        [$sql, $bindings] = $this->buildWhereClause($table, $conditions);
+        [$sql, $bindings] = $this->buildWhereClause(table: $table, conditions: $conditions);
 
         if (! empty($conditions)) {
             $sql .= ' WHERE ' . $conditions['_where'] ?? '';
@@ -63,9 +63,9 @@ final readonly class ReadPersistentData
             $sql .= sprintf(' OFFSET %d', $offset);
         }
 
-        $request = PersistentDataRequest::select($sql, $bindings);
+        $request = PersistentDataRequest::select(sql: $sql, bindings: $bindings);
 
-        return $this->read($request);
+        return $this->read(request: $request);
     }
 
     public function count(string $table, array $conditions = []) : int
@@ -73,21 +73,21 @@ final readonly class ReadPersistentData
         $whereClause = empty($conditions) ? '' : ' WHERE ' . ($conditions['_where'] ?? '');
 
         $sql     = sprintf('SELECT COUNT(*) as cnt FROM %s%s', $table, $whereClause);
-        $request = PersistentDataRequest::select($sql, $bindings ?? []);
+        $request = PersistentDataRequest::select(sql: $sql, bindings: $bindings ?? []);
 
-        $result = $this->read($request);
+        $result = $this->read(request: $request);
 
         return (int) ($result->first()['cnt'] ?? 0);
     }
 
     public function exists(string $table, array $conditions) : bool
     {
-        return $this->count($table, $conditions) > 0;
+        return $this->count(table: $table, conditions: $conditions) > 0;
     }
 
     public function existsById(string $table, mixed $id, string $idColumn = 'id') : bool
     {
-        return $this->exists($table, [$idColumn => $id]);
+        return $this->exists(table: $table, conditions: [$idColumn => $id]);
     }
 
     public function paginate(
@@ -106,8 +106,8 @@ final readonly class ReadPersistentData
         $conditions['_limit']  = $perPage;
         $conditions['_offset'] = $offset;
 
-        $items = $this->findAll($table, $conditions);
-        $total = $this->count($table, $conditions);
+        $items = $this->findAll(table: $table, conditions: $conditions);
+        $total = $this->count(table: $table, conditions: $conditions);
 
         return [
             'items'       => $items->rows,
@@ -118,7 +118,7 @@ final readonly class ReadPersistentData
         ];
     }
 
-    private function buildWhereClause(string $table, array $conditions, ?int $limit = null) : array
+    private function buildWhereClause(string $table, array $conditions, int|null $limit = null) : array
     {
         if (empty($conditions)) {
             $limiter = $limit ? sprintf(' LIMIT %d', $limit) : '';

@@ -15,7 +15,7 @@ final readonly class Path implements Stringable
 
     public function __construct(string $path)
     {
-        $this->path = $this->normalize($path);
+        $this->path = $this->normalize(path: $path);
     }
 
     private function normalize(string $path) : string

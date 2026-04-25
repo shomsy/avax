@@ -10,7 +10,7 @@ final class SessionNonce
 
     public static function generate() : self
     {
-        return new self(bin2hex(random_bytes(16)));
+        return new self(value: bin2hex(random_bytes(16)));
     }
 
     public function value() : string

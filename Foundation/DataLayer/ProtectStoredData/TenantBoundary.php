@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\ProtectStoredData;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
 
 enum SensitiveField: string
@@ -61,15 +62,15 @@ final readonly class TenantBoundary
 {
     public string  $id;
     public string  $column;
-    public bool    $isRequired;
-    public ?string $parentTenantId;
-    public array   $settings;
+    public bool        $isRequired;
+    public string|null $parentTenantId;
+    public array       $settings;
 
     private function __construct(
         string      $id,
         string|null $column = null,
         bool|null   $isRequired = null,
-        ?string     $parentTenantId = null,
+        string|null $parentTenantId = null,
         array       $settings = []
     )
     {
@@ -88,7 +89,7 @@ final readonly class TenantBoundary
     ) : self
     {
         if (empty(trim($id))) {
-            throw new InvalidArgumentException('Tenant ID cannot be empty.');
+            throw new InvalidArgumentException(message: 'Tenant ID cannot be empty.');
         }
 
         return new self(
@@ -102,12 +103,12 @@ final readonly class TenantBoundary
 
     public static function multiTenant(string $column = 'tenant_id') : self
     {
-        return self::create('multi', ['column' => $column, 'required' => true]);
+        return self::create(id: 'multi', options: ['column' => $column, 'required' => true]);
     }
 
     public static function singleTenant(string $column = 'tenant_id') : self
     {
-        return self::create('single', ['column' => $column, 'required' => true]);
+        return self::create(id: 'single', options: ['column' => $column, 'required' => true]);
     }
 
     public function toWhereClause(mixed $tenantId) : string
@@ -134,20 +135,20 @@ final readonly class TenantBoundary
 
 final readonly class DataAccessPolicy
 {
-    public string           $name;
-    public ?TenantBoundary  $tenantBoundary;
-    public array            $allowedOperations;
+    public string               $name;
+    public TenantBoundary|null  $tenantBoundary;
+    public array                $allowedOperations;
     public array            $sensitiveFields;
-    public bool             $enableAudit;
-    public ?RetentionPolicy $retentionPolicy;
+    public bool                 $enableAudit;
+    public RetentionPolicy|null $retentionPolicy;
 
     private function __construct(
-        string           $name,
-        ?TenantBoundary  $tenantBoundary = null,
-        array|null $allowedOperations = null,
-        array|null $sensitiveFields = null,
-        bool|null  $enableAudit = null,
-        ?RetentionPolicy $retentionPolicy = null
+        string               $name,
+        TenantBoundary|null  $tenantBoundary = null,
+        array|null           $allowedOperations = null,
+        array|null           $sensitiveFields = null,
+        bool|null            $enableAudit = null,
+        RetentionPolicy|null $retentionPolicy = null
     )
     {
         $allowedOperations ??= [];
@@ -164,7 +165,7 @@ final readonly class DataAccessPolicy
     public static function create(string $name, array $options = []) : self
     {
         $tenantBoundary = isset($options['tenant'])
-            ? TenantBoundary::create($options['tenant'])
+            ? TenantBoundary::create(id: $options['tenant'])
             : null;
 
         return new self(
@@ -255,30 +256,30 @@ final readonly class DataAuditEntry
 {
     public string             $id;
     public string             $action;
-    public string             $table;
-    public ?string            $recordId;
-    public ?string            $tenantId;
-    public array              $oldValues;
+    public string            $table;
+    public string|null       $recordId;
+    public string|null       $tenantId;
+    public array             $oldValues;
     public array              $newValues;
-    public string             $actorId;
-    public ?string            $actorIp;
-    public \DateTimeImmutable $timestamp;
-    public bool               $success;
-    public ?string            $errorMessage;
+    public string            $actorId;
+    public string|null       $actorIp;
+    public DateTimeImmutable $timestamp;
+    public bool              $success;
+    public string|null       $errorMessage;
 
     private function __construct(
-        string             $id,
-        string             $action,
-        string             $table,
-        ?string            $recordId,
-        ?string            $tenantId,
-        array              $oldValues,
-        array              $newValues,
-        string             $actorId,
-        ?string            $actorIp,
-        \DateTimeImmutable $timestamp,
-        bool|null $success = null,
-        ?string            $errorMessage = null
+        string            $id,
+        string            $action,
+        string            $table,
+        string|null       $recordId,
+        string|null       $tenantId,
+        array             $oldValues,
+        array             $newValues,
+        string            $actorId,
+        string|null       $actorIp,
+        DateTimeImmutable $timestamp,
+        bool|null         $success = null,
+        string|null       $errorMessage = null
     )
     {
         $success         ??= true;
@@ -297,13 +298,13 @@ final readonly class DataAuditEntry
     }
 
     public static function create(
-        string  $action,
-        string  $table,
-        ?string $recordId,
-        array   $oldValues,
-        array   $newValues,
-        string  $actorId,
-        array   $options = []
+        string      $action,
+        string      $table,
+        string|null $recordId,
+        array       $oldValues,
+        array       $newValues,
+        string      $actorId,
+        array       $options = []
     ) : self
     {
         return new self(
@@ -316,7 +317,7 @@ final readonly class DataAuditEntry
             newValues   : $newValues,
             actorId     : $actorId,
             actorIp     : $options['ip'] ?? null,
-            timestamp   : new \DateTimeImmutable(),
+            timestamp   : new DateTimeImmutable(),
             success     : $options['success'] ?? true,
             errorMessage: $options['error'] ?? null
         );
@@ -326,18 +327,18 @@ final readonly class DataAuditEntry
     {
         return sprintf(
             "INSERT INTO audit_log (id, action, table_name, record_id, tenant_id, old_values, new_values, actor_id, actor_ip, timestamp, success, error_message) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s)",
-            $this->quoted($this->id),
-            $this->quoted($this->action),
-            $this->quoted($this->table),
-            $this->quoted($this->recordId),
-            $this->quoted($this->tenantId),
-            $this->quoted(json_encode($this->oldValues)),
-            $this->quoted(json_encode($this->newValues)),
-            $this->quoted($this->actorId),
-            $this->quoted($this->actorIp),
-            $this->quoted($this->timestamp->format('Y-m-d H:i:s.u')),
+            $this->quoted(value: $this->id),
+            $this->quoted(value: $this->action),
+            $this->quoted(value: $this->table),
+            $this->quoted(value: $this->recordId),
+            $this->quoted(value: $this->tenantId),
+            $this->quoted(value: json_encode($this->oldValues)),
+            $this->quoted(value: json_encode($this->newValues)),
+            $this->quoted(value: $this->actorId),
+            $this->quoted(value: $this->actorIp),
+            $this->quoted(value: $this->timestamp->format(format: 'Y-m-d H:i:s.u')),
             $this->success ? 1 : 0,
-            $this->quoted($this->errorMessage)
+            $this->quoted(value: $this->errorMessage)
         );
     }
 

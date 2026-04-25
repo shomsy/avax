@@ -46,8 +46,8 @@ final class CollectionFamilyTest extends TestCase
     public function testSequenceTransformsValuesInOrder() : void
     {
         $sequence = new Sequence(items: [1, 2, 3])
-            ->map(static fn (int $value) : int => $value * 2)
-            ->filter(static fn (int $value) : bool => $value > 2);
+            ->map(callback: static fn (int $value) : int => $value * 2)
+            ->filter(callback: static fn (int $value) : bool => $value > 2);
 
         $this->assertSame([4, 6], $sequence->all());
     }

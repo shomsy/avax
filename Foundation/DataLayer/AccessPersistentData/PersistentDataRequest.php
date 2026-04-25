@@ -22,27 +22,27 @@ final readonly class PersistentDataRequest
 {
     public string                  $sql;
     public PersistentDataOperation $operation;
-    public array                   $bindings;
-    public ?string                 $connectionName;
-    public ?int                    $fetchMode;
-    public ?int                    $fetchCtorArg1;
-    public ?string                 $fetchCtorArg2;
-    public bool                    $useTransaction;
-    public ?int                    $transactionIsolation;
-    public ?int                    $timeout;
-    public array                   $options;
+    public array       $bindings;
+    public string|null $connectionName;
+    public int|null    $fetchMode;
+    public int|null    $fetchCtorArg1;
+    public string|null $fetchCtorArg2;
+    public bool        $useTransaction;
+    public int|null    $transactionIsolation;
+    public int|null    $timeout;
+    public array       $options;
 
     private function __construct(
         string                  $sql,
         PersistentDataOperation $operation,
-        array|null $bindings = null,
-        ?string                 $connectionName = null,
-        ?int                    $fetchMode = null,
-        ?int                    $fetchCtorArg1 = null,
-        ?string                 $fetchCtorArg2 = null,
-        bool|null  $useTransaction = null,
-        ?int                    $transactionIsolation = null,
-        ?int                    $timeout = null,
+        array|null  $bindings = null,
+        string|null $connectionName = null,
+        int|null    $fetchMode = null,
+        int|null    $fetchCtorArg1 = null,
+        string|null $fetchCtorArg2 = null,
+        bool|null   $useTransaction = null,
+        int|null    $transactionIsolation = null,
+        int|null    $timeout = null,
         array                   $options = []
     )
     {
@@ -69,10 +69,10 @@ final readonly class PersistentDataRequest
     {
         $bindings ??= [];
         if (empty(trim($sql))) {
-            throw new InvalidArgumentException('SQL cannot be empty.');
+            throw new InvalidArgumentException(message: 'SQL cannot be empty.');
         }
 
-        $operation = self::detectOperation($sql);
+        $operation = self::detectOperation(sql: $sql);
 
         return new self(
             sql                 : $sql,
@@ -97,7 +97,7 @@ final readonly class PersistentDataRequest
     {
         $bindings ??= [];
 
-        return self::create($sql, $bindings, array_merge($options, ['operation' => 'SELECT']));
+        return self::create(sql: $sql, bindings: $bindings, options: array_merge($options, ['operation' => 'SELECT']));
     }
 
     public static function insert(
@@ -115,7 +115,7 @@ final readonly class PersistentDataRequest
             implode(', ', $placeholders)
         );
 
-        return self::create($sql, $values, array_merge($options, ['operation' => 'INSERT']));
+        return self::create(sql: $sql, bindings: $values, options: array_merge($options, ['operation' => 'INSERT']));
     }
 
     public static function update(
@@ -132,7 +132,7 @@ final readonly class PersistentDataRequest
 
         $allBindings = array_merge($values, $bindings);
 
-        return self::create($sql, $allBindings, array_merge($options, ['operation' => 'UPDATE']));
+        return self::create(sql: $sql, bindings: $allBindings, options: array_merge($options, ['operation' => 'UPDATE']));
     }
 
     public static function delete(
@@ -145,7 +145,7 @@ final readonly class PersistentDataRequest
         $bindings ??= [];
         $sql      = sprintf('DELETE FROM %s WHERE %s', $table, $where);
 
-        return self::create($sql, $bindings, array_merge($options, ['operation' => 'DELETE']));
+        return self::create(sql: $sql, bindings: $bindings, options: array_merge($options, ['operation' => 'DELETE']));
     }
 
     public static function call(
@@ -157,7 +157,7 @@ final readonly class PersistentDataRequest
         $bindings ??= [];
         $sql      = sprintf('CALL %s(%s)', $procedure, implode(', ', array_keys($bindings)));
 
-        return self::create($sql, $bindings, array_merge($options, ['operation' => 'CALL']));
+        return self::create(sql: $sql, bindings: $bindings, options: array_merge($options, ['operation' => 'CALL']));
     }
 
     public static function raw(
@@ -168,7 +168,7 @@ final readonly class PersistentDataRequest
     {
         $bindings ??= [];
 
-        return self::create($sql, $bindings, $options);
+        return self::create(sql: $sql, bindings: $bindings, options: $options);
     }
 
     private static function detectOperation(string $sql) : PersistentDataOperation
@@ -188,7 +188,7 @@ final readonly class PersistentDataRequest
             return PersistentDataOperation::DELETE;
         }
         if (preg_match('/^(CALL|BEGIN|COMMIT|ROLLBACK)\s/i', $normalized)) {
-            return PersistentDataOperation::from(trim($normalized));
+            return PersistentDataOperation::from(value: trim($normalized));
         }
 
         return PersistentDataOperation::SELECT;
@@ -228,7 +228,7 @@ final readonly class PersistentDataRequest
         );
     }
 
-    public function withConnection(?string $name) : self
+    public function withConnection(string|null $name) : self
     {
         return new self(
             sql                 : $this->sql,
@@ -245,7 +245,7 @@ final readonly class PersistentDataRequest
         );
     }
 
-    public function withFetchMode(?int $mode, ?int $arg1 = null, ?string $arg2 = null) : self
+    public function withFetchMode(int|null $mode, int|null $arg1 = null, string|null $arg2 = null) : self
     {
         return new self(
             sql                 : $this->sql,

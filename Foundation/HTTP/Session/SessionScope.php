@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session;
 
+use SensitiveParameter;
+
 final class SessionScope
 {
     private string $prefix;
     private SessionInterface $session;
 
-    public function __construct(string $namespace, SessionInterface $session)
+    public function __construct(string $namespace, #[SensitiveParameter] SessionInterface $session)
     {
         $this->prefix  = rtrim($namespace, '.') . '.';
         $this->session = $session;
@@ -22,22 +24,22 @@ final class SessionScope
 
     public function put(string $key, mixed $value, int|null $ttl = null) : void
     {
-        $this->session->put($this->key($key), $value, $ttl);
+        $this->session->put(key: $this->key(k: $key), value: $value, ttl: $ttl);
     }
 
     public function get(string $key, mixed $default = null) : mixed
     {
-        return $this->session->get($this->key($key), $default);
+        return $this->session->get(key: $this->key(k: $key), default: $default);
     }
 
     public function has(string $key) : bool
     {
-        return $this->session->has($this->key($key));
+        return $this->session->has(key: $this->key(k: $key));
     }
 
     public function forget(string $key) : void
     {
-        $this->session->forget($this->key($key));
+        $this->session->forget(key: $this->key(k: $key));
     }
 
     public function all() : array

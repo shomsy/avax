@@ -24,10 +24,10 @@ final readonly class DescribeWritePath
     )
     {
         if ($this->batchSize < 1) {
-            throw new InvalidArgumentException('Batch size must be at least 1.');
+            throw new InvalidArgumentException(message: 'Batch size must be at least 1.');
         }
         if ($this->flushIntervalMs < 0) {
-            throw new InvalidArgumentException('Flush interval must be non-negative.');
+            throw new InvalidArgumentException(message: 'Flush interval must be non-negative.');
         }
     }
 
@@ -38,14 +38,14 @@ final readonly class DescribeWritePath
 
     public static function direct(bool $durable = true) : self
     {
-        return new self(WritePathStrategy::DIRECT, 1, 0, $durable);
+        return new self(strategy: WritePathStrategy::DIRECT, batchSize: 1, flushIntervalMs: 0, durable: $durable);
     }
 
     public static function batch(int|null $batchSize = null, int $flushIntervalMs = 100) : self
     {
         $batchSize ??= 1000;
 
-        return new self(WritePathStrategy::BATCH, $batchSize, $flushIntervalMs, true);
+        return new self(strategy: WritePathStrategy::BATCH, batchSize: $batchSize, flushIntervalMs: $flushIntervalMs, durable: true);
     }
 
     public function shouldFlush(int $bufferedWrites) : bool

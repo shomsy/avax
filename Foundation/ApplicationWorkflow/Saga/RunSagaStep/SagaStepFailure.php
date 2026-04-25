@@ -14,7 +14,7 @@ final class SagaStepFailure extends RuntimeException
 {
     public static function unknownStep(string $stepName) : self
     {
-        return new self("Saga step {$stepName} does not exist in the definition.");
+        return new self(message: "Saga step {$stepName} does not exist in the definition.");
     }
 
     public static function failed(string $stepName, Throwable $previous) : self

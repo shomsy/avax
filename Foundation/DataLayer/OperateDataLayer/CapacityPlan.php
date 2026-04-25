@@ -27,7 +27,7 @@ final readonly class CapacityPlan
 
     public static function standard(int $currentMb) : self
     {
-        return new self($currentMb, 1000, 12, 20);
+        return new self(currentCapacityMb: $currentMb, growthRateMb: 1000, forecastMonths: 12, bufferPercent: 20);
     }
 
     public function planCapacity() : CapacityPlanResult
@@ -40,7 +40,7 @@ final readonly class CapacityPlan
             currentCapacityMb    : $this->currentCapacityMb,
             projectedCapacityMb  : $projected,
             requiredCapacityMb   : $total,
-            recommendedShardCount: $this->calculateShardCount($total)
+            recommendedShardCount: $this->calculateShardCount(capacityMb: $total)
         );
     }
 

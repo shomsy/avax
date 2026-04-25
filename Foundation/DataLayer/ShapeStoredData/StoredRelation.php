@@ -42,10 +42,10 @@ final readonly class StoredRelation
     public string         $targetField;
     public OnDeleteAction $onDelete;
     public OnUpdateAction $onUpdate;
-    public bool           $isRequired;
-    public ?string        $junctionTable;
-    public ?string        $junctionSourceField;
-    public ?string        $junctionTargetField;
+    public bool        $isRequired;
+    public string|null $junctionTable;
+    public string|null $junctionSourceField;
+    public string|null $junctionTargetField;
 
     private function __construct(
         string              $name,
@@ -57,9 +57,9 @@ final readonly class StoredRelation
         OnDeleteAction|null $onDelete = null,
         OnUpdateAction|null $onUpdate = null,
         bool|null           $isRequired = null,
-        ?string             $junctionTable = null,
-        ?string             $junctionSourceField = null,
-        ?string             $junctionTargetField = null
+        string|null $junctionTable = null,
+        string|null $junctionSourceField = null,
+        string|null $junctionTargetField = null
     )
     {
         $onDelete   ??= OnDeleteAction::RESTRICT;
@@ -90,19 +90,19 @@ final readonly class StoredRelation
     ) : self
     {
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Relation name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Relation name cannot be empty.');
         }
 
         if (empty(trim($sourceModel))) {
-            throw new InvalidArgumentException('Source model cannot be empty.');
+            throw new InvalidArgumentException(message: 'Source model cannot be empty.');
         }
 
         if (empty(trim($targetModel))) {
-            throw new InvalidArgumentException('Target model cannot be empty.');
+            throw new InvalidArgumentException(message: 'Target model cannot be empty.');
         }
 
         if ($type === RelationType::MANY_TO_MANY && empty($options['junction_table'])) {
-            throw new InvalidArgumentException('Many-to-many relations require a junction table.');
+            throw new InvalidArgumentException(message: 'Many-to-many relations require a junction table.');
         }
 
         return new self(
@@ -112,8 +112,8 @@ final readonly class StoredRelation
             sourceField        : $sourceField,
             targetModel        : $targetModel,
             targetField        : $targetField,
-            onDelete           : OnDeleteAction::from($options['on_delete'] ?? 'RESTRICT'),
-            onUpdate           : OnUpdateAction::from($options['on_update'] ?? 'RESTRICT'),
+            onDelete           : OnDeleteAction::from(value: $options['on_delete'] ?? 'RESTRICT'),
+            onUpdate           : OnUpdateAction::from(value: $options['on_update'] ?? 'RESTRICT'),
             isRequired         : $options['required'] ?? false,
             junctionTable      : $options['junction_table'] ?? null,
             junctionSourceField: $options['junction_source_field'] ?? null,

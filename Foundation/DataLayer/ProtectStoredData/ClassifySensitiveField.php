@@ -36,7 +36,7 @@ final readonly class ClassifySensitiveField
 
     public static function defaultClassification() : self
     {
-        return new self(SensitivityLevel::INTERNAL);
+        return new self(defaultLevel: SensitivityLevel::INTERNAL);
     }
 
     public function toMetadata() : array

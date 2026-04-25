@@ -11,7 +11,7 @@ use Avax\DataFoundation\Exceptions\InvalidValueException;
  */
 final readonly class None extends Option
 {
-    private static ?self $instance = null;
+    private static self|null $instance = null;
 
     private function __construct() {}
 

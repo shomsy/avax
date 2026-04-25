@@ -21,7 +21,7 @@ final class SessionTransaction
     public function begin() : void
     {
         if ($this->active) {
-            throw new Exception('Transaction already active');
+            throw new Exception(message: 'Transaction already active');
         }
 
         $this->backup = $this->store->all();
@@ -31,7 +31,7 @@ final class SessionTransaction
     public function commit() : void
     {
         if (! $this->active) {
-            throw new Exception('No active transaction');
+            throw new Exception(message: 'No active transaction');
         }
 
         $this->backup = null;
@@ -41,13 +41,13 @@ final class SessionTransaction
     public function rollback() : void
     {
         if (! $this->active || $this->backup === null) {
-            throw new Exception('No active transaction');
+            throw new Exception(message: 'No active transaction');
         }
 
         $this->store->flush();
 
         foreach ($this->backup as $key => $value) {
-            $this->store->put($key, $value);
+            $this->store->put(key: $key, value: $value);
         }
 
         $this->backup = null;

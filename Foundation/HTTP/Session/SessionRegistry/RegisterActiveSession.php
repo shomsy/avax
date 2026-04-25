@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionRegistry;
 
+use SensitiveParameter;
+
 final class RegisterActiveSession
 {
     private $registry;
@@ -13,7 +15,7 @@ final class RegisterActiveSession
         $this->registry = $registry;
     }
 
-    public function handle(string $sessionId, array $metadata = []) : void
+    public function handle(#[SensitiveParameter] string $sessionId, array $metadata = []) : void
     {
         $this->registry->register($sessionId, $metadata);
     }

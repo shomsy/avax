@@ -12,7 +12,7 @@ use FuzzyWuzzy\Fuzz;
  */
 final readonly class MatchTextFuzzily
 {
-    private ?Fuzz $fuzz;
+    private Fuzz|null $fuzz;
 
     public function __construct(
         private array $items = [],
@@ -21,14 +21,14 @@ final readonly class MatchTextFuzzily
         $this->fuzz = null;
     }
 
-    public function __invoke(string $query, int|null $threshold = null, ?string $key = null) : array
+    public function __invoke(string $query, int|null $threshold = null, string|null $key = null) : array
     {
         $threshold ??= 70;
 
         return $this->match(query: $query, threshold: $threshold, key: $key);
     }
 
-    public function match(string $query, int|null $threshold = null, ?string $key = null) : array
+    public function match(string $query, int|null $threshold = null, string|null $key = null) : array
     {
         $threshold ??= 70;
         new Threshold(value: $threshold);
@@ -43,8 +43,8 @@ final readonly class MatchTextFuzzily
                 }
 
                 return $this->getFuzz()->ratio(
-                        strtolower(string: $query),
-                        strtolower(string: $target)
+                        s1: strtolower(string: $query),
+                        s2: strtolower(string: $target)
                     ) >= $threshold;
             }
         );

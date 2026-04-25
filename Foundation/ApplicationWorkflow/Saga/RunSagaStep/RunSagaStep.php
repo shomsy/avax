@@ -9,6 +9,7 @@ use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\InspectSaga;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use Throwable;
 
 final readonly class RunSagaStep
 {
@@ -26,20 +27,20 @@ final readonly class RunSagaStep
         $currentStep = $instance->currentStepName;
         if ($currentStep === null) {
             return SagaStepResult::failure(
-                'no_step',
-                'No current step to execute.'
+                stepName: 'no_step',
+                error   : 'No current step to execute.'
             );
         }
 
-        $stepDef = $definition->getStep($currentStep);
+        $stepDef = $definition->getStep(name: $currentStep);
         if ($stepDef === null) {
             return SagaStepResult::failure(
-                $currentStep,
-                sprintf('Step %s not found in definition.', $currentStep)
+                stepName: $currentStep,
+                error   : sprintf('Step %s not found in definition.', $currentStep)
             );
         }
 
-        $policy    = SagaStepExecutionPolicy::fromStep($stepDef);
+        $policy = SagaStepExecutionPolicy::fromStep(step: $stepDef);
         $attempt   = 1;
         $startTime = microtime(true);
 
@@ -54,8 +55,8 @@ final readonly class RunSagaStep
                     attempt   : $attempt,
                     durationMs: $duration
                 );
-            } catch (\Throwable $e) {
-                if (! $policy->canRetry($attempt)) {
+            } catch (Throwable $e) {
+                if (! $policy->canRetry(currentAttempt: $attempt)) {
                     $duration = (microtime(true) - $startTime) * 1000;
 
                     return SagaStepResult::failure(
@@ -81,7 +82,7 @@ final readonly class RunSagaStep
         );
     }
 
-    public function chooseNext(SagaInstance $instance, SagaDefinition $definition) : ?SagaStepDefinition
+    public function chooseNext(SagaInstance $instance, SagaDefinition $definition) : SagaStepDefinition|null
     {
         $currentIndex = $instance->currentStepIndex;
         $nextIndex    = $currentIndex + 1;
@@ -92,7 +93,7 @@ final readonly class RunSagaStep
 
         $nextStepName = $definition->stepOrder[$nextIndex] ?? null;
 
-        return $nextStepName ? $definition->getStep($nextStepName) : null;
+        return $nextStepName ? $definition->getStep(name: $nextStepName) : null;
     }
 
     public function scheduleNext(
@@ -102,10 +103,10 @@ final readonly class RunSagaStep
     ) : SagaInstance
     {
         if (! $result->success) {
-            return $currentInstance->fail($result->error ?? 'Unknown error');
+            return $currentInstance->fail(error: $result->error ?? 'Unknown error');
         }
 
-        $nextStep = $this->chooseNext($currentInstance, $definition);
+        $nextStep = $this->chooseNext(instance: $currentInstance, definition: $definition);
         if ($nextStep === null) {
             return $currentInstance->complete();
         }

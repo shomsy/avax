@@ -31,17 +31,17 @@ final readonly class StorageEngineKind
 
     public static function innodb() : self
     {
-        return new self(StorageEngineType::INNO_DB, true, false, PHP_INT_MAX);
+        return new self(type: StorageEngineType::INNO_DB, transactional: true, inMemory: false, maxDataSizeBytes: PHP_INT_MAX);
     }
 
     public static function memory() : self
     {
-        return new self(StorageEngineType::MEMORY, false, true, 1073741824);
+        return new self(type: StorageEngineType::MEMORY, transactional: false, inMemory: true, maxDataSizeBytes: 1073741824);
     }
 
     public static function columnar() : self
     {
-        return new self(StorageEngineType::COLLUMNAR, true, false, PHP_INT_MAX);
+        return new self(type: StorageEngineType::COLLUMNAR, transactional: true, inMemory: false, maxDataSizeBytes: PHP_INT_MAX);
     }
 
     public function supportsTransactions() : bool

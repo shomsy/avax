@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccelerateDataReads;
 
-use InvalidArgumentException;
-
 enum SlowQuerySeverity: string
 {
     case NONE     = 'none';
@@ -23,7 +21,7 @@ final readonly class SlowDataQueryReport
         public int               $rowsExamined,
         public int               $rowsReturned,
         public SlowQuerySeverity $severity,
-        public ?string           $queryFingerprint
+        public string|null $queryFingerprint
     ) {}
 
     public function describeResponsibility() : string

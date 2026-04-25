@@ -14,9 +14,9 @@ final class SessionPolicyTest extends TestCase
 {
     public function test_idle_timeout_allows_within_timeout() : void
     {
-        $policy = new IdleTimeoutPolicy(1800);
+        $policy = new IdleTimeoutPolicy(timeout: 1800);
 
-        $result = $policy->evaluate([
+        $result = $policy->evaluate(context: [
                                         'last_activity' => time() - 600,
                                     ]);
 
@@ -25,9 +25,9 @@ final class SessionPolicyTest extends TestCase
 
     public function test_idle_timeout_rejects_after_timeout() : void
     {
-        $policy = new IdleTimeoutPolicy(1800);
+        $policy = new IdleTimeoutPolicy(timeout: 1800);
 
-        $result = $policy->evaluate([
+        $result = $policy->evaluate(context: [
                                         'last_activity' => time() - 3600,
                                     ]);
 
@@ -36,9 +36,9 @@ final class SessionPolicyTest extends TestCase
 
     public function test_absolute_lifetime_allows_within_lifetime() : void
     {
-        $policy = new AbsoluteLifetimePolicy(86400);
+        $policy = new AbsoluteLifetimePolicy(lifetime: 86400);
 
-        $result = $policy->evaluate([
+        $result = $policy->evaluate(context: [
                                         'created_at' => time() - 3600,
                                     ]);
 
@@ -47,9 +47,9 @@ final class SessionPolicyTest extends TestCase
 
     public function test_absolute_lifetime_rejects_after_lifetime() : void
     {
-        $policy = new AbsoluteLifetimePolicy(86400);
+        $policy = new AbsoluteLifetimePolicy(lifetime: 86400);
 
-        $result = $policy->evaluate([
+        $result = $policy->evaluate(context: [
                                         'created_at' => time() - 172800,
                                     ]);
 
@@ -58,9 +58,9 @@ final class SessionPolicyTest extends TestCase
 
     public function test_secure_transport_requires_https() : void
     {
-        $policy = new SecureTransportPolicy(true);
+        $policy = new SecureTransportPolicy(requireSsl: true);
 
-        $this->assertFalse($policy->evaluate(['secure' => false]));
-        $this->assertTrue($policy->evaluate(['secure' => true]));
+        $this->assertFalse($policy->evaluate(context: ['secure' => false]));
+        $this->assertTrue($policy->evaluate(context: ['secure' => true]));
     }
 }

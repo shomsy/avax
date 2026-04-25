@@ -44,26 +44,26 @@ final readonly class StoredField
     public StoredFieldType    $type;
     public FieldNullability   $nullability;
     public FieldGeneratedType $generatedType;
-    public ?int               $length;
-    public ?int               $precision;
-    public ?int               $scale;
+    public int|null    $length;
+    public int|null    $precision;
+    public int|null    $scale;
     public mixed              $defaultValue;
     public bool               $isPrimaryKey;
     public bool               $isUnique;
-    public ?string            $checkConstraint;
+    public string|null $checkConstraint;
 
     private function __construct(
         string                  $name,
         StoredFieldType         $type,
         FieldNullability        $nullability,
         FieldGeneratedType|null $generatedType = null,
-        ?int                    $length = null,
-        ?int                    $precision = null,
-        ?int                    $scale = null,
+        int|null    $length = null,
+        int|null    $precision = null,
+        int|null    $scale = null,
         mixed                   $defaultValue = null,
         bool|null               $isPrimaryKey = null,
         bool|null               $isUnique = null,
-        ?string                 $checkConstraint = null
+        string|null $checkConstraint = null
     )
     {
         $generatedType ??= FieldGeneratedType::NONE;
@@ -91,12 +91,12 @@ final readonly class StoredField
     {
         $nullability ??= FieldNullability::NULLABLE;
         if (empty(trim($name))) {
-            throw new InvalidArgumentException('Field name cannot be empty.');
+            throw new InvalidArgumentException(message: 'Field name cannot be empty.');
         }
 
         if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
             throw new InvalidArgumentException(
-                sprintf('Invalid field name "%s". Must start with a letter and contain only alphanumeric characters and underscores.', $name)
+                message: sprintf('Invalid field name "%s". Must start with a letter and contain only alphanumeric characters and underscores.', $name)
             );
         }
 
@@ -104,7 +104,7 @@ final readonly class StoredField
             name           : $name,
             type           : $type,
             nullability    : $nullability,
-            generatedType  : FieldGeneratedType::from($options['generated'] ?? 'none'),
+            generatedType  : FieldGeneratedType::from(value: $options['generated'] ?? 'none'),
             length         : $options['length'] ?? null,
             precision      : $options['precision'] ?? null,
             scale          : $options['scale'] ?? null,
@@ -134,12 +134,12 @@ final readonly class StoredField
 
     public function nullable() : self
     {
-        return $this->withNullability(FieldNullability::NULLABLE);
+        return $this->withNullability(nullability: FieldNullability::NULLABLE);
     }
 
     public function notNullable() : self
     {
-        return $this->withNullability(FieldNullability::NOT_NULLABLE);
+        return $this->withNullability(nullability: FieldNullability::NOT_NULLABLE);
     }
 
     public function withNullability(FieldNullability $nullability) : self
@@ -214,7 +214,7 @@ final readonly class StoredField
     {
         if (! in_array($this->type, [StoredFieldType::INTEGER, StoredFieldType::BIGINT], true)) {
             throw new InvalidArgumentException(
-                sprintf('Auto-increment is only supported for INTEGER and BIGINT fields, got %s.', $this->type->value)
+                message: sprintf('Auto-increment is only supported for INTEGER and BIGINT fields, got %s.', $this->type->value)
             );
         }
 
@@ -252,7 +252,7 @@ final readonly class StoredField
         }
 
         if ($this->defaultValue !== null) {
-            $definition .= sprintf(' DEFAULT %s', $this->formatDefault($this->defaultValue));
+            $definition .= sprintf(' DEFAULT %s', $this->formatDefault(value: $this->defaultValue));
         }
 
         return $definition;

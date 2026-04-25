@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\ResumeSaga;
 
-use InvalidArgumentException;
-
 enum SagaRecoveryStrategy: string
 {
     case RETRY      = 'retry';
@@ -31,7 +29,7 @@ final readonly class SagaRecoveryPlan
     public static function standard() : self
     {
         return new self(
-                            SagaRecoveryStrategy::RETRY,
+            strategy      : SagaRecoveryStrategy::RETRY,
             maxRetries    : 3,
             retryDelayMs  : 1000,
             allowSkipSteps: false
@@ -41,7 +39,7 @@ final readonly class SagaRecoveryPlan
     public static function aggressive() : self
     {
         return new self(
-                            SagaRecoveryStrategy::COMPENSATE,
+            strategy      : SagaRecoveryStrategy::COMPENSATE,
             maxRetries    : 5,
             retryDelayMs  : 500,
             allowSkipSteps: true

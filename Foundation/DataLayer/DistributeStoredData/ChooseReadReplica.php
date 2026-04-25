@@ -20,7 +20,7 @@ final readonly class ChooseReadReplica
     public function selectReplica(array $replicas) : ReplicaInfo
     {
         if (empty($replicas)) {
-            throw new InvalidArgumentException('No replicas available.');
+            throw new InvalidArgumentException(message: 'No replicas available.');
         }
 
         $primary = array_filter($replicas, fn ($r) => $r->isPrimary);
@@ -31,11 +31,11 @@ final readonly class ChooseReadReplica
     public function selectReadReplica(array $replicas) : ReplicaInfo
     {
         if (empty($replicas)) {
-            throw new InvalidArgumentException('No replicas available.');
+            throw new InvalidArgumentException(message: 'No replicas available.');
         }
 
         if ($this->policy->replicaSelection === ReplicaSelectionPolicy::LOWEST_LAG) {
-            return $this->selectLowestLag($replicas);
+            return $this->selectLowestLag(replicas: $replicas);
         }
 
         if ($this->policy->replicaSelection === ReplicaSelectionPolicy::RANDOM) {

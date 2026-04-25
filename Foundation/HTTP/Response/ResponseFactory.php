@@ -49,7 +49,7 @@ final class ResponseFactory implements ResponseFactoryInterface
 
     public function createJsonResponse(array $data, int $status = 200) : ResponseInterface
     {
-        return new BuildJsonResponse()($data, $status);
+        return new BuildJsonResponse()(data: $data, status: $status);
     }
 
     public function createErrorResponse(int $statusCode, string $message) : ResponseInterface
@@ -59,7 +59,7 @@ final class ResponseFactory implements ResponseFactoryInterface
 
     public function createTextResponse(string $content, int $status = 200) : ResponseInterface
     {
-        return new BuildTextResponse()($content, $status);
+        return new BuildTextResponse()(content: $content, status: $status);
     }
 
     public function createResponseWithBody(string $content, int $status, #[SensitiveParameter] array $headers = []) : ResponseInterface
@@ -81,11 +81,11 @@ final class ResponseFactory implements ResponseFactoryInterface
 
     public function createRedirectResponse(string $url, int $status = 302) : ResponseInterface
     {
-        return new BuildRedirectResponse()($url, $status);
+        return new BuildRedirectResponse()(target: $url, status: $status);
     }
 
     public function createHtmlResponse(string $html, int $status = 200) : ResponseInterface
     {
-        return new BuildHtmlResponse()($html, $status);
+        return new BuildHtmlResponse()(content: $html, status: $status);
     }
 }

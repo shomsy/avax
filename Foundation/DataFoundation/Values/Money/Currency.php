@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataFoundation\Values\Money;
 
 use Avax\DataFoundation\Exceptions\InvalidValueException;
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -15,7 +16,7 @@ final readonly class Currency implements Stringable
     private string $code;
 
     public function __construct(
-        string $code,
+        #[SensitiveParameter] string $code,
     )
     {
         $normalized = strtoupper(trim($code));

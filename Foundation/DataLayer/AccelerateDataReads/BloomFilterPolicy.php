@@ -23,7 +23,7 @@ final readonly class BloomFilterPolicy
     )
     {
         if ($this->falsePositiveRate <= 0 || $this->falsePositiveRate >= 1) {
-            throw new InvalidArgumentException('False positive rate must be between 0 and 1.');
+            throw new InvalidArgumentException(message: 'False positive rate must be between 0 and 1.');
         }
     }
 
@@ -34,12 +34,12 @@ final readonly class BloomFilterPolicy
 
     public static function keys(float $fpr = 0.01) : self
     {
-        return new self(BloomFilterPolicyType::KEYS, $fpr, 1000000, true);
+        return new self(type: BloomFilterPolicyType::KEYS, falsePositiveRate: $fpr, expectedKeys: 1000000, autoCreate: true);
     }
 
     public static function rows(float $fpr = 0.05) : self
     {
-        return new self(BloomFilterPolicyType::ROWS, $fpr, 10000000, true);
+        return new self(type: BloomFilterPolicyType::ROWS, falsePositiveRate: $fpr, expectedKeys: 10000000, autoCreate: true);
     }
 
     public function calculateOptimalBits() : int

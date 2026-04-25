@@ -4,36 +4,37 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\PropagateDataChanges;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
 
 final readonly class OutboxMessage
 {
-    public string              $id;
-    public string              $aggregateType;
-    public string              $aggregateId;
-    public string              $eventType;
-    public string              $eventPayload;
-    public string              $causationId;
-    public string              $correlationId;
-    public \DateTimeImmutable  $occurredAt;
-    public int                 $attempt;
-    public ?string             $lastError;
-    public ?\DateTimeImmutable $lastAttemptAt;
-    public OutboxStatus        $status;
+    public string                 $id;
+    public string                 $aggregateType;
+    public string                 $aggregateId;
+    public string                 $eventType;
+    public string                 $eventPayload;
+    public string                 $causationId;
+    public string                 $correlationId;
+    public DateTimeImmutable      $occurredAt;
+    public int                    $attempt;
+    public string|null            $lastError;
+    public DateTimeImmutable|null $lastAttemptAt;
+    public OutboxStatus           $status;
 
     private function __construct(
-        string              $id,
-        string              $aggregateType,
-        string              $aggregateId,
-        string              $eventType,
-        string              $eventPayload,
-        string              $causationId,
-        string              $correlationId,
-        \DateTimeImmutable  $occurredAt,
-        int|null $attempt = null,
-        ?string             $lastError = null,
-        ?\DateTimeImmutable $lastAttemptAt = null,
-        OutboxStatus        $status = OutboxStatus::PENDING
+        string                 $id,
+        string                 $aggregateType,
+        string                 $aggregateId,
+        string                 $eventType,
+        string                 $eventPayload,
+        string                 $causationId,
+        string                 $correlationId,
+        DateTimeImmutable      $occurredAt,
+        int|null               $attempt = null,
+        string|null            $lastError = null,
+        DateTimeImmutable|null $lastAttemptAt = null,
+        OutboxStatus           $status = OutboxStatus::PENDING
     )
     {
         $attempt ??= 0;
@@ -52,20 +53,20 @@ final readonly class OutboxMessage
     }
 
     public static function create(
-        string  $aggregateType,
-        string  $aggregateId,
-        string  $eventType,
-        array   $eventPayload,
-        ?string $causationId = null,
-        ?string $correlationId = null
+        string      $aggregateType,
+        string      $aggregateId,
+        string      $eventType,
+        array       $eventPayload,
+        string|null $causationId = null,
+        string|null $correlationId = null
     ) : self
     {
         if (empty(trim($aggregateType))) {
-            throw new InvalidArgumentException('Aggregate type cannot be empty.');
+            throw new InvalidArgumentException(message: 'Aggregate type cannot be empty.');
         }
 
         if (empty(trim($eventType))) {
-            throw new InvalidArgumentException('Event type cannot be empty.');
+            throw new InvalidArgumentException(message: 'Event type cannot be empty.');
         }
 
         return new self(
@@ -76,7 +77,7 @@ final readonly class OutboxMessage
             eventPayload : json_encode($eventPayload, JSON_THROW_ON_ERROR),
             causationId  : $causationId ?? self::generateId(),
             correlationId: $correlationId ?? self::generateId(),
-            occurredAt   : new \DateTimeImmutable()
+            occurredAt   : new DateTimeImmutable()
         );
     }
 
@@ -90,13 +91,13 @@ final readonly class OutboxMessage
             eventPayload : $row['event_payload'],
             causationId  : $row['causation_id'],
             correlationId: $row['correlation_id'],
-            occurredAt   : new \DateTimeImmutable($row['occurred_at']),
+            occurredAt   : new DateTimeImmutable(datetime: $row['occurred_at']),
             attempt      : (int) ($row['attempt'] ?? 0),
             lastError    : $row['last_error'] ?? null,
             lastAttemptAt: isset($row['last_attempt_at'])
-                               ? new \DateTimeImmutable($row['last_attempt_at'])
+                               ? new DateTimeImmutable(datetime: $row['last_attempt_at'])
                                : null,
-            status       : OutboxStatus::from($row['status'] ?? 'pending')
+            status       : OutboxStatus::from(value: $row['status'] ?? 'pending')
         );
     }
 
@@ -131,7 +132,7 @@ final readonly class OutboxMessage
             occurredAt   : $this->occurredAt,
             attempt      : $this->attempt + 1,
             lastError    : $error,
-            lastAttemptAt: new \DateTimeImmutable(),
+            lastAttemptAt: new DateTimeImmutable(),
             status       : OutboxStatus::FAILED
         );
     }
@@ -148,7 +149,7 @@ final readonly class OutboxMessage
             addslashes($this->eventPayload),
             addslashes($this->causationId),
             addslashes($this->correlationId),
-            $this->occurredAt->format('Y-m-d H:i:s.u'),
+            $this->occurredAt->format(format: 'Y-m-d H:i:s.u'),
             $this->status->value
         );
     }
@@ -156,7 +157,7 @@ final readonly class OutboxMessage
     public function toUpdateStatusSql() : string
     {
         $lastError   = $this->lastError ? sprintf("'%s'", addslashes($this->lastError)) : 'NULL';
-        $lastAttempt = $this->lastAttemptAt ? sprintf("'%s'", $this->lastAttemptAt->format('Y-m-d H:i:s.u')) : 'NULL';
+        $lastAttempt = $this->lastAttemptAt ? sprintf("'%s'", $this->lastAttemptAt->format(format: 'Y-m-d H:i:s.u')) : 'NULL';
 
         return sprintf(
             "UPDATE outbox SET status = '%s', attempt = %d, last_error = %s, last_attempt_at = %s WHERE id = '%s'",

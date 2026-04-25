@@ -7,10 +7,10 @@ namespace Avax\DataLayer\PropagateDataChanges;
 final readonly class ChangeStreamCursor
 {
     public function __construct(
-        public string  $streamName,
-        public ?string $position,
-        public ?string $timestamp,
-        public int     $sequence
+        public string      $streamName,
+        public string|null $position,
+        public string|null $timestamp,
+        public int         $sequence
     ) {}
 
     public function describeResponsibility() : string
@@ -20,21 +20,21 @@ final readonly class ChangeStreamCursor
 
     public static function start(string $streamName) : self
     {
-        return new self($streamName, null, null, 0);
+        return new self(streamName: $streamName, position: null, timestamp: null, sequence: 0);
     }
 
     public static function fromPosition(string $streamName, string $position) : self
     {
-        return new self($streamName, $position, null, 0);
+        return new self(streamName: $streamName, position: $position, timestamp: null, sequence: 0);
     }
 
     public function advance(string $position, int $sequence) : self
     {
         return new self(
-            $this->streamName,
-            $position,
-            date('c'),
-            $sequence
+            streamName: $this->streamName,
+            position  : $position,
+            timestamp : date('c'),
+            sequence  : $sequence
         );
     }
 

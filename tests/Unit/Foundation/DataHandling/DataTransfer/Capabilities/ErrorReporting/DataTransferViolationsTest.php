@@ -25,7 +25,7 @@ final class DataTransferViolationsTest extends TestCase
     public function test_it_groups_messages_by_path_when_multiple_violations_share_a_path() : void
     {
         // Arrange
-        $violations = DataTransferViolations::from([
+        $violations = DataTransferViolations::from(violations: [
                                                        new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
                                                        new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
                                                        new DataTransferViolation(path: 'name', code: 'required', message: 'Name is required.'),
@@ -47,7 +47,7 @@ final class DataTransferViolationsTest extends TestCase
     public function test_it_keeps_latest_legacy_error_when_multiple_violations_share_a_path() : void
     {
         // Arrange
-        $violations = DataTransferViolations::from([
+        $violations = DataTransferViolations::from(violations: [
                                                        new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
                                                        new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
                                                    ]);

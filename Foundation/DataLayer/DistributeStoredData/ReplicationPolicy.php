@@ -39,10 +39,10 @@ final readonly class ReplicationPolicy
     )
     {
         if ($this->minReplicas < 1) {
-            throw new InvalidArgumentException('Min replicas must be at least 1.');
+            throw new InvalidArgumentException(message: 'Min replicas must be at least 1.');
         }
         if ($this->maxReplicas < $this->minReplicas) {
-            throw new InvalidArgumentException('Max replicas must be greater than or equal to min replicas.');
+            throw new InvalidArgumentException(message: 'Max replicas must be greater than or equal to min replicas.');
         }
     }
 
@@ -54,22 +54,22 @@ final readonly class ReplicationPolicy
     public static function singleAsync() : self
     {
         return new self(
-            ReplicationSyncMode::ASYNC,
-            ReplicaSelectionPolicy::LOWEST_LAG,
-            1,
-            1,
-            5000
+            syncMode            : ReplicationSyncMode::ASYNC,
+            replicaSelection    : ReplicaSelectionPolicy::LOWEST_LAG,
+            minReplicas         : 1,
+            maxReplicas         : 1,
+            replicationTimeoutMs: 5000
         );
     }
 
     public static function multiSync() : self
     {
         return new self(
-            ReplicationSyncMode::SEMI_SYNC,
-            ReplicaSelectionPolicy::LOWEST_LAG,
-            2,
-            3,
-            30000
+            syncMode            : ReplicationSyncMode::SEMI_SYNC,
+            replicaSelection    : ReplicaSelectionPolicy::LOWEST_LAG,
+            minReplicas         : 2,
+            maxReplicas         : 3,
+            replicationTimeoutMs: 30000
         );
     }
 

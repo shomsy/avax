@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\URI\Parts;
 
-use SensitiveParameter;
+use InvalidArgumentException;
 use Stringable;
 
 /**
@@ -12,11 +12,11 @@ use Stringable;
  */
 final readonly class Authority implements Stringable
 {
-    private ?UserInfo $userInfo;
-    private Host      $host;
-    private ?Port     $port;
+    private UserInfo|null $userInfo;
+    private Host          $host;
+    private Port|null     $port;
 
-    public function __construct(Host $host, ?Port $port = null, ?UserInfo $userInfo = null)
+    public function __construct(Host $host, Port|null $port = null, UserInfo|null $userInfo = null)
     {
         $this->host     = $host;
         $this->port     = $port;
@@ -27,17 +27,17 @@ final readonly class Authority implements Stringable
     {
         $parts = parse_url('https://' . $authority);
         if ($parts === false) {
-            throw new \InvalidArgumentException('Invalid authority: ' . $authority);
+            throw new InvalidArgumentException(message: 'Invalid authority: ' . $authority);
         }
 
-        $host     = new Host($parts['host'] ?? '');
-        $port     = isset($parts['port']) ? new Port($parts['port'], $scheme) : null;
+        $host = new Host(host: $parts['host'] ?? '');
+        $port = isset($parts['port']) ? new Port(port: $parts['port'], scheme: $scheme) : null;
         $userInfo = null;
         if (isset($parts['user'])) {
-            $userInfo = new UserInfo($parts['user'], $parts['pass'] ?? null);
+            $userInfo = new UserInfo(user: $parts['user'], password: $parts['pass'] ?? null);
         }
 
-        return new self($host, $port, $userInfo);
+        return new self(host: $host, port: $port, userInfo: $userInfo);
     }
 
     public function host() : Host
@@ -45,12 +45,12 @@ final readonly class Authority implements Stringable
         return $this->host;
     }
 
-    public function port() : ?Port
+    public function port() : Port|null
     {
         return $this->port;
     }
 
-    public function userInfo() : ?UserInfo
+    public function userInfo() : UserInfo|null
     {
         return $this->userInfo;
     }

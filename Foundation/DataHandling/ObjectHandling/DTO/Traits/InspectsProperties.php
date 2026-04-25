@@ -127,7 +127,7 @@ trait InspectsProperties
      * @param class-string       $attributeFqn Fully qualified class name (FQN) of the attribute.
      * @return object|null The resolved attribute instance, or null if the attribute is not present on the property.
      */
-    protected function getAttribute(ReflectionProperty $property, string $attributeFqn) : ?object
+    protected function getAttribute(ReflectionProperty $property, string $attributeFqn) : object|null
     {
         $attributes = $property->getAttributes(name: $attributeFqn);
 

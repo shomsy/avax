@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataLayer\PropagateDataChanges;
 
 use InvalidArgumentException;
+use SensitiveParameter;
 
 final readonly class RecordOutboxMessage
 {
@@ -18,14 +19,14 @@ final readonly class RecordOutboxMessage
     }
 
     public function record(
-        string  $eventType,
-        array   $payload,
-        ?string $topic = null,
-        array   $headers = []
+        string                      $eventType,
+        array                       $payload,
+        string|null                 $topic = null,
+        #[SensitiveParameter] array $headers = []
     ) : OutboxRecordResult
     {
         if (empty($eventType)) {
-            throw new InvalidArgumentException('Event type cannot be empty.');
+            throw new InvalidArgumentException(message: 'Event type cannot be empty.');
         }
 
         return new OutboxRecordResult(
@@ -48,12 +49,12 @@ final readonly class RecordOutboxMessage
 final readonly class OutboxRecordResult
 {
     public function __construct(
-        public string              $messageId,
-        public string              $topic,
-        public string              $eventType,
-        public array               $payload,
-        public array               $headers,
-        public OutboxMessageStatus $status,
-        public float               $createdAt
+        public string                      $messageId,
+        public string                      $topic,
+        public string                      $eventType,
+        public array                       $payload,
+        #[SensitiveParameter] public array $headers,
+        public OutboxMessageStatus         $status,
+        public float                       $createdAt
     ) {}
 }

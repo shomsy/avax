@@ -17,6 +17,6 @@ final class DropBoundSessionActor
 
     public function handle() : void
     {
-        $this->store->delete('_actor');
+        $this->store->delete(key: '_actor');
     }
 }

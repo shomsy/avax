@@ -17,21 +17,21 @@ final class SessionSnapshotStore
 
     public function put(string $name, array $snapshot) : void
     {
-        $this->store->put('_snapshot.' . $name, $snapshot);
+        $this->store->put(key: '_snapshot.' . $name, value: $snapshot);
     }
 
-    public function get(string $name) : ?array
+    public function get(string $name) : array|null
     {
-        return $this->store->get('_snapshot.' . $name);
+        return $this->store->get(key: '_snapshot.' . $name);
     }
 
     public function has(string $name) : bool
     {
-        return $this->store->has('_snapshot.' . $name);
+        return $this->store->has(key: '_snapshot.' . $name);
     }
 
     public function delete(string $name) : void
     {
-        $this->store->delete('_snapshot.' . $name);
+        $this->store->delete(key: '_snapshot.' . $name);
     }
 }

@@ -39,7 +39,7 @@ final class PropertyMetadata
      */
     public function hasAttribute(string $fqcn) : bool
     {
-        return $this->property->getAttributes($fqcn) !== [];
+        return $this->property->getAttributes(name: $fqcn) !== [];
     }
 
     /**

@@ -52,6 +52,6 @@ final readonly class Batch implements IteratorAggregate, Countable
 
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->batches);
+        return new ArrayIterator(array: $this->batches);
     }
 }

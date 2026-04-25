@@ -24,7 +24,7 @@ final readonly class ReplicaLagReport
     )
     {
         if ($this->lagMs < 0) {
-            throw new InvalidArgumentException('Lag cannot be negative.');
+            throw new InvalidArgumentException(message: 'Lag cannot be negative.');
         }
     }
 

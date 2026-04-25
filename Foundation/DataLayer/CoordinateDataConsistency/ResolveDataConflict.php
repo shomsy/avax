@@ -18,7 +18,7 @@ final readonly class ResolveDataConflict
     public function resolve(mixed $localValue, mixed $remoteValue) : ConflictResolutionResult
     {
         try {
-            $resolved = $this->resolution->resolve([$localValue, $remoteValue]);
+            $resolved = $this->resolution->resolve(conflictingValues: [$localValue, $remoteValue]);
 
             return new ConflictResolutionResult(
                 resolved     : true,
@@ -50,6 +50,6 @@ final readonly class ConflictResolutionResult
         public mixed                      $resolvedValue,
         public ConflictResolutionStrategy $strategy,
         public float                      $timestamp,
-        public ?string                    $error = null
+        public string|null $error = null
     ) {}
 }

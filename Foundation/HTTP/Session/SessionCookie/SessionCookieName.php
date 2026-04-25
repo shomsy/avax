@@ -10,7 +10,7 @@ final class SessionCookieName
 
     public static function default() : self
     {
-        return new self('SID');
+        return new self(value: 'SID');
     }
 
     public function value() : string

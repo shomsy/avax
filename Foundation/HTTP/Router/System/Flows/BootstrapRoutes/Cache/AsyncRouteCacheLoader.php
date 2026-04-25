@@ -176,7 +176,7 @@ final readonly class AsyncRouteCacheLoader
      */
     private function loadSync(string $cachePath, string $routesPath) : void
     {
-        if (! $this->filesystem->exists($cachePath)) {
+        if (! $this->filesystem->exists(path: $cachePath)) {
             throw new RuntimeException(message: "Route cache file not found: {$cachePath}");
         }
 
@@ -331,7 +331,7 @@ final readonly class AsyncRouteCacheLoader
         $hash     = sha1(string: $exported);
         $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
 
-        $this->filesystem->put($cachePath, $content);
+        $this->filesystem->put(path: $cachePath, content: $content);
 
         $manifest = RouteCacheManifest::buildFromDirectory(baseDir: $routesPath);
         $manifest->writeTo(metadataPath: RouteCacheManifest::metadataPath(cachePath: $cachePath));

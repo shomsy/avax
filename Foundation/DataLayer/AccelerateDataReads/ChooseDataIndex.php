@@ -11,12 +11,12 @@ final readonly class ChooseDataIndexResult
         public string  $type,
         public float   $selectivity,
         public float   $estimatedSpeedup,
-        public ?string $indexName
+        public string|null $indexName
     ) {}
 
     public static function none() : self
     {
-        return new self([], 'none', 1.0, 1.0, null);
+        return new self(indexColumns: [], type: 'none', selectivity: 1.0, estimatedSpeedup: 1.0, indexName: null);
     }
 
     public function isUseful() : bool
@@ -52,7 +52,7 @@ final readonly class ChooseDataIndex
 
         $indexColumns     = array_merge($whereColumns, $orderColumns);
         $type             = ! empty($whereColumns) ? 'eq' : 'range';
-        $estimatedSpeedup = $this->calculateSpeedup($selectivity);
+        $estimatedSpeedup = $this->calculateSpeedup(selectivity: $selectivity);
 
         return new ChooseDataIndexResult(
             indexColumns    : $indexColumns,

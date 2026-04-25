@@ -15,9 +15,9 @@ final readonly class RunDataTransaction
 
     public function __construct(private UseDatabaseRuntime $useDatabaseRuntime) {}
 
-    public function run(callable $callback, ?string $connectionName = null) : mixed
+    public function run(callable $callback, string|null $connectionName = null) : mixed
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         if (! $pdo->inTransaction()) {
             $pdo->beginTransaction();
@@ -38,7 +38,7 @@ final readonly class RunDataTransaction
             }
 
             throw new PersistentDataFailure(
-                          sprintf('Transaction failed: %s', $e->getMessage()),
+                message : sprintf('Transaction failed: %s', $e->getMessage()),
                 code    : $e->getCode(),
                 previous: $e
             );
@@ -48,15 +48,15 @@ final readonly class RunDataTransaction
     public function runWithIsolation(
         callable $callback,
         int|null $isolationLevel = null,
-        ?string  $connectionName = null
+        string|null $connectionName = null
     ) : mixed
     {
         $isolationLevel ??= self::DEFAULT_ISOLATION;
-        $pdo               = $this->useDatabaseRuntime->connection($connectionName);
-        $previousIsolation = $this->getCurrentIsolation($pdo);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
+        $previousIsolation = $this->getCurrentIsolation(connectionName: $pdo);
 
         try {
-            $pdo->exec(sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql($isolationLevel)));
+            $pdo->exec(statement: sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql(level: $isolationLevel)));
             $pdo->beginTransaction();
 
             $result = $callback($pdo);
@@ -74,13 +74,13 @@ final readonly class RunDataTransaction
 
             if ($previousIsolation !== null) {
                 try {
-                    $pdo->exec(sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql($previousIsolation)));
+                    $pdo->exec(statement: sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql(level: $previousIsolation)));
                 } catch (Throwable) {
                 }
             }
 
             throw new PersistentDataFailure(
-                          sprintf('Transaction with isolation %s failed: %s', $this->isolationLevelToSql($isolationLevel), $e->getMessage()),
+                message : sprintf('Transaction with isolation %s failed: %s', $this->isolationLevelToSql(level: $isolationLevel), $e->getMessage()),
                 code    : $e->getCode(),
                 previous: $e
             );
@@ -91,7 +91,7 @@ final readonly class RunDataTransaction
         callable $callback,
         int|null $maxRetries = null,
         int|null $delayMs = null,
-        ?string  $connectionName = null
+        string|null $connectionName = null
     ) : mixed
     {
         $maxRetries ??= 3;
@@ -101,11 +101,11 @@ final readonly class RunDataTransaction
 
         while ( $attempt < $maxRetries ) {
             try {
-                return $this->run($callback, $connectionName);
+                return $this->run(callback: $callback, connectionName: $connectionName);
             } catch (PersistentDataFailure $e) {
                 $lastException = $e;
 
-                if (! $this->isRetryable($e)) {
+                if (! $this->isRetryable(failure: $e)) {
                     throw $e;
                 }
 
@@ -117,56 +117,56 @@ final readonly class RunDataTransaction
             }
         }
 
-        throw $lastException ?? new PersistentDataFailure('Transaction failed after retries.');
+        throw $lastException ?? new PersistentDataFailure(message: 'Transaction failed after retries.');
     }
 
-    public function begin(?string $connectionName = null) : void
+    public function begin(string|null $connectionName = null) : void
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
         $pdo->beginTransaction();
     }
 
-    public function commit(?string $connectionName = null) : void
+    public function commit(string|null $connectionName = null) : void
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         if ($pdo->inTransaction()) {
             $pdo->commit();
         }
     }
 
-    public function rollback(?string $connectionName = null) : void
+    public function rollback(string|null $connectionName = null) : void
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
     }
 
-    public function inTransaction(?string $connectionName = null) : bool
+    public function inTransaction(string|null $connectionName = null) : bool
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         return $pdo->inTransaction();
     }
 
-    public function setIsolation(int $isolationLevel, ?string $connectionName = null) : void
+    public function setIsolation(int $isolationLevel, string|null $connectionName = null) : void
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
-        $pdo->exec(sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql($isolationLevel)));
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
+        $pdo->exec(statement: sprintf('SET TRANSACTION ISOLATION LEVEL %s', $this->isolationLevelToSql(level: $isolationLevel)));
     }
 
-    public function getCurrentIsolation(?string $connectionName = null) : ?int
+    public function getCurrentIsolation(string|null $connectionName = null) : int|null
     {
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
         try {
-            $stmt = $pdo->query('SELECT @@SESSION.tx_isolation as isolation');
-            $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $pdo->query(query: 'SELECT @@SESSION.tx_isolation as isolation');
+            $row  = $stmt->fetch(mode: PDO::FETCH_ASSOC);
 
             if ($row) {
-                return $this->sqlToIsolationLevel($row['isolation'] ?? '');
+                return $this->sqlToIsolationLevel(sql: $row['isolation'] ?? '');
             }
         } catch (Throwable) {
         }
@@ -174,22 +174,22 @@ final readonly class RunDataTransaction
         return null;
     }
 
-    public function savepoint(string $name, callable $callback, ?string $connectionName = null) : mixed
+    public function savepoint(string $name, callable $callback, string|null $connectionName = null) : mixed
     {
         if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
-            throw new InvalidArgumentException('Invalid savepoint name.');
+            throw new InvalidArgumentException(message: 'Invalid savepoint name.');
         }
 
-        $pdo = $this->useDatabaseRuntime->connection($connectionName);
+        $pdo = $this->useDatabaseRuntime->connection(name: $connectionName);
 
-        $pdo->exec("SAVEPOINT {$name}");
+        $pdo->exec(statement: "SAVEPOINT {$name}");
 
         try {
             $result = $callback($pdo);
 
             return $result;
         } catch (Throwable $e) {
-            $pdo->exec("ROLLBACK TO SAVEPOINT {$name}");
+            $pdo->exec(statement: "ROLLBACK TO SAVEPOINT {$name}");
             throw $e;
         }
     }
@@ -205,7 +205,7 @@ final readonly class RunDataTransaction
         };
     }
 
-    private function sqlToIsolationLevel(string $sql) : ?int
+    private function sqlToIsolationLevel(string $sql) : int|null
     {
         $normalized = strtoupper(preg_replace('/\s+/', ' ', trim($sql)));
 

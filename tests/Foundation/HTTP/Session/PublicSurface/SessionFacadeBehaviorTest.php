@@ -15,14 +15,14 @@ final class SessionFacadeBehaviorTest extends TestCase
     {
         $session = new Session(store: new ArraySessionStore());
 
-        $session->put('user_id', 7);
+        $session->put(key: 'user_id', value: 7);
 
-        self::assertTrue($session->has('user_id'));
-        self::assertSame(7, $session->get('user_id'));
+        self::assertTrue($session->has(key: 'user_id'));
+        self::assertSame(7, $session->get(key: 'user_id'));
 
-        $session->forget('user_id');
+        $session->forget(key: 'user_id');
 
-        self::assertFalse($session->has('user_id'));
+        self::assertFalse($session->has(key: 'user_id'));
     }
 
     public function test_regenerate_id_changes_identifier() : void

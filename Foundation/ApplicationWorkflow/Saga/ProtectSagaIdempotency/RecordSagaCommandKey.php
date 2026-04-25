@@ -8,14 +8,14 @@ final readonly class DetectDuplicateSagaCommand
 {
     public function __construct(private ProtectSagaIdempotency $idempotency) {}
 
-    public function detect(string $key) : ?SagaCommandResult
+    public function detect(string $key) : SagaCommandResult|null
     {
-        return $this->idempotency->check($key);
+        return $this->idempotency->check(key: $key);
     }
 
     public function exists(string $key) : bool
     {
-        return $this->idempotency->exists($key);
+        return $this->idempotency->exists(key: $key);
     }
 }
 
@@ -25,22 +25,22 @@ final readonly class RecordSagaCommandKey
 
     public function record(string $key, SagaCommandResult $result) : void
     {
-        $this->idempotency->record($key, $result);
+        $this->idempotency->record(key: $key, result: $result);
     }
 
     public function recordSuccess(string $key, string $sagaId, array $output = []) : void
     {
         $this->idempotency->record(
-            $key,
-            SagaCommandResult::success($sagaId, $output)
+            key   : $key,
+            result: SagaCommandResult::success(sagaId: $sagaId, output: $output)
         );
     }
 
     public function recordFailure(string $key, string $sagaId, string $error) : void
     {
         $this->idempotency->record(
-            $key,
-            SagaCommandResult::failure($sagaId, $error)
+            key   : $key,
+            result: SagaCommandResult::failure(sagaId: $sagaId, error: $error)
         );
     }
 }
@@ -49,14 +49,14 @@ final readonly class ReadPreviousSagaCommandResult
 {
     public function __construct(private ProtectSagaIdempotency $idempotency) {}
 
-    public function read(string $key) : ?SagaCommandResult
+    public function read(string $key) : SagaCommandResult|null
     {
-        return $this->idempotency->check($key);
+        return $this->idempotency->check(key: $key);
     }
 
-    public function maybeReplay(string $key) : ?array
+    public function maybeReplay(string $key) : array|null
     {
-        $result = $this->read($key);
+        $result = $this->read(key: $key);
 
         return $result?->output ?? null;
     }

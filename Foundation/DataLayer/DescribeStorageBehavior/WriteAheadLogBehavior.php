@@ -23,10 +23,10 @@ final readonly class WriteAheadLogBehavior
     )
     {
         if ($this->flushIntervalMs < 0) {
-            throw new InvalidArgumentException('Flush interval must be non-negative.');
+            throw new InvalidArgumentException(message: 'Flush interval must be non-negative.');
         }
         if ($this->maxBufferSize < 1) {
-            throw new InvalidArgumentException('Max buffer size must be at least 1.');
+            throw new InvalidArgumentException(message: 'Max buffer size must be at least 1.');
         }
     }
 
@@ -37,19 +37,19 @@ final readonly class WriteAheadLogBehavior
 
     public static function sync() : self
     {
-        return new self(WriteAheadLogMode::SYNC, 0, 1, true);
+        return new self(mode: WriteAheadLogMode::SYNC, flushIntervalMs: 0, maxBufferSize: 1, enabled: true);
     }
 
     public static function async(int $flushIntervalMs = 100) : self
     {
-        return new self(WriteAheadLogMode::ASYNC, $flushIntervalMs, 10000, true);
+        return new self(mode: WriteAheadLogMode::ASYNC, flushIntervalMs: $flushIntervalMs, maxBufferSize: 10000, enabled: true);
     }
 
     public static function groupCommit(int|null $flushIntervalMs = null, int $maxBufferSize = 1000) : self
     {
         $flushIntervalMs ??= 50;
 
-        return new self(WriteAheadLogMode::GROUP_COMMIT, $flushIntervalMs, $maxBufferSize, true);
+        return new self(mode: WriteAheadLogMode::GROUP_COMMIT, flushIntervalMs: $flushIntervalMs, maxBufferSize: $maxBufferSize, enabled: true);
     }
 
     public function shouldFlush(int $bufferedItems) : bool

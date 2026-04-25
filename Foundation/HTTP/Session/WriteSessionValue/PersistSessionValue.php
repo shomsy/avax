@@ -17,6 +17,6 @@ final class PersistSessionValue
 
     public function handle(string $key, mixed $value) : void
     {
-        $this->store->put($key, $value);
+        $this->store->put(key: $key, value: $value);
     }
 }

@@ -36,31 +36,54 @@ flowchart LR
     System --> AvaxCache --> Flows --> Capabilities --> Stores
 ```
 
-## Features
+## Implemented
 
-- **Value Lifecycle Management**: Complete tracking from creation through eviction
-- **Multiple Store Backends**: In-memory, File, Redis, Chain, Fallback
-- **Multi-tier Caching**: L1 + L2 cache with automatic promotion
-- **Smart Invalidation**: By key, tag, namespace, pattern, version
-- **Stale-While-Revalidate**: Serve stale data while refreshing
-- **Stampede Protection**: Lock-based cache stampede prevention
-- **Replacement Policies**: LRU, LFU, FIFO, Random
+- **Runtime Cache Facade**: `Cache::get()`, `Cache::put()`, `Cache::remember()`, `Cache::forget()`, `Cache::clear()`
+- **CacheContract Interface**: PSR-16 compatible runtime cache contract
+- **In-Memory Store**: Fast in-process cache store
+- **File Store**: Persistent file-based cache store
+- **Redis Store**: Redis-backed cache store
+- **Unified Read Routing**: `Cache::read()` with explicit `RuntimeCacheTarget` / `CompiledCacheTarget`
+- **Compiled Cache Subsystem**: Framework artifact compilation with atomic writes and manifest freshness
+- **Cache Registry**: Named cache instances
+- **Contract Tests**: Store implementations validated by contract
+- **Clock Dependency**: Deterministic testing with injected clocks
+
+## Experimental
+
+- **Multi-tier Cache**: L1 + L2 promotion (planned)
+- **Distributed Cache**: Routing model (skeleton, not production-ready)
+- **Chain/Fallback Stores**: Composite store patterns (planned)
+
+## Planned
+
+- **Stampede Protection**: Lock-based prevention (in progress)
+- **Stale-While-Revalidate**: Serve stale while refreshing (in progress)
+- **Replacement Policies**: LRU, LFU, FIFO, Random eviction
+- **Source Sync**: Write-through / write-around / write-behind
 - **Observability**: Metrics, tracing, hit rate tracking
-- **Enterprise Quality**: Contract tests, deterministic testing
+- **LRU/LFU Eviction**: Production-ready replacement policies
+- **Distributed Partitioning**: Real distributed cache with node stores
 
 ## Compiled Cache
 
 Separate subsystem for **framework-generated PHP artifacts**: routes, config, container, events, metadata.
 
 ```php
-use Avax\System\System\Configuration\ConfigureCompiledCache;
+use Avax\Cache\CompiledCache;
+use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
 
-$compiled = ConfigureCompiledCache::inDirectory('var/cache/compiled');
+// Configure once
+CompiledCache::configure('var/cache/compiled');
 
 // Read or compile artifact
-$routes = $compiled->read('routes', function() {
+$routes = CompiledCache::read('routes', function() {
     return ['GET /users' => ['controller' => UserController::class]];
 }, CompiledCacheSources::fromPaths('routes/web.php'));
+
+// Clear when needed
+CompiledCache::clear('routes');
+CompiledCache::clearAll();
 ```
 
 ### Intended CLI Commands
@@ -97,53 +120,57 @@ var/cache/
 ## Quick Start
 
 ```php
-use Avax\System\System\Configuration\BuildCache;
+use Avax\Cache\System\Cache;
 
-// Create in-memory cache
+// Setup (once at bootstrap)
 $cache = BuildCache::inMemory();
+Cache::use($cache);
 
-// Basic operations
-$cache->set('user:123', ['name' => 'John'], ttl: 3600);
-$user = $cache->get('user:123');
-$cache->delete('user:123');
+// Basic operations (everywhere in app)
+Cache::put('user:123', ['name' => 'John'], ttl: 3600);
+$user = Cache::get('user:123');
+Cache::forget('user:123');
 
 // Remember pattern (get-or-load)
-$user = $cache->remember(
-    key: 'user:123',
+$user = Cache::remember(
+    'user:123',
     ttl: 3600,
     loader: fn() => $userRepository->find(123)
 );
+
+// Testing
+Cache::use($mockCache);
+Cache::reset();
 ```
 
 ## Architecture
 
 ```
 System/
-├── System.php              # Public API
-├── AvaxCache.php           # Main implementation
-├── CacheResult.php        # Result types
+├── Cache.php               # Public facade (Cache::get/put/remember)
+├── CacheContract.php       # Runtime cache interface
+├── CompiledCache.php       # Compiled artifacts facade
+├── AvaxCache.php           # Default implementation
 │
-├── Flows/                 # End-to-end operations
+├── PublicSurface/          # Registry, facade, helpers
+│   ├── CacheRegistry.php   # Named cache instances
+│   └── CacheFacade.php     # Instance facade for DI
+│
+├── Flows/                  # End-to-end operations
 │   ├── ReadCachedValue/
-│   ├── StoreCachedValue/
-│   ├── RememberCachedValue/
-│   ├── ForgetCachedValue/
-│   ├── ClearCache/
+│   ├── CompileCache/
 │   └── ...
 │
-├── Capabilities/          # Shared abilities
-│   ├── IdentifyCachedValues/
+├── Capabilities/           # Shared abilities
 │   ├── ManageCacheLifecycle/
+│   ├── ManageCompiledCache/
 │   ├── StoreCachedValues/
-│   ├── ObserveCache/
 │   └── ...
 │
-├── Foundation/            # Primitive building blocks
-│   ├── Time/
-│   ├── Serialization/
+├── Foundation/             # Time, Serialization
 │   └── ...
 │
-└── Configuration/         # Building and wiring
+└── Configuration/          # BuildCache, BuildCompiledCache
 ```
 
 ## Key Design Decisions
@@ -171,8 +198,10 @@ All time operations use injected `Clock` for deterministic testing.
 ## Documentation
 
 - [How This Works](./docs/Cache/how-this-works.md) - System overview
-- [Public API](./docs/Cache/public-api.md) - Usage guide
+- [Public Surface](./docs/Cache/public-surface.md) - Facade usage
+- [Public API](./docs/Cache/public-api.md) - Detailed usage guide
 - [System Design](./docs/Cache/system-design.md) - Architecture details
+- [Compiled Cache Model](./docs/Cache/compiled-cache-model.md) - Compiled artifacts
 - [Failure Modes](./docs/Cache/failure-modes.md) - Error handling
 - [Invalidation Model](./docs/Cache/invalidation-model.md) - Invalidation strategies
 - [Replacement Policy](./docs/Cache/replacement-policy-model.md) - Eviction strategies

@@ -44,11 +44,12 @@ final class CompileCache
 
         $pathResolver = new ResolveCompiledCachePath($this->directory);
         $artifactPath = $pathResolver->resolveArtifactPath($nameObj);
+        $now = $this->clock->now();
 
         $entry = CompiledCacheManifestEntry::create(
             name             : $nameObj->toString(),
             path             : $artifactPath->toString(),
-            createdAt        : time(),
+            createdAt        : $now->seconds,
             sourceFingerprint: $fingerprint
         );
 

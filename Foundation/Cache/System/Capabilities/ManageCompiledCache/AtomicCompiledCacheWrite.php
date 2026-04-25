@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Cache\System\Capabilities\ManageCompiledCache;
 
-use RuntimeException;
+use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Cache\System\Foundation\Time\SystemClock;
 
 final class AtomicCompiledCacheWrite
 {
     public function __construct(
-        private CompiledCacheDirectory $directory
+        private CompiledCacheDirectory $directory,
+        private Clock                  $clock = new SystemClock()
     ) {}
 
     public function write(
@@ -35,10 +37,12 @@ final class AtomicCompiledCacheWrite
             throw new CompiledCacheCouldNotBeWritten($name->toString());
         }
 
+        $now = $this->clock->now();
+
         return CompiledCacheArtifact::create(
             name             : $name->toString(),
             path             : $finalPath->toString(),
-            createdAt        : time(),
+            createdAt        : $now->seconds,
             sourceFingerprint: ''
         );
     }

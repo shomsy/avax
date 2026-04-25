@@ -43,10 +43,17 @@ final class AvaxCache implements CacheContract
 
     public function remember(string $key, null|int|DateInterval $ttl, callable $loader) : mixed
     {
-        $value = $this->get($key);
+        $cacheKey = CacheKey::create($key);
+        $result   = $this->store->read($cacheKey, $this->clock);
 
-        if ($value !== null) {
-            return $value;
+        if ($result instanceof CacheStoreRecordWasFound && ! $result->record->lifecycle->isExpired($this->clock)) {
+            $this->recordMetrics(
+                startTime: hrtime(as_integer: true),
+                operation: 'hit',
+                key      : $cacheKey
+            );
+
+            return $result->record->value;
         }
 
         $value = $loader();

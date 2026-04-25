@@ -209,11 +209,13 @@ final class FileCacheStore implements CacheStore
 
     private function deserializeLifecycle(array $data, Clock $clock) : CachedValueLifecycle
     {
+        $now = $clock->now();
+
         return new CachedValueLifecycle(
-            createdAt     : Timestamp::fromUnixTime($data['createdAt'] ?? time()),
-            lastAccessedAt: Timestamp::fromUnixTime($data['lastAccessedAt'] ?? time()),
-            expiresAt     : Timestamp::fromUnixTime($data['expiresAt'] ?? time()),
-            refreshedAt   : Timestamp::fromUnixTime($data['refreshedAt'] ?? time()),
+            createdAt     : Timestamp::fromUnixTime($data['createdAt'] ?? $now->seconds),
+            lastAccessedAt: Timestamp::fromUnixTime($data['lastAccessedAt'] ?? $now->seconds),
+            expiresAt     : Timestamp::fromUnixTime($data['expiresAt'] ?? $now->seconds),
+            refreshedAt   : Timestamp::fromUnixTime($data['refreshedAt'] ?? $now->seconds),
             hitCount      : $data['hitCount'] ?? 0,
             refreshCount  : $data['refreshCount'] ?? 0
         );

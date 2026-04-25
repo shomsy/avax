@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Cache\System\Configuration\CompiledCacheConfiguration;
 
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCache;
+use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheContract;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheArtifact;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheDirectory;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheManifest;
@@ -24,20 +24,20 @@ final class BuildCompiledCache
         $this->clock = $clock;
     }
 
-    public function inDirectory(string $directory) : CompiledCache
+    public function inDirectory(string $directory) : CompiledCacheContract
     {
         return $this->fromConfiguration(
             CompiledCacheConfiguration::inDirectory($directory)
         );
     }
 
-    public function fromConfiguration(CompiledCacheConfiguration $configuration) : CompiledCache
+    public function fromConfiguration(CompiledCacheConfiguration $configuration) : CompiledCacheContract
     {
         return new class(
             $configuration->directory,
             $configuration,
             $this->clock
-        ) implements CompiledCache {
+        ) implements CompiledCacheContract {
             public function __construct(
                 private string                     $directory,
                 private CompiledCacheConfiguration $config,

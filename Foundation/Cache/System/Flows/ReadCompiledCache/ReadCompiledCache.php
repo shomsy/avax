@@ -12,6 +12,7 @@ use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheManifest;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheName;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\ResolveCompiledCachePath;
+use Avax\Cache\System\Capabilities\ManageCompiledCache\ValidateCompiledCachePayload;
 use Avax\Cache\System\Flows\CompileCache\CompileCache;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
@@ -69,6 +70,9 @@ final class ReadCompiledCache
         }
 
         $payload = require $path->toString();
+
+        $validator = new ValidateCompiledCachePayload();
+        $validator->validate($name->toString(), $payload);
 
         return $payload;
     }

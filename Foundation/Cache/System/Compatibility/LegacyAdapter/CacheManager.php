@@ -13,6 +13,8 @@ use Throwable;
  * Class CacheManager
  *
  * Manages caching operations and delegates them to the backend.
+ *
+ * @deprecated Use Avax\Cache\System\Cache facade instead. Will be removed in V3.
  */
 readonly class CacheManager implements CacheInterface
 {

@@ -61,7 +61,7 @@ Pooled lifetime is unsafe when:
 // UNSAFE: User context that cannot be cleared safely
 $container->pooled(UserContext::class); // BAD - holds user data
 
-// UNSAFE: Cache with sensitive data
+// UNSAFE: System with sensitive data
 $container->pooled(ResponseCache::class); // BAD - may leak response data
 
 // UNSAFE: Non-thread-safe logger

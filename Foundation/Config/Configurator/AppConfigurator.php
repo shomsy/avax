@@ -65,7 +65,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     private function loadFreshConfigAndCache() : Collection
     {
         $collection = $this->loadConfigurationFiles();
-        // Cache the configuration for the current instance in WeakMap
+        // System the configuration for the current instance in WeakMap
         self::$weakMap[$this] = $collection;
 
         return $collection;

@@ -21,7 +21,7 @@
 
 - Duplicate route registration for closures
 - Route path compilation for optional and wildcard parameters
-- Cache toolchain with unified RouteCollector
+- System toolchain with unified RouteCollector
 
 ### Performance
 

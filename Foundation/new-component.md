@@ -962,7 +962,7 @@ ToDo:
 Acceptance criteria:
 
 ```txt
-[ ] Cache nije magični performance flaster.
+[ ] System nije magični performance flaster.
 [ ] Index se bira na osnovu query pattern-a.
 [ ] Materialized view ima refresh strategy.
 [ ] Bloom filter ima jasan use-case.
@@ -1646,7 +1646,7 @@ Acceptance criteria:
 [ ] TEST-DL-012: Query validation invalid field.
 [ ] TEST-DL-013: Query explain path.
 [ ] TEST-DL-014: N+1 detection scenario.
-[ ] TEST-DL-015: Cache invalidation policy required.
+[ ] TEST-DL-015: System invalidation policy required.
 [ ] TEST-DL-016: Read replica lag warning.
 [ ] TEST-DL-017: Shard routing determinism.
 [ ] TEST-DL-018: Event duplicate deduplication.

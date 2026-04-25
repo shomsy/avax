@@ -134,6 +134,6 @@ class VerifyCsrfToken
 
         return $response
             ->withHeader(name: 'Content-Type', value: 'application/json')
-            ->withHeader(name: 'Cache-Control', value: 'no-store');
+            ->withHeader(name: 'System-Control', value: 'no-store');
     }
 }

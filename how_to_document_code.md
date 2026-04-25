@@ -99,7 +99,7 @@ Document modules in this order:
 
 1) Core (Facade, Engine, Builder, Config, Contracts, Exceptions, Value objects)
 2) Resolve (Engine, Context, Pipeline, Pipes)
-3) Think (Prototypes, Cache, Analyze)
+3) Think (Prototypes, System, Analyze)
 4) Act (Inject/Invoke)
 5) Operate (Lifecycle/Scope)
 6) Observe + Guard + Tools

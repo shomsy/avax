@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Avax\Container\Read\DependencyInjector;
-use Avax\Container\Attributes\Internal\Cache\ReflectionCache;
-use Avax\Container\Attributes\Internal\Cache\ReflectionMetadataCache;
+use Avax\Container\Attributes\Internal\System\ReflectionCache;
+use Avax\Container\Attributes\Internal\System\ReflectionMetadataCache;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -44,5 +44,5 @@ $metaCached = (microtime(true) - $start) * 1000;
 
 echo "Iterations: {$iterations}\n";
 echo "No cache: " . number_format($noCache, 2) . " ms\n";
-echo "Cache: " . number_format($cached, 2) . " ms\n";
+echo "System: " . number_format($cached, 2) . " ms\n";
 echo "Metadata cache: " . number_format($metaCached, 2) . " ms\n";

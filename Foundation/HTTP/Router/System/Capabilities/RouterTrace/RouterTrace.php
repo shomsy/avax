@@ -12,7 +12,7 @@ use JsonException;
  * Provides fine-grained introspection and observability for:
  * - Route resolution timing and flow
  * - Matcher branch analysis
- * - Cache operation tracking
+ * - System operation tracking
  * - Bootstrap performance metrics
  *
  * Enables deterministic debugging and profiling capabilities

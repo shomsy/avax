@@ -109,7 +109,7 @@ final class RouterIntegrationTest extends TestCase
             expected: $runtimeCount,
             actual  : $cacheCount,
             message : sprintf(
-                          'Route count mismatch: runtime=%d, cache=%d. Cache loading should preserve all routes.',
+                          'Route count mismatch: runtime=%d, cache=%d. System loading should preserve all routes.',
                           $runtimeCount,
                           $cacheCount
                       )

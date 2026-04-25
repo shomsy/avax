@@ -229,7 +229,7 @@ Shared domain objects live in `System/Capabilities`, configuration in `System/Co
 
 | Finding | Evidence | Resolution |
 | --- | --- | --- |
-| Old namespace tree leaked into Composer autoload | `Routing`, `Support`, `Bootstrap`, `Cache`, `Kernel`, `Validation`, `Tracing`, `Matching`, `Metrics`, `Snapshots`, `Exceptions` all existed beside `System` | Deleted the stale folders after the new `System` tree loaded successfully |
+| Old namespace tree leaked into Composer autoload | `Routing`, `Support`, `Bootstrap`, `System`, `Kernel`, `Validation`, `Tracing`, `Matching`, `Metrics`, `Snapshots`, `Exceptions` all existed beside `System` | Deleted the stale folders after the new `System` tree loaded successfully |
 | Register DSL and runtime router were mixed | Root `RouterDsl.php` and old `Routing/*` carried registration concerns outside the flow folder | Moved DSL and builders under `System/Flows/RegisterRoutes` |
 | 404/405 flow was converted into a synthetic failure route | `HttpRequestRouter::resolve()` caught route failures and returned `RouteResolutionContext::failure()` | Restored explicit `RouteNotFoundException` and `MethodNotAllowedException` throwing |
 | HEAD fallback used stale class naming | Old `HeadRequestFallback` naming survived in docs/source | Replaced with `ApplyHeadRequestFallback` and wired it to the new exception contract |
@@ -466,7 +466,7 @@ final readonly class Router implements RouterRuntimeInterface
      * 5. Handles route registration and cleanup automatically
      *
      * @param string $routesPath Path to the routes file
-     * @param string $cacheDir   Cache directory for compiled routes (optional)
+     * @param string $cacheDir   System directory for compiled routes (optional)
      *
      * @return void
      * @throws LogicException|ReservedRouteNameException If DSL router or group
@@ -1874,7 +1874,7 @@ use JsonException;
  * Provides fine-grained introspection and observability for:
  * - Route resolution timing and flow
  * - Matcher branch analysis
- * - Cache operation tracking
+ * - System operation tracking
  * - Bootstrap performance metrics
  *
  * Enables deterministic debugging and profiling capabilities
@@ -2302,8 +2302,8 @@ namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Contracts\FilesystemException;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheManifest;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
@@ -2747,12 +2747,12 @@ final readonly class BootstrapRoutes
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/AsyncRouteCacheLoader.php ===
+=== System/Flows/BootstrapRoutes/System/AsyncRouteCacheLoader.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\AsyncFilesystemInterface;
@@ -2872,11 +2872,11 @@ final readonly class AsyncRouteCacheLoader
 
                 // Validate signature for immutable routing guarantees (v2.1 feature)
                 if (! $storedManifest->validateSignatureFile($cachePath)) {
-                    $this->logger->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+                    $this->logger->warning(message: 'Route cache signature validation failed. System may be compromised.', context: [
                         'cache_path'  => $cachePath,
                         'routes_path' => $routesPath,
                     ]);
-                    throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+                    throw new RuntimeException(message: 'Route cache signature validation failed. System integrity compromised.');
                 }
 
                 // Load and register routes
@@ -2940,11 +2940,11 @@ final readonly class AsyncRouteCacheLoader
 
         // Validate signature for immutable routing guarantees (v2.1 feature)
         if (! $storedManifest->validateSignatureFile(cachePath: $cachePath)) {
-            $this->logger->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+            $this->logger->warning(message: 'Route cache signature validation failed. System may be compromised.', context: [
                 'cache_path'  => $cachePath,
                 'routes_path' => $routesPath,
             ]);
-            throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+            throw new RuntimeException(message: 'Route cache signature validation failed. System integrity compromised.');
         }
 
         /** @var array<array<string, mixed>> $routes */
@@ -3105,18 +3105,18 @@ final readonly class AsyncRouteCacheLoader
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/CachedRouteLoader.php ===
+=== System/Flows/BootstrapRoutes/System/CachedRouteLoader.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\FilesystemInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheManifest;
 use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Source\RouteSourceLoaderInterface;
 use JsonException;
 use RuntimeException;
@@ -3156,12 +3156,12 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new RuntimeException(message: 'Cache file not available or invalid');
+            throw new RuntimeException(message: 'System file not available or invalid');
         }
 
         // Validate cache integrity before loading
         if (! $this->manifest->validateSignatureFile(cachePath: $this->cachePath)) {
-            throw new RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
+            throw new RuntimeException(message: 'System signature validation failed - possible tampering detected');
         }
 
         // Load and validate JSON content
@@ -3175,7 +3175,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         }
 
         if (! is_array(value: $routesData)) {
-            throw new RuntimeException(message: 'Cache file does not contain valid route array');
+            throw new RuntimeException(message: 'System file does not contain valid route array');
         }
 
         // Populate collection with cached routes
@@ -3235,12 +3235,12 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/RouteCacheCompiler.php ===
+=== System/Flows/BootstrapRoutes/System/RouteCacheCompiler.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
@@ -3330,12 +3330,12 @@ final readonly class RouteCacheCompiler
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/RouteCacheLoader.php ===
+=== System/Flows/BootstrapRoutes/System/RouteCacheLoader.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\FilesystemInterface;
@@ -3397,11 +3397,11 @@ final readonly class RouteCacheLoader
 
         // Validate signature for immutable routing guarantees (v2.1 feature)
         if (! $storedManifest->validateSignatureFile(cachePath: $cachePath)) {
-            $this->logger?->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+            $this->logger?->warning(message: 'Route cache signature validation failed. System may be compromised.', context: [
                 'cache_path'  => $cachePath,
                 'routes_path' => $routesPath,
             ]);
-            throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+            throw new RuntimeException(message: 'Route cache signature validation failed. System integrity compromised.');
         }
 
         // Load routes from secure JSON format instead of PHP require()
@@ -3502,12 +3502,12 @@ final readonly class RouteCacheLoader
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/RouteCacheManifest.php ===
+=== System/Flows/BootstrapRoutes/System/RouteCacheManifest.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use JsonException;
@@ -3764,12 +3764,12 @@ final readonly class RouteCacheManifest
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/RouteExportValidator.php ===
+=== System/Flows/BootstrapRoutes/System/RouteExportValidator.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache;
+namespace Avax\HTTP\Router\System\Flows\BootstrapRoutes\System;
 
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Psr\Log\LoggerInterface;
@@ -3942,11 +3942,11 @@ final class RouteExportValidator
     }
 }
 
-=== System/Flows/BootstrapRoutes/Cache/how-this-works.md ===
-# Cache
+=== System/Flows/BootstrapRoutes/System/how-this-works.md ===
+# System
 
 This folder owns compiled route cache loading, writing, manifesting, and validation.
-Cache code must reject closures and corrupted payloads, then allow disk bootstrap to recover.
+System code must reject closures and corrupted payloads, then allow disk bootstrap to recover.
 
 === System/Flows/BootstrapRoutes/Disk/DiskRouteLoader.php ===
 <?php
@@ -9573,7 +9573,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 
 /**
- * Cache for reflection metadata to optimize repeated reflection operations.
+ * System for reflection metadata to optimize repeated reflection operations.
  *
  * Stores reflection results for classes, methods, and properties to avoid
  * expensive reflection operations during route validation and processing.
@@ -9782,7 +9782,7 @@ use Throwable;
  * Fault injection testing framework for router resilience.
  *
  * Enables chaos testing to ensure router reliability under failure conditions:
- * - Cache corruption scenarios
+ * - System corruption scenarios
  * - Filesystem failures
  * - Memory exhaustion
  * - Concurrent access issues
@@ -11529,7 +11529,7 @@ final readonly class RouteDefinition {
 
 **Format**: Serialized `RouteDefinition` array (no closures)
 **Storage**: PHP file with manifest hash
-**Validation**: Cache invalid if manifest doesn't match
+**Validation**: System invalid if manifest doesn't match
 **Fallback**: Rebuild from route definitions if cache invalid
 
 ## Anti-Patterns (What NOT To Do)
@@ -11577,7 +11577,7 @@ $router->middleware(['auth'])->group(function($r) {
 - **Route Registration**: O(1) per route
 - **Route Matching**: O(n) where n = routes per method
 - **Parameter Extraction**: O(k) where k = parameters in route
-- **Cache Loading**: O(m) where m = cached routes
+- **System Loading**: O(m) where m = cached routes
 - **Memory**: ~50-100 bytes per route definition
 
 ## Extension Points
@@ -11708,7 +11708,7 @@ behaviors documented here are guaranteed stable.*
 
 ## Caching Failures
 
-### ❌ Cache File Corrupt
+### ❌ System File Corrupt
 
 **Trigger**: Manual cache file editing or disk corruption
 **Expected**: Fallback to route recompilation
@@ -11718,11 +11718,11 @@ behaviors documented here are guaranteed stable.*
 ### ❌ Manifest Mismatch
 
 **Trigger**: Route files changed since cache creation
-**Expected**: Cache invalidation, route recompilation
+**Expected**: System invalidation, route recompilation
 **Verified**: `RouteCacheManifest` hash comparison
 **Recovery**: Transparent performance degradation during first request
 
-### ❌ Closure Routes in Cache
+### ❌ Closure Routes in System
 
 **Trigger**: Attempting to cache routes with closures
 **Expected**: `RuntimeException` during cache compilation
@@ -11785,14 +11785,14 @@ behaviors documented here are guaranteed stable.*
 
 ### Graceful Degradation
 
-- Cache failures → Recompile routes (slower first request)
+- System failures → Recompile routes (slower first request)
 - Matcher failures → Fallback to simple 404
 - Pipeline failures → Skip middleware, direct dispatch
 
 ### Monitoring Integration
 
 - Route matching latency
-- Cache hit/miss ratios
+- System hit/miss ratios
 - Error rates by route pattern
 - Memory usage per request
 
@@ -15358,7 +15358,7 @@ Ovaj refactor plan je implementiran kroz novu `System` strukturu:
 * `System/Configuration`
 * `System/Foundation`
 
-Stara paralelna Router struktura (`Routing`, `Support`, `Bootstrap`, `Cache`, `Kernel`, `Validation`, `Tracing`, `Matching`, `Metrics`, `Snapshots`, `Exceptions`) je uklonjena nakon Composer autoload smoke provere.
+Stara paralelna Router struktura (`Routing`, `Support`, `Bootstrap`, `System`, `Kernel`, `Validation`, `Tracing`, `Matching`, `Metrics`, `Snapshots`, `Exceptions`) je uklonjena nakon Composer autoload smoke provere.
 Detaljan review i završni plan su u `Code-Review-And-ToDo/review.md` i `Code-Review-And-ToDo/refactor-plan.md`.
 
 Idemo na precizan plan, bez magle. Osnova plana je da zadrzis javni ugovor stabilnim oko `RouterInterface` i `Router`, da ne radis big-bang rewrite, i da novu strukturu preseces po 4 stvarna toka koja vec postoje u komponenti: DSL registracija, bootstrap, runtime resolution i execution pipeline. To je u skladu i sa samim Router principima i sa how-to pravilima o flow-first citanju, maloj javnoj povrsini, incremental refactoru i TDD-u.
@@ -15519,10 +15519,10 @@ ToDo:
     * `Source/DecideBootstrapSource.php`
     * `Disk/DiscoverRouteFiles.php`
     * `Disk/LoadRoutesFromDisk.php`
-    * `Cache/LoadRoutesFromCache.php`
-    * `Cache/WriteRouteCache.php`
+    * `System/LoadRoutesFromCache.php`
+    * `System/WriteRouteCache.php`
     * `Snapshot/ExportRouterSnapshot.php`
-* `RouteCacheLoader`, `AsyncRouteCacheLoader`, `RouteCacheManifest` premesti pod `BootstrapRoutes/Cache/`
+* `RouteCacheLoader`, `AsyncRouteCacheLoader`, `RouteCacheManifest` premesti pod `BootstrapRoutes/System/`
 * `RouterBootstrapState` premesti pod `BootstrapRoutes/State/`
 * `RouterSnapshot` premesti pod `BootstrapRoutes/Snapshot/` ili ostavi kao capability samo ako ga zaista koristi i nesto drugo osim bootstrap-a
 * ukloni anonymous adapter unutar `exportRouterSnapshot()`
@@ -16069,13 +16069,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-    * Cache format: JSON + SHA256 signature.
+    * System format: JSON + SHA256 signature.
     * Verifikacija pre učitavanja.
 
 * ✅ *Acceptance:*
 
     * Loader više ne koristi `require` ni `eval`.
-    * Cache signature validacija prolazi.
+    * System signature validacija prolazi.
 
 ---
 
@@ -16230,7 +16230,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ---
 
-### ✅ **M4. Cache Signature Verification**
+### ✅ **M4. System Signature Verification**
 
 * 🔧 *Fajlovi:* `RouteCacheLoader.php`, `RouteCacheManifest.php`
 * 🧠 *Rešenje:* Validacija SHA256 pre hydrate.
@@ -16374,7 +16374,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ---
 
-### ✅ **X6. Cache manifest trust boundary**
+### ✅ **X6. System manifest trust boundary**
 
 **Opis:** Uvesti SHA256 cache manifest i fallback loader.
 
@@ -16386,7 +16386,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
     * Ako hash ne odgovara, fallback na disk + log upozorenje.
     * Integrisati u bootstrap proces.
 
-* ✅ *Acceptance:* Cache poisoning eliminisan, determinističko ponašanje.
+* ✅ *Acceptance:* System poisoning eliminisan, determinističko ponašanje.
 
 ---
 
@@ -16497,10 +16497,10 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 ## 🟧 **PHASE 2 — PERFORMANCE & VALIDATION OPTIMIZATION (HIGH)**
 
-### ☐ **[R3] Reflection Metadata Cache**
+### ☐ **[R3] Reflection Metadata System**
 
 * **Problem:** `RouteDefinitionValidator` koristi reflection za svaku proveru.
-* **Goal:** Cache reflektovanih metoda/atributa za višestruku upotrebu.
+* **Goal:** System reflektovanih metoda/atributa za višestruku upotrebu.
 
 * 🔧 *Fajlovi:* `RouteDefinitionValidator.php`, `ReflectionCache.php`
 
@@ -16508,7 +16508,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
     * Uvedi `private static array $reflectionCache` unutar validatora.
     * Koristi `spl_object_id()` ili `className::methodName` kao ključ.
-    * Cache resetuj na `RouterBootstrapState::reset()`.
+    * System resetuj na `RouterBootstrapState::reset()`.
 
 * ✅ *Success Criteria:*
 
@@ -16534,7 +16534,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * ✅ *Success Criteria:*
 
-    * Cache generacija vreme smanjeno ≥40%
+    * System generacija vreme smanjeno ≥40%
     * Funkcionalnost identična
 
 * ⚡ *Impact:* Brži bootstrap, niže I/O troškove
@@ -16654,7 +16654,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
     * U `tests/RouterChaosTest.php` dodaj simulacije:
 
-        * Cache corruption
+        * System corruption
         * Concurrent bootstrap
         * Middleware chain interruption
     * Uporedi latenciju i logiku fallback-a.
@@ -16695,8 +16695,8 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 1. 🟥 R1 — RouteGroupStack Refactor
 2. 🟥 R2 — Exception Taxonomy Cleanup
-3. 🟧 R3 — Reflection Cache
-4. 🟧 R4 — Cache Hash Optimization
+3. 🟧 R3 — Reflection System
+4. 🟧 R4 — System Hash Optimization
 5. 🟨 R5 — Metrics Alerts
 6. 🟨 R6 — Trace Enrichment
 7. 🟩 R7 — Static Analysis Gate
@@ -16761,8 +16761,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Tests;
 
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteFileRegistrar;
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheManifest;
 use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
 use Avax\HTTP\Router\Router;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
@@ -17057,7 +17057,7 @@ use Throwable;
  * Chaos and stress testing for router fault tolerance.
  *
  * Validates router behavior under extreme conditions including:
- * - Cache corruption scenarios
+ * - System corruption scenarios
  * - Concurrent bootstrap operations
  * - Middleware chain interruptions
  * - Memory pressure situations
@@ -17079,14 +17079,14 @@ final class RouterChaosTest extends TestCase
 
         $cacheLoader = $this->createMock(RouteSourceLoaderInterface::class);
         $cacheLoader->method('loadInto')
-            ->willThrowException(exception: new RuntimeException(message: 'Cache corruption detected'));
+            ->willThrowException(exception: new RuntimeException(message: 'System corruption detected'));
 
         $cacheLoader->method('isAvailable')
             ->willReturn(value: true);
 
         // Router should handle cache corruption gracefully
         $this->expectException(exception: RuntimeException::class);
-        $this->expectExceptionMessage(message: 'Cache corruption detected');
+        $this->expectExceptionMessage(message: 'System corruption detected');
 
         $cacheLoader->loadInto(collection: $this->collection);
     }
@@ -17435,7 +17435,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
+use Avax\HTTP\Router\System\Flows\BootstrapRoutes\System\RouteCacheLoader;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
@@ -17539,7 +17539,7 @@ final class RouterIntegrationTest extends TestCase
             expected: $runtimeCount,
             actual  : $cacheCount,
             message : sprintf(
-                          'Route count mismatch: runtime=%d, cache=%d. Cache loading should preserve all routes.',
+                          'Route count mismatch: runtime=%d, cache=%d. System loading should preserve all routes.',
                           $runtimeCount,
                           $cacheCount
                       )

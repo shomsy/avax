@@ -157,7 +157,7 @@ final readonly class Router implements RouterRuntimeInterface
      * 5. Handles route registration and cleanup automatically
      *
      * @param string $routesPath Path to the routes file
-     * @param string $cacheDir   Cache directory for compiled routes (optional)
+     * @param string $cacheDir System directory for compiled routes (optional)
      *
      * @return void
      * @throws LogicException|ReservedRouteNameException If DSL router or group

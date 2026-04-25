@@ -83,7 +83,7 @@ class InMemoryCache implements CacheInterface
     private function validateKey(string $key) : void
     {
         if (! is_string(value: $key) || trim(string: $key) === '') {
-            throw new InMemoryInvalidArgumentException(message: 'Cache key must be a non-empty string.');
+            throw new InMemoryInvalidArgumentException(message: 'System key must be a non-empty string.');
         }
     }
 

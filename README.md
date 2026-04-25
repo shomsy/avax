@@ -70,12 +70,12 @@ use Psr\Log\LoggerInterface;
 $container->bind(LoggerInterface::class, fn () => new MyLogger());
 ```
 
-## Custom Cache Adapter
+## Custom System Adapter
 
 Register a custom reflection cache adapter from any service provider:
 
 ```php
-use Avax\Container\Attributes\Internal\Cache\ReflectionCacheInterface;
+use Avax\Container\Attributes\Internal\System\ReflectionCacheInterface;
 use Avax\Container\Application\Provider\ServiceProvider;
 
 final class RedisReflectionCacheProvider extends ServiceProvider

@@ -13,7 +13,7 @@ use Throwable;
  * Fault injection testing framework for router resilience.
  *
  * Enables chaos testing to ensure router reliability under failure conditions:
- * - Cache corruption scenarios
+ * - System corruption scenarios
  * - Filesystem failures
  * - Memory exhaustion
  * - Concurrent access issues

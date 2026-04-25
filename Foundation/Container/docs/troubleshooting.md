@@ -73,7 +73,7 @@ If warm versus lazy shared behavior is surprising:
 2. inspect `describeService()['lifetimePlan']['lazy']`
 3. remember that `warmCompiled()` skips lazy shared services on purpose
 
-## Compiled Cache Issues
+## Compiled System Issues
 
 If compiled artifacts are not being used:
 

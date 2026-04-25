@@ -23,7 +23,7 @@ use Throwable;
  * Chaos and stress testing for router fault tolerance.
  *
  * Validates router behavior under extreme conditions including:
- * - Cache corruption scenarios
+ * - System corruption scenarios
  * - Concurrent bootstrap operations
  * - Middleware chain interruptions
  * - Memory pressure situations
@@ -45,14 +45,14 @@ final class RouterChaosTest extends TestCase
 
         $cacheLoader = $this->createMock(RouteSourceLoaderInterface::class);
         $cacheLoader->method('loadInto')
-            ->willThrowException(exception: new RuntimeException(message: 'Cache corruption detected'));
+            ->willThrowException(exception: new RuntimeException(message: 'System corruption detected'));
 
         $cacheLoader->method('isAvailable')
             ->willReturn(value: true);
 
         // Router should handle cache corruption gracefully
         $this->expectException(exception: RuntimeException::class);
-        $this->expectExceptionMessage(message: 'Cache corruption detected');
+        $this->expectExceptionMessage(message: 'System corruption detected');
 
         $cacheLoader->loadInto(collection: $this->collection);
     }

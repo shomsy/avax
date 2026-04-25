@@ -45,12 +45,12 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new RuntimeException(message: 'Cache file not available or invalid');
+            throw new RuntimeException(message: 'System file not available or invalid');
         }
 
         // Validate cache integrity before loading
         if (! $this->manifest->validateSignatureFile(cachePath: $this->cachePath)) {
-            throw new RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
+            throw new RuntimeException(message: 'System signature validation failed - possible tampering detected');
         }
 
         // Load and validate JSON content
@@ -64,7 +64,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         }
 
         if (! is_array(value: $routesData)) {
-            throw new RuntimeException(message: 'Cache file does not contain valid route array');
+            throw new RuntimeException(message: 'System file does not contain valid route array');
         }
 
         // Populate collection with cached routes

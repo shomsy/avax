@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\AppKernel;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Middleware\CsrfVerificationMiddleware;
-use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\Router\Routing\RouteCollection;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\RouterBootstrapper;
-use Avax\Tests\TestCase;
+use components\HTTP\AppKernel;
+use components\HTTP\Dispatcher\ControllerDispatcher;
+use components\HTTP\Middleware\CsrfVerificationMiddleware;
+use components\HTTP\Response\ResponseFactory;
+use components\HTTP\Router\RouterInterface;
+use components\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
+use components\HTTP\Router\Routing\RouteCollection;
+use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
+use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use components\HTTP\RouterBootstrapper;
+use components\Tests\TestCase;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

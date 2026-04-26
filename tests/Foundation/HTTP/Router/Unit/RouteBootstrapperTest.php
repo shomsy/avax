@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\Tests\Unit;
+namespace components\HTTP\Router\Tests\Unit;
 
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
-use Avax\Tests\TestCase;
+use components\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Prototypes\Factory;
+namespace components\Container\Tests\Capability\Prototypes\Factory;
 
-use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Cache\PrototypeCache;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
+use components\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
+use components\Container\DependencyInjection\Capability\Prototypes\Cache\PrototypeCache;
+use components\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use components\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

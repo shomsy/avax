@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\SessionBridge;
+namespace components\Tests\Foundation\HTTP\Request\System\Capability\SessionBridge;
 
-use Avax\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge;
-use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
-use Avax\Tests\TestCase;
+use components\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge;
+use components\HTTP\Session\Shared\Contracts\SessionInterface;
+use components\Tests\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

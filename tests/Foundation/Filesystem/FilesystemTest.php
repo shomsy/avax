@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Filesystem;
+namespace components\Tests\Foundation\Filesystem;
 
-use Avax\Filesystem\Disks\Local\LocalDisk;
-use Avax\Filesystem\Filesystem;
-use Avax\Tests\TestCase;
+use components\Filesystem\Disks\Local\LocalDisk;
+use components\Filesystem\Filesystem;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class FilesystemTest extends TestCase

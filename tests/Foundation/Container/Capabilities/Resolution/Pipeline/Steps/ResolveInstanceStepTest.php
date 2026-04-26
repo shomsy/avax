@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Steps;
+namespace components\Container\Tests\Capability\Resolution\Pipeline\Steps;
 
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\ResolveInstanceStep;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
+use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\ResolveInstanceStep;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

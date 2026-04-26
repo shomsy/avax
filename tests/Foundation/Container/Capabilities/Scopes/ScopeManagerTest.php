@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Scopes;
+namespace components\Container\Tests\Capability\Scopes;
 
-use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
-use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
+use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

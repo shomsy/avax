@@ -1,10 +1,10 @@
 <?php
 
-use Avax\Container\Features\Think\Model\MethodPrototype;
-use Avax\Container\Features\Think\Model\ParameterPrototype;
-use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Router\Routing\StageChain;
-use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
+use components\Container\Features\Think\Model\MethodPrototype;
+use components\Container\Features\Think\Model\ParameterPrototype;
+use components\Container\Features\Think\Model\ServicePrototype;
+use components\HTTP\Router\Routing\StageChain;
+use components\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
 
 return ServicePrototype::__set_state(array: [
                                                 'class' => StageChain::class,

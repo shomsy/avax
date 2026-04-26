@@ -1,9 +1,9 @@
 <?php
 
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
-use Avax\Logging\ErrorHandler;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use components\Logging\ErrorHandler;
 
 return ServicePrototype::__set_state(array: [
                                                 'class' => ErrorHandler::class,

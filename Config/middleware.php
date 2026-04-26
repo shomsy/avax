@@ -9,14 +9,14 @@ declare(strict_types=1);
 // It is designed to prevent malicious activities such as CSRF attacks by verifying that the
 // CSRF token submitted with the request matches the token stored in the user's session.
 // If the token is missing or invalid, the request is rejected to protect the application.
-use Avax\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
-use Avax\HTTP\Middleware\CorsMiddleware;
-use Avax\HTTP\Middleware\ExceptionHandlerMiddleware;
-use Avax\HTTP\Middleware\JsonResponseMiddleware;
-use Avax\HTTP\Middleware\RateLimiterMiddleware;
-use Avax\HTTP\Middleware\RequestLoggerMiddleware;
-use Avax\HTTP\Middleware\SecurityHeadersMiddleware;
-use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
+use components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
+use components\HTTP\Middleware\CorsMiddleware;
+use components\HTTP\Middleware\ExceptionHandlerMiddleware;
+use components\HTTP\Middleware\JsonResponseMiddleware;
+use components\HTTP\Middleware\RateLimiterMiddleware;
+use components\HTTP\Middleware\RequestLoggerMiddleware;
+use components\HTTP\Middleware\SecurityHeadersMiddleware;
+use components\HTTP\Middleware\SessionLifecycleMiddleware;
 use Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware;
 
 return [

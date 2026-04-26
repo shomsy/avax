@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
+namespace components\Tests\Foundation\HTTP\Session\Capabilities;
 
-use Avax\HTTP\Session\Audit\Audit;
-use Avax\Tests\TestCase;
+use components\HTTP\Session\Audit\Audit;
+use components\Tests\TestCase;
 use Psr\Log\LoggerInterface;
 
 final class AuditCharacterizationTest extends TestCase

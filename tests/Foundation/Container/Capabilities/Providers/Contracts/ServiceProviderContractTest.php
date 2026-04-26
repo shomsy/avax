@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Providers\Contracts;
+namespace components\Container\Tests\Capability\Providers\Contracts;
 
-use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
-use Avax\Tests\TestCase;
+use components\Container\ContainerInterface;
+use components\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 

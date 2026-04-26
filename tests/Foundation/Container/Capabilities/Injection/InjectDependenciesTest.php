@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Injection;
+namespace components\Container\Tests\Capability\Injection;
 
-use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capability\Injection\InjectDependencies;
-use Avax\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
-use Avax\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
-use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
-use Avax\Tests\TestCase;
+use components\Container\ContainerInterface;
+use components\Container\DependencyInjection\Capability\Injection\InjectDependencies;
+use components\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
+use components\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
+use components\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use components\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
+use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use components\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

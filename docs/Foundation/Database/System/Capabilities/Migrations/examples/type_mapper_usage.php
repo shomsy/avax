@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Demonstrates how to use SQLToPHPTypeMapper for DTO/Entity generation.
  */
 
-use Avax\Database\System\Capabilities\Migrations\Design\TypeMapping\SQLToPHPTypeMapper;
+use components\Database\System\Capabilities\Migrations\Design\TypeMapping\SQLToPHPTypeMapper;
 
 require_once __DIR__ . '/../Design/TypeMapping/SQLToPHPTypeMapper.php';
 

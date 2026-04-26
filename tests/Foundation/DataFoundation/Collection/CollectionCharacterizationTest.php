@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\DataFoundation\Collection;
+namespace components\Tests\Foundation\DataFoundation\Collection;
 
-use Avax\DataFoundation\Collection;
-use Avax\Tests\TestCase;
+use components\DataFoundation\Collection;
+use components\Tests\TestCase;
 use RuntimeException;
 
 /**

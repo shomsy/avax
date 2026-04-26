@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
+namespace components\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
-use Avax\HTTP\URI\UriBuilder;
-use Avax\Tests\TestCase;
+use components\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
+use components\HTTP\URI\UriBuilder;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

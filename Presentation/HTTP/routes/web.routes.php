@@ -3,57 +3,42 @@
 declare(strict_types=1);
 
 use Avax\Facade\Facades\Route;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
-use http\Encoding\Stream;
-use Psr\Http\Message\ResponseInterface;
+use Avax\HTTP\Response\Response;
+use Psr\Http\Message\ServerRequestInterface;
 
-Route::get('/', static function (Request $request) : ResponseInterface {
-    $body = 'HTTP Foundation v2.0 - Router is Working!';
+/**
+ * --------------------------------------------------------------------------
+ * Web Routes
+ * --------------------------------------------------------------------------
+ *
+ * Here is where you can register web routes for your application. These
+ * routes are loaded by the RouteServiceProvider within a group which
+ * contains the "web" middleware group. Now create something great!
+ *
+ */
 
-    return new Response(stream: Stream::fromString(content: $body), protocolVersion: null, statusCode: 200, headers: ['Content-Type' => 'text/plain']);
-})->name(name: 'home');
+// Basic system routes using lean closure actions
+Route::get('/', static fn () => 'HTTP Foundation v2.0 - Router is Working!')
+    ->name('home');
 
-Route::get('/health', static function (Request $request) : ResponseInterface {
-    $body = 'ok';
+Route::get('/health', static fn () => 'ok')
+    ->name('health');
 
-    return new Response(
-        stream    : Stream::fromString(content: $body),
-        statusCode: 200,
-        headers   : ['Content-Type' => 'text/plain'],
-    );
-})->name(name: 'health');
+Route::get('/test', static fn () => 'Test route - Enterprise Router Active! = ')
+    ->name('test');
 
-Route::get('/test', static function (Request $request) : ResponseInterface {
-    $body = 'Test route - Enterprise Router Active! =�';
+// Dedicated assets/utility routes
+Route::get('/favicon.ico', static fn () => Response::noContent([
+                                                                   'Content-Type' => 'image/x-icon'
+                                                               ]));
 
-    return new Response(
-        stream    : Stream::fromString(content: $body),
-        statusCode: 200,
-        headers   : ['Content-Type' => 'text/plain'],
-    );
-})->name(name: 'test');
-
-Route::get('/favicon.ico', static function (Request $request) : ResponseInterface {
-
-    return new Response(
-        stream    : Stream::fromString(content: ''),
-        statusCode: 204,
-        headers   : ['Content-Type' => 'image/x-icon'],
-    );
-});
-
-Route::fallback(static function (Request $request) : ResponseInterface {
-    $message = sprintf(
+// Global fallback handler for unmatched routes
+// Using PSR-7 ServerRequestInterface for maximum compatibility and stability
+Route::fallback(static fn (ServerRequestInterface $request) => Response::text(
+    content: sprintf(
         'Route not found for [%s] %s',
         $request->getMethod(),
         $request->getUri()->getPath()
-    );
-
-    return new Response(
-        stream    : Stream::fromString(content: $message),
-        statusCode: 404,
-        headers   : ['Content-Type' => 'text/plain'],
-    );
-});
+             ),
+    status : 404
+));

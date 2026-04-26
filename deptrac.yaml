@@ -1,59 +1,56 @@
 deptrac:
+  paths:
+    - ./Foundation
+    - ./Presentation
+    - ./Config
+    - ./bootstrap
+    - ./bin
   layers:
-    - name: HTTP
+    - name: Foundation
       collectors:
         - type: directory
-          value: Foundation/HTTP/.*
-    - name: Cache
+          value: Foundation/(Text|Helpers|Enums|Time|Contracts|Exceptions)/.*
+    - name: Capability
       collectors:
         - type: directory
-          value: Foundation/Cache/.*
-    - name: Database
+          value: Foundation/(Auth|Cache|Container|Database|Filesystem|HTTP|Logging|Middlewares|View|Security|Repository|Entity|DataHandling|DataLayer|DataFoundation)/.*
+    - name: Flow
       collectors:
         - type: directory
-          value: Foundation/Database/.*
-    - name: Auth
+          value: Foundation/ApplicationWorkflow/.*
+    - name: Configuration
       collectors:
         - type: directory
-          value: Foundation/Auth/.*
-    - name: Container
+          value: (Foundation/Config|Config|bootstrap)/.*
+    - name: Presentation
       collectors:
         - type: directory
-          value: Foundation/Container/.*
-    - name: Logging
+          value: Presentation/.*
+    - name: EntryPoint
       collectors:
         - type: directory
-          value: Foundation/Logging/.*
-    - name: Filesystem
-      collectors:
-        - type: directory
-          value: Foundation/Filesystem/.*
-    - name: Helpers
-      collectors:
-        - type: directory
-          value: Foundation/Helpers/.*
+          value: (bin|public)/.*
 
   ruleset:
-    HTTP:
-      - Container
-      - Helpers
-      - Auth
-      - Cache
-    Auth:
-      - Database
-      - Container
-      - Cache
-      - Logging
-    Cache:
-      - Container
-      - Filesystem
-      - Logging
-    Database:
-      - Container
-      - Logging
-    Logging:
-      - Filesystem
-      - Container
-    Container: [ ]
-    Filesystem: [ ]
-    Helpers: [ ]
+    Presentation:
+      - Flow
+      - Capability
+      - Foundation
+    Flow:
+      - Capability
+      - Foundation
+    Capability:
+      - Foundation
+      - Capability
+    Configuration:
+      - Flow
+      - Capability
+      - Foundation
+      - Presentation
+    Foundation:
+      - Foundation
+    EntryPoint:
+      - Configuration
+      - Flow
+      - Capability
+      - Foundation

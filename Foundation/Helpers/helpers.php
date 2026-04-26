@@ -11,6 +11,7 @@ use Avax\Database\System\Capabilities\Connections\Connections;
 use Avax\DataFoundation\Arrhae;
 use Avax\DataFoundation\Collection;
 use Avax\DumpDebugger;
+use Avax\HTTP\Context\HttpContextInterface;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Security\CsrfTokenManager;
@@ -238,6 +239,13 @@ if (! function_exists(function: 'storage_path')) {
         $base = base_path(path: 'storage');
 
         return rtrim(string: $base, characters: '/') . '/' . ltrim(string: $path, characters: '/');
+    }
+}
+
+if (! function_exists(function: 'http_context')) {
+    function http_context() : HttpContextInterface
+    {
+        return app(abstract: HttpContextInterface::class);
     }
 }
 

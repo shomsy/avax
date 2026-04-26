@@ -73,7 +73,7 @@ final readonly class DataField
         if ($this->property !== null) {
             $doc = $this->property->getDocComment();
 
-            if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[\]/', subject: $doc, matches: $matches) === 1) {
+            if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[]/', subject: $doc, matches: $matches) === 1) {
                 $class = ltrim(string: $matches[1], characters: '\\');
 
                 if (str_contains(haystack: $class, needle: '\\')) {

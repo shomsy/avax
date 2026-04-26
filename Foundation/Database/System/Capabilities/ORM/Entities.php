@@ -13,13 +13,13 @@ use Throwable;
 /**
  * Coordinates entity lifecycle: find, persist, update, delete, and refresh.
  */
-final readonly class EntityStore
+readonly class Entities
 {
     public function __construct(
-        private Query                   $query,
-        private AttributeMetadataReader $metadataReader,
-        private Hydrator                $hydrator,
-        private EntityPersister         $persister
+        Query                   $query,
+        AttributeMetadataReader $metadataReader,
+        Hydrator                $hydrator,
+        private EntityPersister $persister
     ) {}
 
     /**

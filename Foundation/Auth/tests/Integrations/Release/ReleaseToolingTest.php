@@ -601,7 +601,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $root . '/System/Actions', permissions: 0777, recursive: true);
         mkdir(directory: $root . '/System/Capabilities/Helpers', permissions: 0777, recursive: true);
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
-        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/DefaultAuth.php', data: "<?php\n");
 
         $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
@@ -642,7 +642,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
         mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
-        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/DefaultAuth.php', data: "<?php\n");
 
         $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
@@ -683,7 +683,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
         mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
-        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/DefaultAuth.php', data: "<?php\n");
 
         $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
@@ -704,7 +704,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
         mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
-        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/DefaultAuth.php', data: "<?php\n");
 
         $result = new CheckSystemShape()->execute(repositoryRoot: $root);
 
@@ -725,7 +725,7 @@ final class ReleaseToolingTest extends TestCase
         mkdir(directory: $root . '/System/Configuration', permissions: 0777, recursive: true);
         mkdir(directory: $root . '/System/Foundation', permissions: 0777, recursive: true);
         file_put_contents(filename: $root . '/System/Auth.php', data: "<?php\n");
-        file_put_contents(filename: $root . '/System/AuthInterface.php', data: "<?php\n");
+        file_put_contents(filename: $root . '/System/DefaultAuth.php', data: "<?php\n");
         symlink(target: $root . '/System/Flows', link: $root . '/System/Flow');
         symlink(target: $root . '/System/Capabilities', link: $root . '/System/Capability');
 

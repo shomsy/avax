@@ -15,7 +15,10 @@ use Throwable;
  *
  * It operates by using reflection to dynamically populate object properties with
  * provided raw data while performing type casting, validation, and handling attributes.
- * This ensures that the hydrated object adheres to the defined structure and constraints.
+ *
+ * @method array reflectPublicFields()
+ * @method mixed castToExpectedType(ReflectionProperty $property, mixed $value)
+ * @method bool isPropertyNullable(ReflectionProperty $property)
  */
 trait HandlesHydration
 {

@@ -15,11 +15,11 @@ use ReflectionException;
 use RuntimeException;
 
 /**
- * Resolves the matched route and dispatches to the target controller.
+ * Resolves the matched route from an incoming HTTP request and dispatches it to the target controller.
  *
  * @internal
  */
-final readonly class DispatchRoute implements RequestHandlerInterface
+readonly class ResolveRouteFromRequest implements RequestHandlerInterface
 {
     public function __construct(private RouterRuntimeInterface $router) {}
 

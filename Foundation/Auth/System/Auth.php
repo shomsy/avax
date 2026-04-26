@@ -115,7 +115,7 @@ use DateMalformedStringException;
  * Provides high-frequency convenience methods directly and exposes
  * capability owners via accessor methods for domain-specific operations.
  */
-interface AuthInterface
+interface Auth
 {
     // ── Fast-path convenience methods ──
 

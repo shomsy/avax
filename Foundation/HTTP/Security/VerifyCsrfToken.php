@@ -23,14 +23,14 @@ class VerifyCsrfToken
 {
     private const array SAFE_METHODS = ['HEAD', 'GET', 'OPTIONS'];
     protected readonly ResponseFactory  $responseFactory;
-    protected readonly CsrfTokenManager $csrfTokenManager;
+    protected readonly CsrfTokens $csrfTokens;
 
     public function __construct(
-        #[SensitiveParameter] CsrfTokenManager $csrfTokenManager,
+        #[SensitiveParameter] CsrfTokens $csrfTokens,
         ResponseFactory                        $responseFactory
     )
     {
-        $this->csrfTokenManager = $csrfTokenManager;
+        $this->csrfTokens = $csrfTokens;
         $this->responseFactory  = $responseFactory;
     }
 
@@ -51,7 +51,7 @@ class VerifyCsrfToken
 
         $token = $this->extractToken(request: $request);
 
-        if (! $this->csrfTokenManager->validateToken(token: $token)) {
+        if (! $this->csrfTokens->validateToken(token: $token)) {
             return $this->createTokenMismatchResponse();
         }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Logging;
 
-use Avax\Exceptions\ValidationException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Avax\Validation\System\Foundation\Exceptions\ValidationException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
 use JsonException;

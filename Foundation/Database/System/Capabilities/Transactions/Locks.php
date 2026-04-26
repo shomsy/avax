@@ -6,7 +6,7 @@ namespace Avax\Database\System\Capabilities\Transactions;
 
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 
-final class LockManager
+final class Locks
 {
     public function __construct(private readonly DatabaseConnection $connection) {}
 

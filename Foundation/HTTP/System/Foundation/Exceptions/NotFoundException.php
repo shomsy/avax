@@ -14,7 +14,7 @@ class NotFoundException extends Exception
 {
     protected string $defaultMessage = 'Not found!';
 
-    protected int $code = 404;
+    protected $code = 404;
 
     /**
      * Constructor for NotFoundException that appends file, line, and trace information.

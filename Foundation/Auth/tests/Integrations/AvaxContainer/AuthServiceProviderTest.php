@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\AvaxContainer;
 
 use Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider;
-use Avax\Auth\System\AuthInterface;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
@@ -62,9 +61,9 @@ class AuthServiceProviderTest extends TestCase
             cacheDir : sys_get_temp_dir()
         );
 
-        $auth = $container->get(id: AuthInterface::class);
+        $auth = $container->get(id: Auth::class);
 
-        $this->assertInstanceOf(expected: AuthInterface::class, actual: $auth);
+        $this->assertInstanceOf(expected: Auth::class, actual: $auth);
 
         $result = $auth->register(data: new RegistrationData(
                                             email   : 'provider@example.com',
@@ -111,7 +110,7 @@ class AuthServiceProviderTest extends TestCase
             message: 'AuthServiceProvider::registerIdentity() requires at least one identity backend'
         );
 
-        $container->get(id: AuthInterface::class);
+        $container->get(id: Auth::class);
     }
 
     /**
@@ -156,7 +155,7 @@ class AuthServiceProviderTest extends TestCase
             cacheDir : sys_get_temp_dir()
         );
 
-        $auth = $container->get(id: AuthInterface::class);
+        $auth = $container->get(id: Auth::class);
 
         $auth->register(data: new RegistrationData(
             email   : 'provider-clock@example.com',

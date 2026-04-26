@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Security\CsrfTokenManager;
+use Avax\HTTP\Security\CsrfTokens;
 
 if (! function_exists(function: 'csrf_token')) {
     /**
-     * Get the current CSRF token.
+     * Generates a CSRF token.
      *
-     * @return string
-     * @throws Exception
+     * @return string The generated token.
+     *
+     * @throws Exception If token generation fails.
      */
     function csrf_token() : string
     {
-        $csrfManager = app(abstract: CsrfTokenManager::class);
+        $csrfManager = app(abstract: CsrfTokens::class);
 
-        if (! $csrfManager instanceof CsrfTokenManager) {
-            throw new RuntimeException(message: 'CsrfTokenManager is not registered in the container.');
+        if (! $csrfManager instanceof CsrfTokens) {
+            throw new RuntimeException(message: 'CsrfTokens is not registered in the container.');
         }
 
         return $csrfManager->getToken();

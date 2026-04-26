@@ -128,7 +128,7 @@ use SensitiveParameter;
  *   $auth->externalIdentity()->registerOAuthClient($data);
  *   $auth->tenancy()->createTenant($data);
  */
-final readonly class Auth implements AuthInterface
+final readonly class DefaultAuth implements Auth
 {
     public function __construct(
         #[SensitiveParameter] private Access $access,

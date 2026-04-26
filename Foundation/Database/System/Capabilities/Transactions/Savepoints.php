@@ -7,7 +7,7 @@ namespace Avax\Database\System\Capabilities\Transactions;
 use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use InvalidArgumentException;
 
-final class SavepointManager
+final class Savepoints
 {
     public function __construct(private readonly DatabaseConnection $connection) {}
 

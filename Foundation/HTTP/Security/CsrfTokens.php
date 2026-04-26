@@ -11,10 +11,11 @@ use Random\RandomException;
 use SensitiveParameter;
 
 /**
- * The `CsrfTokenManager` is a high-level component that manages CSRF tokens
- * to prevent cross-site request forgery attacks.
+ * The `CsrfTokens` is a high-level component that manages CSRF tokens
+ *
+ * @internal
  */
-final readonly class CsrfTokenManager
+final readonly class CsrfTokens
 {
     /**
      * The session key under which all CSRF tokens are stored.

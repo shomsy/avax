@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Facade\Facades;
 
-use Avax\Auth\Contracts\AuthInterface;
+
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\Credentials;
-use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Identity\User\UserInterface;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Facade\BaseFacade;
@@ -35,5 +35,5 @@ final class Auth extends BaseFacade
     /**
      * The unique key representing the authentication service in the application container.
      */
-    protected static string $accessor = AuthInterface::class;
+    protected static string $accessor = Auth::class;
 }

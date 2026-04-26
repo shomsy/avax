@@ -7,7 +7,7 @@ namespace Avax\Auth\Integrations\Http\Scim;
 use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
-use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkOperation;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkOperationResult;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest;
@@ -33,7 +33,7 @@ final readonly class ServeScimHttpSurface
     private const string USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
 
     public function __construct(
-        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private Auth $auth,
         #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     )
     {

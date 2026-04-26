@@ -7,7 +7,7 @@ namespace Avax\Auth\Integrations\Http\Oidc;
 use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
-use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
@@ -26,7 +26,7 @@ use Throwable;
 final readonly class ServeOidcHttpSurface
 {
     public function __construct(
-        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private Auth $auth,
         #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     )
     {

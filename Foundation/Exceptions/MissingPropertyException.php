@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Exceptions;
 
 use Exception;
-use Override;
 
 /**
  * Class MissingPropertyException
@@ -21,7 +20,6 @@ class MissingPropertyException extends Exception
      *
      * @param string $propertyName The name of the missing property.
      */
-    #[Override]
     public function __construct(string $propertyName)
     {
         $message = sprintf("The property '%s' is required but missing in the data.", $propertyName);

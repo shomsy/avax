@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Exceptions;
 
 use InvalidArgumentException;
-use Override;
 
 /**
  * Class InvalidTypeException
@@ -22,7 +21,6 @@ class InvalidTypeException extends InvalidArgumentException
      * @param string $expectedType The expected type.
      * @param mixed  $actualValue  The actual value that caused the exception.
      */
-    #[Override]
     public function __construct(string $expectedType, mixed $actualValue)
     {
         $actualType = gettype(value: $actualValue);

@@ -5,22 +5,30 @@ declare(strict_types=1);
 namespace Avax\Facade\Facades;
 
 use Avax\Facade\BaseFacade;
-use Avax\Filesystem\Storage\FileStorageInterface;
+use Avax\Filesystem\Disks\Disk;
 
 /**
+ * @deprecated Facades hide dependencies. Prefer explicit DI injection of FilesystemInterface.
+ *
  * Facade for accessing the Filesystem service.
  *
- * @method static string read(string $path)
- * @method static bool write(string $path, string $content, bool $append = false)
- * @method static bool delete(string $path)
+ * @method static string get(string $path)
+ * @method static void put(string $path, string $content)
+ * @method static void append(string $path, string $content)
+ * @method static void copy(string $source, string $destination)
+ * @method static void move(string $source, string $destination)
  * @method static bool exists(string $path)
- * @method static bool createDirectory(string $directory)
- * @method static bool deleteDirectory(string $directory)
- * @method static bool setPermissions(string $path, int $permissions)
- * @method static FileStorageInterface disk(string|null $name = null)
+ * @method static void delete(string $path)
+ * @method static int|null lastModified(string $path)
+ * @method static void ensureDirectory(string $path)
+ * @method static void createDirectory(string $path, int $permissions = 0755)
+ * @method static void deleteDirectory(string $path)
+ * @method static void clearDirectory(string $path)
+ * @method static array listFiles(string $path)
  * @method static bool isWritable(string $path)
- * @method static bool clear(string $directory)
+ * @method static bool setPermissions(string $path, int $permissions)
  * @method static bool hasPermission(string $path, int $permissions)
+ * @method static Disk disk(string|null $name = null)
  */
 class Storage extends BaseFacade
 {

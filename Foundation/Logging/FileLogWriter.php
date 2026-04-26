@@ -36,11 +36,8 @@ final class FileLogWriter implements LogWriterInterface
     {
         $directory = dirname(path: $this->filePath);
         // Attempt to ensure the directory exists or use fallback if creation fails
-        if (! Storage::exists(path: $directory) && ! Storage::createDirectory(directory: $directory)) {
-            $this->filePath = self::FALLBACK_PATH;
-            $this->ensureWritable();
-
-            return;
+        if (! Storage::exists(path: $directory)) {
+            Storage::createDirectory(path: $directory);
         }
 
         // Set directory permissions to ensure it is writable

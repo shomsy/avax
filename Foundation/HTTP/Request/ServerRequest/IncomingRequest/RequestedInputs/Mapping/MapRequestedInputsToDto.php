@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use InvalidArgumentException;

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Psr\Http\Message\UriInterface;
 use LogicException;
@@ -2220,7 +2220,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use InvalidArgumentException;
 use RuntimeException;
@@ -2575,7 +2575,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use ReflectionException;
 
 /**
@@ -6743,7 +6743,7 @@ class RequestedInputsTest extends TestCase
         if (!class_exists('Avax\HTTP\Request\Tests\Unit\TestDtoClass')) {
             eval('
                 namespace Avax\HTTP\Request\tests\Unit;
-                use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+                use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 
                 class TestDtoClass extends AbstractDTO {
                     public string $name;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use LogicException;
 use Psr\Http\Message\UriInterface;

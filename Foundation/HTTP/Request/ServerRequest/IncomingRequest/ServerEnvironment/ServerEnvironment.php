@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment;
 
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use ReflectionException;
 
 /**

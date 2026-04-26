@@ -6,6 +6,7 @@ namespace Avax\Database\System\Capabilities\Query\Grammar;
 
 use Avax\Database\System\Capabilities\Query\State\QueryState;
 use Override;
+use RuntimeException;
 
 /**
  * ClickHouse Grammar - Columnar analytics database.
@@ -29,7 +30,7 @@ final class ClickHouseGrammar extends BaseGrammar
         return implode(separator: ' ', array: array_filter(array: $components));
     }
 
-    private function compileColumns(QueryState $state) : string
+    protected function compileColumns(QueryState $state) : string
     {
         $select = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
 
@@ -41,10 +42,12 @@ final class ClickHouseGrammar extends BaseGrammar
     #[Override]
     public function wrap(mixed $value) : string
     {
+        parent::wrap(value: $value);
+
         return (string) $value;
     }
 
-    private function compileHaving(QueryState $state) : string
+    protected function compileHaving(QueryState $state) : string
     {
         return '';
     }
@@ -52,6 +55,8 @@ final class ClickHouseGrammar extends BaseGrammar
     #[Override]
     public function compileUpdate(QueryState $state) : string
     {
+        parent::compileUpdate(state: $state);
+
         $table = $this->wrap(value: $state->from);
 
         $sets = [];
@@ -71,6 +76,8 @@ final class ClickHouseGrammar extends BaseGrammar
     #[Override]
     public function compileDelete(QueryState $state) : string
     {
+        parent::compileDelete(state: $state);
+
         $table  = $this->wrap(value: $state->from);
         $wheres = $this->compileWheres(state: $state);
 
@@ -80,12 +87,19 @@ final class ClickHouseGrammar extends BaseGrammar
     #[Override]
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
     {
+        try {
+            parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
+        } catch (RuntimeException) {
+        }
+
         return $this->compileInsert(state: $state);
     }
 
     #[Override]
     public function compileInsert(QueryState $state) : string
     {
+        parent::compileInsert(state: $state);
+
         $table   = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
         $values  = implode(separator: ', ', array: array_map(

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
+
 use Avax\HTTP\Session\Recovery\Recovery;
 use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class RecoveryCharacterizationTest extends TestCase
 {

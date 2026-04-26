@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware\CSRF;
 
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Security\CsrfTokens;
 use Exception;
@@ -45,7 +45,7 @@ readonly class CsrfMiddleware
      *
      * @throws Exception
      */
-    public function handle(Request $request, callable $next) : mixed
+    public function handle(ServerRequest $request, callable $next) : mixed
     {
         // Only validate CSRF tokens for methods that can modify state
         if (in_array(needle: $request->getMethod(), haystack: ['POST', 'PUT', 'PATCH', 'DELETE'])) {
@@ -53,7 +53,7 @@ readonly class CsrfMiddleware
             $token = $request->inputs()->get(key: '_csrf_token');
 
             // If the token is invalid or missing, return a 403 Forbidden response
-            if (! $this->csrfTokens->isValid(token: $token)) {
+            if (! $this->csrfTokens->validateToken(token: is_string(value: $token) ? $token : null)) {
                 return $this->responseFactory->createResponse(code: 403, reasonPhrase: 'CSRF token validation failed');
             }
         }

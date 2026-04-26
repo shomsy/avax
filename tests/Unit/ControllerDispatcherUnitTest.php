@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Avax\Tests\Unit;
+
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Request\RequestDtoFactory;
@@ -18,9 +20,8 @@ use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
 use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
 use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Avax\HTTP\Response\Response;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\HTTP\URI\Uri;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -143,7 +144,7 @@ class ControllerDispatcherUnitTest extends TestCase
             queryParams: ['q' => 'test'],
             parsedBody : ['data' => 'value'],
             method     : 'POST'
-        )->withUri(uri: UriBuilder::createFromString(uri: 'https://example.com/api'));
+        )->withUri(uri: Uri::fromString(uri: 'https://example.com/api'));
 
         // Mock container to return RequestDtoFactory
         $factory = new RequestDtoFactory();
@@ -169,7 +170,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $this->assertEquals(expected: 'success', actual: (string) $response->getBody());
     }
 
-    #[Override]
+
     protected function setUp() : void
     {
         $this->container  = $this->createMock(ContainerInterface::class);

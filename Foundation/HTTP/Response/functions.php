@@ -15,7 +15,7 @@ if (! function_exists(function: 'response')) {
      *
      * @return ResponseInterface
      */
-    function response(string|null $content = null, int $status = 200, array $headers = []) : ResponseInterface
+    function response(string|null $content = null, int $status = 200, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         return Response::text(content: $content ?? '', status: $status, headers: $headers);
     }
@@ -31,7 +31,7 @@ if (! function_exists(function: 'redirect')) {
      *
      * @return ResponseInterface
      */
-    function redirect(string $url, int $status = 302, array $headers = []) : ResponseInterface
+    function redirect(string $url, int $status = 302, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         return Response::redirect(url: $url, status: $status, headers: $headers);
     }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Avax\Config\Architecture\DDD\AppPath;
-use Avax\Config\Config;
+use Avax\Config\Service\Config;
 
 if (! function_exists(function: 'config')) {
     /**

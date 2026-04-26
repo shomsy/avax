@@ -22,7 +22,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Avax\\\\Tests\\\\": "tests/"
+      "Avax\\Tests\\": "tests/"
     },
     "files": [
       "tests/TestCase.php"

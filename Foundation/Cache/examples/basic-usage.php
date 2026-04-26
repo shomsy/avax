@@ -6,8 +6,9 @@ namespace Avax\Cache\Examples;
 
 use Avax\Cache\Cache;
 use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Cache\System\Foundation\Time\Timestamp;
 
 require __DIR__ . '/../../vendor/autoload.php';
 

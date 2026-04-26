@@ -10,6 +10,7 @@ use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
 use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
 use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 
@@ -43,6 +44,26 @@ final readonly class BuildCache
         $store = new FileCacheStore(
             basePath: $basePath,
             clock   : $this->clock
+        );
+
+        return $this->fromStore(store: $store, config: $config);
+    }
+
+    public function inDirectory(string $directory, CacheConfiguration|null $config = null) : AvaxCache
+    {
+        return $this->file(basePath: $directory, config: $config);
+    }
+
+    public function redis(
+        string                  $host = '127.0.0.1',
+        int                     $port = 6379,
+        CacheConfiguration|null $config = null
+    ) : AvaxCache
+    {
+        $store = new RedisCacheStore(
+            host : $host,
+            port : $port,
+            clock: $this->clock
         );
 
         return $this->fromStore(store: $store, config: $config);

@@ -42,7 +42,7 @@ final class SessionEventBus
         }
 
         foreach ($this->listeners[$event] as $callback) {
-            $callback(new SessionEvent(name: $event, data: $data));
+            $callback(SessionEvent::create(name: $event, data: $data));
         }
     }
 }

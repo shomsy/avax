@@ -132,6 +132,17 @@ final readonly class TenantBoundary
     {
         return $this->id === 'multi';
     }
+
+    public function toArray() : array
+    {
+        return [
+            'id'       => $this->id,
+            'column'   => $this->column,
+            'required' => $this->isRequired,
+            'parent'   => $this->parentTenantId,
+            'settings' => $this->settings,
+        ];
+    }
 }
 
 final readonly class DataAccessPolicy

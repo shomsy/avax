@@ -13,11 +13,13 @@ final class CacheFacadeTest extends TestCase
 {
     protected function setUp() : void
     {
+        parent::setUp();
         Cache::reset();
     }
 
     protected function tearDown() : void
     {
+        parent::tearDown();
         Cache::reset();
     }
 

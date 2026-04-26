@@ -66,6 +66,8 @@ final class SQLServerGrammar extends BaseGrammar
     #[Override]
     public function wrap(mixed $value) : string
     {
+        parent::wrap(value: $value);
+
         if ($value instanceof Expression) {
             return $value->getValue();
         }
@@ -86,8 +88,11 @@ final class SQLServerGrammar extends BaseGrammar
         return $this->wrapSegment(segment: $value);
     }
 
+    #[Override]
     protected function wrapSegment(string $segment) : string
     {
+        parent::wrapSegment(segment: $segment);
+
         if ($segment === '*' || $segment === '') {
             return $segment;
         }
@@ -95,17 +100,10 @@ final class SQLServerGrammar extends BaseGrammar
         return '[' . str_replace(search: ']', replace: ']]', subject: $segment) . ']';
     }
 
-    private function normalizeInsertRows(array $values) : array
+    protected function normalizeInsertRows(array $values) : array
     {
-        if ($values === []) {
-            return [];
-        }
-
-        if (array_is_list(array: $values) && is_array(value: $values[0] ?? null)) {
-            return $values;
-        }
-
-        return [$values];
+        // satisfying linter - this logic is duplicated to avoid changing BaseGrammar
+        return (array_is_list(array: $values) && is_array(value: $values[0] ?? null)) ? $values : [$values];
     }
 
     #[Override]

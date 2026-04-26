@@ -201,6 +201,7 @@ final class CacheReadRoutingTest extends TestCase
 
     protected function setUp() : void
     {
+        parent::setUp();
         Cache::reset();
         CompiledCache::reset();
 
@@ -213,6 +214,7 @@ final class CacheReadRoutingTest extends TestCase
 
     protected function tearDown() : void
     {
+        parent::tearDown();
         Cache::reset();
         CompiledCache::reset();
     }

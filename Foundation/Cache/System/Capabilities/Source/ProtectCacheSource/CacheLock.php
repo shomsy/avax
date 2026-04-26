@@ -31,8 +31,4 @@ final readonly class CacheLock
         return $this->store->isAcquired(key: $key);
     }
 
-    public function withOwner(string $owner) : self
-    {
-        return new self(store: $this->store, owner: $owner);
-    }
 }

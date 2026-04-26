@@ -384,11 +384,15 @@ final readonly class Text
     {
         $matches = Pattern::of(raw: '\b\w+\b')->matchAll(subject: $this->value);
         $words   = [];
+
         foreach ($matches as $match) {
             $words[] = $match[0] ?? '';
         }
 
-        return array_filter(array: $words);
+        /** @var array<string> $filtered */
+        $filtered = array_filter(array: $words);
+
+        return array_values(array: $filtered);
     }
 
     public function startsWithPattern(string $pattern) : bool

@@ -17,6 +17,7 @@ use Redis;
 use RedisArray;
 use RedisCluster;
 use RedisClusterException;
+use SensitiveParameter;
 
 final class RedisCacheStore implements CacheStore
 {
@@ -31,7 +32,7 @@ final class RedisCacheStore implements CacheStore
     public function __construct(
         private readonly string                            $host = '127.0.0.1',
         private readonly int                               $port = self::DEFAULT_PORT,
-        #[SensitiveParameter] private readonly string|null $connectionPassphrase = null,
+        #[SensitiveParameter] private readonly string|null $connectionSecret = null,
         private readonly int                               $database = 0,
         private readonly float                             $timeout = self::DEFAULT_TIMEOUT,
         private readonly string                            $prefix = self::DEFAULT_PREFIX,
@@ -102,8 +103,8 @@ final class RedisCacheStore implements CacheStore
         $this->redis = new Redis();
         $this->redis->connect(host: $this->host, port: $this->port, timeout: $this->timeout);
 
-        if ($this->connectionPassphrase !== null) {
-            $this->redis->auth(credentials: $this->connectionPassphrase);
+        if ($this->connectionSecret !== null) {
+            $this->redis->auth(credentials: $this->connectionSecret);
         }
 
         if ($this->database > 0) {

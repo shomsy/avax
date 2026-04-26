@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP;
 
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\IpRestrictionMiddleware;
 use Avax\HTTP\Middleware\MiddlewareInterface;
 use Avax\HTTP\Middleware\MiddlewareRegistry;
@@ -43,8 +42,6 @@ final readonly class AppKernel implements Kernel
     /**
      * Create AppKernel with all dependencies.
      *
-     * @param RouterRuntimeInterface $router           The route resolver
-     * @param ControllerDispatcher   $dispatcher       The controller executor
      * @param ResponseFactory        $responseFactory  For creating responses
      * @param MiddlewareInterface[]  $globalMiddleware Always-executed middleware
      *
@@ -52,7 +49,6 @@ final readonly class AppKernel implements Kernel
      */
     public function __construct(
         private RouterRuntimeInterface $router,
-        private ControllerDispatcher   $dispatcher,
         private ResponseFactory        $responseFactory,
         private array                  $globalMiddleware = []
     )
@@ -64,7 +60,6 @@ final readonly class AppKernel implements Kernel
 
         $this->kernel = new HttpKernel(
             router          : $this->router,
-            dispatcher      : $this->dispatcher,
             globalMiddleware: $middlewareStack,
             responseFactory : $this->responseFactory
         );
@@ -276,7 +271,6 @@ final readonly class AppKernel implements Kernel
     {
         return new self(
             router          : $this->router,
-            dispatcher      : $this->dispatcher,
             responseFactory : $this->responseFactory,
             globalMiddleware: [...$this->globalMiddleware, $middleware]
         );

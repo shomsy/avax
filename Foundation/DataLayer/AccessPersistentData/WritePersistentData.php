@@ -144,7 +144,7 @@ final readonly class WritePersistentData
         return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: array_values($ids)));
     }
 
-    public function increment(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
+    public function increment(string $table, string $column, mixed $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
     {
         $amount ??= 1;
         $where  ??= '1=1';
@@ -155,7 +155,7 @@ final readonly class WritePersistentData
         return $this->write(request: PersistentDataRequest::raw(sql: $sql, bindings: $allBindings));
     }
 
-    public function decrement(string $table, string $column, mixed|null $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
+    public function decrement(string $table, string $column, mixed $amount = null, string|null $where = null, array $bindings = []) : PersistentDataResult
     {
         $amount ??= 1;
         $where  ??= '1=1';

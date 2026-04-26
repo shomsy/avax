@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Cache\Unit\Cache\PublicSurface;
+namespace Avax\Cache\tests\Unit\Cache\PublicSurface;
 
 use Avax\Cache\Cache;
 use Avax\Cache\System\CacheContract;

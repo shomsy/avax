@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Cache\tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
 
 use Avax\Cache\System\AvaxCache;
 use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;

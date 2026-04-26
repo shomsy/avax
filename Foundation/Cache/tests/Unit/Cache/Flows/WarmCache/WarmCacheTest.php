@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Flows\WarmCache;
+namespace Avax\Cache\tests\Unit\Cache\Flows\WarmCache;
 
 use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;

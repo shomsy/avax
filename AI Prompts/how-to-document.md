@@ -218,20 +218,20 @@ Use this as the starting structure:
 
 ## Real commands or triggers that reach this folder
 
-- <real command that eventually reaches this slice>
-- <runtime trigger or gate trigger>
+- `<real command that eventually reaches this slice>`
+- `<runtime trigger or gate trigger>`
 
 ## Exact upstream handoffs
 
-- <caller-file>
-- function: <CallerFunction>(...)
-- <caller> -> <function in this folder>(...)
+- `<caller-file>`
+- function: `<CallerFunction>`(...)
+- `<caller>` -> `<function in this folder>`(...)
 
 ## The simplest story
 
-- <what enters here>
-- <what this folder decides, writes, reads, or renders>
-- <where the result goes next>
+- `<what enters here>`
+- `<what this folder decides, writes, reads, or renders>`
+- `<where the result goes next>`
 
 ## The first important path
 
@@ -256,10 +256,10 @@ sequenceDiagram
     Next -->> Result: Step 4: <visible result, artifact, or next state>
 ```
 
-- **Step 1:** <what catches the command>
-- **Step 2:** <what this folder really does>
-- **Step 3:** <who receives the result next>
-- **Step 4:** <what the user sees or what artifact now exists>
+- **Step 1:** `<what catches the command>`
+- **Step 2:** `<what this folder really does>`
+- **Step 3:** `<who receives the result next>`
+- **Step 4:** `<what the user sees or what artifact now exists>`
 
 ## Direct files in this folder
 
@@ -269,18 +269,18 @@ This is the file where <one plain sentence about the file's purpose>.
 
 When the story opens this file:
 
-- <command or trigger> -> <caller> -> <this file>
+- `<command or trigger>` -> `<caller>` -> `<this file>`
 
 What arrives here:
 
-- <input 1>
-- <input 2>
+- `<input 1>`
+- `<input 2>`
 
 What leaves this file:
 
-- <returned value>
-- <written artifact>
-- <visible output if true>
+- `<returned value>`
+- `<written artifact>`
+- `<visible output if true>`
 
 Why you open it first:
 
@@ -295,8 +295,8 @@ Open `<child>/how-this-works.md`.
 
 Use it when:
 
-- <command or trigger>
-- <command or trigger>
+- `<command or trigger>`
+- `<command or trigger>`
 
 ## Debug first
 

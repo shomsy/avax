@@ -22,17 +22,17 @@ final readonly class CacheEncryptionKey
         }
     }
 
-    public static function fromEnvironment(string $envVar = 'CACHE_ENCRYPTION_KEY') : self
+    public static function fromConfig(string $configKey = 'cache.encryption_key') : self
     {
-        $key = getenv($envVar);
+        $key = config(key: $configKey);
 
-        if ($key === false || $key === '') {
+        if ($key === null || $key === '') {
             throw new InvalidArgumentException(
-                message: sprintf('Environment variable "%s" is not set', $envVar)
+                message: sprintf('Configuration key "%s" is not set', $configKey)
             );
         }
 
-        return new self(key: $key);
+        return new self(key: (string) $key);
     }
 
     /**

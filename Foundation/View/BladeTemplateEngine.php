@@ -35,7 +35,7 @@ class BladeTemplateEngine extends Blade
             return $context->baseUrl();
         }
 
-        $url    = parse_url(url: (string) env(key: 'APP_URL', default: 'http://localhost'));
+        $url = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
         $host   = $url['host'] ?? 'localhost';
 

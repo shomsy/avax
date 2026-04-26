@@ -60,8 +60,7 @@ final readonly class RouterSnapshot
         $data = [
             'routes'      => $routes,
             'metadata'    => $metadata,
-            'created_at'  => date(format: 'c'),
-            'environment' => $context['environment'] ?? getenv(name: 'APP_ENV') ?: 'unknown',
+            'environment' => $context['environment'] ?? config(key: 'app.env', default: 'unknown'),
             'version'     => $context['version'] ?? 'unknown',
         ];
 

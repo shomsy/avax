@@ -126,7 +126,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
     private function ensureDirectoryExists(string $directory) : void
     {
         if (! Storage::exists(path: $directory)) {
-            Storage::createDirectory(directory: $directory);
+            Storage::createDirectory(path: $directory);
         }
     }
 

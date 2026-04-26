@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\DumpDebugger;
+use Avax\DumpDebugger\DumpDebugger;
 use JetBrains\PhpStorm\NoReturn;
 
 // dd() like function

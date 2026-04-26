@@ -103,7 +103,7 @@ final class LoggerFactory
         $dir = dirname(path: $logPath);
 
         if (! Storage::exists(path: $dir)) {
-            Storage::createDirectory(directory: $dir);
+            Storage::createDirectory(path: $dir);
         }
 
         if (! Storage::isWritable(path: $dir)) {

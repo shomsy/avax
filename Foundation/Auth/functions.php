@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\AuthInterface;
+use Avax\Auth\System\AuthInterface;
 
 if (! function_exists(function: 'auth')) {
     /**

@@ -88,7 +88,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
             $configData[$namespace] = $this->configLoader->loadConfigFile(filePath: $filePath);
         }
 
-        return new Collection(items: $configData);
+        return collect(items: $configData);
     }
 
     /**

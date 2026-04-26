@@ -184,7 +184,7 @@ if (! function_exists(function: 'route_compile_pattern')) {
 
         $pattern = '';
         foreach (explode(separator: '/', string: trim(string: $template, characters: '/')) as $segment) {
-            if (preg_match(pattern: '/^\{([^}]+)\}$/', subject: $segment, matches: $matches) !== 1) {
+            if (preg_match(pattern: '/^\{([^}]+)}$/', subject: $segment, matches: $matches) !== 1) {
                 $pattern .= '/' . preg_quote(str: $segment, delimiter: '#');
                 continue;
             }
@@ -239,7 +239,7 @@ if (! function_exists(function: 'route_extract_params')) {
             $params[] = $match[1] ?? '';
         }
 
-        return array_filter(array: $params);
+        return array_values(array: array_filter(array: $params));
     }
 }
 
@@ -297,7 +297,10 @@ if (! function_exists(function: 'route_match')) {
         $result  = preg_match(pattern: $pattern, subject: $subject, matches: $matches);
 
         if ($result === 1) {
-            return array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
+            /** @var array<string, string> $filtered */
+            $filtered = array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
+
+            return $filtered;
         }
 
         return null;
@@ -603,12 +606,18 @@ if (! function_exists(function: 'route_resource')) {
                     $constraints["{$resource}_id"] = route_constraint(constraints: ['id' => 'id'])['id'];
                 }
 
-                $routes[] = match (strtolower(string: $method)) {
-                    'get'    => get(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                $route = match (strtolower(string: $method)) {
+                    'get'    => get(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller),
                     'post'   => post(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller),
-                    'put'    => put(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
-                    'delete' => delete(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'put'    => put(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller),
+                    'delete' => delete(path: $path, action: is_string(value: $controller) ? "{$controller}@{$handler}" : $controller),
                 };
+
+                foreach ($constraints as $param => $pattern) {
+                    $route->where(param: $param, pattern: $pattern);
+                }
+
+                $routes[] = $route;
             }
         }
 

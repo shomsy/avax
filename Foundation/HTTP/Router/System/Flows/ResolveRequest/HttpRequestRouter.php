@@ -16,7 +16,6 @@ namespace Avax\HTTP\Router\System\Flows\ResolveRequest;
  * @phpstan-type RouteMethodMap array<string, array<string, RouteDefinition[]>>
  */
 
-use Avax\DataFoundation\Arrhae;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\DuplicatePolicy;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
@@ -31,8 +30,6 @@ use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Text\Pattern;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 /**
  * INTERNAL: HTTP ServerRequest Router Engine
@@ -56,7 +53,6 @@ use Psr\Log\NullLogger;
  */
 final class HttpRequestRouter
 {
-    private readonly LoggerInterface $logger;
     /**
      * All registered routes, grouped by HTTP method and path.
      * Supports multiple routes per path for domain-aware routing.
@@ -90,14 +86,12 @@ final class HttpRequestRouter
     public function __construct(
         RouteConstraintValidator $constraintValidator,
         RouteMatcherInterface    $matcher,
-        LoggerInterface|null     $logger = null,
         RouterTrace|null         $trace = null
     )
     {
         $this->constraintValidator = $constraintValidator;
         $this->matcher             = $matcher;
         $this->trace               = $trace;
-        $this->logger              = $logger ?? new NullLogger;
     }
 
     /**
@@ -253,7 +247,7 @@ final class HttpRequestRouter
             }
         }
 
-        return Arrhae::of(items: $allowedMethods)
+        return arrhae(array: $allowedMethods)
             ->unique()
             ->sort()
             ->values();
@@ -279,7 +273,7 @@ final class HttpRequestRouter
 
     private function extractParameters(array $matches) : array
     {
-        return Arrhae::of(items: $matches)
+        return arrhae(array: $matches)
             ->filter(callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY)
             ->all();
     }
@@ -384,15 +378,10 @@ final class HttpRequestRouter
 
         match ($policy) {
             DuplicatePolicy::THROW   => throw new DuplicateRouteException(
-                method: "Duplicate route: {$newRoute->method} {$newRoute->path}",
-                path  : (string) 409,
-                domain: [
-                            'method' => $newRoute->method,
-                            'path'   => $newRoute->path,
-                            'domain' => $newRoute->domain,
-                            'name'   => $newRoute->name
-                        ],
-                name  : false
+                method: $newRoute->method,
+                path  : $newRoute->path,
+                domain: $newRoute->domain,
+                name  : $newRoute->name
             ),
             DuplicatePolicy::REPLACE => $this->replaceRoute(key: $existingKey, newRoute: $newRoute),
             DuplicatePolicy::IGNORE  => null, // Do nothing, keep existing route
@@ -408,7 +397,7 @@ final class HttpRequestRouter
 
         // Remove existing route
         if (isset($this->routes[$method][$key->path])) {
-            $this->routes[$method][$key->path] = Arrhae::of(items: $this->routes[$method][$key->path])
+            $this->routes[$method][$key->path] = arrhae(array: $this->routes[$method][$key->path])
                 ->filter(callback: static fn (RouteDefinition $route) => $route->domain !== $key->domain)
                 ->all();
         }

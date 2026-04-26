@@ -10,7 +10,7 @@ use Stringable;
 /**
  * User entity within the Avax Auth System.
  */
-final readonly class User implements UserInterface, Stringable
+final class User implements UserInterface, Stringable
 {
     /** @var list<UserPermission> */
     public array $permissions;
@@ -19,8 +19,10 @@ final readonly class User implements UserInterface, Stringable
 
     public function __construct(
         private UserId    $_id,
+        /** @phpstan-ignore-next-line */
         private UserEmail $_email,
         private string    $_username,
+        /** @phpstan-ignore-next-line */
         private string    $_passwordHash,
         array|null        $roles = null,
         array|null        $permissions = null,
@@ -78,18 +80,18 @@ final readonly class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        return Arrhae::of(items: $this->roles)->contains(needle: $role);
+        return arrhae(array: $this->roles)->contains(needle: $role);
     }
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        return Arrhae::of(items: $this->permissions)
+        return arrhae(array: $this->permissions)
             ->any(callback: fn (UserPermission $p) => $p->equals(other: $permission));
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        return Arrhae::of(items: $this->roles)
+        return arrhae(array: $this->roles)
             ->any(callback: fn (UserRole $role) => $role->canAccess(required: $requiredRole));
     }
 
@@ -111,6 +113,11 @@ final readonly class User implements UserInterface, Stringable
     public function getPasswordHash() : string
     {
         return $this->passwordHash;
+    }
+
+    public function isActive() : bool
+    {
+        return $this->_isActive;
     }
 
     /**

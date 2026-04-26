@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Filesystem\Files;
+namespace components\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Disks\Local\LocalDisk;
-use Avax\Filesystem\Files\AppendToFile;
-use Avax\Tests\TestCase;
+use components\Filesystem\Disks\Local\LocalDisk;
+use components\Filesystem\Files\AppendToFile;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class AppendToFileTest extends TestCase

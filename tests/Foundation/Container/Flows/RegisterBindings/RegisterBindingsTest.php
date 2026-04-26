@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Flow\RegisterBindings;
+namespace components\Container\Tests\Flow\RegisterBindings;
 
-use Avax\Container\Core\AppFactory;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
-use Avax\Container\DependencyInjection\Configuration\AppFactory;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
-use Avax\Tests\TestCase;
+use components\Container\Core\AppFactory;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
+use components\Container\DependencyInjection\Configuration\AppFactory;
+use components\HTTP\Request\Request;
+use components\HTTP\Router\RouterInterface;
+use components\HTTP\Router\Routing\RouteRegistrarProxy;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use components\Tests\TestCase;
 use LogicException;
 use Override;
 use PHPUnit\Framework\TestCase;

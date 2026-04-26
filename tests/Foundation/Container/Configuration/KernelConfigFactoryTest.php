@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Configuration;
+namespace components\Container\Tests\Configuration;
 
-use Avax\Container\DependencyInjection\Capability\Injection\InjectDependencies;
-use Avax\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
-use Avax\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
-use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capability\Invocation\InvokeAction;
-use Avax\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
-use Avax\Container\DependencyInjection\Capability\Observability\Timeline\ResolutionTimeline;
-use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Cache\FilePrototypeCache;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
-use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
-use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
-use Avax\Container\DependencyInjection\Configuration\KernelConfigFactory;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Injection\InjectDependencies;
+use components\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
+use components\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
+use components\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use components\Container\DependencyInjection\Capability\Invocation\InvokeAction;
+use components\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
+use components\Container\DependencyInjection\Capability\Observability\Timeline\ResolutionTimeline;
+use components\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
+use components\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
+use components\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
+use components\Container\DependencyInjection\Capability\Prototypes\Cache\FilePrototypeCache;
+use components\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
+use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
+use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use components\Container\DependencyInjection\Configuration\KernelConfigFactory;
+use components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class KernelConfigFactoryTest extends TestCase

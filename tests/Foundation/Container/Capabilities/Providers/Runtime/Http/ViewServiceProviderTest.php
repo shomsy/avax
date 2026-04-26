@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Providers\Runtime\Http;
+namespace components\Container\Tests\Capability\Providers\Runtime\Http;
 
-use Avax\Container\BindingBuilderInterface;
-use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
-use Avax\Container\DependencyInjection\Configuration\Settings;
-use Avax\Tests\TestCase;
-use Avax\View\BladeTemplateEngine;
+use components\Container\BindingBuilderInterface;
+use components\Container\ContainerInterface;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
+use components\Container\DependencyInjection\Configuration\Settings;
+use components\Tests\TestCase;
+use components\View\BladeTemplateEngine;
 use Illuminate\View\ViewServiceProvider;
 use JakubOnderka\PhpParallelLint\Settings;
 use PHPUnit\Framework\TestCase;

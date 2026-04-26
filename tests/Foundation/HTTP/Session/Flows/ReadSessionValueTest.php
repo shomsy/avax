@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Tests\TestCase;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ReadSessionValueTest extends TestCase

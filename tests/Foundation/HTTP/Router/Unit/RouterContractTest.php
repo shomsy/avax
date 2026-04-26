@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
-use Avax\Tests\TestCase;
+use components\HTTP\Request\Request;
+use components\HTTP\Router\Router;
+use components\HTTP\Router\RouterInterface;
+use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 

@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Filesystem\Paths;
+namespace components\Tests\Foundation\Filesystem\Paths;
 
-use Avax\Filesystem\Paths\PathIsWritable;
-use Avax\Tests\TestCase;
+use components\Filesystem\Paths\PathIsWritable;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class PathIsWritableTest extends TestCase
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Text\Tests;
+namespace components\Text\Tests;
 
-use Avax\Tests\TestCase;
-use Avax\Text\Pattern;
+use components\Tests\TestCase;
+use components\Text\Pattern;
 use PHPUnit\Framework\TestCase;
 
 final class PatternFlagsPropagationTest extends TestCase

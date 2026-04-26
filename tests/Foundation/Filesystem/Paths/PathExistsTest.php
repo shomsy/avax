@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Filesystem\Paths;
+namespace components\Tests\Foundation\Filesystem\Paths;
 
-use Avax\Filesystem\Paths\PathExists;
-use Avax\Tests\TestCase;
+use components\Filesystem\Paths\PathExists;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 class PathExistsTest extends TestCase

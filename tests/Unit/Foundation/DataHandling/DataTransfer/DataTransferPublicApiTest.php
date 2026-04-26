@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Foundation\DataHandling\DataTransfer;
+namespace components\Tests\Unit\Foundation\DataHandling\DataTransfer;
 
-use Avax\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
-use Avax\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
-use Avax\DataHandling\DataTransfer\Capabilities\Attributes\MapFrom;
-use Avax\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferFailure;
-use Avax\DataHandling\DataTransfer\Configuration\DataTransferConfig;
-use Avax\DataHandling\DataTransfer\Configuration\UnknownFieldPolicy;
-use Avax\DataHandling\DataTransfer\DataTransfer;
+use components\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
+use components\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
+use components\DataHandling\DataTransfer\Capabilities\Attributes\MapFrom;
+use components\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferFailure;
+use components\DataHandling\DataTransfer\Configuration\DataTransferConfig;
+use components\DataHandling\DataTransfer\Configuration\UnknownFieldPolicy;
+use components\DataHandling\DataTransfer\DataTransfer;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Strategies;
+namespace components\Container\Tests\Capability\Resolution\Pipeline\Strategies;
 
-use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStageHandlers;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
+use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStageHandlers;
+use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
+use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionStageHandlersTest extends TestCase

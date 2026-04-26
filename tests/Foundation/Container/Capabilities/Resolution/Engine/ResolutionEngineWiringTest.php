@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Engine;
+namespace components\Container\Tests\Capability\Resolution\Engine;
 
-use Avax\Container\DependencyInjection\Capability\Definitions\Store\DefinitionStore;
-use Avax\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\Instantiator;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
-use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Definitions\Store\DefinitionStore;
+use components\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
+use components\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use components\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\Instantiator;
+use components\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
+use components\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
+use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
+use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use components\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

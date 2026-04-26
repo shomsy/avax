@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Pipeline;
+namespace components\Container\Tests\Capability\Resolution\Pipeline;
 
-use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Contracts\KernelStep;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\ResolutionPipeline;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Tests\TestCase;
+use components\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
+use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Contracts\KernelStep;
+use components\Container\DependencyInjection\Capability\Resolution\Pipeline\ResolutionPipeline;
+use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;

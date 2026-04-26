@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit;
+namespace Avax\tests\Unit;
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
@@ -24,6 +24,7 @@ use Avax\HTTP\URI\Uri;
 use Avax\Tests\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Unit tests for ControllerDispatcher
@@ -39,10 +40,10 @@ class ControllerDispatcherUnitTest extends TestCase
     public function dispatch_callable_returns_response_when_callable_returns_null() : void
     {
         // Given: A callable that returns null
-        $callable = static fn (Request $request) => null;
+        $callable = static fn (ServerRequestInterface $request) => null;
 
         // Mock request
-        $request = $this->createMock(originalClassName: ServerRequest::class);
+        $request = $this->createMock(originalClassName: ServerRequestInterface::class);
 
         // When: Dispatching the callable
         $response = $this->dispatcher->dispatch(action: $callable, request: $request);
@@ -59,7 +60,7 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: A controller with a method that returns null
         $controller = new class {
-            public function testMethod(Request $request) : ResponseInterface|null
+            public function testMethod(ServerRequestInterface $request) : ResponseInterface|null
             {
                 return null;
             }
@@ -70,7 +71,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $this->container->method('get')->willReturn(value: $controller);
 
         // Mock request
-        $request = $this->createMock(originalClassName: ServerRequest::class);
+        $request = $this->createMock(originalClassName: ServerRequestInterface::class);
 
         // When: Dispatching the controller method
         $response = $this->dispatcher->dispatch(action: [get_class(object: $controller), 'testMethod'], request: $request);
@@ -87,14 +88,14 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: An invokable controller that returns null
         $controller = new class {
-            public function __invoke(Request $request) : ResponseInterface|null
+            public function __invoke(ServerRequestInterface $request) : ResponseInterface|null
             {
                 return null;
             }
         };
 
         // Mock request
-        $request = $this->createMock(originalClassName: ServerRequest::class);
+        $request = $this->createMock(originalClassName: ServerRequestInterface::class);
 
         // When: Dispatching the invokable controller
         $response = $this->dispatcher->dispatch(action: $controller::class, request: $request);

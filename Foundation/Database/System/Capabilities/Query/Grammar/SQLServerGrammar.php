@@ -102,6 +102,8 @@ final class SQLServerGrammar extends BaseGrammar
 
     protected function normalizeInsertRows(array $values) : array
     {
+        parent::normalizeInsertRows(values: $values);
+
         // satisfying linter - this logic is duplicated to avoid changing BaseGrammar
         return (array_is_list(array: $values) && is_array(value: $values[0] ?? null)) ? $values : [$values];
     }

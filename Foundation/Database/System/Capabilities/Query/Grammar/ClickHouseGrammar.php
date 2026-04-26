@@ -16,6 +16,8 @@ final class ClickHouseGrammar extends BaseGrammar
     #[Override]
     public function compileSelect(QueryState $state) : string
     {
+        parent::compileSelect(state: $state);
+
         $components = [
             'select' => $this->compileColumns(state: $state),
             'from'   => $this->compileFrom(state: $state),
@@ -32,6 +34,8 @@ final class ClickHouseGrammar extends BaseGrammar
 
     protected function compileColumns(QueryState $state) : string
     {
+        parent::compileColumns(state: $state);
+
         $select = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
 
         $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns ?: ['*']);

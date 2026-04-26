@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Integration\Cache\ManageCompiledCache;
+namespace Avax\Cache\tests\Integration\Cache\ManageCompiledCache;
 
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCache;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
@@ -20,7 +20,7 @@ final class UserController
 final class CompiledCacheIntegrationTest extends TestCase
 {
     private string        $tmpDir;
-    private CompiledCache $cache;
+    private CompiledCacheContract $cache;
 
     public function test_it_compiles_reads_and_clears_route_like_artifact() : void
     {

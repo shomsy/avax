@@ -38,7 +38,7 @@ readonly class CsrfMiddleware
      * Handles the incoming request and ensures that CSRF token validation is performed for certain HTTP methods.
      * If the token is invalid or absent, a 403 response is generated.
      *
-     * @param Request  $request The incoming HTTP request object.
+     * @param ServerRequest $request The incoming HTTP request object.
      * @param callable $next    The next middleware to be called.
      *
      * @return mixed Returns the next middleware response or a 403 response if CSRF validation fails.

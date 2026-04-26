@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\PropagateDataChanges;
 
+use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use JsonException;
+use Random\RandomException;
 
 final readonly class OutboxMessage
 {
@@ -52,6 +55,10 @@ final readonly class OutboxMessage
         $this->status        = $status;
     }
 
+    /**
+     * @throws RandomException
+     * @throws JsonException
+     */
     public static function create(
         string      $aggregateType,
         string      $aggregateId,
@@ -81,6 +88,9 @@ final readonly class OutboxMessage
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public static function fromArray(array $row) : self
     {
         return new self(
@@ -169,6 +179,9 @@ final readonly class OutboxMessage
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     public function getPayload() : array
     {
         return json_decode($this->eventPayload, true, 512, JSON_THROW_ON_ERROR);
@@ -184,6 +197,9 @@ final readonly class OutboxMessage
         return $this->attempt < 3 && $this->status === OutboxStatus::FAILED;
     }
 
+    /**
+     * @throws RandomException
+     */
     private static function generateId() : string
     {
         return sprintf(

@@ -13,6 +13,9 @@ final class RetryablePool
         private int                $maxRetries = 3,
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public function execute(callable $operation) : mixed
     {
         $attempts = 0;

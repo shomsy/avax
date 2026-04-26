@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity\SessionEncryption;
 
+use Random\RandomException;
+
 final class SessionEncrypter
 {
     private string $key;
@@ -13,6 +15,9 @@ final class SessionEncrypter
         $this->key = $key;
     }
 
+    /**
+     * @throws RandomException
+     */
     public function encrypt(mixed $value) : string
     {
         $json      = json_encode($value);

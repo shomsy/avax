@@ -12,14 +12,22 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshT
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class LegacyAuthenticationBehaviorTest extends TestCase
 {
+    /**
+     * @throws AuthenticationFailed
+     * @throws RegistrationFailed
+     * @throws RateLimitException
+     */
     public function testLegacyAuthenticationLifecycleRemainsStable() : void
     {
         $auth = $this->buildAuth();

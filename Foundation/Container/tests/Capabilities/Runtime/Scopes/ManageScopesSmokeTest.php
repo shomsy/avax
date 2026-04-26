@@ -22,6 +22,8 @@ assertThrows(
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: ScopedService::class),
     message      : 'Scoped services must fail closed without an active scope.'

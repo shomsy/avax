@@ -29,6 +29,9 @@ class LoginRateLimitTest extends TestCase
         $this->assertSame(expected: 0, actual: $storage->get(identifier: 'alice'));
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginRateLimitBlocksWithinDecayWindow() : void
     {
         $storage   = new InMemoryLoginRateLimitStorage();
@@ -55,6 +58,9 @@ class LoginRateLimitTest extends TestCase
         $this->assertSame(expected: 0, actual: $storage->getLastAttemptTime(identifier: 'alice'));
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginRateLimitNormalizesIdentifiers() : void
     {
         $storage   = new InMemoryLoginRateLimitStorage();

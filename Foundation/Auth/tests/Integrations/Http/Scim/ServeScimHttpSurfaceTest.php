@@ -17,9 +17,13 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\Re
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class ServeScimHttpSurfaceTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testScimHttpSurfaceServesMetadataCrudAndPatchFlow() : void
     {
         $auth        = $this->buildAuth();
@@ -159,6 +163,9 @@ final class ServeScimHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'invalidValue', actual: $response->body['scimType']);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testScimHttpSurfaceRejectsOversizedBulkRequests() : void
     {
         $auth       = $this->buildAuth();

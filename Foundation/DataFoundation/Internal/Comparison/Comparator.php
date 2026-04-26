@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\DataFoundation\Internal\Comparison;
 
+use JsonException;
 use Stringable;
 
 /**
@@ -11,6 +12,9 @@ use Stringable;
  */
 final readonly class Comparator
 {
+    /**
+     * @throws JsonException
+     */
     public static function compare(mixed $left, mixed $right) : int
     {
         $leftHash  = self::hash(value: $left);
@@ -19,6 +23,9 @@ final readonly class Comparator
         return $leftHash <=> $rightHash;
     }
 
+    /**
+     * @throws JsonException
+     */
     public static function hash(mixed $value) : string
     {
         return match (true) {

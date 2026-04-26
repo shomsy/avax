@@ -12,14 +12,24 @@ use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthentica
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Tests\TestCase;
+use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 
 final class LegacyTokenRefreshBehaviorTest extends TestCase
 {
+    /**
+     * @throws DateMalformedStringException
+     * @throws AuthenticationFailed
+     * @throws RateLimitException
+     * @throws RegistrationFailed
+     */
     public function testLegacyRefreshRotationBehaviorRemainsStable() : void
     {
         $userSource    = new InMemoryUserSource();

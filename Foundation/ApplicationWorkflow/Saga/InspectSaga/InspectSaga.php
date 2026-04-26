@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\ApplicationWorkflow\Saga\InspectSaga;
 
 use Countable;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use IteratorAggregate;
+use Random\RandomException;
 use Traversable;
 
 final readonly class InspectSaga implements IteratorAggregate, Countable
@@ -180,6 +182,9 @@ final readonly class SagaRuntimeEvent
         ];
     }
 
+    /**
+     * @throws RandomException
+     */
     private static function generateId() : string
     {
         return sprintf('evt_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
@@ -215,6 +220,9 @@ final readonly class SagaTimeline
         $this->finalStatus = $finalStatus;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public static function fromEvents(string $sagaId, array $events) : self
     {
         $steps       = [];

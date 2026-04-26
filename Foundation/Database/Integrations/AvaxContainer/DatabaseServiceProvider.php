@@ -22,6 +22,7 @@ use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Database\Telemetry;
 use Avax\Database\Transactions;
+use Random\RandomException;
 
 /**
  * Optional Avax Container adapter for assembling the Database system.
@@ -123,6 +124,9 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
         return [];
     }
 
+    /**
+     * @throws RandomException
+     */
     private function buildDatabase() : Database
     {
         return Database::configuration()

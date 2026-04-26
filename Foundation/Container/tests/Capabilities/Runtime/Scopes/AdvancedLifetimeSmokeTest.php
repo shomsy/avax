@@ -134,6 +134,8 @@ assertThrows(
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
     message      : 'ServerRequest-scoped services should require an active request scope.'
@@ -154,6 +156,8 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws Throwable
  */ /**
  * @throws Throwable
  */ expectedClass: ContainerException::class,

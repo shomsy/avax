@@ -22,10 +22,16 @@ use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Tests\TestCase;
+use JsonException;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class FederationFlowTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     * @throws JsonException
+     */
     public function testFederationConnectionDiscoveryAndLoginProvisioning() : void
     {
         $auditLog      = new InMemoryAuditLog();

@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Query\IR;
 
 use Avax\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
+use JsonException;
 
 final class IRNormalizer
 {
+    /**
+     * @throws JsonException
+     */
     public function fingerprint(QueryNode $query) : string
     {
         return hash(algo: 'sha256', data: json_encode(value: $this->toCanonicalArray(query: $query), flags: JSON_THROW_ON_ERROR));

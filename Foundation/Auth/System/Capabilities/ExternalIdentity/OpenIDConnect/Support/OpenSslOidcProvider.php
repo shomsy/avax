@@ -13,9 +13,6 @@ use OpenSSLAsymmetricKey;
 use RuntimeException;
 use SensitiveParameter;
 
-/** @noinspection PhpComposerExtensionStubsInspection */
-
-/** @noinspection PhpComposerExtensionStubsInspection */
 final readonly class OpenSslOidcProvider implements OidcProviderInterface
 {
     private OpenSSLAsymmetricKey      $privateKey;

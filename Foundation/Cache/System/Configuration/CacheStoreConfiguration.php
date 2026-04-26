@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Cache\System\Configuration;
 
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\FileCacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use InvalidArgumentException;
 
 final readonly class CacheStoreConfiguration
@@ -39,9 +39,9 @@ final readonly class CacheStoreConfiguration
         return match ($this->type) {
             'memory' => new InMemoryCacheStore(),
             'file'   => new FileCacheStore(
-                $this->options['base_path'] ?? sys_get_temp_dir() . '/avax_cache'
+                basePath: $this->options['base_path'] ?? sys_get_temp_dir() . '/avax_cache'
             ),
-            default  => throw new InvalidArgumentException("Unknown store type: {$this->type}"),
+            default  => throw new InvalidArgumentException(message: "Unknown store type: {$this->type}"),
         };
     }
 }

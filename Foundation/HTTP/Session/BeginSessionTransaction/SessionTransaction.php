@@ -18,6 +18,9 @@ final class SessionTransaction
         $this->store = $store;
     }
 
+    /**
+     * @throws Exception
+     */
     public function begin() : void
     {
         if ($this->active) {
@@ -28,6 +31,9 @@ final class SessionTransaction
         $this->active = true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function commit() : void
     {
         if (! $this->active) {
@@ -38,6 +44,9 @@ final class SessionTransaction
         $this->active = false;
     }
 
+    /**
+     * @throws Exception
+     */
     public function rollback() : void
     {
         if (! $this->active || $this->backup === null) {

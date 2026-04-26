@@ -14,6 +14,7 @@ use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionExcepti
 use Avax\Tests\TestCase;
 use Exception;
 use PDO;
+use Random\RandomException;
 use SensitiveParameter;
 use Throwable;
 
@@ -117,6 +118,10 @@ final class CriticalPathTest extends TestCase
         $this->fail(message: 'Expected QueryException was not thrown.');
     }
 
+    /**
+     * @throws Throwable
+     * @throws RandomException
+     */
     protected function setUp() : void
     {
         parent::setUp();
@@ -152,6 +157,9 @@ final class TestUserEntity
 
 final class TestUserRepository extends EntityRepository
 {
+    /**
+     * @throws Throwable
+     */
     public function findByEmail(#[SensitiveParameter] string $email) : TestUserEntity|null
     {
         $entity = $this->findOneBy(criteria: ['email' => $email]);

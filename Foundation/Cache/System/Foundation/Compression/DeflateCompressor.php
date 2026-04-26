@@ -18,7 +18,7 @@ final readonly class DeflateCompressor implements CacheCompressor
         $compressed   = zlib_encode($data, encoding: ZLIB_ENCODING_DEFLATE, level: self::LEVEL);
 
         if ($compressed === false) {
-            throw new RuntimeException('Failed to compress data using deflate');
+            throw new RuntimeException(message: 'Failed to compress data using deflate');
         }
 
         return new CompressedCachePayload(
@@ -33,14 +33,14 @@ final readonly class DeflateCompressor implements CacheCompressor
     {
         if ($payload->algorithm !== self::ALGORITHM) {
             throw new InvalidArgumentException(
-                sprintf('Cannot decompress payload with algorithm "%s"', $payload->algorithm)
+                message: sprintf('Cannot decompress payload with algorithm "%s"', $payload->algorithm)
             );
         }
 
         $decompressed = zlib_decode($payload->data);
 
         if ($decompressed === false) {
-            throw new RuntimeException('Failed to decompress data');
+            throw new RuntimeException(message: 'Failed to decompress data');
         }
 
         return $decompressed;

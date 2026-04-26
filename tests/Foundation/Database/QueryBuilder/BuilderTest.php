@@ -7,10 +7,15 @@ namespace Avax\Tests\Foundation\Database\QueryBuilder;
 use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Tests\TestCase;
 use Override;
+use ReflectionException;
 use Throwable;
 
 class BuilderTest extends TestCase
 {
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function test_basic_select() : void
     {
         $results = $this->database->table(table: 'users')->select('id', 'name')->get();
@@ -19,6 +24,10 @@ class BuilderTest extends TestCase
         $this->assertEquals(expected: 'John Doe', actual: $results[0]['name']);
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function test_where_clauses() : void
     {
         $builder = $this->database->table(table: 'users')
@@ -28,6 +37,10 @@ class BuilderTest extends TestCase
         $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function test_joins() : void
     {
         $builder = $this->database->table(table: 'users')
@@ -37,6 +50,10 @@ class BuilderTest extends TestCase
         $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function test_aggregates() : void
     {
         $count = $this->database->table(table: 'users')->count();

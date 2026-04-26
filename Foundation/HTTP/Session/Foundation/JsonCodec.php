@@ -17,6 +17,9 @@ final class JsonCodec
         }
     }
 
+    /**
+     * @throws JsonException
+     */
     public function encode(mixed $value) : string
     {
         return json_encode($value, JSON_THROW_ON_ERROR);
@@ -31,6 +34,9 @@ final class JsonCodec
         }
     }
 
+    /**
+     * @throws JsonException
+     */
     public function decode(string $data) : mixed
     {
         return json_decode($data, true, 512, JSON_THROW_ON_ERROR);

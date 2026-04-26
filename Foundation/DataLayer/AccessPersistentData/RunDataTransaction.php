@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\AccessPersistentData;
 
+use Exception;
 use InvalidArgumentException;
 use PDO;
 use Throwable;
@@ -87,6 +88,9 @@ final readonly class RunDataTransaction
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function runWithRetry(
         callable $callback,
         int|null $maxRetries = null,
@@ -174,6 +178,9 @@ final readonly class RunDataTransaction
         return null;
     }
 
+    /**
+     * @throws Throwable
+     */
     public function savepoint(string $name, callable $callback, string|null $connectionName = null) : mixed
     {
         if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {

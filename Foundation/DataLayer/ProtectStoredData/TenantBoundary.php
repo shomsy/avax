@@ -6,6 +6,7 @@ namespace Avax\DataLayer\ProtectStoredData;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Random\RandomException;
 
 enum SensitiveField: string
 {
@@ -342,6 +343,9 @@ final readonly class DataAuditEntry
         );
     }
 
+    /**
+     * @throws RandomException
+     */
     private static function generateId() : string
     {
         return sprintf('audit_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));

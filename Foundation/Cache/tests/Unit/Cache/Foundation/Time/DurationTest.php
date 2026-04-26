@@ -11,73 +11,73 @@ final class DurationTest extends TestCase
 {
     public function test_creates_from_seconds() : void
     {
-        $duration = Duration::ofSeconds(60);
+        $duration = Duration::ofSeconds(seconds: 60);
 
-        $this->assertSame(60, $duration->toSeconds());
-        $this->assertSame(60000, $duration->toMilliseconds());
+        $this->assertSame(expected: 60, actual: $duration->toSeconds());
+        $this->assertSame(expected: 60000, actual: $duration->toMilliseconds());
     }
 
     public function test_creates_from_milliseconds() : void
     {
-        $duration = Duration::ofMilliseconds(1500);
+        $duration = Duration::ofMilliseconds(milliseconds: 1500);
 
-        $this->assertSame(1, $duration->toSeconds());
-        $this->assertSame(1500, $duration->toMilliseconds());
+        $this->assertSame(expected: 1, actual: $duration->toSeconds());
+        $this->assertSame(expected: 1500, actual: $duration->toMilliseconds());
     }
 
     public function test_adds_durations() : void
     {
-        $a = Duration::ofSeconds(30);
-        $b = Duration::ofSeconds(20);
+        $a = Duration::ofSeconds(seconds: 30);
+        $b = Duration::ofSeconds(seconds: 20);
 
-        $result = $a->add($b);
+        $result = $a->add(other: $b);
 
-        $this->assertSame(50, $result->toSeconds());
+        $this->assertSame(expected: 50, actual: $result->toSeconds());
     }
 
     public function test_subtracts_durations() : void
     {
-        $a = Duration::ofSeconds(30);
-        $b = Duration::ofSeconds(20);
+        $a = Duration::ofSeconds(seconds: 30);
+        $b = Duration::ofSeconds(seconds: 20);
 
-        $result = $a->subtract($b);
+        $result = $a->subtract(other: $b);
 
-        $this->assertSame(10, $result->toSeconds());
+        $this->assertSame(expected: 10, actual: $result->toSeconds());
     }
 
     public function test_prevents_negative_result() : void
     {
-        $a = Duration::ofSeconds(10);
-        $b = Duration::ofSeconds(20);
+        $a = Duration::ofSeconds(seconds: 10);
+        $b = Duration::ofSeconds(seconds: 20);
 
-        $result = $a->subtract($b);
+        $result = $a->subtract(other: $b);
 
-        $this->assertSame(0, $result->toSeconds());
+        $this->assertSame(expected: 0, actual: $result->toSeconds());
     }
 
     public function test_is_zero() : void
     {
-        $zero    = Duration::ofSeconds(0);
-        $nonZero = Duration::ofSeconds(1);
+        $zero    = Duration::ofSeconds(seconds: 0);
+        $nonZero = Duration::ofSeconds(seconds: 1);
 
-        $this->assertTrue($zero->isZero());
-        $this->assertFalse($nonZero->isZero());
+        $this->assertTrue(condition: $zero->isZero());
+        $this->assertFalse(condition: $nonZero->isZero());
     }
 
     public function test_is_positive() : void
     {
-        $positive = Duration::ofSeconds(1);
-        $zero     = Duration::ofSeconds(0);
+        $positive = Duration::ofSeconds(seconds: 1);
+        $zero     = Duration::ofSeconds(seconds: 0);
 
-        $this->assertTrue($positive->isPositive());
-        $this->assertFalse($zero->isPositive());
+        $this->assertTrue(condition: $positive->isPositive());
+        $this->assertFalse(condition: $zero->isPositive());
     }
 
     public function test_multiplies_duration() : void
     {
-        $duration = Duration::ofSeconds(10);
-        $result   = $duration->multiply(3);
+        $duration = Duration::ofSeconds(seconds: 10);
+        $result   = $duration->multiply(factor: 3);
 
-        $this->assertSame(30, $result->toSeconds());
+        $this->assertSame(expected: 30, actual: $result->toSeconds());
     }
 }

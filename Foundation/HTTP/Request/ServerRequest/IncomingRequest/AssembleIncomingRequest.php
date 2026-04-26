@@ -7,6 +7,7 @@ namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use ReflectionException;
 
 /**
  * AssembleIncomingRequest - Public flow owner for request creation.
@@ -19,6 +20,9 @@ final readonly class AssembleIncomingRequest
         private MapRequestedInputsToDto $mapper,
     ) {}
 
+    /**
+     * @throws ReflectionException
+     */
     public function fromGlobals(
         array|null $server = null,
         array|null $query = null,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\PropagateDataChanges;
 
+use Random\RandomException;
+
 enum ChangeType: string
 {
     case INSERT   = 'insert';
@@ -39,6 +41,9 @@ final readonly class PublishedChange
         return 'represents a published change from CDC stream.';
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function create(
         string     $streamName,
         ChangeType $type,

@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Foundation;
 
+use Random\RandomException;
+
 final class UuidGenerator
 {
+    /**
+     * @throws RandomException
+     */
     public function generate() : string
     {
         return sprintf(

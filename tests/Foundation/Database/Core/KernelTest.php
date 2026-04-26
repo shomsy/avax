@@ -14,9 +14,15 @@ use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Database\Telemetry;
 use Avax\Database\Transactions;
 use Avax\Tests\TestCase;
+use Random\RandomException;
+use ReflectionException;
+use Throwable;
 
 class KernelTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function test_database_configuration_builds_public_surface() : void
     {
         $database = Database::configuration()->usingConfig(config: [
@@ -40,6 +46,10 @@ class KernelTest extends TestCase
         $this->assertInstanceOf(expected: Telemetry::class, actual: $database->telemetry());
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function test_database_table_entrypoint_returns_query_builder() : void
     {
         $builder = $this->database->table(table: 'users');

@@ -14,18 +14,18 @@ final readonly class GenerateJitteredTtl
 
     public function forSeconds(int $ttlInSeconds) : int
     {
-        return $this->jitter->apply($ttlInSeconds);
+        return $this->jitter->apply(ttlInSeconds: $ttlInSeconds);
     }
 
     public function forDuration(Duration $duration) : Duration
     {
-        $milliseconds = $this->forMilliseconds($duration->toMilliseconds());
+        $milliseconds = $this->forMilliseconds(ttlInMilliseconds: $duration->toMilliseconds());
 
-        return Duration::ofMilliseconds($milliseconds);
+        return Duration::ofMilliseconds(milliseconds: $milliseconds);
     }
 
     public function forMilliseconds(int $ttlInMilliseconds) : int
     {
-        return $this->jitter->applyToDuration($ttlInMilliseconds);
+        return $this->jitter->applyToDuration(ttlInMilliseconds: $ttlInMilliseconds);
     }
 }

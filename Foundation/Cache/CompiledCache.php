@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Cache;
 
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheArtifact;
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheContract;
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
-use Avax\Cache\System\PublicSurface\CompiledCacheNotConfigured;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheArtifact;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Cache\System\PublicSurface\Exception\CompiledNotConfigured;
 use Throwable;
 
 final class CompiledCache
 {
-    private static ?CompiledCacheContract $instance = null;
+    private static CompiledCacheContract|null $instance = null;
 
     public static function use(CompiledCacheContract $compiledCache) : void
     {
@@ -35,7 +35,7 @@ final class CompiledCache
         CompiledCacheSources $sources
     ) : mixed
     {
-        return self::resolve()->read($name, $build, $sources);
+        return self::resolve()->read(name: $name, build: $build, sources: $sources);
     }
 
     public static function compile(
@@ -44,12 +44,12 @@ final class CompiledCache
         CompiledCacheSources $sources
     ) : CompiledCacheArtifact
     {
-        return self::resolve()->compile($name, $build, $sources);
+        return self::resolve()->compile(name: $name, build: $build, sources: $sources);
     }
 
     public static function clear(string $name) : void
     {
-        self::resolve()->clear($name);
+        self::resolve()->clear(name: $name);
     }
 
     public static function clearAll() : void
@@ -73,6 +73,6 @@ final class CompiledCache
             }
         }
 
-        throw new CompiledCacheNotConfigured();
+        throw new CompiledNotConfigured();
     }
 }

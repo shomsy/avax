@@ -6,6 +6,7 @@ namespace Avax\ApplicationWorkflow\Saga\StartSaga;
 
 use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
 use Avax\ApplicationWorkflow\Saga\InspectSaga\SagaRuntimeEvent;
+use Random\RandomException;
 use RuntimeException;
 use Throwable;
 
@@ -45,6 +46,9 @@ final readonly class CreateSagaInstance
         );
     }
 
+    /**
+     * @throws RandomException
+     */
     private function generateId() : string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
@@ -53,6 +57,9 @@ final readonly class CreateSagaInstance
 
 final readonly class CreateSagaCorrelationId
 {
+    /**
+     * @throws RandomException
+     */
     public function create(string|null $prefix = null, string|null $suffix = null) : string
     {
         $parts = array_filter([

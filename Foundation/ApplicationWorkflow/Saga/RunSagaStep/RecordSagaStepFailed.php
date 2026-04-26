@@ -6,6 +6,7 @@ namespace Avax\ApplicationWorkflow\Saga\RunSagaStep;
 
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\SagaEvent;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use Random\RandomException;
 use Throwable;
 
 /**
@@ -13,6 +14,9 @@ use Throwable;
  */
 final readonly class RecordSagaStepFailed
 {
+    /**
+     * @throws RandomException
+     */
     public function record(StoreSagaState $storeSagaState, string $instanceId, string $stepName, string $correlationId, Throwable $failure) : SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(

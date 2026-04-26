@@ -10,6 +10,7 @@ use Countable;
 use DateTimeImmutable;
 use DateTimeInterface;
 use IteratorAggregate;
+use Random\RandomException;
 use Traversable;
 
 final readonly class SagaState implements ArrayAccess, Countable, IteratorAggregate
@@ -249,6 +250,9 @@ final readonly class SagaEvent
         ];
     }
 
+    /**
+     * @throws RandomException
+     */
     private static function generateId() : string
     {
         return sprintf('evt_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));

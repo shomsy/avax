@@ -97,6 +97,9 @@ final class CompiledRuntime
         return $this->compiler?->report(serviceIds: $serviceIds);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function isCompiled(ServiceRegistry $registrations, string $serviceId) : bool
     {
         $this->refresh(registrations: $registrations, serviceId: $serviceId);
@@ -274,6 +277,9 @@ final class CompiledRuntime
         ];
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function shouldUse(ServiceRegistry $registrations, ResolveRequest $request) : bool
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {

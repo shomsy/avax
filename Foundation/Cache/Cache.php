@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Avax\Cache;
 
 use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\PublicSurface\CacheFacade;
-use Avax\Cache\System\PublicSurface\CacheNotConfigured;
-use Avax\Cache\System\PublicSurface\CacheReadTarget;
-use Avax\Cache\System\PublicSurface\CacheReadTargetWasNotSupported;
-use Avax\Cache\System\PublicSurface\CompiledCacheTarget;
-use Avax\Cache\System\PublicSurface\ReadFromCache;
-use Avax\Cache\System\PublicSurface\RuntimeCacheTarget;
+use Avax\Cache\System\PublicSurface\Exception\NotConfigured;
+use Avax\Cache\System\PublicSurface\Exception\UnsupportedTarget;
+use Avax\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Cache\System\PublicSurface\Read\CacheReadTarget;
+use Avax\Cache\System\PublicSurface\Read\CompiledCacheTarget;
+use Avax\Cache\System\PublicSurface\Read\ReadFromCache;
+use Avax\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
 use DateInterval;
+use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
 
 final class Cache
 {
-    private static ?CacheContract $instance = null;
+    private static CacheContract|null $instance = null;
 
     public static function use(CacheContract $cache) : void
     {
@@ -29,74 +30,111 @@ final class Cache
         self::$instance = null;
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
     public static function get(string $key, mixed $default = null) : mixed
     {
-        return self::resolve()->get($key, $default);
+        return self::resolve()->get(key: $key, default: $default);
     }
 
-    public static function set(string $key, mixed $value, null|int|DateInterval $ttl = null) : bool
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
+    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        return self::resolve()->set($key, $value, $ttl);
+        return self::resolve()->set(key: $key, value: $value, ttl: $ttl);
     }
 
-    public static function put(string $key, mixed $value, null|int|DateInterval $ttl = null) : bool
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
+    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        return self::resolve()->set($key, $value, $ttl);
+        return self::resolve()->set(key: $key, value: $value, ttl: $ttl);
     }
 
-    public static function remember(string $key, null|int|DateInterval $ttl, callable $loader) : mixed
+    /**
+     * @throws Throwable
+     */
+    public static function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
-        return self::resolve()->remember($key, $ttl, $loader);
+        return self::resolve()->remember(key: $key, ttl: $ttl, loader: $loader);
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
     public static function forget(string $key) : bool
     {
-        return self::resolve()->delete($key);
+        return self::resolve()->delete(key: $key);
     }
 
+    /**
+     * @throws Throwable
+     */
     public static function clear() : bool
     {
         return self::resolve()->clear();
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
     public static function has(string $key) : bool
     {
-        return self::resolve()->has($key);
+        return self::resolve()->has(key: $key);
     }
 
-    public static function store(?string $name = null) : CacheContract
+    /**
+     * @throws Throwable
+     */
+    public static function store(string|null $name = null) : CacheContract
     {
         if ($name !== null) {
-            return self::resolveFacade()->store($name);
+            return self::resolveFacade()->store(name: $name);
         }
 
         return self::resolve();
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
     public static function read(CacheReadTarget|string $target, mixed $default = null) : mixed
     {
         if (is_string($target)) {
-            return self::resolve()->get($target, $default);
+            return self::resolve()->get(key: $target, default: $default);
         }
 
         if ($target instanceof RuntimeCacheTarget) {
-            return self::readRuntimeTarget($target);
+            return self::readRuntimeTarget(target: $target);
         }
 
         if ($target instanceof CompiledCacheTarget) {
-            return self::resolveReadFromCache()->read($target);
+            return self::resolveReadFromCache()->read(target: $target);
         }
 
-        throw new CacheReadTargetWasNotSupported($target::class);
+        throw new UnsupportedTarget(targetClass: $target::class);
     }
 
+    /**
+     * @throws Throwable
+     * @throws InvalidArgumentException
+     */
     private static function readRuntimeTarget(RuntimeCacheTarget $target) : mixed
     {
         if ($target->store !== null) {
-            return self::resolveFacade()->read($target);
+            return self::resolveFacade()->read(target: $target);
         }
 
-        return self::resolve()->get($target->key, $target->default);
+        return self::resolve()->get(key: $target->key, default: $target->default);
     }
 
     private static function resolveFacade() : CacheFacade
@@ -111,8 +149,8 @@ final class Cache
             }
         }
 
-        throw new CacheNotConfigured(
-            'Named store requires CacheServiceProvider with CacheFacade bound.'
+        throw new NotConfigured(
+            message: 'Named store requires CacheServiceProvider with CacheFacade bound.'
         );
     }
 
@@ -128,11 +166,14 @@ final class Cache
             }
         }
 
-        throw new CacheNotConfigured(
-            'CompiledCacheTarget requires ReadFromCache to be bound. Use CacheServiceProvider.'
+        throw new NotConfigured(
+            message: 'CompiledCacheTarget requires ReadFromCache to be bound. Use CacheServiceProvider.'
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     private static function resolve() : CacheContract
     {
         if (self::$instance !== null) {
@@ -147,13 +188,12 @@ final class Cache
                 }
             } catch (Throwable $e) {
                 if (str_contains($e->getMessage(), 'Container instance is not initialized')) {
-                    throw new CacheNotConfigured();
+                    throw new NotConfigured();
                 }
                 throw $e;
-            } catch (Throwable) {
             }
         }
 
-        throw new CacheNotConfigured();
+        throw new NotConfigured();
     }
 }

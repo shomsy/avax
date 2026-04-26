@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\System\Capabilities\Query\Projections;
 
 use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
 
 final class ResultMapper
@@ -19,6 +20,9 @@ final class ResultMapper
         $this->propertyMappings = $this->buildMappings(className: $className);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function buildMappings(string $className) : array
     {
         $ref      = new ReflectionClass(objectOrClass: $className);
@@ -40,6 +44,9 @@ final class ResultMapper
         return $mappings;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function map(array $row) : object
     {
         $instance = new ($this->className)();

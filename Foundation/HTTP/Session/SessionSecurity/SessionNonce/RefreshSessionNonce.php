@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity\SessionNonce;
 
+use Random\RandomException;
+
 final class RefreshSessionNonce
 {
     private $store;
@@ -13,6 +15,9 @@ final class RefreshSessionNonce
         $this->store = $store;
     }
 
+    /**
+     * @throws RandomException
+     */
     public function handle() : string
     {
         $nonce = bin2hex(random_bytes(16));

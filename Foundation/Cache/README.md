@@ -16,19 +16,28 @@ and consistency guarantees across multiple store backends.
 - **Cache Registry**: Named cache instances with `Cache::store($name)`
 - **Contract Tests**: Store implementations validated by `CacheStoreContractTest`
 - **Clock Dependency**: Deterministic testing with injected clocks
+- **Stampede Protection**: Lock-based prevention via `AcquireCacheStampedeLock` flow
+- **Stale-While-Revalidate**: `StaleValuePolicy` enum (DO_NOT_SERVE_STALE, SERVE_STALE_WHILE_REVALIDATING,
+  SERVE_STALE_FOREVER)
+- **Refresh-Ahead**: `RefreshPolicy` enum (DO_NOT_REFRESH, REFRESH_ON_READ, REFRESH_AHEAD, REFRESH_WHEN_STALE,
+  REFRESH_AFTER_WRITE)
+- **Capacity Control**: `InMemoryCacheStore` with max entries and `CacheCapacityWasExceeded` exception
+- **Replacement Policies**: `LeastRecentlyUsedReplacement`, `FirstInFirstOutReplacement`, `NoReplacement`
+- **Observability**: `CacheMetrics` with hit/miss/eviction/stale/lock-wait tracking
+- **Multi-tier Cache**: `TieredCache` with L1 + L2 promotion via `CacheTier`
+- **Source Sync**: `SourceSyncPolicy` enum (WRITE_THROUGH, WRITE_AROUND, WRITE_BEHIND, CACHE_ASIDE)
+- **LFU Replacement**: `LeastFrequentlyUsedReplacement` with frequency decay
+- **Distributed Cache**: `CacheCluster` with node health detection and consistent hash rebalancing
+- **Cache Warming**: `WarmCache` flow for proactive cache population
+- **Metrics Backends**: `PrometheusBackend`, `StatsDBackend`, `MetricsSink` for observability
 
 ## Experimental
 
-- **Distributed Cache**: Routing model (skeleton, excluded from contract tests until promoted)
-- **Multi-tier Cache**: L1 + L2 promotion (planned)
+- **Distributed Cache**: Consistent hash ring with stable node stores (experimental)
 
 ## Planned
 
-- **Stampede Protection**: Lock-based prevention
-- **Stale-While-Revalidate**: Serve stale while refreshing
-- **Replacement Policies**: LRU, LFU, FIFO, Random eviction
-- **Source Sync**: Write-through / write-around / write-behind
-- **Observability**: Metrics, tracing, hit rate tracking
+- **Cache tier auto-scaling**: Dynamic tier promotion based on access patterns
 
 ## Quick Start: Standalone
 
@@ -110,7 +119,7 @@ Separate subsystem for **framework-generated PHP artifacts**: routes, config, co
 
 ```php
 use Avax\Cache\CompiledCache;
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 
 $routes = CompiledCache::read(
     'routes',
@@ -143,43 +152,43 @@ Foundation/Cache/
 │   │   ├── RuntimeCacheTarget.php
 │   │   ├── CompiledCacheTarget.php
 │   │   ├── ReadFromCache.php
-│   │   ├── CacheReadTarget.php
-│   │   ├── CacheReadKind.php
-│   │   ├── CacheNotConfigured.php
-│   │   ├── CacheNotFound.php
-│   │   └── CompiledCacheNotConfigured.php
-│   │
+│   │   └── CacheNotConfigured.php
+│   ��
 │   ├── Flows/
-│   │   ├── ReadCachedValue/
-│   │   ├── StoreCachedValue/
-│   │   ├── RememberCachedValue/
-│   │   ├── ForgetCachedValue/
-│   │   ├── ClearCache/
-│   │   ├── InvalidateCachedValue/
-│   │   ├── RefreshCachedValue/
-│   │   ├── EvictCachedValue/
-│   │   ├── WarmCache/
-│   │   ├── ProtectCacheSource/
-│   │   ├── RecoverCache/
-│   │   ├── SyncCachedValue/
-│   │   ├── CompileCache/
-│   │   ├── ReadCompiledCache/
-│   │   ├── ClearCompiledCache/
-│   │   └── WarmCompiledCache/
+│   │   ├── Operations/          # Read, Store, Forget, Clear
+│   │   ├── Lifecycle/           # Remember, Invalidate, Refresh, Evict, Warm
+│   │   ├── Protection/         # Protect, Sync, Recover
+│   │   └── Compiled/          # Compile, Read, Clear, Warm
 │   │
 │   ├── Capabilities/
-│   │   ├── IdentifyCachedValues/
-│   │   ├── ManageCacheLifecycle/
-│   │   ├── StoreCachedValues/
-│   │   ├── ObserveCache/
-│   │   ├── ProtectCacheSource/
-│   │   ├── ProtectCachedValues/
-│   │   ├── UseCacheTiers/
-│   │   ├── DistributeCachedValues/  # Experimental
-│   │   ├── ReplicateCachedValues/
-│   │   ├── SyncWithSource/
-│   │   ├── SizeCachedValues/
-│   │   └── ManageCompiledCache/
+│   │   ├── Lifecycle/            # Value lifecycle management
+│   │   │   ├── CachedValues/
+│   │   │   ├── ExpireCachedValues/
+│   │   │   ├── InvalidateCachedValues/
+│   │   │   ├── RefreshCachedValues/
+│   │   │   └── ReplaceCachedValues/
+│   │   │
+│   │   ├── Storage/             # Physical storage
+│   │   │   ├── StoreCachedValues/
+│   │   │   ├── SizeCachedValues/
+│   │   │   └── ProtectCachedValues/
+│   │   │
+│   │   ├── Distribution/        # Horizontal scaling
+│   │   │   ├── DistributeCachedValues/
+│   │   │   ├── ReplicateCachedValues/
+│   │   │   └── UseCacheTiers/
+│   │   │
+│   │   ├── Source/              # Source sync & protection
+│   │   │   ├── ProtectCacheSource/
+│   │   │   ├── SyncWithSource/
+│   │   │   └── ControlConsistency/
+│   │   │
+│   │   ├── Observability/      # Metrics & tracing
+│   │   │   ├── ObserveCache/
+│   │   │   └── IdentifyCachedValues/
+│   │   │
+│   │   └── CompiledCache/       # Framework artifacts
+│   │       └── ManageCompiledCache/
 │   │
 │   ├── Foundation/
 │   │   ├── Time/
@@ -188,8 +197,11 @@ Foundation/Cache/
 │   │   └── Randomness/
 │   │
 │   └── Configuration/
-│       ├── BuildCache.php
-│       └── CompiledCacheConfiguration/
+│       └── BuildCache.php
+│
+├── tests/
+└── docs/
+```
 │
 ├── tests/
 └── examples/

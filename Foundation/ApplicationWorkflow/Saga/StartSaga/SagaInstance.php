@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\ApplicationWorkflow\Saga\StartSaga;
 
+use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
+use Random\RandomException;
 
 enum SagaInstanceStatus: string
 {
@@ -69,6 +71,10 @@ final readonly class SagaInstance
         $this->tenantId         = $tenantId;
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public static function create(
         string $id,
         string $definitionName,
@@ -104,6 +110,9 @@ final readonly class SagaInstance
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public static function fromArray(array $row) : self
     {
         return new self(
@@ -273,6 +282,9 @@ final readonly class SagaInstance
         ];
     }
 
+    /**
+     * @throws RandomException
+     */
     private static function generateCorrelationId() : string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));

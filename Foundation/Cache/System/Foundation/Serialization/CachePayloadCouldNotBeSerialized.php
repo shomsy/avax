@@ -11,9 +11,9 @@ final class CachePayloadCouldNotBeSerialized extends RuntimeException
 {
     public function __construct(
         string     $message,
-        ?Throwable $previous = null
+        Throwable|null $previous = null
     )
     {
-        parent::__construct($message, 0, $previous);
+        parent::__construct(message: $message, code: 0, previous: $previous);
     }
 }

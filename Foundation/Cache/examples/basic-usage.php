@@ -11,7 +11,7 @@ use Avax\Cache\System\Foundation\Time\FrozenClock;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$clock = new FrozenClock(Timestamp::now());
+$clock = new FrozenClock(timestamp: Timestamp::now());
 
 $store = new InMemoryCacheStore(
     clock: $clock
@@ -22,19 +22,19 @@ $cache = new AvaxCache(
     clock: $clock
 );
 
-Cache::use($cache);
+Cache::use(cache: $cache);
 
-$cache->set('user:42', [
+$cache->set(key: 'user:42', value: [
     'id'    => 42,
     'name'  => 'John Doe',
     'email' => 'john@example.com',
-], ttl:     3600);
+],          ttl: 3600);
 
-$result = Cache::get('user:42');
+$result = Cache::get(key: 'user:42');
 
 print_r($result);
 
-$result = Cache::remember('user:99', 3600, fn () => [
+$result = Cache::remember(key: 'user:99', ttl: 3600, loader: fn () => [
     'id'    => 99,
     'name'  => 'Jane Doe',
     'email' => 'jane@example.com',

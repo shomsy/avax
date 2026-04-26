@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\RegenerateSessionId;
 
 use Avax\HTTP\Session\SessionStore\SessionStore;
+use Random\RandomException;
 
 final class ReadCurrentSessionId
 {
@@ -20,6 +21,9 @@ final class ReadCurrentSessionId
         return $this->store->get(key: '_session_id', default: '') ?: $this->generate();
     }
 
+    /**
+     * @throws RandomException
+     */
     private function generate() : string
     {
         return bin2hex(random_bytes(32));

@@ -176,6 +176,8 @@ assertThrows(
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: InternalAuditTrail::class);
@@ -190,6 +192,8 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws Throwable
  */ /**
  * @throws Throwable
  */ expectedClass: ContainerException::class,

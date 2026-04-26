@@ -32,6 +32,9 @@ final readonly class MigrateFreshCommand
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     private function dropAllTables() : void
     {
         $pdo    = $this->connections->pdo();

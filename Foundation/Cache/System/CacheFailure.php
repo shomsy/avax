@@ -23,14 +23,14 @@ final class CacheFailure extends RuntimeException
     public function __construct(
         string      $message,
         int         $code = 0,
-        ?Throwable $previous = null
+        Throwable|null $previous = null
     )
     {
         $this->failureCode = $code;
-        parent::__construct($message, 0, $previous);
+        parent::__construct(message: $message, code: 0, previous: $previous);
     }
 
-    public static function storeUnavailable(string $storeName, ?Throwable $previous = null) : self
+    public static function storeUnavailable(string $storeName, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('System store "%s" is unavailable', $storeName),
@@ -39,7 +39,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function invalidKey(string $key, ?Throwable $previous = null) : self
+    public static function invalidKey(string $key, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('Invalid cache key: "%s"', $key),
@@ -48,7 +48,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function serializationFailed(string $reason, ?Throwable $previous = null) : self
+    public static function serializationFailed(string $reason, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('System serialization failed: %s', $reason),
@@ -57,7 +57,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function capacityExceeded(int $maxSize, ?Throwable $previous = null) : self
+    public static function capacityExceeded(int $maxSize, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('System capacity exceeded maximum of %d entries', $maxSize),
@@ -66,7 +66,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function networkError(string $message, ?Throwable $previous = null) : self
+    public static function networkError(string $message, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('System network error: %s', $message),
@@ -75,7 +75,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function sourceUnavailable(string $sourceName, ?Throwable $previous = null) : self
+    public static function sourceUnavailable(string $sourceName, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('System source "%s" is unavailable', $sourceName),
@@ -84,7 +84,7 @@ final class CacheFailure extends RuntimeException
         );
     }
 
-    public static function lockTimeout(string $key, int $timeoutSeconds, ?Throwable $previous = null) : self
+    public static function lockTimeout(string $key, int $timeoutSeconds, Throwable|null $previous = null) : self
     {
         return new self(
             message : sprintf('Lock timeout for key "%s" after %d seconds', $key, $timeoutSeconds),

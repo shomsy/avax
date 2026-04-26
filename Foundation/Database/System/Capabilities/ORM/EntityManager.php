@@ -8,6 +8,7 @@ use Avax\Database\System\Capabilities\ORM\Hydration\Hydrator;
 use Avax\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Database\System\Capabilities\ORM\Persisters\EntityPersister;
 use Avax\Database\System\Capabilities\Query\Query;
+use Throwable;
 
 final readonly class EntityManager
 {
@@ -53,21 +54,33 @@ final readonly class EntityManager
         );
     }
 
+    /**
+     * @throws Throwable
+     */
     public function insert(object $entity, string|null $connection = null) : void
     {
         $this->persister->insert(entity: $entity, connectionName: $connection);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function update(object $entity, string|null $connection = null) : void
     {
         $this->persister->update(entity: $entity, connectionName: $connection);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function delete(object $entity, string|null $connection = null) : void
     {
         $this->persister->delete(entity: $entity, connectionName: $connection);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function refresh(object $entity, string|null $connection = null) : object
     {
         return $this->persister->refresh(entity: $entity, connectionName: $connection);

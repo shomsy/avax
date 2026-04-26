@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Cache\System\Configuration;
 
 use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\Capabilities\ObserveCache\CacheMetrics;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\ChainCacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\FileCacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 
@@ -19,14 +19,14 @@ final readonly class BuildCache
         private Clock $clock = new SystemClock()
     ) {}
 
-    public function inMemory(?CacheConfiguration $config = null) : AvaxCache
+    public function inMemory(CacheConfiguration|null $config = null) : AvaxCache
     {
-        $store = new InMemoryCacheStore($this->clock);
+        $store = new InMemoryCacheStore(clock: $this->clock);
 
-        return $this->fromStore($store, $config);
+        return $this->fromStore(store: $store, config: $config);
     }
 
-    public function fromStore(CacheStore $store, ?CacheConfiguration $config = null) : AvaxCache
+    public function fromStore(CacheStore $store, CacheConfiguration|null $config = null) : AvaxCache
     {
         $config ??= new CacheConfiguration();
 
@@ -40,24 +40,24 @@ final readonly class BuildCache
         );
     }
 
-    public function file(string $basePath, ?CacheConfiguration $config = null) : AvaxCache
+    public function file(string $basePath, CacheConfiguration|null $config = null) : AvaxCache
     {
         $store = new FileCacheStore(
             basePath: $basePath,
             clock   : $this->clock
         );
 
-        return $this->fromStore($store, $config);
+        return $this->fromStore(store: $store, config: $config);
     }
 
     public function tiered(
         CacheStore          $l1,
         CacheStore          $l2,
-        ?CacheConfiguration $config = null
+        CacheConfiguration|null $config = null
     ) : AvaxCache
     {
         $store = new ChainCacheStore($l1, $l2);
 
-        return $this->fromStore($store, $config);
+        return $this->fromStore(store: $store, config: $config);
     }
 }

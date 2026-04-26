@@ -34,16 +34,20 @@ Foundation/Cache/
 │   │   ├── CacheFacade.php
 │   │   ├── CacheRegistry.php
 │   │   ├── RuntimeCacheTarget.php
-│   │   ├── CompiledCacheTarget.php
-│   │   ├── ReadFromCache.php
-│   │   ├── CacheReadTarget.php
-│   │   ├── CacheReadKind.php
-│   │   └── CacheNotConfigured.php
+│   │   └── CompiledCacheTarget.php
 │   │
-│   ├── Flows/                  # 16 runtime flows + 4 compiled flows
-│   ├── Capabilities/           # 10 runtime + 2 compiled capabilities
+│   ├── Flows/                  # 12 runtime flows
+│   │
+│   ├── Capabilities/          # 6 groups, 17 capabilities
+│   │   ├── Lifecycle/          # Value lifecycle
+│   │   ├── Storage/            # Physical storage
+│   │   ├── Distribution/      # Horizontal scaling
+│   │   ├── Source/            # Source sync & protection
+│   │   ├── Observability/     # Metrics
+│   │   └── CompiledCache/      # Framework artifacts
+│   │
 │   ├── Foundation/             # Time, Serialization
-│   └── Configuration/          # BuildCache, BuildCompiledCache
+│   └── Configuration/         # BuildCache
 │
 ├── tests/
 ├── docs/
@@ -61,10 +65,10 @@ Foundation/Cache/
 ### Version Roadmap
 
 - **V1** (Complete): Core cache with InMemory, File stores, basic flows
-- **V1.5**: Stampede protection, stale-while-revalidate, multi-tier
+- **V1.5** (Complete): Stampede protection, stale-while-revalidate, refresh-ahead, replacement policies
 - **V2** (Complete): Compiled cache subsystem + public surface facade
-- **V3**: LRU/LFU eviction, source sync, cache warming
-- **V4**: Distributed partitioning, replication, consistency levels
+- **V3** (Complete): Multi-tier cache, source sync, LFU with decay, distributed cache foundation
+- **V4** (Complete): Distributed cache promotion, cache warming, metrics backends
 
 ### Key Principles Applied
 

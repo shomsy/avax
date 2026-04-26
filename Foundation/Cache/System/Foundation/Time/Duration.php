@@ -77,7 +77,7 @@ final readonly class Duration implements Stringable
 
     public function toDateInterval() : DateInterval
     {
-        $interval    = new DateInterval('P0DT0H0M0S');
+        $interval = new DateInterval(duration: 'P0DT0H0M0S');
         $interval->s = $this->seconds % 60;
         $interval->i = (int) floor($this->seconds / 60) % 60;
         $interval->h = (int) floor($this->seconds / 3600) % 24;

@@ -1,4 +1,3 @@
-```markdown
 # Enterprise-Grade System Code Review
 
 ## Architecture, Design, and Foundational Assessment
@@ -75,6 +74,220 @@ Stop the review immediately if any of the following cannot be produced:
 
 ---
 
+## Cross-Governance Compliance Gate (Mandatory)
+
+This review MUST verify that the reviewed code, tests, architecture, and documentation comply with **every applicable
+rule from every `how-to-*.md` governance document** in the repository.
+
+This is not optional.
+This is not a reminder.
+This is a hard review gate.
+
+A code review that does not explicitly check the `how-to-*.md` governance set is incomplete, even if the architecture
+analysis is strong.
+
+### Governance Inventory Rule
+
+Before writing findings, the reviewer MUST discover and list all governance documents matching:
+
+```text
+**/how-to-*.md
+```
+
+The inventory MUST include at least:
+
+- file path
+- document title or main purpose
+- applicable scope: architecture / clean code / code style / coding standards / testing / documentation / review
+  process / other
+- whether the document applies to this reviewed system
+- if not applicable, the exact reason why it does not apply
+
+The reviewer MUST NOT silently ignore a `how-to-*.md` document.
+
+If a governance document exists but cannot be read, parsed, or reconciled with the review scope, the review MUST mark
+this as a **Governance Blocker**.
+
+### Rule Extraction Rule
+
+For every applicable `how-to-*.md` document, the reviewer MUST extract and enforce:
+
+- every `MUST` rule
+- every `MUST NOT` rule
+- every `HARD RULE`
+- every `Mandatory` section
+- every `Non-Negotiable` section
+- every explicit checklist item
+- every required output or deliverable
+- every forbidden anti-pattern
+- every naming, ownership, testing, documentation, style, or architecture law
+
+`SHOULD` rules must also be reviewed, but they may be treated as improvement opportunities when the trade-off is
+justified.
+
+The reviewer MUST NOT cherry-pick only the obvious rules.
+The reviewer MUST treat the governance set as a complete contract.
+
+### Compliance Matrix Rule
+
+The review output MUST include a `GOVERNANCE COMPLIANCE REPORT` section with a matrix like this:
+
+| Governance Document      | Rule / Requirement                                                                   | Applies? | Status                | Evidence                           | Missing / Weak Area | Required Action                                | Severity                      |
+|--------------------------|--------------------------------------------------------------------------------------|----------|-----------------------|------------------------------------|---------------------|------------------------------------------------|-------------------------------|
+| `how-to-architecture.md` | folder says flow or capability, unit says responsibility, function says exact action | Yes      | Pass / Partial / Fail | file/folder/class/function pointer | exact gap           | keep / rename / move / split / merge / rewrite | Low / Medium / High / Blocker |
+
+Status values:
+
+- **Pass**: rule is clearly satisfied
+- **Partial**: rule is attempted but incomplete, vague, weak, inconsistent, or under-documented
+- **Fail**: rule is violated
+- **Not Applicable**: rule honestly does not apply, with a concrete reason
+- **Blocked**: rule cannot be evaluated because evidence is missing or the governance source cannot be read
+
+The matrix MUST be concrete.
+Do not write vague entries like "mostly follows clean code" or "tests are okay".
+
+### Exact Gap Reporting Rule
+
+For every `Partial`, `Fail`, or `Blocked` item, the review MUST state exactly:
+
+- **what is missing**
+- **where it is missing**: file, class, method, folder, test, doc, public API, or flow
+- **why it matters**
+- **which governance document and rule it violates**
+- **what should be done next**
+- whether the required action is:
+    - add
+    - remove
+    - rename
+    - move
+    - split
+    - merge
+    - simplify
+    - document
+    - test
+    - harden
+    - rewrite
+    - deprecate
+
+The report MUST include concrete suggestions, rewrites, or replacement shapes when they improve clarity.
+
+If the reviewer believes a rule should not be followed in this specific case, they MUST write an explicit exception
+with:
+
+- reason
+- trade-off
+- risk
+- owner of the exception
+- expiration or revisit condition
+
+Silent exceptions are forbidden.
+
+### Governance Coverage Summary
+
+The review MUST include a short summary:
+
+```text
+Governance documents found: <number>
+Governance documents applied: <number>
+Rules checked: <number or best-effort count>
+Passed: <number>
+Partial: <number>
+Failed: <number>
+Blocked: <number>
+Highest severity: Low / Medium / High / Blocker
+```
+
+If the reviewer cannot count every rule exactly, they MUST provide a best-effort count and explain why exact counting
+was not possible.
+
+### Governance Failure Impact Rule
+
+Governance failures MUST influence the final decision.
+
+Use this interpretation:
+
+- **Low**: local improvement, does not change the final decision by itself
+- **Medium**: affects maintainability, documentation, tests, naming, or local ownership
+- **High**: affects architecture, correctness, safety, public API stability, test trust, or evolution safety
+- **Blocker**: review cannot approve the system until the gap is resolved or explicitly accepted
+
+A system may not receive **✅ Keep and Improve** if there is an unresolved governance blocker.
+
+A system may not receive a clean approval if any `MUST`, `MUST NOT`, `HARD RULE`, or `Non-Negotiable` item fails without
+an explicit exception.
+
+### Mandatory Governance Finding Template
+
+Use this template for governance-specific findings:
+
+```md
+### Governance Finding: <short title>
+
+- **Governance Source:** `<how-to-file.md>` -> `<section/rule>`
+- **Required Rule:** ...
+- **Observed Gap:** ...
+- **Where It Fails:** file/folder/class/method/test/doc path
+- **Why It Matters:** ...
+- **Required Action:** add / remove / rename / move / split / merge / simplify / document / test / harden / rewrite / deprecate
+- **Suggested Fix:** concrete proposed change, rewrite, or replacement shape
+- **Severity:** Low / Medium / High / Blocker
+- **Evidence:** concrete pointers
+```
+
+### Cross-Document Conflict Rule
+
+If two `how-to-*.md` documents appear to conflict, the reviewer MUST NOT guess.
+
+Resolve conflicts using this priority order:
+
+1. correctness and safety
+2. explicit project governance
+3. architecture and ownership clarity
+4. public API stability
+5. testability
+6. documentation truthfulness
+7. coding standards and style
+8. local taste
+
+The review MUST record the conflict and the chosen interpretation in `DECISIONS-LOG`.
+
+### Minimum Required Governance Checks
+
+When these files exist, the review MUST check them explicitly:
+
+- `how-to-architecture.md`: ownership, screaming architecture, flow/capability slicing, hierarchy, boundaries, locality,
+  public surface, security, refactoring, and change governance
+- `how-to-clean-code.md`: correctness, readability, simplicity, naming, function design, module design, error handling,
+  testing, refactoring discipline, anti-pattern rejection
+- `how-to-code-style.md`: project-specific formatting, typing, imports, constructor promotion, nullable type style,
+  named arguments, static closures, pipe usage when applicable
+- `how-to-coding-standards.md`: PHP version expectations, security, DevSecOps gates, modern language features, output
+  expectations, privacy/legal notes where relevant
+- `how-to-unit-test.md`: behavior-first tests, happy/failure/edge/regression/security scenarios, naming,
+  Arrange/Act/Assert, one-act rule, assertion precision, test data clarity
+- `how-to-document.md`: docs location, filesystem-first documentation, `how-this-works.md`, mermaid diagrams, real
+  triggers, debug-first guidance, documentation completeness
+- `how-to-code-review.md`: this review process itself, including hard gates, findings, decision, next steps, and
+  governance compliance
+
+If any listed file is missing, the reviewer MUST state whether it is expected to exist for this repository.
+
+### Deliverable
+
+The final `review.md` MUST include:
+
+- `GOVERNANCE INVENTORY`
+- `GOVERNANCE COMPLIANCE REPORT`
+- `GOVERNANCE FINDINGS`
+- `GOVERNANCE EXCEPTIONS` if any
+- `GOVERNANCE COVERAGE SUMMARY`
+- `DECISIONS-LOG` entries for conflicts, exceptions, or waived rules
+
+If these sections are missing, the review fails the review process itself.
+
+---
+
 ## Risk Level Definitions (Mandatory)
 
 | Risk Level | Definition |
@@ -105,6 +318,10 @@ The review must produce these file review.md as output
 in the folder Code-Review-And-ToDo with sections:
 
 - `ARCHITECTURE NOTES` (or this doc filled in)
+- `GOVERNANCE INVENTORY` (all discovered `how-to-*.md` documents)
+- `GOVERNANCE COMPLIANCE REPORT` (rule-by-rule compliance matrix)
+- `GOVERNANCE FINDINGS` (all governance gaps using the mandatory governance finding template)
+- `GOVERNANCE EXCEPTIONS` (only when a rule is intentionally waived with justification)
 - `FINDINGS` (all findings using the standard template)
 - `DECISION` (final decision, max 10 sentences)
 - `DECISIONS-LOG` (decision log entries, see template below)

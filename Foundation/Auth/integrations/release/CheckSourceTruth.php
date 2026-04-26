@@ -209,7 +209,7 @@ final readonly class CheckSourceTruth
      */
     private function isSeparatorRow(array $columns) : bool
     {
-        return array_all(array: $columns, callback: fn ($column) => ! ($column === '' || preg_match(pattern: '/^[-:]+$/', subject: $column) !== 1));
+        return array_all(array: $columns, callback: static fn ($column) => ! ($column === '' || preg_match(pattern: '/^[-:]+$/', subject: $column) !== 1));
     }
 
     /**
@@ -217,7 +217,7 @@ final readonly class CheckSourceTruth
      */
     private function hasExecutableEvidence(array $paths) : bool
     {
-        return array_any(array: $paths, callback: fn ($path) => str_starts_with(haystack: $path, needle: 'tests/')
+        return array_any(array: $paths, callback: static fn ($path) => str_starts_with(haystack: $path, needle: 'tests/')
             || str_starts_with(haystack: $path, needle: 'build/')
             || str_contains(haystack: $path, needle: '/tests/'));
     }

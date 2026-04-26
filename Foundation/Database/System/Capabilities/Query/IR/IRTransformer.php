@@ -26,7 +26,7 @@ final class IRTransformer
         if (! empty($ctes)) {
             $hasRecursive = array_any(
                 array   : $ctes,
-                callback: fn (CTENode $cte) => $cte->type === CTEType::RECURSIVE
+                callback: static fn (CTENode $cte) => $cte->type === CTEType::RECURSIVE
             );
             $cteSql       = array_map(
                 callback: fn (CTENode $cte) => $cte->getSql(grammar: $this->grammar),

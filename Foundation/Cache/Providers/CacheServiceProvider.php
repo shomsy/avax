@@ -51,7 +51,7 @@ final class CacheServiceProvider extends ServiceProvider
             return new ReadFromCache($app->make(CacheRegistry::class), $compiledCache);
         });
 
-        $this->app->singleton(id: CacheContract::class, implementation: function ($app) {
+        $this->app->singleton(id: CacheContract::class, implementation: static function ($app) {
             return $app->make(CacheRegistry::class)->default();
         });
 

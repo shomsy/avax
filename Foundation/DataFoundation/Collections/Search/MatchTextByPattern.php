@@ -28,7 +28,7 @@ final readonly class MatchTextByPattern
 
         $filtered = array_filter(
             array   : $this->items,
-            callback: function (mixed $item) use ($pattern, $key) : bool {
+            callback: static function (mixed $item) use ($pattern, $key) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
                 if (! is_string(value: $target)) {

@@ -26,7 +26,7 @@ final readonly class SortValuesBy
         $items   = $this->items;
 
         $keys = array_map(
-            callback: fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $items
         );
 

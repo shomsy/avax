@@ -13,6 +13,7 @@ use Avax\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\DefaultAuth;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Auth\System\Foundation\Clock;
@@ -86,7 +87,7 @@ final class AuthServiceProvider extends ServiceProvider
     {
         if (! $this->app->has(id: Auth::class)) {
             $this->app->singleton(id: Auth::class, implementation: function () {
-                $builder = $this->applyOptionalBindings(builder: Auth::configuration()
+                $builder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
                     ->forUser(userSource: $this->app->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->app->get(id: IdentityInterface::class))
                     ->usingHasher(passwordHasher: $this->app->get(id: PasswordHasher::class))

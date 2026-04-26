@@ -24,7 +24,7 @@ final class CompiledCacheSources
     public static function fromPaths(string ...$paths) : self
     {
         $sources = array_map(
-            fn (string $path) => CompiledCacheSource::fromPath(path: $path),
+            static fn (string $path) => CompiledCacheSource::fromPath(path: $path),
             $paths
         );
 

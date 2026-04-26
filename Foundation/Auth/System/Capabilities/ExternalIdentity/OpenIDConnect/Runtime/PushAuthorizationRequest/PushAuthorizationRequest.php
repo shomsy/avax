@@ -297,7 +297,7 @@ final readonly class PushAuthorizationRequest
             return false;
         }
 
-        return array_any(array: $audience, callback: fn ($candidate) => is_string(value: $candidate) && trim(string: $candidate) === $expectedAudience);
+        return array_any(array: $audience, callback: static fn ($candidate) => is_string(value: $candidate) && trim(string: $candidate) === $expectedAudience);
     }
 
     /**

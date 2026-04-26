@@ -38,7 +38,7 @@ final class RememberNullRegressionTest extends TestCase
 
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'nullable', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'nullable', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
@@ -52,7 +52,7 @@ final class RememberNullRegressionTest extends TestCase
     {
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'missing', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'missing', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
@@ -71,7 +71,7 @@ final class RememberNullRegressionTest extends TestCase
 
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'exists', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'exists', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';

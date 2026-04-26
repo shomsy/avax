@@ -121,7 +121,7 @@ final class ArrhaeCharacterizationTest extends TestCase
                                          ['amount' => 200],
                                      ]);
 
-        $plucked = $arrh->pluck(key: fn (array $item) : int => $item['amount'] * 2);
+        $plucked = $arrh->pluck(key: static fn (array $item) : int => $item['amount'] * 2);
         $this->assertSame([200, 400], $plucked);
     }
 
@@ -209,7 +209,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testMapTransformsValues() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3]);
-        $result = $arrh->map(callback: fn (int $n) : int => $n * 2);
+        $result = $arrh->map(callback: static fn (int $n) : int => $n * 2);
 
         $this->assertSame([2, 4, 6], $result->all());
     }
@@ -217,7 +217,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testFilterKeepsMatchingValues() : void
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
-        $result = $arrh->filter(callback: fn (int $n) : bool => $n % 2 === 0);
+        $result = $arrh->filter(callback: static fn (int $n) : bool => $n % 2 === 0);
 
         $this->assertSame([1 => 2, 3 => 4], $result->all());
     }
@@ -226,7 +226,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     {
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
         $result = $arrh->reduce(
-            callback: fn (int $carry, int $n) : int => $carry + $n,
+            callback: static fn (int $carry, int $n) : int => $carry + $n,
             initial : 0
         );
 
@@ -396,7 +396,7 @@ final class ArrhaeCharacterizationTest extends TestCase
     public function testSortWithCallback() : void
     {
         $arrh   = $this->arrhae(items: [3, 1, 2]);
-        $result = $arrh->sort(callback: fn (int $a, int $b) : int => $b <=> $a);
+        $result = $arrh->sort(callback: static fn (int $a, int $b) : int => $b <=> $a);
 
         $this->assertSame([3, 2, 1], $result->all());
     }

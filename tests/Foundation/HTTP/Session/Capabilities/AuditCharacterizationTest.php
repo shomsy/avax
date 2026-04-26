@@ -14,23 +14,23 @@ final class AuditCharacterizationTest extends TestCase
         $logger = new class implements LoggerInterface {
             public array $calls = [];
 
-            public function emergency($message, array $context = []) { $this->calls[] = ['level' => 'emergency', 'msg' => $message, 'ctx' => $context]; }
+            public function emergency($message, array $context = []) : void { $this->calls[] = ['level' => 'emergency', 'msg' => $message, 'ctx' => $context]; }
 
-            public function alert($message, array $context = []) { $this->calls[] = ['level' => 'alert', 'msg' => $message, 'ctx' => $context]; }
+            public function alert($message, array $context = []) : void { $this->calls[] = ['level' => 'alert', 'msg' => $message, 'ctx' => $context]; }
 
-            public function critical($message, array $context = []) { $this->calls[] = ['level' => 'critical', 'msg' => $message, 'ctx' => $context]; }
+            public function critical($message, array $context = []) : void { $this->calls[] = ['level' => 'critical', 'msg' => $message, 'ctx' => $context]; }
 
-            public function error($message, array $context = []) { $this->calls[] = ['level' => 'error', 'msg' => $message, 'ctx' => $context]; }
+            public function error($message, array $context = []) : void { $this->calls[] = ['level' => 'error', 'msg' => $message, 'ctx' => $context]; }
 
-            public function warning($message, array $context = []) { $this->calls[] = ['level' => 'warning', 'msg' => $message, 'ctx' => $context]; }
+            public function warning($message, array $context = []) : void { $this->calls[] = ['level' => 'warning', 'msg' => $message, 'ctx' => $context]; }
 
-            public function notice($message, array $context = []) { $this->calls[] = ['level' => 'notice', 'msg' => $message, 'ctx' => $context]; }
+            public function notice($message, array $context = []) : void { $this->calls[] = ['level' => 'notice', 'msg' => $message, 'ctx' => $context]; }
 
-            public function info($message, array $context = []) { $this->calls[] = ['level' => 'info', 'msg' => $message, 'ctx' => $context]; }
+            public function info($message, array $context = []) : void { $this->calls[] = ['level' => 'info', 'msg' => $message, 'ctx' => $context]; }
 
-            public function debug($message, array $context = []) { $this->calls[] = ['level' => 'debug', 'msg' => $message, 'ctx' => $context]; }
+            public function debug($message, array $context = []) : void { $this->calls[] = ['level' => 'debug', 'msg' => $message, 'ctx' => $context]; }
 
-            public function log($level, $message, array $context = []) { $this->calls[] = ['level' => $level, 'msg' => $message, 'ctx' => $context]; }
+            public function log($level, $message, array $context = []) : void { $this->calls[] = ['level' => $level, 'msg' => $message, 'ctx' => $context]; }
         };
 
         $audit = new Audit(logger: $logger);

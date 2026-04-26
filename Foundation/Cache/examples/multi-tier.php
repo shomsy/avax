@@ -16,7 +16,7 @@ $clock = new SystemClock();
 $cache = Cache::use(cache: $l1);
 
 for ($i = 0; $i < 10; $i++) {
-    Cache::remember(key: "item:{$i}", ttl: 3600, loader: fn () => ["id" => $i, "name" => "Item {$i}"]);
+    Cache::remember(key: "item:{$i}", ttl: 3600, loader: static fn () => ["id" => $i, "name" => "Item {$i}"]);
 }
 
 $result = Cache::get(key: 'item:5');

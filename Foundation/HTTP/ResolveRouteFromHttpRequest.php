@@ -19,7 +19,7 @@ use RuntimeException;
  *
  * @internal
  */
-readonly class ResolveRouteFromRequest implements RequestHandlerInterface
+readonly class ResolveRouteFromHttpRequest implements RequestHandlerInterface
 {
     public function __construct(private RouterRuntimeInterface $router) {}
 

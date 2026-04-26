@@ -31,7 +31,7 @@ final readonly class PluckValues
     public function pluck(string|callable $key) : array
     {
         return array_map(
-            callback: fn (mixed $item) : mixed => is_callable(value: $key)
+            callback: static fn (mixed $item) : mixed => is_callable(value: $key)
                 ? $key($item)
                 : ($item[$key] ?? null),
             array   : $this->items

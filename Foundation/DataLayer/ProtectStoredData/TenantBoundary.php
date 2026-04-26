@@ -246,7 +246,7 @@ final readonly class DataAccessPolicy
             'name'      => $this->name,
             'tenant'    => $this->tenantBoundary?->toArray(),
             'allowed'   => $this->allowedOperations,
-            'sensitive' => array_map(fn (SensitiveField $f) => $f->value, $this->sensitiveFields),
+            'sensitive' => array_map(static fn (SensitiveField $f) => $f->value, $this->sensitiveFields),
             'audit'     => $this->enableAudit,
             'retention' => $this->retentionPolicy?->toArray(),
         ];

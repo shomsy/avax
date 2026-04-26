@@ -24,7 +24,7 @@ final class SessionAuditTest extends TestCase
         $logger = new class {
             public string|null $message = null;
 
-            public function info($message, $context = [])
+            public function info($message, $context = []) : void
             {
                 $this->message = $message;
             }

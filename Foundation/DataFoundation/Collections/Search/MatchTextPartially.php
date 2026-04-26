@@ -22,7 +22,7 @@ final readonly class MatchTextPartially
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: function (mixed $item) use ($query, $key) : bool {
+            callback: static function (mixed $item) use ($query, $key) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
                 if (! is_string(value: $target)) {

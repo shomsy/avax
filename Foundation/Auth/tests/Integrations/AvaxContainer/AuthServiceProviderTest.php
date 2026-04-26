@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\AvaxContainer;
 
 use Avax\Auth\Integrations\AvaxContainer\AuthServiceProvider;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
@@ -21,7 +22,6 @@ use Avax\Container\Providers\ServiceProvider;
 use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use Override;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
 /**

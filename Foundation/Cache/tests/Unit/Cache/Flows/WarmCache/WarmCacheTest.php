@@ -24,9 +24,9 @@ final class WarmCacheTest extends TestCase
         $warmCache = new WarmCache(store: $this->store, clock: $this->clock);
 
         $entries = [
-            'user:1' => fn () => 'User One',
-            'user:2' => fn () => 'User Two',
-            'user:3' => fn () => 'User Three',
+            'user:1' => static fn () => 'User One',
+            'user:2' => static fn () => 'User Two',
+            'user:3' => static fn () => 'User Three',
         ];
 
         $count = $warmCache->warm(entries: $entries);
@@ -70,11 +70,11 @@ final class WarmCacheTest extends TestCase
         $warmCache = new WarmCache(store: $this->store, clock: $this->clock);
 
         $entries = [
-            'key_1' => fn () => 'value_1',
-            'key_2' => fn () => 'value_2',
-            'key_3' => fn () => 'value_3',
-            'key_4' => fn () => 'value_4',
-            'key_5' => fn () => 'value_5',
+            'key_1' => static fn () => 'value_1',
+            'key_2' => static fn () => 'value_2',
+            'key_3' => static fn () => 'value_3',
+            'key_4' => static fn () => 'value_4',
+            'key_5' => static fn () => 'value_5',
         ];
 
         $count = $warmCache->warm(entries: $entries);
@@ -96,7 +96,7 @@ final class WarmCacheTest extends TestCase
         $warmCache = new WarmCache(store: $this->store, clock: $this->clock);
 
         $entries = [
-            'existing' => fn () => 'new_value',
+            'existing' => static fn () => 'new_value',
         ];
 
         $warmCache->warm(entries: $entries);

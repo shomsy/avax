@@ -89,7 +89,7 @@ final class ClickHouseGrammar extends BaseGrammar
         $table   = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
         $values  = implode(separator: ', ', array: array_map(
-            callback: fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
+            callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
             array   : $state->values
         ));
 

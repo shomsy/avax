@@ -83,6 +83,6 @@ final readonly class VerifyTrustedProxyHeaders
         #[SensitiveParameter] string $header
     ) : bool
     {
-        return array_any(array: $this->forwardedHeaders, callback: fn ($candidate) => strcasecmp(string1: $header, string2: $candidate) === 0);
+        return array_any(array: $this->forwardedHeaders, callback: static fn ($candidate) => strcasecmp(string1: $header, string2: $candidate) === 0);
     }
 }

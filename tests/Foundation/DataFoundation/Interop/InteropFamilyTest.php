@@ -42,7 +42,7 @@ final class InteropFamilyTest extends TestCase
     {
         $calls = 0;
 
-        $lazy = FromGenerator::toLazySequence(factory: function () use (&$calls) : iterable {
+        $lazy = FromGenerator::toLazySequence(factory: static function () use (&$calls) : iterable {
             $calls++;
             yield 1;
             yield 2;

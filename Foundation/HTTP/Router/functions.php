@@ -336,7 +336,7 @@ if (! function_exists(function: 'get')) {
      *
      * @return RouteRegistrarProxy
      */
-    function get(string $path, callable|array|string $action)
+    function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
@@ -353,7 +353,7 @@ if (! function_exists(function: 'post')) {
      *
      * @return RouteRegistrarProxy
      */
-    function post(string $path, callable|array|string $action)
+    function post(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
@@ -370,7 +370,7 @@ if (! function_exists(function: 'put')) {
      *
      * @return RouteRegistrarProxy
      */
-    function put(string $path, callable|array|string $action)
+    function put(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
@@ -387,7 +387,7 @@ if (! function_exists(function: 'patch')) {
      *
      * @return RouteRegistrarProxy
      */
-    function patch(string $path, callable|array|string $action)
+    function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
@@ -404,7 +404,7 @@ if (! function_exists(function: 'delete')) {
      *
      * @return RouteRegistrarProxy
      */
-    function delete(string $path, callable|array|string $action)
+    function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
@@ -421,7 +421,7 @@ if (! function_exists(function: 'options')) {
      *
      * @return RouteRegistrarProxy
      */
-    function options(string $path, callable|array|string $action)
+    function options(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
@@ -438,7 +438,7 @@ if (! function_exists(function: 'head')) {
      *
      * @return RouteRegistrarProxy
      */
-    function head(string $path, callable|array|string $action)
+    function head(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
@@ -455,7 +455,7 @@ if (! function_exists(function: 'any')) {
      *
      * @return RouteRegistrarProxy
      */
-    function any(string $path, callable|array|string $action)
+    function any(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return RouteCollector::current()->addRouteBuilder(
             routeBuilder: RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)

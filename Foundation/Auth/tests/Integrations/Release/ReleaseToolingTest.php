@@ -19,7 +19,6 @@ use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
 use Avax\Tests\TestCase;
 use JsonException;
-use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
 final class ReleaseToolingTest extends TestCase

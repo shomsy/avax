@@ -68,7 +68,7 @@ final readonly class ConsistentHashRing
 
     public function removeNode(string $node) : self
     {
-        $newNodes = array_filter($this->nodes, fn ($n) => $n !== $node);
+        $newNodes = array_filter($this->nodes, static fn ($n) => $n !== $node);
 
         return self::create(nodes: array_values($newNodes), virtualNodes: $this->virtualNodes);
     }

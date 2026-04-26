@@ -27,10 +27,8 @@ class AuthConfig
      *                The guard is first fetched from the environment variable 'AUTH_GUARD'.
      *                If not set, it falls back to the default guard defined by DEFAULT_GUARD.
      */
-    public static function getGuard() : string
-    {
-        // Fetch guard from environment or use default
-        return env(key: 'AUTH_GUARD') ?: self::DEFAULT_GUARD;
+    // Fetch guard from configuration or use default
+return config(key: 'auth.guard') ?: self::DEFAULT_GUARD;
     }
 
     /**
@@ -40,9 +38,7 @@ class AuthConfig
      *                The provider is first fetched from the environment variable 'AUTH_PROVIDER'.
      *                If not set, it falls back to the default provider defined by DEFAULT_PROVIDER.
      */
-    public static function getProvider() : string
-    {
-        // Fetch provider from environment or use default
-        return env(key: 'AUTH_PROVIDER') ?: self::DEFAULT_PROVIDER;
+// Fetch provider from configuration or use default
+return config(key: 'auth.provider') ?: self::DEFAULT_PROVIDER;
     }
 }

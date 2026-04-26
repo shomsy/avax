@@ -179,7 +179,7 @@ final readonly class ErrorHandler
      */
     private function renderFormat() : string
     {
-        return env(key: 'EXCEPTION_RESPONSE_FORMAT', default: self::RENDER_FORMAT_IGNITION);
+        return config(key: 'app.exception_format', default: self::RENDER_FORMAT_IGNITION);
     }
 
     /**

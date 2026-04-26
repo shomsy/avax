@@ -110,7 +110,7 @@ final readonly class Audit
         $payload = [
             'timestamp'   => date(format: 'c'),
             'event'       => strtoupper(string: $event),
-            'environment' => getenv(name: 'APP_ENV') ?: 'production',
+            'environment' => config(key: 'app.env', default: 'production'),
             'session_id'  => $sessionId,
             'user_id'     => $userId,
             'ip_address'  => $clientIp,

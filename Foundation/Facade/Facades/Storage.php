@@ -17,7 +17,7 @@ use Avax\Filesystem\Storage\FileStorageInterface;
  * @method static bool createDirectory(string $directory)
  * @method static bool deleteDirectory(string $directory)
  * @method static bool setPermissions(string $path, int $permissions)
- * @method static FileStorageInterface disk(?string|null $name = null)
+ * @method static FileStorageInterface disk(string|null $name = null)
  * @method static bool isWritable(string $path)
  * @method static bool clear(string $directory)
  * @method static bool hasPermission(string $path, int $permissions)

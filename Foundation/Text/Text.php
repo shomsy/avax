@@ -259,9 +259,9 @@ final readonly class Text
 
     public function slug(string $separator = '-') : self
     {
-        $s = $this->toAscii()->lower()->toString();
-        $s = preg_replace(pattern: '~[^a-z0-9]+~', replacement: $separator, subject: $s);
-        $s = trim(string: $s, characters: $separator);
+        $s = $this->toAscii()->lower()->toString()
+                |> (fn ($x) => preg_replace(pattern: '~[^a-z0-9]+~', replacement: $separator, subject: $x))
+                |> (fn ($x) => trim(string: $x, characters: $separator));
 
         return new self(value: $s);
     }
@@ -326,9 +326,9 @@ final readonly class Text
 
     public function snake(string $delimiter = '_') : self
     {
-        $s = $this->value;
-        $s = preg_replace(pattern: '~([a-z0-9])([A-Z])~', replacement: '$1' . $delimiter . '$2', subject: $s);
-        $s = preg_replace(pattern: '~[\s\-]+~', replacement: $delimiter, subject: $s);
+        $s = $this->value
+                |> (fn (string $v) => preg_replace(pattern: '~([a-z0-9])([A-Z])~', replacement: '$1' . $delimiter . '$2', subject: $v))
+                |> (fn (string $v) => preg_replace(pattern: '~[\s\-]+~', replacement: $delimiter, subject: $v));
 
         return self::of(value: $s)->lower();
     }

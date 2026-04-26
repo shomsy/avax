@@ -10,6 +10,8 @@ use Throwable;
 
 /**
  * Exception thrown by filesystem operations.
+ *
+ * @deprecated Move to Foundation/Filesystem/Exceptions/FilesystemException.php
  */
 class FilesystemException extends Exception
 {

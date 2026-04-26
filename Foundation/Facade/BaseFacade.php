@@ -10,6 +10,8 @@ use RuntimeException;
  * Abstract base class for creating facades that provide static access to services.
  * Facades implemented using this base class allow methods to be called statically,
  * delegating the calls to the resolved instance of the service.
+ *
+ * @deprecated Facades hide dependencies and bypass DI. Prefer explicit constructor injection.
  */
 abstract class BaseFacade
 {

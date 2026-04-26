@@ -12,6 +12,8 @@ use Override;
  *
  * A custom exception class used to indicate that a requested resource could not be found.
  * It extends the built-in Exceptions class and provides a default message and HTTP 404 code.
+ *
+ * @deprecated Move to Foundation/HTTP/System/Foundation/Exceptions/ or Foundation/DataLayer/Exceptions/
  */
 class NotFoundException extends Exception
 {

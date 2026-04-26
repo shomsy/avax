@@ -106,7 +106,7 @@ final readonly class Text
             return $this;
         }
 
-        return new self(value: substr(string: $this->value, offset: 0, length: (int) $pos));
+        return new self(value: substr(string: $this->value, offset: 0, length: $pos));
     }
 
     public function after(string $needle, bool $last = false) : self
@@ -116,7 +116,7 @@ final readonly class Text
             return $this;
         }
 
-        return new self(value: substr(string: $this->value, offset: (int) $pos + strlen(string: $needle)));
+        return new self(value: substr(string: $this->value, offset: $pos + strlen(string: $needle)));
     }
 
     public function between(string $left, string $right) : self
@@ -190,7 +190,7 @@ final readonly class Text
         }
 
         if (function_exists(function: 'mb_substr')) {
-            $cut = (string) mb_substr(string: $this->value, start: 0, length: $max, encoding: 'UTF-8');
+            $cut = mb_substr(string: $this->value, start: 0, length: $max, encoding: 'UTF-8');
 
             return new self(value: $cut . $suffix);
         }
@@ -201,7 +201,7 @@ final readonly class Text
     public function length() : int
     {
         if (function_exists(function: 'mb_strlen')) {
-            return (int) mb_strlen(string: $this->value, encoding: 'UTF-8');
+            return mb_strlen(string: $this->value, encoding: 'UTF-8');
         }
 
         return strlen(string: $this->value);
@@ -209,12 +209,11 @@ final readonly class Text
 
     public function toInt(int|null $default = null) : int|null
     {
-        $v = $this->trim()->toString();
-        if ($v === '' || ! preg_match(pattern: '~^[+-]?\d+$~', subject: $v)) {
+        if ($this->isBlank() || ! preg_match(pattern: '~^[+-]?\d+$~', subject: $this->trim()->toString())) {
             return $default;
         }
 
-        return (int) $v;
+        return (int) $this->trim()->toString();
     }
 
     public function toString() : string
@@ -229,12 +228,11 @@ final readonly class Text
 
     public function toFloat(float|null $default = null) : float|null
     {
-        $v = $this->trim()->toString();
-        if ($v === '' || ! is_numeric(value: $v)) {
+        if ($this->isBlank() || ! is_numeric(value: $this->trim()->toString())) {
             return $default;
         }
 
-        return (float) $v;
+        return (float) $this->trim()->toString();
     }
 
     public function toBool(bool|null $default = null) : bool|null
@@ -251,7 +249,7 @@ final readonly class Text
     public function lower() : self
     {
         if (function_exists(function: 'mb_strtolower')) {
-            return new self(value: (string) mb_strtolower(string: $this->value, encoding: 'UTF-8'));
+            return new self(value: mb_strtolower(string: $this->value, encoding: 'UTF-8'));
         }
 
         return new self(value: strtolower(string: $this->value));
@@ -261,9 +259,9 @@ final readonly class Text
     {
         $s = $this->toAscii()->lower()->toString();
         $s = preg_replace(pattern: '~[^a-z0-9]+~', replacement: $separator, subject: $s);
-        $s = trim(string: (string) $s, characters: $separator);
+        $s = trim(string: $s, characters: $separator);
 
-        return new self(value: (string) $s);
+        return new self(value: $s);
     }
 
     public function toAscii() : self
@@ -302,7 +300,7 @@ final readonly class Text
 
         $parts = explode(separator: ' ', string: $s);
         $parts = array_map(
-            callback: static fn (string $p) : string => $p === '' ? '' : ucfirst(string: strtolower(string: $p)),
+            callback: static fn (string $p) : string => $p === '' ? '' : ucfirst(string: mb_strtolower($p, 'UTF-8')),
             array   : $parts
         );
 
@@ -328,41 +326,41 @@ final readonly class Text
     {
         $s = $this->value;
         $s = preg_replace(pattern: '~([a-z0-9])([A-Z])~', replacement: '$1' . $delimiter . '$2', subject: $s);
-        $s = preg_replace(pattern: '~[\s\-]+~', replacement: $delimiter, subject: (string) $s);
+        $s = preg_replace(pattern: '~[\s\-]+~', replacement: $delimiter, subject: $s);
 
-        return self::of(value: (string) $s)->lower();
+        return self::of(value: $s)->lower();
     }
 
     // DSL Methods - Human-readable operations without exposing regex patterns
 
     public function containsOnlyDigits() : bool
     {
-        return Pattern::of(raw: '^\d+$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^\d+$');
     }
 
     public function containsOnlyLetters() : bool
     {
-        return Pattern::of(raw: '^[a-zA-Z]+$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^[a-zA-Z]+$');
     }
 
     public function containsOnlyAlphanumeric() : bool
     {
-        return Pattern::of(raw: '^[a-zA-Z0-9]+$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^[a-zA-Z0-9]+$');
     }
 
     public function isValidEmail() : bool
     {
-        return Pattern::of(raw: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     }
 
     public function isValidUrl() : bool
     {
-        return Pattern::of(raw: '^https?://[^\s/$.?#].[^\s]*$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^https?://[^\s/$.?#].[^\s]*$');
     }
 
     public function isValidSlug() : bool
     {
-        return Pattern::of(raw: '^[a-z0-9]+(?:-[a-z0-9]+)*$')->test(subject: $this->value);
+        return $this->testRegex(pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$');
     }
 
     public function extractDigits() : self
@@ -394,16 +392,16 @@ final readonly class Text
 
     public function startsWithPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: '^' . preg_quote(str: $pattern, delimiter: '~'))->test(subject: $this->value);
+        return $this->testRegex(pattern: '^' . preg_quote(str: $pattern, delimiter: '~'));
     }
 
     public function endsWithPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: preg_quote(str: $pattern, delimiter: '~') . '$')->test(subject: $this->value);
+        return $this->testRegex(pattern: preg_quote(str: $pattern, delimiter: '~') . '$');
     }
 
     public function containsPattern(string $pattern) : bool
     {
-        return Pattern::of(raw: preg_quote(str: $pattern, delimiter: '~'))->test(subject: $this->value);
+        return $this->testRegex(pattern: preg_quote(str: $pattern, delimiter: '~'));
     }
 }

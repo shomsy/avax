@@ -13,28 +13,42 @@ use Stringable;
 final readonly class User implements UserInterface, Stringable
 {
     /** @var list<UserPermission> */
-    public array     $permissions;
+    public array $permissions;
     /** @var list<UserRole> */
-    public array     $roles;
+    public array $roles;
 
-    /**
-     * @param array<UserRole>|null       $roles
-     * @param array<UserPermission>|null $permissions
-     */
     public function __construct(
-        public UserId                          $id,
-        #[SensitiveParameter] public UserEmail $email,
-        public string                          $username,
-        #[SensitiveParameter] public string    $passwordHash,
-        array|null                      $roles = null,
-        array|null                      $permissions = null,
-        public bool                            $isActive = true
+        private UserId    $_id,
+        private UserEmail $_email,
+        private string    $_username,
+        private string    $_passwordHash,
+        array|null        $roles = null,
+        array|null        $permissions = null,
+        private bool      $_isActive = true
     )
     {
-        $roles              ??= [];
-        $permissions        ??= [];
-        $this->roles = array_values(array: $roles);
-        $this->permissions = array_values(array: $permissions);
+        $this->roles       = array_values(array: $roles ?? []);
+        $this->permissions = array_values(array: $permissions ?? []);
+    }
+
+    public UserId $id {
+        get => $this->_id;
+    }
+
+    public UserEmail $email {
+        get => $this->_email;
+    }
+
+    public string $username {
+        get => $this->_username;
+    }
+
+    public string $passwordHash {
+        get => $this->_passwordHash;
+    }
+
+    public bool $isActive {
+        get => $this->_isActive;
     }
 
     /**
@@ -51,34 +65,32 @@ final readonly class User implements UserInterface, Stringable
         bool                            $isActive = true
     ) : self
     {
-        $roles       ??= [];
-        $permissions ??= [];
-
-        return new self(id: $id, email: $email, username: $username, passwordHash: $passwordHash, roles: $roles, permissions: $permissions, isActive: $isActive);
+        return new self(
+            _id          : $id,
+            _email       : $email,
+            _username    : $username,
+            _passwordHash: $passwordHash,
+            roles        : $roles,
+            permissions  : $permissions,
+            _isActive    : $isActive
+        );
     }
 
     public function hasRole(UserRole $role) : bool
     {
-        if (in_array(needle: $role, haystack: $this->roles, strict: true)) {
-            return true;
-        }
-
-        return false;
+        return Arrhae::of(items: $this->roles)->contains(needle: $role);
     }
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        return array_any(array: $this->permissions, callback: fn ($userPermission) => $userPermission->equals(other: $permission));
+        return Arrhae::of(items: $this->permissions)
+            ->any(callback: fn (UserPermission $p) => $p->equals(other: $permission));
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        return array_any(array: $this->roles, callback: fn ($role) => $role->canAccess(required: $requiredRole));
-    }
-
-    public function isActive() : bool
-    {
-        return $this->isActive;
+        return Arrhae::of(items: $this->roles)
+            ->any(callback: fn (UserRole $role) => $role->canAccess(required: $requiredRole));
     }
 
     public function getId() : UserId

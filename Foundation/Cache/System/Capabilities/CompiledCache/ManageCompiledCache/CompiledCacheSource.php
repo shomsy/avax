@@ -53,6 +53,8 @@ final readonly class CompiledCacheSource
             return $this->checksum;
         }
 
-        return md5_file($this->path) ?: (string) $this->mtime;
+        // Fast fingerprint based on mtime and size
+        // md5_file is too slow for per-request checks
+        return md5($this->path . ':' . $this->mtime . ':' . filesize($this->path));
     }
 }

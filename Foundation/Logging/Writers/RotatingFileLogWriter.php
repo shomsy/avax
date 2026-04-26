@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Logging\Writers;
 
+use Avax\Facade\Facades\Storage;
 use Avax\Logging\LogWriterInterface;
 use Carbon\Carbon;
 use DateTimeZone;
@@ -30,17 +31,6 @@ use RuntimeException;
 final class RotatingFileLogWriter implements LogWriterInterface
 {
     /**
-     * Absolute path prefix for log files (e.g., /var/logs/app-error).
-     * The File path is dynamically suffixed with the date.
-     */
-    private string $baseLogPath;
-
-    /**
-     * Valid IANA timezone identifier (e.g., Europe/Belgrade).
-     */
-    private string $timezone;
-
-    /**
      * Current date suffix for caching (format: d.m.Y).
      */
     private string|null $cachedDate = null;
@@ -51,50 +41,28 @@ final class RotatingFileLogWriter implements LogWriterInterface
     private string|null $cachedFilePath = null;
 
     /**
-     * Maximum number of log files to retain (FIFO deletion).
-     * Ensures consistent disk usage over time.
-     *
-     * @readonly
-     */
-    private readonly int $maxLogFiles;
-
-    /**
-     * Constructor.
-     *
      * @param string      $baseLogPath Base absolute path for log files (no date or extension).
-     * @param string|null $timezone    Optional timezone (default: UTC).
+     * @param string $timezone IANA timezone identifier (default: UTC).
      * @param int         $maxLogFiles Max number of retained rotated log files.
      *
      * @throws RuntimeException If path or timezone are invalid.
      */
     public function __construct(
-        string      $baseLogPath,
-        string|null $timezone = null,
-        int         $maxLogFiles = 30
+        private string       $baseLogPath,
+        private string       $timezone = 'UTC',
+        private readonly int $maxLogFiles = 30
     )
     {
-        // Set the default timezone to 'UTC' if no value is provided for $timezone.
-        $timezone ??= 'UTC';
-
         // Validate the base log path value to ensure it is not empty and does not contain unsafe segments.
-        $this->validateBaseLogPath(baseLogPath: $baseLogPath);
+        $this->validateBaseLogPath(baseLogPath: $this->baseLogPath);
 
-        // Attempt to resolve the absolute path of the provided base log path. If realpath() fails (e.g.,
-        // if the path does not exist yet), fallback to using the raw $baseLogPath value,
-        // ensuring that it does not end with DIRECTORY_SEPARATOR unnecessarily.
-        $this->baseLogPath = rtrim(string: $baseLogPath, characters: DIRECTORY_SEPARATOR);
+        // Attempt to resolve the absolute path of the provided base log path.
+        $this->baseLogPath = rtrim(string: $this->baseLogPath, characters: DIRECTORY_SEPARATOR);
 
-        // Check if the provided timezone is valid by ensuring it exists in the list of IANA timezone identifiers.
-        // If it is invalid, throw a RuntimeException with a clear message.
-        if (! in_array(needle: $timezone, haystack: DateTimeZone::listIdentifiers(), strict: true)) {
-            throw new RuntimeException(message: "Invalid timezone provided: {$timezone}");
+        // Check if the provided timezone is valid.
+        if (! in_array(needle: $this->timezone, haystack: DateTimeZone::listIdentifiers(), strict: true)) {
+            throw new RuntimeException(message: "Invalid timezone provided: {$this->timezone}");
         }
-
-        // Assign the validated timezone to the class property for further use.
-        $this->timezone = $timezone;
-
-        // Set the maximum number of log files that can be rotated before overwriting old ones.
-        $this->maxLogFiles = $maxLogFiles;
     }
 
     /**
@@ -157,8 +125,8 @@ final class RotatingFileLogWriter implements LogWriterInterface
      */
     private function ensureDirectoryExists(string $directory) : void
     {
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new RuntimeException(message: "Failed to create log directory: {$directory}");
+        if (! Storage::exists(path: $directory)) {
+            Storage::createDirectory(directory: $directory);
         }
     }
 
@@ -170,35 +138,20 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *                                 Represents the maximum age (in days) for retaining log files.
      */
     private function rotateLogs() : void
-    {// Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
-        // This uses the `glob` function to find all files matching the wildcard pattern.
-        $logFiles = glob(pattern: "{$this->baseLogPath}-*.log");
+    {
+        // Retrieve a list of log files matching the naming convention.
+        $logFiles            = Storage::listFiles(path: dirname(path: $this->baseLogPath));
 
-        // If the `glob` function fails (returns false), exit early as no files were found to process.
-        if ($logFiles === false) {
-            return;
-        }
-
-        // Get the current Unix timestamp, which represents the current time in seconds since the Unix epoch.
         $now = time();
+        $maxFileAgeInSeconds = $this->maxLogFiles * 86400;
 
-        // Calculate the maximum file age in seconds by multiplying the provided days by the number of seconds in a day (86,400).
-        $maxFileAgeInSeconds = 30 * 86400;
-
-        // Iterate over each file path returned by `glob`.
         foreach ($logFiles as $file) {
-            // Skip processing if the current path is not a regular file.
-            // This avoids issues with directories or non-files that may have matched the pattern.
-            if (! is_file(filename: $file)) {
+            if (! str_starts_with(haystack: basename(path: $file), needle: basename(path: $this->baseLogPath))) {
                 continue;
             }
 
-            // Check if the file's modification time exceeds the maximum allowed age.
-            // Compare the current timestamp with the last modification time (`filemtime`).
-            if (($now - filemtime(filename: $file)) > $maxFileAgeInSeconds) {
-                // If the file is older than allowed, delete it using the `unlink` function.
-                // The `unlink` function permanently removes the file from the file system.
-                unlink(filename: $file);
+            if (($now - Storage::lastModified(path: $file)) > $maxFileAgeInSeconds) {
+                Storage::delete(path: $file);
             }
         }
     }
@@ -213,24 +166,6 @@ final class RotatingFileLogWriter implements LogWriterInterface
      */
     private function appendToFile(string $filePath, string $content) : void
     {
-        // Attempting to write content to the specified file.
-        // The filename is provided by the $filePath variable.
-        // The data being written includes the content followed by a new line (PHP_EOL).
-        // The FILE_APPEND flag ensures that the content is appended to the file instead of overwriting it.
-        // The LOCK_EX flag prevents concurrent writes to the file
-        //  by getting an exclusive lock during the writing process.
-        $result = file_put_contents(
-            filename: $filePath,
-            data    : $content . PHP_EOL,
-            flags   : FILE_APPEND | LOCK_EX
-        );
-
-        // Checking if the result of the file_put_contents call is false.
-        // A result of false indicates that an error occurred while trying to write to the file.
-        if ($result === false) {
-            // Throwing a RuntimeException if writing to the file failed.
-            // The exception provides a meaningful error message that includes the filepath for debugging.
-            throw new RuntimeException(message: "Unable to write log entry to file: {$filePath}");
-        }
+        Storage::write(path: $filePath, content: $content . PHP_EOL, append: true);
     }
 }

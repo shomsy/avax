@@ -266,21 +266,14 @@ if (! function_exists(function: 'asset')) {
 }
 
 /**
- * Redirects to a given relative path or route name.
+ * Redirects to a given URL with a specified HTTP status code.
  *
- * @param string $destination A relative path or route name.
- * @param array  $parameters  Parameters for dynamic route segments (if using route names).
- * @param int    $status      HTTP status code for the redirection (default: 302).
+ * @param string $url    The destination URL.
+ * @param int    $status HTTP status code (default: 302).
  *
  * @return ResponseInterface
  */
-if (! function_exists(function: 'redirect') && ! function_exists(function: 'redirect')) {
-    /**
-     * Redirects to a given URL.
-     *
-     * @param string $url    The URL to redirect to.
-     * @param int    $status The HTTP status code for the redirection (default: 302).
-     */
+if (! function_exists(function: 'redirect')) {
     function redirect(string $url, int $status = 302) : ResponseInterface
     {
         $responseFactory = app(abstract: ResponseFactoryInterface::class);
@@ -292,15 +285,13 @@ if (! function_exists(function: 'redirect') && ! function_exists(function: 'redi
 }
 
 /**
- * Redirects to a given relative path or route name.
+ * Creates a new Arrhae instance for advanced array manipulation.
  *
- * @param string $destination A relative path or route name.
- * @param array  $parameters  Parameters for dynamic route segments (if using route names).
- * @param int    $status      HTTP status code for the redirection (default: 302).
+ * @param array $array The source array.
  *
- * @return ResponseInterface
+ * @return Arrhae
  */
-if (! function_exists(function: 'arrhae') && ! function_exists(function: 'arrhae')) {
+if (! function_exists(function: 'arrhae')) {
     function arrhae(array $array) : Arrhae
     {
         return new Arrhae(items: $array);

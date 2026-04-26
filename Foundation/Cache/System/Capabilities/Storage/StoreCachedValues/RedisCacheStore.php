@@ -6,6 +6,9 @@ namespace Avax\Cache\System\Capabilities\Storage\StoreCachedValues;
 
 use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Cache\System\Foundation\Serialization\CacheSerializer;
+use Avax\Cache\System\Foundation\Serialization\JsonCacheSerializer;
+use Avax\Cache\System\Foundation\Serialization\SerializedCachePayload;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 use Avax\Cache\System\Foundation\Time\Timestamp;
@@ -23,16 +26,21 @@ final class RedisCacheStore implements CacheStore
 
     private Redis|RedisArray|RedisCluster|null $redis     = null;
     private bool                               $connected = false;
+    private CacheSerializer $serializer;
 
     public function __construct(
-        private string      $host = '127.0.0.1',
-        private int         $port = self::DEFAULT_PORT,
-        private string|null $password = null,
-        private int         $database = 0,
-        private float       $timeout = self::DEFAULT_TIMEOUT,
-        private string      $prefix = self::DEFAULT_PREFIX,
-        private Clock       $clock = new SystemClock()
-    ) {}
+        private readonly string                            $host = '127.0.0.1',
+        private readonly int                               $port = self::DEFAULT_PORT,
+        #[SensitiveParameter] private readonly string|null $connectionPassphrase = null,
+        private readonly int                               $database = 0,
+        private readonly float                             $timeout = self::DEFAULT_TIMEOUT,
+        private readonly string                            $prefix = self::DEFAULT_PREFIX,
+        private readonly Clock                             $clock = new SystemClock(),
+        CacheSerializer|null                               $serializer = null
+    )
+    {
+        $this->serializer = $serializer ?? new JsonCacheSerializer(clock: $this->clock);
+    }
 
     /**
      * @throws RedisClusterException
@@ -42,7 +50,7 @@ final class RedisCacheStore implements CacheStore
         $this->ensureConnected();
 
         $fullKey = $this->prefix . $key->fullKey();
-        $data    = $this->redis->get(key: $fullKey);
+        $data = $this->redis->get($fullKey);
 
         if ($data === false || $data === null) {
             return new CacheStoreRecordWasMissing(key: $key);
@@ -62,10 +70,17 @@ final class RedisCacheStore implements CacheStore
             return new CacheStoreRecordWasMissing(key: $key);
         }
 
-        $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
-        $record           = new StoredCacheRecord(
-            value    : $decoded['value'] ?? null,
-            lifecycle: $updatedLifecycle
+        $valuePayload = SerializedCachePayload::create(
+            data  : $decoded['value'] ?? '',
+            format: $decoded['format'] ?? 'json',
+            clock : $clock
+        );
+
+        $value = $this->serializer->unserialize(payload: $valuePayload);
+
+        $record = new StoredCacheRecord(
+            value    : $value,
+            lifecycle: $lifecycle
         );
 
         return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
@@ -87,8 +102,8 @@ final class RedisCacheStore implements CacheStore
         $this->redis = new Redis();
         $this->redis->connect(host: $this->host, port: $this->port, timeout: $this->timeout);
 
-        if ($this->password !== null) {
-            $this->redis->auth(credentials: $this->password);
+        if ($this->connectionPassphrase !== null) {
+            $this->redis->auth(credentials: $this->connectionPassphrase);
         }
 
         if ($this->database > 0) {
@@ -120,7 +135,7 @@ final class RedisCacheStore implements CacheStore
         $this->ensureConnected();
 
         $fullKey = $this->prefix . $key->fullKey();
-        $this->redis->del(key: $fullKey);
+        $this->redis->del($fullKey);
     }
 
     /**
@@ -133,17 +148,20 @@ final class RedisCacheStore implements CacheStore
 
         $fullKey = $this->prefix . $key->fullKey();
 
+        $serializedPayload = $this->serializer->serialize(value: $record->value);
+
         $data = json_encode([
-                                'value' => $record->value,
-                                                                                                                                                                                                                                                                                                                                                                                                              'lifecycle' => $this->serializeLifecycle(lifecycle: $record->lifecycle),
+                                'value'     => $serializedPayload->data,
+                                'format'    => $serializedPayload->format,
+                                'lifecycle' => $this->serializeLifecycle(lifecycle: $record->lifecycle),
                             ], JSON_THROW_ON_ERROR);
 
         $ttl = $record->lifecycle->timeToLive(clock: $this->clock);
 
         if ($ttl > 0 && $ttl < PHP_INT_MAX) {
-            $this->redis->setex(key: $fullKey, expire: $ttl, value: $data);
+            $this->redis->setex($fullKey, (int) $ttl, $data);
         } else {
-            $this->redis->set(key: $fullKey, value: $data);
+            $this->redis->set($fullKey, $data);
         }
     }
 
@@ -166,10 +184,23 @@ final class RedisCacheStore implements CacheStore
     {
         $this->ensureConnected();
 
-        $keys = $this->redis->keys(pattern: $this->prefix . '*');
+        $iterator = null;
+        $pattern  = $this->prefix . '*';
 
-        if (! empty($keys)) {
-            $this->redis->del(key: $keys);
+        while ( true ) {
+            $keys = $this->redis->scan($iterator, $pattern, 100);
+
+            if ($keys === false) {
+                break;
+            }
+
+            if (! empty($keys)) {
+                $this->redis->del($keys);
+            }
+
+            if ($iterator === 0) {
+                break;
+            }
         }
     }
 
@@ -182,7 +213,7 @@ final class RedisCacheStore implements CacheStore
 
         $fullKey = $this->prefix . $key->fullKey();
 
-        return (bool) $this->redis->exists(key: $fullKey);
+        return (bool) $this->redis->exists($fullKey);
     }
 
     /**
@@ -192,9 +223,10 @@ final class RedisCacheStore implements CacheStore
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key;
+        $cacheKey = CacheKey::create(key: $key);
+        $fullKey  = $this->prefix . $cacheKey->fullKey();
 
-        return (int) $this->redis->incrBy(key: $fullKey, value: $value);
+        return (int) $this->redis->incrBy($fullKey, $value);
     }
 
     /**
@@ -204,9 +236,10 @@ final class RedisCacheStore implements CacheStore
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key;
+        $cacheKey = CacheKey::create(key: $key);
+        $fullKey  = $this->prefix . $cacheKey->fullKey();
 
-        return (int) $this->redis->decrBy(key: $fullKey, value: $value);
+        return (int) $this->redis->decrBy($fullKey, $value);
     }
 
     public function isConnected() : bool

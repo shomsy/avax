@@ -21,18 +21,18 @@ final class InMemoryLockStore implements CacheLockStore
         $this->locks = $locks;
     }
 
-    public function acquire(string $key, int $ttlSeconds) : bool
+    public function acquire(string $key, string $owner, int $ttlSeconds) : bool
     {
         if ($this->isAcquired(key: $key)) {
-            $owner = $this->locks[$key] ?? null;
+            $existingOwner = $this->locks[$key] ?? null;
 
-            if ($owner !== null && ! $owner->isExpired(clock: $this->clock)) {
-                return false;
+            if ($existingOwner !== null && ! $existingOwner->isExpired(clock: $this->clock)) {
+                return $existingOwner->ownerId === $owner;
             }
         }
 
         $this->locks[$key] = CacheLockOwner::current(
-            ownerId   : uniqid(more_entropy: true),
+            ownerId   : $owner,
             ttlSeconds: $ttlSeconds,
             clock     : $this->clock
         );
@@ -57,9 +57,13 @@ final class InMemoryLockStore implements CacheLockStore
         return true;
     }
 
-    public function release(string $key) : void
+    public function release(string $key, string $owner) : void
     {
-        unset($this->locks[$key]);
+        $existingOwner = $this->locks[$key] ?? null;
+
+        if ($existingOwner !== null && $existingOwner->ownerId === $owner) {
+            unset($this->locks[$key]);
+        }
     }
 
     public function getOwner(string $key) : CacheLockOwner|null

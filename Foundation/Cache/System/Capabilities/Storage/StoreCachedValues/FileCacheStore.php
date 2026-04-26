@@ -7,10 +7,13 @@ namespace Avax\Cache\System\Capabilities\Storage\StoreCachedValues;
 use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Cache\System\Foundation\Serialization\JsonCacheSerializer;
+use Avax\Cache\System\Foundation\Serialization\SerializedCachePayload;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 use Avax\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Throwable;
 
 final class FileCacheStore implements CacheStore
@@ -19,16 +22,14 @@ final class FileCacheStore implements CacheStore
     private const WRITE_MODE     = 0644;
     private const LOCK_MODE      = LOCK_EX;
 
-    private string              $basePath;
     private JsonCacheSerializer $serializer;
 
     public function __construct(
-        string                   $basePath,
-        private Clock            $clock = new SystemClock(),
+        private readonly string $basePath,
+        private readonly Clock  $clock = new SystemClock(),
         JsonCacheSerializer|null $serializer = null
     )
     {
-        $this->basePath   = rtrim($basePath, '/\\');
         $this->serializer = $serializer ?? new JsonCacheSerializer(clock: $this->clock);
 
         $this->ensureDirectoryExists();
@@ -49,11 +50,13 @@ final class FileCacheStore implements CacheStore
         $filePath = $this->getFilePath(key: $key);
         $this->ensureDirectoryExistsForKey(filePath: $filePath);
 
+        $serializedPayload = $this->serializer->serialize(value: $record->value);
+
         $data = [
-            'value'          => $record->value,
+            'value'  => $serializedPayload->data,
+            'format' => $serializedPayload->format,
             'lifecycle'      => $this->serializeLifecycle(lifecycle: $record->lifecycle),
             'serializedData' => $record->serializedData,
-            'format'         => $record->format,
         ];
 
         $content = json_encode($data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
@@ -120,15 +123,26 @@ final class FileCacheStore implements CacheStore
 
     public function clear() : void
     {
-        $files = glob($this->basePath . '/*' . self::FILE_EXTENSION);
+        $this->recursiveDelete(directory: $this->basePath);
+        $this->ensureDirectoryExists();
+    }
 
-        if ($files === false) {
+    private function recursiveDelete(string $directory) : void
+    {
+        if (! is_dir($directory)) {
             return;
         }
 
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                @unlink($file);
+        $items = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($items as $item) {
+            if ($item->isDir()) {
+                @rmdir($item->getRealPath());
+            } else {
+                @unlink($item->getRealPath());
             }
         }
     }
@@ -179,8 +193,16 @@ final class FileCacheStore implements CacheStore
                 return new CacheStoreRecordWasMissing(key: $key);
             }
 
+            $valuePayload = SerializedCachePayload::create(
+                data  : $data['value'] ?? '',
+                format: $data['format'] ?? 'json',
+                clock : $clock
+            );
+
+            $value = $this->serializer->unserialize(payload: $valuePayload);
+
             $record = new StoredCacheRecord(
-                value         : $data['value'] ?? null,
+                value         : $value,
                 lifecycle     : $lifecycle,
                 serializedData: $data['serializedData'] ?? null,
                 format        : $data['format'] ?? null

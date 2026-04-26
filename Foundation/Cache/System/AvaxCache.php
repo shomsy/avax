@@ -36,16 +36,16 @@ final class AvaxCache implements CacheContract
     private bool                          $stampedeProtectionEnabled;
 
     public function __construct(
-        private readonly CacheStore            $store,
-        private readonly Clock                 $clock = new SystemClock(),
-        private readonly CacheMetrics|null     $metrics = null,
-        private readonly StaleValuePolicy|null $stalePolicy = null,
-        private readonly RefreshPolicy|null    $refreshPolicy = null,
-        private readonly CacheLockStore|null   $lockStore = null,
-        private readonly bool                  $stampedeProtection = false,
-        private readonly int                   $lockWaitTimeoutSeconds = 5,
-        private readonly int                   $lockTtlSeconds = 30,
-        private readonly int                   $refreshAheadWindowSeconds = 60
+        private readonly CacheStore        $store,
+        private readonly Clock             $clock = new SystemClock(),
+        private readonly CacheMetrics|null $metrics = null,
+        StaleValuePolicy|null              $stalePolicy = null,
+        RefreshPolicy|null                 $refreshPolicy = null,
+        CacheLockStore|null                $lockStore = null,
+        bool                               $stampedeProtection = false,
+        private readonly int               $lockWaitTimeoutSeconds = 5,
+        private readonly int               $lockTtlSeconds = 30,
+        private readonly int               $refreshAheadWindowSeconds = 60
     )
     {
         $this->ttlCalculator  = new CacheTtl(clock: $this->clock);
@@ -61,7 +61,6 @@ final class AvaxCache implements CacheContract
         if ($stampedeProtection && $lockStore !== null) {
             $this->stampedeLock              = new AcquireCacheStampedeLock(
                 lockStore         : $lockStore,
-                clock             : $this->clock,
                 waitTimeoutSeconds: $this->lockWaitTimeoutSeconds,
                 lockTtlSeconds    : $this->lockTtlSeconds
             );
@@ -73,8 +72,9 @@ final class AvaxCache implements CacheContract
 
     public function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
-        $cacheKey = CacheKey::create(key: $key);
-        $result   = $this->store->read(key: $cacheKey, clock: $this->clock);
+        $startTime = hrtime(true);
+        $cacheKey  = CacheKey::create(key: $key);
+        $result    = $this->store->read(key: $cacheKey, clock: $this->clock);
 
         if ($result instanceof CacheStoreRecordWasFound) {
             $record    = $result->record;
@@ -87,7 +87,7 @@ final class AvaxCache implements CacheContract
             if ($lifecycle->isExpired(clock: $this->clock)) {
                 if ($this->stalePolicyDecider->canServeStale()) {
                     $this->recordMetrics(
-                        startTime: hrtime(true),
+                        startTime: $startTime,
                         operation: 'stale_served',
                         key      : $cacheKey
                     );
@@ -101,7 +101,7 @@ final class AvaxCache implements CacheContract
             }
 
             $this->recordMetrics(
-                startTime: hrtime(true),
+                startTime: $startTime,
                 operation: 'hit',
                 key      : $cacheKey
             );
@@ -249,6 +249,10 @@ final class AvaxCache implements CacheContract
 
         $this->metrics->recordLatency(microseconds: $latencyMicroseconds);
     }
+
+    /**
+     * @throws InvalidArgumentException
+     */
 
     public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {

@@ -6,9 +6,7 @@ namespace Avax\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
 
 final readonly class DecideStaleValueCanBeServed
 {
-    public function __construct(
-        private StaleValuePolicy $policy = StaleValuePolicy::DO_NOT_SERVE_STALE
-    ) {}
+    public function __construct(private StaleValuePolicy $policy = StaleValuePolicy::DO_NOT_SERVE_STALE) {}
 
     public function canServeStale() : bool
     {

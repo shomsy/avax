@@ -11,9 +11,7 @@ final readonly class PhpCacheSerializer implements CacheSerializer
 {
     public const FORMAT = 'php-serialized';
 
-    public function __construct(
-        private Clock $clock = new SystemClock()
-    ) {}
+    public function __construct(private Clock $clock = new SystemClock()) {}
 
     public function serialize(mixed $value) : SerializedCachePayload
     {

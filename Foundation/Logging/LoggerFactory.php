@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Logging;
 
 use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Facade\Facades\Storage;
 use Avax\Logging\Writers\RotatingFileLogWriter;
 use RuntimeException;
 
@@ -39,7 +40,7 @@ final class LoggerFactory
     public function create() : ErrorLogger
     {
         // Get the environment from env()
-        $env = env(key: 'APP_ENV');
+        $env = config(key: 'app.env', default: 'production');
 
         // Determine base name based on environment
         $baseName = match ($env) {
@@ -78,8 +79,8 @@ final class LoggerFactory
         return new ErrorLogger(
             logWriter: new RotatingFileLogWriter(
                            baseLogPath: $path,
-                           timezone   : env(
-                                            key    : 'APP_TZ',
+                           timezone   : config(
+                                            key    : 'app.timezone',
                                             default: date_default_timezone_get()
                                         )
                        )
@@ -99,18 +100,13 @@ final class LoggerFactory
      */
     private function ensureLogDirectoryIsWritable(string $logPath) : void
     {
-        // Extract the parent directory from the log file path
         $dir = dirname(path: $logPath);
 
-        // Attempt to create the directory if it does not exist
-        if (! is_dir(filename: $dir) && ! mkdir(directory: $dir, permissions: 0750, recursive: true) && ! is_dir(filename: $dir)) {
-            throw new RuntimeException(
-                message: "Failed to create log directory: {$dir}"
-            );
+        if (! Storage::exists(path: $dir)) {
+            Storage::createDirectory(directory: $dir);
         }
 
-        // Verify write permission (prevents silent failures or security issues)
-        if (! is_writable(filename: $dir)) {
+        if (! Storage::isWritable(path: $dir)) {
             throw new RuntimeException(
                 message: "Log directory not writable: {$dir}"
             );

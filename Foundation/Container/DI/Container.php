@@ -39,9 +39,7 @@ use Throwable;
  */
 final readonly class Container implements ContainerInterface
 {
-    private ServiceResolver $resolver;
-
-    public function __construct(ServiceResolver $resolver) { $this->resolver = $resolver; }
+    public function __construct(private ServiceResolver $resolver) {}
 
     /**
      * @throws Throwable

@@ -18,21 +18,25 @@
     ]
   },
   "require-dev": {
-    "nunomaduro/phpinsights": "^2.11",
+    "phpstan/phpstan": "^2.0",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "vimeo/psalm": "^5.26",
+    "infection/infection": "^0.29",
     "rector/rector": "^1.2",
-    "laravel/pint": "^1.16",
-    "barryvdh/laravel-ide-helper": "^3.1",
     "friendsofphp/php-cs-fixer": "^3.63",
     "squizlabs/php_codesniffer": "^3.7",
     "qossmic/deptrac": "^2.0",
+    "nunomaduro/phpinsights": "^2.11",
+    "barryvdh/laravel-ide-helper": "^3.1",
     "tracy/tracy": "^2.3",
     "swoole/ide-helper": "^5.1",
-    "phpunit/phpunit": "^10.5"
+    "phpunit/phpunit": "^10.5.17"
   },
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
-      "phpstan/extension-installer": false
+      "phpstan/extension-installer": true,
+      "infection/extension-installer": true
     }
   },
   "require": {
@@ -62,21 +66,18 @@
     "rakibtg/sleekdb": "^2.15",
     "psr/simple-cache": "^3.0",
     "ext-intl": "*",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "ext-redis": "*"
   },
   "scripts": {
-    "analyse": [
-      "composer insights",
-      "composer rector"
-    ],
-    "fix": [
-      "composer fix-rector"
-    ],
-    "rector": "php vendor/bin/rector",
-    "fix-insights": "php vendor/bin/phpinsights analyse --fix",
-    "fix-rector": "php vendor/bin/rector",
-    "fix-pint": "php vendor/bin/pint",
-    "pint": "php vendor/bin/pint",
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "style": "php-cs-fixer fix --dry-run --diff",
+    "style:fix": "php-cs-fixer fix",
+    "architecture": "deptrac analyse",
+    "refactor:dry": "rector process --dry-run",
+    "refactor": "rector process",
+    "test": "phpunit",
+    "mutation": "infection --min-msi=80 --min-covered-msi=90",
     "check:superglobals": "php scripts/check-superglobals.php"
   },
   "suggest": {}

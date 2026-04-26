@@ -13,7 +13,6 @@ use Avax\HTTP\Middleware\RateLimiterMiddleware;
 use Avax\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Session\NullSession;
 use Override;
@@ -41,45 +40,33 @@ final readonly class AppKernel implements Kernel
 {
     private HttpKernel $kernel;
 
-    private RouterRuntimeInterface $router;
-
-    private ControllerDispatcher $dispatcher;
-
-    private ResponseFactory $responseFactory;
-
-    private array $globalMiddleware;
-
     /**
      * Create AppKernel with all dependencies.
      *
-     * @param RouterInterface       $router           The route resolver
-     * @param ControllerDispatcher  $dispatcher       The controller executor
-     * @param ResponseFactory       $responseFactory  For creating responses
-     * @param MiddlewareInterface[] $globalMiddleware Always-executed middleware
+     * @param RouterRuntimeInterface $router           The route resolver
+     * @param ControllerDispatcher   $dispatcher       The controller executor
+     * @param ResponseFactory        $responseFactory  For creating responses
+     * @param MiddlewareInterface[]  $globalMiddleware Always-executed middleware
      *
      * @throws ReflectionException
      */
     public function __construct(
-        RouterRuntimeInterface $router,
-        ControllerDispatcher $dispatcher,
-        ResponseFactory      $responseFactory,
-        array                $globalMiddleware = []
+        private RouterRuntimeInterface $router,
+        private ControllerDispatcher   $dispatcher,
+        private ResponseFactory        $responseFactory,
+        private array                  $globalMiddleware = []
     )
     {
-        $this->router          = $router;
-        $this->dispatcher      = $dispatcher;
-        $this->responseFactory = $responseFactory;
-
         // Default global middleware if none provided
-        $this->globalMiddleware = empty($globalMiddleware)
-            ? $this->createDefaultMiddlewareStack(responseFactory: $responseFactory)
-            : $globalMiddleware;
+        $middlewareStack = empty($this->globalMiddleware)
+            ? $this->createDefaultMiddlewareStack(responseFactory: $this->responseFactory)
+            : $this->globalMiddleware;
 
         $this->kernel = new HttpKernel(
-            router          : $router,
-            dispatcher      : $dispatcher,
-            globalMiddleware: $this->globalMiddleware,
-            responseFactory : $responseFactory
+            router          : $this->router,
+            dispatcher      : $this->dispatcher,
+            globalMiddleware: $middlewareStack,
+            responseFactory : $this->responseFactory
         );
     }
 
@@ -89,7 +76,6 @@ final readonly class AppKernel implements Kernel
      * This provides sensible defaults that can be customized or replaced.
      * Order matters for security and functionality.
      *
-     * @throws ReflectionException
      * @throws ReflectionException
      */
     private function createDefaultMiddlewareStack(ResponseFactory $responseFactory) : array
@@ -177,47 +163,47 @@ final readonly class AppKernel implements Kernel
             logger: new class implements LoggerInterface {
                       public function emergency(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function alert(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function critical(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function error(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function warning(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function notice(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function info(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function debug(Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
 
                       public function log($level, Stringable|string $message, array $context = []) : void
                       {
-                          error_log(message: $message);
+                          error_log(message: (string) $message);
                       }
                   }
         );
@@ -252,8 +238,8 @@ final readonly class AppKernel implements Kernel
                               },
             responseFactory   : $responseFactory,
             identifierType    : 'ip',
-            maxRequests       : 100, // max requests
-            timeWindow        : 60   // time window
+            maxRequests       : 100,
+            timeWindow        : 60
         );
     }
 
@@ -267,17 +253,6 @@ final readonly class AppKernel implements Kernel
 
     /**
      * Process HTTP request through complete application pipeline.
-     *
-     * Pipeline:
-     * 1. Global middleware (CORS, security headers, logging)
-     * 2. Route resolution (RouterInterface)
-     * 3. Route-specific middleware (if configured)
-     * 4. Controller execution (ControllerDispatcher)
-     * 5. Response formatting
-     *
-     * @param ServerRequestInterface $request The HTTP request
-     *
-     * @return ResponseInterface The HTTP response
      */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {

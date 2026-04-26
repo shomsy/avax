@@ -15,9 +15,7 @@ use Avax\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class BuildCache
 {
-    public function __construct(
-        private Clock $clock = new SystemClock()
-    ) {}
+    public function __construct(private Clock $clock = new SystemClock()) {}
 
     public function inMemory(CacheConfiguration|null $config = null) : AvaxCache
     {

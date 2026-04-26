@@ -1,0 +1,43 @@
+parameters:
+    level: 8
+    paths:
+        - .
+    excludePaths:
+        - vendor/
+        - tests/
+        - storage/
+        - public/
+        - docker/
+        - tmp/
+        - tools/
+        - .idea/
+        - .git/
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+
+    # Custom rules for enterprise router code
+    rules:
+        - Avax\Router\Rules\NoStaticMutableProperties
+        - Avax\Router\Rules\NoGlobalStateUsage
+        - Avax\Router\Rules\RequireStrictTypes
+
+    # Ignore known issues in external dependencies
+    ignoreErrors:
+        - '#Call to an undefined method#'
+        - '#Access to undefined constant#'
+        - '#Cannot call method#'
+        - '#Method .* does not exist#'
+
+    # Router-specific type definitions
+    typeAliases:
+        RoutesMap: 'array<string, array<string, RouteDefinition[]>>'
+        RouteConstraints: 'array<string, string>'
+        RouteDefaults: 'array<string, mixed>'
+        RouteMetadata: 'array<string, mixed>'
+        RouteAttributes: 'array<string, mixed>'
+
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon

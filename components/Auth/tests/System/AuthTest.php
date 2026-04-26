@@ -1,0 +1,226 @@
+<?php
+
+declare(strict_types=1);
+
+namespace components\Auth\Tests\System;
+
+use components\Auth\System\Auth;
+use components\Auth\System\Capabilities\Access\AccessInterface;
+use components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
+use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use components\Auth\System\Capabilities\Identity\Identity;
+use components\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use components\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
+use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use components\Auth\System\Configuration\AuthBuilder;
+use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use components\Auth\System\Flows\Login\Credentials;
+use components\Auth\System\Flows\Register\RegistrationData;
+use components\Auth\System\Foundation\Clock;
+use components\Auth\Tests\Support\ArraySessionStore;
+use components\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Smoke tests for the public Auth facade.
+ */
+final class AuthTest extends TestCase
+{
+    public function testAuthConfigurationReturnsBuilder() : void
+    {
+        $this->assertInstanceOf(expected: AuthBuilder::class, actual: Auth::configuration());
+    }
+
+    /**
+     */
+    public function testAuthFacadeRunsCorePublicFlowSurface() : void
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auth          = Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-test-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->ready();
+
+        $registration = $auth->register(data: new RegistrationData(
+                                                  email   : 'facade@example.com',
+                                                  username: 'facade',
+                                                  password: 'secret'
+                                              ));
+        $this->assertSame(expected: 'facade@example.com', actual: $registration->user()->email);
+
+        $login = $auth->login(credentials: new Credentials(
+                                               identifier: 'facade@example.com',
+                                               password  : 'secret'
+                                           ));
+
+        $this->assertTrue(condition: $login->isAuthenticated());
+        $this->assertNotNull(actual: $login->accessToken());
+        $this->assertNotNull(actual: $login->refreshToken());
+        $this->assertTrue(condition: $auth->check());
+        $this->assertSame(expected: $login->user()?->id, actual: $auth->current()->user()?->id);
+        $this->assertSame(expected: $login->user()?->email, actual: $auth->user()?->email);
+        $this->assertInstanceOf(expected: AccessInterface::class, actual: $auth->access());
+
+        $resolved = $auth->authenticateRequest(request: AuthenticationRequest::bearer(bearerToken: $login->accessToken() ?? ''));
+        $this->assertTrue(condition: $resolved->isAuthenticated());
+        $this->assertSame(expected: 'facade@example.com', actual: $resolved->user()?->email);
+
+        $auth->logout();
+
+        $this->assertFalse(condition: $auth->check());
+        $this->assertNull(actual: $auth->user());
+    }
+
+    /**
+     * @throws Unauthenticated
+     */
+    public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
+    {
+        $userSource      = new InMemoryUserSource();
+        $sessionRegistry = new InMemorySessionRegistry();
+        $sessionStore    = new ArraySessionStore();
+        $auth            = Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(
+                                         sessionIdentity: new SessionIdentity(
+                                                              store          : $sessionStore,
+                                                              sessionRegistry: $sessionRegistry
+                                                          )
+                                     ))
+            ->withSessionRegistry(sessionRegistry: $sessionRegistry)
+            ->ready();
+
+        $auth->register(data: new RegistrationData(
+                                  email   : 'session@example.com',
+                                  username: 'session-user',
+                                  password: 'secret'
+                              ));
+
+        $login = $auth->login(credentials: new Credentials(
+                                               identifier: 'session@example.com',
+                                               password  : 'secret',
+                                               ipAddress : '127.0.0.1',
+                                               userAgent : 'PHPUnit'
+                                           ));
+
+        $this->assertTrue(condition: $login->isAuthenticated());
+        $sessions = $auth->readActiveSessions();
+        $this->assertCount(expectedCount: 1, haystack: $sessions);
+        $this->assertTrue(condition: $sessions[0]->current);
+
+        $auth->revokeSession(sessionId: $sessions[0]->sessionId);
+
+        $this->assertFalse(condition: $auth->check());
+        $this->assertNull(actual: $auth->user());
+    }
+
+    /**
+     */
+    public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auditLog      = new InMemoryAuditLog();
+        $auth          = Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-correlation-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withAuditLog(auditLog: $auditLog)
+            ->withAuditCorrelationId(correlationId: 'corr-auth-1')
+            ->ready();
+
+        $auth->register(data: new RegistrationData(
+                                  email   : 'trace@example.com',
+                                  username: 'trace-user',
+                                  password: 'secret'
+                              ));
+        $auth->login(credentials: new Credentials(
+                                      identifier: 'trace@example.com',
+                                      password  : 'secret'
+                                  ));
+        $auth->logout();
+
+        $events = $auditLog->events();
+        $this->assertNotSame(expected: [], actual: $events);
+        $this->assertContainsOnlyInstancesOf(className: AuditEvent::class, haystack: $events);
+        array_map(callback: static fn ($event) => $event->correlationId, array: $events)
+            |> array_filter(...)
+            |> array_unique(...)
+            |> array_values(...)
+            |> (fn ($x) => $this->assertSame(expected: ['corr-auth-1'], actual: $x));
+    }
+
+    public function testAuthFacadeReadsWorkloadIdentityInventory() : void
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auth          = Auth::configuration()
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-workload-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->ready();
+
+        $auth->registerOAuthClient(data: new RegisterClientData(
+                                             name                    : 'Search Worker',
+                                             type                    : OAuthClientType::CONFIDENTIAL,
+                                             redirectUris            : ['urn:avax:oauth:search-worker'],
+                                             allowedScopes           : ['search.read'],
+                                             allowedAudiences        : ['search-api'],
+                                             allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+                                             requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+                                             workloadIdentity        : true
+                                         ));
+
+        $profiles = $auth->readWorkloadIdentities();
+
+        $this->assertCount(expectedCount: 1, haystack: $profiles);
+        $this->assertSame(expected: ['search-api'], actual: $profiles[0]->allowedAudiences);
+    }
+
+    public function testAuthFacadeExposesExplainabilitySurface() : void
+    {
+        $auth = Auth::configuration()
+            ->forUser(userSource: new InMemoryUserSource())
+            ->withIdentity(identity: new Identity(
+                                         sessionIdentity: new SessionIdentity(store: new ArraySessionStore())
+                                     ))
+            ->ready();
+
+        $explanation = $auth->explainSenderConstraintFailure(
+            reason            : 'binding_mismatch',
+            requiredConstraint: 'mtls'
+        );
+
+        $this->assertSame(expected: 'sender_constraint_failed', actual: $explanation->code);
+        $this->assertSame(expected: 'mtls', actual: $explanation->context['required_constraint']);
+    }
+}

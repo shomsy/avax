@@ -1,0 +1,266 @@
+<?php
+
+declare(strict_types=1);
+
+namespace components\HTTP\Router\System\Flows\RegisterRoutes;
+
+use BadMethodCallException;
+use Closure;
+use components\HTTP\Dispatcher\ControllerDispatcher;
+use components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use components\HTTP\Router\HttpMethod;
+use components\HTTP\Router\RouterInterface;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Attributes\AttributeRouteRegistrar;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\ConfigureRouteGroupAttributes;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
+use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use components\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use InvalidArgumentException;
+use LogicException;
+use ReflectionException;
+
+/**
+ * Router DSL surface responsible for defining routes and fallbacks.
+ *
+ * This class keeps all registration logic isolated from the runtime router.
+ */
+final readonly class RouterDsl implements RouterInterface
+{
+    private RouteRegistry        $registry;
+    private RouteGroupFrames     $groupStack;
+    private RegisteredFallback   $fallbackManager;
+    private ControllerDispatcher $controllerDispatcher;
+    private HttpRequestRouter    $router;
+    private RouterRegistrar      $registrar;
+
+    public function __construct(
+        RouterRegistrar      $registrar,
+        HttpRequestRouter    $router,
+        ControllerDispatcher $controllerDispatcher,
+        RegisteredFallback   $fallbackManager,
+        RouteGroupFrames     $groupStack,
+        RouteRegistry        $registry,
+    )
+    {
+        $this->registrar            = $registrar;
+        $this->router               = $router;
+        $this->controllerDispatcher = $controllerDispatcher;
+        $this->fallbackManager      = $fallbackManager;
+        $this->groupStack           = $groupStack;
+        $this->registry             = $registry;
+    }
+
+    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        if (empty($path)) {
+            throw new InvalidArgumentException(message: 'Route path cannot be empty in get() method');
+        }
+
+        return $this->register(method: HttpMethod::GET->value, path: $path, action: $action);
+    }
+
+    private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        if (empty($path)) {
+            throw new InvalidArgumentException(message: "Route path cannot be empty for method {$method}");
+        }
+
+        $builder = RouteBuilder::make(method: $method, path: $path);
+        $builder->action(action: $action);
+
+        // Apply current group context (prefixes, middleware, etc.)
+        $builder = $this->groupStack->applyTo(builder: $builder);
+
+        return new RouteRegistrarProxy(
+            router  : $this->router,
+            builder : $builder,
+            registry: $this->registry
+        );
+    }
+
+    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::POST->value, path: $path, action: $action);
+    }
+
+    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::PUT->value, path: $path, action: $action);
+    }
+
+    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::PATCH->value, path: $path, action: $action);
+    }
+
+    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::DELETE->value, path: $path, action: $action);
+    }
+
+    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::OPTIONS->value, path: $path, action: $action);
+    }
+
+    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::HEAD->value, path: $path, action: $action);
+    }
+
+    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(method: HttpMethod::ANY->value, path: $path, action: $action);
+    }
+
+    public function anyExpanded(string $path, callable|array|string $action) : array
+    {
+        $proxies = [];
+
+        foreach (HttpMethod::cases() as $method) {
+            // Skip ANY method in expanded version
+            if ($method !== HttpMethod::ANY) {
+                $proxies[] = $this->register(method: $method->value, path: $path, action: $action);
+            }
+        }
+
+        return $proxies;
+    }
+
+    public function fallback(callable|array|string $handler) : void
+    {
+        $callable = is_callable(value: $handler)
+            ? $handler
+            : fn (ServerRequest $request) => $this->controllerDispatcher->dispatch(action: $handler, request: $request);
+
+        // Unified fallback handling through RegisteredFallback only
+        $this->fallbackManager->set(handler: $callable);
+
+        // Set in registry for DSL execution (used during route file loading)
+        $this->registry->setFallback(fallback: $callable);
+    }
+
+    /**
+     * @param object|string $controller
+     *
+     * @throws ReflectionException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
+     */
+    public function registerAttributes(object|string $controller) : void
+    {
+        new AttributeRouteRegistrar(router: $this->router)->register(controller: $controller);
+    }
+
+    public function name(string $prefix) : self
+    {
+        $context = $this->groupStack->current();
+
+        if ($context === null) {
+            throw new LogicException(message: 'Cannot call ->name() outside of a route group context.');
+        }
+
+        $context->namePrefix = $prefix;
+
+        return $this;
+    }
+
+    public function domain(string $domain) : self
+    {
+        $this->groupStack->current()?->setDomain(domain: $domain);
+
+        return $this;
+    }
+
+    public function authorize(string $policy) : self
+    {
+        $this->groupStack->current()?->setAuthorization(authorization: $policy);
+
+        return $this;
+    }
+
+    public function group(array $attributes, Closure $callback) : void
+    {
+        $context = new RouteGroupContext;
+
+        (new ConfigureRouteGroupAttributes)->apply(
+            attributes: $attributes,
+            context   : $context
+        );
+
+        $this->groupStack->push(group: $context);
+
+        try {
+            $callback($this);
+        } finally {
+            $this->groupStack->pop();
+        }
+    }
+
+    public function prefix(string $prefix) : self
+    {
+        $context = $this->groupStack->current();
+
+        if ($context === null) {
+            throw new LogicException(message: 'Cannot call ->prefix() outside of a route group context.');
+        }
+
+        $context->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function middleware(array $middleware) : self
+    {
+        $this->groupStack->current()?->addMiddleware(middleware: $middleware);
+
+        return $this;
+    }
+
+    public function where(array $constraints) : self
+    {
+        $this->groupStack->current()?->addConstraints(constraints: $constraints);
+
+        return $this;
+    }
+
+    public function defaults(array $defaults) : self
+    {
+        $this->groupStack->current()?->addDefaults(defaults: $defaults);
+
+        return $this;
+    }
+
+    public function attributes(array $attributes) : self
+    {
+        $this->groupStack->current()?->addAttributes(attributes: $attributes);
+
+        return $this;
+    }
+
+    /**
+     * Handle dynamic method calls for HTTP methods not explicitly defined.
+     * This prevents creation of routes with empty paths when invalid methods are called.
+     *
+     * @param string $method    The method name being called
+     * @param array  $arguments The arguments passed to the method
+     *
+     * @throws BadMethodCallException When an invalid HTTP method is called
+     */
+    public function __call(string $method, array $arguments) : mixed
+    {
+        // Check if this might be an HTTP method (all uppercase)
+        if (strtoupper(string: $method) === $method && strlen(string: $method) > 0) {
+            throw new BadMethodCallException(message: "HTTP method '{$method}' is not supported or route path is empty");
+        }
+
+        throw new BadMethodCallException(message: "Method '{$method}' does not exist on RouterDsl");
+    }
+}

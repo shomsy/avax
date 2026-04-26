@@ -1,0 +1,10 @@
+{
+  "approved": true,
+  "issues": [],
+  "checked": {
+    "status": true,
+    "product_boundary": true,
+    "capability_matrix": true,
+    "migration_guide": true
+  }
+}

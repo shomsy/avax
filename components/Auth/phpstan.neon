@@ -1,0 +1,7 @@
+parameters:
+  level: 5
+  paths:
+    - System
+    - integrations
+  scanFiles:
+    - phpstan.stubs/avax-container.stub.php

@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capabilities\Identity\Sessions\Registry;
+
+use DateTimeImmutable;
+
+interface PruneExpiredSessionsInterface
+{
+    public function pruneExpired(DateTimeImmutable $now) : int;
+}

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
     <testsuites>
-        <testsuite name="Contract">
-            <directory>tests/Contract</directory>
+        <testsuite name="Cache Contract">
+            <directory>tests/Contract/Cache</directory>
         </testsuite>
-        <testsuite name="Unit">
-            <directory>tests/Unit</directory>
+        <testsuite name="Cache Unit">
+            <directory>tests/Unit/Cache</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
-            <directory>Cache</directory>
+            <directory suffix=".php">System</directory>
+            <directory suffix=".php">tests</directory>
         </include>
+        <exclude>
+            <directory>tests/Unit/Cache/Capabilities/ManageDistributedCache</directory>
+        </exclude>
     </source>
-    <php>
-        <ini name="display_errors" value="1"/>
-        <ini name="error_reporting" value="-1"/>
-    </php>
 </phpunit>

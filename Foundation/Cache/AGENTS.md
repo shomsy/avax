@@ -21,23 +21,29 @@ Foundation/Cache/
 
 ```
 Foundation/Cache/
+├── Cache.php                  # Public runtime facade: Avax\Cache\Cache
+├── CompiledCache.php          # Public compiled facade: Avax\Cache\CompiledCache
+├── Providers/
+│   └── CacheServiceProvider.php
+│
 ├── System/
-│   ├── Cache.php               # Public facade (Cache::get/put/remember)
-│   ├── CacheContract.php       # Runtime cache interface
-│   ├── CompiledCache.php       # Compiled artifacts facade
-│   ├── AvaxCache.php           # Default implementation
+│   ├── CacheContract.php      # Runtime cache interface
+│   ├── AvaxCache.php          # Default implementation
 │   │
-│   ├── PublicSurface/          # Registry, facade, helpers
-│   │   ├── CacheRegistry.php
+│   ├── PublicSurface/
 │   │   ├── CacheFacade.php
+│   │   ├── CacheRegistry.php
+│   │   ├── RuntimeCacheTarget.php
+│   │   ├── CompiledCacheTarget.php
+│   │   ├── ReadFromCache.php
+│   │   ├── CacheReadTarget.php
+│   │   ├── CacheReadKind.php
 │   │   └── CacheNotConfigured.php
 │   │
-│   ├── Flows/                  # 12 runtime flows + 4 compiled flows
-│   ├── Capabilities/           # 10 runtime + 1 compiled capability
+│   ├── Flows/                  # 16 runtime flows + 4 compiled flows
+│   ├── Capabilities/           # 10 runtime + 2 compiled capabilities
 │   ├── Foundation/             # Time, Serialization
-│   ├── Configuration/          # BuildCache, BuildCompiledCache
-│   │
-│   └── Compatibility/LegacyAdapter/  # Deprecated legacy classes
+│   └── Configuration/          # BuildCache, BuildCompiledCache
 │
 ├── tests/
 ├── docs/
@@ -46,8 +52,10 @@ Foundation/Cache/
 
 ### Three Public Entrypoints
 
-1. **Cache** - static facade for runtime cache: `Cache::get()`, `Cache::put()`, `Cache::remember()`
-2. **CompiledCache** - static facade for compiled artifacts: `CompiledCache::read()`, `CompiledCache::compile()`
+1. **Avax\Cache\Cache** - static facade for runtime cache: `Cache::get()`, `Cache::put()`, `Cache::remember()`,
+   `Cache::read()`
+2. **Avax\Cache\CompiledCache** - static facade for compiled artifacts: `CompiledCache::read()`,
+   `CompiledCache::compile()`
 3. **BuildCache / BuildCompiledCache** - builders for manual composition and tests
 
 ### Version Roadmap
@@ -64,8 +72,9 @@ Foundation/Cache/
 2. **Clock dependency everywhere** - no direct time() calls
 3. **Cache miss !== stored null** - explicit distinction
 4. **Expired !== Stale** - explicit state modeling
-5. **Small public API, strong internal system** - facade has no real logic
+5. **Small public API, strong internal system** - Cache facade is a thin static router with routing logic
 6. **Observability as first-class concern**
+7. **Raw string in Cache::read() means runtime key** - compiled requires explicit target
 
 ### User Mental Model
 
@@ -74,13 +83,12 @@ Foundation/Cache/
 Cache::get('key');
 Cache::put('key', $value, ttl: 3600);
 Cache::remember('key', 3600, fn() => $loader->load());
+Cache::read('key'); // runtime
+Cache::read(CompiledCacheTarget::artifact(...)); // compiled
 
 // Testing
 Cache::use($mockCache);
 Cache::reset();
-
-// Compiled artifacts
-CompiledCache::read('routes', $builder, $sources);
 ```
 
 ### Testing Commands
@@ -103,11 +111,14 @@ Each folder contains `how-this-works.md` explaining:
 
 ### Important Notes
 
-- All stores must pass `CacheStoreContractTest`
+- All production stores must pass `CacheStoreContractTest` before promotion
 - FrozenClock used for deterministic testing
 - Metrics are optional (enable via config)
-- No direct time() in core logic
+- No direct time() in core logic. The entire System/ folder is covered by NoTimeFunctionInSystemTest.
 - All exceptions have error codes
 - **FileCacheStore !== CompiledCache**: Runtime store stores values, CompiledCache stores framework-generated PHP
   artifacts
-- **Cache facade delegates to CacheRegistry** - facade has no real business logic
+- **Cache facade is a thin static router** with routing logic for string/RuntimeCacheTarget/CompiledCacheTarget
+- **Cache::read() string means runtime key** - compiled requires explicit target
+- **Distributed cache is experimental** - routing skeleton only, excluded from contract tests until promoted
+- **No Compatibility/LegacyAdapter folder** - legacy code removed

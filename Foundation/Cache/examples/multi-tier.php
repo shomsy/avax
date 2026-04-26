@@ -4,30 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Examples;
 
-use Avax\Cache\Cache\AvaxCache;
-use Avax\Cache\Cache\Capabilities\StoreCachedValues\FileCacheStore;
-use Avax\Cache\Cache\Capabilities\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\Cache\Foundation\Time\SystemClock;
+use Avax\Cache\Cache;
+use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Foundation\Time\SystemClock;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$l1    = new InMemoryCacheStore(maxEntries: 100);
-$l2    = new FileCacheStore(directory: '/tmp/cache');
+$l1 = new InMemoryCacheStore();
 $clock = new SystemClock();
 
-$cache = new AvaxCache(
-    store         : $l1,
-    clock         : $clock,
-    defaultTtl    : 3600,
-    fallbackStores: [$l2]
-);
+$cache = Cache::use($l1);
 
 for ($i = 0; $i < 10; $i++) {
-    $cache->remember("item:{$i}", fn () => ["id" => $i, "name" => "Item {$i}"]);
+    Cache::remember("item:{$i}", 3600, fn () => ["id" => $i, "name" => "Item {$i}"]);
 }
 
-$stats = $cache->inspect()->metrics();
+$result = Cache::get('item:5');
+print_r($result);
 
-echo "Hits: {$stats->hitCount}\n";
-echo "Misses: {$stats->missCount}\n";
-echo "Hit rate: " . ($stats->hitCount / ($stats->hitCount + $stats->missCount) * 100) . "%\n";
+Cache::clear();
+
+$result = Cache::has('item:5');
+echo "After clear, has item:5 = " . ($result ? 'true' : 'false') . "\n";

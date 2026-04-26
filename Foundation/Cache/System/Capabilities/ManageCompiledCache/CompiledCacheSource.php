@@ -34,11 +34,15 @@ final readonly class CompiledCacheSource
 
     public static function fromPath(string $path) : self
     {
+        if (! file_exists($path)) {
+            throw new InvalidArgumentException(sprintf('Source file does not exist: %s', $path));
+        }
+
         $stat = stat($path);
 
         return new self(
             path    : $path,
-            mtime   : $stat['mtime'] ?? filemtime($path),
+            mtime   : $stat !== false ? $stat['mtime'] : filemtime($path),
             checksum: null
         );
     }

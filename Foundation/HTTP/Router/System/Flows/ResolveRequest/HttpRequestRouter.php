@@ -16,6 +16,7 @@ namespace Avax\HTTP\Router\System\Flows\ResolveRequest;
  * @phpstan-type RouteMethodMap array<string, array<string, RouteDefinition[]>>
  */
 
+use Avax\DataFoundation\Arrhae;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\DuplicatePolicy;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
@@ -29,6 +30,7 @@ use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Avax\Text\Pattern;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -243,20 +245,18 @@ final class HttpRequestRouter
         foreach ($this->routes as $method => $pathsForMethod) {
             foreach ($pathsForMethod as $routesForPath) {
                 foreach ($routesForPath as $route) {
-                    // Check if this route's pattern could match the path
                     if ($this->matchesIgnoringMethod(route: $route, path: $path)) {
                         $allowedMethods[] = $method;
-                        break 2; // Found at least one route for this method
+                        break 2;
                     }
                 }
             }
         }
 
-        // Remove duplicates and sort
-        $allowedMethods = array_unique(array: $allowedMethods);
-        sort(array: $allowedMethods);
-
-        return $allowedMethods;
+        return Arrhae::of(items: $allowedMethods)
+            ->unique()
+            ->sort()
+            ->values();
     }
 
     /**
@@ -274,13 +274,14 @@ final class HttpRequestRouter
      */
     private function matchesIgnoringMethod(RouteDefinition $route, string $path) : bool
     {
-        // Use precompiled regex pattern for performance
-        return preg_match(pattern: $route->compiledPathRegex, subject: $path) === 1;
+        return Pattern::of(raw: $route->compiledPathRegex)->test(subject: $path);
     }
 
     private function extractParameters(array $matches) : array
     {
-        return array_filter(array: $matches, callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
+        return Arrhae::of(items: $matches)
+            ->filter(callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY)
+            ->all();
     }
 
     /**
@@ -407,10 +408,9 @@ final class HttpRequestRouter
 
         // Remove existing route
         if (isset($this->routes[$method][$key->path])) {
-            $this->routes[$method][$key->path] = array_filter(
-                array   : $this->routes[$method][$key->path],
-                callback: static fn (RouteDefinition $route) => $route->domain !== $key->domain
-            );
+            $this->routes[$method][$key->path] = Arrhae::of(items: $this->routes[$method][$key->path])
+                ->filter(callback: static fn (RouteDefinition $route) => $route->domain !== $key->domain)
+                ->all();
         }
 
         // Add new route
@@ -454,15 +454,18 @@ final class HttpRequestRouter
 
         $pattern = '';
         foreach (explode(separator: '/', string: trim(string: $template, characters: '/')) as $segment) {
-            if (preg_match(pattern: '/^\{([^}]+)\}$/', subject: $segment, matches: $matches) !== 1) {
+            $segmentMatch = Pattern::of(raw: '^\{([^}]+)\}$')->match(subject: $segment);
+
+            if (! $segmentMatch->matched) {
                 $pattern .= '/' . preg_quote(str: $segment, delimiter: '#');
                 continue;
             }
 
-            $parameter  = $matches[1];
+            $parameter = $segmentMatch->matches[1];
             $isOptional = str_ends_with(haystack: $parameter, needle: '?');
             $isWildcard = str_ends_with(haystack: $parameter, needle: '*');
-            $name       = preg_replace(pattern: '/[?*]$/', replacement: '', subject: $parameter);
+
+            $name = Pattern::of(raw: '[?*]$')->replace(subject: $parameter, replacement: '');
             $constraint = $isWildcard ? '.*' : ($constraints[$name] ?? '[^/]+');
             $group      = "(?P<{$name}>{$constraint})";
 

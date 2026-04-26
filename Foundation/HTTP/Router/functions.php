@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
@@ -612,5 +613,40 @@ if (! function_exists(function: 'route_resource')) {
         }
 
         return $routes;
+    }
+}
+if (! function_exists(function: 'route')) {
+    /**
+     * Generate a URL for a named route.
+     *
+     * @param string $name       The name of the route
+     * @param array  $parameters Parameters to inject into the route path
+     *
+     * @return string|null The generated URL or null on failure
+     */
+    function route(string $name, array $parameters = []) : string|null
+    {
+        try {
+            // Retrieve the runtime router instance from the dependency injection container.
+            $router = app(abstract: RouterRuntimeInterface::class);
+
+            // Fetch the route definition by its name using the retrieved `Router` instance.
+            $route = $router->getRouteByName(name: $name);
+
+            // Extract the path of the route.
+            $path = $route->path;
+
+            // Inject parameters into the path
+            foreach ($parameters as $key => $value) {
+                $path = Pattern::of(raw: "\\{{$key}(?:[?*]?)\\}")->replace(subject: $path, replacement: (string) $value);
+            }
+
+            // Clean up any optional params not provided
+            return Pattern::of(raw: '\\{[^}]+\\}')->replace(subject: $path, replacement: '');
+        } catch (Throwable $throwable) {
+            logger(message: 'Failed to generate route.', context: ['route_name' => $name, 'exception' => $throwable]);
+
+            return null;
+        }
     }
 }

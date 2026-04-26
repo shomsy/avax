@@ -4,9 +4,20 @@
       "Avax\\": "Foundation/"
     },
     "files": [
-      "Foundation/Helpers/helpers.php",
       "Foundation/Text/functions.php",
-      "Foundation/HTTP/Router/functions.php"
+      "Foundation/HTTP/Router/functions.php",
+      "Foundation/HTTP/Response/functions.php",
+      "Foundation/Logging/functions.php",
+      "Foundation/Config/functions.php",
+      "Foundation/Auth/functions.php",
+      "Foundation/View/functions.php",
+      "Foundation/HTTP/Session/functions.php",
+      "Foundation/HTTP/Context/functions.php",
+      "Foundation/DataFoundation/functions.php",
+      "Foundation/Database/functions.php",
+      "Foundation/Container/functions.php",
+      "Foundation/HTTP/Security/functions.php",
+      "Foundation/DumpDebugger/functions.php"
     ]
   },
   "autoload-dev": {

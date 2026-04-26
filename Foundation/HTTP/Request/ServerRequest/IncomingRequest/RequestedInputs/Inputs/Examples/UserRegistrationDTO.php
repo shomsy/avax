@@ -5,28 +5,28 @@ declare(strict_types=1);
 namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples;
 
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use Avax\DataHandling\Validation\Attributes\Required;
-use Avax\DataHandling\Validation\Attributes\Rules\EmailRule;
-use Avax\DataHandling\Validation\Attributes\Rules\MinLengthRule;
-use Avax\DataHandling\Validation\Attributes\Rules\MinRule;
-use Avax\DataHandling\Validation\Attributes\Rules\PasswordComplexityRule;
+use Avax\Validation\System\Capabilities\Metadata\Attributes\Email;
+use Avax\Validation\System\Capabilities\Metadata\Attributes\Min;
+use Avax\Validation\System\Capabilities\Metadata\Attributes\MinLength;
+use Avax\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexity;
+use Avax\Validation\System\Capabilities\Metadata\Attributes\Required;
 
 final class UserRegistrationDTO extends AbstractDTO
 {
     #[Required]
-    #[MinLengthRule(length: 2)]
+    #[MinLength(length: 2)]
     public string $name;
 
     #[Required]
-    #[EmailRule]
+    #[Email]
     public string $email;
 
     #[Required]
-    #[MinLengthRule(length: 8)]
-    #[PasswordComplexityRule]
+    #[MinLength(length: 8)]
+    #[PasswordComplexity]
     public string $password;
 
-    #[MinRule(minimum: 18)]
+    #[Min(minimum: 18)]
     public int $age = 18;
 
     public string|null $phone = null;

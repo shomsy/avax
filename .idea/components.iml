@@ -29,7 +29,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/release" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Release\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System/Capabilities" isTestSource="false" packagePrefix="Avax\Auth\System\Capabilities\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System/Flows" isTestSource="false" packagePrefix="Avax\Auth\System\Flows\" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/storage/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/colinodell/json5" />

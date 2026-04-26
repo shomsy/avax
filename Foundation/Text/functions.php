@@ -179,3 +179,22 @@ function rx_split(string $pattern, string $subject, string $flags = '') : array
 {
     return Pattern::of(raw: $pattern, flags: $flags)->split(subject: $subject);
 }
+
+if (! function_exists(function: 'preview_text')) {
+    /**
+     * Shortens the given text for preview purposes.
+     *
+     * @param string $text
+     * @param int    $limit Number of characters to show
+     *
+     * @return string Truncated text with ellipsis if necessary.
+     */
+    function preview_text(string $text, int $limit = 80) : string
+    {
+        $text = strip_tags(string: $text);
+
+        return mb_strlen(string: $text) > $limit
+            ? mb_substr(string: $text, start: 0, length: $limit - 3) . '...'
+            : $text;
+    }
+}

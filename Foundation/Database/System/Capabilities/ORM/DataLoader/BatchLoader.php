@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\System\Capabilities\ORM\DataLoader;
 
+use JsonException;
 use RuntimeException;
 
 final class BatchLoader
@@ -19,6 +20,9 @@ final class BatchLoader
         return $this;
     }
 
+    /**
+     * @throws JsonException
+     */
     public function load(string $name, array $keys) : array
     {
         $cacheKey = $name . ':' . md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));

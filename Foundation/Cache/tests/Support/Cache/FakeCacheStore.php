@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Tests\Support\Cache;
 
-use Avax\Cache\System\Capabilities\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Cache\System\Capabilities\StoreCachedValues\StoredCacheRecord;
+use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 
@@ -19,7 +19,7 @@ final class FakeCacheStore implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(?Clock $clock = null)
+    public function __construct(Clock|null $clock = null)
     {
         $this->clock = $clock ?? new SystemClock();
     }
@@ -29,18 +29,18 @@ final class FakeCacheStore implements CacheStore
         $fullKey = $key->fullKey();
 
         if (! isset($this->records[$fullKey])) {
-            return new CacheStoreRecordWasMissing($key);
+            return new CacheStoreRecordWasMissing(key: $key);
         }
 
         $record = $this->records[$fullKey];
 
-        if ($record->lifecycle->isExpired($clock)) {
+        if ($record->lifecycle->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
-            return new CacheStoreRecordWasMissing($key);
+            return new CacheStoreRecordWasMissing(key: $key);
         }
 
-        return new CacheStoreRecordWasFound($key, $record, $clock);
+        return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
     }
 
     public function write(CacheKey $key, StoredCacheRecord $record) : void
@@ -66,7 +66,7 @@ final class FakeCacheStore implements CacheStore
             return false;
         }
 
-        return ! $this->records[$fullKey]->lifecycle->isExpired($this->clock);
+        return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
     public function getRecords() : array

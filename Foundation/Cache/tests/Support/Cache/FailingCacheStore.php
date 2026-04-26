@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Tests\Support\Cache;
 
-use Avax\Cache\System\Capabilities\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Cache\System\Capabilities\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Cache\System\Capabilities\StoreCachedValues\StoredCacheRecord;
+use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
+use Random\RandomException;
 use RuntimeException;
 
 final class FailingCacheStore implements CacheStore
@@ -19,7 +20,7 @@ final class FailingCacheStore implements CacheStore
     private float $failureRate = 1.0;
     private bool  $shouldFail  = false;
 
-    public function __construct(?Clock $clock = null)
+    public function __construct(Clock|null $clock = null)
     {
         $this->clock = $clock ?? new SystemClock();
     }
@@ -38,13 +39,16 @@ final class FailingCacheStore implements CacheStore
     {
         $this->maybeFail();
 
-        return new CacheStoreRecordWasMissing($key);
+        return new CacheStoreRecordWasMissing(key: $key);
     }
 
+    /**
+     * @throws RandomException
+     */
     private function maybeFail() : void
     {
         if ($this->shouldFail || (random_int(0, 100) / 100) < $this->failureRate) {
-            throw new RuntimeException('Simulated cache store failure');
+            throw new RuntimeException(message: 'Simulated cache store failure');
         }
     }
 

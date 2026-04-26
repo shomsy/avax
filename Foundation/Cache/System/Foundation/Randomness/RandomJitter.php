@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Cache\System\Foundation\Randomness;
 
+use Random\RandomException;
+
 final readonly class RandomJitter
 {
     public const DEFAULT_JITTER_PERCENTAGE = 0.1;
@@ -12,6 +14,9 @@ final readonly class RandomJitter
         private float $jitterPercentage = self::DEFAULT_JITTER_PERCENTAGE
     ) {}
 
+    /**
+     * @throws RandomException
+     */
     public function apply(int $ttlInSeconds) : int
     {
         if ($ttlInSeconds <= 0) {
@@ -24,6 +29,9 @@ final readonly class RandomJitter
         return max(1, $ttlInSeconds + $jitter);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function applyToDuration(int $ttlInMilliseconds) : int
     {
         if ($ttlInMilliseconds <= 0) {

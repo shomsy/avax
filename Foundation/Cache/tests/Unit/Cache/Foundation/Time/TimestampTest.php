@@ -12,50 +12,50 @@ final class TimestampTest extends TestCase
 {
     public function test_creates_from_unix_time() : void
     {
-        $timestamp = Timestamp::fromUnixTime(1700000000);
+        $timestamp = Timestamp::fromUnixTime(timestamp: 1700000000);
 
-        $this->assertSame(1700000000, $timestamp->toUnixTime());
+        $this->assertSame(expected: 1700000000, actual: $timestamp->toUnixTime());
     }
 
     public function test_calculates_difference() : void
     {
-        $a = Timestamp::fromUnixTime(100);
-        $b = Timestamp::fromUnixTime(50);
+        $a = Timestamp::fromUnixTime(timestamp: 100);
+        $b = Timestamp::fromUnixTime(timestamp: 50);
 
-        $diff = $a->difference($b);
+        $diff = $a->difference(other: $b);
 
-        $this->assertSame(50, $diff->toSeconds());
+        $this->assertSame(expected: 50, actual: $diff->toSeconds());
     }
 
     public function test_adds_duration() : void
     {
-        $timestamp = Timestamp::fromUnixTime(100);
-        $duration  = Duration::ofSeconds(50);
+        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
+        $duration  = Duration::ofSeconds(seconds: 50);
 
-        $result = $timestamp->add($duration);
+        $result = $timestamp->add(duration: $duration);
 
-        $this->assertSame(150, $result->toUnixTime());
+        $this->assertSame(expected: 150, actual: $result->toUnixTime());
     }
 
     public function test_subtracts_duration() : void
     {
-        $timestamp = Timestamp::fromUnixTime(100);
-        $duration  = Duration::ofSeconds(30);
+        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
+        $duration  = Duration::ofSeconds(seconds: 30);
 
-        $result = $timestamp->subtract($duration);
+        $result = $timestamp->subtract(duration: $duration);
 
-        $this->assertSame(70, $result->toUnixTime());
+        $this->assertSame(expected: 70, actual: $result->toUnixTime());
     }
 
     public function test_compares_timestamps() : void
     {
-        $a = Timestamp::fromUnixTime(100);
-        $b = Timestamp::fromUnixTime(50);
-        $c = Timestamp::fromUnixTime(100);
+        $a = Timestamp::fromUnixTime(timestamp: 100);
+        $b = Timestamp::fromUnixTime(timestamp: 50);
+        $c = Timestamp::fromUnixTime(timestamp: 100);
 
-        $this->assertTrue($a->isAfter($b));
-        $this->assertTrue($b->isBefore($a));
-        $this->assertFalse($a->isAfter($c));
-        $this->assertFalse($a->isBefore($c));
+        $this->assertTrue(condition: $a->isAfter(other: $b));
+        $this->assertTrue(condition: $b->isBefore(other: $a));
+        $this->assertFalse(condition: $a->isAfter(other: $c));
+        $this->assertFalse(condition: $a->isBefore(other: $c));
     }
 }

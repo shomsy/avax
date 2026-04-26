@@ -2,10 +2,9 @@
 
 ## Status
 
-Current state: **V1 Complete** - Core runtime cache + compiled cache + named stores + public facade are
-production-ready.
+Current state: **V4 Complete** - All features implemented.
 
-Target state: **V1.5** - Production-ready source protection, stale behavior, refresh policies.
+Target state: **Done** - Roadmap complete.
 
 ## Masterpiece Rule
 
@@ -344,25 +343,32 @@ Every subsystem requires:
 
 ---
 
-## Current V1 Feature Status
+## Current V4 Feature Status
 
-| Feature                | Status              |
-|------------------------|---------------------|
-| Runtime Cache Facade   | ✅ Implemented       |
-| Compiled Cache         | ✅ Implemented       |
-| Named Stores           | ✅ Implemented       |
-| InMemory Store         | ✅ Implemented       |
-| File Store             | ✅ Implemented       |
-| Redis Store            | ✅ Implemented       |
-| Contract Tests         | ✅ Implemented       |
-| Clock Dependency       | ✅ Implemented       |
-| Stampede Protection    | ❌ Planned (V1.5)    |
-| Stale-While-Revalidate | ❌ Planned (V1.5)    |
-| Refresh-Ahead          | ❌ Planned (V1.5)    |
-| Replacement Policies   | ❌ Planned (V2)      |
-| Capacity Control       | ❌ Planned (V2)      |
-| Distributed Cache      | ❌ Experimental (V3) |
-| Observability          | ❌ Planned (V4)      |
+| Feature                      | Status               |
+|------------------------------|----------------------|
+| Runtime Cache Facade         | ✅ Implemented        |
+| Compiled Cache               | ✅ Implemented        |
+| Named Stores                 | ✅ Implemented        |
+| InMemory Store               | ✅ Implemented        |
+| File Store                   | ✅ Implemented        |
+| Redis Store                  | ✅ Implemented        |
+| Contract Tests               | ✅ Implemented        |
+| Clock Dependency             | ✅ Implemented        |
+| Stampede Protection          | ✅ Implemented (V1.5) |
+| Stale-While-Revalidate       | ✅ Implemented (V1.5) |
+| Refresh-Ahead                | ✅ Implemented (V1.5) |
+| Replacement Policies         | ✅ Implemented (V2)   |
+| Capacity Control             | ✅ Implemented (V2)   |
+| Observability                | ✅ Implemented (V4)   |
+| Multi-tier Cache             | ✅ Implemented (V3)   |
+| Source Sync                  | ✅ Implemented (V3)   |
+| LFU with decay               | ✅ Implemented (V3)   |
+| Distributed Cache foundation | ✅ Implemented (V3)   |
+| Node health detection        | ✅ Implemented (V4)   |
+| Consistent hash rebalancing  | ✅ Implemented (V4)   |
+| Cache warming                | ✅ Implemented (V4)   |
+| Metrics backends             | ✅ Implemented (V4)   |
 
 ---
 

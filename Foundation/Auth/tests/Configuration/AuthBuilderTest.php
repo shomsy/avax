@@ -29,7 +29,9 @@ use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\InMemoryScimDirectoryStore;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
@@ -229,6 +231,10 @@ class AuthBuilderTest extends TestCase
         $builder->ready();
     }
 
+    /**
+     * @throws RegistrationFailed
+     * @throws RateLimitException
+     */
     public function testAuthBuilderBuildsUsableKernelFromStableIdentityBackendSeam() : void
     {
         $auth = new AuthBuilder()

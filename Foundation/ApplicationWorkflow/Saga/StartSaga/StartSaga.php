@@ -11,6 +11,7 @@ use Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
 use Avax\ApplicationWorkflow\Saga\ProtectSagaIdempotency\SagaCommandResult;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
 use InvalidArgumentException;
+use Random\RandomException;
 
 final readonly class StartSaga
 {
@@ -87,6 +88,9 @@ final readonly class StartSaga
         return $instance;
     }
 
+    /**
+     * @throws RandomException
+     */
     private function createCorrelationId() : string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
@@ -166,6 +170,9 @@ final readonly class SagaCorrelationId
         $this->suffix = $suffix;
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function generate(array $options = []) : self
     {
         $prefix = $options['prefix'] ?? null;

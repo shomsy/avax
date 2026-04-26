@@ -60,6 +60,9 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
         }
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function listForUser(UserId $userId) : array
     {
         $userKey    = self::USER_KEY_PREFIX . $userId->value;

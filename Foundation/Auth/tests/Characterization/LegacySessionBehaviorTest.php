@@ -10,14 +10,23 @@ use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
 use Avax\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flows\Register\RegistrationFailed;
 use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class LegacySessionBehaviorTest extends TestCase
 {
+    /**
+     * @throws AuthenticationFailed
+     * @throws Unauthenticated
+     * @throws RateLimitException
+     * @throws RegistrationFailed
+     */
     public function testLegacySessionReadAndRevocationBehaviorRemainsStable() : void
     {
         $sessionRegistry = new InMemorySessionRegistry();

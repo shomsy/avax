@@ -60,6 +60,8 @@ assertThrows(
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
+ */ /**
+ * @throws Throwable
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $productionReload->get(id: IntegrityTarget::class),
     message      : 'Production mode should fail closed when the compiled artifact is corrupted.'

@@ -18,7 +18,7 @@ final readonly class GzipCompressor implements CacheCompressor
         $compressed   = gzcompress($data, level: self::LEVEL);
 
         if ($compressed === false) {
-            throw new RuntimeException('Failed to compress data using gzip');
+            throw new RuntimeException(message: 'Failed to compress data using gzip');
         }
 
         return new CompressedCachePayload(
@@ -33,14 +33,14 @@ final readonly class GzipCompressor implements CacheCompressor
     {
         if ($payload->algorithm !== self::ALGORITHM) {
             throw new InvalidArgumentException(
-                sprintf('Cannot decompress payload with algorithm "%s"', $payload->algorithm)
+                message: sprintf('Cannot decompress payload with algorithm "%s"', $payload->algorithm)
             );
         }
 
         $decompressed = gzuncompress($payload->data);
 
         if ($decompressed === false) {
-            throw new RuntimeException('Failed to decompress data');
+            throw new RuntimeException(message: 'Failed to decompress data');
         }
 
         return $decompressed;

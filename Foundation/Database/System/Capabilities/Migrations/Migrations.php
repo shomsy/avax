@@ -162,6 +162,10 @@ final readonly class Migrations
         );
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
     {
         $instance = is_string(value: $seeder) ? new $seeder() : $seeder;

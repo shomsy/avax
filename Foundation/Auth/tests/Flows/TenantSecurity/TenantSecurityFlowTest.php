@@ -22,9 +22,13 @@ use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class TenantSecurityFlowTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testTenantSecurityChangeApprovalApplyAndRollback() : void
     {
         $auth       = $this->buildAuth();
@@ -89,6 +93,9 @@ final class TenantSecurityFlowTest extends TestCase
             ->ready();
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testTenantSecurityRejectsUnknownReferencedResources() : void
     {
         $auth = $this->buildAuth();
@@ -107,6 +114,9 @@ final class TenantSecurityFlowTest extends TestCase
                                                ));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testTenantSecurityApplyRequiresApproval() : void
     {
         $auth       = $this->buildAuth();

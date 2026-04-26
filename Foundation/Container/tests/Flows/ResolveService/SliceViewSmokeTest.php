@@ -174,6 +174,9 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
+ */ /**
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($billing) : void {
         $billing->get(id: SliceInternalAudit::class);

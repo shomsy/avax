@@ -8,6 +8,7 @@ use Avax\Database\System\Capabilities\ORM\Hydration\Hydrator;
 use Avax\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
 use Avax\Database\System\Capabilities\Query\Query;
+use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;
 use Throwable;
@@ -55,6 +56,9 @@ final readonly class EntityPersister
         return $payload;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function propertyValue(object $entity, string $property) : mixed
     {
         $reflection = new ReflectionProperty(class: $entity, property: $property);
@@ -63,6 +67,9 @@ final readonly class EntityPersister
         return $reflection->getValue(object: $entity);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function setPropertyValue(object $entity, string $property, mixed $value) : void
     {
         $reflection = new ReflectionProperty(class: $entity, property: $property);

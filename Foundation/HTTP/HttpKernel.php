@@ -15,9 +15,12 @@ use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionException;
 use RuntimeException;
 use Throwable;
 
@@ -117,6 +120,11 @@ final readonly class RouterRequestHandler implements RequestHandlerInterface
 {
     public function __construct(private RouterRuntimeInterface $router) {}
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws ReflectionException
+     * @throws NotFoundExceptionInterface
+     */
     public function handle(RequestInterface $request) : ResponseInterface
     {
         if (! $request instanceof ServerRequest) {

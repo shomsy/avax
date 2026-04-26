@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Tests\Integration\Cache\ManageCompiledCache;
 
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCache;
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCache;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Cache\System\Configuration\BuildCompiledCache;
 use Avax\Cache\System\Configuration\CompiledCacheConfiguration;
 use PHPUnit\Framework\TestCase;
@@ -25,19 +25,19 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $sources = CompiledCacheSources::empty();
 
-        $artifact = $this->cache->compile($name, $builder, $sources);
+        $artifact = $this->cache->compile(name: $name, build: $builder, sources: $sources);
 
-        $this->assertSame('routes', $artifact->name->toString());
-        $this->assertFileExists($artifact->path->toString());
+        $this->assertSame(expected: 'routes', actual: $artifact->name->toString());
+        $this->assertFileExists(filename: $artifact->path->toString());
 
-        $value = $this->cache->read($name, $builder, $sources);
+        $value = $this->cache->read(name: $name, build: $builder, sources: $sources);
 
-        $this->assertIsArray($value);
-        $this->assertSame('index', $value['GET /users']['method']);
+        $this->assertIsArray(actual: $value);
+        $this->assertSame(expected: 'index', actual: $value['GET /users']['method']);
 
-        $this->cache->clear($name);
+        $this->cache->clear(name: $name);
 
-        $this->assertFileDoesNotExist($artifact->path->toString());
+        $this->assertFileDoesNotExist(filename: $artifact->path->toString());
     }
 
     public function test_it_rebuilds_when_source_file_changes() : void
@@ -50,7 +50,7 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $sources = CompiledCacheSources::fromPaths($sourceFile);
 
-        $this->cache->compile($name, $builder, $sources);
+        $this->cache->compile(name: $name, build: $builder, sources: $sources);
 
         sleep(1);
         touch($sourceFile, time());
@@ -58,9 +58,9 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
         $builderNew = fn () => require $sourceFile;
-        $value      = $this->cache->read($name, $builderNew, $sources);
+        $value = $this->cache->read(name: $name, build: $builderNew, sources: $sources);
 
-        $this->assertSame(2, $value['version']);
+        $this->assertSame(expected: 2, actual: $value['version']);
     }
 
     protected function setUp() : void
@@ -76,7 +76,7 @@ final class CompiledCacheIntegrationTest extends TestCase
 
     protected function tearDown() : void
     {
-        $this->recursiveDelete($this->tmpDir);
+        $this->recursiveDelete(dir: $this->tmpDir);
     }
 
     private function recursiveDelete(string $dir) : void
@@ -86,7 +86,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         }
 
         foreach (glob("{$dir}/*") as $file) {
-            is_dir($file) ? $this->recursiveDelete($file) : unlink($file);
+            is_dir($file) ? $this->recursiveDelete(dir: $file) : unlink($file);
         }
 
         rmdir($dir);

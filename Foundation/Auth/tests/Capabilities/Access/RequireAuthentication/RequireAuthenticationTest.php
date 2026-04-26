@@ -35,6 +35,9 @@ class RequireAuthenticationTest extends TestCase
         $this->assertTrue(condition: true); // No exception thrown
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequireAuthenticationFailure() : void
     {
         $requirement = new RequireAuthentication(currentAuthentication: new CurrentAuthentication());

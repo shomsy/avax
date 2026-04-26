@@ -94,6 +94,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->resolver->injectIntoInContext(target: $target, context: $this->context);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function canInject(object $target) : bool
     {
         return $this->base->canInject(target: $target);
@@ -348,6 +351,10 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->flushCompiled();
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function rebuildCompiled(array $serviceIds = []) : void
     {
         $this->base->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));

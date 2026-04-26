@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataLayer\PropagateDataChanges;
 
 use InvalidArgumentException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class RecordOutboxMessage
@@ -18,6 +19,9 @@ final readonly class RecordOutboxMessage
         return 'records outbox message for transactional outbox pattern.';
     }
 
+    /**
+     * @throws RandomException
+     */
     public function record(
         string                      $eventType,
         array                       $payload,

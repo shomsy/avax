@@ -8,6 +8,7 @@ use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\RedisSessionRegistr
 use Avax\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Tests\TestCase;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Redis;
@@ -49,6 +50,9 @@ final class RedisSessionRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testFindAndListForUserHydrateAndSortActiveSessions() : void
     {
         $redis    = $this->createMock(Redis::class);
@@ -160,6 +164,9 @@ final class RedisSessionRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function testPruneExpiredRemovesRevokedAndExpiredSessions() : void
     {
         $redis              = $this->createMock(Redis::class);

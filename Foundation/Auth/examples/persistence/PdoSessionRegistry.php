@@ -115,7 +115,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
         return array_map(
-            callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+        /**
+         * @throws DateMalformedStringException
+         */ callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
             array   : $rows
         );
     }

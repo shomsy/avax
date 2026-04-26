@@ -10,6 +10,7 @@ use Avax\DataFoundation\Internal\Comparison\Comparator;
 use Avax\DataFoundation\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use JsonException;
 use Traversable;
 
 /**
@@ -59,6 +60,9 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
         return new self(items: [...$this->items, $value]);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function contains(mixed $value) : bool
     {
         $hash = Comparator::hash(value: $value);

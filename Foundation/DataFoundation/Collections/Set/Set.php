@@ -10,6 +10,7 @@ use Avax\DataFoundation\Internal\Comparison\Comparator;
 use Avax\DataFoundation\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use JsonException;
 use Traversable;
 
 /**
@@ -69,11 +70,16 @@ final readonly class Set implements IteratorAggregate, Countable
         return new self(items: [...$this->items, $value]);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function remove(mixed $value) : self
     {
         $hash     = Comparator::hash(value: $value);
         $filtered = array_values(array_filter(
-                                     $this->items,
+                                 /**
+                                  * @throws JsonException
+                                  */ $this->items,
                                      static fn (mixed $item) : bool => Comparator::hash(value: $item) !== $hash
                                  ));
 
@@ -95,6 +101,9 @@ final readonly class Set implements IteratorAggregate, Countable
                                             )));
     }
 
+    /**
+     * @throws JsonException
+     */
     public function contains(mixed $value) : bool
     {
         $hash = Comparator::hash(value: $value);

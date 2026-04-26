@@ -26,9 +26,13 @@ use Avax\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TransferOwnership\Trans
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class TenantFlowTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testTenantCreateInviteAcceptSuspendTransferAndRemoveFlow() : void
     {
         [$auth] = $this->buildAuth();
@@ -114,6 +118,9 @@ final class TenantFlowTest extends TestCase
         return [$auth, $userSource];
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testTenantInviteRejectsWrongUserEmail() : void
     {
         [$auth] = $this->buildAuth();

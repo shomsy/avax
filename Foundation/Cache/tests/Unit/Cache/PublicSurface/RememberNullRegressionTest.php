@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Avax\Cache\Tests\Unit\Cache\PublicSurface;
 
 use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
+use Psr\SimpleCache\InvalidArgumentException;
 
 final class RememberNullRegressionTest extends TestCase
 {
@@ -18,7 +19,7 @@ final class RememberNullRegressionTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->clock = new FrozenClock(Timestamp::now());
+        $this->clock = new FrozenClock(timestamp: Timestamp::now());
         $this->store = new InMemoryCacheStore(
             clock: $this->clock
         );
@@ -28,49 +29,55 @@ final class RememberNullRegressionTest extends TestCase
         );
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function test_it_does_not_reload_when_cached_value_is_null() : void
     {
-        $this->cache->set('nullable', null);
+        $this->cache->set(key: 'nullable', value: null);
 
         $loadCount = 0;
 
-        $result = $this->cache->remember('nullable', 3600, function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'nullable', ttl: 3600, loader: function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
         });
 
-        $this->assertNull($result);
-        $this->assertSame(0, $loadCount);
+        $this->assertNull(actual: $result);
+        $this->assertSame(expected: 0, actual: $loadCount);
     }
 
     public function test_it_does_reload_when_key_does_not_exist() : void
     {
         $loadCount = 0;
 
-        $result = $this->cache->remember('missing', 3600, function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'missing', ttl: 3600, loader: function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
         });
 
-        $this->assertSame('loaded', $result);
-        $this->assertSame(1, $loadCount);
+        $this->assertSame(expected: 'loaded', actual: $result);
+        $this->assertSame(expected: 1, actual: $loadCount);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function test_it_reloads_when_value_is_not_null() : void
     {
-        $this->cache->set('exists', 'not_null');
+        $this->cache->set(key: 'exists', value: 'not_null');
 
         $loadCount = 0;
 
-        $result = $this->cache->remember('exists', 3600, function () use (&$loadCount) {
+        $result = $this->cache->remember(key: 'exists', ttl: 3600, loader: function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
         });
 
-        $this->assertSame('not_null', $result);
-        $this->assertSame(0, $loadCount);
+        $this->assertSame(expected: 'not_null', actual: $result);
+        $this->assertSame(expected: 0, actual: $loadCount);
     }
 }

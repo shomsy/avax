@@ -25,9 +25,13 @@ use Avax\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class ScimFlowTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     */
     public function testScimDirectoryProvisionSyncRotateAndDeleteLifecycle() : void
     {
         $auth = $this->buildAuth();
@@ -128,6 +132,9 @@ final class ScimFlowTest extends TestCase
         return $builder->ready();
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testScimBulkCanCreateReplaceAndDeleteUsers() : void
     {
         $auth      = $this->buildAuth();
@@ -178,6 +185,9 @@ final class ScimFlowTest extends TestCase
         $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testScimDirectoryOutageBlocksMutationsUntilRecovered() : void
     {
         $auth      = $this->buildAuth();
@@ -208,6 +218,9 @@ final class ScimFlowTest extends TestCase
                                        ));
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testScimDirectoryThrottleBlocksRepeatedMutations() : void
     {
         $auth      = $this->buildAuth(

@@ -82,338 +82,217 @@ System/
 ├── MissingCachedValue.php
 │
 ├── Flows/
-│   ├── ReadCachedValue/
-│   │   ├── ReadCachedValue.php
-│   │   ├── ReadCachedValueFromStore.php
-│   │   ├── ReturnCachedValue.php
-│   │   ├── ReturnCacheMiss.php
-│   │   └── how-this-works.md
+│   ├── Operations/              # Read, Store, Forget, Clear
+│   │   ├── ReadCachedValue/
+│   │   ├── StoreCachedValue/
+│   │   ├── ForgetCachedValue/
+│   │   └── ClearCache/
 │   │
-│   ├── StoreCachedValue/
-│   │   ├── StoreCachedValue.php
-│   │   ├── PrepareCachedValueForStorage.php
-│   │   ├── StoreCachedValueInStore.php
-│   │   ├── ConfirmCachedValueWasStored.php
-│   │   └── how-this-works.md
+│   ├── Lifecycle/              # Remember, Invalidate, Refresh, Evict, Warm
+│   │   ├── RememberCachedValue/
+│   │   ├── InvalidateCachedValue/
+│   │   ├── RefreshCachedValue/
+│   │   ├── EvictCachedValue/
+│   │   └── WarmCache/
 │   │
-│   ├── ForgetCachedValue/
-│   │   ├── ForgetCachedValue.php
-│   │   ├── ForgetCachedValues.php
-│   │   ├── ForgetCachedValueFromStore.php
-│   │   └── how-this-works.md
+│   ├── Protection/            # Protect, Sync, Recover
+│   │   ├── ProtectCacheSource/
+│   │   ├── SyncCachedValue/
+│   │   └── RecoverCache/
 │   │
-│   ├── ClearCache/
-│   │   ├── ClearCachedValues.php
-│   │   ├── ClearCacheNamespace.php
-│   │   └── how-this-works.md
-│   │
-│   ├── RememberCachedValue/
-│   │   ├── RememberCachedValue.php
-│   │   ├── ReadBeforeLoadingSource.php
-│   │   ├── LoadValueWhenMissing.php
-│   │   ├── StoreLoadedValue.php
-│   │   └── how-this-works.md
-│   │
-│   ├── InvalidateCachedValue/
-│   │   ├── InvalidateCachedValue.php
-│   │   ├── InvalidateCachedValues.php
-│   │   ├── InvalidateCachedValuesByTag.php
-│   │   ├── InvalidateCachedValuesByNamespace.php
-│   │   └── how-this-works.md
-│   │
-│   ├── RefreshCachedValue/
-│   │   ├── RefreshCachedValue.php
-│   │   ├── RefreshStaleCachedValue.php
-│   │   ├── RefreshCachedValueAhead.php
-│   │   └── how-this-works.md
-│   │
-│   ├── EvictCachedValue/
-│   │   ├── EvictCachedValue.php
-│   │   ├── ChooseCachedValueForEviction.php
-│   │   ├── EvictCachedValuesUntilCapacityIsSafe.php
-│   │   └── how-this-works.md
-│   │
-│   ├── WarmCache/
-│   │   ├── WarmCache.php
-│   │   ├── WarmCachedValues.php
-│   │   ├── PreloadFrequentlyUsedValues.php
-│   │   └── how-this-works.md
-│   │
-│   ├── ProtectCacheSource/
-│   │   ├── ProtectCacheSource.php
-│   │   ├── PreventCacheStampede.php
-│   │   ├── WaitForValueBeingRefreshed.php
-│   │   ├── ServeFallbackWhenSourceIsBusy.php
-│   │   └── how-this-works.md
-│   │
-│   ├── SyncCachedValue/
-│   │   ├── SyncCachedValueWithSource.php
-│   │   ├── ReadThroughCache.php
-│   │   ├── WriteThroughCache.php
-│   │   ├── WriteAroundCache.php
-│   │   └── how-this-works.md
-│   │
-│   └── RecoverCache/
-│       ├── RecoverCacheAfterStoreFailure.php
-│       ├── FailOverToNextCacheStore.php
-│       ├── RebuildCachedValuesFromSource.php
-│       └── how-this-works.md
+│   └── Compiled/              # Compile, Read, Clear, Warm
+│       ├── CompileCache/
+│       ├── ReadCompiledCache/
+│       ├── ClearCompiledCache/
+│       └── WarmCompiledCache/
 │
 ├── Capabilities/
-│   ├── ManageCacheLifecycle/
-│   │   ├── CacheLifecyclePolicy.php
-│   │   ├── CachedValueState.php
-│   │   ├── CachedValueLifecycle.php
-│   │   ├── DecideCachedValueState.php
-│   │   │
-│   │   ├── ExpirationMethods/
-│   │   │   ├── CacheTtl.php
-│   │   │   ├── CacheExpiration.php
-│   │   │   ├── NeverExpires.php
-│   │   │   ├── ExpiresAt.php
-│   │   │   ├── ExpiresAfter.php
-│   │   │   ├── SlidingExpiration.php
-│   │   │   ├── ImmediateExpiration.php
-│   │   │   ├── CheckCachedValueIsExpired.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   ├── InvalidationMethods/
-│   │   │   ├── InvalidateByKey.php
-│   │   │   ├── InvalidateByKeys.php
-│   │   │   ├── InvalidateByTag.php
-│   │   │   ├── InvalidateByTags.php
-│   │   │   ├── InvalidateByNamespace.php
-│   │   │   ├── InvalidateByPattern.php
-│   │   │   ├── InvalidateByVersion.php
-│   │   │   ├── SoftInvalidateCachedValue.php
-│   │   │   ├── HardInvalidateCachedValue.php
-│   │   │   ├── InvalidationReason.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   ├── InvalidationStrategies/
-│   │   │   ├── InvalidationStrategy.php
-│   │   │   ├── TtlOnlyInvalidation.php
-│   │   │   ├── ManualInvalidation.php
-│   │   │   ├── EventDrivenInvalidation.php
-│   │   │   ├── WriteThroughInvalidation.php
-│   │   │   ├── CacheAsideInvalidation.php
-│   │   │   ├── VersionedKeyInvalidation.php
-│   │   │   ├── SoftThenRefreshInvalidation.php
-│   │   │   ├── SoftThenHardInvalidation.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   ├── ReplacementPolicies/
-│   │   │   ├── ReplacementPolicy.php
-│   │   │   ├── NoReplacement.php
-│   │   │   ├── LeastRecentlyUsedReplacement.php
-│   │   │   ├── LeastFrequentlyUsedReplacement.php
-│   │   │   ├── FirstInFirstOutReplacement.php
-│   │   │   ├── RandomReplacement.php
-│   │   │   ├── SizeAwareReplacement.php
-│   │   │   ├── TimeAwareReplacement.php
-│   │   │   ├── ChooseCachedValueForReplacement.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   ├── RefreshPolicies/
-│   │   │   ├── RefreshPolicy.php
-│   │   │   ├── RefreshOnRead.php
-│   │   │   ├── RefreshAhead.php
-│   │   │   ├── RefreshAfterWrite.php
-│   │   │   ├── RefreshWhenStale.php
-│   │   │   ├── DoNotRefresh.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   ├── StaleValuePolicies/
-│   │   │   ├── StaleValuePolicy.php
-│   │   │   ├── DoNotServeStaleValue.php
-│   │   │   ├── ServeStaleValueWhileRefreshing.php
-│   │   │   ├── ServeStaleValueWhenSourceFails.php
-│   │   │   ├── DecideStaleValueCanBeServed.php
-│   │   │   └── how-this-works.md
-│   │   │
-│   │   └── how-this-works.md
+│   ├── Lifecycle/                    # Kako vrednost živi, stari, umire
+│   │   ├── CachedValues/
+│   │   ├── ExpireCachedValues/
+│   │   ├── InvalidateCachedValues/
+│   │   ├── RefreshCachedValues/
+│   │   └── ReplaceCachedValues/
 │   │
-│   ├── StoreCachedValues/
-│   │   ├── StoredCacheRecord.php
-│   │   ├── CacheStoreRecordWasFound.php
-│   │   ├── CacheStoreRecordWasMissing.php
-│   │   ├── InMemoryCacheStore.php
-│   │   ├── FileCacheStore.php
-│   │   ├── RedisCacheStore.php
-│   │   ├── NullCacheStore.php
-│   │   ├── ChainCacheStore.php
-│   │   ├── FallbackCacheStore.php
-│   │   ├── StoreCachedValueFailed.php
-│   │   └── how-this-works.md
+│   ├── Storage/                      # Gde se vrednost fizički čuva
+│   │   ├── StoreCachedValues/
+│   │   ├── SizeCachedValues/
+│   │   └── ProtectCachedValues/
 │   │
-│   ├── UseCacheTiers/
-│   │   ├── CacheTier.php
-│   │   ├── CacheTierName.php
-│   │   ├── TieredCache.php
-│   │   ├── ReadFromFastestAvailableTier.php
-│   │   ├── PromoteCachedValueToFasterTier.php
-│   │   ├── WriteCachedValueToAllTiers.php
-│   │   ├── ForgetCachedValueFromAllTiers.php
-│   │   ├── L1MemoryCache.php
-│   │   ├── L2DistributedCache.php
-│   │   └── how-this-works.md
+│   ├── Distribution/                 # Horizontalno skaliranje
+│   │   ├── DistributeCachedValues/
+│   │   ├── ReplicateCachedValues/
+│   │   └── UseCacheTiers/
 │   │
-│   ├── DistributeCachedValues/
-│   │   ├── CacheCluster.php
-│   │   ├── CacheNode.php
-│   │   ├── CacheNodeId.php
-│   │   ├── CacheNodeStatus.php
-│   │   ├── CachePartition.php
-│   │   ├── CachePartitionKey.php
-│   │   ├── ConsistentHashRing.php
-│   │   ├── ChooseCacheNodeForKey.php
-│   │   ├── RouteCacheRead.php
-│   │   ├── RouteCacheWrite.php
-│   │   ├── RebalanceCachePartitions.php
-│   │   ├── DetectUnhealthyCacheNode.php
-│   │   ├── DistributedCacheStore.php
-│   │   └── how-this-works.md
+│   ├── Source/                       # Source sync i zaštita
+│   │   ├── ProtectCacheSource/
+│   │   ├── SyncWithSource/
+│   │   └── ControlConsistency/
 │   │
-│   ├── ReplicateCachedValues/
-│   │   ├── ReplicationPolicy.php
-│   │   ├── ReplicaCount.php
-│   │   ├── PrimaryReplica.php
-│   │   ├── SecondaryReplica.php
-│   │   ├── ChooseReplicaForRead.php
-│   │   ├── WriteCachedValueToReplicas.php
-│   │   ├── ReadCachedValueFromReplica.php
-│   │   ├── RepairDivergedReplica.php
-│   │   └── how-this-works.md
+│   ├── Observability/                # Metrics i tracing
+│   │   ├── ObserveCache/
+│   │   └── IdentifyCachedValues/
 │   │
-│   ├── ControlConsistency/
-│   │   ├── CacheConsistencyLevel.php
-│   │   ├── EventualConsistency.php
-│   │   ├── StrongLocalConsistency.php
-│   │   ├── ReadYourWritesConsistency.php
-│   │   ├── ConsistencyWindow.php
-│   │   ├── DecideCacheReadConsistency.php
-│   │   ├── DecideCacheWriteConsistency.php
-│   │   └── how-this-works.md
-│   │
-│   ├── ProtectCacheSource/
-│   │   ├── CacheLock.php
-│   │   ├── CacheLockStore.php
-│   │   ├── CacheLockOwner.php
-│   │   ├── CacheLockTimeout.php
-│   │   ├── AcquireCacheLock.php
-│   │   ├── ReleaseCacheLock.php
-│   │   ├── CacheLockWasNotAcquired.php
-│   │   ├── RequestCoalescing.php
-│   │   ├── JitterCacheTtl.php
-│   │   └── how-this-works.md
-│   │
-│   ├── IdentifyCachedValues/
-│   │   ├── CacheKey.php
-│   │   ├── CacheKeyPrefix.php
-│   │   ├── CacheNamespace.php
-│   │   ├── CacheTag.php
-│   │   ├── CacheTags.php
-│   │   ├── CacheVersion.php
-│   │   ├── NormalizeCacheKey.php
-│   │   ├── ValidateCacheKey.php
-│   │   ├── NamespaceCacheKey.php
-│   │   ├── VersionCacheKey.php
-│   │   ├── InvalidCacheKey.php
-│   │   └── how-this-works.md
-│   │
-│   ├── SizeCachedValues/
-│   │   ├── CacheCapacity.php
-│   │   ├── CacheEntryCount.php
-│   │   ├── CacheValueSize.php
-│   │   ├── EstimateCachedValueSize.php
-│   │   ├── CheckCacheCapacity.php
-│   │   ├── CacheCapacityWasExceeded.php
-│   │   └── how-this-works.md
-│   │
-│   ├── ProtectCachedValues/
-│   │   ├── EncryptedCache.php
-│   │   ├── CacheEncryptionKey.php
-│   │   ├── EncryptCachedValue.php
-│   │   ├── DecryptCachedValue.php
-│   │   ├── SignCachedPayload.php
-│   │   ├── VerifyCachedPayloadSignature.php
-│   │   ├── CachePayloadWasTampered.php
-│   │   └── how-this-works.md
-│   │
-│   ├── ObserveCache/
-│   │   ├── ObservedCache.php
-│   │   ├── CacheMetrics.php
-│   │   ├── CacheTrace.php
-│   │   ├── CacheOperation.php
-│   │   ├── RecordCacheHit.php
-│   │   ├── RecordCacheMiss.php
-│   │   ├── RecordCacheWrite.php
-│   │   ├── RecordCacheDelete.php
-│   │   ├── RecordCacheEviction.php
-│   │   ├── RecordCacheInvalidation.php
-│   │   ├── RecordCacheLatency.php
-│   │   ├── RecordCacheSourceFailure.php
-│   │   └── how-this-works.md
-│   │
-│   └── SyncWithSource/
-│       ├── CacheSource.php
-│       ├── CacheSourceKey.php
-│       ├── LoadValueFromSource.php
-│       ├── WriteValueToSource.php
-│       ├── DeleteValueFromSource.php
-│       ├── SourceValueWasLoaded.php
-│       ├── SourceValueWasMissing.php
-│       ├── CacheSourceFailed.php
-│       ├── DeferredSourceWrite.php
-│       └── how-this-works.md
+│   └── CompiledCache/                # Framework artifact subsystem
+│       └── ManageCompiledCache/
 │
 ├── Configuration/
-│   ├── CacheConfiguration.php
-│   ├── CacheStoreConfiguration.php
-│   ├── CacheTierConfiguration.php
-│   ├── CacheLifecycleConfiguration.php
-│   ├── CacheDistributionConfiguration.php
-│   ├── CacheReplicationConfiguration.php
-│   ├── CacheConsistencyConfiguration.php
-│   ├── CacheObservabilityConfiguration.php
-│   ├── ConfigureCache.php
-│   ├── BuildCache.php
-│   ├── BuildCacheStore.php
-│   ├── BuildCacheTiers.php
-│   ├── BuildDistributedCache.php
 │   └── how-this-works.md
 │
 ├── Foundation/
 │   ├── Time/
-│   │   ├── Clock.php
-│   │   ├── SystemClock.php
-│   │   ├── FrozenClock.php
-│   │   ├── Duration.php
-│   │   ├── Timestamp.php
-│   │   └── how-this-works.md
-│   │
 │   ├── Serialization/
-│   │   ├── CacheSerializer.php
-│   │   ├── PhpCacheSerializer.php
-│   │   ├── JsonCacheSerializer.php
-│   │   ├── SerializedCachePayload.php
-│   │   ├── SerializeCachedValue.php
-│   │   ├── UnserializeCachedValue.php
-│   │   ├── CachePayloadCouldNotBeSerialized.php
-│   │   └── how-this-works.md
-│   │
 │   ├── Compression/
-│   │   ├── CacheCompressor.php
-│   │   ├── CompressCachedPayload.php
-│   │   ├── DecompressCachedPayload.php
-│   │   └── how-this-works.md
-│   │
-│   └── Randomness/
-│       ├── RandomJitter.php
-│       ├── GenerateJitteredTtl.php
-│       └── how-this-works.md
+│   ├── Randomness/
+│   └── how-this-works.md
 │
 └── how-this-works.md
+```
+
+## 3.1 Lifecycle group detail
+
+```text
+Lifecycle/
+├── CachedValues/
+│   ├── CacheLifecyclePolicy.php
+│   ├── CachedValueState.php
+│   ├── CachedValueLifecycle.php
+│   └── DecideCachedValueState.php
+│
+├── ExpireCachedValues/
+│   ├── CacheTtl.php
+│   ├── CacheExpiration.php
+│   ├── NeverExpires.php
+│   ├── ExpiresAt.php
+│   ├── ExpiresAfter.php
+│   ├── SlidingExpiration.php
+│   ├── ImmediateExpiration.php
+│   ├── CheckCachedValueIsExpired.php
+│   └── StaleValuePolicy.php
+│
+├── InvalidateCachedValues/
+│   ├── InvalidateByKey.php
+│   ├── InvalidateByKeys.php
+│   ├── InvalidateByTag.php
+│   ├── InvalidateByTags.php
+│   ├── InvalidateByNamespace.php
+│   ├── InvalidateByPattern.php
+│   ├── InvalidateByVersion.php
+│   ├── SoftInvalidateCachedValue.php
+│   ├── HardInvalidateCachedValue.php
+│   ├── InvalidationReason.php
+│   └── InvalidationStrategy.php
+│
+├── RefreshCachedValues/
+│   ├── RefreshPolicy.php
+│   └── ShouldRefreshCachedValue.php
+│
+└── ReplaceCachedValues/
+    ├── ChooseCachedValueForReplacement.php
+    ├── LeastRecentlyUsedReplacement.php
+    ├── LeastFrequentlyUsedReplacement.php
+    ├── FirstInFirstOutReplacement.php
+    ├── NoReplacement.php
+    └── TrackCachedValueAccess.php
+```
+
+## 3.2 Storage group detail
+
+```text
+Storage/
+├── StoreCachedValues/
+│   ├── StoredCacheRecord.php
+│   ├── CacheStoreRecordWasFound.php
+│   ├── CacheStoreRecordWasMissing.php
+│   ├── InMemoryCacheStore.php
+│   ├── FileCacheStore.php
+│   ├── RedisCacheStore.php
+│   ├── NullCacheStore.php
+│   ├── ChainCacheStore.php
+│   └── FallbackCacheStore.php
+│
+├── SizeCachedValues/
+│   ├── CacheCapacity.php
+│   ├── CacheEntryCount.php
+│   ├── CacheValueSize.php
+│   └── CacheCapacityWasExceeded.php
+│
+└── ProtectCachedValues/
+    ├── EncryptedCache.php
+    ├── EncryptCachedValue.php
+    └── DecryptCachedValue.php
+```
+
+## 3.3 Distribution group detail
+
+```text
+Distribution/
+├── DistributeCachedValues/
+│   ├── CacheCluster.php
+│   ├── CacheNode.php
+│   ├── CacheNodeId.php
+│   ├── ConsistentHashRing.php
+│   ├── RebalanceCachePartitions.php
+│   ├── DetectUnhealthyCacheNode.php
+│   └── DistributedCacheStore.php
+│
+├── ReplicateCachedValues/
+│   ├── ReplicationPolicy.php
+│   ├── PrimaryReplica.php
+│   ├── SecondaryReplica.php
+│   └── ChooseReplicaForRead.php
+│
+└── UseCacheTiers/
+    ├── CacheTier.php
+    ├── CacheTierName.php
+    ├── TieredCache.php
+    ├── L1MemoryCache.php
+    └── L2DistributedCache.php
+```
+
+## 3.4 Source group detail
+
+```text
+Source/
+├── ProtectCacheSource/
+│   ├── CacheLock.php
+│   ├── CacheLockStore.php
+│   ├── InMemoryLockStore.php
+│   ├── AcquireCacheStampedeLock.php
+│   └── JitterCacheTtl.php
+│
+├── SyncWithSource/
+│   ├── CacheSource.php
+│   ├── LoadValueFromSource.php
+│   ├── WriteValueToSource.php
+│   ├── DeleteValueFromSource.php
+│   └── SourceSyncPolicy.php
+│
+└── ControlConsistency/
+    ├── DecideCacheReadConsistency.php
+    └── CacheConsistencyLevel.php
+```
+
+## 3.5 Observability group detail
+
+```text
+Observability/
+├── ObserveCache/
+│   ├── CacheMetrics.php
+│   ├── CacheTrace.php
+│   ├── CacheOperation.php
+│   └── MetricsBackends/
+│       ├── MetricsBackend.php
+│       ├── PrometheusBackend.php
+│       ├── StatsDBackend.php
+│       └── MetricsSink.php
+│
+└── IdentifyCachedValues/
+    ├── CacheKey.php
+    ├── CacheKeyPrefix.php
+    ├── CacheNamespace.php
+    ├── CacheTag.php
+    └── CacheTags.php
 ```
 
 ## 4. Zašto je ovaj oblik bolji
@@ -1084,12 +963,17 @@ Finalna filozofija:
 ```text
 System/
   Flows/                 šta korisnik/sistem radi
-  Capabilities/          čime cache to omogućava
-  ManageCacheLifecycle/  kako vrednost živi i nestaje
-  StoreCachedValues/     gde vrednost fizički stoji
-  UseCacheTiers/         kako se čita kroz nivoe
-  DistributeCachedValues kako se skalira horizontalno
-  ObserveCache/          kako se vidi ponašanje u produkciji
+    Operations/          osnovne operacije (Read, Store, Forget, Clear)
+    Lifecycle/           upravljanje životom (Remember, Invalidate, Refresh, Evict, Warm)
+    Protection/         zaštita i oporavak (Protect, Sync, Recover)
+    Compiled/           compiled artifacts (Compile, Read, Clear, Warm)
+  Capabilities/
+    Lifecycle/           kako vrednost živi i nestaje
+    Storage/             gde vrednost fizički stoji
+    Distribution/        kako se čita kroz nivoe i skalira horizontalno
+    Source/             source sync i zaštita od stampede-a
+    Observability/       kako se vidi ponašanje u produkciji
+    CompiledCache/      framework artifact subsystem
 ```
 
 Ovo je već ozbiljna komponenta. Ne izgleda kao Laravel helper. Ne izgleda kao Redis klon. Izgleda kao **framework-grade

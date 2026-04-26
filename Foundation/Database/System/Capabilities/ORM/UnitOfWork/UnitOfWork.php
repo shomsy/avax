@@ -7,6 +7,7 @@ namespace Avax\Database\System\Capabilities\ORM\UnitOfWork;
 use Avax\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
 use Avax\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Database\System\Capabilities\ORM\Persisters\EntityPersister;
+use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;
 use Throwable;
@@ -46,6 +47,9 @@ final class UnitOfWork
         $this->dirty[$objectId] = $entity;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function readProperty(object $entity, string $property) : mixed
     {
         $reflection = new ReflectionProperty(class: $entity, property: $property);

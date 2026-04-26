@@ -6,8 +6,10 @@ namespace Avax\DataLayer\CommitDataChanges;
 
 use Avax\DataLayer\AccessPersistentData\UseDatabaseRuntime;
 use Avax\DataLayer\ConfigureDataLayer\DataLayerRuntime;
+use Exception;
 use InvalidArgumentException;
 use PDO;
+use Random\RandomException;
 use Throwable;
 
 final readonly class CommitDataChanges
@@ -131,6 +133,9 @@ final readonly class CommitDataChanges
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function executeWithRetry(
         callable    $operations,
         string|null $connectionName = null,
@@ -234,6 +239,9 @@ final readonly class CommitDataChanges
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     private function generateTransactionId() : string
     {
         return sprintf(

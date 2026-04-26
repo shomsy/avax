@@ -8,7 +8,7 @@ final readonly class ConfigureCompiledCache
 {
     public static function inDirectory(string $directory) : CompiledCacheConfiguration
     {
-        return CompiledCacheConfiguration::inDirectory($directory);
+        return CompiledCacheConfiguration::inDirectory(directory: $directory);
     }
 
     public static function disabled() : CompiledCacheConfiguration

@@ -19,6 +19,9 @@ final readonly class RunScimBulk
     {
     }
 
+    /**
+     * @throws RandomException
+     */
     public function execute(ScimBulkRequest $request) : ScimBulkResponse
     {
         if ($request->operations === []) {

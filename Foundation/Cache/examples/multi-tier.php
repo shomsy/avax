@@ -13,16 +13,16 @@ require __DIR__ . '/../../vendor/autoload.php';
 $l1 = new InMemoryCacheStore();
 $clock = new SystemClock();
 
-$cache = Cache::use($l1);
+$cache = Cache::use(cache: $l1);
 
 for ($i = 0; $i < 10; $i++) {
-    Cache::remember("item:{$i}", 3600, fn () => ["id" => $i, "name" => "Item {$i}"]);
+    Cache::remember(key: "item:{$i}", ttl: 3600, loader: fn () => ["id" => $i, "name" => "Item {$i}"]);
 }
 
-$result = Cache::get('item:5');
+$result = Cache::get(key: 'item:5');
 print_r($result);
 
 Cache::clear();
 
-$result = Cache::has('item:5');
+$result = Cache::has(key: 'item:5');
 echo "After clear, has item:5 = " . ($result ? 'true' : 'false') . "\n";

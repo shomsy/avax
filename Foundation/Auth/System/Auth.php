@@ -100,6 +100,7 @@ use Avax\Auth\System\Flows\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
@@ -145,6 +146,10 @@ final readonly class Auth implements AuthInterface
 
     // ── Fast-path convenience methods (high-frequency, cross-cutting) ──
 
+    /**
+     * @throws AuthenticationFailed
+     * @throws RateLimitException
+     */
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         return $this->identity->login(credentials: $credentials);
@@ -226,6 +231,10 @@ final readonly class Auth implements AuthInterface
         $this->identity->account()->changePassword(data: $data);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge
     {
         return $this->identity->account()->beginEmailChange(data: $data);
@@ -236,6 +245,9 @@ final readonly class Auth implements AuthInterface
         return $this->identity->account()->confirmEmailChange(data: $data);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->identity->recovery()->beginPasswordReset(data: $data);
@@ -246,6 +258,9 @@ final readonly class Auth implements AuthInterface
         return $this->identity->recovery()->resetPassword(data: $data);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function beginEmailVerification(BeginEmailVerificationData $data) : EmailVerificationChallenge
     {
         return $this->identity->verification()->beginEmailVerification(data: $data);
@@ -314,6 +329,10 @@ final readonly class Auth implements AuthInterface
         $this->identity->mfa()->disableMfa();
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function beginMfaRecovery(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
         return $this->identity->mfa()->beginMfaRecovery(data: $data);
@@ -469,6 +488,10 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentity->oidc()->readUserInfo(accessToken: $accessToken);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
     {
         return $this->externalIdentity->oidc()->pushAuthorizationRequest(data: $data);
@@ -479,11 +502,18 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentity->oidc()->logout(data: $data);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws RandomException
+     */
     public function buildOidcJarmResponse(BuildJarmResponseData $data) : JarmResponse
     {
         return $this->externalIdentity->oidc()->buildJarmResponse(data: $data);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function registerFederationConnection(RegisterFederationConnectionData $data) : FederationConnection
     {
         return $this->externalIdentity->sso()->registerConnection(data: $data);
@@ -530,6 +560,9 @@ final readonly class Auth implements AuthInterface
         return $this->externalIdentity->sso()->startFederatedLogin(data: $data);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
     {
         return $this->externalIdentity->sso()->completeFederatedLogin(data: $data);
@@ -598,6 +631,9 @@ final readonly class Auth implements AuthInterface
         return $this->identitySync->scim()->readGroups(directoryId: $directoryId);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult
     {
         return $this->identitySync->scim()->syncGroups(data: $data);

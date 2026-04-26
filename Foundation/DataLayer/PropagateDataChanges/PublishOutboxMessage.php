@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\PropagateDataChanges;
 
+use Random\RandomException;
+
 enum OutboxMessageStatus: string
 {
     case PENDING      = 'pending';
@@ -29,6 +31,9 @@ final readonly class PublishOutboxMessage
         return 'publishes outbox message to message bus.';
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function create(string $topic, array $payload) : self
     {
         return new self(

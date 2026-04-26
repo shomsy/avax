@@ -34,7 +34,7 @@ final readonly class PhpCacheSerializer implements CacheSerializer
 
     public function unserialize(SerializedCachePayload $payload) : mixed
     {
-        if (! $this->canUnserialize($payload)) {
+        if (! $this->canUnserialize(payload: $payload)) {
             throw new CachePayloadCouldNotBeSerialized(
                 message: sprintf('Cannot unserialize payload with format "%s"', $payload->format)
             );

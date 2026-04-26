@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\SessionSecurity\SessionId;
 
+use Random\RandomException;
+
 final class SessionId
 {
     public function __construct(
@@ -12,6 +14,9 @@ final class SessionId
         private int    $lastActivity
     ) {}
 
+    /**
+     * @throws RandomException
+     */
     public static function generate() : self
     {
         return new self(

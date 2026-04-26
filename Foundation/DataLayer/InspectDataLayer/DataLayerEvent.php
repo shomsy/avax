@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataLayer\InspectDataLayer;
 
+use Random\RandomException;
+
 enum DataLayerEventType: string
 {
     case QUERY       = 'query';
@@ -26,6 +28,9 @@ final readonly class DataLayerEvent
         return 'records data layer event including type, metadata, and timestamp.';
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function create(DataLayerEventType $type, array $metadata = []) : self
     {
         return new self(

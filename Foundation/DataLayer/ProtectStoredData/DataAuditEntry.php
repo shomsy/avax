@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataLayer\ProtectStoredData;
 
 use InvalidArgumentException;
+use Random\RandomException;
 use SensitiveParameter;
 
 enum AuditAction: string
@@ -41,6 +42,9 @@ final readonly class DataAuditEntry
         return 'records data audit trail entry with user, action, resource, and timestamp.';
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function create(
         string      $tenantId,
         string      $userId,

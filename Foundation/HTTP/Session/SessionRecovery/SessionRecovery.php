@@ -31,6 +31,9 @@ final class SessionRecovery
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function restore(string $name = 'default') : bool
     {
         if (! isset($this->snapshots[$name])) {
@@ -75,6 +78,9 @@ final class SessionRecovery
         return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function transaction(callable $operation, string $backupName = '') : mixed
     {
         $backupName = $backupName !== '' ? $backupName : 'transaction_' . uniqid();

@@ -18,6 +18,7 @@ use Avax\DataHandling\Validation\Attributes\Rules\EmailRule;
 use Avax\DataHandling\Validation\Attributes\Rules\MinLengthRule;
 use JsonException;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use SensitiveParameter;
 
 final class DataTransferRuntimeTest extends TestCase
@@ -128,6 +129,9 @@ final class DataTransferRuntimeTest extends TestCase
         $this->assertInstanceOf(expected: RuntimeAddressData::class, actual: $data->addresses[0]);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_it_hydrates_legacy_abstract_dto_when_input_is_valid() : void
     {
         // Arrange
@@ -144,6 +148,9 @@ final class DataTransferRuntimeTest extends TestCase
         $this->assertSame(expected: ['email' => 'ada@example.com', 'name' => 'Ada'], actual: $dto->toArray());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_it_throws_dto_validation_exception_when_legacy_input_fails_rules() : void
     {
         // Arrange

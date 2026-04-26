@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\DataHandling\DataTransfer\SerializeDataObject;
 
 use Avax\DataHandling\DataTransfer\Configuration\DataTransferConfig;
+use JsonException;
 use stdClass;
 
 final readonly class SerializeDataObject
@@ -20,6 +21,9 @@ final readonly class SerializeDataObject
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     public function toJson(object $object, int|null $flags = null, int $depth = 512) : string
     {
         $flags ??= 0;
@@ -32,6 +36,9 @@ final readonly class SerializeDataObject
         return new ConvertDataObjectToFlatArray()->convert(object: $object);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function toStdClass(object $object) : stdClass
     {
         return new ConvertDataObjectToStdClass(config: $this->config)->convert(object: $object);

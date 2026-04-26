@@ -30,7 +30,7 @@ final readonly class RejectValues
      */
     public function reject(callable $callback) : array
     {
-        $filter = fn (mixed $item) : bool => ! $callback($item);
+        $filter = static fn (mixed $item) : bool => ! $callback($item);
 
         return array_filter(array: $this->items, callback: $filter);
     }

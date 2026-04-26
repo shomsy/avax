@@ -23,7 +23,7 @@ final readonly class ChooseReadReplica
             throw new InvalidArgumentException(message: 'No replicas available.');
         }
 
-        $primary = array_filter($replicas, fn ($r) => $r->isPrimary);
+        $primary = array_filter($replicas, static fn ($r) => $r->isPrimary);
 
         return ! empty($primary) ? reset($primary) : $replicas[0];
     }
@@ -54,9 +54,9 @@ final readonly class ChooseReadReplica
 
     private function selectLowestLag(array $replicas) : ReplicaInfo
     {
-        usort($replicas, fn ($a, $b) => $a->lagMs <=> $b->lagMs);
+        usort($replicas, static fn ($a, $b) => $a->lagMs <=> $b->lagMs);
 
-        $healthy = array_filter($replicas, fn ($r) => $r->lagMs < 5000);
+        $healthy = array_filter($replicas, static fn ($r) => $r->lagMs < 5000);
 
         return ! empty($healthy) ? reset($healthy) : $replicas[0];
     }

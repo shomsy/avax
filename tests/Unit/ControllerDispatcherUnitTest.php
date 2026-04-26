@@ -148,10 +148,10 @@ class ControllerDispatcherUnitTest extends TestCase
         // Mock container to return RequestDtoFactory
         $factory = new RequestDtoFactory();
         $this->container->method('has')->willReturnCallback(
-            fn ($id) => $id === RequestDtoFactory::class || $id === get_class(object: $controller)
+            static fn ($id) => $id === RequestDtoFactory::class || $id === get_class(object: $controller)
         );
         $this->container->method('get')->willReturnCallback(
-            fn ($id) => match ($id) {
+            static fn ($id) => match ($id) {
                 RequestDtoFactory::class       => $factory,
                 get_class(object: $controller) => $controller,
                 default                        => null

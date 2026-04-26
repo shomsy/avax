@@ -220,7 +220,7 @@ final readonly class CompensationPlan
         return [
             'saga_id'        => $this->sagaId,
             'steps'          => array_map(
-                fn ($step) => $step->toArray(),
+                static fn ($step) => $step->toArray(),
                 $this->steps
             ),
             'failed_on_step' => $this->failedOnStep,

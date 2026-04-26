@@ -74,7 +74,7 @@ final readonly class WritePersistentData
         }
 
         $columns      = array_keys($values);
-        $placeholders = array_map(fn ($i) => ":{$i}", array_keys($values));
+        $placeholders = array_map(static fn ($i) => ":{$i}", array_keys($values));
 
         $onDuplicate = [];
         if (empty($updateColumns)) {

@@ -242,7 +242,7 @@ final readonly class StoredModel implements IteratorAggregate
     {
         return array_filter(
             $this->fields,
-            fn (StoredField $field) => $field->isPrimaryKey
+            static fn (StoredField $field) => $field->isPrimaryKey
         );
     }
 
@@ -280,11 +280,11 @@ final readonly class StoredModel implements IteratorAggregate
 
         $primaryKeys = $this->getPrimaryKeyFields();
         if (! empty($primaryKeys)) {
-            $pkNames   = array_map(fn (StoredField $f) => $f->name, $primaryKeys);
+            $pkNames = array_map(static fn (StoredField $f) => $f->name, $primaryKeys);
             $columns[] = sprintf('PRIMARY KEY (%s)', implode(', ', $pkNames));
         }
 
-        $uniques = array_filter($this->fields, fn (StoredField $f) => $f->isUnique && ! $f->isPrimaryKey);
+        $uniques = array_filter($this->fields, static fn (StoredField $f) => $f->isUnique && ! $f->isPrimaryKey);
         foreach ($uniques as $field) {
             $columns[] = sprintf('UNIQUE KEY %s (%s)', $field->name, $field->name);
         }

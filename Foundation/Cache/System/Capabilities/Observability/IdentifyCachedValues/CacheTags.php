@@ -23,7 +23,7 @@ final readonly class CacheTags implements Stringable
 
     public static function create(string ...$tagNames) : self
     {
-        $tags = array_map(fn (string $name) => CacheTag::create(name: $name), $tagNames);
+        $tags = array_map(static fn (string $name) => CacheTag::create(name: $name), $tagNames);
 
         return new self(...$tags);
     }

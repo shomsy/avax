@@ -61,7 +61,7 @@ final readonly class MaskAuditContext
     {
         $normalized = strtolower(string: trim(string: $key));
 
-        return array_any(array: $this->sensitiveKeys, callback: fn ($candidate) => $normalized === strtolower(string: $candidate));
+        return array_any(array: $this->sensitiveKeys, callback: static fn ($candidate) => $normalized === strtolower(string: $candidate));
     }
 
     /**

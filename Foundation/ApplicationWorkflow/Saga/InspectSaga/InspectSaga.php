@@ -35,7 +35,7 @@ final readonly class InspectSaga implements IteratorAggregate, Countable
     {
         return array_filter(
             $this->events,
-            fn ($e) => $e->sagaId === $sagaId
+            static fn ($e) => $e->sagaId === $sagaId
         );
     }
 

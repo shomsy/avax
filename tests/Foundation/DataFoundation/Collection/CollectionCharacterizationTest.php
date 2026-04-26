@@ -71,7 +71,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testMapFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3]);
-        $result = $col->map(callback: fn (int $n) : int => $n * 2);
+        $result = $col->map(callback: static fn (int $n) : int => $n * 2);
 
         $this->assertSame([2, 4, 6], $result->all());
     }
@@ -79,7 +79,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testFilterFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3, 4]);
-        $result = $col->filter(callback: fn (int $n) : bool => $n % 2 === 0);
+        $result = $col->filter(callback: static fn (int $n) : bool => $n % 2 === 0);
 
         $this->assertSame([1 => 2, 3 => 4], $result->all());
     }
@@ -87,7 +87,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testReduceFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3, 4]);
-        $result = $col->reduce(callback: fn (int $carry, int $n) : int => $carry + $n, initial: 0);
+        $result = $col->reduce(callback: static fn (int $carry, int $n) : int => $carry + $n, initial: 0);
 
         $this->assertSame(10, $result);
     }
@@ -96,8 +96,8 @@ final class CollectionCharacterizationTest extends TestCase
     {
         $col    = $this->collection(items: [1, 2, 3, 4, 5]);
         $result = $col
-            ->filter(callback: fn (int $n) : bool => $n > 2)
-            ->map(callback: fn (int $n) : int => $n * 10)
+            ->filter(callback: static fn (int $n) : bool => $n > 2)
+            ->map(callback: static fn (int $n) : int => $n * 10)
             ->reverse();
 
         $this->assertSame([50, 40, 30], $result->all());
@@ -271,7 +271,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testPartitionFluent() : void
     {
         $col = $this->collection(items: [1, 2, 3, 4]);
-        [$evens, $odds] = $col->partition(callback: fn (int $n) : bool => $n % 2 === 0);
+        [$evens, $odds] = $col->partition(callback: static fn (int $n) : bool => $n % 2 === 0);
 
         $this->assertSame([1 => 2, 3 => 4], $evens->all());
         $this->assertSame([0 => 1, 2 => 3], $odds->all());
@@ -282,7 +282,7 @@ final class CollectionCharacterizationTest extends TestCase
         $col    = $this->collection(items: [1, 2, 3]);
         $tapped = null;
 
-        $col->tap(callback: fn ($c) => $tapped = $c->count());
+        $col->tap(callback: static fn ($c) => $tapped = $c->count());
 
         $this->assertSame(3, $tapped);
     }
@@ -290,7 +290,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testWhenFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3]);
-        $result = $col->when(condition: true, callback: fn ($c) => $c->map(callback: fn ($n) => $n * 2));
+        $result = $col->when(condition: true, callback: fn ($c) => $c->map(callback: static fn ($n) => $n * 2));
 
         $this->assertSame([2, 4, 6], $result->all());
     }
@@ -298,7 +298,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testUnlessFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3]);
-        $result = $col->unless(condition: false, callback: fn ($c) => $c->map(fn ($n) => $n * 2));
+        $result = $col->unless(condition: false, callback: static fn ($c) => $c->map(static fn ($n) => $n * 2));
 
         $this->assertSame([2, 4, 6], $result->all());
     }

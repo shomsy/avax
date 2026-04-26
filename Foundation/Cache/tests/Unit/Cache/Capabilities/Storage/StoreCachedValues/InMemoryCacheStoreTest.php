@@ -103,7 +103,7 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $cache = new AvaxCache(store: $store, clock: $clock);
 
-        $result = $cache->remember(key: 'compute-key', ttl: 3600, loader: fn () => 'computed');
+        $result = $cache->remember(key: 'compute-key', ttl: 3600, loader: static fn () => 'computed');
 
         $this->assertSame(expected: 'computed', actual: $result);
         $this->assertSame(expected: 'computed', actual: $cache->get(key: 'compute-key'));
@@ -121,7 +121,7 @@ final class InMemoryCacheStoreTest extends TestCase
         $cache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result    = $cache->remember(key: 'existing', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';

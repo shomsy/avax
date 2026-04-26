@@ -24,7 +24,7 @@ final readonly class MatchTextPhonetically
 
         $filtered = array_filter(
             array   : $this->items,
-            callback: function (mixed $item) use ($queryPhonetic, $key) : bool {
+            callback: static function (mixed $item) use ($queryPhonetic, $key) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
                 if (! is_string(value: $target)) {

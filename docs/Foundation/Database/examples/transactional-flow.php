@@ -65,7 +65,7 @@ $scope = ExecutionScope::fresh(correlationId: 'req_' . bin2hex(string: random_by
 $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withScope(scope: $scope));
 
 // 4. Execute within a transactional boundary
-$builder->transaction(callback: function (QueryBuilder $query) {
+$builder->transaction(callback: static function (QueryBuilder $query) {
 
     // Standard INSERT
     $query->from(table: 'users')->insert(values: [

@@ -18,7 +18,7 @@ final class CompiledCacheIntegrationTest extends TestCase
     public function test_it_compiles_reads_and_clears_route_like_artifact() : void
     {
         $name    = 'routes';
-        $builder = fn () => [
+        $builder = static fn () => [
             'GET /users'  => ['controller' => UserController::class, 'method' => 'index'],
             'POST /users' => ['controller' => UserController::class, 'method' => 'store'],
         ];
@@ -46,7 +46,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 1];');
 
         $name    = 'config';
-        $builder = fn () => require $sourceFile;
+        $builder = static fn () => require $sourceFile;
 
         $sources = CompiledCacheSources::fromPaths($sourceFile);
 
@@ -57,7 +57,7 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
-        $builderNew = fn () => require $sourceFile;
+        $builderNew = static fn () => require $sourceFile;
         $value = $this->cache->read(name: $name, build: $builderNew, sources: $sources);
 
         $this->assertSame(expected: 2, actual: $value['version']);

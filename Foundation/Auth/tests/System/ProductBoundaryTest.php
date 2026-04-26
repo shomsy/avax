@@ -26,7 +26,6 @@ use Avax\Auth\System\Capabilities\Tenancy\Tenancy;
 use Avax\Auth\System\Capabilities\Tenancy\Tenants\Tenants;
 use Avax\Tests\TestCase;
 use FilesystemIterator;
-use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;

@@ -111,21 +111,21 @@ final class CacheReadRoutingTest extends TestCase
     {
         $this->expectException(exception: CompiledNotConfigured::class);
 
-        CompiledCache::read(name: 'name', build: fn () => [], sources: new CompiledCacheSources());
+        CompiledCache::read(name: 'name', build: static fn () => [], sources: new CompiledCacheSources());
     }
 
     public function test_compiled_cache_compile_throws_when_not_configured() : void
     {
         $this->expectException(exception: CompiledNotConfigured::class);
 
-        CompiledCache::compile(name: 'name', build: fn () => [], sources: new CompiledCacheSources());
+        CompiledCache::compile(name: 'name', build: static fn () => [], sources: new CompiledCacheSources());
     }
 
     public function test_cache_read_throws_for_compiled_target_without_provider() : void
     {
         $target = CompiledCacheTarget::artifact(
             name   : 'routes',
-            builder: fn () => [],
+            builder: static fn () => [],
             sources: new CompiledCacheSources()
         );
 

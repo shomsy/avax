@@ -58,7 +58,7 @@ final class RecoveryCharacterizationTest extends TestCase
         // transaction rollback
         $store->put(key: 'y', value: 'origY');
         try {
-            $recovery->transaction(operation: function () use ($store) {
+            $recovery->transaction(operation: static function () use ($store) {
                 $store->put(key: 'y', value: 'inTx');
                 throw new RuntimeException(message: 'boom');
             });

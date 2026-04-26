@@ -70,7 +70,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::remember(key: 'key', ttl: 3600, loader: fn () => 'loaded');
+        $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn () => 'loaded');
 
         $this->assertSame(expected: 'loaded', actual: $result);
     }

@@ -298,7 +298,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
         }
 
         $values = array_map(
-            callback: fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $this->items
         );
 
@@ -312,7 +312,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
         }
 
         $values = array_map(
-            callback: fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $this->items
         );
 
@@ -333,7 +333,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
+            callback: static fn (mixed $item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
         );
 
         return new self(items: $filtered);
@@ -345,7 +345,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
 
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $item) : bool => ($item[$key] ?? null) >= $min && ($item[$key] ?? null) <= $max
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) >= $min && ($item[$key] ?? null) <= $max
         );
 
         return new self(items: $filtered);
@@ -360,7 +360,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $item) : bool => ($item[$key] ?? null) === $value
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) === $value
         );
 
         return new self(items: $filtered);
@@ -370,7 +370,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $item) : bool => ($item[$key] ?? null) !== null
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) !== null
         );
 
         return new self(items: $filtered);
@@ -456,7 +456,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     public function pluck(string|callable $key) : array
     {
         return array_map(
-            callback: fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $this->items
         );
     }
@@ -540,7 +540,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $_, mixed $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
+            callback: static fn (mixed $_, mixed $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
             mode    : ARRAY_FILTER_USE_BOTH
         );
 
@@ -551,7 +551,7 @@ final readonly class Arrhae implements ArrhaeInterface, IteratorAggregate, Count
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: fn (mixed $_, mixed $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            callback: static fn (mixed $_, mixed $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
             mode    : ARRAY_FILTER_USE_BOTH
         );
 

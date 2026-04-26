@@ -18,7 +18,7 @@ final class PoolFactory
         return new LazyConnectionPool(
             config        : $config,
             maxConnections: $maxConnections,
-            factory       : fn () => self::create(driver: $driver, config: $config, minConnections: 0, maxConnections: $maxConnections),
+            factory       : static fn () => self::create(driver: $driver, config: $config, minConnections: 0, maxConnections: $maxConnections),
         );
     }
 

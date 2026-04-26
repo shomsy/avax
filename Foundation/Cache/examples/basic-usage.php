@@ -34,7 +34,7 @@ $result = Cache::get(key: 'user:42');
 
 print_r($result);
 
-$result = Cache::remember(key: 'user:99', ttl: 3600, loader: fn () => [
+$result = Cache::remember(key: 'user:99', ttl: 3600, loader: static fn () => [
     'id'    => 99,
     'name'  => 'Jane Doe',
     'email' => 'jane@example.com',

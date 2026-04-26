@@ -151,7 +151,7 @@ final class SQLServerGrammar extends BaseGrammar
 
     public function compilePivot(string $column, string $pivotColumn, array $pivotValues) : string
     {
-        $pivotcols = implode(separator: ', ', array: array_map(callback: fn ($val) => "['{$val}']", array: $pivotValues));
+        $pivotcols = implode(separator: ', ', array: array_map(callback: static fn ($val) => "['{$val}']", array: $pivotValues));
 
         return "PIVOT ({$column} FOR {$pivotColumn} IN ({$pivotcols}))";
     }

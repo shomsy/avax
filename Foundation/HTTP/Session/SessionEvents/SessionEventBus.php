@@ -26,7 +26,7 @@ final class SessionEventBus
 
         $this->listeners[$event] = array_filter(
             $this->listeners[$event],
-            fn ($cb) => $cb !== $callback
+            static fn ($cb) => $cb !== $callback
         );
     }
 

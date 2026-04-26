@@ -107,7 +107,7 @@ final readonly class PersistentDataRequest
     ) : self
     {
         $columns      = array_keys($values);
-        $placeholders = array_map(fn ($i) => ":{$i}", array_keys($values));
+        $placeholders = array_map(static fn ($i) => ":{$i}", array_keys($values));
         $sql          = sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
             $table,
@@ -127,7 +127,7 @@ final readonly class PersistentDataRequest
     ) : self
     {
         $bindings ??= [];
-        $set      = implode(', ', array_map(fn ($col) => "{$col} = :{$col}", array_keys($values)));
+        $set = implode(', ', array_map(static fn ($col) => "{$col} = :{$col}", array_keys($values)));
         $sql      = sprintf('UPDATE %s SET %s WHERE %s', $table, $set, $where);
 
         $allBindings = array_merge($values, $bindings);

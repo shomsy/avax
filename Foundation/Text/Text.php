@@ -11,6 +11,8 @@ use Closure;
  *
  * Provides fluent, chainable string operations with functional programming support.
  * All operations return new Text instances, maintaining immutability.
+ *
+ * @noinspection PhpUnused
  */
 final readonly class Text
 {

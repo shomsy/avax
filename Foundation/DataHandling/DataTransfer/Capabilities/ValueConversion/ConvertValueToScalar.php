@@ -7,6 +7,7 @@ namespace Avax\DataHandling\DataTransfer\Capabilities\ValueConversion;
 use Avax\DataHandling\DataTransfer\InspectDataShape\DataField;
 use Stringable;
 
+/** @noinspection PhpUnused */
 final readonly class ConvertValueToScalar
 {
     public function convert(mixed $value, DataField $field, ValueConversionContext $context) : mixed

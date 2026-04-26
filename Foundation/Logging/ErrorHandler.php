@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Logging;
 
 use Avax\Exceptions\ValidationException;
-use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
@@ -202,8 +201,8 @@ final readonly class ErrorHandler
             ];
 
         if (! headers_sent()) {
-            http_response_code(response_code: $response['status']);
-            header(header: 'Content-Type: application/json');
+            http_response_code($response['status']);
+            header('Content-Type: application/json');
         }
 
         echo $this->encodeJsonPayload(payload: $response);

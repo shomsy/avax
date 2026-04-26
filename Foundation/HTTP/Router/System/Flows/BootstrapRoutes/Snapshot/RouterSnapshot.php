@@ -68,7 +68,7 @@ final readonly class RouterSnapshot
             $json     = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             $checksum = hash(algo: 'sha256', data: $json);
         } catch (JsonException $exception) {
-            throw new RuntimeException(message: 'Unable to generate router snapshot.', code: $exception);
+            throw new RuntimeException(message: 'Unable to generate router snapshot.', previous: $exception);
         }
 
         return new self(
@@ -101,7 +101,7 @@ final readonly class RouterSnapshot
         try {
             $data = json_decode(json: file_get_contents(filename: $path), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException(message: "Invalid snapshot file: {$path}", code: $exception);
+            throw new RuntimeException(message: "Invalid snapshot file: {$path}", previous: $exception);
         }
 
         return self::fromArray(data: $data);
@@ -133,7 +133,7 @@ final readonly class RouterSnapshot
             $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             file_put_contents(filename: $path, data: $json . "\n");
         } catch (JsonException $exception) {
-            throw new RuntimeException(message: "Unable to export snapshot to {$path}.", code: $exception);
+            throw new RuntimeException(message: "Unable to export snapshot to {$path}.", previous: $exception);
         }
     }
 

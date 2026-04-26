@@ -80,19 +80,21 @@ final class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        return arrhae(array: $this->roles)->contains(needle: $role);
+        return arrhae(array: $this->roles)->contains(value: $role);
     }
 
     public function hasPermission(UserPermission $permission) : bool
     {
         return arrhae(array: $this->permissions)
-            ->any(callback: fn (UserPermission $p) => $p->equals(other: $permission));
+            ->filter(callback: fn (mixed $v, UserPermission $p) => $p->equals(other: $permission))
+            ->isNotEmpty();
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
         return arrhae(array: $this->roles)
-            ->any(callback: fn (UserRole $role) => $role->canAccess(required: $requiredRole));
+            ->filter(callback: fn (mixed $v, UserRole $role) => $role->canAccess(required: $requiredRole))
+            ->isNotEmpty();
     }
 
     public function getId() : UserId

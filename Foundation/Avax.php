@@ -73,7 +73,7 @@ enum Avax: string
     public static function root() : string
     {
         // Ensure APP_ROOT is set correctly in the environment.
-        $root = env(key: 'FW_ROOT', default: dirname(path: __DIR__, levels: 2));
+        $root = $_ENV['FW_ROOT'] ?? $_SERVER['FW_ROOT'] ?? getenv('FW_ROOT') ?: dirname(path: __DIR__, levels: 2);
 
         if (! is_dir(filename: $root)) {
             throw new RuntimeException(message: "The root path '" . $root . "' does not exist.");

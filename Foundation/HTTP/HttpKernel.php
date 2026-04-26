@@ -53,7 +53,7 @@ final readonly class HttpKernel implements Kernel
     {
         try {
             $pipeline = Psr15MiddlewarePipeline::create(
-                finalHandler: new RouterRequestHandler(router: $this->router)
+                finalHandler: new ResolveRouteFromRequest(router: $this->router)
             );
 
             // Add global middleware (always executed)

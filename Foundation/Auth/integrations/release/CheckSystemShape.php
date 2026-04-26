@@ -42,7 +42,7 @@ final readonly class CheckSystemShape
         }
 
         $allowedTopLevelDirectories = ['Capabilities', 'Flows', 'Configuration', 'Foundation'];
-        $allowedTopLevelFiles       = ['Auth.php', 'AuthInterface.php'];
+        $allowedTopLevelFiles = ['Auth.php', 'DefaultAuth.php'];
         $unexpectedTopLevel         = [];
 
         $entries = scandir(directory: $systemRoot);

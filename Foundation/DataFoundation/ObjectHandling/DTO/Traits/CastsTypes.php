@@ -199,12 +199,11 @@ trait CastsTypes
     }
 
     /**
-     * Resolves the class name of the DTO from either PHP attributes or @param ReflectionProperty $property The
-     * property for which to resolve the class.
+     * Resolves the class name of the DTO from either PHP attributes or annotations.
+     *
+     * @param ReflectionProperty $property The property for which to resolve the class.
      *
      * @return string|null The fully qualified class name of the DTO, or `null` if not found.
-     * @var annotations.
-     *
      */
     protected function resolveDTOClassFromAnnotationsOrAttributes(ReflectionProperty $property) : string|null
     {
@@ -216,7 +215,7 @@ trait CastsTypes
         }
 
         $doc = $property->getDocComment();
-        if ($doc && preg_match('/@var\s+([\w\\]+)\[\]/', $doc, $matches)) {
+        if ($doc && preg_match('/@var\s+([\w\\\\]+)\[]/', $doc, $matches)) {
             return ltrim($matches[1], '\\');
         }
 

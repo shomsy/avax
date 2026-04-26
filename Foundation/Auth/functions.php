@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Auth;
 
 if (! function_exists(function: 'auth')) {
     /**
-     * Retrieve the Authentication capability instance.
+     * Resolve the authentication manager instance.
      *
-     * @return AuthInterface
+     * @return Auth
      */
-    function auth() : AuthInterface
+    function auth() : Auth
     {
-        return app(abstract: AuthInterface::class);
+        return app(abstract: Auth::class);
     }
 }

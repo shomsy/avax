@@ -160,11 +160,11 @@ Consolidate Encryption, Hashing, and Sanitization from scattered locations into 
 
 - [ ] **Decompose `DataHandling`:** 50+ files need namespace migration from `Avax\DataHandling\*` to
   `Avax\DataFoundation\*`. Requires batch `sed` + `composer dump-autoload`.
-- [ ] **Rename `AuthInterface`:** 859-line file + 7 consumers need updating. Requires manual `cp` operation.
-- [ ] **Rename remaining Managers:** `CsrfTokenManager`, `SavepointManager`, `LockManager`.
-- [ ] **Delete old forwarding aliases** when all consumers are updated:
+- [x] **Rename `AuthInterface`:** 859-line file + 7 consumers need updating. Requires manual `cp` operation.
+- [x] **Rename remaining Managers:** `CsrfTokenManager`, `SavepointManager`, `LockManager`.
+- [x] **Delete old forwarding aliases** when all consumers are updated (Checked: zero static usages remaining):
   ```bash
-  rm -rf Foundation/Exceptions/ Foundation/Contracts/
+  rm -rf Foundation/Exceptions/ Foundation/Contracts/ Foundation/Entity/ Foundation/Repository/
   ```
 
 ### 🟡 MEDIUM Priority

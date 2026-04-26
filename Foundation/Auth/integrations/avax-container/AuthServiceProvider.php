@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Auth\Integrations\AvaxContainer;
 
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\AuthInterface;
 use Avax\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
@@ -85,8 +84,8 @@ final class AuthServiceProvider extends ServiceProvider
 
     private function registerAuth() : void
     {
-        if (! $this->app->has(id: AuthInterface::class)) {
-            $this->app->singleton(id: AuthInterface::class, implementation: function () {
+        if (! $this->app->has(id: Auth::class)) {
+            $this->app->singleton(id: Auth::class, implementation: function () {
                 $builder = $this->applyOptionalBindings(builder: Auth::configuration()
                     ->forUser(userSource: $this->app->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->app->get(id: IdentityInterface::class))
@@ -100,12 +99,6 @@ final class AuthServiceProvider extends ServiceProvider
                 }
 
                 return $builder->ready();
-            });
-        }
-
-        if (! $this->app->has(id: Auth::class)) {
-            $this->app->singleton(id: Auth::class, implementation: function () {
-                return $this->app->get(id: AuthInterface::class);
             });
         }
     }

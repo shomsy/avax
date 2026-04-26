@@ -6,7 +6,7 @@ namespace Avax\HTTP\Middleware\CSRF;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Security\CsrfTokenManager;
+use Avax\HTTP\Security\CsrfTokenStore;
 use Exception;
 use SensitiveParameter;
 
@@ -17,20 +17,20 @@ use SensitiveParameter;
 readonly class CsrfMiddleware
 {
     private ResponseFactory  $responseFactory;
-    private CsrfTokenManager $csrfTokenManager;
+    private CsrfTokens $csrfTokens;
 
     /**
-     * Constructor initializes the CsrfMiddleware with a CSRF token manager and a response factory.
+     * Constructor initializes the CsrfMiddleware with a CSRF token store and a response factory.
      *
-     * @param CsrfTokenManager $csrfTokenManager The manager used for CSRF token validation.
+     * @param CsrfTokens $csrfTokens The store used for CSRF token validation.
      * @param ResponseFactory  $responseFactory  The factory used to create HTTP responses.
      */
     public function __construct(
-        #[SensitiveParameter] CsrfTokenManager $csrfTokenManager,
+        #[SensitiveParameter] CsrfTokens $csrfTokens,
         ResponseFactory                        $responseFactory,
     )
     {
-        $this->csrfTokenManager = $csrfTokenManager;
+        $this->csrfTokens = $csrfTokens;
         $this->responseFactory  = $responseFactory;
     }
 
@@ -53,7 +53,7 @@ readonly class CsrfMiddleware
             $token = $request->get(key: '_csrf_token');
 
             // If the token is invalid or missing, return a 403 Forbidden response
-            if (! $this->csrfTokenManager->validateToken(token: $token)) {
+            if (! $this->csrfTokens->validateToken(token: $token)) {
                 return $this->responseFactory->createResponse(code: 403, reasonPhrase: 'CSRF token validation failed');
             }
         }

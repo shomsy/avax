@@ -41,7 +41,7 @@ final class ProductBoundaryTest extends TestCase
         = [
             'Auth'           => [
                 'System/Auth.php',
-                'System/AuthInterface.php',
+                'System/DefaultAuth.php',
             ],
             'Authentication' => [
                 'System/Flows/Login',
@@ -359,8 +359,8 @@ final class ProductBoundaryTest extends TestCase
         $root = dirname(path: __DIR__, levels: 2);
 
         $expectedNamespaces = [
-            $root . '/System/Auth.php'                            => 'namespace Avax\\Auth\\System;',
-            $root . '/System/AuthInterface.php'                   => 'namespace Avax\\Auth\\System;',
+            $root . '/System/Auth.php'        => 'namespace Avax\Auth\System;',
+            $root . '/System/DefaultAuth.php' => 'namespace Avax\Auth\System;',
             $root . '/System/Configuration/AuthBuilder.php'       => 'namespace Avax\\Auth\\System\\Configuration;',
             $root . '/System/Foundation/Clock.php'                => 'namespace Avax\\Auth\\System\\Foundation;',
             $root . '/System/Foundation/IdGenerator.php'          => 'namespace Avax\\Auth\\System\\Foundation;',

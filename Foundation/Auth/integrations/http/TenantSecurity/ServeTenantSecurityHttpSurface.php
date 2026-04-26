@@ -6,7 +6,7 @@ namespace Avax\Auth\Integrations\Http\TenantSecurity;
 
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
-use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
@@ -46,7 +46,7 @@ use Throwable;
 final readonly class ServeTenantSecurityHttpSurface
 {
     public function __construct(
-        #[SensitiveParameter] private AuthInterface $auth
+        #[SensitiveParameter] private Auth $auth
     )
     {
     }

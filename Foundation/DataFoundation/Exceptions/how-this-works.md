@@ -1,38 +1,36 @@
 ---
-title: Exceptions-how-this-works
-owner: foundation-data
-last_reviewed: 2026-04-24
+title: DataFoundation-Exceptions-how-this-works
+owner: DataFoundation
+last_reviewed: 2026-04-26
 classification: internal
 ---
 
-# Exceptions How This Works
+# DataFoundation Exceptions How This Works
 
 ## What this folder is
 
-This folder owns the DataFoundation exception hierarchy.
+Owns exception types thrown during DTO construction, property mapping, and type coercion.
 
-## Real commands or triggers that reach this folder
+## Direct files in this folder
 
-- any invariant failure during value construction
-- any failed conversion, mutation guard, or structure/flow validation
+### InvalidDTOClassException.php
 
-## Exact upstream handoffs
+Thrown when a specified DTO class does not exist or cannot be instantiated.
 
-- public type constructor -> `Exceptions/<Type>.php`
-- internal converter or guard -> `Exceptions/<Type>.php`
+### InvalidPropertyException.php
 
-## The simplest story
+Thrown when a DTO property is missing or structurally invalid during data transfer.
 
-- a public or internal unit detects an invalid state
-- it throws the narrowest named exception in this folder
-- the caller learns exactly which invariant failed
+### InvalidTypeException.php
+
+Thrown when a value does not match the expected type during data transfer.
+
+### MissingPropertyException.php
+
+Thrown when required data is absent from the input provided to a DTO constructor.
 
 ## Debug first
 
-- start here when exception naming feels too generic
-- start here when failure messages stop being specific
-
-## What to remember
-
-- every exception name must say what failed honestly
-- `DataFoundationException` is the root, not a catch-all hiding place
+- Start in `InvalidDTOClassException` when `DataTransfer::create()` fails on class resolution
+- Start in `MissingPropertyException` when required fields are missing from API input
+- Start in `InvalidTypeException` when the wrong data type reaches a typed property

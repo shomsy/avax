@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Validation\System\Capabilities\Standard\Email;
 
 use Avax\Text\Pattern;
+use SensitiveParameter;
 
 /**
  * Action Owner: Validates email format according to standard patterns.

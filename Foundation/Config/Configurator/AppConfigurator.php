@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Config\Configurator;
 
 use Avax\Config\Configurator\FileLoader\ConfigLoaderInterface;
-use Avax\DataHandling\ObjectHandling\Collections\Collection;
+use Avax\DataFoundation\Collection;
 use RuntimeException;
 use WeakMap;
 

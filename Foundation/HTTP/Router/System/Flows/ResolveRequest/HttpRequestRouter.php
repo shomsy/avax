@@ -250,7 +250,8 @@ final class HttpRequestRouter
         return arrhae(array: $allowedMethods)
             ->unique()
             ->sort()
-            ->values();
+            ->values()
+            ->all();
     }
 
     /**
@@ -274,7 +275,7 @@ final class HttpRequestRouter
     private function extractParameters(array $matches) : array
     {
         return arrhae(array: $matches)
-            ->filter(callback: static fn ($key) => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY)
+            ->filter(callback: static fn (mixed $value, mixed $key) => ! is_int(value: $key))
             ->all();
     }
 

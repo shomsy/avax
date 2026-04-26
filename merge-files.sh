@@ -1,172 +1,258 @@
-#!/bin/bash
-
-###############################################################################
-# merge-files.sh
-# -----------------------------------------------------------------------------
-# Merges all text-based files under a directory (recursively) into a single file.
-# Skips .txt and .md files by default unless --include-ext is used.
-# Ignores specific directories: vendor, docker, public, storage, tmp, tools.
-###############################################################################
-
+#!/usr/bin/env bash
 set -euo pipefail
 
-EXCLUDE_EXT=()
-INCLUDE_EXT=()
-DRY_RUN=false
+node --input-type=module - "$@" <<'EOF'
+import fs from 'node:fs';
+import path from 'node:path';
 
-# Hardcoded list of directories to ignore
-# shellcheck disable=SC2054
-IGNORE_DIRS=("vendor" "docker" "public" "storage" "tmp" "tools" ".idea" ".git" "Infrastructure/Framework",
-"Presentation/resources", "resources")
+const scriptName = 'merge-files.sh';
+const args = process.argv.slice(2);
 
-print_help() {
-    cat << EOF
-Usage: $0 [options] /path/to/directory
+function usage() {
+  console.error(`Usage: ${scriptName} <target-dir> [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
+}
 
-Options:
-  --exclude-ext ext1,ext2      Ignore files with these extensions
-  --include-ext ext1,ext2      Include ONLY files with these extensions
-  --dry-run                    Show which files would be processed
-  --help                       Show this help message
+function parseCsv(value) {
+  if (!value) return new Set();
+  return new Set(
+    value
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean),
+  );
+}
+
+function compareStrings(left, right) {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
+function extensionKey(filePath) {
+  const base = path.basename(filePath);
+  if (base.includes('.')) {
+    return path.extname(base).slice(1);
+  }
+  return base;
+}
+
+function readPackageName(rootDir) {
+  const packageJsonPath = path.join(rootDir, 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    return '';
+  }
+
+  try {
+    const raw = fs.readFileSync(packageJsonPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    return typeof parsed.name === 'string' ? parsed.name.trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+function isSafePackageOutputName(value) {
+  return value !== '' && !value.includes('/') && !value.includes('\\');
+}
+
+if (args.length < 1) {
+  usage();
+  process.exit(1);
+}
+
+const targetArg = args[0];
+const optionArgs = args.slice(1);
+const includeExts = new Set();
+const excludeExts = new Set();
+let dryRun = false;
+
+for (const arg of optionArgs) {
+  if (arg.startsWith('--include=')) {
+    for (const ext of parseCsv(arg.slice('--include='.length))) {
+      includeExts.add(ext);
+    }
+    continue;
+  }
+
+  if (arg.startsWith('--exclude=')) {
+    for (const ext of parseCsv(arg.slice('--exclude='.length))) {
+      excludeExts.add(ext);
+    }
+    continue;
+  }
+
+  if (arg === '--dry-run') {
+    dryRun = true;
+    continue;
+  }
+
+  console.error(`Unknown option: ${arg}`);
+  usage();
+  process.exit(2);
+}
+
+if (includeExts.size > 0 && excludeExts.size > 0) {
+  console.error('you cannot use --exclude and --include at the same time');
+  process.exit(2);
+}
+
+const rootDir = path.resolve(targetArg);
+let rootStat;
+
+try {
+  rootStat = fs.statSync(rootDir);
+} catch {
+  console.error(`directory '${targetArg}' does not exist`);
+  process.exit(1);
+}
+
+if (!rootStat.isDirectory()) {
+  console.error(`directory '${targetArg}' does not exist`);
+  process.exit(1);
+}
+
+const targetBasename = path.basename(rootDir);
+const outputFile = path.join(rootDir, `${targetBasename}.txt`);
+// The merged .txt dump is a portable repo snapshot and can serve as a working backup during refactors.
+const packageName = readPackageName(rootDir);
+
+const ignoredDirs = new Set([
+  '.cache',
+  '.git',
+  '.idea',
+  '.phpunit.cache',
+  '__pycache__',
+  'artifacts',
+  'build',
+  'coverage',
+  'dist',
+  'node_modules',
+  'storage',
+  'tmp',
+  'vendor',
+]);
+
+console.log(`Scanning directory: ${rootDir}`);
+console.log(`Output file: ${outputFile}`);
+console.log('Ignoring directories:');
+
+for (const dir of [...ignoredDirs].sort(compareStrings)) {
+  console.log(`- ${dir}`);
+}
+
+console.log('----------------------------------------');
+
+const files = [];
+
+function walk(currentDir) {
+  const entries = fs
+    .readdirSync(currentDir, { withFileTypes: true })
+    .sort((a, b) => compareStrings(a.name, b.name));
+
+  for (const entry of entries) {
+    const currentPath = path.join(currentDir, entry.name);
+    if (entry.isDirectory()) {
+      if (ignoredDirs.has(entry.name) && currentPath !== rootDir) {
+        continue;
+      }
+      walk(currentPath);
+      continue;
+    }
+
+    files.push(currentPath);
+  }
+}
+
+walk(rootDir);
+files.sort(compareStrings);
+
+let merged = 0;
+let skipped = 0;
+const chunks = [];
+
+for (const absPath of files) {
+  const rel = path.relative(rootDir, absPath).split(path.sep).join('/');
+
+  let fileStat;
+
+  try {
+    fileStat = fs.statSync(absPath);
+  } catch {
+    console.log(`Skipping (missing target or broken link): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (!fileStat.isFile()) {
+    console.log(`Skipping (not a regular file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (absPath === outputFile) {
+    console.log(`Skipping (generated output file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  if (rel === 'agents.md') {
+    console.log(`Skipping (ignored mirror file): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  const ext = extensionKey(absPath);
+  if (includeExts.size > 0 && !includeExts.has(ext)) {
+    console.log(`Skipping (not in include list): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+  if (includeExts.size === 0 && excludeExts.has(ext)) {
+    console.log(`Skipping (excluded by default or option): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  const data = fs.readFileSync(absPath);
+  if (data.length > 0 && data.includes(0)) {
+    console.log(`Skipping (binary or non-text): ${rel}`);
+    skipped += 1;
+    continue;
+  }
+
+  merged += 1;
+  if (dryRun) {
+    console.log(`[DRY-RUN] Would merge: ${rel}`);
+    continue;
+  }
+
+  console.log(`Merging: ${rel}`);
+  const text = data.toString('utf8');
+  const normalizedText = text.replace(/[^\S\r\n]+$/gm, '');
+  chunks.push(`=== ${rel} ===\n`);
+  chunks.push(normalizedText);
+  if (!normalizedText.endsWith('\n')) {
+    chunks.push('\n');
+  }
+  chunks.push('\n');
+}
+
+if (!dryRun) {
+  fs.writeFileSync(outputFile, chunks.join(''), 'utf8');
+
+  if (isSafePackageOutputName(packageName) && packageName !== targetBasename) {
+    const renamedOutput = path.join(rootDir, `${packageName}.txt`);
+    fs.renameSync(outputFile, renamedOutput);
+  }
+}
+
+const finalOutputFile = isSafePackageOutputName(packageName) && packageName !== targetBasename
+  ? path.join(rootDir, `${packageName}.txt`)
+  : outputFile;
+
+console.log('----------------------------------------');
+console.log('Done!');
+console.log(`Merged files : ${merged}`);
+console.log(`Skipped files: ${skipped}`);
+console.log(`Output file  : ${finalOutputFile}`);
 EOF
-    exit 0
-}
-
-error() {
-    echo "❌ $1" >&2
-    exit 1
-}
-
-parse_csv_to_array() {
-    IFS=',' read -ra ARR <<< "$1"
-    echo "${ARR[@]}"
-}
-
-POSITIONAL_ARGS=()
-TARGET_DIR=""
-
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --exclude-ext)
-            EXCLUDE_EXT=($(parse_csv_to_array "$2"))
-            shift 2
-            ;;
-        --include-ext)
-            INCLUDE_EXT=($(parse_csv_to_array "$2"))
-            shift 2
-            ;;
-        --dry-run)
-            DRY_RUN=true
-            shift
-            ;;
-        --help)
-            print_help
-            ;;
-        -*|--*)
-            error "Unknown option: $1"
-            ;;
-        *)
-            POSITIONAL_ARGS+=("$1")
-            shift
-            ;;
-    esac
-done
-
-set -- "${POSITIONAL_ARGS[@]}"
-
-if [ "$#" -ne 1 ]; then
-    error "Missing required argument: target directory"
-fi
-
-TARGET_DIR="$1"
-
-if [ ! -d "$TARGET_DIR" ]; then
-    error "Directory '$TARGET_DIR' does not exist."
-fi
-
-# Convert to absolute path for consistency
-TARGET_DIR=$(realpath "$TARGET_DIR")
-
-if [ "${#EXCLUDE_EXT[@]}" -gt 0 ] && [ "${#INCLUDE_EXT[@]}" -gt 0 ]; then
-    error "You cannot use --exclude-ext and --include-ext at the same time."
-fi
-
-# Always skip .txt and .md unless --include-ext is used
-SKIPPED_EXT=("txt" "md" "yaml" "env")
-if [ "${#INCLUDE_EXT[@]}" -eq 0 ]; then
-    EXCLUDE_EXT+=("${SKIPPED_EXT[@]}")
-fi
-
-ROOT_FOLDER_NAME=$(basename "$TARGET_DIR")
-OUTPUT_FILE="${TARGET_DIR}/${ROOT_FOLDER_NAME}.txt"
-
-> "$OUTPUT_FILE"
-
-echo "📁 Scanning directory: $TARGET_DIR"
-echo "📄 Output file: $OUTPUT_FILE"
-
-# Log ignored directories
-if [ "${#IGNORE_DIRS[@]}" -gt 0 ]; then
-    echo "🚫 Ignoring directories:"
-    for dir in "${IGNORE_DIRS[@]}"; do
-        echo "   - $dir"
-    done
-fi
-
-echo "----------------------------------------"
-
-CURRENT=0
-MERGED=0
-SKIPPED=0
-
-# Build prune expression
-PRUNE_EXPR=()
-for dir in "${IGNORE_DIRS[@]}"; do
-    PRUNE_EXPR+=(-path "$TARGET_DIR/$dir" -prune -o)
-done
-# Remove last -o
-unset 'PRUNE_EXPR[${#PRUNE_EXPR[@]}-1]'
-
-# Find and process files excluding pruned dirs
-while IFS= read -r FILE; do
-    REL_PATH="${FILE#$TARGET_DIR/}"
-    EXT="${FILE##*.}"
-
-    if [ "${#INCLUDE_EXT[@]}" -gt 0 ]; then
-        if [[ ! " ${INCLUDE_EXT[@]} " =~ " ${EXT} " ]]; then
-            echo "⏭️  Skipping (not in include list): $REL_PATH"
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
-    else
-        if [[ " ${EXCLUDE_EXT[@]} " =~ " ${EXT} " ]]; then
-            echo "⏭️  Skipping (excluded by default or option): $REL_PATH"
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
-    fi
-
-    CURRENT=$((CURRENT + 1))
-    MERGED=$((MERGED + 1))
-
-    if [ "$DRY_RUN" = true ]; then
-        echo "🧪 [DRY-RUN] Would merge: $REL_PATH"
-        continue
-    fi
-
-    echo "🔄 [$CURRENT] Merging: $REL_PATH"
-
-    {
-        echo "=== $REL_PATH ==="
-        cat "$FILE"
-        echo ""
-    } >> "$OUTPUT_FILE"
-done < <(
-    find "$TARGET_DIR" \( "${PRUNE_EXPR[@]}" \) -o -type f -print | sort -u
-)
-
-echo "----------------------------------------"
-echo "✅ Done!"
-echo "🧩 Merged files : $MERGED"
-echo "🚫 Skipped files: $SKIPPED"
-echo "📄 Output file  : $OUTPUT_FILE"

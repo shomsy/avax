@@ -1,0 +1,491 @@
+# Test Reports
+
+Concrete records of executed verification.
+
+## Entry Template
+
+- `executed_at`:
+- `scope`:
+- `environment`:
+- `checks`:
+- `result`: pass | fail | partial
+- `notes`:
+
+## Reports
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: full package validation after closing asymmetric/public-client JAR verification, OIDC dynamic registration
+  HTTP lifecycle, and source-truth updates
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar`, vendor dependencies, and repo-local
+  coverage-driver tooling installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after the new OIDC registration/update/delete HTTP surface, RSA request-object
+  verification, and canonical doc refresh; result `OK (254 tests, 854 assertions, 4 skipped)`
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: dedicated integration regression lane after the new OIDC and tenant-admin HTTP registration wiring
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test:integration`
+- `result`: pass
+- `notes`: integration suite remains green after OIDC dynamic registration lifecycle and verifier-key propagation;
+  result `OK (57 tests, 269 assertions)`
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: baseline and strict static analysis after OIDC metadata, registration surface, and request-object
+  verification expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`, `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: PHPStan and strict PHPStan pass after the new OIDC registration endpoint, verifier-key propagation, and
+  metadata/status updates
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: source-truth and architecture drift verification after OIDC completeness status closure
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`, `php composer.phar system-shape`
+- `result`: pass
+- `notes`: canonical docs, evidence paths, and screaming architecture checks remain approved after the OIDC/runtime
+  closure
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: covered mutation diagnostic after OIDC completeness closure
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar`, repo-local coverage-driver tooling, and Infection
+  0.28
+- `checks`: `php composer.phar mutation -- --only-covered --threads=4`
+- `result`: partial
+- `notes`: mutation tooling executes end-to-end and generates `build/infection-summary.log`; latest signal is `MSI 59%`,
+  `Covered Code MSI 59%`, `394` escaped mutants, `63` timeouts, and `231` slow mutants, so tooling is no longer blocked
+  but release-quality mutation posture remains open
+
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: full package validation after source-truth evidence checks, system-shape enforcement, clean integration suite
+  split, and canonical status/doc refresh
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after separating the `Integration` suite from the default suite and tightening
+  source-truth/system-shape release checks; result `OK (242 tests, 794 assertions, 4 skipped)`
+
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: dedicated integration regression lane after introducing the new `Integration` testsuite
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test:integration`
+- `result`: pass
+- `notes`: integration suite passes cleanly without duplicate-suite warnings; result `OK (50 tests, 227 assertions)`
+
+- `executed_at`: 2026-04-15 01:22 CEST
+- `scope`: baseline and strict static analysis after source-truth and system-shape checker expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`, `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: PHPStan and strict PHPStan pass after tightening Redis/session adapter types, deployment-trust helpers, and
+  release/source-truth checkers
+
+- `executed_at`: 2026-04-15 01:21 CEST
+- `scope`: source-truth and architecture drift verification after capability-matrix evidence checks and canonical
+  system-shape enforcement
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`, `php composer.phar system-shape`
+- `result`: pass
+- `notes`: source-truth approves canonical docs and evidence paths; system-shape approves the `System/` screaming
+  architecture and rejects junk-drawer regressions
+
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: release gate after system-shape enforcement, source-truth evidence validation, and integration-suite
+  separation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar release:gate`
+- `result`: pass
+- `notes`: release gate passes system-shape, PHPStan, strict PHPStan, full PHPUnit, migration check, source-truth,
+  dependency review, secret scan, SBOM, provenance, rollback evidence, and evidence bundle generation
+
+- `executed_at`: 2026-04-14 23:35 CEST
+- `scope`: targeted release-tooling and product-boundary regression suite after source-truth cleanup, migration tooling,
+  certification profile, and merged-artifact archival
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`:
+  `php composer.phar test -- tests/Integrations/Release/ReleaseToolingTest.php tests/System/ProductBoundaryTest.php`
+- `result`: pass
+- `notes`: targeted suite passes for conformance harness, evidence bundle, source-truth checker, migration checker, and
+  product-boundary docs; result `OK (17 tests, 68 assertions)`
+
+- `executed_at`: 2026-04-14 23:44 CEST
+- `scope`: baseline static analysis after release/source-truth tooling rewrite and canonical doc cleanup
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`
+- `result`: pass
+- `notes`: baseline PHPStan passes after replacing undeclared tooling dependencies with package-owned release
+  integrations
+
+- `executed_at`: 2026-04-14 23:47 CEST
+- `scope`: strict static analysis after Redis adapter casing fix and release/source-truth cleanup
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: strict PHPStan passes after hardening release tooling and fixing Redis ext method casing
+
+- `executed_at`: 2026-04-14 23:47 CEST
+- `scope`: full PHPUnit suite after release/source-truth cleanup, migration guide, and product-boundary updates
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes with the new release/source-truth tooling and canonical docs alignment; result
+  `OK (223 tests, 759 assertions)`
+
+- `executed_at`: 2026-04-14 23:48 CEST
+- `scope`: source-of-truth consistency after risk-register and canonical doc alignment
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`
+- `result`: pass
+- `notes`: source-truth checker approves STATUS, product-boundary, capability-matrix, migration guide, and non-canonical
+  merged artifact posture
+
+- `executed_at`: 2026-04-14 23:48 CEST
+- `scope`: migration-boundary verification after documenting the intentional major-boundary break
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar migration:check`
+- `result`: pass
+- `notes`: migration checker reports clean status for the documented `AuthServiceProvider` namespace move and
+  upgrade-test presence
+
+- `executed_at`: 2026-04-13 13:18 CEST
+- `scope`: full PHPUnit suite after sender-constrained HTTP adapters, SIEM-grade audit exporters, federation
+  operations, high-assurance policy examples, and multi-key token verification
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after DPoP and mTLS verification, audit correlation/export adapters, federation
+  domain verification and health policy, new docs/examples, and `MultiKeyHmacTokenCodec`; result
+  `OK (148 tests, 402 assertions)`
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: baseline static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new diagnostics exporters, sender-constraint HTTP adapters,
+  federation-operation flows, and multi-key token codec
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: strict static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening the JSON-lines audit exporter and new federation/diagnostics seams
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: full PHPUnit suite after assurance policy tiers, sender-constrained OAuth posture, and key-versioned JWT
+  artifacts
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `IdentityPolicyCatalog`, OAuth sender-constraint enforcement, phishing-resistant
+  OAuth client policy, JWT `kid` handling, and new regression coverage; result `OK (138 tests, 355 assertions)`
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: baseline static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new `Capability/Access/Policy` types, OAuth sender-constraint contracts,
+  and JWT token-version support
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: strict static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening grant-type normalization, sender-constraint iterable contracts, and
+  explicit assurance-policy seams
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: targeted regression suite for phishing-resistant access naming, admin elevation policy, and ChangeEmail flow
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test` (suite covered
+  `tests/Capabilities/Access/RequirePhishingResistantAuthentication/RequirePhishingResistantAuthenticationTest.php`,
+  `tests/Flows/ChangeEmail/ChangeEmailTest.php`, `tests/Flows/AdminRealm/AdminElevationTest.php`,
+  `tests/Capabilities/Access/AccessPolicyTest.php`, `tests/Capabilities/Access/AccessTest.php`,
+  `tests/Capabilities/Identity/IdentityTest.php`)
+- `result`: pass
+- `notes`: targeted regression coverage passes for the new phishing-resistant capability guard, admin elevation policy,
+  and email-change begin/confirm lifecycle; result `OK (129 tests, 327 assertions)`
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: baseline static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes after the `RequirePhishingResistantAuthentication` namespace move and email-change
+  builder wiring
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: strict static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the new `ChangeEmail` flow and admin policy naming cleanup
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: targeted authorization-policy, passkey rename, maintenance cleanup, and audit export regression suite
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`:
+  `vendor/bin/phpunit tests/Capabilities/Access/AccessTest.php tests/Capabilities/Access/AccessPolicyTest.php tests/Flows/Passkey/PasskeyFlowTest.php tests/Flows/Session/CleanupExpiredSessionsTest.php tests/Flows/Recover/CleanupExpiredPasswordResetsTest.php tests/Flows/Mfa/CleanupExpiredMfaChallengesTest.php tests/Flows/Passkey/CleanupExpiredPasskeyChallengesTest.php tests/Flows/OAuth/CleanupExpiredAuthorizationCodesTest.php tests/Flows/Diagnostics/ExportAuditEventsTest.php`
+- `result`: pass
+- `notes`: targeted regression suite passes for composed access-policy enforcement, passkey rename ownership, cleanup
+  jobs, and audit export drain behavior; result `OK (10 tests, 27 assertions)`
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: full PHPUnit suite after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after access-policy wiring, maintenance cleanup/export flows, passkey rename, and
+  docs alignment; result `OK (121 tests, 302 assertions)`
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: baseline static analysis after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new `Capability/Access/Policy`, maintenance flows, and passkey rename
+  surface
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: strict static analysis after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the new maintenance contracts, access-policy composition, and passkey label
+  validation flow
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: full PHPUnit suite after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `Capability/OAuth`, `Flow/OAuth`, client-bound JWT claims, and new OAuth facade
+  methods; result `OK (107 tests, 260 assertions)`
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: baseline static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new OAuth capability and flow slices
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: strict static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening iterable contracts for client/scope-aware token issuance
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: targeted OAuth regression suite and JWT claim coverage
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`:
+  `vendor/bin/phpunit tests/Capabilities/OAuth/InMemoryOAuthClientRegistryTest.php tests/Capabilities/Identity/Jwt/JwtIdentityTest.php tests/Flows/OAuth/OAuthFlowTest.php tests/System/AuthTest.php`
+- `result`: pass
+- `notes`: targeted OAuth regression suite passes for PKCE enforcement, authorization-code exchange, refresh reuse
+  detection, introspection, revoke, and client-claim preservation; result `OK (12 tests, 47 assertions)`
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: full PHPUnit suite after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after adding tracked session registry contracts, session facade flows, and session
+  revocation wiring; result `OK (102 tests, 239 assertions)`
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: baseline static analysis after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the expanded session capability and new auth facade/session flow surface
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: strict static analysis after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the session registry, logout-all, and session revoke changes
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: targeted regression suite for session subsystem v1, password-reset revocation, and updated auth facade flows
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`:
+  `vendor/bin/phpunit tests/Capabilities/Identity/Session/SessionIdentityTest.php tests/Flows/Login/LoginTest.php tests/Flows/Mfa/Challenge/VerifyMfaChallengeTest.php tests/Flows/Logout/LogoutTest.php tests/Flows/ChangePassword/ChangePasswordTest.php tests/Flows/Recover/BeginPasswordResetTest.php tests/Flows/Recover/ResetPasswordTest.php tests/Flows/Mfa/Recover/MfaRecoveryTest.php tests/Flows/Session/ReadActiveSessionsTest.php tests/Flows/Session/LogoutAllSessionsTest.php tests/Flows/Session/RevokeSessionTest.php tests/System/AuthTest.php`
+- `result`: pass
+- `notes`: targeted regression suite passes after adding tracked session registry contracts, logout-all, targeted
+  session revoke, and reset-driven session/challenge revocation; result `OK (31 tests, 86 assertions)`
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: full PHPUnit suite after auth-kernel hardening for session lifetime, recovery throttling, and password policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after the new session lifetime, recovery throttling, and password rehash coverage changes;
+  result `OK (97 tests, 219 assertions)`
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: baseline static analysis after auth-kernel hardening for session lifetime, recovery throttling, and password
+  policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes with the new `Throttle` capability, `SessionLifetime` enforcement, and hasher policy
+  changes
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: strict static analysis after auth-kernel hardening for session lifetime, recovery throttling, and password
+  policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening iterable types and default password-hashing behavior
+
+- `executed_at`: 2026-04-09 21:44 CEST
+- `scope`: mutation execution after installing a repo-local coverage-driver fallback
+- `environment`: local CLI PHP 8.4.11 with repo-local `pcov` loaded via `tooling/run-with-coverage-driver`
+- `checks`: `php composer.phar mutation`
+- `result`: fail
+- `notes`: tooling succeeds and Infection completes; result is a real quality failure, not an environment failure:
+  `312 mutations`, `MSI 30%`, `Mutation Code Coverage 50%`, `Covered Code MSI 59%`, `64 escaped`, `153 uncovered`,
+  `1 error`, `1 timeout`
+
+- `executed_at`: 2026-04-09 21:44 CEST
+- `scope`: covered-only mutation diagnostic pass for critical auth slices
+- `environment`: local CLI PHP 8.4.11 with repo-local `pcov` loaded via `tooling/run-with-coverage-driver`
+- `checks`:
+  `tooling/run-with-coverage-driver vendor/bin/infection --configuration=infection.json.dist --only-covered --show-mutations --threads=16`
+- `result`: fail
+- `notes`: coverage lane is clean and actionable; `613 mutations`, `Mutation Code Coverage 100%`, `MSI 61%`,
+  `Covered Code MSI 61%`, `236 escaped`, `70 timeouts`; strongest surviving signals cluster in `Identity`,
+  `JwtIdentity`, `ChangePassword`, `RefreshAuthentication`, `HmacTokenCodec`, and in-memory token stores
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: full PHPUnit suite after restoring the Composer toolchain and strict-review fixes
+- `environment`: local CLI PHP 8.4.11 with local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit now runs end to end; result `OK (89 tests, 200 assertions)`
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: baseline static analysis after kernel, adapter, and test hardening
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes on the package with restored autoload and optional adapter seams
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: strict static analysis after strict-review fixes
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening header parsing, session cookie normalization, TOTP internals, and
+  iterable type declarations
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: PHPUnit hygiene check for deprecations
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations`
+- `result`: pass
+- `notes`: no PHPUnit runtime or configuration deprecations were emitted after migrating `phpunit.xml.dist`
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: PHPUnit hygiene check for skipped tests and hidden errors
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit --display-skipped --display-errors`
+- `result`: pass
+- `notes`: no tests were skipped; the optional Avax container adapter now executes through a test seam instead of
+  being silently omitted
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: mutation verification for security-sensitive auth paths
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar mutation`
+- `result`: partial
+- `notes`: superseded by the 2026-04-09 21:44 CEST mutation runs after the repo-local `pcov` fallback was installed
+
+- `executed_at`: 2026-04-09 19:21 CEST
+- `scope`: syntax validation after kernel and integration boundary extraction
+- `environment`: local CLI PHP 8.4.11 without Composer installed
+- `checks`: `find System integrations tests -name '*.php' -print0 | xargs -0 -n1 php -l`
+- `result`: pass
+- `notes`: kernel, optional adapters, and moved tests all parsed successfully after extracting `integrations/`
+
+- `executed_at`: 2026-04-09 19:21 CEST
+- `scope`: executable kernel and integration smoke path without Composer
+- `environment`: local CLI PHP 8.4.11 with inline PSR-4 autoloader for `System/` and `integrations/`
+- `checks`: inline PHP smoke covering kernel-only auth assembly, JWT login, HTTP ingress mapping, and safe HTTP failure
+  mapping
+- `result`: pass
+- `notes`: emitted `kernel-integration-smoke-ok`
+
+- `executed_at`: 2026-04-09 19:21 CEST
+- `scope`: adapter isolation verification
+- `environment`: local CLI shell
+- `checks`: `rg -n -F 'Avax\\\\Auth\\\\Integrations\\\\' System`
+- `result`: pass
+- `notes`: emitted `kernel-does-not-import-integrations`; kernel source has no import dependency on the integration lane
+
+- `executed_at`: 2026-04-09 18:10 CEST
+- `scope`: syntax validation after MFA subsystem refactor
+- `environment`: local CLI PHP 8.4.11
+- `checks`: `find System tests -name '*.php' -print0 | xargs -0 -n1 php -l`
+- `result`: pass
+- `notes`: all source and test files parsed successfully after MFA slice implementation
+
+- `executed_at`: 2026-04-09 18:10 CEST
+- `scope`: static analysis of core auth kernel after MFA subsystem refactor
+- `environment`: local CLI PHP 8.4.11 with vendor autoload
+- `checks`: `vendor/bin/phpstan analyse System --memory-limit=1G -c phpstan.neon`
+- `result`: pass
+- `notes`: `System/` passes PHPStan with the new MFA slice, `mfaVerifiedAt` auth claims, and builder wiring
+
+- `executed_at`: 2026-04-09 18:10 CEST
+- `scope`: executable MFA lifecycle smoke path
+- `environment`: local CLI PHP 8.4.11 with vendor autoload
+- `checks`: inline PHP smoke covering MFA enrollment, mfa-required login, backup-code verification, change-password
+  step-up, refresh preservation, backup-code replay failure, recovery reset, and post-recovery login
+- `result`: pass
+- `notes`: emitted `mfa-smoke-ok`
+
+- `executed_at`: 2026-04-09 18:10 CEST
+- `scope`: executable MFA security smoke path
+- `environment`: local CLI PHP 8.4.11 with vendor autoload
+- `checks`: inline PHP smoke covering repeated MFA failure lockout and stale fresh-MFA rejection
+- `result`: pass
+- `notes`: emitted `mfa-security-smoke-ok`
+
+- `executed_at`: 2026-04-09 15:31 CEST
+- `scope`: syntax validation for `System/` and `tests/`
+- `environment`: local CLI PHP 8.4.11 without `dom/xml/xmlwriter/mbstring`
+- `checks`: `find System tests -name '*.php' -print0 | xargs -0 -n1 php -l`
+- `result`: pass
+- `notes`: all PHP sources parsed successfully after auth-kernel refactor
+
+- `executed_at`: 2026-04-09 15:31 CEST
+- `scope`: static analysis of core auth kernel
+- `environment`: local CLI PHP 8.4.11 with vendor installed via ignored XML platform requirements
+- `checks`: `vendor/bin/phpstan analyse --no-progress --memory-limit=1G`
+- `result`: pass
+- `notes`: `System/` passes PHPStan level 5; optional Avax container adapter is excluded from kernel analysis because
+  the dependency is not installed locally
+
+- `executed_at`: 2026-04-09 15:31 CEST
+- `scope`: executable auth smoke path
+- `environment`: local CLI PHP 8.4.11 with vendor autoload
+- `checks`: inline PHP smoke covering register, login, authenticateRequest, changePassword, refresh rotation, MFA
+  enable/challenge/verify, email verification, password reset, logout
+- `result`: pass
+- `notes`: emitted `smoke-ok`
+
+- `executed_at`: 2026-04-09 15:31 CEST
+- `scope`: executable security smoke path
+- `environment`: local CLI PHP 8.4.11 with vendor autoload
+- `checks`: inline PHP smoke covering refresh-token reuse detection and password-reset anti-enumeration behavior
+- `result`: pass
+- `notes`: emitted `security-smoke-ok`

@@ -1,0 +1,148 @@
+{
+  "name": "avax/auth",
+  "description": "Pure PHP 8.5+ authentication and authorization framework",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "auth",
+    "authentication",
+    "authorization",
+    "security",
+    "jwt",
+    "session",
+    "rbac",
+    "php85"
+  ],
+  "homepage": "https://github.com/avax/auth",
+  "support": {
+    "issues": "https://github.com/avax/auth/issues",
+    "source": "https://github.com/avax/auth"
+  },
+  "authors": [
+    {
+      "name": "Avax Team",
+      "email": "team@avax.dev"
+    }
+  ],
+  "require": {
+    "php": "^8.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "rector/rector": "^2.4",
+    "infection/infection": "^0.32",
+    "mockery/mockery": "^1.6"
+  },
+  "suggest": {
+    "avax/container": "Optional adapter support for Avax container integration.",
+    "ext-openssl": "Required when using OpenSslOidcProvider for OIDC token signing.",
+    "ext-redis": "Required when using RedisSessionRegistry."
+  },
+  "autoload": {
+    "psr-4": {
+      "Avax\\Auth\\System\\Capabilities\\": "System/Capabilities/",
+      "Avax\\Auth\\System\\Flows\\": "System/Flows/",
+      "Avax\\Auth\\System\\": "System/",
+      "Avax\\Auth\\Integrations\\AvaxContainer\\": "integrations/avax-container/",
+      "Avax\\Auth\\Integrations\\Diagnostics\\": "integrations/diagnostics/",
+      "Avax\\Auth\\Integrations\\Http\\": "integrations/http/",
+      "Avax\\Auth\\Integrations\\Headers\\": "integrations/headers/",
+      "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/",
+      "Avax\\Auth\\Integrations\\Release\\": "integrations/release/"
+    },
+    "files": [
+      "legacy-class-aliases.php"
+    ],
+    "classmap": [
+      "System/",
+      "integrations/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Avax\\Auth\\Tests\\Capabilities\\": "tests/Capabilities/",
+      "Avax\\Auth\\Tests\\Configuration\\": "tests/Configuration/",
+      "Avax\\Auth\\Tests\\Flows\\": "tests/Flows/",
+      "Avax\\Auth\\Tests\\Foundation\\": "tests/Foundation/",
+      "Avax\\Auth\\Tests\\Integration\\": "tests/Integration/",
+      "Avax\\Auth\\Tests\\Integrations\\": "tests/Integrations/",
+      "Avax\\Auth\\Examples\\Http\\": "examples/http/",
+      "Avax\\Auth\\Examples\\Jobs\\": "examples/jobs/",
+      "Avax\\Auth\\Examples\\Persistence\\": "examples/persistence/",
+      "Avax\\Auth\\Examples\\Policies\\": "examples/policies/",
+      "Avax\\Auth\\Tests\\Support\\": "tests/Support/",
+      "Avax\\Auth\\Tests\\System\\": "tests/System/",
+      "Avax\\Container\\Core\\": "tests/Support/AvaxContainer/Core/",
+      "Avax\\Container\\Providers\\": "tests/Support/AvaxContainer/Providers/"
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "infection/extension-installer": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test:coverage": "tooling/run-with-coverage-driver vendor/bin/phpunit --coverage-html coverage",
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "analyse:strict": "phpstan analyse --memory-limit=1G -c phpstan.strict.neon",
+    "dependency-review": "php tooling/review-composer-dependencies.php",
+    "source-truth": "php tooling/check-source-truth.php",
+    "system-shape": "php tooling/check-system-shape.php",
+    "migration:check": "php tooling/check-migration-path.php",
+    "sbom": "php tooling/generate-sbom.php",
+    "evidence:bundle": "php tooling/generate-evidence-bundle.php",
+    "secret-scan": "php tooling/scan-committed-secrets.php",
+    "release:provenance": "php tooling/create-release-provenance.php",
+    "rollback:proof": "php tooling/create-rollback-evidence.php",
+    "release:gate": [
+      "@system-shape",
+      "@analyse",
+      "@analyse:strict",
+      "@test",
+      "@migration:check",
+      "@source-truth",
+      "@dependency-review",
+      "@secret-scan",
+      "@sbom",
+      "@release:provenance",
+      "@rollback:proof",
+      "@evidence:bundle"
+    ],
+    "rector": "rector process --dry-run --no-progress-bar --config rector.php",
+    "rector:apply": "rector process --no-progress-bar --config rector.php",
+    "mutation": [
+      "Composer\\Config::disableProcessTimeout",
+      "tooling/run-with-coverage-driver vendor/bin/infection --configuration=infection.json.dist"
+    ],
+    "all": [
+      "@analyse",
+      "@test",
+      "@rector"
+    ],
+    "quality-gates": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php"
+    ],
+    "quality-gates:json": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php --json"
+    ],
+    "quality-gates:verbose": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php --verbose"
+    ],
+    "conformance": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/run-conformance-harness.php"
+    ],
+    "test:integration": "phpunit --testsuite=Integration"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

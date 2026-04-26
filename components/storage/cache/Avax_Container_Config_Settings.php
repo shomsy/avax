@@ -1,0 +1,34 @@
+<?php
+
+use components\Container\Features\Think\Model\MethodPrototype;
+use components\Container\Features\Think\Model\ParameterPrototype;
+use components\Container\Features\Think\Model\ServicePrototype;
+
+return ServicePrototype::__set_state(array: [
+                                                'class'              => 'Avax\\Container\\Config\\Settings',
+                                                'constructor'        =>
+                                                    MethodPrototype::__set_state(array: [
+                                                                                            'name'       => '__construct',
+                                                                                            'parameters' =>
+                                                                                                [
+                                                                                                    ParameterPrototype::__set_state(array: [
+                                                                                                                                               'name'       => 'items',
+                                                                                                                                               'type'       => null,
+                                                                                                                                               'hasDefault' => true,
+                                                                                                                                               'default'    =>
+                                                                                                                                                   [
+                                                                                                                                                   ],
+                                                                                                                                               'isVariadic' => false,
+                                                                                                                                               'allowsNull' => false,
+                                                                                                                                               'required'   => false,
+                                                                                                                                           ]),
+                                                                                                ],
+                                                                                        ]),
+                                                'injectedProperties' =>
+                                                    [
+                                                    ],
+                                                'injectedMethods'    =>
+                                                    [
+                                                    ],
+                                                'isInstantiable'     => true,
+                                            ]);

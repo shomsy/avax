@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+SYSTEM_PHP_INI="${PHPRC:-/etc/php/8.4/cli/php.ini}"
+SYSTEM_SCAN_DIR="${PHP_INI_SCAN_DIR:-/etc/php/8.4/cli/conf.d}"
+LOCAL_PHP_INI_DIR="$PROJECT_ROOT/build/local-php-ini"
+LOCAL_PCOV_SO="$PROJECT_ROOT/tooling/local-php-ext/pcov/extracted/usr/lib/php/20240924/pcov.so"
+
+has_global_coverage_driver() {
+  php -m 2>/dev/null | grep -Eq '^(pcov|xdebug)$'
+}
+
+if ! has_global_coverage_driver && [[ ! -f "$LOCAL_PCOV_SO" ]]; then
+  printf 'No PHP coverage driver is available. Install pcov/xdebug globally or unpack the local pcov package under tooling/local-php-ext/pcov.\n' >&2
+  exit 1
+fi
+
+if ! has_global_coverage_driver; then
+  mkdir -p "$LOCAL_PHP_INI_DIR"
+
+  cat > "$LOCAL_PHP_INI_DIR/99-local-pcov.ini" <<EOF
+extension=$LOCAL_PCOV_SO
+pcov.enabled=1
+pcov.directory=$PROJECT_ROOT
+pcov.exclude="~(vendor|tests|tooling|docs|examples|\\.agents|build)~"
+EOF
+
+  export PHPRC="$SYSTEM_PHP_INI"
+  export PHP_INI_SCAN_DIR="$SYSTEM_SCAN_DIR:$LOCAL_PHP_INI_DIR"
+fi
+
+exec php "$@"

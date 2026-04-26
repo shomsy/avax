@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "serviceIds": [
+    "HintConditionalService",
+    "HintIdentityService",
+    "HintPipelineStepA",
+    "HintPipelineStepB",
+    "HintRuntimeInputConsumer"
+  ],
+  "sliceExports": {
+    "capability.identity": [
+      "HintConditionalService",
+      "HintIdentityService"
+    ],
+    "flow.hints": []
+  },
+  "sliceImports": {
+    "capability.identity": [],
+    "flow.hints": [
+      "capability.identity"
+    ]
+  },
+  "groups": {
+    "hint.pipeline": [
+      "HintPipelineStepA",
+      "HintPipelineStepB"
+    ]
+  },
+  "runtimeInputs": {
+    "HintConditionalService": [],
+    "HintIdentityService": [],
+    "HintPipelineStepA": [],
+    "HintPipelineStepB": [],
+    "HintRuntimeInputConsumer": [
+      "token"
+    ]
+  },
+  "conditionals": {
+    "HintConditionalService": {
+      "profiles": [
+        "prod"
+      ],
+      "flags": [
+        "beta"
+      ],
+      "tenants": [],
+      "regions": [],
+      "modes": [],
+      "fallback": false
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk;
+
+final readonly class ScimBulkOperationResult
+{
+    /** @var array<string, mixed> */
+    public array $response;
+
+    /**
+     * @param array<string, mixed> $response
+     */
+    public function __construct(
+        public string      $method,
+        public string      $path,
+        public int         $status,
+        array|null         $response = null,
+        public string|null $bulkId = null
+    )
+    {
+        $response       ??= [];
+        $this->response = $response;
+    }
+}

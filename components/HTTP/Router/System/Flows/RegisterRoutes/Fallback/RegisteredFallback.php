@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Router\System\Flows\RegisterRoutes\Fallback;
+
+use Avax\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Closure;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
+use RuntimeException;
+
+/**
+ * Manages the fallback handler invoked when no route matches.
+ */
+final class RegisteredFallback
+{
+    private Closure|array|string|null $handler = null;
+    private ControllerDispatcher      $dispatcher;
+
+    public function __construct(ControllerDispatcher $dispatcher) { $this->dispatcher = $dispatcher; }
+
+    public function set(callable|array|string $handler) : void
+    {
+        $this->handler = is_callable(value: $handler)
+            ? Closure::fromCallable(callback: $handler)
+            : $handler;
+    }
+
+    public function has() : bool
+    {
+        return $this->handler !== null;
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws ReflectionException
+     * @throws NotFoundExceptionInterface
+     */
+    public function invoke(ServerRequest $request) : ResponseInterface
+    {
+        if (! $this->handler) {
+            throw new RuntimeException(message: 'Fallback handler is not configured.');
+        }
+
+        if ($this->handler instanceof Closure) {
+            return ($this->handler)($request);
+        }
+
+        return $this->dispatcher->dispatch(action: $this->handler, request: $request);
+    }
+}

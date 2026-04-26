@@ -27,8 +27,9 @@ use Throwable;
  */
 final readonly class HttpKernel implements Kernel
 {
-* @param array                  $globalMiddleware Always-executed middleware
-* @param ResponseFactory        $responseFactory  for error responses
+    /**
+     * @param array           $globalMiddleware Always-executed middleware
+     * @param ResponseFactory $responseFactory  For error responses
      */
     public function __construct(
         private RouterRuntimeInterface $router,

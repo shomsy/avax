@@ -142,6 +142,8 @@ Consolidate Encryption, Hashing, and Sanitization from scattered locations into 
 - **`DumpDebugger`**: Borderline. `Diagnostics` or `Dump` would be cleaner.
 - **`Repository`**: ✅ **Fixed** → Moved to `Database/ORM`. Old location is forwarding alias.
 - **`Entity`**: ✅ **Fixed** → Moved to `Database/ORM`. Old location is forwarding alias.
+- **`EntityManager`**: ✅ **Fixed** → Renamed to `EntityStore`.
+- **`RouterRequestHandler`**: ✅ **Fixed** → Renamed to `DispatchRoute`.
 
 ### 3. Framework & Namespace Consistency
 
@@ -158,8 +160,8 @@ Consolidate Encryption, Hashing, and Sanitization from scattered locations into 
 
 - [ ] **Decompose `DataHandling`:** 50+ files need namespace migration from `Avax\DataHandling\*` to
   `Avax\DataFoundation\*`. Requires batch `sed` + `composer dump-autoload`.
-- [ ] **Rename `AuthInterface`:** 859-line file + 7 consumers need updating.
-- [ ] **Rename Managers:** `CsrfTokenManager`, `EntityManager`, `SavepointManager`, `LockManager`.
+- [ ] **Rename `AuthInterface`:** 859-line file + 7 consumers need updating. Requires manual `cp` operation.
+- [ ] **Rename remaining Managers:** `CsrfTokenManager`, `SavepointManager`, `LockManager`.
 - [ ] **Delete old forwarding aliases** when all consumers are updated:
   ```bash
   rm -rf Foundation/Exceptions/ Foundation/Contracts/
@@ -184,13 +186,13 @@ Consolidate Encryption, Hashing, and Sanitization from scattered locations into 
 
 ## 📜 Governance Compliance Matrix
 
-| Rule                      | Before | After      | Finding                                                |
-|---------------------------|--------|------------|--------------------------------------------------------|
-| §14.3 (Forbidden Names)   | ❌      | ⚠️ Partial | "Exceptions" & "Contracts" are now forwarding aliases. |
-| §5.4 (Forbidden Suffixes) | ❌      | ⚠️ Partial | `FilesystemInterface` fixed. `AuthInterface` pending.  |
-| §21 (Junk Drawers)        | ❌      | ✅          | All exceptions relocated to owning components.         |
-| §150 (Documentation)      | ❌      | ❌          | No `how-this-works.md` files created yet.              |
-| §18 (Pipe Operator)       | ⚠️     | ⚠️         | Applied in `Text.php`, needs wider adoption.           |
+| Rule                      | Before | After      | Finding                                                                                        |
+|---------------------------|--------|------------|------------------------------------------------------------------------------------------------|
+| §14.3 (Forbidden Names)   | ❌      | ⚠️ Partial | "Exceptions" & "Contracts" are now forwarding aliases.                                         |
+| §5.4 (Forbidden Suffixes) | ❌      | ⚠️ Partial | `FilesystemInterface`, `EntityManager`, `RouterRequestHandler` fixed. `AuthInterface` pending. |
+| §21 (Junk Drawers)        | ❌      | ✅          | All exceptions relocated to owning components.                                                 |
+| §150 (Documentation)      | ❌      | ⚠️ Partial | `how-this-works.md` created for all new/relocated folders. Older folders still pending.        |
+| §18 (Pipe Operator)       | ⚠️     | ⚠️         | Applied in `Text.php`, needs wider adoption.                                                   |
 
 ---
 

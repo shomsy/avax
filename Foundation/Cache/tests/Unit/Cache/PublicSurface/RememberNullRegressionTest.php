@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Tests\Unit\Cache\PublicSurface;
 
-use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
 use Avax\Cache\System\AvaxCache;
+use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
+use Avax\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class RememberNullRegressionTest extends TestCase
 {
-    private FrozenClock        $clock;
+    private FrozenClock $clock;
     private InMemoryCacheStore $store;
-    private AvaxCache          $cache;
+    private AvaxCache   $cache;
 
     protected function setUp() : void
     {
-        $this->clock = new FrozenClock(new SystemClock());
+        $this->clock = new FrozenClock(Timestamp::now());
         $this->store = new InMemoryCacheStore(
-            maxEntries: 100,
-            clock     : $this->clock
+            clock: $this->clock
         );
         $this->cache = new AvaxCache(
-            store     : $this->store,
-            clock     : $this->clock,
-            defaultTtl: 3600
+            store: $this->store,
+            clock: $this->clock
         );
     }
 
@@ -37,7 +34,7 @@ final class RememberNullRegressionTest extends TestCase
 
         $loadCount = 0;
 
-        $result = $this->cache->remember('nullable', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember('nullable', 3600, function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
@@ -51,7 +48,7 @@ final class RememberNullRegressionTest extends TestCase
     {
         $loadCount = 0;
 
-        $result = $this->cache->remember('missing', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember('missing', 3600, function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';
@@ -67,7 +64,7 @@ final class RememberNullRegressionTest extends TestCase
 
         $loadCount = 0;
 
-        $result = $this->cache->remember('exists', ttl: 3600, loader: function () use (&$loadCount) {
+        $result = $this->cache->remember('exists', 3600, function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';

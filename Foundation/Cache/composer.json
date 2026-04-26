@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Avax\\Cache\\": "System/"
+      "Avax\\Cache\\": "."
     }
   },
   "autoload-dev": {

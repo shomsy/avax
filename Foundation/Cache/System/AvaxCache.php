@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Avax\Cache\System;
 
 use Avax\Cache\System\Capabilities\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\IdentifyCachedValues\CacheTags;
-use Avax\Cache\System\Capabilities\ManageCacheLifecycle\CachedValueState;
 use Avax\Cache\System\Capabilities\ManageCacheLifecycle\CachedValueLifecycle;
+use Avax\Cache\System\Capabilities\ManageCacheLifecycle\CachedValueState;
 use Avax\Cache\System\Capabilities\ManageCacheLifecycle\ExpirationMethods\CacheTtl;
 use Avax\Cache\System\Capabilities\ManageCacheLifecycle\StaleValuePolicies\DecideStaleValueCanBeServed;
 use Avax\Cache\System\Capabilities\ManageCacheLifecycle\StaleValuePolicies\StaleValuePolicy;
@@ -48,7 +47,7 @@ final class AvaxCache implements CacheContract
 
         if ($result instanceof CacheStoreRecordWasFound && ! $result->record->lifecycle->isExpired($this->clock)) {
             $this->recordMetrics(
-                startTime: hrtime(as_integer: true),
+                startTime: hrtime(true),
                 operation: 'hit',
                 key      : $cacheKey
             );
@@ -65,7 +64,7 @@ final class AvaxCache implements CacheContract
 
     public function get(string $key, mixed $default = null) : mixed
     {
-        $startTime = hrtime(as_integer: true);
+        $startTime = hrtime(true);
 
         try {
             $cacheKey = CacheKey::create($key);
@@ -94,7 +93,7 @@ final class AvaxCache implements CacheContract
             $state = $this->determineState($result->record->lifecycle);
 
             if ($state === CachedValueState::STALE
-                && ! $this->stalePolicyDecider->canBeServed($state)) {
+                && ! $this->stalePolicyDecider->canServeStale()) {
                 $this->recordMetrics(
                     startTime: $startTime,
                     operation: 'miss',
@@ -110,7 +109,7 @@ final class AvaxCache implements CacheContract
                 key      : $cacheKey
             );
 
-            return $result->value();
+            return $result->record->value;
         } catch (Throwable $e) {
             $this->metrics?->recordStoreFailure();
 
@@ -129,7 +128,7 @@ final class AvaxCache implements CacheContract
             return;
         }
 
-        $endTime             = hrtime(as_integer: true);
+        $endTime = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         match ($operation) {
@@ -154,7 +153,7 @@ final class AvaxCache implements CacheContract
 
     public function set(string $key, mixed $value, null|int|DateInterval $ttl = null) : bool
     {
-        $startTime = hrtime(as_integer: true);
+        $startTime = hrtime(true);
 
         try {
             $cacheKey  = CacheKey::create($key);
@@ -250,7 +249,7 @@ final class AvaxCache implements CacheContract
 
     public function delete(string $key) : bool
     {
-        $startTime = hrtime(as_integer: true);
+        $startTime = hrtime(true);
 
         try {
             $cacheKey = CacheKey::create($key);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Cache\Tests\Unit\Cache\PublicSurface;
 
-use Avax\Cache\System\Cache;
+use Avax\Cache\Cache;
 use Avax\Cache\System\CacheContract;
 use Avax\Cache\System\PublicSurface\CacheNotConfigured;
 use PHPUnit\Framework\TestCase;

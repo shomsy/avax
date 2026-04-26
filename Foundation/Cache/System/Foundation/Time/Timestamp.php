@@ -16,8 +16,8 @@ final readonly class Timestamp implements Stringable
     public static function now() : self
     {
         return new self(
-            seconds    : (int) floor(microtime(accurate: true)),
-            nanoseconds: (int) ((microtime(accurate: true) - floor(microtime(accurate: true))) * 1_000_000_000)
+            seconds    : (int) floor(microtime(true)),
+            nanoseconds: (int) ((microtime(true) - floor(microtime(true))) * 1_000_000_000)
         );
     }
 

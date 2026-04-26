@@ -65,7 +65,7 @@ final readonly class CacheKey implements Stringable
 
     public static function fromParts(string ...$parts) : self
     {
-        $key = implode(key: ':', array: $parts);
+        $key = implode(':', $parts);
 
         return new self($key);
     }

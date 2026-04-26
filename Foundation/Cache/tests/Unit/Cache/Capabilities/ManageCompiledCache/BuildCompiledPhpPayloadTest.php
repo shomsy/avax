@@ -51,7 +51,7 @@ final class BuildCompiledPhpPayloadTest extends TestCase
         $resource = fopen('php://memory', 'r');
 
         $this->expectException(CompiledCachePayloadWasInvalid::class);
-        $this->expectExceptionMessage('Resources cannot be serialized');
+        $this->expectExceptionMessage('Type resource cannot be exported to PHP');
 
         $this->builder->build($resource);
     }
@@ -76,7 +76,7 @@ final class BuildCompiledPhpPayloadTest extends TestCase
         $this->assertStringContainsString('true', $php);
 
         $php = $this->builder->build(null);
-        $this->assertStringContainsString('null', $php);
+        $this->assertStringContainsString('NULL', $php);
     }
 
     protected function setUp() : void

@@ -13,6 +13,7 @@ use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheManifestEntr
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheName;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheSources;
 use Avax\Cache\System\Capabilities\ManageCompiledCache\ResolveCompiledCachePath;
+use Avax\Cache\System\Capabilities\ManageCompiledCache\WriteCompiledCacheManifest;
 use Avax\Cache\System\Foundation\Time\Clock;
 use Avax\Cache\System\Foundation\Time\SystemClock;
 
@@ -37,7 +38,7 @@ final class CompileCache
         $payloadBuilder = new BuildCompiledPhpPayload();
         $phpPayload     = $payloadBuilder->build($payload);
 
-        $writer   = new AtomicCompiledCacheWrite($this->directory);
+        $writer         = new AtomicCompiledCacheWrite($this->directory, $this->clock);
         $artifact = $writer->write($nameObj, $phpPayload);
 
         $fingerprint = $sources->fingerprint();
@@ -56,7 +57,8 @@ final class CompileCache
         $this->manifest->set($entry);
 
         $manifestPath = $pathResolver->resolveManifestPath();
-        $this->manifest->save($manifestPath->toString());
+        $manifestWriter = new WriteCompiledCacheManifest($this->clock);
+        $manifestWriter->write($this->manifest, $manifestPath);
 
         return $artifact;
     }

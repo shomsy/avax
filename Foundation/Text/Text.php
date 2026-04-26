@@ -386,13 +386,10 @@ final readonly class Text
         $words   = [];
 
         foreach ($matches as $match) {
-            $words[] = $match[0] ?? '';
+            $words[] = (string) ($match[0] ?? '');
         }
 
-        /** @var array<string> $filtered */
-        $filtered = array_filter(array: $words);
-
-        return array_values(array: $filtered);
+        return array_values(array_filter($words));
     }
 
     public function startsWithPattern(string $pattern) : bool

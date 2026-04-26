@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
+namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
+
 use Avax\HTTP\Session\Audit\Audit;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 final class AuditCharacterizationTest extends TestCase

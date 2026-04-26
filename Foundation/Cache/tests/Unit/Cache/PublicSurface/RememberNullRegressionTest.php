@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\PublicSurface;
+namespace Avax\Tests\Foundation\Cache\Unit\Cache\PublicSurface;
 
 use Avax\Cache\System\AvaxCache;
 use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Cache\System\Foundation\Time\Timestamp;
-use PHPUnit\Framework\TestCase;
+use Avax\Tests\TestCase;
 use Psr\SimpleCache\InvalidArgumentException;
 
 final class RememberNullRegressionTest extends TestCase

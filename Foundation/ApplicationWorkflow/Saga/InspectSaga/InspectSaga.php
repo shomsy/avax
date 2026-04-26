@@ -12,7 +12,7 @@ use IteratorAggregate;
 use Random\RandomException;
 use Traversable;
 
-final readonly class InspectSaga implements IteratorAggregate, Countable
+final class InspectSaga implements IteratorAggregate, Countable
 {
     private array $events;
 

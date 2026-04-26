@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\DataFoundation;
 
-use ArrayAccess;
 use ArrayIterator;
 use Avax\DataFoundation\Collections\Create\MakeCollection;
 use Avax\DataFoundation\Collections\Create\WrapValue;
@@ -12,14 +11,12 @@ use Avax\DataFoundation\Composites\Pair\Pair;
 use Avax\DataFoundation\Contracts\CollectionInterface;
 use Avax\DataFoundation\Exceptions\MutationException;
 use Avax\DataFoundation\Internal\Mutability\MutationGuard;
-use Countable;
-use IteratorAggregate;
 use Traversable;
 
 /**
  * Collection - fluent state owner for chainable array operations.
  */
-final readonly class Collection implements CollectionInterface, IteratorAggregate, Countable, ArrayAccess
+final readonly class Collection implements CollectionInterface
 {
     private MutationGuard $guard;
 

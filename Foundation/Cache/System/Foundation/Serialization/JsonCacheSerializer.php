@@ -13,9 +13,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
     private const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRESERVE_ZERO_FRACTION;
 
-    public function __construct(
-        private Clock $clock = new SystemClock()
-    ) {}
+    public function __construct(private Clock $clock = new SystemClock()) {}
 
     public function serialize(mixed $value) : SerializedCachePayload
     {
@@ -23,7 +21,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
         if ($serialized === false) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Failed to serialize value to JSON: %s', json_last_msg())
+                message: sprintf('Failed to serialize value to JSON: %s', json_last_error_msg())
             );
         }
 
@@ -52,7 +50,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Failed to unserialize JSON payload: %s', json_last_msg())
+                message: sprintf('Failed to unserialize JSON payload: %s', json_last_error_msg())
             );
         }
 

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Cache\System\Flows\Protection\ProtectCacheSource;
 
+use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLock;
 use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockStore;
-use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockTimeout;
 use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockWasNotAcquired;
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class StampedeLockGuard
 {
@@ -31,19 +29,11 @@ final readonly class StampedeLockGuard
 
 final readonly class AcquireCacheStampedeLock
 {
-    private int $waitTimeoutSeconds;
-    private int $lockTtlSeconds;
-
     public function __construct(
         private CacheLockStore $lockStore,
-        private Clock          $clock = new SystemClock(),
-        int                    $waitTimeoutSeconds = 5,
-        int                    $lockTtlSeconds = 30
-    )
-    {
-        $this->waitTimeoutSeconds = $waitTimeoutSeconds;
-        $this->lockTtlSeconds     = $lockTtlSeconds;
-    }
+        private int $waitTimeoutSeconds = 5,
+        private int $lockTtlSeconds = 30
+    ) {}
 
     public function isLocked(string $key) : bool
     {
@@ -54,10 +44,11 @@ final readonly class AcquireCacheStampedeLock
 
     public function waitForLock(string $key, int $maxWaitSeconds = 5) : bool
     {
-        $lock     = new CacheLock(store: $this->lockStore, timeout: new CacheLockTimeout(seconds: $maxWaitSeconds));
-        $deadline = $this->clock->now()->seconds + $maxWaitSeconds;
+        $lock      = new CacheLock(store: $this->lockStore);
+        $startTime = hrtime(true);
+        $deadline  = $startTime + ($maxWaitSeconds * 1_000_000_000);
 
-        while ( $this->clock->now()->seconds < $deadline ) {
+        while ( hrtime(true) < $deadline ) {
             if ($lock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
                 $lock->release(key: $key);
 
@@ -73,27 +64,24 @@ final readonly class AcquireCacheStampedeLock
     public function acquire(string $key) : StampedeLockGuard
     {
         $lock = new CacheLock(
-            store  : $this->lockStore,
-            timeout: new CacheLockTimeout(seconds: $this->waitTimeoutSeconds)
+            store: $this->lockStore
         );
 
-        $acquiredAt = $this->clock->now()->seconds;
-        $deadline   = $acquiredAt + $this->waitTimeoutSeconds;
+        $startTime = hrtime(true);
+        $deadline  = $startTime + ($this->waitTimeoutSeconds * 1_000_000_000);
 
-        while ( $this->clock->now()->seconds < $deadline ) {
+        while ( hrtime(true) < $deadline ) {
             if ($lock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
                 return new StampedeLockGuard(lock: $lock, key: $key);
-            }
-
-            $owner = $this->lockStore->getOwner(key: $key);
-            if ($owner !== null && $owner->isExpired(clock: $this->clock)) {
-                $lock->release(key: $key);
-                continue;
             }
 
             usleep(10_000);
         }
 
-        throw new CacheLockWasNotAcquired(message: $key);
+        throw new CacheLockWasNotAcquired(
+            message       : sprintf('Lock for key "%s" could not be acquired after %d seconds', $key, $this->waitTimeoutSeconds),
+            key           : CacheKey::create(key: $key),
+            timeoutSeconds: $this->waitTimeoutSeconds
+        );
     }
 }

@@ -9,9 +9,7 @@ use Avax\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class CacheLockTimeout
 {
-    public function __construct(
-        public int $seconds = 5
-    ) {}
+    public function __construct(public int $seconds = 5) {}
 
     public function isExpired(int $acquiredAt, Clock|null $clock = null) : bool
     {

@@ -11,17 +11,11 @@ namespace Avax\Text;
  */
 final readonly class Pattern
 {
-    public string $raw;
-    public string $flags;
-    public string $delimiter;
-
-    private function __construct(string $raw, string|null $flags = null, string $delimiter = '~')
-    {
-        $flags           ??= '';
-        $this->raw       = $raw;
-        $this->flags     = $flags;
-        $this->delimiter = $delimiter;
-    }
+    private function __construct(
+        public string      $raw,
+        public string|null $flags = null,
+        public string      $delimiter = '~'
+    ) {}
 
     public static function of(string $raw, string|null $flags = null, string $delimiter = '~') : self
     {

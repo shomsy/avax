@@ -1,0 +1,59 @@
+deptrac:
+  layers:
+    - name: HTTP
+      collectors:
+        - type: directory
+          value: Foundation/HTTP/.*
+    - name: Cache
+      collectors:
+        - type: directory
+          value: Foundation/Cache/.*
+    - name: Database
+      collectors:
+        - type: directory
+          value: Foundation/Database/.*
+    - name: Auth
+      collectors:
+        - type: directory
+          value: Foundation/Auth/.*
+    - name: Container
+      collectors:
+        - type: directory
+          value: Foundation/Container/.*
+    - name: Logging
+      collectors:
+        - type: directory
+          value: Foundation/Logging/.*
+    - name: Filesystem
+      collectors:
+        - type: directory
+          value: Foundation/Filesystem/.*
+    - name: Helpers
+      collectors:
+        - type: directory
+          value: Foundation/Helpers/.*
+
+  ruleset:
+    HTTP:
+      - Container
+      - Helpers
+      - Auth
+      - Cache
+    Auth:
+      - Database
+      - Container
+      - Cache
+      - Logging
+    Cache:
+      - Container
+      - Filesystem
+      - Logging
+    Database:
+      - Container
+      - Logging
+    Logging:
+      - Filesystem
+      - Container
+    Container: [ ]
+    Filesystem: [ ]
+    Helpers: [ ]

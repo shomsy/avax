@@ -9,10 +9,7 @@ use Throwable;
 
 final class CachePayloadCouldNotBeSerialized extends RuntimeException
 {
-    public function __construct(
-        string     $message,
-        Throwable|null $previous = null
-    )
+    public function __construct(string $message, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, code: 0, previous: $previous);
     }

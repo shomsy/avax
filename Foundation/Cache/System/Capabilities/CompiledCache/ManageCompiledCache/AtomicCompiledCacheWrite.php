@@ -26,11 +26,6 @@ final class AtomicCompiledCacheWrite
 
         $this->ensureDirectoryExists(directory: $finalPath->directory());
 
-        $originalContent = null;
-        if (file_exists($finalPath->toString())) {
-            $originalContent = file_get_contents($finalPath->toString());
-        }
-
         $written = file_put_contents($temporaryPath, $payload, LOCK_EX);
 
         if ($written === false) {
@@ -42,17 +37,11 @@ final class AtomicCompiledCacheWrite
 
         if (! $syntaxValid) {
             @unlink($temporaryPath);
-            if ($originalContent !== false && $originalContent !== null) {
-                file_put_contents($finalPath->toString(), $originalContent, LOCK_EX);
-            }
             throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
         }
 
         if (! rename($temporaryPath, $finalPath->toString())) {
             @unlink($temporaryPath);
-            if ($originalContent !== false && $originalContent !== null) {
-                file_put_contents($finalPath->toString(), $originalContent, LOCK_EX);
-            }
             throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
         }
 

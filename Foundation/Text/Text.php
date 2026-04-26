@@ -14,12 +14,7 @@ use Closure;
  */
 final readonly class Text
 {
-    public string $value;
-
-    private function __construct(string $value)
-    {
-        $this->value = $value;
-    }
+    private function __construct(public string $value) {}
 
     public static function fromNullable(string|null $value, string $default = '') : self
     {

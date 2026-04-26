@@ -49,32 +49,24 @@ use Throwable;
  */
 final readonly class Router implements RouterRuntimeInterface
 {
-    private RouteRegistry|null   $routeRegistry;
-    private RouteGroupFrames|null $groupStack;
-    private RouterInterface|null $dslRouter;
-    private ErrorResponseFactory $errorFactory;
-    private RegisteredFallback    $fallbackManager;
-    private RouterKernel         $kernel;
-    private HttpRequestRouter    $httpRequestRouter;
-
+    /**
+     * @param HttpRequestRouter     $httpRequestRouter The request matcher
+     * @param RouterKernel          $kernel            The execution kernel
+     * @param RegisteredFallback    $fallbackManager   The fallback handler
+     * @param ErrorResponseFactory  $errorFactory      The error response creator
+     * @param RouterInterface|null  $dslRouter         The DSL router (optional)
+     * @param RouteGroupFrames|null $groupStack        The group stack (optional)
+     * @param RouteRegistry|null    $routeRegistry     The route registry (optional)
+     */
     public function __construct(
-        HttpRequestRouter    $httpRequestRouter,
-        RouterKernel         $kernel,
-        RegisteredFallback    $fallbackManager,
-        ErrorResponseFactory $errorFactory,
-        RouterInterface|null $dslRouter = null,
-        RouteGroupFrames|null $groupStack = null,
-        RouteRegistry|null   $routeRegistry = null
-    )
-    {
-        $this->httpRequestRouter = $httpRequestRouter;
-        $this->kernel            = $kernel;
-        $this->fallbackManager   = $fallbackManager;
-        $this->errorFactory      = $errorFactory;
-        $this->dslRouter         = $dslRouter;
-        $this->groupStack        = $groupStack;
-        $this->routeRegistry     = $routeRegistry;
-    }
+        private HttpRequestRouter     $httpRequestRouter,
+        private RouterKernel          $kernel,
+        private RegisteredFallback    $fallbackManager,
+        private ErrorResponseFactory  $errorFactory,
+        private RouterInterface|null  $dslRouter = null,
+        private RouteGroupFrames|null $groupStack = null,
+        private RouteRegistry|null    $routeRegistry = null
+    ) {}
 
     /**
      * @param ServerRequest $request

@@ -6,9 +6,16 @@ namespace Avax\Cache\Tests\Integration\Cache\ManageCompiledCache;
 
 use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCache;
 use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Cache\System\Configuration\BuildCompiledCache;
-use Avax\Cache\System\Configuration\CompiledCacheConfiguration;
+use Avax\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
 use PHPUnit\Framework\TestCase;
+
+final class UserController
+{
+    public static function index() {}
+
+    public static function store() {}
+}
 
 final class CompiledCacheIntegrationTest extends TestCase
 {

@@ -288,7 +288,7 @@ final readonly class SagaReport
     public array              $events;
     public DateTimeImmutable $generatedAt;
 
-    private function __construct(
+    public function __construct(
         string             $sagaId,
         SagaTimeline       $timeline,
         array              $events,

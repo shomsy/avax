@@ -31,7 +31,7 @@ final readonly class ConsistentHashRing
         foreach ($nodes as $node) {
             for ($i = 0; $i < $virtualNodes; $i++) {
                 $key         = sprintf('%s-%d', $node, $i);
-                $hash = $this->hash(key: $key);
+                $hash = self::hash(key: $key);
                 $ring[$hash] = $node;
             }
         }
@@ -41,14 +41,14 @@ final readonly class ConsistentHashRing
         return new self(virtualNodes: $virtualNodes, nodes: $nodes, ring: $ring);
     }
 
-    private function hash(string $key) : int
+    private static function hash(string $key) : int
     {
-        return crc32($key) & 0xFFFFFFFF;
+        return crc32(string: $key) & 0xFFFFFFFF;
     }
 
     public function getNode(string $key) : string
     {
-        $hash = $this->hash(key: $key);
+        $hash = self::hash(key: $key);
 
         foreach ($this->ring as $ringHash => $node) {
             if ($ringHash >= $hash) {

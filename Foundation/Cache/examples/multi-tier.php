@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Avax\Cache\Examples;
 
 use Avax\Cache\Cache;
-use Avax\Cache\System\Capabilities\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Cache\System\AvaxCache;
+use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$l1 = new InMemoryCacheStore();
-$clock = new SystemClock();
+$l1 = new InMemoryCacheStore(clock: $clock);
 
-$cache = Cache::use(cache: $l1);
+$cache = new AvaxCache(store: $l1, clock: $clock);
+
+Cache::use(cache: $cache);
 
 for ($i = 0; $i < 10; $i++) {
     Cache::remember(key: "item:{$i}", ttl: 3600, loader: static fn () => ["id" => $i, "name" => "Item {$i}"]);

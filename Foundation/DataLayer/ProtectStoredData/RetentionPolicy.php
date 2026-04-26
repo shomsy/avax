@@ -67,6 +67,30 @@ final readonly class RetentionPolicy
         return $this->archiveAfter && $ageDays > $this->calculateRetentionDays();
     }
 
+    public static function create(array|int $options) : self
+    {
+        if (is_int($options)) {
+            return self::days(days: $options);
+        }
+
+        return new self(
+            period      : $options['period'] ?? 30,
+            unit        : isset($options['unit']) ? RetentionPeriodUnit::from($options['unit']) : RetentionPeriodUnit::DAYS,
+            archiveAfter: $options['archive'] ?? true,
+            permanent   : $options['permanent'] ?? false
+        );
+    }
+
+    public static function days(int $days) : self
+    {
+        return new self(period: $days, unit: RetentionPeriodUnit::DAYS, archiveAfter: true, permanent: false);
+    }
+
+    public function toArray() : array
+    {
+        return $this->toMetadata();
+    }
+
     public function toMetadata() : array
     {
         return [

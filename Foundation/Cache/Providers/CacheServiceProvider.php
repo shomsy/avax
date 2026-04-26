@@ -6,12 +6,12 @@ namespace Avax\Cache\Providers;
 
 use Avax\Cache\Cache;
 use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\Capabilities\ManageCompiledCache\CompiledCacheContract;
+use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Cache\System\Configuration\BuildCache;
 use Avax\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
-use Avax\Cache\System\PublicSurface\CacheFacade;
-use Avax\Cache\System\PublicSurface\CacheRegistry;
-use Avax\Cache\System\PublicSurface\ReadFromCache;
+use Avax\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Container\Providers\ServiceProvider;
 
 final class CacheServiceProvider extends ServiceProvider
@@ -37,22 +37,22 @@ final class CacheServiceProvider extends ServiceProvider
 
         $this->app->singleton(id: CacheFacade::class, implementation: function ($app) {
             $compiledCache = $this->compiledCacheDirectory !== null
-                ? $app->make(CompiledCacheContract::class)
+                ? $app->get(id: CompiledCacheContract::class)
                 : null;
 
-            return new CacheFacade($app->make(CacheRegistry::class), $compiledCache);
+            return new CacheFacade($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
         $this->app->singleton(id: ReadFromCache::class, implementation: function ($app) {
             $compiledCache = $this->compiledCacheDirectory !== null
-                ? $app->make(CompiledCacheContract::class)
+                ? $app->get(id: CompiledCacheContract::class)
                 : null;
 
-            return new ReadFromCache($app->make(CacheRegistry::class), $compiledCache);
+            return new ReadFromCache($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
         $this->app->singleton(id: CacheContract::class, implementation: static function ($app) {
-            return $app->make(CacheRegistry::class)->default();
+            return $app->get(id: CacheRegistry::class)->default();
         });
 
         if ($this->compiledCacheDirectory !== null) {
@@ -61,7 +61,7 @@ final class CacheServiceProvider extends ServiceProvider
             });
         }
 
-        Cache::use(cache: $this->app->make(CacheContract::class));
+        Cache::use(cache: $this->app->get(id: CacheContract::class));
     }
 
     public function defaultStore(string $store = 'in_memory', array $options = []) : self

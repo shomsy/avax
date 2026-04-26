@@ -42,7 +42,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $callable = static fn (Request $request) => null;
 
         // Mock request
-        $request = $this->createMock(Request::class);
+        $request = $this->createMock(originalClassName: ServerRequest::class);
 
         // When: Dispatching the callable
         $response = $this->dispatcher->dispatch(action: $callable, request: $request);
@@ -70,7 +70,7 @@ class ControllerDispatcherUnitTest extends TestCase
         $this->container->method('get')->willReturn(value: $controller);
 
         // Mock request
-        $request = $this->createMock(Request::class);
+        $request = $this->createMock(originalClassName: ServerRequest::class);
 
         // When: Dispatching the controller method
         $response = $this->dispatcher->dispatch(action: [get_class(object: $controller), 'testMethod'], request: $request);
@@ -94,7 +94,7 @@ class ControllerDispatcherUnitTest extends TestCase
         };
 
         // Mock request
-        $request = $this->createMock(Request::class);
+        $request = $this->createMock(originalClassName: ServerRequest::class);
 
         // When: Dispatching the invokable controller
         $response = $this->dispatcher->dispatch(action: $controller::class, request: $request);
@@ -110,12 +110,14 @@ class ControllerDispatcherUnitTest extends TestCase
     public function dispatch_controller_method_autowires_request_dto_from_server_request() : void
     {
         // Given: A controller that expects a Request DTO parameter
-        $controller = new class {
+        $controller = new class($this) {
+            public function __construct(private readonly TestCase $test) {}
+
             public function handle(Request $request) : ResponseInterface
             {
                 // Verify that the Request DTO has access to ServerRequest
-                $this->assertEquals('POST', $request->method());
-                $this->assertEquals('example.com', $request->uri()->getHost());
+                $this->test->assertEquals('POST', $request->method());
+                $this->test->assertEquals('example.com', $request->uri()->getHost());
 
                 return Response::text(content: 'success');
             }
@@ -173,7 +175,8 @@ class ControllerDispatcherUnitTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->container  = $this->createMock(ContainerInterface::class);
+        parent::setUp();
+        $this->container = $this->createMock(originalClassName: ContainerInterface::class);
         $this->dispatcher = new ControllerDispatcher(container: $this->container);
     }
 }

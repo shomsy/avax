@@ -7,6 +7,8 @@ namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
 use Avax\HTTP\Session\Recovery\Recovery;
 use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
 use Avax\Tests\TestCase;
+use RuntimeException;
+use Throwable;
 
 final class RecoveryCharacterizationTest extends TestCase
 {

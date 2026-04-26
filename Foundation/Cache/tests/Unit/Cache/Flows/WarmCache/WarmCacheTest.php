@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Flows\Lifecycle\WarmCache;
+namespace Avax\Cache\Tests\Unit\Cache\Flows\WarmCache;
 
 use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
@@ -108,6 +108,7 @@ final class WarmCacheTest extends TestCase
 
     protected function setUp() : void
     {
+        parent::setUp();
         $this->clock = new FrozenClock(timestamp: Timestamp::now());
         $this->store = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
     }

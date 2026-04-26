@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Config\Configurator;
 
-use Avax\DataHandling\ObjectHandling\Collections\Collection;
+use Avax\DataFoundation\Collection;
 use InvalidArgumentException;
 
 /**

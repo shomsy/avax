@@ -118,7 +118,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     public function get(string $key, mixed $default = null) : mixed
     {
         // Access the base data from the collection
-        $items = $this->configuration->getItems();
+        $items = $this->configuration->all();
 
         // Use data_get for dot-notated configuration access
         $value = data_get(target: $items, key: $key, default: $default);

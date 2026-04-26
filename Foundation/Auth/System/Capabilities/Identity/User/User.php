@@ -19,11 +19,9 @@ final class User implements UserInterface, Stringable
 
     public function __construct(
         private UserId    $_id,
-        /** @phpstan-ignore-next-line */
-        private UserEmail $_email,
+        #[SensitiveParameter] private UserEmail $_email,
         private string    $_username,
-        /** @phpstan-ignore-next-line */
-        private string    $_passwordHash,
+        #[SensitiveParameter] private string    $_passwordHash,
         array|null        $roles = null,
         array|null        $permissions = null,
         private bool      $_isActive = true

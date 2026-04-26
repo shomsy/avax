@@ -11,6 +11,8 @@ use Override;
  * Class InvalidTypeException
  *
  * Thrown when a value does not match the expected type.
+ *
+ * @deprecated Move to Foundation/DataFoundation/Exceptions/
  */
 class InvalidTypeException extends InvalidArgumentException
 {

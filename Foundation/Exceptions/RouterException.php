@@ -6,4 +6,7 @@ namespace Avax\Exceptions;
 
 use Exception;
 
+/**
+ * @deprecated Move to Foundation/HTTP/Router/System/Foundation/Exceptions/
+ */
 class RouterException extends Exception {}

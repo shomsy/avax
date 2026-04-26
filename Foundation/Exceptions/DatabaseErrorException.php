@@ -4,4 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Exceptions;
 
-class DatabaseErrorException {}
+use Exception;
+
+/**
+ * @deprecated Move to Foundation/Database/System/Foundation/Exceptions/
+ */
+class DatabaseErrorException extends Exception {}

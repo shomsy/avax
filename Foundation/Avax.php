@@ -17,7 +17,7 @@ enum Avax: string
     // Foundation core directories
     case AUTH = 'Foundation/Auth/';
 
-    case CACHE = 'Foundation/System/';
+    case CACHE = 'Foundation/Cache/';
 
     case CONFIG = 'Foundation/Config/';
 
@@ -37,6 +37,7 @@ enum Avax: string
 
     case LOGGING = 'Foundation/Logging/';
 
+    /** @deprecated Move middleware interface to Commands/Middleware/ */
     case MIDDLEWARES = 'Foundation/Middlewares/';
 
     case VIEW = 'Foundation/View/';

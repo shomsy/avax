@@ -10,6 +10,8 @@ use Throwable;
 
 /**
  * Custom exception for validation errors.
+ *
+ * @deprecated Move to Foundation/Validation/System/Foundation/Exceptions/
  */
 class ValidationException extends RuntimeException
 {

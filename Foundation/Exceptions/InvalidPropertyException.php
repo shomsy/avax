@@ -11,6 +11,8 @@ use Override;
  * Class InvalidPropertyException
  *
  * Thrown when a DTO is missing a required property or has an invalid property.
+ *
+ * @deprecated Move to Foundation/DataHandling/DataTransfer/Exceptions/
  */
 class InvalidPropertyException extends Exception
 {

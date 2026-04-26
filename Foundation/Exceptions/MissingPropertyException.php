@@ -11,6 +11,8 @@ use Override;
  * Class MissingPropertyException
  *
  * Thrown when a required property is missing from the data provided to a DTO.
+ *
+ * @deprecated Move to Foundation/DataHandling/DataTransfer/Exceptions/
  */
 class MissingPropertyException extends Exception
 {

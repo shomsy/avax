@@ -11,6 +11,8 @@ use ReflectionClass;
  *
  * This serves as a base class for all domain entities, providing common functionality.
  * Currently, it is automating table name derivation from the class name.
+ *
+ * @deprecated Move to Foundation/Database/System/Capabilities/ORM/Entity.php
  */
 abstract class Entity
 {

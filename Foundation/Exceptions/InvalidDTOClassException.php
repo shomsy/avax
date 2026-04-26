@@ -11,6 +11,8 @@ use Override;
  * Class InvalidDTOClassException
  *
  * Thrown when a specified DTO class does not exist or is not valid.
+ *
+ * @deprecated Move to Foundation/DataHandling/DataTransfer/Exceptions/
  */
 class InvalidDTOClassException extends InvalidArgumentException
 {

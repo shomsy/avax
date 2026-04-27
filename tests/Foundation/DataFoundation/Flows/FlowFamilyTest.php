@@ -9,7 +9,6 @@ use Avax\DataFoundation\Flows\LazySequence\LazySequence;
 use Avax\DataFoundation\Flows\Pipeline\Pipeline;
 use Avax\DataFoundation\Flows\Window\Window;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class FlowFamilyTest extends TestCase
 {

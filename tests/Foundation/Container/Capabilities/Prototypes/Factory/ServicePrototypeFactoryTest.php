@@ -11,7 +11,6 @@ use components\Container\DependencyInjection\Capability\Prototypes\Factory\Servi
 use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 use components\Tests\TestCase;
 use Override;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 

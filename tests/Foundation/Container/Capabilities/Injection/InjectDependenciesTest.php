@@ -17,7 +17,6 @@ use components\Container\DependencyInjection\Capability\Prototypes\Model\Service
 use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
 use components\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
 final class InjectDependenciesTest extends TestCase

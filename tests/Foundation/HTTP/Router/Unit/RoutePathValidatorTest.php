@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RoutePathValidator;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for RoutePathValidator wildcard and optional parameter validation.

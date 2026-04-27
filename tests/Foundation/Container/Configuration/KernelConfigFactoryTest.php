@@ -21,9 +21,7 @@ use components\Container\DependencyInjection\Capability\Resolution\Engine\Engine
 use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use components\Container\DependencyInjection\Configuration\KernelConfigFactory;
-use components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class KernelConfigFactoryTest extends TestCase
 {

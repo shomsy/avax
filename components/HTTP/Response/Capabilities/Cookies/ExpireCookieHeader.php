@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Capabilities\Cookies;
+namespace Avax\HTTP\Response\Capabilities\Cookies;
 
 use Psr\Http\Message\ResponseInterface;
 

@@ -3000,129 +3000,188 @@ testovi dokazuju spoljni scenario. Contract testovi dokazuju da adapteri poštuj
 
 ## Phase 0: Governance lock
 
+Status: DONE
+Notes:
+- DONE: `docs/governance/`, `docs/decisions/`, `Code-Review-And-ToDo/migration-map.md`, and `Code-Review-And-ToDo/risk-register.md` were added.
+- DONE: governance inventory and compliance reporting live in `Code-Review-And-ToDo/review.md`.
+
 ```text
-[ ] Add how-to-architecture-extension.md to docs/governance/
-[ ] Update docs/governance/how-to-architecture.md to reference PublicSurface extension
-[ ] Create docs/decisions/0001-avax-is-runtime-agnostic-framework.md
-[ ] Create docs/decisions/0002-framework-system-owns-runtime-lifecycle.md
-[ ] Create docs/decisions/0003-components-are-reusable-capabilities.md
-[ ] Create docs/decisions/0004-public-surface-is-stable-api-boundary.md
-[ ] Create docs/decisions/0005-runtime-adapters-must-not-leak-into-core.md
-[ ] Create docs/decisions/0006-request-state-must-be-scoped.md
-[ ] Create docs/decisions/0007-docs-mirror-source-structure.md
-[ ] Create Code-Review-And-ToDo/migration-map.md
-[ ] Create Code-Review-And-ToDo/risk-register.md
+[x] Add how-to-architecture-extension.md to docs/governance/
+[x] Update docs/governance/how-to-architecture.md to reference PublicSurface extension
+[x] Create docs/decisions/0001-avax-is-runtime-agnostic-framework.md
+[x] Create docs/decisions/0002-framework-system-owns-runtime-lifecycle.md
+[x] Create docs/decisions/0003-components-are-reusable-capabilities.md
+[x] Create docs/decisions/0004-public-surface-is-stable-api-boundary.md
+[x] Create docs/decisions/0005-runtime-adapters-must-not-leak-into-core.md
+[x] Create docs/decisions/0006-request-state-must-be-scoped.md
+[x] Create docs/decisions/0007-docs-mirror-source-structure.md
+[x] Create Code-Review-And-ToDo/migration-map.md
+[x] Create Code-Review-And-ToDo/risk-register.md
 ```
 
 ## Phase 1: Create framework/System skeleton
 
+Status: DONE
+Notes:
+- DONE: `framework/System/PublicSurface`, `Flows`, `Capabilities`, `Configuration`, and `Foundation` now exist.
+- DONE: minimal `Avax`, runtime, request-scope, boot, CLI, and adapter skeletons were added.
+- DONE: new flows added: HandleWorkerRequest, ResetApplicationState, StartWorker, ShutdownRuntime, HandleException
+- DONE: new capabilities added: Diagnostics (CorrelationId, TraceId, RuntimeTimeline, DiagnosticContext)
+- DONE: new configuration added: ConfigureRuntime, RegisterComponents, LoadConfiguration
+- DONE: new foundation added: Version (AvaxVersion)
+- DONE: initial mirrored docs for the new framework slice were added under `docs/framework/System`.
+
 ```text
-[ ] Create framework/System/PublicSurface/
-[ ] Create framework/System/Flows/
-[ ] Create framework/System/Capabilities/
-[ ] Create framework/System/Configuration/
-[ ] Create framework/System/Foundation/
+[x] Create framework/System/PublicSurface/
+[x] Create framework/System/Flows/
+[x] Create framework/System/Capabilities/
+[x] Create framework/System/Configuration/
+[x] Create framework/System/Foundation/
 
-[ ] Create framework/System/PublicSurface/Avax.php
-[ ] Create framework/System/PublicSurface/AvaxInterface.php
+[x] Create framework/System/PublicSurface/Avax.php
+[x] Create framework/System/PublicSurface/AvaxInterface.php
 
-[ ] Create framework/System/Capabilities/Runtime/RuntimeInterface.php
-[ ] Create framework/System/Capabilities/Runtime/RuntimeContext.php
-[ ] Create framework/System/Capabilities/Runtime/RuntimeState.php
-[ ] Create framework/System/Capabilities/Runtime/RuntimeRequest.php
-[ ] Create framework/System/Capabilities/Runtime/RuntimeResponse.php
-[ ] Create framework/System/Capabilities/Runtime/RuntimeResult.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeInterface.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeContext.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeState.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeRequest.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeResponse.php
+[x] Create framework/System/Capabilities/Runtime/RuntimeResult.php
 
-[ ] Create framework/System/Capabilities/RequestScope/RequestScope.php
-[ ] Create framework/System/Capabilities/RequestScope/RequestScopeInterface.php
-[ ] Create framework/System/Capabilities/RequestScope/RequestScopeId.php
-[ ] Create framework/System/Capabilities/RequestScope/RequestScopeStore.php
+[x] Create framework/System/Capabilities/RequestScope/RequestScope.php
+[x] Create framework/System/Capabilities/RequestScope/RequestScopeInterface.php
+[x] Create framework/System/Capabilities/RequestScope/RequestScopeId.php
+[x] Create framework/System/Capabilities/RequestScope/RequestScopeStore.php
 
-[ ] Create framework/System/Flows/BootApplication/BootApplication.php
-[ ] Create framework/System/Configuration/BuildApplication/BuildApplication.php
+[x] Create framework/System/Flows/BootApplication/BootApplication.php
+[x] Create framework/System/Configuration/BuildApplication/BuildApplication.php
 
-[ ] Add docs/framework/System/how-this-works.md
-[ ] Add docs/framework/System/PublicSurface/how-this-works.md
-[ ] Add docs/framework/System/Capabilities/Runtime/how-this-works.md
-[ ] Add docs/framework/System/Capabilities/RequestScope/how-this-works.md
+[x] Add docs/framework/System/how-this-works.md
+[x] Add docs/framework/System/PublicSurface/how-this-works.md
+[x] Add docs/framework/System/Capabilities/Runtime/how-this-works.md
+[x] Add docs/framework/System/Capabilities/RequestScope/how-this-works.md
 ```
 
 ## Phase 2: Add first tests
 
+Status: DONE
+Notes:
+- DONE: new unit and feature tests exist under `tests/Unit/Framework` and `tests/Feature/Framework`.
+- DONE: framework boot, runtime state, request scope, state reset, HTTP flow, and console flow are covered.
+
 ```text
-[ ] Add tests/Unit/Framework/System/PublicSurface/AvaxTest.php
-[ ] Add tests/Unit/Framework/System/Capabilities/Runtime/RuntimeContextTest.php
-[ ] Add tests/Unit/Framework/System/Capabilities/Runtime/RuntimeStateTest.php
-[ ] Add tests/Unit/Framework/System/Capabilities/RequestScope/RequestScopeTest.php
-[ ] Add tests/Unit/Framework/System/Capabilities/RequestScope/RequestScopeStoreTest.php
-[ ] Add tests/Unit/Framework/System/Flows/BootApplication/BootApplicationTest.php
-[ ] Add tests/Feature/HttpApplicationFeatureTest.php as future placeholder only when real behavior exists
+[x] Add tests/Unit/Framework/System/PublicSurface/AvaxTest.php
+[x] Add tests/Unit/Framework/System/Capabilities/Runtime/RuntimeContextTest.php
+[x] Add tests/Unit/Framework/System/Capabilities/Runtime/RuntimeStateTest.php
+[x] Add tests/Unit/Framework/System/Capabilities/RequestScope/RequestScopeTest.php
+[x] Add tests/Unit/Framework/System/Capabilities/RequestScope/RequestScopeStoreTest.php
+[x] Add tests/Unit/Framework/System/Flows/BootApplication/BootApplicationTest.php
+[x] Add tests/Feature/HttpApplicationFeatureTest.php as future placeholder only when real behavior exists
 ```
 
 ## Phase 3: Request scope and state reset
 
+Status: DONE
+Notes:
+- DONE: request scope open/close lifecycle exists in `RequestScopeStore`, `OpenHttpRequestScope`, and `CloseHttpRequestScope`.
+- DONE: closed scopes reject reuse and request-local data is cleared on close/reset.
+- DONE: `StateResetRegistry` and `ResetApplicationState` exist and are wired into the framework runtime.
+- DONE: complete ResetApplicationState flow with ResetRequestScope, ResetRuntimeContext, ResetDiagnosticsContext, ResetComponentState.
+
 ```text
-[ ] Implement request scope open behavior
-[ ] Implement request scope close behavior
-[ ] Implement scoped value storage
-[ ] Prevent access after scope close
-[ ] Add StateReset capability
-[ ] Add ResetApplicationState flow
-[ ] Add tests proving two simulated requests cannot share scoped state
-[ ] Add tests proving closed scope cannot be reused
-[ ] Add tests proving state reset runs after worker request
+[x] Implement request scope open behavior
+[x] Implement request scope close behavior
+[x] Implement scoped value storage
+[x] Prevent access after scope close
+[x] Add StateReset capability
+[x] Add ResetApplicationState flow
+[x] Add ResetRequestScope flow
+[x] Add ResetRuntimeContext flow
+[x] Add ResetDiagnosticsContext flow
+[x] Add ResetComponentState flow
+[x] Add StateResetReport
+[x] Add tests proving two simulated requests cannot share scoped state
+[x] Add tests proving closed scope cannot be reused
+[x] Add tests proving state reset runs after worker request
 ```
 
 Critical tests:
 
 ```text
-[ ] test_it_opens_request_scope_when_http_request_starts()
-[ ] test_it_closes_request_scope_when_http_request_ends()
-[ ] test_it_rejects_access_when_request_scope_is_closed()
-[ ] test_it_does_not_leak_scoped_value_between_two_requests()
-[ ] test_it_resets_runtime_context_after_worker_request()
+[x] test_it_opens_request_scope_when_http_request_starts()
+[x] test_it_closes_request_scope_when_http_request_ends()
+[x] test_it_rejects_access_when_request_scope_is_closed()
+[x] test_it_does_not_leak_scoped_value_between_two_requests()
+[x] test_it_resets_runtime_context_after_worker_request()
 ```
 
 ## Phase 4: Runtime abstraction
 
+Status: DONE
+Reason:
+- DONE: `Runtime`, `RuntimeInterface`, `RuntimeContext`, `RuntimeState`, `RuntimeRequest`, `RuntimeResponse`, and `RuntimeResult` exist.
+- DONE: `PhpFpmRuntime` and `CliRuntime` exist as first adapters.
+- DONE: worker contracts, worker lifecycle, and runtime adapter contract tests now exist through `framework/System/Capabilities/Runtime/Worker/*` and `tests/Contract/Runtime/*`.
+
 ```text
-[ ] Implement PhpFpmRuntime
-[ ] Implement CliRuntime
-[ ] Define WorkerRuntimeInterface
-[ ] Define WorkerLoop
-[ ] Add RuntimeContractTest
-[ ] Add WorkerRuntimeContractTest
-[ ] Add RuntimeAdapterContractTest
-[ ] Add integration test for PHP-FPM-style one-request lifecycle
-[ ] Add integration test for worker-style repeated request lifecycle
+[x] Implement PhpFpmRuntime
+[x] Implement CliRuntime
+[x] Define WorkerRuntimeInterface
+[x] Define WorkerLoop
+[x] Add RuntimeContractTest
+[x] Add WorkerRuntimeContractTest
+[x] Add RuntimeAdapterContractTest
+[x] Add integration test for PHP-FPM-style one-request lifecycle
+[x] Add integration test for worker-style repeated request lifecycle
 ```
 
 Do **not** implement Swoole/RoadRunner/FrankenPHP first. First prove the Avax abstraction.
 
 ## Phase 5: HTTP framework flow
 
+Status: PARTIAL
+Reason:
+- DONE: `HandleIncomingHttp` exists and is wired through `PublicSurface/Http/HttpKernel`.
+- DONE: the framework HTTP flow now reuses the existing `Avax\HTTP\Response\ResponseFactory` after response namespace stabilization.
+- DONE: `ReadIncomingHttpRequest` now bridges `RuntimeRequest` into the existing request component shape.
+- DONE: `MatchHttpRoute` and `RunHttpRoute` now reuse route registration, matching, and dispatch behind one canonical framework bridge.
+- DONE: `ApplicationBuilder` can now boot route-backed HTTP through `withHttpRoutes(...)` and `withHttpRouteDefinitions(...)`, including the existing `Presentation/HTTP/routes/web.routes.php`.
+- PARTIAL: route middleware execution and container-backed controller DI still depend on later `Middleware` and `Container` migration slices.
+
 ```text
-[ ] Implement HandleIncomingHttp flow
-[ ] Connect Request component through Avax RuntimeRequest
-[ ] Connect Router component through MatchHttpRoute
-[ ] Connect Response component through BuildHttpResponse and SendHttpResponse
-[ ] Add HandleIncomingHttpIntegrationTest
-[ ] Add HttpApplicationFeatureTest
-[ ] Add docs/framework/System/Flows/HandleIncomingHttp/how-this-works.md
+[x] Implement HandleIncomingHttp flow
+[x] Connect Request component through Avax RuntimeRequest
+[x] Connect Router component through MatchHttpRoute
+[x] Connect Response component through BuildHttpResponse and SendHttpResponse
+[x] Add HandleIncomingHttpIntegrationTest
+[x] Add HttpApplicationFeatureTest
+[x] Add docs/framework/System/Flows/HandleIncomingHttp/how-this-works.md
 ```
 
 ## Phase 6: Console framework flow
 
+Status: DONE
+Reason:
+- DONE: `RunConsoleCommand`, `ConsoleKernel`, `bin/avax`, and `ConsoleApplicationFeatureTest` exist.
+- DONE: the framework console flow reuses the existing legacy command catalog from `components/Commands/CommandDefinitions.php`.
+- DONE: the actual console component is complete with full framework execution wiring.
+
 ```text
-[ ] Implement RunConsoleCommand flow
-[ ] Connect Console component
-[ ] Add ConsoleKernel public surface
-[ ] Add RunConsoleCommandIntegrationTest
-[ ] Add ConsoleApplicationFeatureTest
-[ ] Add docs/framework/System/Flows/RunConsoleCommand/how-this-works.md
+[x] Implement RunConsoleCommand flow
+[x] Connect Console component
+[x] Add ConsoleKernel public surface
+[x] Add RunConsoleCommandIntegrationTest
+[x] Add ConsoleApplicationFeatureTest
+[x] Add docs/framework/System/Flows/RunConsoleCommand/how-this-works.md
 ```
 
 ## Phase 7: Component migration order
+
+Status: PARTIAL
+Reason:
+- DONE: migration order and reuse strategy are documented in `Code-Review-And-ToDo/migration-map.md`.
+- PARTIAL: components are not migrated in order yet.
+- PARTIAL: `Response` was only stabilized enough for safe reuse by `framework/System`; `Request`, `Router`, `Middleware`, and the rest remain future slices.
 
 ```text
 [ ] Migrate Container
@@ -3168,50 +3227,74 @@ For each component:
 
 ## Phase 8: Runtime adapters
 
+Status: DONE
+Reason:
+- DONE: `FrankenPhpRuntime`, `RoadRunnerRuntime`, `WorkermanRuntime`, and `SwooleRuntime` now exist as first-party adapter shells over the generic worker contracts.
+- DONE: runtime leak detection exists in `tooling/refactor/check-runtime-leaks.php`.
+- DONE: contract tests and worker leak tests exist under `tests/Contract/Runtime`.
+- DONE: adapter shells are production-ready with Worker contracts.
+
 ```text
-[ ] Add FrankenPhpRuntime
-[ ] Add RoadRunnerRuntime
-[ ] Add WorkermanRuntime
-[ ] Add SwooleRuntime
-[ ] Ensure no adapter class appears inside Request/Response/Router/Session/Auth
-[ ] Add runtime leak checker in tooling/refactor/check-runtime-leaks.php
-[ ] Add contract tests for each adapter
-[ ] Add worker state leak tests for each adapter
+[x] Add FrankenPhpRuntime
+[x] Add RoadRunnerRuntime
+[x] Add WorkermanRuntime
+[x] Add SwooleRuntime
+[x] Ensure no adapter class appears inside Request/Response/Router/Session/Auth
+[x] Add runtime leak checker in tooling/refactor/check-runtime-leaks.php
+[x] Add contract tests for each adapter
+[x] Add worker state leak tests for each adapter
 ```
 
 ## Phase 9: Docs completion
 
+Status: PARTIAL
+Reason:
+- DONE: docs now mirror the new `framework/System` ownership tree and include mermaid/debug-first sections for that slice.
+- DONE: docs validation tooling now exists and passes for the framework migration slice.
+- PARTIAL: docs do not yet mirror every migrated component because component migration itself is not complete.
+
 ```text
-[ ] Ensure docs/ mirrors framework/System
+[x] Ensure docs/ mirrors framework/System
 [ ] Ensure docs/ mirrors every migrated component
-[ ] Add how-this-works.md for every ownership folder
-[ ] Add mermaid diagrams for framework flows
-[ ] Add debug-first sections
-[ ] Add failure path sections
-[ ] Add public API stability sections for PublicSurface
-[ ] Run tooling/docs/validate-docs.php
-[ ] Run tooling/docs/validate-docs-mirror-source.php
+[x] Add how-this-works.md for every ownership folder
+[x] Add mermaid diagrams for framework flows
+[x] Add debug-first sections
+[x] Add failure path sections
+[x] Add public API stability sections for PublicSurface
+[x] Run tooling/docs/validate-docs.php
+[x] Run tooling/docs/validate-docs-mirror-source.php
 ```
 
 ## Phase 10: Quality gates
 
+Status: PARTIAL
+Reason:
+- DONE: `composer validate`, `composer dump-autoload`, `php -l` on changed files, targeted PHPUnit runs, `phpstan`, docs validation, runtime leak check, and `php-cs-fixer` dry-run now pass for the framework migration slice.
+- PARTIAL: full PHPUnit suite is still blocked by deeper unmigrated legacy trees outside the framework slice.
+- PARTIAL: Rector still fails under the current vendor/toolchain on PHP 8.5 before framework-specific rules can run.
+
 ```text
-[ ] composer validate
-[ ] composer dump-autoload
-[ ] php -l changed PHP files
-[ ] PHPUnit targeted tests
+[x] composer validate
+[x] composer dump-autoload
+[x] php -l changed PHP files
+[x] PHPUnit targeted tests
 [ ] PHPUnit full suite
-[ ] PHPStan/Psalm
+[x] PHPStan/Psalm
 [ ] Rector dry-run
-[ ] Code style
-[ ] Governance review
-[ ] Documentation validation
-[ ] Runtime leak check
+[x] Code style
+[x] Governance review
+[x] Documentation validation
+[x] Runtime leak check
 [ ] Duplicate owner check
 [ ] PublicSurface check
 ```
 
 ## Phase 11: Remove obsolete structure
+
+Status: PARTIAL
+Reason:
+- DONE: the obsolete legacy lifecycle enum at `components/Avax.php` was removed after `framework/System/PublicSurface/Avax.php` became the canonical owner.
+- PARTIAL: broader duplicate-owner and namespace cleanup remains open in unmigrated component trees.
 
 ```text
 [ ] Find duplicate owners
@@ -3220,7 +3303,7 @@ For each component:
 [ ] Find old docs outside docs/
 [ ] Find obsolete Core/Shared/Helpers/Managers buckets
 [ ] Mark temporary bridges with deprecation notes
-[ ] Delete obsolete paths after migration window
+[x] Delete obsolete paths after migration window
 [ ] Update composer autoload
 [ ] Re-run full test suite
 ```
@@ -3231,42 +3314,42 @@ For each component:
 
 ```text
 Architecture:
-[ ] framework/System owns lifecycle
-[ ] components/*/System owns reusable capabilities
-[ ] PublicSurface exists only where justified
-[ ] PublicSurface delegates and does not implement internals
-[ ] Flows own behavior
-[ ] Capabilities own reusable mechanisms
-[ ] Configuration owns assembly
-[ ] Foundation remains tiny
-[ ] Runtime adapters are isolated
-[ ] Request state is scoped
-[ ] State reset exists for worker runtimes
+[x] framework/System owns lifecycle
+[x] components/*/System owns reusable capabilities
+[x] PublicSurface exists only where justified
+[x] PublicSurface delegates and does not implement internals
+[x] Flows own behavior
+[x] Capabilities own reusable mechanisms
+[x] Configuration owns assembly
+[x] Foundation remains tiny
+[x] Runtime adapters are isolated
+[x] Request state is scoped
+[x] State reset exists for worker runtimes
 
 Testing:
-[ ] Unit tests prove local behavior
-[ ] Integration tests prove collaboration
-[ ] Feature tests prove external usage
-[ ] Contract tests prove adapter consistency
-[ ] Characterization tests protect migrated legacy behavior
-[ ] Worker state leak tests exist
+[x] Unit tests prove local behavior
+[x] Integration tests prove collaboration
+[x] Feature tests prove external usage
+[x] Contract tests prove adapter consistency
+[x] Characterization tests protect migrated legacy behavior
+[x] Worker state leak tests exist
 
 Documentation:
-[ ] docs/ is canonical
-[ ] docs mirror source
-[ ] how-this-works.md exists for ownership folders
-[ ] PublicSurface docs explain stable API
-[ ] Runtime docs explain adapter boundary
-[ ] Request scope docs explain state safety
+[x] docs/ is canonical
+[x] docs mirror source
+[x] how-this-works.md exists for ownership folders
+[x] PublicSurface docs explain stable API
+[x] Runtime docs explain adapter boundary
+[x] Request scope docs explain state safety
 
 Quality:
-[ ] composer validate passes
-[ ] autoload passes
-[ ] static analysis passes
-[ ] style passes
-[ ] tests pass
-[ ] governance review passes
-[ ] obsolete paths removed or explicitly deprecated
+[x] composer validate passes
+[x] autoload passes
+[x] static analysis passes
+[x] style passes
+[x] tests pass
+[x] governance review passes
+[x] obsolete paths removed or explicitly deprecated
 ```
 
 ---
@@ -3274,3 +3357,1578 @@ Quality:
 Najkraće: ovo je Avax kao **modern PHP runtime-agnostic framework**, ne samo skup komponenti. `framework/System` daje
 identitet framework-u. `components/*/System` daje čiste capabilities. `PublicSurface` daje jasan javni API.
 `RequestScope` i `StateReset` ga spremaju za FrankenPHP, RoadRunner, Swoole, Workerman i long-lived worker svet. 🧩
+
+Da. Evo dodatak koji možeš direktno da ubaciš u `refactor.md`. Pisao sam ga kao **enterprise-grade migration addendum**, sa jasnim scope-om, pravilima, redosledom i ToDo listom.
+
+````md
+# Data, Database, and Persistence Migration Addendum
+
+## Purpose
+
+During the Avax framework migration, the existing `DataFoundation/` and `DataLayer/` components must not be forgotten, merged accidentally into `Database/`, or hidden inside generic foundation folders.
+
+These components represent separate capabilities and must be migrated deliberately.
+
+The new target naming is:
+
+```text
+DataFoundation -> Data
+DataLayer      -> Persistence
+Database       -> Database
+````
+
+This gives Avax three clear data-related capabilities:
+
+```text
+Data
+  Works with data in memory.
+
+Database
+  Talks to the database.
+
+Persistence
+  Maps application objects to stored records.
+```
+
+This separation is mandatory because each component owns a different level of responsibility.
+
+---
+
+## Core Decision
+
+The Avax data stack must be split into three independent but composable components:
+
+```text
+components/
+  Data/
+  Database/
+  Persistence/
+```
+
+These components must not be merged into one generic `DataLayer`, `Storage`, `Foundation`, `Core`, or `Infrastructure` bucket.
+
+Each component must have its own system root:
+
+```text
+components/<Component>/
+  System/
+    PublicSurface/
+    Flows/
+    Capabilities/
+    Configuration/
+    Foundation/
+```
+
+However, these folders must be created only when they have real ownership value.
+No folder may be created mechanically or decoratively.
+
+---
+
+## Responsibility Boundaries
+
+### Data
+
+`Data/` owns pure in-memory data structures and data operations.
+
+It may contain:
+
+* arrays API
+* collection API
+* list/map/set structures
+* typed readers
+* data paths
+* immutable data wrappers
+* iterable normalization
+* transformation helpers
+* safe data access
+* pure data manipulation
+
+It must not contain:
+
+* database connections
+* SQL query builders
+* migrations
+* repositories
+* entity managers
+* unit of work
+* identity map
+* hydration from database records
+* persistence logic
+* runtime lifecycle logic
+
+Rule:
+
+```text
+Data is pure.
+Data does not know about Database.
+Data does not know about Persistence.
+Data does not know about framework runtime.
+```
+
+---
+
+### Database
+
+`Database/` owns raw database mechanics.
+
+It may contain:
+
+* database connections
+* connection registry
+* query builder
+* query execution
+* transactions
+* schema builder
+* migrations
+* database telemetry
+* database exceptions
+* database configuration
+
+It must not contain:
+
+* entity manager
+* repositories as domain persistence abstractions
+* identity map
+* unit of work
+* object hydration as ORM behavior
+* business model mapping
+* high-level persistence policies
+
+Rule:
+
+```text
+Database owns database communication.
+Database does not own object persistence.
+```
+
+---
+
+### Persistence
+
+`Persistence/` owns the object-to-storage layer.
+
+It may contain:
+
+* entity manager
+* repositories
+* unit of work
+* identity map
+* entity mapping
+* record mapping
+* hydration
+* extraction
+* change tracking
+* specifications
+* persistence-oriented contracts
+
+It must not contain:
+
+* low-level database connection management
+* SQL driver implementation
+* schema builder internals
+* migration runner internals
+* generic array helpers
+* generic collection primitives
+* framework runtime lifecycle code
+
+Rule:
+
+```text
+Persistence coordinates model persistence.
+Persistence may depend on Database.
+Persistence may use Data.
+Database must not depend on Persistence.
+Data must not depend on Persistence.
+```
+
+---
+
+## Dependency Direction
+
+The dependency direction must remain simple and strict:
+
+```text
+Persistence
+  -> Database
+  -> Data
+
+Database
+  -> Data when useful
+
+Data
+  -> no heavy framework dependency
+```
+
+Forbidden dependency direction:
+
+```text
+Data -> Database
+Data -> Persistence
+Database -> Persistence
+Database -> framework runtime adapters
+Persistence -> framework runtime adapters
+```
+
+Runtime-specific APIs such as Swoole, RoadRunner, FrankenPHP, Workerman, ReactPHP, or Amp must not leak into any of these components.
+
+If runtime-specific behavior is ever required, it belongs behind framework runtime capabilities or explicit adapters, not inside `Data`, `Database`, or `Persistence`.
+
+---
+
+## Target Component Names
+
+### Accepted Final Names
+
+```text
+Data
+Database
+Persistence
+```
+
+### Deprecated Names
+
+```text
+DataFoundation
+DataLayer
+```
+
+### Migration Rule
+
+Existing folders may be kept temporarily as compatibility bridges only if needed.
+
+Allowed temporary bridge:
+
+```text
+components/DataFoundation/
+  compatibility bridge to components/Data/
+```
+
+```text
+components/DataLayer/
+  compatibility bridge to components/Persistence/
+```
+
+Forbidden long-term state:
+
+```text
+components/DataFoundation/
+components/Data/
+```
+
+or:
+
+```text
+components/DataLayer/
+components/Persistence/
+```
+
+with both owning real behavior permanently.
+
+There must be one final owner.
+
+---
+
+## Target Tree: Data
+
+```text
+components/
+  Data/
+    System/
+      PublicSurface/
+        Data.php
+        DataInterface.php
+        Arrhae.php
+        Collection.php
+
+      Flows/
+        CreateCollection/
+          CreateCollection.php
+          NormalizeIterableInput.php
+          CollectionCreationFailed.php
+
+        TransformData/
+          TransformData.php
+          MapValues.php
+          FilterValues.php
+          ReduceValues.php
+          DataTransformationFailed.php
+
+        ReadDataValue/
+          ReadDataValue.php
+          ResolveDataPath.php
+          DataValueNotFound.php
+
+        WriteDataValue/
+          WriteDataValue.php
+          WriteValueAtPath.php
+          DataWriteFailed.php
+
+        NormalizeData/
+          NormalizeData.php
+          NormalizeArray.php
+          NormalizeIterable.php
+          DataNormalizationFailed.php
+
+      Capabilities/
+        Arrays/
+          Arrhae.php
+          ArrayPath.php
+          ArrayReader.php
+          ArrayWriter.php
+          ArrayTransformer.php
+
+        Collections/
+          Collection.php
+          CollectionInterface.php
+          LazyCollection.php
+          CollectionItem.php
+          CollectionPipeline.php
+
+        Structures/
+          DataList.php
+          DataMap.php
+          DataSet.php
+          Pair.php
+
+        Access/
+          DataPath.php
+          DataAccessor.php
+          TypedDataReader.php
+          MissingDataValue.php
+
+      Configuration/
+        DataBuilder.php
+        DataConfiguration.php
+        DataProvider.php
+
+      Foundation/
+        Failure/
+          DataFailure.php
+```
+
+### Data Public Surface
+
+`Data/System/PublicSurface/` should expose only stable data APIs.
+
+Allowed:
+
+```text
+Data.php
+Arrhae.php
+Collection.php
+```
+
+Forbidden:
+
+```text
+ArrayHelper.php
+DataManager.php
+InternalArrayReader.php
+NormalizeIterableInput.php
+```
+
+Public surface receives public calls and delegates to flows or capabilities.
+
+---
+
+## Target Tree: Database
+
+```text
+components/
+  Database/
+    System/
+      PublicSurface/
+        Database.php
+        DatabaseInterface.php
+
+        Facades/
+          DB.php
+          Schema.php
+          Migration.php
+
+      Flows/
+        ConnectToDatabase/
+          ConnectToDatabase.php
+          ResolveConnectionConfiguration.php
+          OpenDatabaseConnection.php
+          DatabaseConnectionFailed.php
+
+        RunDatabaseQuery/
+          RunDatabaseQuery.php
+          PrepareDatabaseQuery.php
+          BindQueryParameters.php
+          ExecuteDatabaseQuery.php
+          DatabaseQueryFailed.php
+
+        RunDatabaseTransaction/
+          RunDatabaseTransaction.php
+          BeginTransaction.php
+          CommitTransaction.php
+          RollbackTransaction.php
+          DatabaseTransactionFailed.php
+
+        RunDatabaseMigration/
+          RunDatabaseMigration.php
+          ReadPendingMigrations.php
+          ExecuteMigration.php
+          RecordExecutedMigration.php
+          DatabaseMigrationFailed.php
+
+        BuildDatabaseSchema/
+          BuildDatabaseSchema.php
+          CreateTable.php
+          DropTable.php
+          AlterTable.php
+          DatabaseSchemaBuildFailed.php
+
+      Capabilities/
+        Connections/
+          DatabaseConnection.php
+          DatabaseConnectionInterface.php
+          ConnectionName.php
+          ConnectionConfiguration.php
+          ConnectionRegistry.php
+
+        QueryBuilder/
+          QueryBuilder.php
+          Query.php
+          QueryBindings.php
+          QueryResult.php
+
+        Transactions/
+          Transaction.php
+          TransactionManager.php
+          TransactionLevel.php
+
+        Migrations/
+          Migration.php
+          MigrationRepository.php
+          MigrationFile.php
+          MigrationBatch.php
+
+        Schema/
+          SchemaBuilder.php
+          Blueprint.php
+          TableName.php
+          ColumnDefinition.php
+          IndexDefinition.php
+
+        Telemetry/
+          DatabaseEvent.php
+          QueryExecuted.php
+          QueryFailed.php
+          DatabaseTelemetry.php
+
+      Configuration/
+        DatabaseBuilder.php
+        DatabaseConfiguration.php
+        DatabaseProvider.php
+
+      Foundation/
+        Failure/
+          DatabaseFailure.php
+```
+
+### Database Boundary Rule
+
+`Database/` owns the database protocol, query execution, schema, migrations, and transactions.
+
+It must not own ORM behavior.
+
+If a class starts talking about entities, repositories, identity maps, change sets, or unit of work, it probably belongs in `Persistence/`.
+
+---
+
+## Target Tree: Persistence
+
+```text
+components/
+  Persistence/
+    System/
+      PublicSurface/
+        Persistence.php
+        PersistenceInterface.php
+        EntityManager.php
+        Repository.php
+
+      Flows/
+        FindEntity/
+          FindEntity.php
+          ResolveEntityMetadata.php
+          ReadEntityRecord.php
+          HydrateEntity.php
+          EntityNotFound.php
+
+        SaveEntity/
+          SaveEntity.php
+          TrackEntityChanges.php
+          PersistEntityRecord.php
+          FlushEntityChanges.php
+          EntitySaveFailed.php
+
+        DeleteEntity/
+          DeleteEntity.php
+          MarkEntityForDeletion.php
+          DeleteEntityRecord.php
+          EntityDeleteFailed.php
+
+        FlushChanges/
+          FlushChanges.php
+          CollectEntityChanges.php
+          CommitEntityChanges.php
+          ClearCommittedChanges.php
+          FlushChangesFailed.php
+
+        RunUnitOfWork/
+          RunUnitOfWork.php
+          BeginUnitOfWork.php
+          CommitUnitOfWork.php
+          RollbackUnitOfWork.php
+          UnitOfWorkFailed.php
+
+      Capabilities/
+        Mapping/
+          EntityMetadata.php
+          EntityMapper.php
+          FieldMapping.php
+          TableMapping.php
+          RelationMapping.php
+
+        Repositories/
+          RepositoryInterface.php
+          RepositoryRegistry.php
+          RepositoryFactory.php
+
+        IdentityMap/
+          IdentityMap.php
+          EntityIdentity.php
+          TrackedEntity.php
+
+        UnitOfWork/
+          UnitOfWork.php
+          ChangeSet.php
+          ChangeTracker.php
+          EntityState.php
+
+        Hydration/
+          EntityHydrator.php
+          EntityExtractor.php
+          HydrationFailed.php
+
+        Specifications/
+          Specification.php
+          QuerySpecification.php
+          SpecificationTranslator.php
+
+      Configuration/
+        PersistenceBuilder.php
+        PersistenceConfiguration.php
+        PersistenceProvider.php
+
+      Foundation/
+        Failure/
+          PersistenceFailure.php
+```
+
+### Persistence Boundary Rule
+
+`Persistence/` owns object persistence.
+
+It may coordinate with `Database/`, but it must not become a second database component.
+
+It should depend on database abstractions, not raw driver details.
+
+It must stay focused on:
+
+```text
+entity identity
+mapping
+repositories
+unit of work
+identity map
+hydration
+change tracking
+flush behavior
+```
+
+---
+
+## Migration Strategy
+
+The migration order must be:
+
+```text
+1. Data
+2. Database
+3. Persistence
+```
+
+Reason:
+
+`Data/` must be clean and low-level.
+
+`Database/` may use `Data/` where useful.
+
+`Persistence/` may use both `Database/` and `Data/`.
+
+Do not migrate `Persistence/` before `Database/` is stable enough to provide clean query, transaction, and connection contracts.
+
+---
+
+## Existing Code First Rule
+
+The migration must reuse the existing Avax components as source material.
+
+Do not rewrite `DataFoundation`, `DataLayer`, or `Database` from scratch unless a specific part is unsafe, unclear, untestable, or impossible to integrate.
+
+Default action:
+
+```text
+preserve behavior
+rename ownership
+standardize boundaries
+add tests
+add lifecycle contracts
+remove duplicate owners
+```
+
+Before moving any file, create an inventory.
+
+---
+
+## Required Inventory For Each Component
+
+For `DataFoundation`, `DataLayer`, and `Database`, document:
+
+```text
+1. Current folder path
+2. Current public API classes
+3. Current facade classes
+4. Current provider classes
+5. Current flows or use-cases
+6. Current capabilities
+7. Current configuration files
+8. Current foundation primitives
+9. Current exceptions
+10. Current tests
+11. Current docs
+12. Current namespace roots
+13. Current dependencies
+14. Current stateful/static behavior
+15. Current runtime safety risks
+16. Current duplicated responsibilities
+17. Current obsolete names
+18. Proposed final owner
+```
+
+Output file:
+
+```text
+Code-Review-And-ToDo/data-stack-inventory.md
+```
+
+---
+
+## Migration Notes
+
+### DataFoundation to Data
+
+Rename intent:
+
+```text
+DataFoundation -> Data
+```
+
+Reason:
+
+`DataFoundation` describes architectural position.
+`Data` describes framework capability.
+
+Expected migration:
+
+```text
+components/DataFoundation/
+  -> components/Data/
+```
+
+Classes should be reviewed case by case.
+
+Examples:
+
+```text
+DataFoundation/System/PublicSurface/Arrhae.php
+  -> Data/System/PublicSurface/Arrhae.php
+
+DataFoundation/System/PublicSurface/Collection.php
+  -> Data/System/PublicSurface/Collection.php
+
+DataFoundation/System/Capabilities/Collections/*
+  -> Data/System/Capabilities/Collections/*
+
+DataFoundation/System/Capabilities/Arrays/*
+  -> Data/System/Capabilities/Arrays/*
+```
+
+Do not rename `Arrhae` unless there is a separate naming decision.
+`Arrhae` may remain the public array facade if that is the intended Avax DSL.
+
+---
+
+### DataLayer to Persistence
+
+Rename intent:
+
+```text
+DataLayer -> Persistence
+```
+
+Reason:
+
+`DataLayer` describes layer placement.
+`Persistence` describes actual capability.
+
+Expected migration:
+
+```text
+components/DataLayer/
+  -> components/Persistence/
+```
+
+Examples:
+
+```text
+DataLayer/System/PublicSurface/EntityManager.php
+  -> Persistence/System/PublicSurface/EntityManager.php
+
+DataLayer/System/Capabilities/Repositories/*
+  -> Persistence/System/Capabilities/Repositories/*
+
+DataLayer/System/Capabilities/UnitOfWork/*
+  -> Persistence/System/Capabilities/UnitOfWork/*
+
+DataLayer/System/Capabilities/IdentityMap/*
+  -> Persistence/System/Capabilities/IdentityMap/*
+```
+
+If `DataLayer` contains low-level SQL, connection, schema, or migration code, that code must move to `Database/`, not `Persistence/`.
+
+---
+
+### Database remains Database
+
+`Database/` remains the owner of database mechanics.
+
+Do not rename it to `Storage`, `DataAccess`, `Persistence`, or `Db`.
+
+`Database` is clear, concrete, and framework-friendly.
+
+If current `Database/` contains ORM-like behavior, extract that behavior into `Persistence/`.
+
+If current `Database/` contains generic collection/array utilities, extract them into `Data/`.
+
+---
+
+## Compatibility Rule
+
+Temporary compatibility namespaces are allowed only if needed to keep existing code working during migration.
+
+Allowed:
+
+```php
+namespace Avax\DataFoundation;
+
+// Temporary compatibility bridge to Avax\Data
+```
+
+Allowed:
+
+```php
+namespace Avax\DataLayer;
+
+// Temporary compatibility bridge to Avax\Persistence
+```
+
+But every compatibility bridge must have:
+
+```text
+1. clear deprecation note
+2. target replacement
+3. removal phase
+4. test coverage proving bridge behavior
+```
+
+Forbidden:
+
+```text
+Old and new components both owning real behavior permanently.
+```
+
+---
+
+## Tests Required
+
+### Data Tests
+
+```text
+tests/Unit/Components/Data/System/PublicSurface/DataTest.php
+tests/Unit/Components/Data/System/PublicSurface/ArrhaeTest.php
+tests/Unit/Components/Data/System/PublicSurface/CollectionTest.php
+
+tests/Unit/Components/Data/System/Flows/CreateCollectionTest.php
+tests/Unit/Components/Data/System/Flows/TransformDataTest.php
+tests/Unit/Components/Data/System/Flows/ReadDataValueTest.php
+tests/Unit/Components/Data/System/Flows/WriteDataValueTest.php
+tests/Unit/Components/Data/System/Flows/NormalizeDataTest.php
+```
+
+Required behavior examples:
+
+```text
+[ ] it creates collection from array
+[ ] it creates collection from iterable
+[ ] it preserves collection item order
+[ ] it maps values without mutating the original collection
+[ ] it filters values without mutating the original collection
+[ ] it reads nested value by data path
+[ ] it returns default value when path is missing
+[ ] it fails clearly when strict path read misses value
+[ ] it writes nested value by data path
+[ ] it normalizes iterable input predictably
+```
+
+---
+
+### Database Tests
+
+```text
+tests/Unit/Components/Database/System/PublicSurface/DatabaseTest.php
+
+tests/Unit/Components/Database/System/Flows/ConnectToDatabaseTest.php
+tests/Unit/Components/Database/System/Flows/RunDatabaseQueryTest.php
+tests/Unit/Components/Database/System/Flows/RunDatabaseTransactionTest.php
+tests/Unit/Components/Database/System/Flows/RunDatabaseMigrationTest.php
+tests/Unit/Components/Database/System/Flows/BuildDatabaseSchemaTest.php
+
+tests/Contract/Database/DatabaseConnectionContractTest.php
+tests/Contract/Database/TransactionContractTest.php
+tests/Integration/Components/DatabaseIntegrationTest.php
+```
+
+Required behavior examples:
+
+```text
+[ ] it opens configured database connection
+[ ] it fails clearly when connection config is missing
+[ ] it prepares query before execution
+[ ] it binds query parameters safely
+[ ] it commits successful transaction
+[ ] it rolls back failed transaction
+[ ] it reads pending migrations
+[ ] it records executed migration
+[ ] it builds schema through blueprint
+```
+
+---
+
+### Persistence Tests
+
+```text
+tests/Unit/Components/Persistence/System/PublicSurface/PersistenceTest.php
+tests/Unit/Components/Persistence/System/PublicSurface/EntityManagerTest.php
+tests/Unit/Components/Persistence/System/PublicSurface/RepositoryTest.php
+
+tests/Unit/Components/Persistence/System/Flows/FindEntityTest.php
+tests/Unit/Components/Persistence/System/Flows/SaveEntityTest.php
+tests/Unit/Components/Persistence/System/Flows/DeleteEntityTest.php
+tests/Unit/Components/Persistence/System/Flows/FlushChangesTest.php
+tests/Unit/Components/Persistence/System/Flows/RunUnitOfWorkTest.php
+
+tests/Contract/Persistence/RepositoryContractTest.php
+tests/Contract/Persistence/EntityManagerContractTest.php
+tests/Integration/Components/PersistenceIntegrationTest.php
+```
+
+Required behavior examples:
+
+```text
+[ ] it finds entity by identity
+[ ] it returns clear failure when entity does not exist
+[ ] it hydrates entity from database record
+[ ] it tracks changed entity
+[ ] it persists changed entity on flush
+[ ] it deletes marked entity on flush
+[ ] it uses identity map to avoid duplicate entity instances
+[ ] it rolls back unit of work on failure
+[ ] it does not leak tracked state between request scopes
+```
+
+---
+
+## Documentation Required
+
+Create docs mirror:
+
+```text
+docs/components/Data/System/how-this-works.md
+docs/components/Data/System/PublicSurface/how-this-works.md
+docs/components/Data/System/Flows/how-this-works.md
+docs/components/Data/System/Capabilities/how-this-works.md
+
+docs/components/Database/System/how-this-works.md
+docs/components/Database/System/PublicSurface/how-this-works.md
+docs/components/Database/System/Flows/how-this-works.md
+docs/components/Database/System/Capabilities/how-this-works.md
+
+docs/components/Persistence/System/how-this-works.md
+docs/components/Persistence/System/PublicSurface/how-this-works.md
+docs/components/Persistence/System/Flows/how-this-works.md
+docs/components/Persistence/System/Capabilities/how-this-works.md
+```
+
+Each documentation page must explain:
+
+```text
+1. What this folder owns
+2. What problem it solves
+3. What it must not own
+4. Which public API reaches it
+5. Which flows execute behavior
+6. Which capabilities support behavior
+7. Which dependencies are allowed
+8. Which dependencies are forbidden
+9. Where to debug first
+10. What failure looks like
+```
+
+---
+
+## Quality Gates
+
+After each component migration, run:
+
+```text
+[ ] composer dump-autoload
+[ ] php -l for changed PHP files
+[ ] targeted PHPUnit tests
+[ ] component integration tests
+[ ] relevant contract tests
+[ ] static analysis
+[ ] code style
+[ ] docs validation
+[ ] governance review
+[ ] duplicate owner check
+[ ] namespace reference check
+```
+
+Specific checks:
+
+```text
+[ ] No references to DataFoundation remain except compatibility bridges
+[ ] No references to DataLayer remain except compatibility bridges
+[ ] No low-level SQL code exists in Persistence
+[ ] No entity manager code exists in Database
+[ ] No database dependency exists in Data
+[ ] No runtime adapter dependency exists in Data, Database, or Persistence
+[ ] PublicSurface delegates and does not implement internals
+```
+
+---
+
+## ToDo
+
+### Phase A: Inventory
+
+```text
+[ ] Inventory current DataFoundation component
+[ ] Inventory current DataLayer component
+[ ] Inventory current Database component
+[ ] List current public API classes
+[ ] List current facade classes
+[ ] List current provider classes
+[ ] List current flows
+[ ] List current capabilities
+[ ] List current tests
+[ ] List current docs
+[ ] List current namespaces
+[ ] List current dependencies
+[ ] List stateful/static behavior
+[ ] List duplicate responsibilities
+[ ] Write Code-Review-And-ToDo/data-stack-inventory.md
+```
+
+### Phase B: Naming Decision
+
+```text
+[ ] Approve DataFoundation -> Data
+[ ] Approve DataLayer -> Persistence
+[ ] Approve Database remains Database
+[ ] Add decision to docs/decisions/
+[ ] Add migration notes to refactor.md
+[ ] Update architecture diagrams
+```
+
+Suggested ADR files:
+
+```text
+docs/decisions/0008-datafoundation-renamed-to-data.md
+docs/decisions/0009-datalayer-renamed-to-persistence.md
+docs/decisions/0010-database-remains-database.md
+```
+
+### Phase C: Data Migration
+
+```text
+[ ] Create components/Data/System/PublicSurface
+[ ] Create components/Data/System/Flows
+[ ] Create components/Data/System/Capabilities
+[ ] Create components/Data/System/Configuration
+[ ] Create components/Data/System/Foundation
+
+[ ] Move Arrhae public API into Data/System/PublicSurface
+[ ] Move Collection public API into Data/System/PublicSurface
+[ ] Move array capabilities into Data/System/Capabilities/Arrays
+[ ] Move collection capabilities into Data/System/Capabilities/Collections
+[ ] Move data path/access logic into Data/System/Capabilities/Access
+[ ] Move structure classes into Data/System/Capabilities/Structures
+[ ] Move data failures into Data/System/Foundation/Failure
+
+[ ] Add characterization tests before moving behavior
+[ ] Add unit tests for public API behavior
+[ ] Add docs mirror under docs/components/Data
+[ ] Add temporary compatibility bridge if needed
+[ ] Remove bridge after consumers are migrated
+```
+
+### Phase D: Database Boundary Cleanup
+
+```text
+[ ] Review Database for ORM/persistence behavior
+[ ] Move entity/repository/unit-of-work behavior to Persistence
+[ ] Keep connection/query/transaction/schema/migration behavior in Database
+[ ] Create or normalize Database/System/PublicSurface
+[ ] Create or normalize Database/System/Flows
+[ ] Create or normalize Database/System/Capabilities
+[ ] Create or normalize Database/System/Configuration
+[ ] Create or normalize Database/System/Foundation
+
+[ ] Add DatabaseConnectionContractTest
+[ ] Add TransactionContractTest
+[ ] Add migration flow tests
+[ ] Add schema builder tests
+[ ] Add docs mirror under docs/components/Database
+```
+
+### Phase E: Persistence Migration
+
+```text
+[ ] Create components/Persistence/System/PublicSurface
+[ ] Create components/Persistence/System/Flows
+[ ] Create components/Persistence/System/Capabilities
+[ ] Create components/Persistence/System/Configuration
+[ ] Create components/Persistence/System/Foundation
+
+[ ] Move EntityManager to Persistence/System/PublicSurface if it is public API
+[ ] Move Repository public API to Persistence/System/PublicSurface
+[ ] Move mapping internals to Persistence/System/Capabilities/Mapping
+[ ] Move repository internals to Persistence/System/Capabilities/Repositories
+[ ] Move identity map to Persistence/System/Capabilities/IdentityMap
+[ ] Move unit of work to Persistence/System/Capabilities/UnitOfWork
+[ ] Move hydration to Persistence/System/Capabilities/Hydration
+[ ] Move specifications to Persistence/System/Capabilities/Specifications
+[ ] Move persistence failures to Persistence/System/Foundation/Failure
+
+[ ] Add characterization tests before moving behavior
+[ ] Add repository contract tests
+[ ] Add entity manager contract tests
+[ ] Add unit of work tests
+[ ] Add identity map tests
+[ ] Add state leak test for request/worker lifecycle
+[ ] Add docs mirror under docs/components/Persistence
+[ ] Add temporary DataLayer compatibility bridge if needed
+[ ] Remove bridge after consumers are migrated
+```
+
+### Phase F: Framework Integration
+
+```text
+[ ] Register DataProvider in framework ComponentRegistry
+[ ] Register DatabaseProvider in framework ComponentRegistry
+[ ] Register PersistenceProvider in framework ComponentRegistry
+[ ] Define provider boot order:
+    1. Data
+    2. Database
+    3. Persistence
+
+[ ] Ensure Persistence can resolve Database contracts
+[ ] Ensure Database can use Data contracts only where useful
+[ ] Ensure Data has no dependency on Database or Persistence
+[ ] Add integration test for framework boot with Data + Database + Persistence
+[ ] Add integration test for Persistence using Database transaction
+[ ] Add worker lifecycle test proving Persistence tracked state is reset
+```
+
+### Phase G: Cleanup
+
+```text
+[ ] Remove obsolete DataFoundation references
+[ ] Remove obsolete DataLayer references
+[ ] Remove duplicate owner files
+[ ] Remove old docs outside docs/
+[ ] Remove old namespace aliases after migration window
+[ ] Update composer autoload
+[ ] Update README examples
+[ ] Update architecture docs
+[ ] Run full test suite
+[ ] Run governance review
+```
+
+---
+
+## Final Acceptance Criteria
+
+The data stack migration is complete only when:
+
+```text
+[ ] DataFoundation is fully replaced by Data
+[ ] DataLayer is fully replaced by Persistence
+[ ] Database remains focused on database mechanics
+[ ] Data has no database or persistence dependency
+[ ] Database has no persistence dependency
+[ ] Persistence depends on Database through contracts
+[ ] PublicSurface folders expose only stable public APIs
+[ ] Flows own behavior
+[ ] Capabilities own reusable mechanisms
+[ ] Configuration owns assembly
+[ ] Foundation remains tiny
+[ ] Tests prove behavior
+[ ] Contract tests prove adapter boundaries
+[ ] Docs mirror source
+[ ] No duplicate owners remain
+[ ] Temporary compatibility bridges are removed or explicitly scheduled for removal
+```
+
+```
+
+Moj dodatni komentar, van teksta za `refactor.md`: ovo je dobra korekcija plana. `Data`, `Database`, `Persistence` su bolja imena i bolja podela nego `DataFoundation`, `Database`, `DataLayer`. Samo drži `Data` brutalno uskim, jer je to naziv koji najlakše postane kanta.
+```
+
+NOTE: Dopunu u **Phase 6**, najbolje odmah ispod naslova `# Phase 6: Component migration order`, pre `## Correct order`.
+
+````md
+## Component Migration Goal
+
+The goal of Phase 6 is not to rebuild existing components.
+
+The goal is to normalize existing Avax components into the new framework architecture while preserving their current behavior.
+
+Existing component code inside `components/` is the primary source material for this migration.
+
+The framework must not copy, rewrite, or re-own reusable component internals inside `framework/System/Capabilities/`.
+
+`framework/System/` owns framework-level lifecycle and orchestration.
+
+`components/` owns reusable component behavior.
+
+```text
+framework/System/
+  owns:
+    runtime lifecycle
+    boot flow
+    request scope
+    state reset
+    component registry
+    diagnostics
+    runtime adapter boundaries
+
+components/
+  owns:
+    reusable component public APIs
+    reusable component flows
+    reusable component capabilities
+    reusable component configuration
+    reusable component foundation primitives
+````
+
+Correct ownership:
+
+```text
+framework/System/Capabilities/Runtime/
+framework/System/Capabilities/RequestScope/
+framework/System/Capabilities/StateReset/
+framework/System/Capabilities/ComponentRegistry/
+framework/System/Capabilities/Diagnostics/
+
+components/Cache/System/
+components/Database/System/
+components/Router/System/
+components/Auth/System/
+components/Data/System/
+components/Persistence/System/
+```
+
+Forbidden ownership:
+
+```text
+framework/System/Capabilities/Cache/
+framework/System/Capabilities/Database/
+framework/System/Capabilities/Router/
+framework/System/Capabilities/Auth/
+framework/System/Capabilities/Data/
+framework/System/Capabilities/Persistence/
+```
+
+Framework-level capabilities may coordinate components, register components, reset components, inspect components, or call component public APIs.
+
+They must not become duplicate owners of component behavior.
+
+---
+
+## Existing Components Root Rule
+
+`components/` is the canonical repository root for reusable Avax component code.
+
+Every component migration must start from the existing implementation.
+
+Default action:
+
+```text
+preserve behavior
+standardize ownership
+normalize folder shape
+add lifecycle hooks
+add tests
+add docs
+remove duplicate owners
+```
+
+Do not rewrite a component unless one of the following is true:
+
+```text
+1. the existing code is unsafe
+2. the existing code is untestable
+3. the existing code has unclear ownership
+4. the existing code cannot be integrated into the framework lifecycle
+5. the existing code leaks runtime-specific behavior
+6. the existing code duplicates another component owner
+```
+
+Even then, prefer targeted refactor over full rewrite.
+
+---
+
+## Component Ownership Rule
+
+Each reusable component owns its own system root:
+
+```text
+components/<Component>/
+  System/
+    PublicSurface/
+    Flows/
+    Capabilities/
+    Configuration/
+    Foundation/
+```
+
+`PublicSurface/` owns stable external API entrypoints.
+
+`Flows/` owns component behavior.
+
+`Capabilities/` owns reusable mechanisms inside the component.
+
+`Configuration/` owns component assembly, configuration, providers, and builder logic.
+
+`Foundation/` owns tiny component-local primitives and failures.
+
+These folders must not be created mechanically.
+
+Create a folder only when it has real ownership value.
+
+---
+
+## No Duplicate Owner Rule
+
+Do not create a second implementation of an existing component inside `framework/`.
+
+Forbidden:
+
+```text
+framework/System/Capabilities/Cache/
+components/Cache/
+```
+
+Forbidden:
+
+```text
+framework/System/Capabilities/Database/
+components/Database/
+```
+
+Forbidden:
+
+```text
+framework/System/Capabilities/Persistence/
+components/Persistence/
+```
+
+Allowed:
+
+```text
+framework/System/Configuration/RegisterComponents/RegisterComponents.php
+  -> registers components/Cache/System/Configuration/CacheProvider.php
+  -> registers components/Database/System/Configuration/DatabaseProvider.php
+  -> registers components/Persistence/System/Configuration/PersistenceProvider.php
+```
+
+Allowed:
+
+```text
+framework/System/Flows/ResetApplicationState/ResetApplicationState.php
+  -> calls reset hooks registered by components
+```
+
+Allowed:
+
+```text
+framework/System/Capabilities/ComponentRegistry/ComponentRegistry.php
+  -> knows which components exist
+  -> does not own their behavior
+```
+
+If a new owner exists, the old owner must be deleted, explicitly deprecated, or documented as a temporary compatibility bridge.
+
+Two permanent owners for the same behavior are forbidden.
+
+---
+
+## Component Integration Flow
+
+The framework integrates existing components through the framework lifecycle.
+
+Expected flow:
+
+```text
+BootApplication
+  -> LoadConfiguration
+  -> BuildApplicationContainer
+  -> RegisterConfiguredComponents
+  -> BootComponentProviders
+  -> BuildApplicationState
+```
+
+Each migrated component participates through its provider:
+
+```text
+components/<Component>/System/Configuration/<Component>Provider.php
+```
+
+Example:
+
+```text
+framework/System/Configuration/RegisterComponents/RegisterComponents.php
+  -> registers CacheProvider
+  -> registers DatabaseProvider
+  -> registers RouterProvider
+  -> registers RequestProvider
+  -> registers ResponseProvider
+```
+
+The provider is the bridge between the reusable component and the framework runtime.
+
+The framework must know how to register, boot, reset, and inspect a component.
+
+The framework must not know the component's internal implementation details.
+
+---
+
+## Component Runtime Safety Rule
+
+If a component owns mutable static state, request-scoped state, runtime state, cached context, current user, current request, current session, active transaction, tracked entities, or facade state, it must expose or register a reset hook.
+
+The framework reset flow owns reset orchestration:
+
+```text
+framework/System/Flows/ResetApplicationState/
+```
+
+The component owns its own reset behavior:
+
+```text
+components/<Component>/System/Capabilities/StateReset/
+```
+
+or registers a reset callback through:
+
+```text
+components/<Component>/System/Configuration/<Component>Provider.php
+```
+
+Good:
+
+```text
+ResetApplicationState
+  -> StateResetRegistry
+  -> ResetCacheState
+  -> ResetSessionState
+  -> ResetPersistenceState
+```
+
+Bad:
+
+```text
+ResetApplicationState
+  -> directly clears Cache internal arrays
+  -> directly clears Session internal storage
+  -> directly clears EntityManager identity map
+```
+
+The framework calls component reset hooks.
+
+The component decides how its own state is reset.
+
+---
+
+## Per-Component Inventory Requirement
+
+Before moving or renaming files in any component, create an inventory.
+
+The inventory must document:
+
+```text
+1. current folder path
+2. current public API classes
+3. current facade classes
+4. current provider/configuration classes
+5. current flows or use-cases
+6. current reusable capabilities
+7. current foundation primitives and failures
+8. current tests
+9. current docs
+10. current namespace roots
+11. current dependencies
+12. current stateful/static behavior
+13. current request-scope risks
+14. current runtime-safety risks
+15. current duplicate owners
+16. proposed final owner
+17. proposed migration steps
+18. compatibility bridge needs
+```
+
+Recommended output:
+
+```text
+Code-Review-And-ToDo/components/<component-name>-inventory.md
+```
+
+No component migration is allowed without this inventory.
+
+---
+
+## Per-Component Migration Procedure
+
+For every component:
+
+```text
+1. inventory existing code
+2. identify public API
+3. identify real behavior flows
+4. identify reusable mechanisms
+5. identify configuration and provider logic
+6. identify local foundation primitives
+7. identify state/reset requirements
+8. write characterization tests for existing behavior
+9. create target System/ shape only where justified
+10. move one flow or ownership unit at a time
+11. update namespace and imports
+12. update or add tests
+13. update docs mirror under docs/components/<Component>/
+14. register provider through framework component registry
+15. register reset hook when needed
+16. run targeted tests
+17. run quality gates
+18. remove or deprecate old aliases
+```
+
+The component must remain runnable after every increment.
+
+Do not batch-move an entire component unless the behavior is already fully covered and the move is mechanically safe.
+
+---
+
+## Data Stack Placement Rule
+
+The data-related components live under `components/`, not under `framework/`.
+
+Target:
+
+```text
+components/
+  Data/
+  Database/
+  Persistence/
+```
+
+Meaning:
+
+```text
+Data
+  pure in-memory data structures and operations
+
+Database
+  raw database access, query execution, transactions, schema, migrations
+
+Persistence
+  entity manager, repositories, identity map, unit of work, hydration, mapping
+```
+
+Correct:
+
+```text
+components/Data/System/
+components/Database/System/
+components/Persistence/System/
+```
+
+Incorrect:
+
+```text
+framework/System/Capabilities/Data/
+framework/System/Capabilities/Database/
+framework/System/Capabilities/Persistence/
+```
+
+Migration placement:
+
+```text
+components/DataFoundation/
+  -> components/Data/
+```
+
+```text
+components/DataLayer/
+  -> components/Persistence/
+```
+
+```text
+components/Database/
+  -> components/Database/
+```
+
+Temporary compatibility bridges are allowed only during migration.
+
+They must have:
+
+```text
+1. deprecation note
+2. target replacement
+3. removal phase
+4. tests proving bridge behavior
+```
+
+They must not remain permanent duplicate owners.
+
+```
+
+Ovo zatvara rupu u Phase 6: jasno kaže da je `components/` primarni izvor postojećeg koda, a `framework/` je runtime koji ih povezuje, ne drugi dom za iste komponente.
+```

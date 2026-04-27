@@ -6,3 +6,16 @@ Foundation/Container/Container.txt
 
 # Dependencies
 vendor/
+
+# Generated/backup artifacts
+*.cache
+.phpunit.result.cache
+.php-cs-fixer.cache
+.ruff_cache/
+var/
+*backup*.txt
+
+# IDE
+.idea/
+.vscode/
+.gigaide/

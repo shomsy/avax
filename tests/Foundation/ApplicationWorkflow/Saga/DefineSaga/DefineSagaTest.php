@@ -10,7 +10,6 @@ use components\ApplicationWorkflow\Saga\DefineSaga\SagaCompensationDefinition;
 use components\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
 use components\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class DefineSagaTest extends TestCase
 {

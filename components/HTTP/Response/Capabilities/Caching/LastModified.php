@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Capabilities\Caching;
+namespace Avax\HTTP\Response\Capabilities\Caching;
 
 use DateTimeInterface;
 

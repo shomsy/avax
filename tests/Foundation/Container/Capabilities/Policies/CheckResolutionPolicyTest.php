@@ -10,7 +10,6 @@ use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionA
 use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionBlocked;
 use Avax\Container\DependencyInjection\Capability\Policies\StrictResolutionPolicy;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class CheckResolutionPolicyTest extends TestCase

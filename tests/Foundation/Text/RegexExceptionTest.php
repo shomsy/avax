@@ -7,7 +7,6 @@ namespace Avax\Text\Tests;
 use Avax\Tests\TestCase;
 use Avax\Text\Pattern;
 use Avax\Text\RegexException;
-use PHPUnit\Framework\TestCase;
 
 final class RegexExceptionTest extends TestCase
 {

@@ -6,10 +6,8 @@ namespace Avax\Tests\Foundation\HTTP\Context;
 
 use Avax\HTTP\Context\GlobalsProviderInterface;
 use Avax\HTTP\Context\HttpContext;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Tests\TestCase;
 use Nyholm\Psr7\ServerRequest;
-use PHPUnit\Framework\TestCase;
 
 final class HttpContextTest extends TestCase
 {

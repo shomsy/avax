@@ -14,8 +14,7 @@ use Avax\Database\Integrations\Console\MigrateRefreshCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Avax\Database\Integrations\Console\MigrateStatusCommand;
 use Avax\Database\Integrations\Console\SeedCommand;
-use Composer\Command\InstallCommand;
-use Illuminate\Database\Console\Migrations\InstallCommand;
+use Illuminate\Database\Console\Migrations\InstallCommand as LaravelInstallCommand;
 
 class CommandDefinitions
 {
@@ -146,7 +145,7 @@ class CommandDefinitions
             'install' => [
                 'alias'       => null,
                 'description' => 'Set up the application (e.g., create the migrations table).',
-                'class'       => InstallCommand::class,
+                'class'       => LaravelInstallCommand::class,
                 'arguments'   => [],
                 'options'     => [],
             ],

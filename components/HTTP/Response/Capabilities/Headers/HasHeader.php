@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Capabilities\Headers;
+namespace Avax\HTTP\Response\Capabilities\Headers;
 
 use SensitiveParameter;
 

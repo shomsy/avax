@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class WriteSessionValueTest extends TestCase
 {

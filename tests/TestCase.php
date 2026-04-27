@@ -39,3 +39,9 @@ abstract class TestCase extends BaseTestCase
         parent::tearDown();
     }
 }
+
+class_alias(
+    class     : TestCase::class,
+    alias     : 'components\\Tests\\TestCase',
+    autoload  : false
+);

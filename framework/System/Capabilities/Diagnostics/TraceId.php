@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Framework\System\Capabilities\Diagnostics;
+
+final class TraceId
+{
+    public function __construct(
+        public readonly string $value,
+    ) {
+    }
+
+    public static function generate(): self
+    {
+        return new self(value: bin2hex(random_bytes(8)));
+    }
+}

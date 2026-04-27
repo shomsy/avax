@@ -8,7 +8,7 @@ final class DetectDownloadMediaType
 {
     public function __invoke(string $path) : string
     {
-        $finfo = finfo_open(options: FILEINFO_MIME_TYPE);
+        $finfo = finfo_open(flags: FILEINFO_MIME_TYPE);
 
         if ($finfo === false) {
             return 'application/octet-stream';

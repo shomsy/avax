@@ -7,7 +7,6 @@ namespace components\Tests\Foundation\Filesystem\Files;
 use components\Filesystem\Disks\Local\LocalDisk;
 use components\Filesystem\Files\AppendToFile;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class AppendToFileTest extends TestCase
 {

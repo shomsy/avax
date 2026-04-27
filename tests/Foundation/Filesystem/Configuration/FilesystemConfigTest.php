@@ -6,7 +6,6 @@ namespace Avax\Tests\Foundation\Filesystem\Configuration;
 
 use Avax\Filesystem\Configuration\FilesystemConfig;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class FilesystemConfigTest extends TestCase
 {

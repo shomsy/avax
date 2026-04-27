@@ -7,7 +7,6 @@ namespace Avax\Tests\Foundation\HTTP\Session\PublicSurface;
 use Avax\HTTP\Session\Session;
 use Avax\HTTP\Session\SessionStore\ArraySessionStore;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class SessionFacadeBehaviorTest extends TestCase
 {

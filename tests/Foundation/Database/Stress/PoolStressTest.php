@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace components\Tests\Foundation\Database\Stress;
 
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Throwable;
 
 /**

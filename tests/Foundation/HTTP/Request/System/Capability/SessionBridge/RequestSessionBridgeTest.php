@@ -8,7 +8,6 @@ use components\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge
 use components\HTTP\Session\Shared\Contracts\SessionInterface;
 use components\Tests\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 final class RequestSessionBridgeTest extends TestCase
 {

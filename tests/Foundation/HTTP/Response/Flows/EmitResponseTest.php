@@ -6,15 +6,10 @@ namespace Avax\Tests\Foundation\HTTP\Response\Flows;
 
 use Avax\HTTP\Response\Flows\EmitResponse\EmitResponse;
 use Avax\HTTP\Response\Response;
-use Avax\Tests\TestCase;
-use PHPUnit\Framework\Attributes\PreserveGlobalState;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 
 final class EmitResponseTest extends TestCase
 {
-    #[RunInSeparateProcess]
-    #[PreserveGlobalState(enabled: false)]
     public function test_emit_response_writes_status_headers_and_body() : void
     {
         http_response_code(response_code: 200);

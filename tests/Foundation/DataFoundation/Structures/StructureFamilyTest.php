@@ -11,7 +11,6 @@ use Avax\DataFoundation\Structures\RingBuffer\RingBuffer;
 use Avax\DataFoundation\Structures\Stack\Stack;
 use Avax\DataFoundation\Structures\Tree\Tree;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class StructureFamilyTest extends TestCase
 {

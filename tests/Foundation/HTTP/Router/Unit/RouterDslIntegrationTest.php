@@ -8,7 +8,6 @@ use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Core functionality tests - ensures basic components work without full DI.

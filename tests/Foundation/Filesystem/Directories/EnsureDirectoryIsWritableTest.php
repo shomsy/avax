@@ -7,7 +7,6 @@ namespace Avax\Tests\Foundation\Filesystem\Directories;
 use Avax\Filesystem\Directories\EnsureDirectoryIsWritable;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class EnsureDirectoryIsWritableTest extends TestCase
 {

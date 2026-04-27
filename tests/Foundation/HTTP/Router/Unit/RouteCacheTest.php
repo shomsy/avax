@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests\Unit;
 
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheLoader;
@@ -16,7 +16,6 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
@@ -55,7 +54,7 @@ final class RouteCacheTest extends TestCase
 
             public function __construct(HttpRequestRouter $router) { $this->router = $router; }
 
-            public function resolve(Request $request) : ResponseInterface
+            public function resolve(ServerRequest $request) : ResponseInterface
             {
                 throw new RuntimeException(message: 'Not used');
             }

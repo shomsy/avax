@@ -29,6 +29,15 @@
         <testsuite name="Request">
             <directory>tests/Unit/Foundation/HTTP/Request</directory>
         </testsuite>
+        <testsuite name="FrameworkUnit">
+            <directory>tests/Unit/Framework</directory>
+        </testsuite>
+        <testsuite name="FrameworkFeature">
+            <directory>tests/Feature/Framework</directory>
+        </testsuite>
+        <testsuite name="FrameworkContract">
+            <directory>tests/Contract/Runtime</directory>
+        </testsuite>
     </testsuites>
     <logging/>
     <source/>

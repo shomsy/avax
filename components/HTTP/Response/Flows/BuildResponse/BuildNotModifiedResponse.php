@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Flows\BuildResponse;
+namespace Avax\HTTP\Response\Flows\BuildResponse;
 
-use components\HTTP\Response\Capabilities\Caching\BuildNotModifiedHeaders;
-use components\HTTP\Response\Capabilities\Caching\CacheControl;
-use components\HTTP\Response\Capabilities\Caching\Etag;
-use components\HTTP\Response\Capabilities\Caching\LastModified;
+use Avax\HTTP\Response\Capabilities\Caching\BuildNotModifiedHeaders;
+use Avax\HTTP\Response\Capabilities\Caching\CacheControl;
+use Avax\HTTP\Response\Capabilities\Caching\Etag;
+use Avax\HTTP\Response\Capabilities\Caching\LastModified;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

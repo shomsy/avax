@@ -10,9 +10,6 @@ use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\V
 use components\Container\DependencyInjection\Configuration\Settings;
 use components\Tests\TestCase;
 use components\View\BladeTemplateEngine;
-use Illuminate\View\ViewServiceProvider;
-use JakubOnderka\PhpParallelLint\Settings;
-use PHPUnit\Framework\TestCase;
 
 final class ViewServiceProviderTest extends TestCase
 {

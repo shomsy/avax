@@ -6,7 +6,6 @@ namespace components\Tests\Foundation\HTTP\Request\System\Capability\Input;
 
 use components\HTTP\Request\System\Capability\Input\JsonBodyParser;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 final class JsonBodyParserTest extends TestCase

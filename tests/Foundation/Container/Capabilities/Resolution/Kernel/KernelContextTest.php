@@ -7,7 +7,6 @@ namespace components\Container\Tests\Capability\Resolution\Kernel;
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use components\Tests\TestCase;
 use LogicException;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class KernelContextTest extends TestCase

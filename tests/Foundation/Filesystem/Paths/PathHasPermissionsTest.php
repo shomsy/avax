@@ -6,7 +6,6 @@ namespace Avax\Tests\Foundation\Filesystem\Paths;
 
 use Avax\Filesystem\Paths\PathHasPermissions;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class PathHasPermissionsTest extends TestCase
 {

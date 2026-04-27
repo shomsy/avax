@@ -6,7 +6,6 @@ namespace components\Tests\Foundation\Filesystem\Paths;
 
 use components\Filesystem\Paths\PathIsWritable;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class PathIsWritableTest extends TestCase
 {

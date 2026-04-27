@@ -8,7 +8,6 @@ use Avax\DataLayer\CommitDataChanges\CommitDataChanges;
 use Avax\DataLayer\CommitDataChanges\DataTransactionFailure;
 use Avax\DataLayer\CommitDataChanges\DataTransactionPolicy;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 final class CommitDataChangesTest extends TestCase

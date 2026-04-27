@@ -6,7 +6,6 @@ namespace components\Tests\Foundation\Filesystem\Paths;
 
 use components\Filesystem\Paths\ChangePathPermissions;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class ChangePathPermissionsTest extends TestCase

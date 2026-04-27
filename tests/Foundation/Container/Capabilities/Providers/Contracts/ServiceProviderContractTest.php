@@ -7,7 +7,6 @@ namespace components\Container\Tests\Capability\Providers\Contracts;
 use components\Container\ContainerInterface;
 use components\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
 final class ServiceProviderContractTest extends TestCase

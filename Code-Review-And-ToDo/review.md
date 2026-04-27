@@ -1,230 +1,133 @@
-# Architecture, Design, and Foundational Assessment: Components Project
+# GOVERNANCE INVENTORY
 
-## PHASE 0: Context and Scope Gate
+| file path | applies? | used in this iteration |
+| --- | --- | --- |
+| `AI Prompts/how-to-architecture.md` | Yes | Yes |
+| `AI Prompts/how-to-architecture-extension.md` | Yes | Yes |
+| `AI Prompts/how-to-clean-code.md` | Yes | Yes |
+| `AI Prompts/how-to-code-style.md` | Yes | Yes |
+| `AI Prompts/how-to-coding-standards.md` | Yes | Yes |
+| `AI Prompts/how-to-document.md` | Yes | Yes |
+| `AI Prompts/how-to-unit-test.md` | Yes | Yes |
+| `AI Prompts/how-to-code-review.md` | Yes | Yes |
 
-### 0.1 System Identity
+# GOVERNANCE COMPLIANCE REPORT
 
-- **System Type:** Framework / Platform (Core Foundation Layer)
-- **Primary Consumers:** Internal teams / Application layer / Infrastructure layer
-- **Runtime Context:** Mixed (HTTP Request / CLI / Worker)
-- **Lifecycle:** Stable Core (Modernized for PHP 8.5+)
+| governance source | rule | status | evidence | note |
+| --- | --- | --- | --- | --- |
+| `how-to-architecture.md` | framework lifecycle owner must be explicit | Pass | `framework/System/...` | new framework axis created |
+| `how-to-arhitecture-extension.md` | `PublicSurface/` must delegate | Pass | `PublicSurface/Avax.php`, `Http/HttpKernel.php`, `Console/ConsoleKernel.php` | no real behavior buried in public surface |
+| `how-to-clean-code.md` | small safe refactor steps | Pass | new slice added without deleting old component trees | no big-bang move |
+| `how-to-code-style.md` | named arguments and imports | Pass | new framework files | local style follows repository convention |
+| `how-to-coding-standards.md` | modern PHP, explicit failure, strict types | Pass | all new PHP files | runtime and failure types explicit |
+| `how-to-document.md` | docs mirror new source folders | Pass | `docs/framework/System/...` | framework/System ownership folders now have `how-this-works.md` coverage |
+| `how-to-unit-test.md` | behavior-first tests | Pass | `tests/Unit/Framework`, `tests/Feature/Framework`, `tests/Contract/Runtime`, `tests/Integration/Framework/HandleIncomingHttpIntegrationTest.php` | framework slice now proves callback HTTP and route-backed HTTP separately |
+| `how-to-code-review.md` | findings and risks must be explicit | Pass | this file, `risk-register.md` | blockers are recorded directly |
 
-### 0.2 Intended Use-Cases and Anti-Use-Cases
+# GOVERNANCE FINDINGS
 
-- **Intended Use-Cases:**
-    - Enterprise-grade dependency injection with semantic resolution.
-    - PSR-7/15 compliant HTTP stack.
-    - Capability-driven Authentication and Tenancy management.
-- **Anti-Use-Cases:**
-    - Direct usage of internal implementation details (e.g., reaching into `ServiceResolver` from the app layer).
-    - Global state mutations outside of the central context.
+## Finding 1: Legacy HTTP response component required namespace normalization before safe reuse
 
-### 0.3 Non-Goals
+- Severity: Resolved
+- Evidence: `components/HTTP/Response/...`
+- Symptom: framework test run originally hit a fatal redeclaration caused by namespace drift inside the response capability tree
+- Why it mattered: the new framework flow could not safely reuse that component until the namespace map was repaired
+- Action taken: normalized response component namespaces and imports, fixed response-specific tests, and switched `HandleIncomingHttp` back to `Avax\HTTP\Response\ResponseFactory`
 
-- Full observability tooling (monitoring, tracing vendors).
-- Frontend asset management (Vite/Webpack).
+## Finding 2: Existing bootstrap path is not a valid lifecycle owner
 
-### 0.4 Compatibility Contract
+- Severity: High
+- Evidence: `bootstrap/bootstrap.php`
+- Symptom: bootstrap imports an `AppFactory` that does not exist in the current tree
+- Why it matters: old bootstrap cannot be treated as a reliable production owner for the migration
+- Action taken: `framework/System` now boots independently through `PublicSurface/Avax.php`
 
-- **Public API Stability Requirement:** Strict (Core Foundation).
-- **Backwards Compatibility:** Required for the current major version.
-- **Performance Budget:** High performance, low-overhead DI resolution.
+## Finding 3: Namespace drift still exists across legacy components
 
----
+- Severity: High
+- Evidence: mixed `Avax\\...` and `components\\...` declarations under `components/`
+- Why it matters: reuse is possible only behind explicit adapters until those trees are normalized
+- Action taken: composer autoload now maps both prefixes and the new framework slice isolates legacy coupling
 
-## ARCHITECTURE NOTES
+## Finding 4: Full suite parser debt was reduced, but broader legacy namespace drift remains outside the framework slice
 
-### 1. System Model Reconstruction
+- Severity: High
+- Evidence: `tests/Foundation/...`, `tests/Integration/...`, `components/compat.php`
+- Symptom: the repository used to fail in parser/type-compatibility phase before meaningful tests could start
+- Why it matters: a migration cannot be called safe if basic verification dies before behavior is exercised
+- Action taken: normalized duplicate imports across legacy tests, added explicit compatibility aliases for the smallest safe HTTP/request/router bridge, and corrected facade namespaces
+- Remaining gap: full `phpunit` now advances past parser noise but still hits wider legacy namespace drift in non-migrated component trees such as DataHandling
 
-**Actual Execution Flow (As-Built):**
-`RequestAssembler -> ServerRequest -> AppKernel -> MiddlewarePipeline -> HttpKernel -> ResolveRouteFromHttpRequest -> RouterRuntime -> ControllerDispatcher -> Controller`
+## Finding 5: Worker-safe runtime lifecycle was missing from the original framework slice
 
-```mermaid
-flowchart TD
-    Request[Incoming Request] --> Assembler[Request Assembler]
-    Assembler --> SRequest[ServerRequest DTO]
-    SRequest --> AKernel[AppKernel]
-    AKernel --> Pipeline[Middleware Pipeline]
-    Pipeline --> HKernel[HttpKernel]
-    HKernel --> Resolver[ResolveRouteFromHttpRequest]
-    Resolver --> Router[Router Runtime]
-    Router --> Dispatcher[Controller Dispatcher]
-    Dispatcher --> Target[Target Controller]
-```
+- Severity: Resolved
+- Evidence: `framework/System/Capabilities/Runtime/Worker/*`, `framework/System/Flows/HandleWorkerRequest/*`, `framework/System/PublicSurface/Runtime/*`
+- Symptom: the first framework slice could boot and serve one HTTP request, but had no canonical worker boundary for repeated requests or shutdown bookkeeping
+- Why it mattered: the migration plan explicitly requires request-scope reset safety for long-lived runtimes before adapter isolation can be trusted
+- Action taken: added worker runtime contracts, generic worker loop, repeated-request flow, shutdown flow, public runtime kernel, first-party adapter shells, runtime leak checker, and contract tests proving no request-scope leakage across two worker requests
 
-**"This is how the system actually works."**
-The system operates as a series of nested pipelines. The outermost layer assembles a type-safe `ServerRequest` (DTO),
-which is then passed through an immutable `Psr15MiddlewarePipeline`. The final handler in this pipeline is the
-`HttpKernel`, which delegates to a specialized router handler. Resolution and dispatching are handled via a DI-aware
-dispatcher, ensuring that all controller dependencies are resolved through the `ResolutionPipeline`.
+## Finding 6: Framework HTTP no longer stops at a raw callback boundary
 
-### 2. Central Abstraction Identification
+- Severity: Resolved
+- Evidence: `framework/System/Flows/HandleIncomingHttp/ReadIncomingHttpRequest.php`, `MatchHttpRoute.php`, `RunHttpRoute.php`, `ConfiguredRoutesHttpHandler.php`, `tests/Integration/Framework/HandleIncomingHttpIntegrationTest.php`
+- Symptom: the earlier framework HTTP path only executed one framework-level callback and never proved that the existing request and router capabilities could run behind `RuntimeRequest`
+- Why it mattered: phase 5 explicitly requires request and router reuse behind canonical framework owners, otherwise the new public HTTP surface would stay structurally shallow and migration would stall
+- Action taken: added explicit bridge owners that translate `RuntimeRequest` into the existing request shape, register routes through the existing router builders, match routes through the existing matcher, dispatch actions through the existing controller dispatcher, and load the real `Presentation/HTTP/routes/web.routes.php` through a temporary facade container boundary
 
-- **Primary Axis:** **Pipeline**. (The core logic across HTTP, Container, and Auth is organized as a sequence of
-  discrete, immutable steps/middleware).
-- **Secondary Axis:** **Capability**. (Auth and Container delegate domain logic to specialized capability owners).
+## Finding 7: Static analysis still sees namespace debt inside the reused HTTP/request/router bridge
 
-### 3. Central Abstraction Stress Test
+- Severity: High
+- Evidence: targeted `phpstan analyse framework/System/Flows/HandleIncomingHttp ...`
+- Symptom: runtime behavior and integration tests now pass, but PHPStan still reports unknown-class and dual-namespace issues for reused legacy request/router dependencies
+- Why it matters: the bridge is production-executable now, but the legacy `Avax\\` / `components\\` split still weakens static trust and keeps the migration incomplete
+- Action taken: kept the runtime bridge explicit and narrow in `components/compat.php` instead of widening alias sprawl
+- Remaining gap: the affected request/router subtrees need canonical namespace normalization so static analysis can evaluate the bridge honestly without relying on runtime aliases
 
-- Does every feature flow through it? **Yes**.
-- Does it accumulate responsibilities? **Yes** (Specifically in `ServiceResolver`).
-- Is it harder to change than surrounding components? **Yes**.
+# GOVERNANCE EXCEPTIONS
 
-**Assessment: ⚠️ Weak**
-The Pipeline pattern is strong, but the `ServiceResolver` (the engine behind the ResolutionPipeline) has become a
-bottleneck of complexity.
+1. The full `AI Prompts` corpus was not copied verbatim under `docs/governance/` in this iteration.
+   - Reason: the authoritative prompt files already exist and copying them wholesale would create duplicate sources during a structural migration.
+   - Control: `docs/governance/README.md` and mirror pages explicitly point to the authoritative files.
 
-### 4. Responsibility and Boundary Mapping
+2. Targeted framework PHPUnit runs still surface PHPUnit 10.5 / PHP 8.5 runner deprecation noise.
+   - Reason: the current vendor stack emits internal deprecation notices unrelated to response behavior.
+   - Control: response behavior is still covered; the remaining noise is verification-environment debt, not a framework flow blocker.
 
-| Component         | Orchestrates | Executes         | Holds State        | Notes                                      |
-|-------------------|--------------|------------------|--------------------|--------------------------------------------|
-| `HttpKernel`      | Middleware   | -                | -                  | Thin orchestrator.                         |
-| `DefaultAuth`     | Capabilities | -                | -                  | Modern capability-based facade.            |
-| `ServiceResolver` | Resolution   | Policy/Telemetry | Compilation/Scopes | **Red Flag:** Overloaded responsibilities. |
-| `Container`       | -            | -                | Bindings/Services  | Pure state holder.                         |
+3. `components/compat.php` currently aliases only the smallest safe subset of legacy HTTP/router classes.
+   - Reason: broader eager aliasing reaches inconsistent legacy trees and can break autoload itself.
+   - Control: compatibility bridges stay explicit and narrow until the affected component slices are migrated properly.
 
-**Responsibility boundaries are: stressed.**
+4. Targeted PHPStan for the new request/router bridge still fails on reused legacy dual-namespace owners.
+   - Reason: runtime aliases make the bridge executable, but static discovery still sees split ownership across `Avax\\...` and `components\\...` classes.
+   - Control: the bridge is test-covered and kept narrow; the follow-up work is canonical namespace normalization, not wider alias masking.
 
----
+# GOVERNANCE COVERAGE SUMMARY
 
-## GOVERNANCE INVENTORY
+- phases covered in this iteration: `0` through `10`, with `11` started through legacy owner removal
+- new framework code added: lifecycle owner, runtime abstractions, request scope, state reset, HTTP flow, request/router bridge owners, console flow, worker runtime loop, shutdown flow, runtime public surface, runtime adapter shells, docs validators, runtime leak checker
+- documentation status: `framework/System` mirror is complete for current ownership folders and validator scripts pass
+- legacy verification cleanup: duplicate import/parser blockers removed from the test tree so full-suite failures now surface real namespace/runtime debt
+- targeted HTTP bridge result: pass for `HandleIncomingHttpIntegrationTest`, `HttpApplicationFeatureTest`, and `HandleIncomingHttpTest`, with the existing PHPUnit coverage warning and PHPUnit-internal PHP 8.5 deprecation noise
+- highest unresolved severity: High
 
-| file path                               | document title      | scope         | applies? |
-|-----------------------------------------|---------------------|---------------|----------|
-| `AI Prompts/how-to-architecture.md`     | System Design       | architecture  | Yes      |
-| `AI Prompts/how-to-clean-code.md`       | Coding Principles   | clean code    | Yes      |
-| `AI Prompts/how-to-code-style.md`       | Formatting/Usage    | code style    | Yes      |
-| `AI Prompts/how-to-coding-standards.md` | Modern PHP/Security | standards     | Yes      |
-| `AI Prompts/how-to-document.md`         | Documentation       | documentation | Yes      |
-| `AI Prompts/how-to-unit-test.md`        | Testing             | testing       | Yes      |
-| `AI Prompts/how-to-code-review.md`      | Review Process      | review        | Yes      |
+# DECISIONS-LOG
 
----
+1. `framework/System` was introduced without moving existing component trees.
+2. existing code is reused where it is structurally safe today:
+   - command catalog metadata from `components/Commands/CommandDefinitions.php`
+   - `components/HTTP/Response` through `Avax\HTTP\Response\ResponseFactory`
+   - narrow compatibility aliases in `components/compat.php` for request/router/response types that still straddle old and new namespace axes
+   - route registration, route definitions, route matching, and controller dispatch through explicit framework bridge owners
+3. composer autoload was corrected before any framework tests could run.
+4. full `phpunit` is no longer blocked by broad parser noise; the next blockers are deeper unmigrated component contracts.
+5. `components/Avax.php` was removed because `framework/System/PublicSurface/Avax.php` is now the canonical lifecycle owner.
+6. repo-level quality tooling now targets the live migration slice instead of the removed legacy `Foundation/` root.
 
-## GOVERNANCE COMPLIANCE REPORT
+# NEXT STEPS
 
-| Governance Document          | Rule / Requirement  | Applies? | Status  | Evidence                         | Missing / Weak Area   | Required Action | Severity |
-|------------------------------|---------------------|----------|---------|----------------------------------|-----------------------|-----------------|----------|
-| `how-to-architecture.md`     | Capabilities plural | Yes      | Pass    | `Sessions`, `Locks`              | -                     | -               | Low      |
-| `how-to-document.md`         | Ship Check          | Yes      | Fail    | `HTTP/how-this-works.md`         | No mermaid/debug info | add             | High     |
-| `how-to-clean-code.md`       | Simplicity/Focus    | Yes      | Partial | `ServiceResolver.php`            | Monolithic God Class  | split           | High     |
-| `how-to-code-style.md`       | PHP 8.4+ Features   | Yes      | Pass    | `ServerRequest.php`              | -                     | -               | Low      |
-| `how-to-coding-standards.md` | No Superglobals     | Yes      | Pass    | `scripts/check-superglobals.php` | -                     | -               | Low      |
-
----
-
-## GOVERNANCE FINDINGS
-
-### Governance Finding: Documentation Quality Gate Failure
-
-- **Governance Source:** `how-to-document.md` -> `Ship Check`
-- **Required Rule:** Documentation MUST contain mermaid diagrams, real participant names, and "where to debug first"
-  section.
-- **Observed Gap:** Core components lack the required `how-this-works.md` structure or have placeholder descriptions.
-- **Where It Fails:** `Foundation/HTTP/how-this-works.md`, `Foundation/Auth/` (missing file).
-- **Why It Matters:** Fails the mandatory ship gate; documentation does not enable a reader to retell the flow without
-  opening code.
-- **Required Action:** add
-- **Suggested Fix:** Generate `how-this-works.md` for all core components using the mandatory template.
-- **Severity:** High
-- **Evidence:** `Foundation/HTTP/how-this-works.md:L1-L21`
-
-### Governance Finding: Monolithic Core (Container)
-
-- **Governance Source:** `how-to-architecture.md` -> `Locality`
-- **Required Rule:** Maintain small, focused units of responsibility.
-- **Observed Gap:** `ServiceResolver.php` is ~5000 lines and handles 5+ distinct concerns.
-- **Where It Fails:** `Foundation/Container/DI/Capabilities/Resolution/ServiceResolver.php`
-- **Why It Matters:** Systemic fragility; any change to telemetry or policy risks breaking core resolution logic.
-- **Required Action:** split
-- **Suggested Fix:** Extract `PolicyEngine`, `TelemetryCollector`, and `DebugReporter`.
-- **Severity:** High
-- **Evidence:** File line count and method distribution.
-
----
-
-## FINDINGS
-
-### Finding: God-Class Anti-Pattern in Resolution Engine
-
-- **Symptom:** `ServiceResolver` contains 4976 lines of code.
-- **Root Cause:** All logic related to "how a service is resolved" (including auxiliary concerns like metrics and
-  logging) was dumped into this class.
-- **Impact:** High technical debt; impossible to unit test resolution logic in isolation from telemetry.
-- **Evidence:** `Foundation/Container/DI/Capabilities/Resolution/ServiceResolver.php`
-- **Risk Level:** Rewrite Risk
-
-### Finding: Missing Extension Safety Invariants
-
-- **Symptom:** Invariants regarding "extension safety" are documented but not strictly enforced in the pipeline steps.
-- **Root Cause:** Implicit trust in step ordering.
-- **Impact:** Future extensions could bypass `GuardPolicyStep` if not properly sequenced.
-- **Evidence:** `ResolutionPipeline` (implied logic).
-- **Risk Level:** Medium
-
----
-
-## REWRITE HEURISTICS
-
-| Heuristic                                           | Weight | Checked |
-|-----------------------------------------------------|--------|---------|
-| Central abstraction is wrong                        | 2      | ☐       |
-| Pipeline relies on implicit ordering                | 2      | ☑       |
-| Configuration complexity mirrors design complexity  | 1      | ☐       |
-| Usage requires explanation to avoid misuse          | 1      | ☐       |
-| Performance depends on mitigation, not structure    | 1      | ☐       |
-| New features require touching multiple core classes | 2      | ☑       |
-
-**Rewrite Score: 4**
-**Interpretation:** Redesign likely. The monolithic nature of the Container's `ServiceResolver` and the implicit
-ordering of some pipeline steps suggest that a targeted redesign of the resolution engine is necessary to maintain
-long-term health.
-
----
-
-## DECISION: ✅ Keep and Improve (with Targeted Redesign)
-
-**Justification:**
-The system is fundamentally sound and leverages modern PHP 8.5+ features (Property Hooks, Clone with properties) to
-achieve high performance and immutability. The "Pipeline" and "Capability" architectures are correctly implemented
-across HTTP and Auth components. However, the `ServiceResolver` in the Container component has grown into a monolithic
-God Class that violates `how-to-architecture.md` governance. We choose to keep the system but mandate a targeted
-redesign of the `ServiceResolver` to split it into focused capability owners.
-
----
-
-## NEXT STEPS
-
-1. **Refactor ServiceResolver**: Split the ~5000 line class into `ResolutionEngine`, `ResolutionPolicy`, and
-   `ResolutionTelemetry`.
-2. **Harden Pipeline Invariants**: Implement explicit pre/post condition checks for every pipeline step to ensure "
-   Guard" steps cannot be bypassed.
-3. **Upgrade Documentation**: Complete the `how-this-works.md` inventory for all components, adding mandatory Mermaid
-   diagrams and "Where to debug first" sections.
-
----
-
-## GOVERNANCE COVERAGE SUMMARY
-
-Governance documents found: 7
-Governance documents applied: 7
-Rules checked: ~45 (Architecture, Clean Code, Style, Standards, Docs, Tests)
-Passed: 38
-Partial: 5
-Failed: 2
-Blocked: 0
-Highest severity: **High (Blocker)**
-
----
-
-## DECISIONS-LOG
-
-### Decision: Keep Architecture, Redesign Resolver
-
-- **Date:** 2026-04-26 21:15
-- **Context:** `ServiceResolver` reached 5k lines, creating a maintenance bottleneck.
-- **Decision:** Retain the Pipeline architecture but decompose the `ServiceResolver` God Class.
-- **Alternatives:** Full rewrite (rejected as the overall pipeline logic is sound) / Leave as is (rejected as it
-  violates architecture governance).
-- **Consequences:** Will require significant unit test refactoring in the Container component.
-- **Evidence:** Finding: Monolithic ServiceResolver.
+1. stabilize a reusable container/application boot path from the existing container code
+2. migrate `Middleware` and container-backed controller resolution into the canonical framework HTTP flow so the new bridge stops deferring those concerns
+3. migrate the real console execution component so framework CLI stops at metadata reuse and gains production command execution wiring
+4. resolve the next full-suite blocker chain in non-migrated DataHandling and HTTP legacy trees
+5. normalize the reused request/router namespaces so PHPStan can verify the bridge without runtime alias crutches
+6. replace or upgrade the current Rector toolchain, which still fails under the installed PHP 8.5 runtime before framework-specific rules even run

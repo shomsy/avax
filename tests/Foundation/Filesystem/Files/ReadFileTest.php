@@ -8,7 +8,6 @@ use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\FileNotFound;
 use Avax\Filesystem\Files\ReadFile;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class ReadFileTest extends TestCase
 {

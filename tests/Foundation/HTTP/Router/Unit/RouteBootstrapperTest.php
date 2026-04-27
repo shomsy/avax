@@ -7,7 +7,6 @@ namespace components\HTTP\Router\Tests\Unit;
 use components\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**

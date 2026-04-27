@@ -4,151 +4,123 @@ declare(strict_types=1);
 
 namespace Avax\Components\Data\System\Capabilities\Collections;
 
+use ArrayAccess;
+use Avax\Components\Data\System\Capabilities\Collections\Composites\Pair\Pair;
 use Countable;
 use IteratorAggregate;
 
 /**
- * Contract for a typed, immutable collection of items.
- *
- * Collections are the primary data structure for working with lists of values
- * in Avax. Every mutation returns a new Collection instance.
- *
- * @template TKey of array-key
- * @template TValue
- *
- * @extends IteratorAggregate<TKey, TValue>
+ * Collection contract - defines the public surface for fluent collection API.
  */
-interface CollectionInterface extends Countable, IteratorAggregate
+interface CollectionInterface extends ArrayAccess, IteratorAggregate, Countable
 {
-    /**
-     * @return array<TKey, TValue>
-     */
-    public function all(): array;
+    public function __construct(array $items = []);
 
-    public function isEmpty(): bool;
+    public function all() : array;
 
-    public function isNotEmpty(): bool;
+    public function count() : int;
 
-    public function has(int|string $key): bool;
+    public function isEmpty() : bool;
 
-    /**
-     * @return TValue|null
-     */
-    public function get(int|string $key, mixed $default = null): mixed;
+    public function isNotEmpty() : bool;
 
-    /**
-     * @return TValue|null
-     */
-    public function first(): mixed;
+    public function first(mixed $default = null) : mixed;
 
-    /**
-     * @return TValue|null
-     */
-    public function last(): mixed;
+    public function last(mixed $default = null) : mixed;
 
-    /**
-     * @return array<TKey>
-     */
-    public function keys(): array;
+    public function get(string $key, mixed $default = null) : mixed;
 
-    /**
-     * @return array<int, TValue>
-     */
-    public function values(): array;
+    public function has(string $key) : bool;
 
-    /**
-     * @return static
-     */
+    public function set(string $key, mixed $value) : static;
+
+    public function forget(string $key) : static;
+
+    public function add(mixed $value) : static;
+
+    public function pull(string $key) : Pair;
+
     public function map(callable $callback) : static;
 
-    /**
-     * @return static
-     */
     public function filter(callable $callback) : static;
 
     public function reduce(callable $callback, mixed $initial = null) : mixed;
 
-    /**
-     * @return static
-     */
-    public function each(callable $callback) : static;
+    public function sum(string|callable $key) : int|float;
 
-    /**
-     * @return static
-     */
-    public function sortBy(callable $callback) : static;
+    public function average(string|callable $key) : float;
 
-    /**
-     * @return static
-     */
-    public function reverse() : static;
+    public function min(string|callable $key) : mixed;
 
-    /**
-     * @return static
-     */
-    public function unique() : static;
+    public function max(string|callable $key) : mixed;
 
-    /**
-     * @return static
-     */
-    public function slice(int $offset, int|null $length = null) : static;
+    public function chunk(int $size) : static;
 
-    /**
-     * @return static
-     */
-    public function take(int $count) : static;
+    public function groupBy(string|callable $key) : array;
 
-    /**
-     * @return static
-     */
-    public function skip(int $count) : static;
+    public function keyBy(string|callable $key) : static;
 
-    /**
-     * @return array<mixed, static>
-     */
-    public function groupBy(callable $callback) : array;
-
-    /**
-     * @return array<mixed, TValue>
-     */
-    public function keyBy(callable $callback) : array;
-
-    /**
-     * @return array<int, mixed>
-     */
-    public function pluck(string $key) : array;
-
-    /**
-     * @return static
-     */
-    public function flatten(int $depth = INF) : static;
-
-    /**
-     * @return static
-     */
-    public function merge(array $items) : static;
+    public function partition(callable $callback) : array;
 
     public function contains(mixed $value) : bool;
 
-    /**
-     * @return TValue|null
-     */
-    public function firstWhere(string $key, mixed $value) : mixed;
+    public function search(mixed $value) : int|false;
 
-    public function sum(callable|string|null $callback = null) : int|float;
+    public function where(string $key, mixed $value) : static;
 
-    public function avg(callable|string|null $callback = null) : int|float|null;
+    public function whereIn(string $key, array $values) : static;
 
-    public function min(callable|string|null $callback = null) : mixed;
+    public function whereBetween(string $key, array $range) : static;
 
-    public function max(callable|string|null $callback = null) : mixed;
+    public function whereNull(string $key) : static;
 
-    /**
-     * @return static
-     */
-    public function chunk(int $size) : static;
+    public function whereNotNull(string $key) : static;
+
+    public function sort(callable|null $callback = null) : static;
+
+    public function sortBy(string|callable $key, bool $descending = false) : static;
+
+    public function reverse() : static;
+
+    public function shuffle() : static;
+
+    public function unique() : static;
+
+    public function toArray() : array;
 
     public function toJson(int $flags = 0) : string;
 
-    public function implode(string $glue, string|null $key = null) : string;
+    public function toXml(string $rootElement = 'root') : string;
+
+    public function only(array $keys) : static;
+
+    public function except(array $keys) : static;
+
+    public function pluck(string|callable $key) : array;
+
+    public function keys() : array;
+
+    public function values() : static;
+
+    public function flip() : static;
+
+    public function merge(array $items) : static;
+
+    public function union(array $items) : static;
+
+    public function diff(array $items) : static;
+
+    public function intersect(array $items) : static;
+
+    public function tap(callable $callback) : static;
+
+    public function when(bool $condition, callable $callback) : static;
+
+    public function unless(bool $condition, callable $callback) : static;
+
+    public function isLocked() : bool;
+
+    public function lock() : static;
+
+    public function toImmutable() : static;
 }

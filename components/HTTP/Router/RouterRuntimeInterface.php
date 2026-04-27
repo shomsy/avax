@@ -4,37 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Http\Message\ResponseInterface;
-use ReflectionException;
+use Avax\Components\Router\System\PublicSurface\RouterRuntimeInterface as NewRouterRuntimeInterface;
 
 /**
- * Represents the runtime responsibilities of the router: resolving requests
- * and exposing runtime metadata used by helpers and tools.
+ * @deprecated Use Avax\Components\Router\System\PublicSurface\RouterRuntimeInterface instead.
  */
-interface RouterRuntimeInterface
+interface RouterRuntimeInterface extends NewRouterRuntimeInterface
 {
-    /**
-     * Resolves the request and returns a PSR-7 response.
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ReflectionException
-     */
-    public function resolve(ServerRequest $request) : ResponseInterface;
-
-    /**
-     * Retrieves a route definition by name.
-     */
-    public function getRouteByName(string $name) : RouteDefinition;
-
-    /**
-     * Returns all registered routes grouped by HTTP method.
-     *
-     * @return array<string, RouteDefinition[]>
-     */
-    public function allRoutes() : array;
 }

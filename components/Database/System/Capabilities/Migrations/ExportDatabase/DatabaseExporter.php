@@ -61,7 +61,7 @@ final readonly class DatabaseExporter
                         separator: ', ',
                         array    : array_map(callback: fn (string $column) => $this->quoteIdentifier(name: $column), array: array_keys(array: $row))
                     );
-                    $vals    = array_map(callback: static fn ($v) => is_null(value: $v) ? 'NULL' : "'" . addslashes(string: (string) $v) . "'", array: array_values(array: $row));
+                    $vals = array_map(callback: fn ($v) => is_null(value: $v) ? 'NULL' : $this->pdo->quote(string: (string) $v), array: array_values(array: $row));
                     $valsStr = implode(separator: ', ', array: $vals);
                     // noinspection SqlNoDataSourceInspection
                     $output .= "INSERT INTO {$quotedTableName} ({$cols}) VALUES ({$valsStr});\n";

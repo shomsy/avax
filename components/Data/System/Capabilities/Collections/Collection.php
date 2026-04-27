@@ -5,382 +5,455 @@ declare(strict_types=1);
 namespace Avax\Components\Data\System\Capabilities\Collections;
 
 use ArrayIterator;
-use Countable;
-use Generator;
-use IteratorAggregate;
+use Avax\Components\Data\System\Capabilities\Collections\Composites\Pair\Pair;
+use Avax\Components\Data\System\Capabilities\Collections\Create\MakeCollection;
+use Avax\Components\Data\System\Capabilities\Collections\Create\WrapValue;
+use Avax\Components\Data\System\Capabilities\Collections\Exceptions\MutationException;
+use Avax\Components\Data\System\Capabilities\Collections\Internal\Mutability\MutationGuard;
+use Traversable;
 
-final class Collection implements CollectionInterface, IteratorAggregate, Countable
+/**
+ * Collection - fluent state owner for chainable array operations.
+ * Recovered from legacy DataFoundation.
+ */
+final readonly class Collection implements CollectionInterface
 {
-    private array $items;
+    private MutationGuard $guard;
 
-    public function __construct(array $items = [])
+    public function __construct(
+        private array $items = [],
+    )
     {
-        $this->items = $items;
+        $this->guard = new MutationGuard();
     }
 
-    public static function from(array $items): self
+    public static function make(iterable $items = []) : static
     {
-        return new self(items: $items);
+        return new self(items: new MakeCollection()->from(items: $items));
     }
 
-    public function all(): array
+    public static function wrap(mixed $value) : static
+    {
+        return match (true) {
+            $value instanceof static => $value,
+            default                  => new self(items: new WrapValue()->intoArray(value: $value)),
+        };
+    }
+
+    public function all() : array
     {
         return $this->items;
     }
 
-    public function isEmpty(): bool
+    public function count() : int
+    {
+        return count(value: $this->items);
+    }
+
+    public function isEmpty() : bool
     {
         return $this->items === [];
     }
 
-    public function isNotEmpty(): bool
+    public function isNotEmpty() : bool
     {
-        return ! $this->isEmpty();
+        return $this->items !== [];
     }
 
-    public function has(int|string $key): bool
+    public function first(mixed $default = null) : mixed
     {
-        return array_key_exists($key, $this->items);
-    }
-
-    public function get(int|string $key, mixed $default = null): mixed
-    {
-        return $this->items[$key] ?? $default;
-    }
-
-    public function first(): mixed
-    {
-        return reset($this->items) ?: null;
-    }
-
-    public function last(): mixed
-    {
-        return end($this->items) ?: null;
-    }
-
-    public function keys(): array
-    {
-        return array_keys($this->items);
-    }
-
-    public function values(): array
-    {
-        return array_values($this->items);
-    }
-
-    public function count(): int
-    {
-        return count($this->items);
-    }
-
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->items);
-    }
-
-    public function map(callable $callback): self
-    {
-        return new self(items: array_map($callback, $this->items, array_keys($this->items)));
-    }
-
-    public function filter(callable $callback): self
-    {
-        return new self(items: array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
-    }
-
-    public function reduce(callable $callback, mixed $initial = null): mixed
-    {
-        return array_reduce($this->items, $callback, $initial);
-    }
-
-    public function flatMap(callable $callback) : self
-    {
-        $result = [];
-        foreach ($this->items as $key => $item) {
-            $mapped = $callback($item, $key);
-            if (is_array($mapped)) {
-                $result = array_merge($result, $mapped);
-            } else {
-                $result[] = $mapped;
-            }
+        if ($this->items === []) {
+            return $default;
         }
 
-        return new self(items: $result);
+        return reset(array: $this->items);
     }
 
-    public function flatten() : self
+    public function last(mixed $default = null) : mixed
     {
-        $result = [];
-        foreach ($this->items as $item) {
-            if (is_array($item)) {
-                $result = array_merge($result, iterator_to_array($this->flattenArray($item)));
-            } else {
-                $result[] = $item;
-            }
+        if ($this->items === []) {
+            return $default;
         }
 
-        return new self(items: $result);
+        return end(array: $this->items);
     }
 
-    private function flattenArray(array $array) : Generator
+    public function get(string $key, mixed $default = null) : mixed
     {
-        foreach ($array as $value) {
-            if (is_array($value)) {
-                yield from $this->flattenArray($value);
-            } else {
-                yield $value;
-            }
-        }
-    }
-
-    public function groupBy(callable|string $callback) : array
-    {
-        $result = [];
-        foreach ($this->items as $key => $item) {
-            $groupKey            = is_callable($callback) ? $callback($item, $key) : ($item[$callback] ?? $key);
-            $result[$groupKey][] = $item;
+        if (array_key_exists(key: $key, array: $this->items)) {
+            return $this->items[$key];
         }
 
-        return $result;
-    }
-
-    public function keyBy(callable|string $callback) : self
-    {
-        $result = [];
-        foreach ($this->items as $key => $item) {
-            $newKey          = is_callable($callback) ? $callback($item, $key) : ($item[$callback] ?? $key);
-            $result[$newKey] = $item;
+        if (str_contains(haystack: $key, needle: '.')) {
+            return new Read\ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
         }
 
-        return new self(items: $result);
+        return $default;
     }
 
-    public function sort(callable|null $callback = null) : self
+    public function has(string $key) : bool
     {
+        return array_key_exists(key: $key, array: $this->items)
+            || new Read\HasValue(items: $this->items)->check(key: $key);
+    }
+
+    public function set(string $key, mixed $value) : static
+    {
+        $this->guard->assertMutable();
+
         $items = $this->items;
-        if ($callback !== null) {
-            uksort($items, $callback);
+
+        if (str_contains(haystack: $key, needle: '.')) {
+            $items = new Write\PutValueByPath(items: $items)->put(path: $key, value: $value);
         } else {
-            sort($items);
+            $items[$key] = $value;
         }
 
         return new self(items: $items);
     }
 
-    public function sortBy(string $key, bool $descending = false) : self
+    public function forget(string $key) : static
     {
-        $items = $this->items;
-        usort($items, function ($a, $b) use ($key, $descending) {
-            $aVal = is_array($a) ? ($a[$key] ?? '') : ($a->{$key} ?? '');
-            $bVal = is_array($b) ? ($b[$key] ?? '') : ($b->{$key} ?? '');
+        $this->guard->assertMutable();
 
-            return $descending ? $bVal <=> $aVal : $aVal <=> $bVal;
-        });
-
-        return new self(items: $items);
-    }
-
-    public function reverse() : self
-    {
-        return new self(items: array_reverse($this->items, preserve_keys: true));
-    }
-
-    public function shuffle() : self
-    {
-        $items = $this->items;
-        shuffle($items);
-
-        return new self(items: $items);
-    }
-
-    public function chunk(int $size) : array
-    {
-        return array_map(
-            fn (array $chunk) => new self(items: $chunk),
-            array_chunk($this->items, $size, preserve_keys: true)
+        return new self(
+            items: new Write\ForgetValue(items: $this->items)->forget(key: $key)
         );
     }
 
-    public function slice(int $offset, int|null $length = null) : self
+    public function add(mixed $value) : static
     {
-        return new self(items: array_slice($this->items, $offset, $length, preserve_keys: true));
+        $this->guard->assertMutable();
+
+        return new self(
+            items: new Write\AppendValue(items: $this->items)->append(value: $value)
+        );
     }
 
-    public function take(int $limit) : self
+    public function pull(string $key) : Pair
     {
-        return new self(items: array_slice($this->items, 0, $limit, preserve_keys: true));
+        $this->guard->assertMutable();
+
+        [$value, $items] = new Write\PullValue(items: $this->items)->pull(key: $key);
+
+        return new Pair(
+            first : $value,
+            second: $items === $this->items ? $this : new self(items: $items),
+        );
     }
 
-    public function skip(int $offset) : self
+    public function map(callable $callback) : static
     {
-        return new self(items: array_slice($this->items, $offset, null, preserve_keys: true));
+        return new self(
+            items: new Transform\MapValues(items: $this->items)->map(callback: $callback)
+        );
     }
 
-    public function unique() : self
+    public function filter(callable $callback) : static
     {
-        return new self(items: array_unique($this->items, SORT_REGULAR));
+        return new self(
+            items: new Transform\FilterValues(items: $this->items)->filter(callback: $callback)
+        );
     }
 
-    public function random(int|null $count = null) : self|array
+    public function reduce(callable $callback, mixed $initial = null) : mixed
     {
-        $items = $this->items;
-        if ($count === null) {
-            return new self(items: [array_rand($items) => $items[array_rand($items)]]);
+        return new Transform\ReduceValues(items: $this->items)->reduce(callback: $callback, initial: $initial);
+    }
+
+    public function sum(string|callable $key) : int|float
+    {
+        return new Aggregate\SumValues(items: $this->items)->sum(key: $key);
+    }
+
+    public function average(string|callable $key) : float
+    {
+        return new Aggregate\AverageValues(items: $this->items)->average(key: $key);
+    }
+
+    public function min(string|callable $key) : mixed
+    {
+        return new Aggregate\FindMinValue(items: $this->items)->min(key: $key);
+    }
+
+    public function max(string|callable $key) : mixed
+    {
+        return new Aggregate\FindMaxValue(items: $this->items)->max(key: $key);
+    }
+
+    public function chunk(int $size) : static
+    {
+        return new self(
+            items: new Transform\ChunkValues(items: $this->items)->chunk(size: $size)
+        );
+    }
+
+    public function groupBy(string|callable $key) : array
+    {
+        return new Transform\GroupValues(items: $this->items)->group(key: $key);
+    }
+
+    public function keyBy(string|callable $key) : static
+    {
+        $keyed = [];
+
+        foreach ($this->items as $item) {
+            $itemKey         = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
+            $keyed[$itemKey] = $item;
         }
 
-        $keys = array_rand($items, min($count, count($items)));
-        $keys = is_array($keys) ? $keys : [$keys];
-
-        return new self(items: array_intersect_key($items, array_flip($keys)));
+        return new self(items: $keyed);
     }
 
-    public function where(string $key, mixed $operator, mixed $value = null) : self
+    public function partition(callable $callback) : array
     {
-        if ($value === null) {
-            $value    = $operator;
-            $operator = '==';
+        [$pass, $fail] = new Transform\PartitionValues(items: $this->items)->partition(callback: $callback);
+
+        return [new self(items: $pass), new self(items: $fail)];
+    }
+
+    public function contains(mixed $value) : bool
+    {
+        return new Search\ContainsValue(items: $this->items)->contains(value: $value);
+    }
+
+    public function search(mixed $value) : int|false
+    {
+        return new Search\SearchValue(items: $this->items)->search(value: $value);
+    }
+
+    public function where(string $key, mixed $value) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) === $value
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function whereIn(string $key, array $values) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function whereBetween(string $key, array $range) : static
+    {
+        [$min, $max] = $range;
+
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) >= $min && ($item[$key] ?? null) <= $max
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function whereNull(string $key) : static
+    {
+        return $this->where(key: $key, value: null);
+    }
+
+    public function whereNotNull(string $key) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) !== null
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function sort(callable|null $callback = null) : static
+    {
+        return new self(
+            items: new Order\SortValues(items: $this->items)->sort(callback: $callback)
+        );
+    }
+
+    public function sortBy(string|callable $key, bool $descending = false) : static
+    {
+        return new self(
+            items: new Order\SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending)
+        );
+    }
+
+    public function reverse() : static
+    {
+        return new self(
+            items: new Order\ReverseValues(items: $this->items)->reverse()
+        );
+    }
+
+    public function shuffle() : static
+    {
+        return new self(
+            items: new Order\ShuffleValues(items: $this->items)->shuffle()
+        );
+    }
+
+    public function unique() : static
+    {
+        return new self(
+            items: new Transform\UniqueValues(items: $this->items)->unique()
+        );
+    }
+
+    public function toArray() : array
+    {
+        return new Convert\ConvertCollectionToArray(items: $this->items)->toArray();
+    }
+
+    public function toJson(int $flags = 0) : string
+    {
+        return new Convert\ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
+    }
+
+    public function toXml(string $rootElement = 'root') : string
+    {
+        return new Convert\ConvertCollectionToXml(items: $this->items)->toXml(rootElement: $rootElement);
+    }
+
+    public function only(array $keys) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $_, mixed $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function except(array $keys) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $_, mixed $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
+        );
+
+        return new self(items: $filtered);
+    }
+
+    public function pluck(string|callable $key) : array
+    {
+        $plucked = [];
+
+        foreach ($this->items as $item) {
+            $plucked[] = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
         }
 
-        return $this->filter(function ($item) use ($key, $operator, $value) {
-            $itemValue = is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null);
-
-            return match ($operator) {
-                '=='         => $itemValue == $value,
-                '==='        => $itemValue === $value,
-                '!='         => $itemValue != $value,
-                '!=='        => $itemValue !== $value,
-                '>'          => $itemValue > $value,
-                '<'          => $itemValue < $value,
-                '>='         => $itemValue >= $value,
-                '<='         => $itemValue <= $value,
-                'contains'   => is_array($itemValue) && in_array($value, $itemValue),
-                'startsWith' => is_string($itemValue) && str_starts_with($itemValue, $value),
-                'endsWith'   => is_string($itemValue) && str_ends_with($itemValue, $value),
-                default      => false,
-            };
-        });
+        return $plucked;
     }
 
-    public function whereIn(string $key, array $values) : self
+    public function keys() : array
     {
-        return $this->filter(function ($item) use ($key, $values) {
-            $itemValue = is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null);
-
-            return in_array($itemValue, $values, strict: false);
-        });
+        return array_keys(array: $this->items);
     }
 
-    public function whereNull(string $key) : self
+    public function values() : static
     {
-        return $this->where($key, '===', null);
+        return new self(items: array_values(array: $this->items));
     }
 
-    public function whereNotNull(string $key) : self
+    public function flip() : static
     {
-        return $this->filter(function ($item) use ($key) {
-            $itemValue = is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null);
-
-            return $itemValue !== null;
-        });
+        return new self(
+            items: new Transform\FlipValues(items: $this->items)->flip()
+        );
     }
 
-    public function find(callable $callback) : mixed
+    public function merge(array $items) : static
     {
-        foreach ($this->items as $key => $item) {
-            if ($callback($item, $key)) {
-                return $item;
-            }
-        }
-
-        return null;
+        return new self(items: array_merge($this->items, $items));
     }
 
-    public function sum(string|null $key = null) : int|float
+    public function union(array $items) : static
     {
-        if ($key === null) {
-            return array_sum($this->items);
-        }
-
-        return array_sum(array_map(function ($item) use ($key) {
-            return is_array($item) ? ($item[$key] ?? 0) : ($item->{$key} ?? 0);
-        }, $this->items));
+        return new self(items: $this->items + $items);
     }
 
-    public function avg(string|null $key = null) : float|null
+    public function diff(array $items) : static
     {
-        $count = $this->count();
-        if ($count === 0) {
-            return null;
-        }
-
-        return $this->sum($key) / $count;
+        return new self(items: array_diff($this->items, $items));
     }
 
-    public function min(string|null $key = null) : mixed
+    public function intersect(array $items) : static
     {
-        if ($key === null) {
-            return empty($this->items) ? null : min($this->items);
-        }
-
-        $values = array_map(function ($item) use ($key) {
-            return is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null);
-        }, $this->items);
-        $values = array_filter($values, fn ($v) => $v !== null);
-
-        return empty($values) ? null : min($values);
+        return new self(items: array_intersect($this->items, $items));
     }
 
-    public function max(string|null $key = null) : mixed
-    {
-        if ($key === null) {
-            return empty($this->items) ? null : max($this->items);
-        }
-
-        $values = array_map(function ($item) use ($key) {
-            return is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null);
-        }, $this->items);
-        $values = array_filter($values, fn ($v) => $v !== null);
-
-        return empty($values) ? null : max($values);
-    }
-
-    public function toJson(int $flags = JSON_THROW_ON_ERROR) : string
-    {
-        return json_encode($this->items, $flags);
-    }
-
-    public static function fromJson(string $json) : self
-    {
-        return new self(items: json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR));
-    }
-
-    public function merge(array|self $items) : self
-    {
-        $values = $items instanceof self ? $items->all() : $items;
-
-        return new self(items: array_merge($this->items, $values));
-    }
-
-    public function union(array|self $items) : self
-    {
-        $values = $items instanceof self ? $items->all() : $items;
-
-        return new self(items: $this->items + $values);
-    }
-
-    public function tap(callable $callback) : self
+    public function tap(callable $callback) : static
     {
         $callback($this);
 
         return $this;
     }
 
-    public function when(bool $condition, callable $callback) : self
+    public function unless(bool $condition, callable $callback) : static
+    {
+        return $this->when(condition: ! $condition, callback: $callback);
+    }
+
+    public function when(bool $condition, callable $callback) : static
     {
         if ($condition) {
             return $callback($this) ?? $this;
         }
 
         return $this;
+    }
+
+    public function isLocked() : bool
+    {
+        return $this->guard->isLocked();
+    }
+
+    public function lock() : static
+    {
+        if ($this->guard->isLocked()) {
+            throw MutationException::collectionIsAlreadyLocked();
+        }
+
+        $clone = new self(items: $this->items);
+        $clone->guard->lock();
+
+        return $clone;
+    }
+
+    public function toImmutable() : static
+    {
+        return $this->lock();
+    }
+
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator(array: $this->items);
+    }
+
+    public function offsetExists(mixed $offset) : bool
+    {
+        return array_key_exists(key: (string) $offset, array: $this->items);
+    }
+
+    public function offsetGet(mixed $offset) : mixed
+    {
+        return $this->items[$offset] ?? null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        $this->guard->assertMutable();
+    }
+
+    public function offsetUnset(mixed $offset) : void
+    {
+        $this->guard->assertMutable();
     }
 }

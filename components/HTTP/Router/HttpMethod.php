@@ -4,48 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
+use Avax\Components\Router\System\PublicSurface\HttpMethod as NewHttpMethod;
+
 /**
- * Enum representing HTTP methods.
- *
- * This provides a type-safe representation of allowed HTTP methods
- * for routing and validation purposes.
+ * @deprecated Use Avax\Components\Router\System\PublicSurface\HttpMethod instead.
  */
-enum HttpMethod: string
+class HttpMethod
 {
-    case GET = 'GET';
-
-    case POST = 'POST';
-
-    case PUT = 'PUT';
-
-    case DELETE = 'DELETE';
-
-    case PATCH = 'PATCH';
-
-    case OPTIONS = 'OPTIONS';
-
-    case HEAD = 'HEAD';
-    case ANY  = 'ANY';
-
-    /**
-     * Validates if a given string matches a valid HTTP method.
-     *
-     * @param string $method The HTTP method to validate.
-     *
-     * @return bool True if valid, false otherwise.
-     */
-    public static function isValid(string $method) : bool
-    {
-        return in_array(needle: strtoupper(string: $method), haystack: array_column(array: self::cases(), column_key: 'value'), strict: true);
-    }
-
-    /**
-     * Returns a list of all HTTP methods as strings.
-     *
-     * @return array<string>
-     */
-    public static function list() : array
-    {
-        return array_map(callback: static fn (self $method) => $method->value, array: self::cases());
-    }
+    // Bridge case-like constants if needed, but Enum to Class bridge is tricky.
+    // For now, we keep it as a simple bridge or let users migrate to the enum.
 }

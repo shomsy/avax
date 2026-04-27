@@ -4,106 +4,147 @@ declare(strict_types=1);
 
 namespace Avax\Components\Container\System\PublicSurface;
 
-use Avax\Components\Container\System\Capabilities\Bindings\BindingRegistry;
-use Avax\Components\Container\System\Capabilities\Providers\ProviderRegistry;
-use Avax\Components\Container\System\Capabilities\Resolution\ServiceResolver;
+use components\Container\DI\Container as RealContainer;
+use components\Container\DI\ContainerInterface as RealContainerInterface;
 
 /**
  * Public surface for the Container component.
- * Delegating all logic to internal capabilities per Screaming Architecture.
+ *
+ * Delegates ALL logic to the real DI Container (Container/DI/Container.php).
+ * The real container has: scopes, compilation, lazy proxies, decorators,
+ * context containers, debug/governance tools, graph exports, and more.
+ *
+ * This class exists solely to provide the canonical Screaming Architecture
+ * namespace. All power comes from the real DI engine.
  */
 final class Container implements ContainerInterface
 {
-    private BindingRegistry  $bindings;
-    private ServiceResolver  $resolver;
-    private ProviderRegistry $providerRegistry;
+    public function __construct(
+        private readonly RealContainerInterface $engine,
+    ) {}
 
-    public function __construct()
+    /**
+     * Create a Container wrapping the real DI engine.
+     */
+    public static function fromEngine(RealContainerInterface $engine) : self
     {
-        $this->bindings         = new BindingRegistry();
-        $this->resolver         = new ServiceResolver($this->bindings);
-        $this->providerRegistry = new ProviderRegistry($this);
+        return new self($engine);
     }
 
-    public function make(string $abstract, array $parameters = []) : mixed
-    {
-        return $this->resolver->resolve($abstract, $parameters);
-    }
+    // --- Core resolution ---
 
     public function get(string $id) : mixed
     {
-        return $this->resolver->resolve($id);
+        return $this->engine->get($id);
     }
 
-    public function has(string $id): bool
+    public function has(string $id) : bool
     {
-        return $this->bindings->has($id);
+        return $this->engine->has($id);
     }
 
-    public function call(callable $callback, array $parameters = []) : mixed
+    public function make(string $abstract, array $parameters = []) : object
     {
-        return $this->resolver->call($callback, $parameters);
+        return $this->engine->make($abstract, $parameters);
     }
 
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
+    public function call(callable|string $callable, array $parameters = []) : mixed
     {
-        $this->bindings->bind($abstract, $concrete, $shared);
+        return $this->engine->call($callable, $parameters);
     }
 
-    public function singleton(string $abstract, mixed $concrete = null) : void
+    // --- Registration ---
+
+    public function bind(string $abstract, mixed $concrete = null) : mixed
     {
-        $this->bindings->singleton($abstract, $concrete);
+        return $this->engine->bind($abstract, $concrete);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : void
+    public function singleton(string $abstract, mixed $concrete = null) : mixed
     {
-        $this->bindings->scoped($abstract, $concrete);
+        return $this->engine->singleton($abstract, $concrete);
+    }
+
+    public function scoped(string $abstract, mixed $concrete = null) : mixed
+    {
+        return $this->engine->scoped($abstract, $concrete);
     }
 
     public function instance(string $abstract, object $instance) : void
     {
-        $this->bindings->instance($abstract, $instance);
+        $this->engine->instance($abstract, $instance);
     }
 
     public function alias(string $alias, string $abstract) : void
     {
-        $this->bindings->alias($alias, $abstract);
+        $this->engine->alias($alias, $abstract);
     }
+
+    // --- Tags ---
 
     public function tag(string|array $abstracts, string|array $tags) : void
     {
-        $this->bindings->tag($abstracts, $tags);
+        $this->engine->tag($abstracts, $tags);
     }
 
     public function tagged(string $tag) : array
     {
-        $abstracts = $this->bindings->tagged($tag);
-        $results   = [];
-
-        foreach ($abstracts as $abstract) {
-            $results[] = $this->get($abstract);
-        }
-
-        return $results;
+        return $this->engine->tagged($tag);
     }
 
-    public function registerProvider(string $providerClass) : void
+    // --- Providers ---
+
+    public function bootProviders(array $providers) : void
     {
-        $this->providerRegistry->register($providerClass);
+        $this->engine->bootProviders($providers);
     }
 
-    public function boot() : void
+    // --- Scopes ---
+
+    public function openScope(string $kind = 'operation', string $scopeId = '') : void
     {
-        $this->providerRegistry->boot();
+        $this->engine->openScope($kind, $scopeId);
     }
+
+    public function closeScope(string|null $kind = null) : void
+    {
+        $this->engine->closeScope($kind);
+    }
+
+    // --- Lifecycle ---
 
     public function flush() : void
     {
-        $this->bindings->clear();
+        $this->engine->flush();
     }
 
-    public function flushScoped() : void
+    public function reset() : void
     {
-        $this->bindings->clearScoped();
+        $this->engine->reset();
+    }
+
+    // --- Advanced (compilation, debug, governance) ---
+
+    public function compileContainer(array $serviceIds = []) : void
+    {
+        $this->engine->compileContainer($serviceIds);
+    }
+
+    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = '') : string
+    {
+        return $this->engine->exportGraph($format, $kind, $id);
+    }
+
+    public function validate(array $serviceIds = []) : array
+    {
+        return $this->engine->validate($serviceIds);
+    }
+
+    /**
+     * Access the underlying real DI engine for advanced operations.
+     */
+    public function engine() : RealContainerInterface
+    {
+        return $this->engine;
     }
 }

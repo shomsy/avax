@@ -193,7 +193,12 @@ final class RouterMetricsCollector
         if (! empty($metric['labels'])) {
             $labelParts = [];
             foreach ($metric['labels'] as $k => $v) {
-                $labelParts[] = $k . '="' . addslashes(string: (string) $v) . '"';
+                $escapedValue = str_replace(
+                    search : ['\\', '"', "\n"],
+                    replace: ['\\\\', '\"', '\n'],
+                    subject: (string) $v
+                );
+                $labelParts[] = $k . '="' . $escapedValue . '"';
             }
             $labels = '{' . implode(separator: ',', array: $labelParts) . '}';
         }

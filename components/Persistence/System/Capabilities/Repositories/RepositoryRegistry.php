@@ -4,27 +4,53 @@ declare(strict_types=1);
 
 namespace Avax\Components\Persistence\System\Capabilities\Repositories;
 
+use RuntimeException;
+
+/**
+ * Registry for repository storage backends.
+ *
+ * Maps entity class names to their concrete RepositoryStorageInterface
+ * implementations, enabling the framework to resolve the correct
+ * storage backend for any entity type.
+ */
 final class RepositoryRegistry
 {
-    /**
-     * @var array<string, RepositoryBackend>
-     */
+    /** @var array<string, RepositoryStorageInterface> */
     private array $backends = [];
 
-    public function register(string $entityName, RepositoryBackend $backend): void
+    public function register(string $entityClass, RepositoryStorageInterface $backend) : void
     {
-        $this->backends[$entityName] = $backend;
+        $this->backends[$entityClass] = $backend;
     }
 
-    public function get(string $entityName): RepositoryBackend
+    public function get(string $entityClass) : RepositoryStorageInterface
     {
-        return $this->backends[$entityName] ?? throw new \RuntimeException(
-            message: "No backend registered for entity: {$entityName}",
+        return $this->backends[$entityClass] ?? throw new RuntimeException(
+            message: "No storage backend registered for entity: {$entityClass}",
         );
     }
 
-    public function has(string $entityName): bool
+    public function has(string $entityClass) : bool
     {
-        return isset($this->backends[$entityName]);
+        return isset($this->backends[$entityClass]);
+    }
+
+    /**
+     * Get all registered entity classes.
+     *
+     * @return array<string>
+     */
+    public function registeredEntities() : array
+    {
+        return array_keys($this->backends);
+    }
+
+    /**
+     * Clear all registrations.
+     * Useful for worker state reset.
+     */
+    public function clear() : void
+    {
+        $this->backends = [];
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Router;
+namespace Avax\Components\HTTP\Router;
 
 /**
  * @phpstan-type RouterConfig array{
@@ -15,21 +15,21 @@ namespace components\HTTP\Router;
  *     routeRegistry?: RouteRegistry }
  */
 
-use components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use components\HTTP\Router\System\Capabilities\RouterTrace\RouterTrace;
-use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
-use components\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
-use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteFileRegistrar;
-use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
-use components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
-use components\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponseFactory;
-use components\HTTP\Router\System\Flows\RunRoute\RouterKernel;
-use components\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
-use components\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
-use components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
-use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
-use components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouterTrace\RouterTrace;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteFileRegistrar;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponseFactory;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\RouterKernel;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use LogicException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;

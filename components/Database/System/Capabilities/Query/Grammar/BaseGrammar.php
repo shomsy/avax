@@ -60,6 +60,7 @@ abstract class BaseGrammar implements GrammarInterface
     public function compileSelect(QueryState $state) : string
     {
         $components = [
+            'ctes' => $this->compileCtes(state: $state),
             'select' => $this->compileColumns(state: $state),
             'from'   => $this->compileFrom(state: $state),
             'joins'  => $this->compileJoins(state: $state),
@@ -80,9 +81,36 @@ abstract class BaseGrammar implements GrammarInterface
     protected function compileColumns(QueryState $state) : string
     {
         $select  = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
-        $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns);
+        $columns = array_map(callback: function ($c) use ($state) {
+            if (is_string($c) && isset($state->windows[$c])) {
+                return $this->wrap($c) . ' OVER ' . $this->wrap($state->windows[$c]);
+            }
+
+            return $this->wrap(value: $c);
+        },                   array   : $state->columns);
 
         return $select . implode(separator: ', ', array: $columns);
+    }
+
+    protected function compileCtes(QueryState $state) : string
+    {
+        if (empty($state->ctes)) {
+            return '';
+        }
+
+        $ctes      = [];
+        $recursive = false;
+
+        foreach ($state->ctes as $cte) {
+            $name   = $this->wrap($cte['name']);
+            $query  = $cte['query'] instanceof QueryState ? $this->compileSelect($cte['query']) : (string) $cte['query'];
+            $ctes[] = "{$name} AS ({$query})";
+            if ($cte['recursive']) {
+                $recursive = true;
+            }
+        }
+
+        return 'WITH ' . ($recursive ? 'RECURSIVE ' : '') . implode(', ', $ctes);
     }
 
     /**

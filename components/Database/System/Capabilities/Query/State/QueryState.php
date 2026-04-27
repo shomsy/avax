@@ -28,6 +28,8 @@ final readonly class QueryState
     public array       $joins;
     public string|null $from;
     public array       $columns;
+    public array $ctes;
+    public array $windows;
     private BindingBag $bindings;
 
     /**
@@ -55,6 +57,8 @@ final readonly class QueryState
      *                                                        upsert logic.
      * @param bool                             $distinct      Toggle indicating if strictly unique records should be
      *                                                        projected.
+     * @param array $ctes                                     Common Table Expressions (WITH clauses).
+     * @param array $windows                                  Window Function definitions (OVER clauses).
      * @param BindingBag                       $bindings      The immutable container for secure, parameterized query
      *                                                        tokens.
      */
@@ -71,6 +75,8 @@ final readonly class QueryState
         array|null  $values = null,
         array|null  $updateColumns = null,
         bool|null   $distinct = null,
+        array|null $ctes = null,
+        array|null $windows = null,
         BindingBag  $bindings = new BindingBag
     )
     {
@@ -95,6 +101,8 @@ final readonly class QueryState
         $this->values        = $values;
         $this->updateColumns = $updateColumns;
         $this->distinct      = $distinct;
+        $this->ctes = $ctes ?? [];
+        $this->windows = $windows ?? [];
         $this->bindings      = $bindings;
     }
 
@@ -305,6 +313,20 @@ final readonly class QueryState
     {
         return new self(
             ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $order]]
+        );
+    }
+
+    public function withCte(string $name, mixed $query, bool $recursive = false) : self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, compact('name', 'query', 'recursive')]]
+        );
+    }
+
+    public function withWindow(string $name, mixed $window) : self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'windows' => [...$this->windows, $name => $window]]
         );
     }
 

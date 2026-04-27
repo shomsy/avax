@@ -4,29 +4,73 @@ declare(strict_types=1);
 
 namespace Avax\Components\Database\System\PublicSurface;
 
-use Avax\Components\Database\System\Capabilities\Connections\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\Database\System\Capabilities\ORM\EntityManager as EntityManagerCapability;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
+use Avax\Components\Database\System\Configuration\DatabaseBuilder;
 
-final class Database implements DatabaseInterface
+/**
+ * Public surface for the Database component.
+ */
+final readonly class Database
 {
-    private array $connections = [];
+    public function __construct(
+        private Connections             $connections,
+        private QueryCapability         $query,
+        private EntityManagerCapability $entityManager,
+        private SchemaCapability        $schema,
+        private MigrationsCapability    $migrations,
+        private TransactionsCapability  $transactions,
+        private TelemetryCapability     $telemetry
+    ) {}
 
-    public function connection(string $name = 'default'): DatabaseConnection
+    public static function configuration() : DatabaseBuilder
     {
-        return $this->connections[$name] ??= $this->createConnection($name);
+        return new DatabaseBuilder();
     }
 
-    public function transactions(): bool
+    public function connections() : Connections
     {
-        return true;
+        return $this->connections;
     }
 
-    public function schema(): SchemaBuilder
+    public function query() : Query
     {
-        return new SchemaBuilder($this);
+        return new Query($this->query);
     }
 
-    private function createConnection(string $name): DatabaseConnection
+    public function entityManager() : EntityManager
     {
-        return new DatabaseConnection($name);
+        return new EntityManager($this->entityManager);
+    }
+
+    public function schema() : Schema
+    {
+        return new Schema($this->schema);
+    }
+
+    public function migrations() : Migrations
+    {
+        return new Migrations($this->migrations);
+    }
+
+    public function transactions() : Transactions
+    {
+        return new Transactions($this->transactions);
+    }
+
+    public function telemetry() : Telemetry
+    {
+        return new Telemetry($this->telemetry);
+    }
+
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->query->from($table, $connectionName);
     }
 }

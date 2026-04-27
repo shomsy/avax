@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Container\System\Capabilities\Providers;
+
+use Avax\Components\Container\System\PublicSurface\ContainerInterface;
+
+/**
+ * Base class for service providers.
+ */
+abstract class ServiceProvider
+{
+    public function __construct(
+        protected readonly ContainerInterface $container
+    ) {}
+
+    /**
+     * Register services in the container.
+     */
+    abstract public function register() : void;
+
+    /**
+     * Boot services after all have been registered.
+     */
+    public function boot() : void
+    {
+        // Optional boot logic
+    }
+}

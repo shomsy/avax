@@ -4,66 +4,147 @@ declare(strict_types=1);
 
 namespace Avax\Components\Persistence\System\Capabilities\UnitOfWork;
 
+use Avax\Components\Persistence\System\Capabilities\IdentityMap\IdentityMap;
+
+/**
+ * Tracks entity lifecycle changes and flushes them to the persistence backend.
+ *
+ * Recovered from Database/ORM/UnitOfWork with proper Persistence ownership.
+ * Uses IdentityMap for entity identity tracking and EntityPersisterInterface
+ * for actual storage delegation.
+ */
 final class UnitOfWork implements UnitOfWorkInterface
 {
-    /**
-     * @var array<object>
-     */
-    private array $newEntities = [];
+    /** @var array<int, object> Entities scheduled for INSERT */
+    private array $new = [];
 
-    /**
-     * @var array<object>
-     */
-    private array $dirtyEntities = [];
+    /** @var array<int, object> Entities scheduled for UPDATE */
+    private array $dirty = [];
 
-    /**
-     * @var array<object>
-     */
-    private array $removedEntities = [];
+    /** @var array<int, object> Entities scheduled for DELETE */
+    private array $removed = [];
+
+    /** @var array<int, array> Snapshots of entity states for dirty tracking */
+    private array $snapshots = [];
+
+    public function __construct(
+        private readonly IdentityMap              $identityMap,
+        private readonly EntityPersisterInterface $persister,
+    ) {}
 
     public function persist(object $entity): void
     {
-        $this->dirtyEntities[] = $entity;
+        $objectId = spl_object_id(object: $entity);
+
+        // If it was previously scheduled for removal, cancel the removal
+        unset($this->removed[$objectId]);
+
+        $identifier = $this->persister->extractIdentifier($entity);
+
+        if ($identifier === null) {
+            // New entity (no ID yet)
+            $this->new[$objectId] = $entity;
+
+            return;
+        }
+
+        // Existing entity (has ID) → mark dirty for update if changed
+        if ($this->isDirty($entity)) {
+            $this->dirty[$objectId] = $entity;
+        }
+    }
+
+    private function isDirty(object $entity) : bool
+    {
+        $objectId = spl_object_id($entity);
+        if (! isset($this->snapshots[$objectId])) {
+            return true; // No snapshot, assume dirty
+        }
+
+        $currentData = $this->persister->extractData($entity);
+
+        return $currentData !== $this->snapshots[$objectId];
+    }
+
+    public function registerClean(object $entity) : void
+    {
+        $objectId                   = spl_object_id($entity);
+        $this->snapshots[$objectId] = $this->persister->extractData($entity);
     }
 
     public function remove(object $entity): void
     {
-        $this->removedEntities[] = $entity;
+        $objectId = spl_object_id(object: $entity);
+
+        // Remove from new/dirty if present
+        unset($this->new[$objectId], $this->dirty[$objectId]);
+
+        $this->removed[$objectId] = $entity;
     }
 
-    public function flush(): void
+    public function flush(string|null $connectionName = null) : void
     {
-        foreach ($this->newEntities as $entity) {
-            $this->persistEntity(entity: $entity);
+        // Process inserts
+        foreach ($this->new as $objectId => $entity) {
+            $this->persister->insert(entity: $entity, connectionName: $connectionName);
+            unset($this->new[$objectId]);
+
+            // After insert, register in identity map
+            $identifier = $this->persister->extractIdentifier($entity);
+
+            if ($identifier !== null) {
+                $this->identityMap->put(
+                    entityClass: $entity::class,
+                    id         : $identifier,
+                    entity     : $entity,
+                );
+            }
         }
 
-        foreach ($this->dirtyEntities as $entity) {
-            $this->updateEntity(entity: $entity);
+        // Process updates
+        foreach ($this->dirty as $objectId => $entity) {
+            if ($this->isDirty($entity)) {
+                $this->persister->update(entity: $entity, connectionName: $connectionName);
+                $this->registerClean($entity);
+            }
+            unset($this->dirty[$objectId]);
         }
 
-        foreach ($this->removedEntities as $entity) {
-            $this->deleteEntity(entity: $entity);
-        }
+        // Process deletions
+        foreach ($this->removed as $objectId => $entity) {
+            $identifier = $this->persister->extractIdentifier($entity);
 
-        $this->clear();
+            $this->persister->delete(entity: $entity, connectionName: $connectionName);
+            unset($this->removed[$objectId]);
+
+            if ($identifier !== null) {
+                $this->identityMap->remove(
+                    entityClass: $entity::class,
+                    id         : $identifier,
+                );
+            }
+        }
     }
 
     public function clear(): void
     {
-        $this->newEntities = [];
-        $this->dirtyEntities = [];
-        $this->removedEntities = [];
+        $this->new     = [];
+        $this->dirty   = [];
+        $this->removed = [];
+        $this->identityMap->clear();
     }
 
-    private function persistEntity(object $entity): void
+    public function hasPendingChanges() : bool
     {
+        return $this->new !== [] || $this->dirty !== [] || $this->removed !== [];
     }
 
-    private function updateEntity(object $entity): void
+    public function pendingSummary() : array
     {
-    }
-
-    private function deleteEntity(object $entity): void
-    {
+        return [
+            'new'     => count($this->new),
+            'dirty'   => count($this->dirty),
+            'removed' => count($this->removed),
+        ];
     }
 }

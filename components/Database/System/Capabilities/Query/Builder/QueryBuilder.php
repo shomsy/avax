@@ -24,6 +24,7 @@ use Throwable;
 class QueryBuilder
 {
     use Concerns\HasAdvancedMutations;
+    use Concerns\HasAdvancedQueries;
     use Concerns\HasAggregates;
     use Concerns\HasConditions;
     use Concerns\HasControlStructures;

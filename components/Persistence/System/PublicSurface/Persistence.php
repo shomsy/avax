@@ -4,24 +4,64 @@ declare(strict_types=1);
 
 namespace Avax\Components\Persistence\System\PublicSurface;
 
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
-use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
+use Avax\Components\Persistence\System\Capabilities\Hydration\HydratorInterface;
+use Avax\Components\Persistence\System\Capabilities\IdentityMap\IdentityMap;
+use Avax\Components\Persistence\System\Capabilities\Repositories\RepositoryRegistry;
+use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
 
+/**
+ * Persistence PublicSurface implementation.
+ *
+ * Thin delegation layer that provides access to all persistence capabilities.
+ * No business logic lives here — only delegation per refactor.md.
+ */
 final readonly class Persistence implements PersistenceInterface
 {
     public function __construct(
-        private Repository $repository,
-        private UnitOfWork $unitOfWork,
+        private UnitOfWorkInterface $unitOfWork,
+        private RepositoryRegistry  $repositoryRegistry,
+        private HydratorInterface   $hydrator,
+        private IdentityMap         $identityMap,
     ) {
     }
 
-    public function repository(string $name): Repository
-    {
-        return $this->repository->forEntity(entityName: $name);
-    }
-
-    public function unitOfWork(): UnitOfWork
+    public function unitOfWork() : UnitOfWorkInterface
     {
         return $this->unitOfWork;
+    }
+
+    public function repositories() : RepositoryRegistry
+    {
+        return $this->repositoryRegistry;
+    }
+
+    public function hydrator() : HydratorInterface
+    {
+        return $this->hydrator;
+    }
+
+    public function identityMap() : IdentityMap
+    {
+        return $this->identityMap;
+    }
+
+    public function persist(object $entity) : void
+    {
+        $this->unitOfWork->persist($entity);
+    }
+
+    public function remove(object $entity) : void
+    {
+        $this->unitOfWork->remove($entity);
+    }
+
+    public function flush(string|null $connectionName = null) : void
+    {
+        $this->unitOfWork->flush($connectionName);
+    }
+
+    public function clear() : void
+    {
+        $this->unitOfWork->clear();
     }
 }

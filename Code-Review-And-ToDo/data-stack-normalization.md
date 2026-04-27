@@ -4,13 +4,13 @@
 
 ### Current State
 
-| Component | Path | Status |
-|-----------|------|--------|
-| Data | components/Data/ | DONE |
-| DataFoundation | components/DataFoundation/ | DEPRECATED |
-| Persistence | components/Persistence/ | DONE |
-| DataLayer | components/DataLayer/ | DEPRECATED |
-| Database | components/Database/ | KEEP |
+| Component      | Path                       | Status                        |
+|----------------|----------------------------|-------------------------------|
+| Data           | components/Data/           | PARTIAL                       |
+| DataFoundation | components/DataFoundation/ | DEPRECATED (REAL BEHAVIOR)    |
+| Persistence    | components/Persistence/    | PARTIAL                       |
+| DataLayer      | components/DataLayer/      | REMOVED                       |
+| Database       | components/Database/       | KEEP (ORM EXTRACTION PENDING) |
 
 ---
 
@@ -54,19 +54,21 @@ components/
 5. Data must NOT depend on Database or Persistence
 6. Database must NOT depend on Persistence
 7. Persistence may depend on Database contracts and Data
+8. No duplicate owners: DataFoundation and DataLayer must contain only bridge files (aliases) or be deleted.
 
 ---
 
 ### Migration Status
 
-| Task | Status |
-|------|--------|
-| Inventory DataFoundation | DONE |
-| Inventory DataLayer | DONE |
-| Move DataFoundation files to components/Data | DONE |
-| Move DataLayer files to components/Persistence | DONE |
-| Keep compatibility bridges | DONE |
-| Add deprecation notes | PENDING |
+| Task                                           | Status      |
+|------------------------------------------------|-------------|
+| Inventory DataFoundation                       | DONE        |
+| Inventory DataLayer                            | DONE        |
+| Move DataFoundation files to components/Data   | IN PROGRESS |
+| Move DataLayer files to components/Persistence | DONE        |
+| Keep compatibility bridges                     | DONE        |
+| Add deprecation notes                          | PENDING     |
+| ORM extraction from Database                   | PENDING     |
 
 ---
 

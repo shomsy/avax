@@ -17,8 +17,9 @@ use Throwable;
 final readonly class CompensateSaga
 {
     public function __construct(
-        private StoreSagaState $storeSagaState,
-        private InspectSaga    $inspectSaga
+        private StoreSagaState          $storeSagaState,
+        private InspectSaga             $inspectSaga,
+        private ChooseCompensationSteps $chooseCompensationSteps
     ) {}
 
     public function compensate(
@@ -38,10 +39,11 @@ final readonly class CompensateSaga
             );
         }
 
-        $compensationSteps = $this->chooseCompensationSteps(definition: $definition, instance: $instance);
+        $compensationSteps = $this->chooseCompensationSteps->choose(saga: $instance, definition: $definition);
 
         $results = [];
-        foreach ($compensationSteps as $stepName => $stepDef) {
+        foreach ($compensationSteps as $stepDef) {
+            $stepName = $stepDef->name;
             $previousResult = $instance->stepResults[$stepName] ?? null;
 
             try {
@@ -56,7 +58,7 @@ final readonly class CompensateSaga
             return $this->markAsUnrecoverable(instance: $instance);
         }
 
-        $compensated = $instance->compensate();
+        $compensated = $instance->compensate(compensationResults: $results);
         $this->storeSagaState->save(instance: $compensated);
 
         $this->inspectSaga->record(
@@ -67,23 +69,6 @@ final readonly class CompensateSaga
         );
 
         return $compensated;
-    }
-
-    public function chooseCompensationSteps(
-        SagaDefinition $definition,
-        SagaInstance   $instance
-    ) : array
-    {
-        $steps = [];
-
-        foreach (array_reverse($definition->stepOrder) as $stepName) {
-            $stepDef = $definition->getStep(name: $stepName);
-            if ($stepDef?->hasCompensation() && $this->wasCompleted(instance: $instance, stepName: $stepName)) {
-                $steps[$stepName] = $stepDef;
-            }
-        }
-
-        return $steps;
     }
 
     private function wasCompleted(SagaInstance $instance, string $stepName) : bool

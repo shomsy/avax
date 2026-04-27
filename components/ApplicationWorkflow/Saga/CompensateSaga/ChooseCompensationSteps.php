@@ -2,36 +2,48 @@
 
 declare(strict_types=1);
 
-namespace components\ApplicationWorkflow\Saga\CompensateSaga;
+namespace Avax\ApplicationWorkflow\Saga\CompensateSaga;
 
-use components\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
-use components\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
-use components\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus;
+use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
+use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstance;
+use Avax\ApplicationWorkflow\Saga\StartSaga\SagaInstanceStatus;
 use InvalidArgumentException;
 
+/**
+ * Strategy for choosing which steps to compensate and in what order.
+ * Standard SAGA pattern requires compensating successful steps in reverse order of completion.
+ */
 final readonly class ChooseCompensationSteps
 {
-    public function describeResponsibility() : string
-    {
-        return 'chooses compensation steps in reverse successful side-effect order.';
-    }
-
     /**
+     * Chooses compensation steps based on saga completion history and definition.
+     *
      * @return array<int, SagaStepDefinition>
      */
-    public function choose(SagaInstance $saga, CompensationPlan $plan) : array
+    public function choose(SagaInstance $saga, SagaDefinition $definition) : array
     {
         $this->validateSagaInstance(saga: $saga);
 
         $completedSteps = $saga->completedSteps;
-
         if (empty($completedSteps)) {
             return [];
         }
 
-        $definitions = $plan->getStepDefinitions();
+        $compensationSteps = [];
 
-        return $this->selectCompensationSteps(completedSteps: $completedSteps, definitions: $definitions);
+        // Reverse the order of completed steps for compensation (LIFO)
+        $reversedCompletedSteps = array_reverse($completedSteps);
+
+        foreach ($reversedCompletedSteps as $stepName) {
+            $stepDef = $definition->getStep(name: $stepName);
+
+            if ($stepDef !== null && $stepDef->hasCompensation()) {
+                $compensationSteps[] = $stepDef;
+            }
+        }
+
+        return $compensationSteps;
     }
 
     private function validateSagaInstance(SagaInstance $saga) : void
@@ -40,44 +52,10 @@ final readonly class ChooseCompensationSteps
             throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 
-        if ($saga->status->value === SagaInstanceStatus::PENDING->value) {
+        if ($saga->status === SagaInstanceStatus::PENDING) {
             throw new InvalidArgumentException(
                 message: sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id)
             );
         }
-    }
-
-    /**
-     * @param array<int, string>                $completedSteps
-     * @param array<string, SagaStepDefinition> $definitions
-     *
-     * @return array<int, SagaStepDefinition>
-     */
-    private function selectCompensationSteps(array $completedSteps, array $definitions) : array
-    {
-        $compensationSteps = [];
-
-        $reversedSteps = array_reverse($completedSteps, preserve_keys: true);
-
-        foreach ($reversedSteps as $index => $stepName) {
-            $stepDef = $definitions[$stepName] ?? null;
-
-            if (! $stepDef instanceof SagaStepDefinition) {
-                continue;
-            }
-
-            if (! $this->stepHasCompensation(stepDef: $stepDef)) {
-                continue;
-            }
-
-            $compensationSteps[] = $stepDef;
-        }
-
-        return $compensationSteps;
-    }
-
-    private function stepHasCompensation(SagaStepDefinition $stepDef) : bool
-    {
-        return $stepDef->hasCompensation();
     }
 }

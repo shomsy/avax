@@ -1,114 +1,72 @@
-# Cleanup Review Report
+# Cleanup Review Report (REGENERATED - HONEST)
 
-## Phase 12: Quality Gates - Final Report
-
-### TEST RESULTS
-
-| Phase | Status |
-|-------|--------|
-| composer validate | PASS |
-| composer dump-autoload | PASS |
-| php -l syntax check | PASS |
+> Generated: 2026-04-27
+> Status: AUDITED - REALITY CHECKED
 
 ---
 
-### ROOT CLEANUP MATRIX
+## Migration Integrity Matrix
 
-| Folder/File | Action | Status |
-|-------------|--------|--------|
-| avax-backup.txt | DELETE | DONE |
-| avax.txt | DELETE | DONE |
-| .php-cs-fixer.cache | DELETE | DONE |
-| .phpunit.result.cache | DELETE | DONE |
-| .ruff_cache/ | DELETE | DONE |
-| docker.zip | DELETE | DONE |
-| redis.zip | DELETE | DONE |
-| reverse-proxy.zip | DELETE | DONE |
-| Config/ | MOVE to examples/ | DONE |
-| Presentation/ | DELETE (empty) | DONE |
-| bootstrap/ | DELETE | DONE |
-| scripts/ | MOVE to tooling/ | DONE |
-| AI Prompts/how-to-arhitecture-extension.md | RENAME to architecture | DONE |
+| Component          | Status (Previous) | Status (Actual) | Problem                                                                 |
+|--------------------|-------------------|-----------------|-------------------------------------------------------------------------|
+| **DataFoundation** | DONE              | **PARTIAL**     | Still contains 600+ lines of real behavior (Arrhae, Collection).        |
+| **DataLayer**      | DONE              | **DONE**        | Genuinely removed.                                                      |
+| **Database**       | DONE              | **PARTIAL**     | Legacy root files remain; unsafe SQL found.                             |
+| **Config**         | DONE              | **PARTIAL**     | PublicSurface contained mutable state + loading logic (now refactored). |
+| **Namespace**      | DONE              | **DRIFTING**    | Mixed `components\` and `Avax\` namespaces persist.                     |
 
 ---
 
-### DUPLICATE OWNER REPORT
+## Security Audit (SQL)
 
-No duplicate owners found after cleanup.
-
----
-
-### NAMESPACE NORMALIZATION REPORT
-
-| File | Change | Status |
-|------|--------|--------|
-| docs/governance/how-to-architecture-extension.md | Fixed reference | DONE |
-| docs/governance/README.md | Fixed reference | DONE |
-| Code-Review-And-ToDo/review.md | Fixed reference | DONE |
+| File                         | Issue                      | Status                              |
+|------------------------------|----------------------------|-------------------------------------|
+| `DatabaseExporter.php`       | `addslashes` in INSERT     | **FIXED** (using PDO::quote)        |
+| `ColumnSQLRenderer.php`      | `addslashes` in COMMENT    | **FIXED** (using str_replace)       |
+| `RouterMetricsCollector.php` | `addslashes` in Prometheus | **FIXED** (using explicit escaping) |
 
 ---
 
-### REMOVED FILES/FOLDERS
+## PublicSurface Audit
 
-```
-- avax-backup.txt
-- avax.txt  
-- .php-cs-fixer.cache
-- .phpunit.result.cache
-- .ruff_cache/
-- docker.zip
-- redis.zip
-- reverse-proxy.zip
-- env.php
-- index.php
-- merge-files.sh
-- errors/
-- event-log-layout.blade.php
-- public/
-- Presentation/
-- bootstrap/
-- scripts/
-```
+| Component       | Status        | Action Taken                                                |
+|-----------------|---------------|-------------------------------------------------------------|
+| **Config**      | **COMPLIANT** | Moved state to ConfigurationRepository and loading to Flow. |
+| **Data**        | **COMPLIANT** | Thin interface delegating to Capabilities.                  |
+| **Persistence** | **COMPLIANT** | Thin interface delegating to Capabilities.                  |
 
 ---
 
-### FINAL ROOT STRUCTURE
+## Namespace Drift Report (Post-Cleanup)
 
-```
-avax/
-  .aiassistant/
-  .gigaide/
-  .github/
-  .idea/
-  .phpunit.cache/
-  .vscode/
-  AI Prompts/
-  Code-Review-And-ToDo/
-  bin/
-  components/
-  docs/
-  examples/
-  framework/
-  storage/
-  tests/
-  tooling/
-  var/
-  vendor/
-```
+| Folder                      | Status       | Priority                                     |
+|-----------------------------|--------------|----------------------------------------------|
+| `DataFoundation/`           | **CRITICAL** | Needs full migration to `Data/System`.       |
+| `ApplicationWorkflow/Saga/` | **HIGH**     | Uses `components\` lowercase namespace.      |
+| `Container/`                | **MEDIUM**   | Generated code uses `components\` namespace. |
 
 ---
 
-### REMAINING RISKS
+## Recovered Skeleton Audit Summary
 
-1. **Namespace drift** - components still use mixed `Avax\...` and `components\...` namespaces
-   - Status: ACKNOWLEDGED - next phase targets namespace normalization
-2. **Compatibility bridges** - DataFoundation and DataLayer still exist as bridges
-   - Status: ACCEPTABLE - temporary bridges for migration
+**15 files** in `ApplicationWorkflow/Saga/` were identified as skeletons.
+
+- 14 are pure architectural placeholders.
+- 1 (ChooseCompensationSteps) was "partial" logic marked as skeleton.
+- Full report in: `Code-Review-And-ToDo/recovered-skeletons.md`
 
 ---
 
-### NEXT STEPS
+## Critical Remaining Risks
 
-1. Run targeted PHPUnit for framework/System
-2. Update ToDo.md with completion status
-3. Begin Phase 6: HTTP/Request/Router namespace normalization (if requested)
+1. **Stale behavior in DataFoundation**: Until `Arrhae` and `Collection` are fully migrated, we have split ownership.
+2. **Namespace Drift**: The `composer.json` still maps `components\` to `components/`, enabling legacy drift.
+3. **ORM extraction**: Database component still contains ORM-like behavior (EntityManager) that belongs in Persistence.
+
+---
+
+## Next Steps
+
+1. Complete Phase 3 (DataFoundation -> Data full migration).
+2. Execute `tooling/refactor/check-namespace-drift.php` in CI.
+3. Address ADR 0017 (Router Boundary Promotion).

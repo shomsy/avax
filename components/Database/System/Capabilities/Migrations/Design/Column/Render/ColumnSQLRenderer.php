@@ -87,7 +87,7 @@ final class ColumnSQLRenderer
 
         // COMMENT
         if (isset($column->attributes['comment'])) {
-            $sql .= " COMMENT '" . addslashes(string: $column->attributes['comment']) . "'";
+            $sql .= " COMMENT '" . str_replace(search: "'", replace: "''", subject: $column->attributes['comment']) . "'";
         }
 
         return $sql;

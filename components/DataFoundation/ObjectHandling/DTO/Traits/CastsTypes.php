@@ -1,0 +1,323 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\DataFoundation\ObjectHandling\DTO\Traits;
+
+use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
+use BackedEnum;
+use InvalidArgumentException;
+use ReflectionIntersectionType;
+use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionUnionType;
+
+/**
+ * Trait CastsTypes
+ *
+ * This trait provides sophisticated value-casting mechanisms
+ * to enable flexible and reliable data transfer object (DTO) hydration.
+ *
+ * Supports:
+ * - Nested DTO instances
+ * - Arrays of DTOs (DTO[])
+ * - Backed Enums
+ * - Primitive type fallback pass through
+ *
+ * Uses strict type checking and powerful casting techniques
+ * to resolve property type constraints dynamically.
+ */
+trait CastsTypes
+{
+    /**
+     * Provides a public entry point to the internal casting mechanism.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return mixed The casted value matching the expected type of the property.
+     */
+    public function castTo(ReflectionProperty $property, mixed $value) : mixed
+    {
+        return $this->castToExpectedType(property: $property, value: $value);
+    }
+
+    /**
+     * Dynamically dispatches value casting logic based on the property's type metadata.
+     *
+     * Uses `match` to select the appropriate casting method:
+     * - DTO detection
+     * - Array of DTOs detection
+     * - Backed Enums detection
+     *
+     * Falls back to the raw value if no special handling is needed.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return mixed The casted value (or the original value if no special casting is applied).
+     */
+    protected function castToExpectedType(ReflectionProperty $property, mixed $value) : mixed
+    {
+        return match (true) {
+            $this->isDTOType(property: $property)    => $this->castToDTO(property: $property, value: $value),
+            $this->isDTOArray(property: $property)   => $this->castToDTOArray(property: $property, value: $value),
+            $this->isBackedEnum(property: $property) => $this->castToEnum(property: $property, value: $value),
+            default                                  => $value,
+        };
+    }
+
+    /**
+     * Checks if the given property is a subclass of the current DTO base class.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property maps to a DTO class, `false` otherwise.
+     */
+    protected function isDTOType(ReflectionProperty $property) : bool
+    {
+        $type = $this->resolvePropertyType(property: $property);
+
+        return $type !== null && is_subclass_of($type, AbstractDTO::class);
+    }
+
+    /**
+     * Resolves the fully qualified class name or built-in type of a property.
+     *
+     * Prioritizes class names over scalars when multiple union types are present.
+     *
+     * @param ReflectionProperty $property The property for which to determine the type.
+     *
+     * @return string|null The resolved class or scalar type name, or null if unavailable.
+     */
+    protected function resolvePropertyType(ReflectionProperty $property) : string|null
+    {
+        $type = $property->getType();
+
+        if ($type === null) {
+            return null;
+        }
+
+        if ($type instanceof ReflectionNamedType) {
+            return $type->getName();
+        }
+
+        if ($type instanceof ReflectionUnionType) {
+            $types = array_filter(
+                $type->getTypes(),
+                fn ($t) => $t instanceof ReflectionNamedType && $t->getName() !== 'null'
+            );
+
+            usort(
+                $types,
+                fn (ReflectionNamedType $a, ReflectionNamedType $b) : int => class_exists(
+                        $b->getName()
+                    ) <=> class_exists($a->getName())
+            );
+
+            return $types[0]?->getName();
+        }
+
+        if ($type instanceof ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $named) {
+                if ($named instanceof ReflectionNamedType) {
+                    return $named->getName();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Casts a given value to a DTO instance.
+     *
+     * Initializes a new DTO instance by passing a normalized array of values to its constructor.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return object A new DTO instance based on the resolved class type.
+     *
+     * @throws InvalidArgumentException If the resolved class is invalid or not a DTO.
+     */
+    protected function castToDTO(ReflectionProperty $property, mixed $value) : object
+    {
+        $class = $this->resolvePropertyType(property: $property);
+        $this->assertDTOClass(class: $class, property: $property);
+
+        return new $class($this->normalizeToArray(value: $value));
+    }
+
+    /**
+     * Validates whether the given class is a valid subclass of the DTO base class.
+     *
+     * @param string|null        $class    The class name to validate.
+     * @param ReflectionProperty $property The property for which the class is being validated.
+     *
+     * @throws InvalidArgumentException If the class is not a valid DTO.
+     */
+    protected function assertDTOClass(string|null $class, ReflectionProperty $property) : void
+    {
+        if ($class === null || ! class_exists($class) || ! is_subclass_of($class, AbstractDTO::class)) {
+            throw new InvalidArgumentException(
+                message: sprintf(
+                             "Invalid DTO class '%s' for property '%s'.",
+                             $class ?? 'null',
+                             $property->getName()
+                         )
+            );
+        }
+    }
+
+    /**
+     * Normalizes a mixed input value into an array.
+     *
+     * @param mixed $value The raw input value.
+     *
+     * @return array The normalized array representation of the input.
+     */
+    protected function normalizeToArray(mixed $value) : array
+    {
+        return is_array($value) ? $value : (array) $value;
+    }
+
+    /**
+     * Checks if the given property corresponds to an array of DTO instances.
+     *
+     * Determines this by analyzing the type information and optional metadata
+     * from PHPDoc annotations or attributes.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property is an array of DTOs, `false` otherwise.
+     */
+    protected function isDTOArray(ReflectionProperty $property) : bool
+    {
+        return $this->resolvePropertyType(property: $property) === 'array'
+            && $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property) !== null;
+    }
+
+    /**
+     * Resolves the class name of the DTO from either PHP attributes or annotations.
+     *
+     * @param ReflectionProperty $property The property for which to resolve the class.
+     *
+     * @return string|null The fully qualified class name of the DTO, or `null` if not found.
+     */
+    protected function resolveDTOClassFromAnnotationsOrAttributes(ReflectionProperty $property) : string|null
+    {
+        foreach ($property->getAttributes() as $attribute) {
+            $instance = $attribute->newInstance();
+            if (method_exists($instance, 'of')) {
+                return $instance->of();
+            }
+        }
+
+        $doc = $property->getDocComment();
+        if ($doc && preg_match('/@var\s+([\w\\\\]+)\[]/', $doc, $matches)) {
+            return ltrim($matches[1], '\\');
+        }
+
+        return null;
+    }
+
+    /**
+     * Casts a given value to an array of DTO instances.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value (array) to be casted.
+     *
+     * @return array An array of DTO instances.
+     *
+     * @throws InvalidArgumentException If the DTO class is invalid.
+     */
+    protected function castToDTOArray(ReflectionProperty $property, mixed $value) : array
+    {
+        $class = $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property);
+        $this->assertDTOClass(class: $class, property: $property);
+
+        return array_map(
+            fn ($item) => new $class($this->normalizeToArray(value: $item)),
+            is_array($value) ? $value : []
+        );
+    }
+
+    /**
+     * Checks if the given property maps to a backed enum.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property type is a subclass of `BackedEnum`, `false` otherwise.
+     */
+    protected function isBackedEnum(ReflectionProperty $property) : bool
+    {
+        $type = $this->resolvePropertyType(property: $property);
+
+        return $type !== null
+            && enum_exists($type)
+            && is_subclass_of($type, BackedEnum::class);
+    }
+
+    /**
+     * Casts a scalar value to its corresponding backed enum instance.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw scalar value to be converted.
+     *
+     * @return BackedEnum|string|null The enum instance corresponding to the given value.
+     *
+     * @throws InvalidArgumentException If the provided value does not match a valid enum case.
+     */
+    protected function castToEnum(ReflectionProperty $property, mixed $value) : BackedEnum|string|null
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $type = $this->resolvePropertyType(property: $property);
+        $this->assertEnumClass(class: $type, property: $property);
+
+        /** @var class-string<BackedEnum> $type */
+        if ($value instanceof $type) {
+            return $value;
+        }
+
+        $enum = $type::tryFrom(value: $value);
+
+        if (! $enum) {
+            throw new InvalidArgumentException(
+                message: sprintf(
+                             "Invalid enum value '%s' for '%s' on property '%s'. Valid: [%s]",
+                             is_scalar($value) ? $value : gettype($value),
+                             $type,
+                             $property->getName(),
+                             implode(', ', array_map(static fn ($case) => $case->value, $type::cases()))
+                         )
+            );
+        }
+
+        return $enum;
+    }
+
+    /**
+     * Asserts that the given type is a valid backed enum class.
+     *
+     * @param string|null        $class    The class name to validate.
+     * @param ReflectionProperty $property The property for which the enum is being validated.
+     *
+     * @throws InvalidArgumentException If the class is not a valid backed enum.
+     */
+    protected function assertEnumClass(string|null $class, ReflectionProperty $property) : void
+    {
+        if ($class === null || ! enum_exists($class) || ! is_subclass_of($class, BackedEnum::class)) {
+            throw new InvalidArgumentException(
+                message: sprintf(
+                             "Invalid enum type '%s' for property '%s'. Must be a backed enum.",
+                             $class ?? 'null',
+                             $property->getName()
+                         )
+            );
+        }
+    }
+}

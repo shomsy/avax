@@ -9,8 +9,6 @@ use Avax\DataLayer\AccessPersistentData\PersistentDataRequest;
 use Avax\DataLayer\AccessPersistentData\PersistentDataResult;
 use Avax\DataLayer\DataLayer;
 use Avax\Tests\TestCase;
-use Foundation\DataLayer\DataLayer;
-use PHPUnit\Framework\TestCase;
 
 final class AccessPersistentDataTest extends TestCase
 {

@@ -10,8 +10,6 @@ use Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime;
 use Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime;
 use Avax\DataLayer\DataLayer;
 use Avax\Tests\TestCase;
-use Foundation\DataLayer\DataLayer;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class DataLayerConfigurationTest extends TestCase

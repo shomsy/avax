@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Capabilities\Body;
+namespace Avax\HTTP\Response\Capabilities\Body;
 
-use components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Stringable;

@@ -7,15 +7,12 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
-use Avax\Container\DependencyInjection\Configuration\AppFactory;
-use Avax\HTTP\Request\Request;
+use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Response;
 use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Tests\TestCase;
 use LogicException;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -90,7 +87,7 @@ final class HttpApplicationTest extends TestCase
 
 final class FakeRouter implements RouterRuntimeInterface
 {
-    public function resolve(Request $request) : ResponseInterface
+    public function resolve(ServerRequest $request) : ResponseInterface
     {
         return Response::text(content: 'Avax components router is up.');
     }

@@ -12,7 +12,6 @@ use Avax\DataFoundation\Values\Option\Option;
 use Avax\DataFoundation\Values\Result\Result;
 use Avax\DataFoundation\Values\Text\NonEmptyString;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 final class SemanticValuesTest extends TestCase

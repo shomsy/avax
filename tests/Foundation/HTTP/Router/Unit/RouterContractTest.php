@@ -8,7 +8,6 @@ use components\HTTP\Router\RouterInterface;
 use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
 /**

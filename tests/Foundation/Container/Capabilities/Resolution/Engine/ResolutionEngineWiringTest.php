@@ -11,13 +11,11 @@ use components\Container\DependencyInjection\Capability\Resolution\Contracts\Con
 use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
 use components\Container\DependencyInjection\Capability\Resolution\Engine\Instantiator;
 use components\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
-use components\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use components\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 final class ResolutionEngineWiringTest extends TestCase
 {

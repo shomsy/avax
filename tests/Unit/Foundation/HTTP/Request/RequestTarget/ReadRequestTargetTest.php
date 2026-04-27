@@ -7,7 +7,6 @@ namespace components\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
 use components\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
 use components\HTTP\URI\UriBuilder;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * TDD Tests for ReadRequestTarget according to the DeepRefactor plan.

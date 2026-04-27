@@ -6,7 +6,6 @@ use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteExportValidator;
 use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**

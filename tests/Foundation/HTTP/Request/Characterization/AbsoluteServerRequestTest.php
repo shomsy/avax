@@ -8,7 +8,6 @@ use Avax\HTTP\Request\AbsoluteServerRequest;
 use Avax\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;

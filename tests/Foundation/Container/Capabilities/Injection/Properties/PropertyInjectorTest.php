@@ -11,7 +11,6 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\Container
 use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class PropertyInjectorTest extends TestCase

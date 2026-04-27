@@ -9,7 +9,6 @@ use Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\SagaRuntimeConfig;
 use Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\SagaRuntimeConfigurationFailure;
 use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class ConfigureSagaRuntimeTest extends TestCase
 {

@@ -6,7 +6,6 @@ namespace components\Text\Tests;
 
 use components\Tests\TestCase;
 use components\Text\Pattern;
-use PHPUnit\Framework\TestCase;
 
 final class PatternFlagsPropagationTest extends TestCase
 {

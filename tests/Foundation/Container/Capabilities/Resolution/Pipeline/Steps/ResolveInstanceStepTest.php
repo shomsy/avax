@@ -8,7 +8,6 @@ use components\Container\DependencyInjection\Capability\Resolution\Engine\Engine
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\ResolveInstanceStep;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Flows\BuildResponse;
+namespace Avax\HTTP\Response\Flows\BuildResponse;
 
-use components\HTTP\Response\Capabilities\Body\Xml\EncodeXmlBody;
+use Avax\HTTP\Response\Capabilities\Body\Xml\EncodeXmlBody;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

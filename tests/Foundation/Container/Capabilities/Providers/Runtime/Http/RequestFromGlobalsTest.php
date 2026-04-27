@@ -42,7 +42,6 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
     use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
     use Avax\Tests\TestCase;
     use Override;
-    use PHPUnit\Framework\TestCase;
     use ReflectionProperty;
     use RuntimeException;
     use SensitiveParameter;

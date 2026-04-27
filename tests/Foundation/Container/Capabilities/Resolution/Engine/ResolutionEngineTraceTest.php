@@ -12,7 +12,6 @@ use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\ContainerKer
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Configuration\ContainerBuilder;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use stdClass;
 

@@ -11,7 +11,6 @@ use Avax\ApplicationWorkflow\Saga\Saga;
 use Avax\ApplicationWorkflow\Saga\StartSaga\SagaStartCommand;
 use Avax\Tests\TestCase;
 use RuntimeException;
-use PHPUnit\Framework\TestCase;
 
 final class SagaLifecycleTest extends TestCase
 {

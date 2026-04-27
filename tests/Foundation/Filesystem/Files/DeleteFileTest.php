@@ -8,7 +8,6 @@ use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\DeleteFile;
 use Avax\Filesystem\Files\FileDeleteFailed;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class DeleteFileTest extends TestCase
 {

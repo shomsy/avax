@@ -13,7 +13,6 @@ use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use ReflectionException;
 

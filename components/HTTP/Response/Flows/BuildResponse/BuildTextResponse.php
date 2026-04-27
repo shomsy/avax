@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Flows\BuildResponse;
+namespace Avax\HTTP\Response\Flows\BuildResponse;
 
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;

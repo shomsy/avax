@@ -9,7 +9,6 @@ use Avax\Filesystem\Files\FileNotFound;
 use Avax\Filesystem\Files\FileCopyFailed;
 use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class CopyFileTest extends TestCase
 {

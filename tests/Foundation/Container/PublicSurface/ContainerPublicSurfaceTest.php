@@ -10,10 +10,8 @@ use Avax\Container\ContainerInterface;
 use Avax\Container\ContextBuilderInterface;
 use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
-use Avax\Container\InjectionReport;
 use Avax\Container\ScopeManagerInterface;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
 final class ContainerPublicSurfaceTest extends TestCase

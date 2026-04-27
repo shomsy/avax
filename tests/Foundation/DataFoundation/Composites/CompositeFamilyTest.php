@@ -12,7 +12,6 @@ use Avax\DataFoundation\Composites\Tuple\Tuple2;
 use Avax\DataFoundation\Composites\Tuple\Tuple3;
 use Avax\DataFoundation\Composites\Tuple\Tuple4;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class CompositeFamilyTest extends TestCase
 {

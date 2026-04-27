@@ -6,7 +6,6 @@ namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestHeaders;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * TDD Tests for RequestHeaders according to the DeepRefactor plan.

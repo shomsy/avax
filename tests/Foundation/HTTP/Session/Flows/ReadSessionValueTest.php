@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class ReadSessionValueTest extends TestCase
 {

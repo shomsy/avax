@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Response\Capabilities\Streams;
+namespace Avax\HTTP\Response\Capabilities\Streams;
 
 use GuzzleHttp\Psr7\Stream;
-use http\Encoding\Stream;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 

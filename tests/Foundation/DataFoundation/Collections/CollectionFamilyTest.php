@@ -10,7 +10,6 @@ use Avax\DataFoundation\Collections\MultiMap\MultiMap;
 use Avax\DataFoundation\Collections\Sequence\Sequence;
 use Avax\DataFoundation\Collections\Set\Set;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class CollectionFamilyTest extends TestCase
 {

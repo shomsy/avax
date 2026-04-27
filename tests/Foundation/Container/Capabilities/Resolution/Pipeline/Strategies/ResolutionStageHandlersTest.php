@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace components\Container\Tests\Capability\Resolution\Pipeline\Strategies;
 
-use components\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStageHandlers;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class ResolutionStageHandlersTest extends TestCase
 {

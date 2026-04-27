@@ -10,7 +10,6 @@ use components\Container\DependencyInjection\Capability\Prototypes\Model\Paramet
 use components\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
 use components\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 final class ServicePrototypeBuilderTest extends TestCase
 {

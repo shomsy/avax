@@ -7,7 +7,6 @@ namespace components\Container\Tests\Capability\Scopes;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 

@@ -8,7 +8,6 @@ use Avax\HTTP\Session\SessionSecurity\SessionPolicy\AbsoluteLifetimePolicy;
 use Avax\HTTP\Session\SessionSecurity\SessionPolicy\IdleTimeoutPolicy;
 use Avax\HTTP\Session\SessionSecurity\SessionPolicy\SecureTransportPolicy;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class SessionPolicyTest extends TestCase
 {

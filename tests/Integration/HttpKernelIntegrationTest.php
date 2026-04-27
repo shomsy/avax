@@ -14,7 +14,6 @@ use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\Tests\TestCase;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

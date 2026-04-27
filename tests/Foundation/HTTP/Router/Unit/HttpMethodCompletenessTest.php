@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use components\HTTP\Enums\HttpMethod;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for HTTP method completeness - RFC 9110 coverage.

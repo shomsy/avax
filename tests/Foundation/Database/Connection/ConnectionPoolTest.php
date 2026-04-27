@@ -6,7 +6,6 @@ namespace Avax\Tests\Foundation\Database\Connection;
 
 use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use Avax\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class ConnectionPoolTest extends TestCase
 {

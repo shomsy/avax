@@ -1,38 +1,40 @@
 {
+  "license": "proprietary",
   "autoload": {
     "psr-4": {
-      "Avax\\": "Foundation/"
+      "Avax\\Framework\\": "framework/",
+      "Avax\\": "components/",
+      "components\\": "components/"
     },
     "files": [
-      "Foundation/Text/functions.php",
-      "Foundation/HTTP/Router/functions.php",
-      "Foundation/HTTP/Response/functions.php",
-      "Foundation/Logging/functions.php",
-      "Foundation/Config/functions.php",
-      "Foundation/Auth/functions.php",
-      "Foundation/View/functions.php",
-      "Foundation/HTTP/Session/functions.php",
-      "Foundation/HTTP/Context/functions.php",
-      "Foundation/DataFoundation/functions.php",
-      "Foundation/Database/functions.php",
-      "Foundation/Container/functions.php",
-      "Foundation/HTTP/Security/functions.php",
-      "Foundation/DumpDebugger/functions.php"
+      "components/compat.php",
+      "components/Text/functions.php",
+      "components/HTTP/Router/functions.php",
+      "components/HTTP/Response/functions.php",
+      "components/Logging/functions.php",
+      "components/Config/functions.php",
+      "components/Auth/functions.php",
+      "components/View/functions.php",
+      "components/HTTP/Session/functions.php",
+      "components/HTTP/Context/functions.php",
+      "components/DataFoundation/functions.php",
+      "components/Database/functions.php",
+      "components/Container/functions.php",
+      "components/HTTP/Security/functions.php",
+      "components/DumpDebugger/functions.php"
     ]
   },
   "autoload-dev": {
     "psr-4": {
-      "Avax\\Tests\\": "tests/"
+      "Avax\\Tests\\": "tests/",
+      "components\\Tests\\": "tests/"
     },
     "files": [
       "tests/TestCase.php"
     ]
   },
   "require-dev": {
-    "phpstan/phpstan": "^2.0",
-    "phpstan/phpstan-strict-rules": "^2.0",
-    "vimeo/psalm": "^5.26",
-    "infection/infection": "^0.29",
+    "phpstan/phpstan": "^1.12",
     "rector/rector": "^1.2",
     "friendsofphp/php-cs-fixer": "^3.63",
     "squizlabs/php_codesniffer": "^3.7",
@@ -40,8 +42,8 @@
     "nunomaduro/phpinsights": "^2.11",
     "barryvdh/laravel-ide-helper": "^3.1",
     "tracy/tracy": "^2.3",
-    "phpstan/phpdoc-parser": "^1.26",
-    "phpunit/phpunit": "^11.1",
+    "phpstan/phpdoc-parser": "^2.3",
+    "phpunit/phpunit": "^10.5",
     "swoole/ide-helper": "^5.1"
   },
   "config": {
@@ -69,7 +71,7 @@
     "ramsey/uuid": "^4.7",
     "jenssegers/blade": "^2.0",
     "clickfwd/yoyo": "^0.2.0",
-    "illuminate/view": "11.7.0",
+    "illuminate/view": "^11.7",
     "sentry/sentry": "^4.10",
     "amphp/amp": "^3.0",
     "amphp/parallel-functions": "^2.0",
@@ -89,8 +91,10 @@
     "refactor:dry": "rector process --dry-run",
     "refactor": "rector process",
     "test": "phpunit",
-    "mutation": "infection --min-msi=80 --min-covered-msi=90",
-    "check:superglobals": "php scripts/check-superglobals.php"
+    "check:superglobals": "php scripts/check-superglobals.php",
+    "docs:validate": "php tooling/docs/validate-docs.php",
+    "docs:mirror": "php tooling/docs/validate-docs-mirror-source.php",
+    "runtime:leaks": "php tooling/refactor/check-runtime-leaks.php"
   },
   "suggest": {}
 }

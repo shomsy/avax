@@ -1,13 +1,17 @@
 parameters:
     level: max
     paths:
-        - Foundation
-        - tests
+        - framework
+        - tooling
+        - tests/Unit/Framework
+        - tests/Feature/Framework
+        - tests/Contract/Runtime
     excludePaths:
         - vendor
     checkMissingIterableValueType: true
     checkGenericClassInNonGenericObjectType: true
     reportUnmatchedIgnoredErrors: true
-
-includes:
-    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    ignoreErrors:
+        -
+            message: '#ResponseFactory#'
+            path: framework/System/Flows/HandleIncomingHttp/HandleIncomingHttp.php

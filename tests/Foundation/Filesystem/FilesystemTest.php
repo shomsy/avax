@@ -7,7 +7,6 @@ namespace components\Tests\Foundation\Filesystem;
 use components\Filesystem\Disks\Local\LocalDisk;
 use components\Filesystem\Filesystem;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class FilesystemTest extends TestCase
 {

@@ -1,8 +1,12 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . '/Foundation')
-    ->in(__DIR__ . '/tests')
+    ->in(__DIR__ . '/framework')
+    ->in(__DIR__ . '/tooling')
+    ->in(__DIR__ . '/scripts')
+    ->in(__DIR__ . '/tests/Unit/Framework')
+    ->in(__DIR__ . '/tests/Feature/Framework')
+    ->in(__DIR__ . '/tests/Contract')
     ->name('*.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);

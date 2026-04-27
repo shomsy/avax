@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace components\Container\Tests\Flow\RegisterBindings;
 
-use components\Container\Core\AppFactory;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
-use components\Container\DependencyInjection\Configuration\AppFactory;
+use components\Container\Core\AppFactory;
 use components\HTTP\Request\Request;
-use components\HTTP\Router\RouterInterface;
-use components\HTTP\Router\Routing\RouteRegistrarProxy;
-use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use components\Tests\TestCase;
+use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use LogicException;
 use Override;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -136,9 +133,14 @@ final class RegistrationFakeRouter implements RouterInterface
         return $this->get(path: $path, action: $action);
     }
 
-    public function any(string $path, callable|array|string $action) : array
+    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         throw new LogicException(message: 'Fake router does not support wildcard registration.');
+    }
+
+    public function anyExpanded(string $path, callable|array|string $action) : array
+    {
+        throw new LogicException(message: 'Fake router does not support expanded wildcard registration.');
     }
 
     public function fallback(callable|array|string $handler) : void

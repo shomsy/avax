@@ -8,7 +8,6 @@ use components\Container\DependencyInjection\Capability\Observability\Trace\Reso
 use components\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionExceptionWithTrace;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use components\Tests\TestCase;
-use PHPUnit\Framework\TestCase;
 
 final class ResolutionExceptionWithTraceTest extends TestCase
 {

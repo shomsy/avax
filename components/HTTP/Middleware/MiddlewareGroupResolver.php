@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Middleware;
 
-use Avax\Container\Config\Settings;
+use Avax\Components\Application\Container\Config\Settings;
 use RuntimeException;
 
 /**

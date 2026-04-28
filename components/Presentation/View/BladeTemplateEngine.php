@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\View;
+namespace Avax\Components\Presentation\View;
 
 use Jenssegers\Blade\Blade;
 use Throwable;

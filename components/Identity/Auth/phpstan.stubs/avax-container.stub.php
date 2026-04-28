@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Core;
+namespace Avax\Components\Application\Container\Core;
 
-use Avax\Container\Providers\ServiceProvider;
+use Avax\Components\Application\Container\Providers\ServiceProvider;
 
 final class AppFactory
 {
@@ -34,9 +34,9 @@ final class Container
     public function instance(string $id, mixed $implementation) : void {}
 }
 
-namespace Avax\Container\Providers;
+namespace Avax\Components\Application\Container\Providers;
 
-use Avax\Container\Core\Container;
+use Avax\Components\Application\Container\Core\Container;
 
 abstract class ServiceProvider
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Providers;
+namespace Avax\Components\Application\Container\Providers;
 
-use Avax\Container\Core\Container;
+use Avax\Components\Application\Container\Core\Container;
 
 abstract class ServiceProvider
 {

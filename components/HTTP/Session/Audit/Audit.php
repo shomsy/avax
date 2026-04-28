@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Session\Audit;
 
 use Avax\Components\HTTP\Context\HttpContextInterface;
 use Avax\Components\HTTP\Session\Shared\Security\SessionContextInterface;
-use Avax\Logging\LoggerFactory;
+use Avax\Components\Operations\Logging\System\Configuration\RegisterLogging;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 use Throwable;

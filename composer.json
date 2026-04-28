@@ -3,9 +3,7 @@
   "autoload": {
     "psr-4": {
       "Avax\\Framework\\": "framework/",
-      "Avax\\Components\\": "components/",
-      "Avax\\": "components/",
-      "components\\": "components/"
+      "Avax\\Components\\": "components/"
     },
     "files": [
       "components/compat.php",
@@ -18,7 +16,7 @@
       "components/Presentation/View/functions.php",
       "components/HTTP/Session/functions.php",
       "components/HTTP/Context/functions.php",
-      "components/DataFoundation/functions.php",
+      "components/DataStack/Data/System/PublicSurface/functions.php",
       "components/DataStack/Database/functions.php",
       "components/Application/Container/functions.php",
       "components/HTTP/Security/functions.php",
@@ -27,8 +25,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Avax\\Tests\\": "tests/",
-      "components\\Tests\\": "tests/"
+      "Avax\\Tests\\": "tests/"
     },
     "files": [
       "tests/TestCase.php"

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Commands;
+namespace Avax\Components\CLI\Console;
 
 use Avax\Components\CLI\Console\App\MakeControllerCommand;
 use Avax\Components\CLI\Console\App\MakeRepositoryCommand;

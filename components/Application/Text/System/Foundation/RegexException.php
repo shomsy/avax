@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Text;
+namespace Avax\Components\Application\Text;
 
 use RuntimeException;
 

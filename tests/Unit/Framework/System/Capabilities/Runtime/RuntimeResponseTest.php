@@ -6,9 +6,9 @@ namespace Avax\Tests\Unit\Framework\System\Capabilities\Runtime;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RuntimeResponse::class)]
 final class RuntimeResponseTest extends TestCase

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\RequestScope;
 
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Random\RandomException;
 
 final readonly class RequestScopeId
 {
@@ -22,7 +23,7 @@ final readonly class RequestScopeId
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public static function generate(): self
     {

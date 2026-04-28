@@ -12,6 +12,7 @@ use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 use Avax\HTTP\Response\ResponseFactory;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
+use Random\RandomException;
 use Stringable;
 use Throwable;
 
@@ -22,7 +23,7 @@ final readonly class HandleIncomingHttp
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function handle(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
     {

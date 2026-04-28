@@ -6,13 +6,14 @@ namespace Avax\Framework\System\Capabilities\RequestScope;
 
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Random\RandomException;
 
 final class RequestScopeStore implements ResettableState
 {
     private RequestScope|null $currentScope = null;
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function open(): RequestScope
     {

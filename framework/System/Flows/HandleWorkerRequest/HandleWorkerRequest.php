@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Framework\System\Flows\HandleWorkerRequest;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Components\Framework\System\Capabilities\RequestScope\RequestScope;
+use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Throwable;
 
 final class HandleWorkerRequest
 {
@@ -25,7 +26,7 @@ final class HandleWorkerRequest
             $this->closeWorkerRequestScope();
 
             return $response;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->closeWorkerRequestScope();
 
             throw $e;

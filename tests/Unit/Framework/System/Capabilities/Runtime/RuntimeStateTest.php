@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Framework\System\Capabilities\Runtime;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
+use Avax\Tests\Framework\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RuntimeState::class)]
 final class RuntimeStateTest extends TestCase

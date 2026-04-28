@@ -7,9 +7,9 @@ namespace Avax\Tests\Unit\Framework\System\Capabilities\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeAlreadyClosed;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeId;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RequestScope::class)]
 #[CoversClass(RequestScopeId::class)]

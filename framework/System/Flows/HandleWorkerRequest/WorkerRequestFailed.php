@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Framework\System\Flows\HandleWorkerRequest;
 
-final class WorkerRequestFailed extends \RuntimeException
+use RuntimeException;
+
+final class WorkerRequestFailed extends RuntimeException
 {
 }

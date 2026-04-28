@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Contract\Runtime;
 
-use function assert;
-
 use Avax\Framework\System\Capabilities\Runtime\Adapters\FrankenPhp\FrankenPhpRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Adapters\RoadRunner\RoadRunnerRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Adapters\Swoole\SwooleRuntime;
@@ -18,6 +16,7 @@ use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use function assert;
 
 final class WorkerRuntimeContractTest extends TestCase
 {

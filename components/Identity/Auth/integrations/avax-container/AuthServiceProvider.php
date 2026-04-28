@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Integrations\AvaxContainer;
 
+use Avax\Components\Application\Container\Providers\ServiceProvider;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
@@ -20,7 +21,6 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
-use Avax\Container\Providers\ServiceProvider;
 use Override;
 use ReflectionException;
 

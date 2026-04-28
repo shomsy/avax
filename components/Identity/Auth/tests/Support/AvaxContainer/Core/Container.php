@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Core;
+namespace Avax\Components\Application\Container\Core;
 
 use Closure;
 use ReflectionClass;

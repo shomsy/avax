@@ -782,7 +782,7 @@ final class CompileContainer
         return <<<PHP
             declare(strict_types=1);
             
-            namespace components\\Container\\Capabilities\\Composition\\Compilation\\Generated;
+            namespace Avax\\Components\\Application\\Container\\DI\\Capabilities\\Composition\\Compilation\\Generated;
             
             return new class extends \\Avax\\Container\\Capabilities\\Composition\\Compilation\\CompiledContainer
             {

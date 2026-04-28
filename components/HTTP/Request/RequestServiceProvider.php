@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request;
 
-use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;

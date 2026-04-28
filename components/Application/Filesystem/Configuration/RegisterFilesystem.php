@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\Configuration;
 
+use Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder;
+use Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository;
 use Avax\Components\Application\Filesystem\Disks\Disk;
 use Avax\Components\Application\Filesystem\Disks\ResolveDisk;
 use Avax\Components\Application\Filesystem\Filesystem;
 use Avax\Components\Application\Filesystem\FilesystemInterface;
-use Avax\Container\Core\Capabilities\Binding\Binders\Binder;
-use Avax\Container\Core\Capabilities\Binding\BindingRepository;
 
 final class RegisterFilesystem
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
 
-use Avax\Validation\System\Capabilities\Standard\Email\ValidateEmail;
+use Avax\Components\Application\Validation\System\Capabilities\Standard\Email\ValidateEmail;
 use InvalidArgumentException;
 use Stringable;
 

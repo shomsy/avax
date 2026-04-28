@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\Tests\Capabilities\Oidc;
+
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifier;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\SubjectIdentifierStrategy;
+use Avax\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
+
+final class SubjectIdentifierTest extends TestCase
+{
+    public function testPublicStrategyReturnsTheLocalSubject() : void
+    {
+        $identifier = new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PUBLIC);
+
+        $this->assertSame(expected: 'user-123', actual: $identifier->generate(localSubject: 'user-123'));
+    }
+
+    public function testPairwiseStrategyReturnsStablePseudonymousSubject() : void
+    {
+        $identifier = new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE);
+
+        $first     = $identifier->generate(
+            localSubject    : 'user-123',
+            sectorIdentifier: 'https://rp.example.test',
+            pairwiseSalt    : 'salt-1'
+        );
+        $second    = $identifier->generate(
+            localSubject    : 'user-123',
+            sectorIdentifier: 'https://rp.example.test',
+            pairwiseSalt    : 'salt-1'
+        );
+        $different = $identifier->generate(
+            localSubject    : 'user-123',
+            sectorIdentifier: 'https://other.example.test',
+            pairwiseSalt    : 'salt-1'
+        );
+
+        $this->assertSame(expected: $first, actual: $second);
+        $this->assertNotSame(expected: $first, actual: $different);
+        $this->assertSame(expected: 64, actual: strlen(string: $first));
+    }
+
+    public function testSectorIdentifierValidationAcceptsUrisAndRejectsPlainStrings() : void
+    {
+        $identifier = new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE);
+
+        $this->assertTrue(condition: $identifier->isValidSectorIdentifier(sectorIdentifier: 'https://rp.example.test'));
+        $this->assertFalse(condition: $identifier->isValidSectorIdentifier(sectorIdentifier: 'not-a-sector'));
+    }
+}

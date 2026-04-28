@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Configuration;
 
-use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\Components\HTTP\Middleware\MiddlewareInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\RouterInterface;
 use Avax\Components\HTTP\Router\RouterRuntimeInterface;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use InvalidArgumentException;
 use LogicException;
 

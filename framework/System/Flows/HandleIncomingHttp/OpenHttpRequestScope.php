@@ -8,6 +8,7 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
+use Random\RandomException;
 
 final readonly class OpenHttpRequestScope
 {
@@ -18,7 +19,7 @@ final readonly class OpenHttpRequestScope
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function open(RuntimeRequest $request): RequestScope
     {

@@ -7,10 +7,10 @@ namespace Avax\Tests\Unit\Framework\System\Foundation\Time;
 use Avax\Framework\System\Foundation\Time\Clock;
 use Avax\Framework\System\Foundation\Time\FrozenClock;
 use Avax\Framework\System\Foundation\Time\SystemClock;
+use Avax\Tests\Framework\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(SystemClock::class)]
 #[CoversClass(FrozenClock::class)]

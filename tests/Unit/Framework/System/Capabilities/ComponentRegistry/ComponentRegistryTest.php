@@ -10,9 +10,9 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterf
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(ComponentRegistry::class)]
 #[CoversClass(ComponentDefinition::class)]

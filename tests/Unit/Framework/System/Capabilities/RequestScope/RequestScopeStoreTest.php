@@ -7,9 +7,10 @@ namespace Avax\Tests\Unit\Framework\System\Capabilities\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeNotOpen;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
+use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RequestScopeStore::class)]
 #[CoversClass(RequestScope::class)]
@@ -41,7 +42,7 @@ final class RequestScopeStoreTest extends TestCase
         $store = new RequestScopeStore();
         $store->open();
 
-        $this->expectException(\Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured::class);
+        $this->expectException(FrameworkMisconfigured::class);
         $this->expectExceptionMessage('Cannot open a new request scope while another scope is active.');
 
         $store->open();

@@ -9,10 +9,10 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RuntimeContext::class)]
 #[UsesClass(RequestScopeId::class)]

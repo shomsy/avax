@@ -7,9 +7,10 @@ namespace Avax\Tests\Unit\Framework\System\Capabilities\StateReset;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
+use RuntimeException;
 
 #[CoversClass(StateResetRegistry::class)]
 #[CoversClass(StateResetReport::class)]
@@ -98,7 +99,7 @@ final class StateResetRegistryTest extends TestCase
             state: new class implements ResettableState {
                 public function resetState(): void
                 {
-                    throw new \RuntimeException(message: 'Cannot reset state');
+                    throw new RuntimeException(message: 'Cannot reset state');
                 }
             },
         );
@@ -109,7 +110,7 @@ final class StateResetRegistryTest extends TestCase
         self::assertSame([], $report->resetComponents());
         self::assertCount(1, $report->failures());
         self::assertArrayHasKey('failing', $report->failures());
-        self::assertInstanceOf(\RuntimeException::class, $report->failures()['failing']);
+        self::assertInstanceOf(RuntimeException::class, $report->failures()['failing']);
     }
 
     #[Test]
@@ -124,7 +125,7 @@ final class StateResetRegistryTest extends TestCase
             state: new class implements ResettableState {
                 public function resetState(): void
                 {
-                    throw new \RuntimeException(message: 'Failed');
+                    throw new RuntimeException(message: 'Failed');
                 }
             },
         );

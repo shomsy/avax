@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\System\Capabilities\Runtime;
 
-use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
+use Avax\Tests\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Avax\Tests\Framework\TestCase;
 
 #[CoversClass(RuntimeResult::class)]
 #[UsesClass(RuntimeResponse::class)]

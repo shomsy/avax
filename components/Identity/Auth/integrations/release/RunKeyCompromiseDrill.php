@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\Integrations\Release;
+
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
+use RuntimeException;
+
+final readonly class RunKeyCompromiseDrill
+{
+    /**
+     * @return array{revoked_old_kid:bool}
+     */
+    public function execute(string $preRotationKeyRingPath, string $postCompromiseKeyRingPath) : array
+    {
+        $before = new FileBackedHmacKeyRingCodec(keyRingPath: $preRotationKeyRingPath);
+        $token  = $before->encode(claims: ['sub' => 7, 'iss' => 'drill']);
+
+        $after = new FileBackedHmacKeyRingCodec(keyRingPath: $postCompromiseKeyRingPath);
+
+        if ($after->decode(token: $token) !== null) {
+            throw new RuntimeException(message: 'Compromise drill failed because a retired key still verifies old tokens.');
+        }
+
+        return [
+            'revoked_old_kid' => true,
+        ];
+    }
+}

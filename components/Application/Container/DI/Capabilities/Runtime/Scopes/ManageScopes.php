@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Runtime\Scopes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes;
 
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\ServicePool;
 
 /**
  * Owns shared and scoped instance lifecycle operations.

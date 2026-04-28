@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Recover;
 
 use DateTimeImmutable;
 use SensitiveParameter;

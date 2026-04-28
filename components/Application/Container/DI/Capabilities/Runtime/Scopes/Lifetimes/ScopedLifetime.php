@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes;
 
 /**
  * Marker for one active-scope lifetime.

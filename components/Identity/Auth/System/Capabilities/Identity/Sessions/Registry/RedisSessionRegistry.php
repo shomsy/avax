@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry;
 
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;

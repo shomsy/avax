@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset;
+namespace Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset;
 
 use DateTimeImmutable;
 use SensitiveParameter;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
-use Avax\Components\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\ServicePool;
 
 final class ServicePoolSmokeTest implements ResettableInterface
 {

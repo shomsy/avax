@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
 
 $store  = new ScopeStore();
 $scoped = new ArrayObject();

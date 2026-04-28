@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Access\RequireRole;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Access\RequireRole;
 
-use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserRole;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
 /**

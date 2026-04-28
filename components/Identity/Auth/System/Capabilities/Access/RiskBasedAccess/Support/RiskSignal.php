@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Access\RiskBasedAccess\Support;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Access\RiskBasedAccess\Support;
 
 use DateTimeImmutable;
 

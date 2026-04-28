@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition\Assembly;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly;
 
-use Avax\Components\Container\DI\Capabilities\Composition\Compilation\CompileContainer;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Components\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Components\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompileContainer;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\ServicePool;
 
 /**
  * Built runtime collaborators for one container instance.

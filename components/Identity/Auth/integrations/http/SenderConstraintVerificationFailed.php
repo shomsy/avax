@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Integrations\Http;
+namespace Avax\Components\Identity\Auth\Integrations\Http;
 
 use RuntimeException;
 

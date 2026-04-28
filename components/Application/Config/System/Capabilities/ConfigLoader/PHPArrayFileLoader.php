@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Capabilities\ConfigLoader;
+namespace Avax\Components\Application\Config\System\Capabilities\ConfigLoader;
 
 use RuntimeException;
 

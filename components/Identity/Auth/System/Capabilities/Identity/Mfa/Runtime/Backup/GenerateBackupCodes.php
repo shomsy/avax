@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
-use Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Random\RandomException;
 use SensitiveParameter;
 

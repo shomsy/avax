@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\Token;
+namespace Avax\Components\Identity\Auth\Tests\Flows\Token;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
 use Avax\Components\Tests\TestCase;
 use JsonException;
 use PHPUnit\Framework\TestCase;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Integrations\Diagnostics;
+namespace Avax\Components\Identity\Auth\Integrations\Diagnostics;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditExporterInterface;
 use JsonException;
 
 /**

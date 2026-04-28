@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle;
 
 /**
  * Stores auth-sensitive attempt counts by ownership key.

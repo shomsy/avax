@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition;
 
 /**
  * Immutable build-time options for assembling a container runtime.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Sessions\Runtime;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime;
 
 use DateTimeImmutable;
 use SensitiveParameter;

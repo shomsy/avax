@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition\Testing;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Testing;
 
-use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
-use Avax\Components\Container\DI\Container;
-use Avax\Components\Container\DI\Flows\CreateContainer\CreateContainer;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Components\Application\Container\DI\Container;
+use Avax\Components\Application\Container\DI\Flows\CreateContainer\CreateContainer;
 
 /**
  * Composes isolated test containers with ownership-aware defaults.

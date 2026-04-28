@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Execution\Injection\Attributes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes;
 
 use Attribute;
 

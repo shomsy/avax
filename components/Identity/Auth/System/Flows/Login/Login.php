@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\Login;
+namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
-use Avax\Components\Auth\System\Capabilities\Identity\User;
-use Avax\Components\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 
 final class Login
 {

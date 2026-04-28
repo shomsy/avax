@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
 
-use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaEnrollmentFailed;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\BackupCodeSet;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaEnrollmentFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Random\RandomException;
 use SensitiveParameter;
 

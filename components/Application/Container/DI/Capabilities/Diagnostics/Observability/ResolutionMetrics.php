@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Diagnostics\Observability;
+namespace Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability;
 
 /**
  * Stores low-overhead numeric counters for container activity.

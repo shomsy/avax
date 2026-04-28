@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Support;
+namespace Avax\Components\Identity\Auth\Tests\Support;
 
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateInterval;
 use DateTimeImmutable;
 use Override;

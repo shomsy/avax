@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Integrations\AvaxContainer;
+namespace Avax\Components\Identity\Auth\Tests\Integrations\AvaxContainer;
 
-use Avax\Components\Auth\Integrations\AvaxContainer\AuthServiceProvider;
-use Avax\Components\Auth\System\Auth;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Auth\System\Flows\Register\RegistrationData;
-use Avax\Components\Auth\System\Foundation\Clock;
-use Avax\Components\Auth\System\Foundation\Exceptions\ConfigurationException;
-use Avax\Components\Auth\System\Foundation\IdGeneratorInterface;
-use Avax\Components\Auth\Tests\Support\FrozenClock;
-use Avax\Components\Container\Core\AppFactory;
-use Avax\Components\Container\Providers\ServiceProvider;
+use Avax\Components\Application\Container\Core\AppFactory;
+use Avax\Components\Application\Container\Providers\ServiceProvider;
+use Avax\Components\Identity\Auth\Integrations\AvaxContainer\AuthServiceProvider;
+use Avax\Components\Identity\Auth\System\Auth;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationData;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Foundation\Exceptions\ConfigurationException;
+use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Tests\TestCase;
 use DateTimeImmutable;
 use Override;

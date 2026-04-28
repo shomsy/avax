@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Flows\LoadConfiguration;
+namespace Avax\Components\Application\Config\System\Flows\LoadConfiguration;
 
-use Avax\Components\Config\System\Capabilities\Architecture\AppPath;
-use Avax\Components\Config\System\Capabilities\ConfigLoader\ConfigLoaderInterface;
-use Avax\Components\Config\System\Capabilities\Repository\ConfigurationRepository;
+use Avax\Components\Application\Config\System\Capabilities\Architecture\AppPath;
+use Avax\Components\Application\Config\System\Capabilities\ConfigLoader\ConfigLoaderInterface;
+use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
 
 /**
  * Flow to coordinate the loading of configuration files into the repository.

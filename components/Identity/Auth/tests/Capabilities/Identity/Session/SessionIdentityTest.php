@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Capabilities\Identity\Session;
+namespace Avax\Components\Identity\Auth\Tests\Capabilities\Identity\Session;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionLifetime;
-use Avax\Components\Auth\Tests\Support\ArraySessionStore;
-use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionLifetime;
+use Avax\Components\Identity\Auth\Tests\Support\ArraySessionStore;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Tests\TestCase;
 use DateInterval;
 use DateMalformedStringException;

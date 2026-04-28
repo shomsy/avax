@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\PublicSurface;
+namespace Avax\Components\Application\Container\System\PublicSurface;
 
-use Avax\Components\Container\DI\Container as RealContainer;
-use Avax\Components\Container\DI\ContainerInterface as RealContainerInterface;
+use Avax\Components\Application\Container\DI\Container as RealContainer;
+use Avax\Components\Application\Container\DI\ContainerInterface as RealContainerInterface;
 
 /**
  * Public surface for the Container component.

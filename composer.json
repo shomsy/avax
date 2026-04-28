@@ -9,20 +9,20 @@
     },
     "files": [
       "components/compat.php",
-      "components/Text/functions.php",
+      "components/Application/Text/functions.php",
       "components/HTTP/Router/functions.php",
       "components/HTTP/Response/functions.php",
-      "components/Logging/functions.php",
-      "components/Config/functions.php",
-      "components/Auth/functions.php",
-      "components/View/functions.php",
+      "components/Operations/Logging/functions.php",
+      "components/Application/Config/functions.php",
+      "components/Identity/Auth/functions.php",
+      "components/Presentation/View/functions.php",
       "components/HTTP/Session/functions.php",
       "components/HTTP/Context/functions.php",
       "components/DataFoundation/functions.php",
-      "components/Database/functions.php",
-      "components/Container/functions.php",
+      "components/DataStack/Database/functions.php",
+      "components/Application/Container/functions.php",
       "components/HTTP/Security/functions.php",
-      "components/DumpDebugger/functions.php"
+      "components/DeveloperTools/DumpDebugger/functions.php"
     ]
   },
   "autoload-dev": {

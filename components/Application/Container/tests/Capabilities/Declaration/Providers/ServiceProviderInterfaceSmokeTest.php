@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Components\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 $reflection  = new ReflectionClass(objectOrClass: ServiceProviderInterface::class);
 $constructor = $reflection->getMethod(name: '__construct');

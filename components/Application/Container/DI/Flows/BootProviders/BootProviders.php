@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Flows\BootProviders;
+namespace Avax\Components\Application\Container\DI\Flows\BootProviders;
 
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Components\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 use InvalidArgumentException;
 use Throwable;
 

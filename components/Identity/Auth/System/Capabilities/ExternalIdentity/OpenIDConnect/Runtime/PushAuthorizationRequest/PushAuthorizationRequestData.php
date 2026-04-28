@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest;
 
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
 use SensitiveParameter;
 
 final readonly class PushAuthorizationRequestData

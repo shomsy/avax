@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaEnrollmentRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaRecoveryRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaEnrollmentRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaMethodRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaRecoveryRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 
 /**
  * Stores active MFA methods, pending enrollments, and recovery tokens.

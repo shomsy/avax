@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Execution\Injection\Invocation;
+namespace Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation;
 
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolvePlan;
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolvePlan;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use ReflectionParameter;
 use Throwable;
 

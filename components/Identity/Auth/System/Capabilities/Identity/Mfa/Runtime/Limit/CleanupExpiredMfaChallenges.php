@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit;
 
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredMfaChallenges
 {

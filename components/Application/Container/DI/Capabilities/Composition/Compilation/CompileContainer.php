@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition\Compilation;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation;
 
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\LifetimePlan;
 use Closure;
-use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
-use Avax\Components\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Container\DI\Capabilities\Resolution\LifetimePlan;
 use JsonException;
 use ReflectionException;
 use RuntimeException;

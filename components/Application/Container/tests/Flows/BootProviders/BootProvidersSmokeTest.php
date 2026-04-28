@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Components\Container\DI\ContainerInterface;
-use Avax\Components\Container\DI\Flows\BootProviders\BootProviders;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Flows\BootProviders\BootProviders;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

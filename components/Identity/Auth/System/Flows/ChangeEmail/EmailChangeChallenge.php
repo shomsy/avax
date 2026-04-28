@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\ChangeEmail;
+namespace Avax\Components\Identity\Auth\System\Flows\ChangeEmail;
 
 use DateTimeImmutable;
 use SensitiveParameter;

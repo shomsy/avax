@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\IdentityOwners;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners;
 
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetChallenge;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
 use DateMalformedStringException;
 use SensitiveParameter;
 

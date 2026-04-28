@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\Configurator;
+namespace Avax\Components\Application\Config\Configurator;
 
-use Avax\Components\Config\Configurator\FileLoader\ConfigLoaderInterface;
+use Avax\Components\Application\Config\Configurator\FileLoader\ConfigLoaderInterface;
 use Avax\Components\DataFoundation\Collection;
 use RuntimeException;
 use WeakMap;

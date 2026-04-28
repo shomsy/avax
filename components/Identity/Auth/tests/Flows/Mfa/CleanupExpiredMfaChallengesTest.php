@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\Mfa;
+namespace Avax\Components\Identity\Auth\Tests\Flows\Mfa;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Tests\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

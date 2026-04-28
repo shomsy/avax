@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\Flows\CreateContainer;
+namespace Avax\Components\Application\Container\System\Flows\CreateContainer;
 
-use Avax\Components\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\PublicSurface\Container;
 
 final class CreateContainer
 {

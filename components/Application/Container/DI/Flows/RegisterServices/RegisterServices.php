@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Flows\RegisterServices;
+namespace Avax\Components\Application\Container\DI\Flows\RegisterServices;
 
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\RegisterForTarget;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Components\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\RegisterForTarget;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 
 /**
  * Public write-side flow for registering bindings into the container.

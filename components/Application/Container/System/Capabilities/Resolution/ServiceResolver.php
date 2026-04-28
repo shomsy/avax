@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
 
-use Avax\Components\Container\System\Capabilities\Bindings\BindingRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Bindings\BindingRegistry;
 use Closure;
 use ReflectionClass;
 use ReflectionFunction;

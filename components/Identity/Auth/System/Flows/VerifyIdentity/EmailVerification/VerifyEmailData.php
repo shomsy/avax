@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\VerifyIdentity\EmailVerification;
+namespace Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification;
 
 use SensitiveParameter;
 

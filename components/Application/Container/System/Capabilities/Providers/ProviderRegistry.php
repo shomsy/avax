@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\Capabilities\Providers;
+namespace Avax\Components\Application\Container\System\Capabilities\Providers;
 
-use Avax\Components\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 
 /**
  * Manages the registration and booting of service providers.

@@ -1,38 +1,48 @@
 # Component Suite Migration Truth
 
 ## Status
-Phase 0: Inventory - In Progress
 
-## Current Top-Level Components
+Phase 0: Inventory - Refreshed (2026-04-28)
+
+## Current `components/` root folders (fact)
 
 ```
 components/
-├── ApplicationWorkflow/  # TBD: Application suite
-├── Auth/                # TBD: Identity/Auth
-├── Cache/               # → Application/Cache
-├── Commands/            # → CLI/Console
-├── Config/              # → Application/Config
-├── Container/          # → Application/Container
-├── Data/               # → DataStack/Data
-├── DataFoundation/     # → DataStack/Data (merge then bridge/delete)
-├── DataLayer/         # DOES NOT EXIST
-├── Database/          # → DataStack/Database
-├── DateTime/          # → Application/DateTime
-├── DumpDebugger/      # → DeveloperTools/DumpDebugger
-├── Events/           # → Operations/Events
-├── Filesystem/        # → Application/Filesystem
-├── HTTP/             # KEEP AS SUITE
-├── Logging/          # → Operations/Logging
-├── Mail/            # → Operations/Mail
-├── Persistence/      # → DataStack/Persistence
-├── Queue/           # → Operations/Queue
-├── Router/          # → HTTP/Router (under HTTP suite)
-├── Security/       # TBD: Identity/Security or HTTP/Security
-├── Session/         # DELETED (empty)
-├── Middleware/      # DELETED (empty)
-├── Text/            # → Application/Text
-├── Validation/      # → Application/Validation
-└── View/           # → Presentation/View
+├── Application/            # suite (exists)
+├── CLI/                    # suite (exists)
+├── DataStack/              # suite (exists)
+├── DeveloperTools/         # suite (exists)
+├── HTTP/                   # suite (exists)
+├── Identity/               # suite (exists)
+├── Operations/             # suite (exists)
+├── Presentation/           # suite (exists)
+│
+├── ApplicationWorkflow/    # legacy root owner (must be moved or deleted)
+├── Auth/                   # legacy root component (must become Identity/Auth bridge or be deleted)
+├── Cache/                  # legacy root component (must become Application/Cache bridge or be deleted)
+├── Commands/               # legacy root component (must become CLI/Console bridge or be deleted)
+├── Container/              # legacy root component (must become Application/Container bridge or be deleted)
+├── Data/                   # legacy root component (must become DataStack/Data bridge or be deleted)
+├── DataFoundation/         # legacy (must become bridge-only or be deleted)
+├── Database/               # legacy root component (must become DataStack/Database bridge or be deleted)
+├── DateTime/               # legacy root component (must become Application/DateTime bridge or be deleted)
+├── DumpDebugger/           # legacy root component (must become DeveloperTools/DumpDebugger bridge or be deleted)
+├── Events/                 # legacy root component (must become Operations/Events bridge or be deleted)
+├── Filesystem/             # legacy root component (must become Application/Filesystem bridge or be deleted)
+├── Logging/                # legacy root component (must become Operations/Logging bridge or be deleted)
+├── Mail/                   # legacy root component (must become Operations/Mail bridge or be deleted)
+├── Persistence/            # legacy root component (must become DataStack/Persistence bridge or be deleted)
+├── Queue/                  # legacy root component (must become Operations/Queue bridge or be deleted)
+├── Router/                 # legacy root component (must become HTTP/Router bridge or be deleted)
+├── Security/               # legacy root component (must become Identity/Security or HTTP/Security bridge or be deleted)
+├── Text/                   # legacy root component (must become Application/Text bridge or be deleted)
+├── Validation/             # legacy root component (must become Application/Validation bridge or be deleted)
+├── View/                   # legacy root component (must become Presentation/View bridge or be deleted)
+│
+├── compat.php              # temporary compatibility file autoloaded by composer
+├── new-component.md        # documentation/helper (non-production)
+├── storage/                # test/dev storage (verify scope)
+└── tests/                  # component-local tests (should be migrated to repo `tests/` or documented)
 ```
 
 ## Target Suite Structure
@@ -51,32 +61,46 @@ components/
 
 ## Classification Table
 
-| Current Path | Current Role | Target Suite | Target Component | Action |
-|---|---|---|---|---|
-| components/Config | real owner | Application | Config | move |
-| components/Container | real owner | Application | Container | move |
-| components/Cache | real owner | Application | Cache | move |
-| components/Filesystem | real owner | Application | Filesystem | move |
-| components/Validation | real owner | Application | Validation | move |
-| components/Text | real owner | Application | Text | move |
-| components/DateTime | real owner | Application | DateTime | move |
-| components/HTTP | suite owner | HTTP | HTTP | keep |
-| components/Router | real owner | HTTP | Router | move under HTTP |
-| components/Session | deleted | HTTP | Session | already deleted |
-| components/Middleware | deleted | HTTP | Middleware | already deleted |
-| components/Data | partial owner | DataStack | Data | move |
-| components/DataFoundation | legacy real | DataStack | Data | merge then bridge/delete |
-| components/Database | real owner | DataStack | Database | move |
-| components/Persistence | real owner | DataStack | Persistence | move |
-| components/Auth | real owner | Identity | Auth | move |
-| components/Security | real owner | Identity | Security | move |
-| components/Events | real owner | Operations | Events | move |
-| components/Logging | real owner | Operations | Logging | move |
-| components/Mail | real owner | Operations | Mail | move |
-| components/Queue | real owner | Operations | Queue | move |
-| components/View | real owner | Presentation | View | move |
-| components/DumpDebugger | real owner | DeveloperTools | DumpDebugger | move |
-| components/Commands | real owner | CLI | Console | move |
+| Current Path              | Current Role      | Target Suite   | Target Component | Action                           |
+|---------------------------|-------------------|----------------|------------------|----------------------------------|
+| components/Auth           | legacy root owner | Identity       | Auth             | move/merge then bridge or delete |
+| components/Security       | legacy root owner | Identity       | Security         | move/merge then bridge or delete |
+| components/Cache          | legacy root owner | Application    | Cache            | move/merge then bridge or delete |
+| components/Container      | legacy root owner | Application    | Container        | move/merge then bridge or delete |
+| components/DateTime       | legacy root owner | Application    | DateTime         | move/merge then bridge or delete |
+| components/Filesystem     | legacy root owner | Application    | Filesystem       | move/merge then bridge or delete |
+| components/Text           | legacy root owner | Application    | Text             | move/merge then bridge or delete |
+| components/Validation     | legacy root owner | Application    | Validation       | move/merge then bridge or delete |
+| components/Data           | legacy root owner | DataStack      | Data             | move/merge then bridge or delete |
+| components/DataFoundation | legacy namespace  | DataStack      | Data             | merge then bridge-only or delete |
+| components/Database       | legacy root owner | DataStack      | Database         | move/merge then bridge or delete |
+| components/Persistence    | legacy root owner | DataStack      | Persistence      | move/merge then bridge or delete |
+| components/Router         | legacy root owner | HTTP           | Router           | move/merge then bridge or delete |
+| components/Commands       | legacy root owner | CLI            | Console          | move/merge then bridge or delete |
+| components/Events         | legacy root owner | Operations     | Events           | move/merge then bridge or delete |
+| components/Logging        | legacy root owner | Operations     | Logging          | move/merge then bridge or delete |
+| components/Mail           | legacy root owner | Operations     | Mail             | move/merge then bridge or delete |
+| components/Queue          | legacy root owner | Operations     | Queue            | move/merge then bridge or delete |
+| components/View           | legacy root owner | Presentation   | View             | move/merge then bridge or delete |
+| components/DumpDebugger   | legacy root owner | DeveloperTools | DumpDebugger     | move/merge then bridge or delete |
+
+## Namespace inventory (fact)
+
+### Forbidden: `namespace components\...` in canonical source
+
+- `components/Application/Container/DI/Capabilities/Composition/Compilation/CompileContainer.php` contains a generated
+  namespace: `components\Container\Capabilities\Composition\Compilation\Generated`
+
+### Legacy: `namespace Avax\DataFoundation\...`
+
+- `components/DataFoundation/Arrhae.php`
+- `components/DataFoundation/Collection.php`
+- `components/DataFoundation/ObjectHandling/DTO/AbstractDTO.php`
+- `components/DataFoundation/Validation/Attributes/Rules/IntegerRule.php`
+
+### Legacy: `namespace Avax\DataLayer\...`
+
+- Only present in aggregated dumps (`avax.txt`) at the repo root. No real `components/DataLayer/` folder exists.
 
 ## Phase 0 Done
 
@@ -86,6 +110,6 @@ components/
 
 ## Next
 
-Phase 1: Create suite skeleton folders
+Phase 2: Move DataStack (Data, Database, Persistence) into `components/DataStack/*`, then delete/bridge legacy roots.
 
 *Updated: 2026-04-28*

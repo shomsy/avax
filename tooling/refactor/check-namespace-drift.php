@@ -11,14 +11,13 @@ use RuntimeException;
 final class CheckNamespaceDrift
 {
     private const FORBIDDEN_NAMESPACES = [
-        'namespace components\\' => 'Use Avax\Components\<Component>\System namespace',
-        'namespace Avax\\DataFoundation' => 'Use Avax\Components\Data\System namespace',
-        'namespace Avax\\DataLayer' => 'Use Avax\Components\Persistence\System namespace',
+        'namespace components\\'         => 'Use Avax\\Components\\<Suite>\\<Component>\\System\\... namespace',
+        'namespace Avax\\DataFoundation' => 'Use Avax\\Components\\DataStack\\Data\\System\\... namespace (or a bridge-only file)',
+        'namespace Avax\\DataLayer'      => 'Use Avax\\Components\\DataStack\\Persistence\\System\\... namespace (or a bridge-only file)',
     ];
 
     private const ALLOWED_BRIDGE_PATHS = [
         'components/DataFoundation/',
-        'components/DataLayer/',
     ];
 
     private const PHP_EXTENSIONS = ['.php'];

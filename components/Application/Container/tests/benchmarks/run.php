@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
-use Avax\Components\Container\DI\Container;
-use Avax\Components\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
+use Avax\Components\Application\Container\DI\Container;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 const BENCHMARK_DOCKER_IMAGE  = 'php:8.3-cli';
 const BENCHMARK_SUITE_VERSION = '2026-04-08';

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI;
+namespace Avax\Components\Application\Container\DI;
 
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompileReport;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\LazyProxy;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 use Closure;
-use Avax\Components\Container\DI\Capabilities\Composition\Compilation\CompileReport;
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
-use Avax\Components\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
-use Avax\Components\Container\DI\Capabilities\Runtime\LazyProxy;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 

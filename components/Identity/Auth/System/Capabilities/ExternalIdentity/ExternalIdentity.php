@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity;
 
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
 use SensitiveParameter;
 
 /**

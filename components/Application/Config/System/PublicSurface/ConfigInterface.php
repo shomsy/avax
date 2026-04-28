@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\PublicSurface;
+namespace Avax\Components\Application\Config\System\PublicSurface;
 
 interface ConfigInterface
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\Logout;
+namespace Avax\Components\Identity\Auth\System\Flows\Logout;
 
-use Avax\Components\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 
 final class Logout
 {

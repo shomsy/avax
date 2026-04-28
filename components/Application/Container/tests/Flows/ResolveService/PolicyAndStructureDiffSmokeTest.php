@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 final class PolicyDependencyA {}
 

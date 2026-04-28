@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\DI\Capabilities\Resolution;
 
-use Avax\Components\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\OperationLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\PooledLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\RequestLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\ScopedLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TenantLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\OperationLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\PooledLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\RequestLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\ScopedLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TenantLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 
 /**
  * One explicit lifetime decision for a resolved service.

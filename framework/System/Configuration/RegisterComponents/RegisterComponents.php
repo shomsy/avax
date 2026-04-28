@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Configuration\RegisterComponents;
+namespace Avax\Framework\System\Configuration\RegisterComponents;
 
 final class RegisterComponents
 {

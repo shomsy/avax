@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\FirstInFirstOutReplacement;
-use Avax\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
-use Avax\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\NoReplacement;
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\SizeCachedValues\CacheCapacityWasExceeded;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\FirstInFirstOutReplacement;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\NoReplacement;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\SizeCachedValues\CacheCapacityWasExceeded;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryCacheStoreCapacityTest extends TestCase

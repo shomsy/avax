@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Execution\Injection\Methods;
+namespace Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Methods;
 
-use Avax\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
-use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Closure;
 
 /**

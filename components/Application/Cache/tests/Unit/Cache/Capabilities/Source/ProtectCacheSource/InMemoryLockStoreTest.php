@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Source\ProtectCacheSource;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Source\ProtectCacheSource;
 
-use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\InMemoryLockStore;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\InMemoryLockStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryLockStoreTest extends TestCase

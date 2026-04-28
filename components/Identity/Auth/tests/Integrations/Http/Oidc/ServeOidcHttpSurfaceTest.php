@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http\Oidc;
 
-use Avax\Auth\Integrations\Http\HttpEndpointInput;
-use Avax\Auth\Integrations\Http\Oidc\ServeOidcHttpSurface;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpEndpointInput;
+use Avax\Components\Identity\Auth\Integrations\Http\Oidc\ServeOidcHttpSurface;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCodeData;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;

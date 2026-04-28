@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\RefreshCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues;
 
 enum RefreshPolicy: string
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Filesystem\Paths;
+namespace Avax\Components\Application\Filesystem\Paths;
 
 class PathExists
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\RunKeyRolloverDrill;
+use Avax\Components\Identity\Auth\Integrations\Release\RunKeyRolloverDrill;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 
 interface ChooseCachedValueForReplacement
 {

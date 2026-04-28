@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Observability\ObserveCache;
+namespace Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache;
 
 interface CacheTrace
 {

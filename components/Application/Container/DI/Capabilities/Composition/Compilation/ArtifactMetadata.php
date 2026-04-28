@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Composition\Compilation;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation;
 
-use Avax\Container\DI\Capabilities\Resolution\LifetimePlan;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\LifetimePlan;
 use SensitiveParameter;
 
 /**

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 4) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
-use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 
 interface CallArgumentGreeterContract
 {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Filesystem\Configuration;
+namespace Avax\Components\Application\Filesystem\Configuration;
 
+use Avax\Components\Application\Filesystem\Disks\Disk;
+use Avax\Components\Application\Filesystem\Disks\ResolveDisk;
+use Avax\Components\Application\Filesystem\Filesystem;
+use Avax\Components\Application\Filesystem\FilesystemInterface;
 use Avax\Container\Core\Capabilities\Binding\Binders\Binder;
 use Avax\Container\Core\Capabilities\Binding\BindingRepository;
-use Avax\Filesystem\Disks\Disk;
-use Avax\Filesystem\Disks\ResolveDisk;
-use Avax\Filesystem\Filesystem;
-use Avax\Filesystem\FilesystemInterface;
 
 final class RegisterFilesystem
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Composition\Compilation;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation;
 
 abstract class CompiledContainer
 {

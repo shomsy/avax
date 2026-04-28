@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Execution\Injection\Reports;
+namespace Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Reports;
 
 /**
  * Stable public diagnostics DTO for injection inspection.

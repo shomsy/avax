@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Validation\System\Capabilities\Standard\Email;
+namespace Avax\Components\Application\Validation\System\Capabilities\Standard\Email;
 
 use Avax\Text\Pattern;
 use SensitiveParameter;

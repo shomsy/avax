@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Source\SyncWithSource\CacheSource;
-use Avax\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey;
-use Avax\Cache\System\Capabilities\Source\SyncWithSource\DeferredSourceWrite;
-use Avax\Cache\System\Capabilities\Source\SyncWithSource\DeleteValueFromSource;
-use Avax\Cache\System\Capabilities\Source\SyncWithSource\WriteValueToSource;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\CacheSource;
+use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey;
+use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\DeferredSourceWrite;
+use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\DeleteValueFromSource;
+use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\WriteValueToSource;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 
 final readonly class SourceSyncCoordinator
 {

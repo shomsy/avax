@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Capabilities\Diagnostics;
+namespace Avax\Framework\System\Capabilities\Diagnostics;
 
 final class TraceId
 {

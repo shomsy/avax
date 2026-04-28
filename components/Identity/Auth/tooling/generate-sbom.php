@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\GenerateReleaseSbom;
+use Avax\Components\Identity\Auth\Integrations\Release\GenerateReleaseSbom;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

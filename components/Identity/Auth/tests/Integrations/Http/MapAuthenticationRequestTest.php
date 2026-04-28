@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http;
 
-use Avax\Auth\Integrations\Http\HttpAuthenticationInput;
-use Avax\Auth\Integrations\Http\MapAuthenticationRequest;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpAuthenticationInput;
+use Avax\Components\Identity\Auth\Integrations\Http\MapAuthenticationRequest;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

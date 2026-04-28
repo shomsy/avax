@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\DateTime\System\Flows\Parse;
+namespace Avax\Components\Application\DateTime\System\Flows\Parse;
 
-use Avax\DateTime\System\Foundation\Failure\InvalidDateTimeString;
+use Avax\Components\Application\DateTime\System\Foundation\Failure\InvalidDateTimeString;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;

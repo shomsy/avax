@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Configuration\CompiledCacheConfiguration;
+namespace Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration;
 
 final readonly class ConfigureCompiledCache
 {

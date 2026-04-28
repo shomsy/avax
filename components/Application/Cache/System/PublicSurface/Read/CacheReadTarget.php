@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\PublicSurface\Read;
+namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
 interface CacheReadTarget
 {

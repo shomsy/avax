@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\RefreshCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class ShouldRefreshCachedValue
 {

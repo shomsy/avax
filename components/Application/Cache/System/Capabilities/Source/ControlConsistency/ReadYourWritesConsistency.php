@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Source\ControlConsistency;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlConsistency;
 
 final class ReadYourWritesConsistency
 {

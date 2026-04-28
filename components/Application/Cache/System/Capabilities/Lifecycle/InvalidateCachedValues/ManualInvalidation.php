@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues;
 
 final readonly class ManualInvalidation implements InvalidationStrategy
 {

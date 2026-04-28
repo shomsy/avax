@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Integrations\Http;
 
-use Avax\Auth\Integrations\Cookies\ResolveSessionAllowance;
-use Avax\Auth\Integrations\Headers\ReadBearerToken;
+use Avax\Components\Identity\Auth\Integrations\Cookies\ResolveSessionAllowance;
+use Avax\Components\Identity\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
 use SensitiveParameter;
 

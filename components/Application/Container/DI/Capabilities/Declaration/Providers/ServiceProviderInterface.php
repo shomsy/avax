@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Providers;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers;
 
-use Avax\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 /**
  * Service provider contract for deterministic registration.

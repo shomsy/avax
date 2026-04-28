@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Capabilities\Runtime\Worker;
+namespace Avax\Framework\System\Capabilities\Runtime\Worker;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
 interface WorkerRuntimeInterface
 {

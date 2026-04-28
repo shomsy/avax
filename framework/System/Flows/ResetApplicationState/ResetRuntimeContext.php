@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\ResetApplicationState;
+namespace Avax\Framework\System\Flows\ResetApplicationState;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
 final class ResetRuntimeContext
 {

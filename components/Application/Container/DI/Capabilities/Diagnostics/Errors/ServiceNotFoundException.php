@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Diagnostics\Errors;
+namespace Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors;
 
 use Psr\Container\NotFoundExceptionInterface;
 

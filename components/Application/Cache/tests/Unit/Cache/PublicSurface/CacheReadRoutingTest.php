@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\tests\Unit\Cache\PublicSurface;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\PublicSurface;
 
-use Avax\Cache\Cache;
-use Avax\Cache\CompiledCache;
-use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
-use Avax\Cache\System\PublicSurface\Exception\NotConfigured as CompiledNotConfigured;
-use Avax\Cache\System\PublicSurface\Exception\UnsupportedTarget as CacheReadTargetWasNotSupported;
-use Avax\Cache\System\PublicSurface\Read\CacheReadKind;
-use Avax\Cache\System\PublicSurface\Read\CacheReadTarget;
-use Avax\Cache\System\PublicSurface\Read\CompiledCacheTarget;
-use Avax\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
+use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\CompiledCache;
+use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CompiledNotConfigured;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\UnsupportedTarget as CacheReadTargetWasNotSupported;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadKind;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
 use Avax\Tests\TestCase;
 use Psr\SimpleCache\InvalidArgumentException;
 use ReflectionMethod;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Ownership\Views;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\Views;
 
-use Avax\Container\DI\ContextContainer;
+use Avax\Components\Application\Container\DI\ContextContainer;
 
 /**
  * Logical flow-scoped view over the assembled container.

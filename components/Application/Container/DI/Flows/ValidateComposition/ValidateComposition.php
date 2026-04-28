@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Flows\ValidateComposition;
+namespace Avax\Components\Application\Container\DI\Flows\ValidateComposition;
 
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use ReflectionException;
 
 /**

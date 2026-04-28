@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\SignReleaseArtifact;
+use Avax\Components\Identity\Auth\Integrations\Release\SignReleaseArtifact;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

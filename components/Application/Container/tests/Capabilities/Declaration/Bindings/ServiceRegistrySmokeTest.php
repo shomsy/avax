@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 
 $registry = new ServiceRegistry();
 

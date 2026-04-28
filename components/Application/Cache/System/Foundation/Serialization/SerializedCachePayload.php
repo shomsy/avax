@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Foundation\Serialization;
+namespace Avax\Components\Application\Cache\System\Foundation\Serialization;
 
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\SystemClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
 use Stringable;
 

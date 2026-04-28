@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\TenantSecurity;
 
-use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationProvider;
@@ -20,6 +19,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Tenancy\Runtime\TenantSecu
 use Avax\Components\Identity\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStatus;
 use Avax\Components\Identity\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

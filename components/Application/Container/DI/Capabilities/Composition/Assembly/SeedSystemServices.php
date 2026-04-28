@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Composition\Assembly;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly;
 
-use Avax\Container\DI\Capabilities\Composition\ContainerSettings;
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Container\DI\Capabilities\Runtime\ServicePool;
-use Avax\Container\DI\Container;
-use Avax\Container\DI\ContainerInterface;
-use Avax\Container\DI\Foundation\Time\Clock;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\ContainerSettings;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\DI\Container;
+use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Foundation\Time\Clock;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**

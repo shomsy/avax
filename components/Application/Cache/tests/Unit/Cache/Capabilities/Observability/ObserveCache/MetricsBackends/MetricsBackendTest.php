@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Observability\ObserveCache\MetricsBackends;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Observability\ObserveCache\MetricsBackends;
 
-use Avax\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use Avax\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\MetricsSink;
-use Avax\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\PrometheusBackend;
-use Avax\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\StatsDBackend;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\MetricsSink;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\PrometheusBackend;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends\StatsDBackend;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class MetricsBackendTest extends TestCase

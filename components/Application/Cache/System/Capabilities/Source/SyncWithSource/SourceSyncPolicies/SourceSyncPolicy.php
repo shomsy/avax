@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
 
 enum SourceSyncPolicy: string
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Text\System\Capabilities\Validate;
+namespace Avax\Components\Application\Text\System\Capabilities\Validate;
 
 final class ValidateSlug
 {

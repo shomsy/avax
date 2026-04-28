@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Characterization;
 
-use Avax\Auth\Tests\Support\ArraySessionStore;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
@@ -16,6 +15,7 @@ use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationFailed;
+use Avax\Components\Identity\Auth\Tests\Support\ArraySessionStore;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

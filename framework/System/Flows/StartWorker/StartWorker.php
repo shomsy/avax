@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\StartWorker;
+namespace Avax\Framework\System\Flows\StartWorker;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
 final class StartWorker
 {

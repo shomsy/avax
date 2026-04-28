@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 
 final readonly class ForgetCachedValueFromAllTiers
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\HandleWorkerRequest;
+namespace Avax\Framework\System\Flows\HandleWorkerRequest;
 
-use Avax\Components\Framework\System\Capabilities\RequestScope\RequestScope;
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Throwable;
 
 final class HandleWorkerRequest

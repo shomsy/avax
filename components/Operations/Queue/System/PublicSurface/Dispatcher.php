@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Queue\System\PublicSurface;
+namespace Avax\Components\Operations\Queue\System\PublicSurface;
 
-use Avax\Queue\System\Capabilities\Job\JobDefinition;
-use Avax\Queue\System\Capabilities\Queue\QueueBroker;
-use Avax\Queue\System\Flows\Dispatch\DispatchJob;
+use Avax\Components\Operations\Queue\System\Capabilities\Job\JobDefinition;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
+use Avax\Components\Operations\Queue\System\Flows\Dispatch\DispatchJob;
 use DateTimeInterface;
 
 final class Dispatcher

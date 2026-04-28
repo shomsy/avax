@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends;
+namespace Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends;
 
 final class PrometheusBackend implements MetricsBackend
 {

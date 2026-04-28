@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Composition\Testing\TestComposition;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Testing\TestComposition;
 
 interface TestingClockContract
 {

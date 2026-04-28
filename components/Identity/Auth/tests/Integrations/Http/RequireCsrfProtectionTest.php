@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http;
 
-use Avax\Auth\Examples\Http\RequireCsrfProtection;
+use Avax\Components\Identity\Auth\Examples\Http\RequireCsrfProtection;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

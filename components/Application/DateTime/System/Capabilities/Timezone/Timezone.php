@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DateTime\System\Capabilities\Timezone;
+namespace Avax\Components\Application\DateTime\System\Capabilities\Timezone;
 
 use DateTimeInterface;
 use DateTimeZone;

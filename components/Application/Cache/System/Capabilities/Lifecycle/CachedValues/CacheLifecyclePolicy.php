@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\CachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues;
 
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class CacheLifecyclePolicy implements DecideCachedValueState
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DateTime\System\Flows\Modify;
+namespace Avax\Components\Application\DateTime\System\Flows\Modify;
 
 use DateTimeImmutable;
 

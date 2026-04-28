@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\DI\Capabilities\Resolution;
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;

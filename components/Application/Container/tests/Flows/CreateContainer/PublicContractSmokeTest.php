@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Container\DI\Container;
-use Avax\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Container;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 $expectedMethods = [
     'alias',

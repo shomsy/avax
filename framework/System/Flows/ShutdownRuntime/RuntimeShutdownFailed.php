@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\ShutdownRuntime;
+namespace Avax\Framework\System\Flows\ShutdownRuntime;
 
 use RuntimeException;
 

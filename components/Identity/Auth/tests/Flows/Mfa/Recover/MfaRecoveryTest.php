@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Mfa\Recover;
 
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
 use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
@@ -27,6 +26,7 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;

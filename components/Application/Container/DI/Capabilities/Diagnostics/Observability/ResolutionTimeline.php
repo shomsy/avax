@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Diagnostics\Observability;
+namespace Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability;
 
-use Avax\Container\DI\Foundation\Time\Clock;
+use Avax\Components\Application\Container\DI\Foundation\Time\Clock;
 
 /**
  * Records ordered resolution events when diagnostics require them.

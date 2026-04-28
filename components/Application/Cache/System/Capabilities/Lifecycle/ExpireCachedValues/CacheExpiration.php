@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
 
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
 
 interface CacheExpiration

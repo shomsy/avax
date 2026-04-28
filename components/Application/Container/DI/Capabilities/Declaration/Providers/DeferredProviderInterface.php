@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Providers;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers;
 
 /**
  * Explicit contract for providers that register lazily on first owned service resolve.

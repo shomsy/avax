@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache;
 
-use Avax\Cache\Cache;
-use Avax\Cache\CompiledCache;
+use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\CompiledCache;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

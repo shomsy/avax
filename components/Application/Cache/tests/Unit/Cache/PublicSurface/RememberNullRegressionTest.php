@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\tests\Unit\Cache\PublicSurface;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\PublicSurface;
 
-use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use Avax\Tests\TestCase;
 use Psr\SimpleCache\InvalidArgumentException;
 

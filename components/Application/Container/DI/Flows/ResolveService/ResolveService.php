@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Flows\ResolveService;
+namespace Avax\Components\Application\Container\DI\Flows\ResolveService;
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Throwable;
 
 /**

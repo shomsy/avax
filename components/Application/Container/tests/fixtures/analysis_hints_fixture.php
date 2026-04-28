@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 
 final class HintIdentityService {}
 

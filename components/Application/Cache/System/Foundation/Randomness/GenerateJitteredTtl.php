@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Foundation\Randomness;
+namespace Avax\Components\Application\Cache\System\Foundation\Randomness;
 
-use Avax\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 
 final readonly class GenerateJitteredTtl
 {

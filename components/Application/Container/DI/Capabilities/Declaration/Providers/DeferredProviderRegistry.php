@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Providers;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers;
 
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 
 /**
  * Owns deferred provider ownership and lazy boot lifecycle.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Federation;
 
-use Avax\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData;
@@ -21,6 +20,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\St
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Tests\TestCase;
 use JsonException;
 use PHPUnit\Framework\TestCase;

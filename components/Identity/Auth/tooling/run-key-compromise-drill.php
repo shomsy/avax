@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\RunKeyCompromiseDrill;
+use Avax\Components\Identity\Auth\Integrations\Release\RunKeyCompromiseDrill;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

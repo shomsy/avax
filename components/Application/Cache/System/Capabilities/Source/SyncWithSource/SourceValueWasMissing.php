@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Source\SyncWithSource;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource;
 
 final readonly class SourceValueWasMissing
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
 
-use Avax\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
-use Avax\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeId;
-use Avax\Cache\System\Capabilities\Distribution\DistributeCachedValues\ConsistentHashRing;
-use Avax\Cache\System\Capabilities\Distribution\DistributeCachedValues\RebalanceCachePartitions;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeId;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\ConsistentHashRing;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\RebalanceCachePartitions;
 use PHPUnit\Framework\TestCase;
 
 final class RebalanceCachePartitionsTest extends TestCase

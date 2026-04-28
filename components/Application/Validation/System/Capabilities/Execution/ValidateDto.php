@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Validation\System\Capabilities\Execution;
+namespace Avax\Components\Application\Validation\System\Capabilities\Execution;
 
-use Avax\Validation\System\Capabilities\Metadata\Attributes\Email;
-use Avax\Validation\System\Capabilities\Metadata\Attributes\Min;
-use Avax\Validation\System\Capabilities\Metadata\Attributes\MinLength;
-use Avax\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexity;
-use Avax\Validation\System\Capabilities\Metadata\Attributes\Required;
-use Avax\Validation\System\Capabilities\Standard\Email\ValidateEmail;
+use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Email;
+use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Min;
+use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinLength;
+use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexity;
+use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
+use Avax\Components\Application\Validation\System\Capabilities\Standard\Email\ValidateEmail;
 use ReflectionClass;
 use ReflectionProperty;
 

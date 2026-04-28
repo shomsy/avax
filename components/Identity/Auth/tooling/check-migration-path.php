@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\CheckMigrationPath;
+use Avax\Components\Identity\Auth\Integrations\Release\CheckMigrationPath;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

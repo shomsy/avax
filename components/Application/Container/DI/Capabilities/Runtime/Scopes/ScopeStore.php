@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Runtime\Scopes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes;
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 
 /**
  * Stores disposable instances for the current active scope stack.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Flows\Operations\ClearCache;
+namespace Avax\Components\Application\Cache\System\Flows\Operations\ClearCache;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheNamespace;
-use Avax\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheNamespace;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class ClearCache

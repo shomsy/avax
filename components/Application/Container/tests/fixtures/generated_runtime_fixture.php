@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
 final class GeneratedFixtureDependency
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Blueprints;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints;
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 
 /**
  * Caches service blueprints in memory and optional disk artifacts.

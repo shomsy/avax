@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
+use Avax\Components\Identity\Auth\Integrations\Release\ScanCommittedSecrets;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

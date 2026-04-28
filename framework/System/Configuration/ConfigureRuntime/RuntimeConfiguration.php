@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Configuration\ConfigureRuntime;
+namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\Adapters\FrankenPhp\FrankenPhpRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\Adapters\RoadRunner\RoadRunnerRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\Adapters\Swoole\SwooleRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\Adapters\Workerman\WorkermanRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeInterface;
+use Avax\Framework\System\Capabilities\Runtime\Adapters\FrankenPhp\FrankenPhpRuntime;
+use Avax\Framework\System\Capabilities\Runtime\Adapters\RoadRunner\RoadRunnerRuntime;
+use Avax\Framework\System\Capabilities\Runtime\Adapters\Swoole\SwooleRuntime;
+use Avax\Framework\System\Capabilities\Runtime\Adapters\Workerman\WorkermanRuntime;
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
+use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use RuntimeException;
 
 final class RuntimeConfiguration

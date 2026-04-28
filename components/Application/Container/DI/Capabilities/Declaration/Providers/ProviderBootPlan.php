@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Providers;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers;
 
 use InvalidArgumentException;
 use LogicException;

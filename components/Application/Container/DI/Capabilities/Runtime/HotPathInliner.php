@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Runtime;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime;
 
-use Avax\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Closure;
 
 /**

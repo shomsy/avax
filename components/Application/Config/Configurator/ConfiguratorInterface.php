@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Config\Configurator;
+namespace Avax\Components\Application\Config\Configurator;
 
-use Avax\DataFoundation\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 use InvalidArgumentException;
 
 /**

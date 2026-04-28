@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\DataFoundation\ObjectHandling\DTO;
 
-use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataShape;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO as CanonicalAbstractDTO;
 
 /**
- * @deprecated Use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataShape base class instead.
+ * @deprecated Use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO
  */
-abstract class AbstractDTO extends DataShape
+abstract class AbstractDTO extends CanonicalAbstractDTO
 {
 }

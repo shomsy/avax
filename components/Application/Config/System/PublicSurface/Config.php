@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\PublicSurface;
+namespace Avax\Components\Application\Config\System\PublicSurface;
 
-use Avax\Components\Config\System\Capabilities\Repository\ConfigurationRepository;
+use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
 use RuntimeException;
 
 /**

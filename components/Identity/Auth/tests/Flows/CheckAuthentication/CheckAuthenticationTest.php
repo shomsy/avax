@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\CheckAuthentication;
+namespace Avax\Components\Identity\Auth\Tests\Flows\CheckAuthentication;
 
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

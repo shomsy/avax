@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\ChangePassword;
+namespace Avax\Components\Identity\Auth\System\Flows\ChangePassword;
 
 use Exception;
 

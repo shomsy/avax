@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\FrontChannelLogout;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\FrontChannelLogout;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutResult;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutResult;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class FrontChannelLogout

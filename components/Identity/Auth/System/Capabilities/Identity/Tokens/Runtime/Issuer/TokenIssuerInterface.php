@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Issuer;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Issuer;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
-use Avax\Components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 
 /**

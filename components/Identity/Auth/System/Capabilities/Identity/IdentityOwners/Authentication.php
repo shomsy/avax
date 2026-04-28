@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\IdentityOwners;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthentication;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationFailed;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest;
-use Avax\Components\Auth\System\Flows\Login\AuthenticationFailed;
-use Avax\Components\Auth\System\Flows\Login\AuthenticationResult;
-use Avax\Components\Auth\System\Flows\Login\Credentials;
-use Avax\Components\Auth\System\Flows\Login\Login;
-use Avax\Components\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use Avax\Components\Auth\System\Flows\Logout\Logout;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthentication;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Flow\RefreshAuthenticationRequest;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
+use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Identity\Auth\System\Flows\Login\Login;
+use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Identity\Auth\System\Flows\Logout\Logout;
 use DateMalformedStringException;
 use SensitiveParameter;
 

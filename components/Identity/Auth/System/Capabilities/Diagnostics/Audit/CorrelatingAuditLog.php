@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Diagnostics\Audit;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit;
 
 /**
  * Decorates audit events with a request correlation id when flows do not set one.

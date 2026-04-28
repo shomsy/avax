@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Integrations\Headers;
+namespace Avax\Components\Identity\Auth\Integrations\Headers;
 
 use SensitiveParameter;
 

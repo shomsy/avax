@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
+namespace Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
 use DateTimeImmutable;
 use InvalidArgumentException;

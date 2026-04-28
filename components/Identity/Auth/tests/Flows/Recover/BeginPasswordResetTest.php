@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\Recover;
+namespace Avax\Components\Identity\Auth\Tests\Flows\Recover;
 
-use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
-use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use Avax\Components\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserEmail;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
-use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
-use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;

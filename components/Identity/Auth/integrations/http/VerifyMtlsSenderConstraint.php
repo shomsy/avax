@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Integrations\Http;
+namespace Avax\Components\Identity\Auth\Integrations\Http;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use DateTimeImmutable;
 use SensitiveParameter;
 

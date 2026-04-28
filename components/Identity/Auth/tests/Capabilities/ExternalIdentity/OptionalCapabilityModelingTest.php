@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Capabilities\ExternalIdentity;
+namespace Avax\Components\Identity\Auth\Tests\Capabilities\ExternalIdentity;
 
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
 use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

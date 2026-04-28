@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Foundation\Exceptions;
+namespace Avax\Components\Identity\Auth\System\Foundation\Exceptions;
 
 use SensitiveParameter;
 use Throwable;

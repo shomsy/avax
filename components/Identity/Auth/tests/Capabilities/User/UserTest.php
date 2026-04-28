@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Capabilities\User;
+namespace Avax\Components\Identity\Auth\Tests\Capabilities\User;
 
-use Avax\Components\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserEmail;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserPermission;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Components\Tests\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Access\RequirePermission;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Access\RequirePermission;
 
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Exception;
 
 /**

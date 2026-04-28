@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\DisableClient;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\DisableClient;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use RuntimeException;
 
 final readonly class DisableClient

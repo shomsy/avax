@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Runtime;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime;
 
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Throwable;
 
 /**

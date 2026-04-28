@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\OAuth;
+namespace Avax\Components\Identity\Auth\Tests\Flows\OAuth;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClient;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClient;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;

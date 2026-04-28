@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Foundation\Text;
+namespace Avax\Components\Identity\Auth\System\Foundation\Text;
 
 final class NormalizeScope
 {

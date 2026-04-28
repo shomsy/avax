@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
 use DateTimeImmutable;
 use SensitiveParameter;

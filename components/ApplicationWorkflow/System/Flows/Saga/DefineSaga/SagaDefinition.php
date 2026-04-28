@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\ApplicationWorkflow\System\Flows\Saga\DefineSaga;
 
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
+use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Declaration\Blueprints;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints;
 
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolvePlan;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolvePlan;
 
 final readonly class ServiceBlueprint
 {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\EndAdminElevation;
 
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
-use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class EndAdminElevation

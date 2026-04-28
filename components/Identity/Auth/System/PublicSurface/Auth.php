@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\PublicSurface;
+namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
-use Avax\Components\Auth\System\Capabilities\Access\Access;
-use Avax\Components\Auth\System\Capabilities\Identity\Identity;
-use Avax\Components\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Access;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Throwable;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition;
 
 /**
  * Container-scoped settings with dot-notation access.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Foundation\Time;
+namespace Avax\Components\Identity\Auth\System\Foundation\Time;
 
 use DateTimeImmutable;
 use InvalidArgumentException;

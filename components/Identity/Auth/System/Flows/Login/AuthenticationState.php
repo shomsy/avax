@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Flows\Login;
+namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
 /**
  * Stable public state of an authentication attempt.

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser;
+namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser;
 
-use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
-use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
-use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class DeleteScimUser

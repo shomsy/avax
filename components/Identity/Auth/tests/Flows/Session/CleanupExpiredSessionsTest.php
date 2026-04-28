@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\Session;
+namespace Avax\Components\Identity\Auth\Tests\Flows\Session;
 
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;

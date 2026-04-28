@@ -1,6 +1,6 @@
 <?php
 
-use Avax\Components\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
 use Avax\Components\HTTP\Router\Validation\RouteConstraintValidator;
 

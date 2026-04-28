@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Jwt;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt;
 
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\TokenCodecInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\TokenRevocationStoreInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\TokenCodecInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\TokenRevocationStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;

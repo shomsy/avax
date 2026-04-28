@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
+namespace Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 use Random\RandomException;
 use SensitiveParameter;

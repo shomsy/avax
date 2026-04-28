@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\Tests\Flows\Session;
+namespace Avax\Components\Identity\Auth\Tests\Flows\Session;
 
-use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
-use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Runtime\ReadActiveSessions\ReadActiveSessions;
-use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\InMemorySessionRegistry;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\ReadActiveSessions\ReadActiveSessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Tests\TestCase;
 use DateInterval;
 use DateInvalidOperationException;

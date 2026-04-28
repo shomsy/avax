@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\Capabilities\Bindings;
+namespace Avax\Components\Application\Container\System\Capabilities\Bindings;
 
 use LogicException;
 

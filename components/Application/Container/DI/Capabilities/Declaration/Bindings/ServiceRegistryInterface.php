@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Declaration\Bindings;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings;
 
 /**
  * Shared registration contract for the container write side.

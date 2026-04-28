@@ -1,8 +1,8 @@
 <?php
 
-use Avax\Components\Container\Features\Think\Model\MethodPrototype;
-use Avax\Components\Container\Features\Think\Model\ParameterPrototype;
-use Avax\Components\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => 'Avax\\Container\\Config\\Settings',

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Configuration;
+namespace Avax\Components\Application\Config\System\Configuration;
 
-use Avax\Components\Config\System\Capabilities\ConfigLoader\PHPArrayFileLoader;
-use Avax\Components\Config\System\Capabilities\Repository\ConfigurationRepository;
-use Avax\Components\Config\System\PublicSurface\Config;
-use Avax\Components\Data\System\PublicSurface\Data;
+use Avax\Components\Application\Config\System\Capabilities\ConfigLoader\PHPArrayFileLoader;
+use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
+use Avax\Components\Application\Config\System\PublicSurface\Config;
+use Avax\Components\DataStack\Data\System\PublicSurface\Data;
 
 /**
  * Configuration unit to assemble Config component services.

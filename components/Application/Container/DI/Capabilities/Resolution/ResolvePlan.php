@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\DI\Capabilities\Resolution;
 
 /**
  * Compiled parameter resolution plan.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity;
 
 use RuntimeException;
 

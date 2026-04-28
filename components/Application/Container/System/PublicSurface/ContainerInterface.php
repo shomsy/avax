@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\PublicSurface;
+namespace Avax\Components\Application\Container\System\PublicSurface;
 
 interface ContainerInterface
 {

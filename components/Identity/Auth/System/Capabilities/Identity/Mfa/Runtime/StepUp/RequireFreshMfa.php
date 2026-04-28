@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp;
 
-use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 /**

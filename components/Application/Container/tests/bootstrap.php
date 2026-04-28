@@ -20,9 +20,9 @@ namespace Psr\Container {
 
 namespace {
 
-    use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-    use Avax\Components\Container\DI\Container;
-    use Avax\Components\Container\DI\Flows\CreateContainer\CreateContainer;
+    use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+    use Avax\Components\Application\Container\DI\Container;
+    use Avax\Components\Application\Container\DI\Flows\CreateContainer\CreateContainer;
 
     $root             = dirname(path: __DIR__) . '/DI';
     $composerAutoload = dirname(path: __DIR__, levels: 2) . '/vendor/autoload.php';

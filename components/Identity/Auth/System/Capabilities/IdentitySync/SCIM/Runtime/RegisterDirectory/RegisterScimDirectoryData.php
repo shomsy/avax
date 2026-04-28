@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory;
+namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory;
 
 final readonly class RegisterScimDirectoryData
 {

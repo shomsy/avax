@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Composition\Assembly;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly;
 
-use Avax\Components\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
-use Avax\Components\Container\DI\Foundation\Time\Clock;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Components\Application\Container\DI\Foundation\Time\Clock;
 
 /**
  * Builds the observability collaborators for one container runtime.

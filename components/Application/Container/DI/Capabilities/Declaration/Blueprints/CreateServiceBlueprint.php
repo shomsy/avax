@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\DI\Capabilities\Declaration\Blueprints;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints;
 
-use Avax\Components\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
-use Avax\Components\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Components\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;

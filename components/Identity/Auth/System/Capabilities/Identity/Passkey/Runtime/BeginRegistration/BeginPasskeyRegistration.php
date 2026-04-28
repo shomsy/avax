@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginRegistration;
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Runtime\BeginRegistration;
 
-use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeStoreInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
-use Avax\Components\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
-use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Runtime\PasskeyRegistration;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengePurpose;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeRecord;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Support\PasskeyRuntimeInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement;
+namespace Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement;
 
-use components\Cache\System\Capabilities\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Capabilities\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 
 final class LeastFrequentlyUsedReplacement implements ChooseCachedValueForReplacement
 {

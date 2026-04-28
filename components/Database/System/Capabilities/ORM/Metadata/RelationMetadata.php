@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Metadata;
+namespace Avax\Components\Database\System\Capabilities\ORM\Metadata;
 
-use Avax\Database\System\Capabilities\ORM\Relations\RelationKind;
+use Avax\Components\Database\System\Capabilities\ORM\Relations\RelationKind;
 
 final readonly class RelationMetadata
 {

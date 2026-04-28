@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
 
 if (! function_exists(function: 'connection')) {
     /**

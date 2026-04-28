@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Flows\BuildResponse;
+namespace Avax\Components\HTTP\Response\Flows\BuildResponse;
 
-use Avax\HTTP\Response\Capabilities\Redirects\NormalizeRedirectStatus;
-use Avax\HTTP\Response\Capabilities\Redirects\ValidateRedirectTarget;
+use Avax\Components\HTTP\Response\Capabilities\Redirects\NormalizeRedirectStatus;
+use Avax\Components\HTTP\Response\Capabilities\Redirects\ValidateRedirectTarget;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

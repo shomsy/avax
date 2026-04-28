@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\View\System\Capabilities\Engines;
 
-use components\View\TemplateEngine as RealTemplateEngine;
+use Avax\Components\View\TemplateEngine as RealTemplateEngine;
 
 /**
  * Advanced Template Engine based on BladeOne.

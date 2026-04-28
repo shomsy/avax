@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Security;
+namespace Avax\Components\HTTP\Security;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Response\ResponseFactory;
 use Closure;
 use Exception;
 use Psr\Http\Message\ResponseInterface;

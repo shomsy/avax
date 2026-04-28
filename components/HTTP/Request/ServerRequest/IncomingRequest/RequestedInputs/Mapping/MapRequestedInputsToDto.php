@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping;
 
 use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\PublicSurface\Read;
+namespace Avax\Components\Cache\System\PublicSurface\Read;
 
-use components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use components\Cache\System\PublicSurface\Exception\CompiledNotConfigured;
+use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Cache\System\PublicSurface\Exception\CompiledNotConfigured;
 
 final readonly class ReadFromCache
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit;
 
 /**
  * Stores MFA verification attempt counts by key.

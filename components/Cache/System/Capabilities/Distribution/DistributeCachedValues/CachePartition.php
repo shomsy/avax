@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
 final readonly class CachePartition
 {

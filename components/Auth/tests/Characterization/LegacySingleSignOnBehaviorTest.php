@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Characterization;
+namespace Avax\Components\Auth\Tests\Characterization;
 
-use components\Auth\System\Auth;
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnectionData;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\StartFederatedLogin\StartFederatedLoginData;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\VerifyDomain\VerifyFederationDomainData;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationProvider;
-use components\Auth\System\Capabilities\Identity\Identity;
-use components\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
-use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use components\Auth\System\Foundation\Clock;
-use components\Auth\Tests\Support\FakeFederationRuntime;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Auth;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\VerifyDomain\VerifyFederationDomainData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationProvider;
+use Avax\Components\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\Tests\Support\FakeFederationRuntime;
+use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class LegacySingleSignOnBehaviorTest extends TestCase

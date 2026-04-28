@@ -14,9 +14,18 @@ final readonly class Pair
         private mixed $second,
     ) {}
 
-    public function first() : mixed { return $this->first; }
+    public function first() : mixed
+    {
+        return $this->first;
+    }
 
-    public function second() : mixed { return $this->second; }
+    public function second() : mixed
+    {
+        return $this->second;
+    }
 
-    public function toArray() : array { return [$this->first, $this->second]; }
+    public function toArray() : array
+    {
+        return [$this->first, $this->second];
+    }
 }

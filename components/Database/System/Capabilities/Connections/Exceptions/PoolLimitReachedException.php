@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\Exceptions;
+namespace Avax\Components\Database\System\Capabilities\Connections\Exceptions;
 
-use Avax\Database\System\Foundation\Exceptions\DatabaseException;
+use Avax\Components\Database\System\Foundation\Exceptions\DatabaseException;
 
 /**
  * A "No More Room" report for a connection pool.

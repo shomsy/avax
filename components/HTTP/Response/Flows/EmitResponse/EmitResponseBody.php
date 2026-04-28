@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Flows\EmitResponse;
+namespace Avax\Components\HTTP\Response\Flows\EmitResponse;
 
-use Avax\HTTP\Response\Capabilities\Streams\RewindStream;
+use Avax\Components\HTTP\Response\Capabilities\Streams\RewindStream;
 use Psr\Http\Message\ResponseInterface;
 
 final class EmitResponseBody

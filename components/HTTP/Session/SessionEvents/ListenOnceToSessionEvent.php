@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\SessionEvents;
+namespace Avax\Components\HTTP\Session\SessionEvents;
 
 final class ListenOnceToSessionEvent
 {

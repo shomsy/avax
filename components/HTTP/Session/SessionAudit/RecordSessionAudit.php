@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionAudit;
+namespace Avax\Components\HTTP\Session\SessionAudit;
 
 final class RecordSessionAudit
 {

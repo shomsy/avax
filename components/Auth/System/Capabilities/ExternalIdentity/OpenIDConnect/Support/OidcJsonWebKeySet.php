@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
 
 final readonly class OidcJsonWebKeySet
 {

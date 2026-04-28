@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store;
 
 use DateTimeImmutable;
 use SensitiveParameter;

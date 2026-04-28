@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken;
+namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken;
 
-use components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use SensitiveParameter;
 
 final readonly class RotatedScimToken

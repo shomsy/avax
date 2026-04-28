@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange;
+namespace Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\BeginChange;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
-use components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
-use components\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\TenantSecurityFailed;
-use components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
-use components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStatus;
-use components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStoreInterface;
-use components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
-use components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfigurationStoreInterface;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\TenantSecurity\TenantSecurityFailed;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequest;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStatus;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityChangeRequestStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfiguration;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Security\TenantSecurityConfigurationStoreInterface;
+use Avax\Components\Auth\System\Foundation\Clock;
 use JsonException;
 use Random\RandomException;
 

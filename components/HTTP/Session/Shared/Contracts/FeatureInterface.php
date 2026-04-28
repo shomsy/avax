@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\Shared\Contracts;
+namespace Avax\Components\HTTP\Session\Shared\Contracts;
 
 interface FeatureInterface
 {

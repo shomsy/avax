@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Tests\Unit\Cache\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
+namespace Avax\Components\Cache\Tests\Unit\Cache\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
 
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Source\SyncWithSource\CacheSource;
-use components\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey;
-use components\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies\SourceSyncCoordinator;
-use components\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies\SourceSyncPolicy;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use components\Cache\System\Foundation\Time\Duration;
-use components\Cache\System\Foundation\Time\FrozenClock;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Source\SyncWithSource\CacheSource;
+use Avax\Components\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey;
+use Avax\Components\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies\SourceSyncCoordinator;
+use Avax\Components\Cache\System\Capabilities\Source\SyncWithSource\SourceSyncPolicies\SourceSyncPolicy;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class SourceSyncCoordinatorTest extends TestCase

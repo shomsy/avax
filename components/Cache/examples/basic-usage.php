@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Examples;
+namespace Avax\Components\Cache\Examples;
 
-use components\Cache\Cache;
-use components\Cache\System\AvaxCache;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use components\Cache\System\Foundation\Time\FrozenClock;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\Cache;
+use Avax\Components\Cache\System\AvaxCache;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 
 require __DIR__ . '/../../vendor/autoload.php';
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Body;
+namespace Avax\Components\HTTP\Response\Capabilities\Body;
 
-use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Psr\Http\Message\StreamInterface;
 
 final class ResponseBody

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\State;
+namespace Avax\Components\Database\System\Capabilities\Query\State;
 
 /**
  * Immutable container for query parameter bindings.

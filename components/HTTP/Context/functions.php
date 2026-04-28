@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Context\HttpContextInterface;
+use Avax\Components\HTTP\Context\HttpContextInterface;
 
 if (! function_exists(function: 'http_context')) {
     /**

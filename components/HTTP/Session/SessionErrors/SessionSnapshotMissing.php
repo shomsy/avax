@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\SessionErrors;
+namespace Avax\Components\HTTP\Session\SessionErrors;
 
 class SessionSnapshotMissing extends SessionException {}

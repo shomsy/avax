@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
+namespace Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 use Random\RandomException;
 
 final class WriteCompiledCacheManifest

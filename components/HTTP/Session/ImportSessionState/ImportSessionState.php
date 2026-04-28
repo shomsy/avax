@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\ImportSessionState;
+namespace Avax\Components\HTTP\Session\ImportSessionState;
 
-use Avax\HTTP\Session\SessionRecovery\SessionRecovery;
+use Avax\Components\HTTP\Session\SessionRecovery\SessionRecovery;
 
 final class ImportSessionState
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Directories;
+namespace Avax\Components\Filesystem\Directories;
 
-use components\Filesystem\Disks\Disk;
+use Avax\Components\Filesystem\Disks\Disk;
 
 final class CreateDirectory
 {

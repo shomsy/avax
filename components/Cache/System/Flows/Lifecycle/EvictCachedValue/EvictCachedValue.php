@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Flows\Lifecycle\EvictCachedValue;
+namespace Avax\Components\Cache\System\Flows\Lifecycle\EvictCachedValue;
 
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class EvictCachedValue

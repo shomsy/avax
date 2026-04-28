@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry;
 
-use Avax\Database\System\Capabilities\Telemetry\OpenTelemetry\QuerySpan;
+use Avax\Components\Database\System\Capabilities\Telemetry\OpenTelemetry\QuerySpan;
 
 final class DbMetricsCollector
 {

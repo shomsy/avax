@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody;
 
 use Psr\Http\Message\StreamInterface;
 

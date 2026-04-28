@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\FlashSession;
+namespace Avax\Components\HTTP\Session\FlashSession;
 
-use components\HTTP\Session\Shared\Contracts\FeatureInterface;
+use Avax\Components\HTTP\Session\Shared\Contracts\FeatureInterface;
 
 /**
  * Minimal flash store for short-lived session messages.

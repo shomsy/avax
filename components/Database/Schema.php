@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database;
+namespace Avax\Components\Database;
 
-use components\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
 use Throwable;
 
 final readonly class Schema

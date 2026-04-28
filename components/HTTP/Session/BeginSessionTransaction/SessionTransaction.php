@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\BeginSessionTransaction;
+namespace Avax\Components\HTTP\Session\BeginSessionTransaction;
 
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 use Exception;
 
 final class SessionTransaction

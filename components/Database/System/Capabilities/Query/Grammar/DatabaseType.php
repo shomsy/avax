@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Grammar;
+namespace Avax\Components\Database\System\Capabilities\Query\Grammar;
 
 enum DatabaseType: string
 {

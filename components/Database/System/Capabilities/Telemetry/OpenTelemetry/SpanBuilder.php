@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\OpenTelemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\OpenTelemetry;
 
 final class SpanBuilder
 {

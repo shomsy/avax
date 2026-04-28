@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Session\SessionInterface;
+use Avax\Components\HTTP\Session\SessionInterface;
 
 if (! function_exists(function: 'session')) {
     /**

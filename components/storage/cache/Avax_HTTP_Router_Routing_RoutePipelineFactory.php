@@ -3,10 +3,10 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Middleware\MiddlewareResolver;
-use Avax\HTTP\Router\Routing\RoutePipelineFactory;
-use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RoutePipelineFactory;
+use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Middleware\MiddlewareResolver;
+use Avax\Components\HTTP\Router\Routing\RoutePipelineFactory;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\Pipeline\RoutePipelineFactory;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RoutePipelineFactory::class,

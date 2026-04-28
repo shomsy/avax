@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\DeleteSessionValue;
+namespace Avax\Components\HTTP\Session\DeleteSessionValue;
 
 final class ResolveSessionDeleteKey
 {

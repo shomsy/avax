@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Configuration;
+namespace Avax\Components\HTTP\Response\Configuration;
 
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
-use Avax\HTTP\Response\ResponseEmitter;
-use Avax\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Components\HTTP\Response\ResponseEmitter;
+use Avax\Components\HTTP\Response\ResponseFactory;
 
 final class RegisterResponseServices
 {

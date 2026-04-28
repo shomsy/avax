@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues;
 
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\TrackCachedValueAccess;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Storage\SizeCachedValues\CacheCapacityWasExceeded;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\TrackCachedValueAccess;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Storage\SizeCachedValues\CacheCapacityWasExceeded;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 
 final class InMemoryCacheStore implements CacheStore
 {

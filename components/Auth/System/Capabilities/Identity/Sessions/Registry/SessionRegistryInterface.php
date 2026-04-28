@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Sessions\Registry;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry;
 
-use components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 
 /**

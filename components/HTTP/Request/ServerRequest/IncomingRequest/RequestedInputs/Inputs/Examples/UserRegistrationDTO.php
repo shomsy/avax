@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples;
 
 use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\Validation\System\Capabilities\Metadata\Attributes\Email;

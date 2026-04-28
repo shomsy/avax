@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response;
+namespace Avax\Components\HTTP\Response;
 
-use Avax\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
 use JsonSerializable;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;

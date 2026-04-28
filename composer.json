@@ -3,6 +3,7 @@
   "autoload": {
     "psr-4": {
       "Avax\\Framework\\": "framework/",
+      "Avax\\Components\\": "components/",
       "Avax\\": "components/",
       "components\\": "components/"
     },

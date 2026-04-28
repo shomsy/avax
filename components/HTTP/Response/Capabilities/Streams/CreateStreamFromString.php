@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Streams;
+namespace Avax\Components\HTTP\Response\Capabilities\Streams;
 
 use Psr\Http\Message\StreamInterface;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Transactions;
+namespace Avax\Components\Database\System\Capabilities\Transactions;
 
 final class IsolationLevels
 {

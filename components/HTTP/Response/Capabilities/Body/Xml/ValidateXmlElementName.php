@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Body\Xml;
+namespace Avax\Components\HTTP\Response\Capabilities\Body\Xml;
 
 use InvalidArgumentException;
 

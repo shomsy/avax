@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Storage\ProtectCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Storage\ProtectCachedValues;
 
 use InvalidArgumentException;
 use Random\RandomException;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Integration;
+namespace Avax\Components\Auth\Tests\Integration;
 
-use components\Auth\Tests\Support\CanonicalIntegrationAnchorTestCase;
+use Avax\Components\Auth\Tests\Support\CanonicalIntegrationAnchorTestCase;
 
 final class TokenLifecycleFlowTest extends CanonicalIntegrationAnchorTestCase
 {

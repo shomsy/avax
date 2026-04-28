@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\TakeSessionSnapshot;
+namespace Avax\Components\HTTP\Session\TakeSessionSnapshot;
 
-use Avax\HTTP\Session\SessionRecovery\SessionRecovery;
+use Avax\Components\HTTP\Session\SessionRecovery\SessionRecovery;
 
 final class TakeSessionSnapshot
 {

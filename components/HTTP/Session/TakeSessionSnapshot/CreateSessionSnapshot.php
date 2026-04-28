@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\TakeSessionSnapshot;
+namespace Avax\Components\HTTP\Session\TakeSessionSnapshot;
 
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 final class CreateSessionSnapshot
 {

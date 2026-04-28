@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\Design\Column\DSL;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Design\Column\DSL;
 
 /**
  * Functional technician for defining a database column's technical properties.

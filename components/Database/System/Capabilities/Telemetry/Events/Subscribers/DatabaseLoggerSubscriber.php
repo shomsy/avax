@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry\Events\Subscribers;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events\Subscribers;
 
-use components\Database\System\Capabilities\Telemetry\Config\Config;
-use components\Database\System\Capabilities\Telemetry\Events\EventSubscriberInterface;
-use components\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
+use Avax\Components\Database\System\Capabilities\Telemetry\Config\Config;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventSubscriberInterface;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
 use Psr\Log\LoggerInterface;
 
 /**

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\Design\Table;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Design\Table;
 
-use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
-use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
+use Avax\Components\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 /**
  * Enterprise-grade designer for defining database table structures.

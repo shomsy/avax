@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\State;
+namespace Avax\Components\Database\System\Capabilities\Query\State;
 
-use Avax\Database\System\Capabilities\Query\State\AST\JoinNode;
-use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-use Avax\Database\System\Capabilities\Query\State\AST\OrderNode;
-use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\JoinNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\OrderNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\WhereNode;
 
 /**
  * Immutable technical state container for database query metadata.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Middleware;
+namespace Avax\Components\HTTP\Middleware;
 
 use Exception;
 

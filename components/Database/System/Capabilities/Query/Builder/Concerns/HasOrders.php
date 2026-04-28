@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Query\State\AST\OrderNode;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\OrderNode;
 
 /**
  * Trait providing sorting and ordering capabilities for the QueryBuilder.

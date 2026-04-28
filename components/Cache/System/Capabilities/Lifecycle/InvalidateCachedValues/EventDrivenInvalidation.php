@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues;
 
 final class EventDrivenInvalidation implements InvalidationStrategy
 {

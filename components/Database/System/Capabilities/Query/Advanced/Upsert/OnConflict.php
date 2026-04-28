@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Advanced\Upsert;
+namespace Avax\Components\Database\System\Capabilities\Query\Advanced\Upsert;
 
 final class OnConflict
 {

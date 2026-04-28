@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Transactions;
+namespace Avax\Components\Database\System\Capabilities\Transactions;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 
 final class Locks
 {

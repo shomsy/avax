@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\URI\Parts;
+namespace Avax\Components\HTTP\URI\Parts;
 
 use Stringable;
 

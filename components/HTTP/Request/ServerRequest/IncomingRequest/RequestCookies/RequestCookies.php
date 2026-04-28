@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies;
 
 /**
  * RequestCookies - Capability Owner: Manages HTTP request cookies.

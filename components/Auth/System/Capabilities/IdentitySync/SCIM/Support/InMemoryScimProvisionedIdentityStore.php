@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\IdentitySync\SCIM\Support;
+namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support;
 
 final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdentityStoreInterface
 {

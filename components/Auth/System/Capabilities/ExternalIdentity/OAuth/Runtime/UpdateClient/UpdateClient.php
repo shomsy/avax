@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientApprovalStatus;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethodPolicy;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientApprovalStatus;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethodPolicy;
+use Avax\Components\Auth\System\Foundation\Clock;
 use RuntimeException;
 
 final readonly class UpdateClient

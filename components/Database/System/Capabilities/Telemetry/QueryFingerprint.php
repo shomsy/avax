@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry;
 
 final class QueryFingerprint
 {

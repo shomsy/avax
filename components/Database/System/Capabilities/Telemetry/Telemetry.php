@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry;
 
-use components\Database\System\Capabilities\Telemetry\Config\Config;
-use components\Database\System\Capabilities\Telemetry\Events\EventBus;
-use components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Telemetry\Config\Config;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 
 /**
  * Public capability owner for database telemetry and correlation state.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment;
 
 use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use ReflectionException;

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use components\Auth\System\Auth;
-use components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use components\Auth\System\Capabilities\Identity\User\User;
-use components\Auth\System\Capabilities\Identity\User\UserEmail;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use components\Auth\System\Flows\Login\AuthenticationFailed;
-use components\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Auth\System\Auth;
+use Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Components\Auth\System\Flows\Login\Credentials;
 
 $passwordHasher = new PasswordHasher();
 $userSource     = new InMemoryUserSource();

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\RegisterConnection;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\FederationFailed;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\GroupRoleMappingValidator;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationRuntime\FederationFailed;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnection;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionHealth;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport\GroupRoleMappingValidator;
+use Avax\Components\Auth\System\Foundation\Clock;
 use Random\RandomException;
 
 final readonly class RegisterFederationConnection

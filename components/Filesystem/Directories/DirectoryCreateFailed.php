@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Directories;
+namespace Avax\Components\Filesystem\Directories;
 
 use RuntimeException;
 

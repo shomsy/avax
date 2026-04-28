@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser;
+namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser;
 
-use components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
 
 final readonly class ScimProvisioningResult
 {

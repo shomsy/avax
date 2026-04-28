@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Foundation\Text;
+namespace Avax\Components\Auth\System\Foundation\Text;
 
 final class MaskSecret
 {

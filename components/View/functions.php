@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use components\HTTP\Response\Response;
-use components\View\TemplateEngine;
+use Avax\Components\HTTP\Response\Response;
+use Avax\Components\View\TemplateEngine;
 use Psr\Http\Message\ResponseInterface;
 
 if (! function_exists(function: 'view')) {

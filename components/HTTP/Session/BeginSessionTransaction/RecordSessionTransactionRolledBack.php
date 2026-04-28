@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\BeginSessionTransaction;
+namespace Avax\Components\HTTP\Session\BeginSessionTransaction;
 
 final class RecordSessionTransactionRolledBack
 {

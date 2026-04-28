@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup;
 
 use DateTimeImmutable;
 use SensitiveParameter;

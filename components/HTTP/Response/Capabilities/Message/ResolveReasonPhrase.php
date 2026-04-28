@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Message;
+namespace Avax\Components\HTTP\Response\Capabilities\Message;
 
 final class ResolveReasonPhrase
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 
 /**
  * SanitizedRequestedInputs - Proxy for RequestedInputs that applies sanitization.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Connections\OpenConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\OpenConnection;
 
-use components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use components\Database\System\Capabilities\Telemetry\Events\ConnectionFailed;
-use components\Database\System\Capabilities\Telemetry\Events\ConnectionOpened;
-use components\Database\System\Capabilities\Telemetry\Events\EventBus;
-use components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\ConnectionFailed;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\ConnectionOpened;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Throwable;
 
 /**

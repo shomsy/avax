@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Source\ControlConsistency;
+namespace Avax\Components\Cache\System\Capabilities\Source\ControlConsistency;
 
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 
 final readonly class DecideCacheReadConsistency
 {

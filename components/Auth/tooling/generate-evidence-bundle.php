@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use components\Auth\Integrations\Release\GenerateEvidenceBundle;
+use Avax\Components\Auth\Integrations\Release\GenerateEvidenceBundle;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

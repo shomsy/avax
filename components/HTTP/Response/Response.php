@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response;
+namespace Avax\Components\HTTP\Response;
 
-use Avax\HTTP\Response\Capabilities\Caching\CacheControl;
-use Avax\HTTP\Response\Capabilities\Caching\Etag;
-use Avax\HTTP\Response\Capabilities\Caching\LastModified;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildFileDownloadResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildNoContentResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildNotModifiedResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildProblemResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildStreamResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
-use Avax\HTTP\Response\Flows\BuildResponse\BuildXmlResponse;
+use Avax\Components\HTTP\Response\Capabilities\Caching\CacheControl;
+use Avax\Components\HTTP\Response\Capabilities\Caching\Etag;
+use Avax\Components\HTTP\Response\Capabilities\Caching\LastModified;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildFileDownloadResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildNoContentResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildNotModifiedResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildProblemResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildStreamResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
+use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildXmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

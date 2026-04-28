@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Closure;
-use components\Database\System\Capabilities\Query\Builder\JoinClause;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Query\State\AST\JoinNode;
+use Avax\Components\Database\System\Capabilities\Query\Builder\JoinClause;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\JoinNode;
 
 /**
  * Trait providing relational join capabilities for the QueryBuilder.

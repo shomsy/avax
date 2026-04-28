@@ -3,11 +3,11 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Router\Kernel\RouterKernel;
-use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
-use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
+use Avax\Components\HTTP\Router\Kernel\RouterKernel;
+use Avax\Components\HTTP\Router\Router;
+use Avax\Components\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\RouterKernel;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => Router::class,

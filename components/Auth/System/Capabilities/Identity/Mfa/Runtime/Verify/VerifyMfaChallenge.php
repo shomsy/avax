@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify;
 
-use components\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Identity\IdentityInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\VerifyBackupCode;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\LimitMfaAttempts;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\MfaAttemptLimitReached;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaChallengeFailed;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaVerificationAttempt;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
-use components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
-use components\Auth\System\Flows\Login\AuthenticationResult;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Access\RiskBasedAccess\Support\DeterministicRiskEngine;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\VerifyBackupCode;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Data\VerifyMfaChallengeData;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\LimitMfaAttempts;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\MfaAttemptLimitReached;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaChallengeFailed;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaVerificationAttempt;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Components\Auth\System\Flows\Login\AuthenticationResult;
+use Avax\Components\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 /**

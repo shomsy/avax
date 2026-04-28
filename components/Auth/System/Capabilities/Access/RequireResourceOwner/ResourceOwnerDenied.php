@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Access\RequireResourceOwner;
+namespace Avax\Components\Auth\System\Capabilities\Access\RequireResourceOwner;
 
 use RuntimeException;
 

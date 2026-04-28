@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request;
+namespace Avax\Components\HTTP\Request;
 
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\ContainerInterface;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseFormBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
-use Avax\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
-use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseFormBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseJsonBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\GuardUploadedFiles;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\Components\HTTP\Request\ServerRequest\Network\ParseForwardedAddresses;
+use Avax\Components\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
+use Avax\Components\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

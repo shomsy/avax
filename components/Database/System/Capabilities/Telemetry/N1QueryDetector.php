@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry;
 
 final class N1QueryDetector
 {

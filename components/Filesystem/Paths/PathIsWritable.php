@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Paths;
+namespace Avax\Components\Filesystem\Paths;
 
 class PathIsWritable
 {

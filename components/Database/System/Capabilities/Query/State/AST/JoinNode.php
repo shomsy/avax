@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\State\AST;
+namespace Avax\Components\Database\System\Capabilities\Query\State\AST;
 
-use components\Database\System\Capabilities\Query\Builder\JoinClause;
+use Avax\Components\Database\System\Capabilities\Query\Builder\JoinClause;
 
 /**
  * Immutable AST node representing a SQL JOIN operation.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Access\Policy;
+namespace Avax\Components\Auth\System\Capabilities\Access\Policy;
 
 /**
  * Package-owned assurance defaults for the main identity lanes.

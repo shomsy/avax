@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Enums;
+namespace Avax\Components\Database\System\Capabilities\Query\Enums;
 
 /**
  * Technical base class for all enumerations used within the QueryBuilder domain.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Advanced\BulkOperations;
+namespace Avax\Components\Database\System\Capabilities\Query\Advanced\BulkOperations;
 
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 final class BatchUpdate
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\PublicSurface\Facade;
+namespace Avax\Components\Cache\System\PublicSurface\Facade;
 
-use components\Cache\System\CacheContract;
-use components\Cache\System\PublicSurface\Exception\NotConfigured;
-use components\Cache\System\PublicSurface\Exception\NotFound;
+use Avax\Components\Cache\System\CacheContract;
+use Avax\Components\Cache\System\PublicSurface\Exception\NotConfigured;
+use Avax\Components\Cache\System\PublicSurface\Exception\NotFound;
 
 final class CacheRegistry
 {

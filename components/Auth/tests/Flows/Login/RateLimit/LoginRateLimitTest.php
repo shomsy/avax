@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Flows\Login\RateLimit;
+namespace Avax\Components\Auth\Tests\Flows\Login\RateLimit;
 
-use components\Auth\System\Flows\Login\RateLimit\InMemoryLoginRateLimitStorage;
-use components\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
-use components\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use components\Auth\System\Foundation\Clock;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\InMemoryLoginRateLimitStorage;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 /**

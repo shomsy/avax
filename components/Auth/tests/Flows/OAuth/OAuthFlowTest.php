@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Flows\OAuth;
+namespace Avax\Components\Auth\Tests\Flows\OAuth;
 
-use components\Auth\System\Auth;
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCodeData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials\ExchangeClientCredentialsData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeRefreshToken\ExchangeRefreshTokenData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\IntrospectTokenData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenExchangeFailed;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RevokeToken\RevokeTokenData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use components\Auth\System\Capabilities\Identity\Identity;
-use components\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
-use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use components\Auth\System\Flows\Login\Credentials;
-use components\Auth\System\Flows\Register\RegistrationData;
-use components\Auth\System\Foundation\Clock;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Auth;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode\AuthorizeCodeData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials\ExchangeClientCredentialsData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\IntrospectToken\IntrospectTokenData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthTokenExchangeFailed;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RevokeToken\RevokeTokenData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Auth\System\Flows\Register\RegistrationData;
+use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class OAuthFlowTest extends TestCase

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Transactions;
+namespace Avax\Components\Database\System\Capabilities\Transactions;
 
-use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Transactions\OnConnection\OnConnection;
-use Avax\Database\System\Capabilities\Transactions\RunTransaction\RunTransaction;
-use Avax\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Transactions\OnConnection\OnConnection;
+use Avax\Components\Database\System\Capabilities\Transactions\RunTransaction\RunTransaction;
+use Avax\Components\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
 use Throwable;
 
 /**

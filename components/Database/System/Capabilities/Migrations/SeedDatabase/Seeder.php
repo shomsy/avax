@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Migrations\SeedDatabase;
+namespace Avax\Components\Database\System\Capabilities\Migrations\SeedDatabase;
 
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use RuntimeException;
 
 /**

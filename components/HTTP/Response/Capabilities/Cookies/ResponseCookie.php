@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Cookies;
+namespace Avax\Components\HTTP\Response\Capabilities\Cookies;
 
 use DateTimeImmutable;
 use DateTimeInterface;

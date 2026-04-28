@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Message;
+namespace Avax\Components\HTTP\Response\Capabilities\Message;
 
-use Avax\HTTP\Response\Capabilities\Body\ResponseBody;
-use Avax\HTTP\Response\Capabilities\Headers\ResponseHeaders;
+use Avax\Components\HTTP\Response\Capabilities\Body\ResponseBody;
+use Avax\Components\HTTP\Response\Capabilities\Headers\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SensitiveParameter;

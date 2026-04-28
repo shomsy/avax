@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Integrations\Diagnostics;
+namespace Avax\Components\Auth\Integrations\Diagnostics;
 
 interface PublishAuditMessageInterface
 {

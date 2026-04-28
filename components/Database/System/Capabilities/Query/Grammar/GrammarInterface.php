@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Grammar;
+namespace Avax\Components\Database\System\Capabilities\Query\Grammar;
 
-use Avax\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\Database\System\Capabilities\Query\State\QueryState;
 
 /**
  * Technical contract for translating logical QueryState into dialect-specific SQL SNAPSHOTS.

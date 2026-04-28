@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion;
 
 /**
  * Action Owner: Normalizes the HTTP protocol version.

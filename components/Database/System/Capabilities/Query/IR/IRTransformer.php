@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
+namespace Avax\Components\Database\System\Capabilities\Query\IR;
 
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\CTENode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\CTEType;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\OrderByNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\CTENode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\CTEType;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\OrderByNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
 final class IRTransformer
 {

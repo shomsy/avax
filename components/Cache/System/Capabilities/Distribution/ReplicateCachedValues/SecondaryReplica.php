@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
 
 final readonly class SecondaryReplica
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Flows\BuildResponse;
+namespace Avax\Components\HTTP\Response\Flows\BuildResponse;
 
-use Avax\HTTP\Response\Capabilities\Body\NormalizeResponseBody;
-use Avax\HTTP\Response\Capabilities\Message\ResponseMessage;
+use Avax\Components\HTTP\Response\Capabilities\Body\NormalizeResponseBody;
+use Avax\Components\HTTP\Response\Capabilities\Message\ResponseMessage;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 

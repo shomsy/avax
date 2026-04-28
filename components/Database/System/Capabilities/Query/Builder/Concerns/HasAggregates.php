@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Throwable;
 

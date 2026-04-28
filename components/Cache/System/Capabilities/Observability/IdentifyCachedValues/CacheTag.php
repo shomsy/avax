@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Observability\IdentifyCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues;
 
 use InvalidArgumentException;
 use Stringable;

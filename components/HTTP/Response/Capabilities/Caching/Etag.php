@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Caching;
+namespace Avax\Components\HTTP\Response\Capabilities\Caching;
 
 final readonly class Etag
 {

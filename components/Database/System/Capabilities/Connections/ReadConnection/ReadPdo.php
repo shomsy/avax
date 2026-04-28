@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\ReadConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\ReadConnection;
 
 use PDO;
 use Throwable;

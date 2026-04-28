@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Database\Integrations\Console;
+namespace Avax\Components\Database\Integrations\Console;
 
-use components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Throwable;
 
 final readonly class MigrateRefreshCommand

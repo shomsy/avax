@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
+namespace Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
 use RuntimeException;
 use Throwable;

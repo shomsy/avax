@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Exceptions;
+namespace Avax\Components\Database\System\Capabilities\Query\Exceptions;
 
-use components\Database\System\Foundation\Exceptions\DatabaseException;
+use Avax\Components\Database\System\Foundation\Exceptions\DatabaseException;
 use SensitiveParameter;
 use Throwable;
 

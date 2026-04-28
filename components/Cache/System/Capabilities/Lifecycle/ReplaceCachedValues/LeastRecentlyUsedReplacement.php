@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
 
 final readonly class LeastRecentlyUsedReplacement implements ChooseCachedValueForReplacement
 {

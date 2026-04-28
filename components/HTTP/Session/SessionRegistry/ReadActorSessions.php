@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionRegistry;
+namespace Avax\Components\HTTP\Session\SessionRegistry;
 
 final class ReadActorSessions
 {

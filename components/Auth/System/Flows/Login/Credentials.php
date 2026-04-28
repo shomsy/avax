@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\Login;
+namespace Avax\Components\Auth\System\Flows\Login;
 
 use SensitiveParameter;
 

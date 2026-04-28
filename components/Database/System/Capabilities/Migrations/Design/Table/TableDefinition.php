@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Migrations\Design\Table;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Design\Table;
 
 /**
  * Technical value object representing the metadata of a database table.

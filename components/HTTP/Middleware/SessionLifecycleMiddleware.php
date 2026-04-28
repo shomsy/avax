@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Middleware;
+namespace Avax\Components\HTTP\Middleware;
 
-use Avax\HTTP\Session\SessionInterface;
+use Avax\Components\HTTP\Session\SessionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;

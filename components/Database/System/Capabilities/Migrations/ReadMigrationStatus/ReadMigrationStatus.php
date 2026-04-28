@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Migrations\ReadMigrationStatus;
+namespace Avax\Components\Database\System\Capabilities\Migrations\ReadMigrationStatus;
 
-use components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Throwable;
 
 /**

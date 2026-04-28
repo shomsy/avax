@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Hydration;
+namespace Avax\Components\Database\System\Capabilities\ORM\Hydration;
 
-use Avax\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
-use Avax\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
+use Avax\Components\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
 use ReflectionClass;
 use ReflectionProperty;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Flows\BuildResponse;
+namespace Avax\Components\HTTP\Response\Flows\BuildResponse;
 
-use Avax\HTTP\Response\Capabilities\Downloads\BuildAttachmentDisposition;
-use Avax\HTTP\Response\Capabilities\Downloads\DetectDownloadMediaType;
-use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Components\HTTP\Response\Capabilities\Downloads\BuildAttachmentDisposition;
+use Avax\Components\HTTP\Response\Capabilities\Downloads\DetectDownloadMediaType;
+use Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use SensitiveParameter;

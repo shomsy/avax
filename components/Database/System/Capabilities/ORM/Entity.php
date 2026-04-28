@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM;
+namespace Avax\Components\Database\System\Capabilities\ORM;
 
 use ReflectionClass;
 

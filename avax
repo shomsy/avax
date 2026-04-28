@@ -124,6 +124,33 @@ try {
         case 'status':
             exit(new MigrateStatusCommand(repository: $repository, loader: $loader)->handle(path: $migrationsPath));
 
+        case 'architecture:check':
+            $archDir = $rootDir . '/tooling/architecture';
+            $scripts = [
+                'check-forbidden-folders.php',
+                'check-public-surface.php',
+                'check-runtime-leaks.php',
+                'check-namespace-drift.php',
+                'check-duplicate-owners.php',
+                'check-docs-mirror.php',
+            ];
+            $hasErrors = false;
+            foreach ($scripts as $script) {
+                echo "\033[36mRunning {$script}...\033[0m\n";
+                $result = 0;
+                passthru('php ' . escapeshellarg($archDir . '/' . $script), $result);
+                if ($result !== 0) {
+                    $hasErrors = true;
+                }
+                echo "\n";
+            }
+            if ($hasErrors) {
+                echo "\033[31mArchitecture checks failed!\033[0m\n";
+                exit(1);
+            }
+            echo "\033[32mAll architecture checks passed successfully.\033[0m\n";
+            exit(0);
+
         case 'help':
         default:
             echo "\033[33mAvax Framework CLI\033[0m\n\n";
@@ -140,7 +167,9 @@ try {
             echo "  migrate            Run all pending migrations\n";
             echo "  make <name>        Create a new migration file\n";
             echo "  rollback [steps]   Rollback the last batch of migrations\n";
-            echo "  status             Show the status of all migrations\n";
+            echo "  status             Show the status of all migrations\n\n";
+            echo "\033[32mArchitecture Commands:\033[0m\n";
+            echo "  architecture:check Run all static architecture guards\n";
             exit(0);
     }
 } catch (Throwable $e) {

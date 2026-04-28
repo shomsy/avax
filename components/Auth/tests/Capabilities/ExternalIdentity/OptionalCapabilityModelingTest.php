@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Capabilities\ExternalIdentity;
+namespace Avax\Components\Auth\Tests\Capabilities\ExternalIdentity;
 
-use components\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
-use components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\ExternalIdentityCapabilityUnavailable;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\OAuth;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\OpenIDConnect;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\SingleSignOn;
+use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 
 final class OptionalCapabilityModelingTest extends TestCase

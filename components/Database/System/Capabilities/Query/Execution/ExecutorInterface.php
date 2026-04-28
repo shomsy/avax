@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Execution;
+namespace Avax\Components\Database\System\Capabilities\Query\Execution;
 
-use Avax\Database\System\Capabilities\Query\DTO\ExecutionResult;
-use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Throwable;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\RestoreSessionSnapshot;
+namespace Avax\Components\HTTP\Session\RestoreSessionSnapshot;
 
 final class RecordSessionSnapshotRestored
 {

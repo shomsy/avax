@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\Shared\Contracts;
+namespace Avax\Components\HTTP\Session\Shared\Contracts;
 
-use components\HTTP\Session\SessionInterface as RootSessionInterface;
+use Avax\Components\HTTP\Session\SessionInterface as RootSessionInterface;
 
 interface SessionInterface extends RootSessionInterface
 {

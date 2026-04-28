@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Tests\Support\Cache;
+namespace Avax\Components\Cache\Tests\Support\Cache;
 
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 use Random\RandomException;
 use RuntimeException;
 

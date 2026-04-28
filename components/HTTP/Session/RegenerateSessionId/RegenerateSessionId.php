@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\RegenerateSessionId;
+namespace Avax\Components\HTTP\Session\RegenerateSessionId;
 
 final class RegenerateSessionId
 {

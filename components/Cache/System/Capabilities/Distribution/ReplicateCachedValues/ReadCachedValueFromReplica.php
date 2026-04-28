@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
 
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class ReadCachedValueFromReplica

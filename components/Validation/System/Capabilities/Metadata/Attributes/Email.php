@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Validation\System\Capabilities\Metadata\Attributes;
+namespace Avax\Components\Validation\System\Capabilities\Metadata\Attributes;
 
 use Attribute;
 

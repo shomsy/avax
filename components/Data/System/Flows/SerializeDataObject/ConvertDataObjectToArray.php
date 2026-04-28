@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Data\System\Flows\SerializeDataObject;
 
 use Avax\Components\Data\System\Capabilities\DataTransfer\Configuration\DataTransferConfig;
-use Avax\Components\Data\System\Capabilities\ObjectReading\NormalizeDataObjectValue;
-use Avax\Components\Data\System\Capabilities\ObjectReading\ReadDataObject;
+use Avax\Components\Data\System\Flows\ReadDataObject\NormalizeDataObjectValue;
+use Avax\Components\Data\System\Flows\ReadDataObject\ReadDataObject;
 
 final readonly class ConvertDataObjectToArray
 {

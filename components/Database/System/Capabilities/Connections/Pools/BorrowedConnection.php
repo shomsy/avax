@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Connections\Pools;
+namespace Avax\Components\Database\System\Capabilities\Connections\Pools;
 
-use components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use components\Database\System\Capabilities\Connections\Exceptions\ConnectionException;
-use components\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Exceptions\ConnectionException;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
 use PDO;
 
 /**

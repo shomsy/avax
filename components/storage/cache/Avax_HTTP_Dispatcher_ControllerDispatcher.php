@@ -3,7 +3,7 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => ControllerDispatcher::class,

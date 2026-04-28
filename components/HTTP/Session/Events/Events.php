@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Events;
+namespace Avax\Components\HTTP\Session\Events;
 
-use Avax\HTTP\Session\Shared\Contracts\FeatureInterface;
+use Avax\Components\HTTP\Session\Shared\Contracts\FeatureInterface;
 
 /**
  * Events - Simple Event Dispatcher

@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Data\System\Flows\Batch;
+
+use ArrayIterator;
+use Avax\Components\Data\Exceptions\InvalidFlowException;
+use Avax\Components\Data\Internal\Iteration\NormalizedIterable;
+use Countable;
+use IteratorAggregate;
+use Traversable;
+
+/**
+ * Fixed-size batches over ordered input.
+ */
+final readonly class Batch implements IteratorAggregate, Countable
+{
+    /**
+     * @param array<int, array<int, mixed>> $batches
+     */
+    private function __construct(
+        private array $batches,
+    ) {}
+
+    public static function from(iterable $items, int $size) : self
+    {
+        if ($size <= 0) {
+            throw InvalidFlowException::invalidBatchSize(size: $size);
+        }
+
+        return new self(
+            batches: array_chunk(
+                         array : array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items)),
+                         length: $size
+                     )
+        );
+    }
+
+    /**
+     * @return array<int, array<int, mixed>>
+     */
+    public function all() : array
+    {
+        return $this->batches;
+    }
+
+    public function count() : int
+    {
+        return count($this->batches);
+    }
+
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator(array: $this->batches);
+    }
+}

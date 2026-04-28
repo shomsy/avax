@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Compression;
+namespace Avax\Components\Cache\System\Foundation\Compression;
 
 use InvalidArgumentException;
 use RuntimeException;

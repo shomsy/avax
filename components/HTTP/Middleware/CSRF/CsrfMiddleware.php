@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Middleware\CSRF;
+namespace Avax\Components\HTTP\Middleware\CSRF;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Security\CsrfTokens;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Security\CsrfTokens;
 use Exception;
 use SensitiveParameter;
 

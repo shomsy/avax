@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enroll;
 
-use components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaEnrollmentFailed;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaEnrollmentRecord;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaMethod;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaStatus;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\MfaEnrollmentFailed;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Records\MfaEnrollmentRecord;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Totp\TotpInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Lifecycle\CachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues;
 
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 
 final readonly class CachedValueLifecycle
 {

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Flows\Oidc;
+namespace Avax\Components\Auth\Tests\Flows\Oidc;
 
 use BadMethodCallException;
-use components\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequest;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\InMemoryOidcRequestObjectStore;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcIdToken;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
-use components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use components\Auth\System\Capabilities\Identity\User\User;
-use components\Auth\System\Foundation\Clock;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\InMemoryOAuthClientRegistry;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequest;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\InMemoryOidcRequestObjectStore;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcIdToken;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcJsonWebKeySet;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderMetadata;
+use Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use JsonException;

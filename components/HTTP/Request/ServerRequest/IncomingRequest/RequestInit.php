@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
 

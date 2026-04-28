@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\SuspendUser;
+namespace Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\SuspendUser;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
-use components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
-use components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
-use components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
-use components\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
+use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
+use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmSupport\AdminElevationStoreInterface;
+use Avax\Components\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class SuspendUser

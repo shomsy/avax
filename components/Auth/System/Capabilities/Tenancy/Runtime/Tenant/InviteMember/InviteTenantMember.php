@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember;
+namespace Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\InviteMember;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Tenancy\Model\TenantInvite;
-use components\Auth\System\Capabilities\Tenancy\Model\TenantStoreInterface;
-use components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Model\TenantInvite;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Model\TenantStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\TenantFailed;
+use Avax\Components\Auth\System\Foundation\Clock;
 use Random\RandomException;
 
 final readonly class InviteTenantMember

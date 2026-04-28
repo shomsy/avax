@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events\Strategy;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events\Strategy;
 
-use Avax\Database\System\Capabilities\Telemetry\Events\Contracts\DispatchStrategyInterface;
-use Avax\Database\System\Capabilities\Telemetry\Events\Event;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Contracts\DispatchStrategyInterface;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Event;
 use Psr\Log\LoggerInterface;
 use Throwable;
 

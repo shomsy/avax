@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Migrations\Design\TypeMapping;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Design\TypeMapping;
 
 /**
  * Enterprise-grade SQL to PHP type mapper for DTOs, Entities, and Value Objects.

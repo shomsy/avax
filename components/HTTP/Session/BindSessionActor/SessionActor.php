@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\BindSessionActor;
+namespace Avax\Components\HTTP\Session\BindSessionActor;
 
 final class SessionActor
 {

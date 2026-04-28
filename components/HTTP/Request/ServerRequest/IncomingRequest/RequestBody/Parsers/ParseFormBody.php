@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
 
 /**
  * Action Owner: Parses URL-encoded form data (application/x-www-form-urlencoded).

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Core;
+namespace Avax\Components\Container\Core;
 
-use components\Container\Providers\ServiceProvider;
+use Avax\Components\Container\Providers\ServiceProvider;
 
 final class AppFactory
 {

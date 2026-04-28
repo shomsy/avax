@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionSecurity\SessionFingerprint;
+namespace Avax\Components\HTTP\Session\SessionSecurity\SessionFingerprint;
 
 final class ReadSessionFingerprint
 {

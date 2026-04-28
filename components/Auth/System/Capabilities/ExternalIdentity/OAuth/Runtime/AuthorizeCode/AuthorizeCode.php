@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\AuthorizeCode;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\AuthorizationCodeStoreInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthorizationCode;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObject;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObjectData;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\AuthorizationCodeStoreInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\IssuedAuthorizationCode;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientRegistryInterface;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObject;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObjectData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support\OidcProviderInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;
 

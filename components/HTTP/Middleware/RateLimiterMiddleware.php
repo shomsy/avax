@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Middleware;
+namespace Avax\Components\HTTP\Middleware;
 
-use components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\ResponseFactory;
 use DateMalformedStringException;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\SessionRecovery;
+namespace Avax\Components\HTTP\Session\SessionRecovery;
 
-use Avax\HTTP\Session\Foundation\SafeSerializer;
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\Foundation\SafeSerializer;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 use Exception;
 use RuntimeException;
 use Throwable;

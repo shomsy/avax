@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Support;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Support;
 
 /**
  * The "Number Clicker" (Sequence Tracker).

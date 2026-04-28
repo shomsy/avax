@@ -6,14 +6,14 @@ namespace Avax\Commands;
 
 use Avax\Commands\App\MakeControllerCommand;
 use Avax\Commands\App\MakeRepositoryCommand;
-use Avax\Database\Integrations\Console\ExportCommand;
-use Avax\Database\Integrations\Console\MakeMigrationCommand;
-use Avax\Database\Integrations\Console\MigrateCommand;
-use Avax\Database\Integrations\Console\MigrateFreshCommand;
-use Avax\Database\Integrations\Console\MigrateRefreshCommand;
-use Avax\Database\Integrations\Console\MigrateRollbackCommand;
-use Avax\Database\Integrations\Console\MigrateStatusCommand;
-use Avax\Database\Integrations\Console\SeedCommand;
+use Avax\Components\Database\Integrations\Console\ExportCommand;
+use Avax\Components\Database\Integrations\Console\MakeMigrationCommand;
+use Avax\Components\Database\Integrations\Console\MigrateCommand;
+use Avax\Components\Database\Integrations\Console\MigrateFreshCommand;
+use Avax\Components\Database\Integrations\Console\MigrateRefreshCommand;
+use Avax\Components\Database\Integrations\Console\MigrateRollbackCommand;
+use Avax\Components\Database\Integrations\Console\MigrateStatusCommand;
+use Avax\Components\Database\Integrations\Console\SeedCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand as LaravelInstallCommand;
 
 class CommandDefinitions

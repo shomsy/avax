@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Security\Encryption\Contracts;
+namespace Avax\Components\Security\Encryption\Contracts;
 
 /**
  * Interface EncrypterInterface

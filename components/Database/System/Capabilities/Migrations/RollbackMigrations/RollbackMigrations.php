@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\RollbackMigrations;
+namespace Avax\Components\Database\System\Capabilities\Migrations\RollbackMigrations;
 
-use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
-use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Throwable;
 
 /**

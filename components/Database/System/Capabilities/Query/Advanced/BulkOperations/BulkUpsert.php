@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Advanced\BulkOperations;
+namespace Avax\Components\Database\System\Capabilities\Query\Advanced\BulkOperations;
 
-use components\Database\System\Capabilities\Query\Advanced\Upsert\OnConflict;
-use components\Database\System\Capabilities\Query\Advanced\Upsert\UpsertBuilder;
-use components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\Advanced\Upsert\OnConflict;
+use Avax\Components\Database\System\Capabilities\Query\Advanced\Upsert\UpsertBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 final class BulkUpsert
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\ORM\DataLoader;
+namespace Avax\Components\Database\System\Capabilities\ORM\DataLoader;
 
 interface LoaderCallback
 {

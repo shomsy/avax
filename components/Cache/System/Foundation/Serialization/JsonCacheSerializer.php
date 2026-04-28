@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Serialization;
+namespace Avax\Components\Cache\System\Foundation\Serialization;
 
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class JsonCacheSerializer implements CacheSerializer
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database;
+namespace Avax\Components\Database;
 
-use Avax\Database\System\Capabilities\ORM\EntityManager as EntityManagerCapability;
-use Avax\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
-use Avax\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+use Avax\Components\Database\System\Capabilities\ORM\EntityManager as EntityManagerCapability;
+use Avax\Components\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\Database\System\Capabilities\ORM\Repositories\EntityRepository;
 use Throwable;
 
 final readonly class EntityManager

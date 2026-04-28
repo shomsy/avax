@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support;
 
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 
 /**
  * Explicit approval rule for high-risk OAuth client registrations.

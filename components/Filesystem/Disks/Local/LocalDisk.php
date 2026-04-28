@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Disks\Local;
+namespace Avax\Components\Filesystem\Disks\Local;
 
-use components\Filesystem\Directories\DirectoryClearFailed;
-use components\Filesystem\Directories\DirectoryCreateFailed;
-use components\Filesystem\Directories\DirectoryDeleteFailed;
-use components\Filesystem\Disks\Disk;
-use components\Filesystem\Files\FileCopyFailed;
-use components\Filesystem\Files\FileDeleteFailed as FileDeleteFailedException;
-use components\Filesystem\Files\FileMoveFailed;
-use components\Filesystem\Files\FileNotFound;
-use components\Filesystem\Files\FileWriteFailed;
+use Avax\Components\Filesystem\Directories\DirectoryClearFailed;
+use Avax\Components\Filesystem\Directories\DirectoryCreateFailed;
+use Avax\Components\Filesystem\Directories\DirectoryDeleteFailed;
+use Avax\Components\Filesystem\Disks\Disk;
+use Avax\Components\Filesystem\Files\FileCopyFailed;
+use Avax\Components\Filesystem\Files\FileDeleteFailed as FileDeleteFailedException;
+use Avax\Components\Filesystem\Files\FileMoveFailed;
+use Avax\Components\Filesystem\Files\FileNotFound;
+use Avax\Components\Filesystem\Files\FileWriteFailed;
 use FilesystemIterator;
 use RuntimeException;
 use SplFileInfo;

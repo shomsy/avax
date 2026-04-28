@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Source\ControlConsistency;
+namespace Avax\Components\Cache\System\Capabilities\Source\ControlConsistency;
 
 readonly class ConsistencyWindow
 {

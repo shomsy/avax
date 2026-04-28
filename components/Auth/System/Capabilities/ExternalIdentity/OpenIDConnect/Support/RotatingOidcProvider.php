@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Support;
 
-use components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 use SensitiveParameter;
 

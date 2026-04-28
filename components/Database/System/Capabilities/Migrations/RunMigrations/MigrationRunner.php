@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Migrations\RunMigrations;
+namespace Avax\Components\Database\System\Capabilities\Migrations\RunMigrations;
 
-use components\Database\System\Capabilities\Migrations\Exceptions\MigrationException;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Components\Database\System\Capabilities\Migrations\Exceptions\MigrationException;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions;
 use Throwable;
 
 /**

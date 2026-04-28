@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\ImportSessionState;
+namespace Avax\Components\HTTP\Session\ImportSessionState;
 
-use components\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 final class ReplaceImportedSessionState
 {

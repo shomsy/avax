@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Transactions;
+namespace Avax\Components\Database\System\Capabilities\Transactions;
 
-use components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use InvalidArgumentException;
 
 final class Savepoints

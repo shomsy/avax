@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System;
+namespace Avax\Components\Database\System;
 
-use components\Database\System\Capabilities\Connections\Connections;
-use components\Database\System\Capabilities\Migrations\Migrations;
-use components\Database\System\Capabilities\Migrations\Schema\Schema;
-use components\Database\System\Capabilities\ORM\EntityManager;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Query\Query;
-use components\Database\System\Capabilities\Telemetry\Telemetry;
-use components\Database\System\Capabilities\Transactions\Transactions;
-use components\Database\System\Configuration\DatabaseBuilder;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Migrations\Migrations;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\Database\System\Capabilities\ORM\EntityManager;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Query;
+use Avax\Components\Database\System\Capabilities\Telemetry\Telemetry;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Components\Database\System\Configuration\DatabaseBuilder;
 use ReflectionException;
 use Throwable;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionStore;
+namespace Avax\Components\HTTP\Session\SessionStore;
 
 final class ArraySessionStore implements SessionStore
 {

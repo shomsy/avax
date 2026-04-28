@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Enums;
+namespace Avax\Components\Database\System\Capabilities\Query\Enums;
 
 /**
  * Domain-fluent enumeration of supported SQL comparison operators.

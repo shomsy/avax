@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Events;
+namespace Avax\Components\HTTP\Session\Events;
 
 use Exception;
 use InvalidArgumentException;

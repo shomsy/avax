@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
 final readonly class CacheTier
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry\Config;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Config;
 
 /**
  * In-memory configuration repository supporting dot-notation access.

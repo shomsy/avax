@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Advanced\CTE;
+namespace Avax\Components\Database\System\Capabilities\Query\Advanced\CTE;
 
-use Avax\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\Database\System\Capabilities\Query\State\QueryState;
 
 final class RecursiveCTE
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Recovery;
+namespace Avax\Components\HTTP\Session\Recovery;
 
-use Avax\HTTP\Session\Audit\Audit;
-use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
-use Avax\HTTP\Session\Shared\Exceptions\RecoveryException;
-use Avax\HTTP\Session\Shared\Serialization\Serializer;
+use Avax\Components\HTTP\Session\Audit\Audit;
+use Avax\Components\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
+use Avax\Components\HTTP\Session\Shared\Exceptions\RecoveryException;
+use Avax\Components\HTTP\Session\Shared\Serialization\Serializer;
 use Throwable;
 
 /**

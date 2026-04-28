@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\User;
+namespace Avax\Components\Auth\System\Capabilities\Identity\User;
 
 /**
  * Interface UserInterface within the Avax Auth System.

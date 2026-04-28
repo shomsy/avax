@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Flows\Operations\StoreCachedValue;
+namespace Avax\Components\Cache\System\Flows\Operations\StoreCachedValue;
 
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\Duration;
 use DateInterval;
 use Throwable;
 

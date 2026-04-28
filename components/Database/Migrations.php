@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database;
+namespace Avax\Components\Database;
 
-use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
-use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
-use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use Avax\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
-use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
-use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
-use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
+use Avax\Components\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Components\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
+use Avax\Components\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
 use ReflectionException;
 use Throwable;
 

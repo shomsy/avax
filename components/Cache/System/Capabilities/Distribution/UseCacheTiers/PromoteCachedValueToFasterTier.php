@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
 
 final readonly class PromoteCachedValueToFasterTier
 {

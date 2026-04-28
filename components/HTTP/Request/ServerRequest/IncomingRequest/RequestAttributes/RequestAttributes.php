@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes;
 
 /**
  * RequestAttributes - Capability Owner: Manages arbitrary request attributes.

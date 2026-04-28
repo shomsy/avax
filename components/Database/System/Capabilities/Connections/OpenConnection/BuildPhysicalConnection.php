@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\OpenConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\OpenConnection;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Connections\Exceptions\ConnectionFailure;
-use Avax\Database\System\Capabilities\Connections\ValueObjects\ConnectionConfig;
-use Avax\Database\System\Capabilities\Connections\ValueObjects\Dsn;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Exceptions\ConnectionFailure;
+use Avax\Components\Database\System\Capabilities\Connections\ValueObjects\ConnectionConfig;
+use Avax\Components\Database\System\Capabilities\Connections\ValueObjects\Dsn;
 use PDO;
 use Throwable;
 

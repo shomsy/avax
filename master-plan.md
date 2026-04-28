@@ -1636,7 +1636,8 @@ If the agent needs a short execution order, use this:
 14. Tests
 15. Governance checks
 16. Docs
-17. Final report
+17. Final cleanup - delete deprecated/legacy code, files, folders...
+18. Final report
 ```
 
 Ovo je sada pravi plan: prvo arhitektura i postojeći kod, zatim testovi koji proveravaju da li je arhitektura stvarno nastala, zatim standardi, pa tek onda dokumentacija. 🧊

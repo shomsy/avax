@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Recover;
 
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
@@ -20,6 +19,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemo
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPasswordData;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Tests\TestCase;
 use DateInterval;
 use DateInvalidOperationException;

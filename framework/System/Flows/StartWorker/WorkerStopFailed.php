@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\StartWorker;
+namespace Avax\Framework\System\Flows\StartWorker;
 
 use RuntimeException;
 

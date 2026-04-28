@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Queue\System\Capabilities\Job;
+namespace Avax\Components\Operations\Queue\System\Capabilities\Job;
 
 use RuntimeException;
 use Throwable;

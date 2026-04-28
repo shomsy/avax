@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Queue\System\Flows\Process;
+namespace Avax\Components\Operations\Queue\System\Flows\Process;
 
-use Avax\Queue\System\Capabilities\Job\JobDefinition;
-use Avax\Queue\System\Capabilities\Job\JobRegistry;
-use Avax\Queue\System\Capabilities\Queue\QueueBroker;
-use Avax\Queue\System\PublicSurface\JobResult;
+use Avax\Components\Operations\Queue\System\Capabilities\Job\JobDefinition;
+use Avax\Components\Operations\Queue\System\Capabilities\Job\JobRegistry;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
+use Avax\Components\Operations\Queue\System\PublicSurface\JobResult;
 use Throwable;
 
 final class ProcessJob

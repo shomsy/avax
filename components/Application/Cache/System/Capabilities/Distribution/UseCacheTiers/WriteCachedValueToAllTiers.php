@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class WriteCachedValueToAllTiers
 {

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http\TenantSecurity;
 
-use Avax\Auth\Integrations\Http\HttpEndpointInput;
-use Avax\Auth\Integrations\Http\TenantSecurity\ServeTenantSecurityHttpSurface;
-use Avax\Auth\Tests\Support\FakeFederationRuntime;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpEndpointInput;
+use Avax\Components\Identity\Auth\Integrations\Http\TenantSecurity\ServeTenantSecurityHttpSurface;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
@@ -18,6 +17,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\Tests\Support\FakeFederationRuntime;
 use Avax\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Bindings;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings;
 
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationCategory;
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationMetadata;
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationVisibility;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\OperationLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\PooledLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\RequestLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TenantLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationCategory;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationMetadata;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationVisibility;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\OperationLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\PooledLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\RequestLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TenantLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 
 /**
  * One stored service registration.

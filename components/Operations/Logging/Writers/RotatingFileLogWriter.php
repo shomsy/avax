@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Logging\Writers;
+namespace Avax\Components\Operations\Logging\Writers;
 
+use Avax\Components\Operations\Logging\LogWriterInterface;
 use Avax\Facade\Facades\Storage;
-use Avax\Logging\LogWriterInterface;
 use Carbon\Carbon;
 use DateTimeZone;
 use RuntimeException;

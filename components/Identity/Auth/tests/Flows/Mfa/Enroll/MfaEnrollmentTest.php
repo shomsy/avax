@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Mfa\Enroll;
 
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Backup\GenerateBackupCodes;
@@ -22,6 +21,7 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Tests\TestCase;
 use DateInterval;
 use DateMalformedStringException;

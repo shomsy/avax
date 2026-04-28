@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Examples\Policies;
+namespace Avax\Components\Identity\Auth\Examples\Policies;
 
-use Avax\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
 
 /**
  * Example: policy-driven separation of duties gate.

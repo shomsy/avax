@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes;
 
 use Attribute;
 

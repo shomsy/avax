@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Configuration\CompiledCacheConfiguration;
+namespace Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration;
 
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheArtifact;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheDirectory;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheManifest;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Cache\System\Flows\Compiled\ClearCompiledCache\ClearCompiledCache;
-use Avax\Cache\System\Flows\Compiled\CompileCache\CompileCache;
-use Avax\Cache\System\Flows\Compiled\ReadCompiledCache\ReadCompiledCache;
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheArtifact;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheDirectory;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheManifest;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Cache\System\Flows\Compiled\ClearCompiledCache\ClearCompiledCache;
+use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\CompileCache;
+use Avax\Components\Application\Cache\System\Flows\Compiled\ReadCompiledCache\ReadCompiledCache;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final class BuildCompiledCache
 {

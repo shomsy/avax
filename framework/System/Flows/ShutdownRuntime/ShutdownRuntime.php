@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\ShutdownRuntime;
+namespace Avax\Framework\System\Flows\ShutdownRuntime;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
 final class ShutdownRuntime
 {

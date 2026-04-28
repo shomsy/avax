@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Configuration\LoadConfiguration;
+namespace Avax\Framework\System\Configuration\LoadConfiguration;
 
 final class ConfigurationRepository
 {

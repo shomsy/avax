@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 
 interface DiagnosticsContract
 {

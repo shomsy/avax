@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

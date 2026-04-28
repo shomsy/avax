@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
 
 final readonly class ChooseReplicaForRead
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement;
 
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final class FrequencyTracker
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Capabilities\Runtime\Worker;
+namespace Avax\Framework\System\Capabilities\Runtime\Worker;
 
 final class WorkerLoop
 {

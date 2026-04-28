@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http;
 
-use Avax\Auth\Integrations\Http\DetectUnsafeDeploymentMode;
-use Avax\Auth\Integrations\Http\HttpOAuthProofInput;
-use Avax\Auth\Integrations\Http\TrustedProxyViolation;
-use Avax\Auth\Integrations\Http\VerifyDpopProof;
-use Avax\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
-use Avax\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
-use Avax\Auth\Integrations\Http\VerifyTrustedProxyHeaders;
+use Avax\Components\Identity\Auth\Integrations\Http\DetectUnsafeDeploymentMode;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpOAuthProofInput;
+use Avax\Components\Identity\Auth\Integrations\Http\TrustedProxyViolation;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyDpopProof;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyTrustedProxyHeaders;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
 use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;

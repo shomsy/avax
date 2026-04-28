@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Providers;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Providers;
 
-use Avax\Cache\Cache;
-use Avax\Cache\CompiledCache;
-use Avax\Cache\System\AvaxCache;
-use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\CompiledCache;
+use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use PHPUnit\Framework\TestCase;
 
 final class CacheServiceProviderTest extends TestCase

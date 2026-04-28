@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Source\ProtectCacheSource;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource;
 
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Stringable;
 
 final readonly class CacheLockOwner implements Stringable

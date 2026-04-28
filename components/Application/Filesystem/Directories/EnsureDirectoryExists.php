@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Filesystem\Directories;
+namespace Avax\Components\Application\Filesystem\Directories;
 
-use Avax\Filesystem\Disks\Disk;
+use Avax\Components\Application\Filesystem\Disks\Disk;
 
 final class EnsureDirectoryExists
 {

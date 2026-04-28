@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Flows\CreateContainer;
+namespace Avax\Components\Application\Container\DI\Flows\CreateContainer;
 
-use Avax\Container\DI\Capabilities\Composition\Assembly\AssembleObservability;
-use Avax\Container\DI\Capabilities\Composition\Assembly\AssembleRuntime;
-use Avax\Container\DI\Capabilities\Composition\Assembly\SeedSystemServices;
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Container;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly\AssembleObservability;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly\AssembleRuntime;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly\SeedSystemServices;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Container;
 use InvalidArgumentException;
 
 /**

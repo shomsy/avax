@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Runtime\Scopes;
+namespace Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes;
 
 /**
  * Explicit runtime disposal contract for scoped or shared services.

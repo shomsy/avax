@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Commands\App;
+namespace Avax\Components\CLI\Console\App;
 
-use Avax\Commands\App\Contracts\ControllerGeneratorInterface;
+use Avax\Components\CLI\Console\App\Contracts\ControllerGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 

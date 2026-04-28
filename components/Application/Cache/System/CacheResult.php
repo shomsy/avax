@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System;
+namespace Avax\Components\Application\Cache\System;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 
 class CacheResult
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Commands\App\Contracts;
+namespace Avax\Components\CLI\Console\App\Contracts;
 
 interface EntityGeneratorInterface
 {

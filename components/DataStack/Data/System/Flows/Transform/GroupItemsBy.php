@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Data\System\Flows\Transform;
+namespace Avax\Components\DataStack\Data\System\Flows\Transform;
 
-use Avax\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class GroupItemsBy
 {

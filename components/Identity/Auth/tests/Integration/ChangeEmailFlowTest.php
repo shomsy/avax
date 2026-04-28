@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integration;
 
-use Avax\Auth\Tests\Support\CanonicalIntegrationAnchorTestCase;
+use Avax\Components\Identity\Auth\Tests\Support\CanonicalIntegrationAnchorTestCase;
 
 final class ChangeEmailFlowTest extends CanonicalIntegrationAnchorTestCase
 {

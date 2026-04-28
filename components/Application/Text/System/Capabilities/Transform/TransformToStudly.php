@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Text\System\Capabilities\Transform;
+namespace Avax\Components\Application\Text\System\Capabilities\Transform;
 
-use Avax\Text\System\PublicSurface\Text;
+use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformToStudly
 {

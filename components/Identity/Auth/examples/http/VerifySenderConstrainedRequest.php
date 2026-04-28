@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Examples\Http;
+namespace Avax\Components\Identity\Auth\Examples\Http;
 
-use Avax\Auth\Integrations\Http\HttpOAuthProofInput;
-use Avax\Auth\Integrations\Http\VerifyDpopProof;
-use Avax\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
-use Avax\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpOAuthProofInput;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyDpopProof;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
+use Avax\Components\Identity\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
+use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
 use SensitiveParameter;
 
 /**

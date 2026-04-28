@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Examples\Policies;
+namespace Avax\Components\Identity\Auth\Examples\Policies;
 
-use Avax\Auth\System\Capabilities\Access\Policy\AccessPolicy;
-use Avax\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
-use Avax\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Policy\AccessPolicy;
+use Avax\Components\Identity\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 
 /**
  * Example: high-impact admin action requires fresh assurance.

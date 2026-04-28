@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\DateTime\System\PublicSurface;
+namespace Avax\Components\Application\DateTime\System\PublicSurface;
 
-use Avax\DateTime\System\Foundation\Failure\DateTimeFailure;
+use Avax\Components\Application\DateTime\System\Foundation\Failure\DateTimeFailure;
 use DateTimeImmutable;
 use DateTimeZone;
 

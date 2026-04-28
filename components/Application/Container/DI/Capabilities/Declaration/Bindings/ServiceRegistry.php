@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Bindings;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings;
 
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationCategory;
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationMetadata;
-use Avax\Container\DI\Capabilities\Declaration\Ownership\RegistrationVisibility;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\ScopedLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationCategory;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationMetadata;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership\RegistrationVisibility;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\ScopedLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
 use Closure;
 use LogicException;
 

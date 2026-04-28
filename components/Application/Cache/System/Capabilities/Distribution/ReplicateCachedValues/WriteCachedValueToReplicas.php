@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use InvalidArgumentException;
 use Throwable;
 

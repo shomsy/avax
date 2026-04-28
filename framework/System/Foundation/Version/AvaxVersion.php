@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Foundation\Version;
+namespace Avax\Framework\System\Foundation\Version;
 
 final class AvaxVersion
 {

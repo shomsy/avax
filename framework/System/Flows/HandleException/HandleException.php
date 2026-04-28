@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\HandleException;
+namespace Avax\Framework\System\Flows\HandleException;
 
-use Avax\Components\Framework\System\Capabilities\Runtime\RuntimeResponse;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use BadMethodCallException;
 use Throwable;
 

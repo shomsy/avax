@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Unit\Cache\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Distribution\UseCacheTiers;
 
-use Avax\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTier;
-use Avax\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTierName;
-use Avax\Cache\System\Capabilities\Distribution\UseCacheTiers\TieredCache;
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTier;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTierName;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\TieredCache;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class TieredCacheTest extends TestCase

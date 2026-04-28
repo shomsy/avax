@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Flows\Lifecycle\RefreshCachedValue;
+namespace Avax\Components\Application\Cache\System\Flows\Lifecycle\RefreshCachedValue;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
-use Avax\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\RefreshPolicy;
-use Avax\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\ShouldRefreshCachedValue;
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\RefreshPolicy;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\ShouldRefreshCachedValue;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use DateInterval;
 use Throwable;
 

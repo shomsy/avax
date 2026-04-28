@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\tests\Unit\Cache\Flows\WarmCache;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Flows\WarmCache;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Flows\Lifecycle\WarmCache\WarmCache;
-use Avax\Cache\System\Foundation\Time\Duration;
-use Avax\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Flows\Lifecycle\WarmCache\WarmCache;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class WarmCacheTest extends TestCase

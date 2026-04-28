@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Filesystem\Disks;
+namespace Avax\Components\Application\Filesystem\Disks;
 
 readonly class DiskDefinition
 {

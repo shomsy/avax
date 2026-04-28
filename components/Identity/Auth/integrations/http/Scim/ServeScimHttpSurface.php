@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Integrations\Http\Scim;
 
-use Avax\Auth\Integrations\Headers\ReadBearerToken;
-use Avax\Auth\Integrations\Http\HttpEndpointInput;
-use Avax\Auth\Integrations\Http\JsonHttpResponse;
+use Avax\Components\Identity\Auth\Integrations\Headers\ReadBearerToken;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpEndpointInput;
+use Avax\Components\Identity\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkOperation;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkOperationResult;

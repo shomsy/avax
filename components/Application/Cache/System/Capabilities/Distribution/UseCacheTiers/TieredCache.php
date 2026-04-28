@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final class TieredCache implements CacheStore
 {

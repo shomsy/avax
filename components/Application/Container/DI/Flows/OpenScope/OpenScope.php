@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Flows\OpenScope;
+namespace Avax\Components\Application\Container\DI\Flows\OpenScope;
 
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 
 /**
  * Public scope-entry flow.

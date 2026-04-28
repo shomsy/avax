@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Avax\Filesystem\System\Foundation\Implementation;
+namespace Avax\Components\Application\Filesystem\System\Foundation\Implementation;
 
-use Avax\Filesystem\Directories\ClearDirectory;
-use Avax\Filesystem\Directories\CreateDirectory;
-use Avax\Filesystem\Directories\DeleteDirectory;
-use Avax\Filesystem\Directories\EnsureDirectoryExists;
-use Avax\Filesystem\Directories\EnsureDirectoryIsWritable;
-use Avax\Filesystem\Directories\ListDirectoryFiles;
-use Avax\Filesystem\Disks\Disk;
-use Avax\Filesystem\Disks\ResolveDisk;
-use Avax\Filesystem\Files\AppendToFile;
-use Avax\Filesystem\Files\CopyFile;
-use Avax\Filesystem\Files\DeleteFile;
-use Avax\Filesystem\Files\MoveFile;
-use Avax\Filesystem\Files\ReadFile;
-use Avax\Filesystem\Files\ReadFileLastModifiedAt;
-use Avax\Filesystem\Files\WriteFile;
-use Avax\Filesystem\Filesystem as FilesystemInterface;
+use Avax\Components\Application\Filesystem\Directories\ClearDirectory;
+use Avax\Components\Application\Filesystem\Directories\CreateDirectory;
+use Avax\Components\Application\Filesystem\Directories\DeleteDirectory;
+use Avax\Components\Application\Filesystem\Directories\EnsureDirectoryExists;
+use Avax\Components\Application\Filesystem\Directories\EnsureDirectoryIsWritable;
+use Avax\Components\Application\Filesystem\Directories\ListDirectoryFiles;
+use Avax\Components\Application\Filesystem\Disks\Disk;
+use Avax\Components\Application\Filesystem\Disks\ResolveDisk;
+use Avax\Components\Application\Filesystem\Files\AppendToFile;
+use Avax\Components\Application\Filesystem\Files\CopyFile;
+use Avax\Components\Application\Filesystem\Files\DeleteFile;
+use Avax\Components\Application\Filesystem\Files\MoveFile;
+use Avax\Components\Application\Filesystem\Files\ReadFile;
+use Avax\Components\Application\Filesystem\Files\ReadFileLastModifiedAt;
+use Avax\Components\Application\Filesystem\Files\WriteFile;
+use Avax\Components\Application\Filesystem\Filesystem as FilesystemInterface;
 
 /**
  * Delegates all filesystem operations to local disk through action-owner classes.

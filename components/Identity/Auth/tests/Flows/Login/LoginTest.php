@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Login;
 
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IssuedAuthentication;
@@ -32,6 +31,7 @@ use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Tests\TestCase;
 use DateTimeImmutable;
 use Exception;

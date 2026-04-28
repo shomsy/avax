@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Foundation\Time;
+namespace Avax\Components\Application\Container\DI\Foundation\Time;
 
 /**
  * Provides the container-owned time source.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues;
 
-use Avax\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Foundation\Serialization\JsonCacheSerializer;
-use Avax\Cache\System\Foundation\Serialization\SerializedCachePayload;
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
-use Avax\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Foundation\Serialization\JsonCacheSerializer;
+use Avax\Components\Application\Cache\System\Foundation\Serialization\SerializedCachePayload;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

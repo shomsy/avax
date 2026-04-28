@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Flows\Protection\ProtectCacheSource;
+namespace Avax\Components\Application\Cache\System\Flows\Protection\ProtectCacheSource;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLock;
-use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockStore;
-use Avax\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockWasNotAcquired;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLock;
+use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockStore;
+use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockWasNotAcquired;
 
 final readonly class StampedeLockGuard
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final class L2DistributedCache
 {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
-use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\ContainerInterface;
 
 interface PoolingContract
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
+namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
-use Avax\Cache\System\Foundation\Time\Clock;
-use Avax\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final class AtomicCompiledCacheWrite
 {

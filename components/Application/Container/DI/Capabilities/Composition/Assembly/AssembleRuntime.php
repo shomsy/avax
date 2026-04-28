@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Composition\Assembly;
+namespace Avax\Components\Application\Container\DI\Capabilities\Composition\Assembly;
 
-use Avax\Container\DI\Capabilities\Composition\Compilation\CompileContainer;
-use Avax\Container\DI\Capabilities\Composition\Compilation\ServiceCompiler;
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Container\DI\Capabilities\Declaration\Blueprints\BlueprintCache;
-use Avax\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
-use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderRegistry;
-use Avax\Container\DI\Capabilities\Execution\BuildService;
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
-use Avax\Container\DI\Capabilities\Execution\Injection\Methods\InjectMethods;
-use Avax\Container\DI\Capabilities\Execution\Injection\Properties\InjectProperties;
-use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Runtime\CompiledRuntime;
-use Avax\Container\DI\Capabilities\Runtime\HotPathInliner;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompileContainer;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\ServiceCompiler;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\BlueprintCache;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\BuildService;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Methods\InjectMethods;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Properties\InjectProperties;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\CompiledRuntime;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\HotPathInliner;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\ServicePool;
 
 /**
  * Builds the runtime and compilation collaborators for one container instance.

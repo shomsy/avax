@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\tests\Integration\Cache\ManageCompiledCache;
+namespace Avax\Components\Application\Cache\tests\Integration\Cache\ManageCompiledCache;
 
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
-use Avax\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
 use PHPUnit\Framework\TestCase;
 
 final class UserController

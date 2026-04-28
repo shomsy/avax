@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Configuration\ConfigureRuntime;
+namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
 final class ConfigureRuntime
 {

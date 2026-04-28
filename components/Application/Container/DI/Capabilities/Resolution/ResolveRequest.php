@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\DI\Capabilities\Resolution;
 
 /**
  * Carries one service resolution request and its local context.

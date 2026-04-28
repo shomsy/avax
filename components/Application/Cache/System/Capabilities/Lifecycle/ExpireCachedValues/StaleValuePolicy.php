@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
 
 enum StaleValuePolicy: string
 {

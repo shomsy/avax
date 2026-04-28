@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Capabilities\Engines;
 
-use Avax\View\BladeTemplateEngine as RealBladeTemplateEngine;
+use Avax\Components\Presentation\View\BladeTemplateEngine as RealBladeTemplateEngine;
 
 /**
  * Ultimate Blade Template Engine.

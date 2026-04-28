@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface;
 
-use Avax\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\CacheContract;
 use DateInterval;
 
 /**

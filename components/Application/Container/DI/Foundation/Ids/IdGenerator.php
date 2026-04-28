@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Foundation\Ids;
+namespace Avax\Components\Application\Container\DI\Foundation\Ids;
 
 use Random\RandomException;
 

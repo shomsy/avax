@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Configuration\RegisterComponents;
+namespace Avax\Framework\System\Configuration\RegisterComponents;
 
-use Avax\Components\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
+use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 
 final class ComponentRegistration
 {

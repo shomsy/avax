@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Foundation\Compression;
+namespace Avax\Components\Application\Cache\System\Foundation\Compression;
 
 interface CacheCompressor
 {

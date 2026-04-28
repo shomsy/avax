@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Mail\System\Capabilities\Address;
+namespace Avax\Components\Operations\Mail\System\Capabilities\Address;
 
 final class Envelope
 {

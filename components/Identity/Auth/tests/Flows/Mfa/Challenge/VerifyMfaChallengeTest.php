@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Flows\Mfa\Challenge;
 
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IssuedAuthentication;
@@ -34,6 +33,7 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
+use Avax\Components\Identity\Auth\Tests\Support\FrozenClock;
 use Avax\Tests\TestCase;
 use DateInterval;
 use DateInvalidOperationException;

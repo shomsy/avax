@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\Tests\Contract\Cache;
+namespace Avax\Components\Application\Cache\Tests\Contract\Cache;
 
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final class InMemoryCacheStoreContractTest extends CacheStoreContractTest
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Validation\System\Foundation\Exceptions;
+namespace Avax\Components\Application\Validation\System\Foundation\Exceptions;
 
 use RuntimeException;
 use Throwable;

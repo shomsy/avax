@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\tests\Unit\Cache\PublicSurface;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\PublicSurface;
 
-use Avax\Cache\Cache;
-use Avax\Cache\System\CacheContract;
-use Avax\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
+use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Avax\Tests\TestCase;
 
 final class CacheFacadeTest extends TestCase

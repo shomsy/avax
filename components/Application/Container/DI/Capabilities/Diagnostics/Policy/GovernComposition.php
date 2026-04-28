@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Diagnostics\Policy;
+namespace Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Policy;
 
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
-use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolutionPolicy;
 use ReflectionException;
 
 /**

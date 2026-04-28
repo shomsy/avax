@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
 enum CacheTierName: string
 {

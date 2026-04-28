@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

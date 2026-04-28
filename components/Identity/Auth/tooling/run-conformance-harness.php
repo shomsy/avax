@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Integrations\Release\RunConformanceHarness;
+use Avax\Components\Identity\Auth\Integrations\Release\RunConformanceHarness;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

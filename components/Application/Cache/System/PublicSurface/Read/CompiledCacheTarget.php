@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\PublicSurface\Read;
+namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
-use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use InvalidArgumentException;
 
 final readonly class CompiledCacheTarget implements CacheReadTarget

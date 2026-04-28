@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\DI\Capabilities\Declaration\Ownership;
+namespace Avax\Components\Application\Container\DI\Capabilities\Declaration\Ownership;
 
 /**
  * Stores the active logical slice view inside one resolution context payload.

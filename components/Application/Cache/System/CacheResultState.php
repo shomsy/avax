@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System;
+namespace Avax\Components\Application\Cache\System;
 
 enum CacheResultState: string
 {

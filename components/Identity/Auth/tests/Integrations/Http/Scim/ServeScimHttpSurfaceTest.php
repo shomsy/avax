@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Tests\Integrations\Http\Scim;
 
-use Avax\Auth\Integrations\Http\HttpEndpointInput;
-use Avax\Auth\Integrations\Http\Scim\ServeScimHttpSurface;
+use Avax\Components\Identity\Auth\Integrations\Http\HttpEndpointInput;
+use Avax\Components\Identity\Auth\Integrations\Http\Scim\ServeScimHttpSurface;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;

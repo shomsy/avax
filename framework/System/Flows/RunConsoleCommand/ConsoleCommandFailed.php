@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Framework\System\Flows\RunConsoleCommand;
+namespace Avax\Framework\System\Flows\RunConsoleCommand;
 
 use RuntimeException;
 

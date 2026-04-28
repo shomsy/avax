@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Commands;
 
-use Avax\Commands\App\MakeControllerCommand;
-use Avax\Commands\App\MakeRepositoryCommand;
+use Avax\Components\CLI\Console\App\MakeControllerCommand;
+use Avax\Components\CLI\Console\App\MakeRepositoryCommand;
 use Avax\Components\DataStack\Database\Integrations\Console\ExportCommand;
 use Avax\Components\DataStack\Database\Integrations\Console\MakeMigrationCommand;
 use Avax\Components\DataStack\Database\Integrations\Console\MigrateCommand;

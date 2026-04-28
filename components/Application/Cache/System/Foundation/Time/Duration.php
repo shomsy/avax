@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Foundation\Time;
+namespace Avax\Components\Application\Cache\System\Foundation\Time;
 
 use DateInterval;
 use InvalidArgumentException;

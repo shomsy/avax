@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CachePartitionKey;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CachePartitionKey;
 use Stringable;
 
 final readonly class CacheNode implements Stringable

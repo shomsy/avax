@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DateTime\System\Foundation\Failure;
+namespace Avax\Components\Application\DateTime\System\Foundation\Failure;
 
 final class InvalidDateTimeString extends DateTimeFailure
 {

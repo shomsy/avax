@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Cache\System\Flows\Lifecycle\RememberCachedValue;
+namespace Avax\Components\Application\Cache\System\Flows\Lifecycle\RememberCachedValue;
 
-use Avax\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Cache\System\Flows\Operations\ReadCachedValue\ReadCachedValue;
-use Avax\Cache\System\Flows\Operations\StoreCachedValue\StoreCachedValue;
-use Avax\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Flows\Operations\ReadCachedValue\ReadCachedValue;
+use Avax\Components\Application\Cache\System\Flows\Operations\StoreCachedValue\StoreCachedValue;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use DateInterval;
 use Throwable;
 

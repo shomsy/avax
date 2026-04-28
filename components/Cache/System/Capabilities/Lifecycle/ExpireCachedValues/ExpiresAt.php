@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues;
 
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\Duration;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
 
 final readonly class ExpiresAt implements CacheExpiration

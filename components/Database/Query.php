@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database;
+namespace Avax\Components\Database;
 
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Query\Query as QueryCapability;
-use components\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\Database\System\Capabilities\Query\ValueObjects\Expression;
 use ReflectionException;
 use Throwable;
 

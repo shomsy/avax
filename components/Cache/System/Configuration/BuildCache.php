@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Configuration;
+namespace Avax\Components\Cache\System\Configuration;
 
-use components\Cache\System\AvaxCache;
-use components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\AvaxCache;
+use Avax\Components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class BuildCache
 {

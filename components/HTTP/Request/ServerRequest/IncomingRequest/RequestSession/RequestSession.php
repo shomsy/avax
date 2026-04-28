@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestSession;
 
 /**
  * RequestSession - Capability Owner: Manages the session data attached to a request.

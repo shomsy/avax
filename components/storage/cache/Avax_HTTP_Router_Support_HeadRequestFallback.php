@@ -3,9 +3,9 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Support\HeadRequestFallback;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\Components\HTTP\Router\Support\HeadRequestFallback;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => HeadRequestFallback::class,

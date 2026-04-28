@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\Design\Enums;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Design\Enums;
 
 enum FieldModifier: string
 {

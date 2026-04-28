@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Foundation;
+namespace Avax\Components\Auth\System\Foundation;
 
 use Random\RandomException;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Integrations\Console;
+namespace Avax\Components\Database\Integrations\Console;
 
-use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Components\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
 use Throwable;
 
 final readonly class MigrateStatusCommand

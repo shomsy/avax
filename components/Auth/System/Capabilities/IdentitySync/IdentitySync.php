@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\IdentitySync;
+namespace Avax\Components\Auth\System\Capabilities\IdentitySync;
 
-use components\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
-use components\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
+use Avax\Components\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 
 /**
  * Identity Synchronization capability coordinator.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Randomness;
+namespace Avax\Components\Cache\System\Foundation\Randomness;
 
 use Random\RandomException;
 

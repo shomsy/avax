@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Enums;
+namespace Avax\Components\HTTP\Enums;
 
 /**
  * Enum representing common HTTP Status Codes.

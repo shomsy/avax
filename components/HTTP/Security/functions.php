@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Security\CsrfTokens;
+use Avax\Components\HTTP\Security\CsrfTokens;
 
 if (! function_exists(function: 'csrf_token')) {
     /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Grammar;
+namespace Avax\Components\Database\System\Capabilities\Query\Grammar;
 
 use InvalidArgumentException;
 

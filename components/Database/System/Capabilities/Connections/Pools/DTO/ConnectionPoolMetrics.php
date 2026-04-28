@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\Pools\DTO;
+namespace Avax\Components\Database\System\Capabilities\Connections\Pools\DTO;
 
 use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
 use Avax\DataFoundation\Validation\Attributes\Rules\IntegerRule;

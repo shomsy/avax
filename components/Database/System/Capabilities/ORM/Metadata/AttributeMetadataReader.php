@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Metadata;
+namespace Avax\Components\Database\System\Capabilities\ORM\Metadata;
 
-use Avax\Database\System\Capabilities\ORM\Attributes\Column;
-use Avax\Database\System\Capabilities\ORM\Attributes\Entity;
-use Avax\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
-use Avax\Database\System\Capabilities\ORM\Attributes\Id;
-use Avax\Database\System\Capabilities\ORM\Attributes\JoinColumn;
-use Avax\Database\System\Capabilities\ORM\Attributes\ManyToMany;
-use Avax\Database\System\Capabilities\ORM\Attributes\ManyToOne;
-use Avax\Database\System\Capabilities\ORM\Attributes\OneToMany;
-use Avax\Database\System\Capabilities\ORM\Attributes\OneToOne;
-use Avax\Database\System\Capabilities\ORM\Attributes\Table;
-use Avax\Database\System\Capabilities\ORM\Relations\RelationKind;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\Column;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\Entity;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\Id;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\JoinColumn;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\ManyToMany;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\ManyToOne;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\OneToMany;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\OneToOne;
+use Avax\Components\Database\System\Capabilities\ORM\Attributes\Table;
+use Avax\Components\Database\System\Capabilities\ORM\Relations\RelationKind;
 use ReflectionClass;
 use RuntimeException;
 

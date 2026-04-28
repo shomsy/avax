@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\SessionCookie;
+namespace Avax\Components\HTTP\Session\SessionCookie;
 
 final class HardenSessionCookie
 {

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Integrations\Http\Oidc;
+namespace Avax\Components\Auth\Integrations\Http\Oidc;
 
-use components\Auth\Integrations\Headers\ReadBearerToken;
-use components\Auth\Integrations\Http\HttpEndpointInput;
-use components\Auth\Integrations\Http\JsonHttpResponse;
-use components\Auth\System\Auth;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutData as OidcLogoutData;
-use components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Components\Auth\Integrations\Headers\ReadBearerToken;
+use Avax\Components\Auth\Integrations\Http\HttpEndpointInput;
+use Avax\Components\Auth\Integrations\Http\JsonHttpResponse;
+use Avax\Components\Auth\System\Auth;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\RegisterClient\RegisterClientData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient\UpdateClientData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClient;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\PkceMethod;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\Logout\LogoutData as OidcLogoutData;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequestData;
 use SensitiveParameter;
 use Throwable;
 

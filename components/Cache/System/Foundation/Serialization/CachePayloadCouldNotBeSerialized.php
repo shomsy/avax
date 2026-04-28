@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Serialization;
+namespace Avax\Components\Cache\System\Foundation\Serialization;
 
 use RuntimeException;
 use Throwable;

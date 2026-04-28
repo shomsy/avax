@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\UpdateClient;
 
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthClientType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthGrantType;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\OAuthTokenEndpointAuthMethod;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
 use SensitiveParameter;
 
 final readonly class UpdateClientData

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Metadata;
+namespace Avax\Components\Database\System\Capabilities\ORM\Metadata;
 
 final readonly class FieldMetadata
 {

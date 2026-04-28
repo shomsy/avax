@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\OpenConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\OpenConnection;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use PDO;
 use Throwable;
 

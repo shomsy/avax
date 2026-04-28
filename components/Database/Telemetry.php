@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database;
+namespace Avax\Components\Database;
 
-use Avax\Database\System\Capabilities\Telemetry\Config\Config;
-use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
-use Avax\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
+use Avax\Components\Database\System\Capabilities\Telemetry\Config\Config;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
 
 final readonly class Telemetry
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Projections;
+namespace Avax\Components\Database\System\Capabilities\Query\Projections;
 
 use ReflectionClass;
 use ReflectionException;

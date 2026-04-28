@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionRecovery;
+namespace Avax\Components\HTTP\Session\SessionRecovery;
 
 final class SessionStateChecksum
 {

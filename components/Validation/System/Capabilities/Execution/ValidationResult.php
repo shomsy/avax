@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Validation\System\Capabilities\Execution;
+namespace Avax\Components\Validation\System\Capabilities\Execution;
 
-use components\DataFoundation\Arrhae;
+use Avax\Components\DataFoundation\Arrhae;
 use RuntimeException;
 
 /**

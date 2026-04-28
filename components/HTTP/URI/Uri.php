@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\URI;
+namespace Avax\Components\HTTP\URI;
 
-use Avax\HTTP\URI\Parts\Authority;
-use Avax\HTTP\URI\Parts\Fragment;
-use Avax\HTTP\URI\Parts\Host;
-use Avax\HTTP\URI\Parts\Path;
-use Avax\HTTP\URI\Parts\Port;
-use Avax\HTTP\URI\Parts\Query;
-use Avax\HTTP\URI\Parts\Scheme;
-use Avax\HTTP\URI\Parts\UserInfo;
+use Avax\Components\HTTP\URI\Parts\Authority;
+use Avax\Components\HTTP\URI\Parts\Fragment;
+use Avax\Components\HTTP\URI\Parts\Host;
+use Avax\Components\HTTP\URI\Parts\Path;
+use Avax\Components\HTTP\URI\Parts\Port;
+use Avax\Components\HTTP\URI\Parts\Query;
+use Avax\Components\HTTP\URI\Parts\Scheme;
+use Avax\Components\HTTP\URI\Parts\UserInfo;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
 use Stringable;

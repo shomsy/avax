@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders;
 
 use NoDiscard;
 use SensitiveParameter;

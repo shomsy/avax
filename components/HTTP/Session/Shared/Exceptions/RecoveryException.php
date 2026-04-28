@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\Shared\Exceptions;
+namespace Avax\Components\HTTP\Session\Shared\Exceptions;
 
 use RuntimeException;
 

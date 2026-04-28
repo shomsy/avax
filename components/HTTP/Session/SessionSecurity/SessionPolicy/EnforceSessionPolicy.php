@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionSecurity\SessionPolicy;
+namespace Avax\Components\HTTP\Session\SessionSecurity\SessionPolicy;
 
 final class EnforceSessionPolicy
 {

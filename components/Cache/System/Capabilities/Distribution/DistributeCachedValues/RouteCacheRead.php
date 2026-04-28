@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 
 final readonly class RouteCacheRead
 {

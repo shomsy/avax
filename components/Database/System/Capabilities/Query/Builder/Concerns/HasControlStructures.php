@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Closure;
 
 /**

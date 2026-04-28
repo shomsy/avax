@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
-use components\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\Database\System\Capabilities\Query\State\QueryState;
 
 /**
  * Adds support for CTEs and Window Functions.

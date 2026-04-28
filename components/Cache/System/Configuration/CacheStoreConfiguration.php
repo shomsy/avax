@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Configuration;
+namespace Avax\Components\Cache\System\Configuration;
 
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use InvalidArgumentException;
 
 final readonly class CacheStoreConfiguration

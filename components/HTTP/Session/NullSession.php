@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session;
+namespace Avax\Components\HTTP\Session;
 
-use components\HTTP\Session\Events\Events;
-use components\HTTP\Session\FlashSession\Flash;
-use components\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\Components\HTTP\Session\Events\Events;
+use Avax\Components\HTTP\Session\FlashSession\Flash;
+use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
 
 /**
  * Safe no-op session implementation.

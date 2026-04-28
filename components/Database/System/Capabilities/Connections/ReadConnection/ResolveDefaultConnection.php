@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\ReadConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\ReadConnection;
 
 /**
  * Resolves which connection name should be used for one request.

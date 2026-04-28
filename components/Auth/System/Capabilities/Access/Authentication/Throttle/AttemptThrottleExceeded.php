@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Access\Authentication\Throttle;
+namespace Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle;
 
 use RuntimeException;
 

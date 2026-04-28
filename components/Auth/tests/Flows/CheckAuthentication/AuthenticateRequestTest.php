@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Flows\CheckAuthentication;
+namespace Avax\Components\Auth\Tests\Flows\CheckAuthentication;
 
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
-use components\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
-use components\Auth\System\Capabilities\Identity\User\User;
-use components\Auth\System\Capabilities\Identity\User\UserEmail;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticateRequest;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
-use components\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
-use components\Auth\Tests\Support\FrozenClock;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticateRequest;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationRequest;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Components\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
+use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Tests\TestCase;
 use DateTimeImmutable;
 use Mockery;
 use Override;

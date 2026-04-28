@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Commands\App;
+namespace Avax\Components\Commands\App;
 
-use components\Commands\App\Contracts\ServiceGeneratorInterface;
+use Avax\Components\Commands\App\Contracts\ServiceGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 

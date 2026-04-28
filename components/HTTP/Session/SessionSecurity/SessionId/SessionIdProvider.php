@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\SessionSecurity\SessionId;
+namespace Avax\Components\HTTP\Session\SessionSecurity\SessionId;
 
 interface SessionIdProvider
 {

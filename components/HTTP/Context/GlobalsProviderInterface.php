@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Context;
+namespace Avax\Components\HTTP\Context;
 
 /**
  * Read-only access to PHP runtime globals.

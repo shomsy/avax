@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionSecurity\SessionSignature;
+namespace Avax\Components\HTTP\Session\SessionSecurity\SessionSignature;
 
 use SensitiveParameter;
 

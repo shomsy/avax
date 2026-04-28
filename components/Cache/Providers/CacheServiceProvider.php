@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Providers;
+namespace Avax\Components\Cache\Providers;
 
-use components\Cache\Cache;
-use components\Cache\System\CacheContract;
-use components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use components\Cache\System\Configuration\BuildCache;
-use components\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
-use components\Cache\System\PublicSurface\Facade\CacheFacade;
-use components\Cache\System\PublicSurface\Facade\CacheRegistry;
-use components\Cache\System\PublicSurface\Read\ReadFromCache;
-use components\Container\Providers\ServiceProvider;
+use Avax\Components\Cache\Cache;
+use Avax\Components\Cache\System\CacheContract;
+use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Cache\System\Configuration\BuildCache;
+use Avax\Components\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Components\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Components\Cache\System\PublicSurface\Read\ReadFromCache;
+use Avax\Components\Container\Providers\ServiceProvider;
 
 final class CacheServiceProvider extends ServiceProvider
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Connections\Contracts;
+namespace Avax\Components\Database\System\Capabilities\Connections\Contracts;
 
 use PDO;
 

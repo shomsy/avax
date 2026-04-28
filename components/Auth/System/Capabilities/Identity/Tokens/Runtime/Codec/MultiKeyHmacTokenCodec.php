@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec;
 
 use SensitiveParameter;
 

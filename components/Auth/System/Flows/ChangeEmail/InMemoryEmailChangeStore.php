@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\ChangeEmail;
+namespace Avax\Components\Auth\System\Flows\ChangeEmail;
 
-use components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Random\RandomException;

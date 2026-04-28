@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\URI;
+namespace Avax\Components\HTTP\URI;
 
 use Psr\Http\Message\UriInterface;
 

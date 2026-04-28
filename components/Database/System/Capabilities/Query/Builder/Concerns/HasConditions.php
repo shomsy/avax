@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Builder\Concerns;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder\Concerns;
 
 use Closure;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-use components\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\WhereNode;
 use InvalidArgumentException;
 use ReflectionException;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database;
+namespace Avax\Components\Database;
 
-use Avax\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
-use Avax\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
+use Avax\Components\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
 use Throwable;
 
 final readonly class Transactions

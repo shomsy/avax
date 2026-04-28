@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Transactions\Contracts;
+namespace Avax\Components\Database\System\Capabilities\Transactions\Contracts;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Throwable;
 
 /**

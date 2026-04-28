@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\IR;
+namespace Avax\Components\Database\System\Capabilities\Query\IR;
 
-use components\Database\System\Capabilities\Query\IR\Nodes\ComparisonOperator;
-use components\Database\System\Capabilities\Query\IR\Nodes\CTENode;
-use components\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
-use components\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
-use components\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\ComparisonOperator;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\CTENode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\JoinNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
 final class IRBuilder
 {

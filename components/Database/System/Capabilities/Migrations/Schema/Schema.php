@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\Schema;
+namespace Avax\Components\Database\System\Capabilities\Migrations\Schema;
 
-use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Query\Query;
+use Avax\Components\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\Query;
 use Throwable;
 
 /**

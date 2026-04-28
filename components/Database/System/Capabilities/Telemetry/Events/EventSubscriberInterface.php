@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events;
 
 /**
  * The "Subscription Form" (Event Subscriber Rulebook).

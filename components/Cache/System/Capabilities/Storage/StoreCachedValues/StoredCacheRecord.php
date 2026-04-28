@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues;
 
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
 
 final readonly class StoredCacheRecord
 {

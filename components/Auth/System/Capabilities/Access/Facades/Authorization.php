@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Access\Facades;
+namespace Avax\Components\Auth\System\Capabilities\Access\Facades;
 
-use components\Auth\System\Capabilities\Access\AccessInterface;
-use components\Auth\System\Capabilities\Access\Policy\AccessPolicy;
-use components\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
-use components\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication as RequireAuthenticationBoundary;
-use components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use components\Auth\System\Capabilities\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
-use components\Auth\System\Capabilities\Access\RequireResourceOwner\ResourceOwnerDenied;
-use components\Auth\System\Capabilities\Access\RequireRole\RequireRole as RequireRoleBoundary;
-use components\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
-use components\Auth\System\Capabilities\Identity\User\UserPermission;
-use components\Auth\System\Capabilities\Identity\User\UserRole;
-use components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
+use Avax\Components\Auth\System\Capabilities\Access\AccessInterface;
+use Avax\Components\Auth\System\Capabilities\Access\Policy\AccessPolicy;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication as RequireAuthenticationBoundary;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Components\Auth\System\Capabilities\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
+use Avax\Components\Auth\System\Capabilities\Access\RequireResourceOwner\ResourceOwnerDenied;
+use Avax\Components\Auth\System\Capabilities\Access\RequireRole\RequireRole as RequireRoleBoundary;
+use Avax\Components\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use SensitiveParameter;
 
 /**

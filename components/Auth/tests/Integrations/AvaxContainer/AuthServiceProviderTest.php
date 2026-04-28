@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Integrations\AvaxContainer;
+namespace Avax\Components\Auth\Tests\Integrations\AvaxContainer;
 
-use components\Auth\Integrations\AvaxContainer\AuthServiceProvider;
-use components\Auth\System\Auth;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use components\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use components\Auth\System\Flows\Register\RegistrationData;
-use components\Auth\System\Foundation\Clock;
-use components\Auth\System\Foundation\Exceptions\ConfigurationException;
-use components\Auth\System\Foundation\IdGeneratorInterface;
-use components\Auth\Tests\Support\FrozenClock;
-use components\Container\Core\AppFactory;
-use components\Container\Providers\ServiceProvider;
-use components\Tests\TestCase;
+use Avax\Components\Auth\Integrations\AvaxContainer\AuthServiceProvider;
+use Avax\Components\Auth\System\Auth;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Auth\System\Flows\Register\RegistrationData;
+use Avax\Components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Foundation\Exceptions\ConfigurationException;
+use Avax\Components\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Container\Core\AppFactory;
+use Avax\Components\Container\Providers\ServiceProvider;
+use Avax\Components\Tests\TestCase;
 use DateTimeImmutable;
 use Override;
 use ReflectionException;

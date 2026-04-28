@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\Network;
+namespace Avax\Components\HTTP\Request\ServerRequest\Network;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
 use SensitiveParameter;
 
 /**

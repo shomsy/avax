@@ -9,9 +9,9 @@ declare(strict_types=1);
  * asset path configurations, and other custom directives, making it adaptable for different environments.
  */
 
-namespace components\View;
+namespace Avax\Components\View;
 
-use components\Container\Core\Exceptions\FoundationContainerException;
+use Avax\Components\Container\Core\Exceptions\FoundationContainerException;
 use eftec\bladeone\BladeOne;
 use Override;
 use Psr\Container\ContainerExceptionInterface;

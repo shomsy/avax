@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest;
 
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\RequestedInputs;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;

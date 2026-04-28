@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP;
+namespace Avax\Components\HTTP;
 
-use Avax\HTTP\Middleware\RequestHandlerInterface;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Middleware\RequestHandlerInterface;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Router\RouterRuntimeInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\RequestInterface;

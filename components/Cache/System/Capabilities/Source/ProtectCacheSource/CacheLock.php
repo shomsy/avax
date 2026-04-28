@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Source\ProtectCacheSource;
+namespace Avax\Components\Cache\System\Capabilities\Source\ProtectCacheSource;
 
 final readonly class CacheLock
 {

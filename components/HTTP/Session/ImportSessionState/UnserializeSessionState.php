@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\ImportSessionState;
+namespace Avax\Components\HTTP\Session\ImportSessionState;
 
 final class UnserializeSessionState
 {

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Examples\Policies;
+namespace Avax\Components\Auth\Examples\Policies;
 
-use components\Auth\System\Capabilities\Access\Policy\AccessPolicy;
-use components\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
-use components\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy;
-use components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use components\Auth\System\Capabilities\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
-use components\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
-use components\Auth\System\Capabilities\Identity\User\UserPermission;
-use components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
+use Avax\Components\Auth\System\Capabilities\Access\Policy\AccessPolicy;
+use Avax\Components\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Components\Auth\System\Capabilities\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Components\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmRuntime\AdminElevationFailed;
 use SensitiveParameter;
 
 /**

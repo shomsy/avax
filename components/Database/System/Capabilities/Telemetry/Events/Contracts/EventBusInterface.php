@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry\Events\Contracts;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events\Contracts;
 
-use components\Database\System\Capabilities\Telemetry\Events\Event;
-use components\Database\System\Capabilities\Telemetry\Events\EventSubscriberInterface;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Event;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventSubscriberInterface;
 
 /**
  * The "Radio Command Center" (Event Bus Rulebook).

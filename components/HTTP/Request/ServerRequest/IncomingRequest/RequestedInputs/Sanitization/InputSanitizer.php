@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization;
 
 /**
  * InputSanitizer - Action owner for cleaning input data.

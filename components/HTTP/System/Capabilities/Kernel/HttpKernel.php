@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Capabilities\Kernel;
 
 use Avax\Components\HTTP\System\Flows\Routing\ResolveRouteFromHttpRequest;
-use Avax\HTTP\Middleware\Psr15MiddlewarePipeline;
-use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
-use Avax\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
-use Avax\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Avax\Components\HTTP\Middleware\Psr15MiddlewarePipeline;
+use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\SingleSignOn\FederationSupport;
 
 interface FederationMetadataRuntimeInterface
 {

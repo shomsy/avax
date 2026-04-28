@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Cache\Tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
 
-use components\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
-use components\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeId;
-use components\Cache\System\Capabilities\Distribution\DistributeCachedValues\ConsistentHashRing;
-use components\Cache\System\Capabilities\Distribution\DistributeCachedValues\DistributedCacheStore;
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use components\Cache\System\Foundation\Time\Duration;
-use components\Cache\System\Foundation\Time\FrozenClock;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
+use Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeId;
+use Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues\ConsistentHashRing;
+use Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues\DistributedCacheStore;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
 final class DistributedCacheStoreTest extends TestCase

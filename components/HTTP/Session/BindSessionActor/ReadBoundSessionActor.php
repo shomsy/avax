@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\BindSessionActor;
+namespace Avax\Components\HTTP\Session\BindSessionActor;
 
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 final class ReadBoundSessionActor
 {

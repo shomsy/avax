@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\RememberSessionValue;
+namespace Avax\Components\HTTP\Session\RememberSessionValue;
 
 final class ComputeMissingSessionValue
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Integrations\Release;
+namespace Avax\Components\Auth\Integrations\Release;
 
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\FileBackedHmacKeyRingCodec;
 use RuntimeException;
 
 final readonly class RunKeyRolloverDrill

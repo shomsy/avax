@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Connections\Pools;
+namespace Avax\Components\Database\System\Capabilities\Connections\Pools;
 
-use components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use components\Database\System\Capabilities\Connections\Exceptions\PoolLimitReachedException;
-use components\Database\System\Capabilities\Connections\OpenConnection\BuildPhysicalConnection;
-use components\Database\System\Capabilities\Connections\OpenConnection\OpenConnection;
-use components\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
-use components\Database\System\Capabilities\Connections\Pools\DTO\ConnectionPoolMetrics;
-use components\Database\System\Capabilities\Telemetry\Events\ConnectionAcquired;
-use components\Database\System\Capabilities\Telemetry\Events\EventBus;
-use components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Exceptions\PoolLimitReachedException;
+use Avax\Components\Database\System\Capabilities\Connections\OpenConnection\BuildPhysicalConnection;
+use Avax\Components\Database\System\Capabilities\Connections\OpenConnection\OpenConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\DTO\ConnectionPoolMetrics;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\ConnectionAcquired;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use ReflectionException;
 use SplQueue;
 use Throwable;

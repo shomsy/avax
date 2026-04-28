@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events\Contracts;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events\Contracts;
 
-use Avax\Database\System\Capabilities\Telemetry\Events\Event;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Event;
 
 /**
  * Technical contract defining the processing strategy for system-wide signals.

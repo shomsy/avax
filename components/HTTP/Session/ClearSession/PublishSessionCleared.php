@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\ClearSession;
+namespace Avax\Components\HTTP\Session\ClearSession;
 
 final class PublishSessionCleared
 {

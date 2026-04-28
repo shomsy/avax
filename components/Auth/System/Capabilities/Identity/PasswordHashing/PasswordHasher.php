@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\PasswordHashing;
+namespace Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing;
 
 use SensitiveParameter;
 

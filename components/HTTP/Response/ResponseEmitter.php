@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response;
+namespace Avax\Components\HTTP\Response;
 
-use Avax\HTTP\Response\Flows\EmitResponse\EmitResponse;
+use Avax\Components\HTTP\Response\Flows\EmitResponse\EmitResponse;
 use Psr\Http\Message\ResponseInterface;
 
 /**

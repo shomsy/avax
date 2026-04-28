@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Diagnostics;
+namespace Avax\Components\Auth\System\Capabilities\Diagnostics;
 
-use components\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer;
-use components\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplanation;
 use SensitiveParameter;
 
 final readonly class Diagnostics

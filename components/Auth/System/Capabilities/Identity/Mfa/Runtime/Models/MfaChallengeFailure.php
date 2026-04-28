@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models;
 
 /**
  * Stable reasons exposed by MFA challenge failures.

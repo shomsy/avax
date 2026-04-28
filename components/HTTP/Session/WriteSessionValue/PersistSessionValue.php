@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\WriteSessionValue;
+namespace Avax\Components\HTTP\Session\WriteSessionValue;
 
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 final class PersistSessionValue
 {

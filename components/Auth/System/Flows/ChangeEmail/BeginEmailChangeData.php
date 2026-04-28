@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\ChangeEmail;
+namespace Avax\Components\Auth\System\Flows\ChangeEmail;
 
 use SensitiveParameter;
 

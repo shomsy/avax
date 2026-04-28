@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\RestoreSessionSnapshot;
+namespace Avax\Components\HTTP\Session\RestoreSessionSnapshot;
 
-use Avax\HTTP\Session\SessionRecovery\SessionRecovery;
+use Avax\Components\HTTP\Session\SessionRecovery\SessionRecovery;
 use Exception;
 
 final class RestoreSessionSnapshot

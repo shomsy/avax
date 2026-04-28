@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\VerifyIdentity\EmailVerification;
+namespace Avax\Components\Auth\System\Flows\VerifyIdentity\EmailVerification;
 
-use components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
 
 /**
  * Default verification state store when verification is not configured.

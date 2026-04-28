@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\ChangePassword;
+namespace Avax\Components\Auth\System\Flows\ChangePassword;
 
-use components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
-use components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use components\Auth\System\Capabilities\Identity\IdentityInterface;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
-use components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
-use components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use components\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
-use components\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 /**

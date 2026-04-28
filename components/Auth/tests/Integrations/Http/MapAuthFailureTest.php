@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Integrations\Http;
+namespace Avax\Components\Auth\Tests\Integrations\Http;
 
-use components\Auth\Integrations\Http\MapAuthFailure;
-use components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\MfaAttemptLimitReached;
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
-use components\Auth\System\Capabilities\Identity\User\UserPermission;
-use components\Auth\System\Flows\Login\AuthenticationFailed;
-use components\Auth\System\Flows\Login\RateLimit\RateLimitException;
-use components\Tests\TestCase;
+use Avax\Components\Auth\Integrations\Http\MapAuthFailure;
+use Avax\Components\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\MfaAttemptLimitReached;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Models\FreshMfaRequired;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Components\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Tests\TestCase;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

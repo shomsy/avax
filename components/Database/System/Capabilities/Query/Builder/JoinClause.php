@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Builder;
+namespace Avax\Components\Database\System\Capabilities\Query\Builder;
 
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
 /**
  * technical builder for constructing and compiling JOIN clause conditions.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections;
+namespace Avax\Components\Database\System\Capabilities\Connections;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
-use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadPdo;
-use Avax\Database\System\Capabilities\Connections\RunWithConnection\RunWithConnection;
-use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\Database\System\Capabilities\Connections\ReadConnection\ReadPdo;
+use Avax\Components\Database\System\Capabilities\Connections\RunWithConnection\RunWithConnection;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use PDO;
 use Throwable;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Security;
+namespace Avax\Components\HTTP\Security;
 
-use Avax\HTTP\Session\Session;
+use Avax\Components\HTTP\Session\Session;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Random\RandomException;

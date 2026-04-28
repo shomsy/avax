@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events;
 
-use Avax\Database\System\Capabilities\Telemetry\Events\Contracts\DispatchStrategyInterface;
-use Avax\Database\System\Capabilities\Telemetry\Events\Contracts\EventBusInterface;
-use Avax\Database\System\Capabilities\Telemetry\Events\Strategy\SyncDispatchStrategy;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Contracts\DispatchStrategyInterface;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Contracts\EventBusInterface;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\Strategy\SyncDispatchStrategy;
 
 /**
  * Central event dispatcher for database lifecycle and telemetry signals.

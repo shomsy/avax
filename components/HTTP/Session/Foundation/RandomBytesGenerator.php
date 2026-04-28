@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Foundation;
+namespace Avax\Components\HTTP\Session\Foundation;
 
 use Random\RandomException;
 

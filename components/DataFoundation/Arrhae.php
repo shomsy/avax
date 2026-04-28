@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\DataFoundation;
 
-use Avax\Components\Data\System\Capabilities\Collections\Arrhae as RealArrhae;
-
 /**
- * @deprecated Use Avax\Components\Data\System\Capabilities\Collections\Arrhae instead.
+ * @deprecated Use Avax\Components\Data\System\Capabilities\Collections\Arrhae
  */
-class Arrhae extends RealArrhae {
+class Arrhae extends \Avax\Components\Data\System\Capabilities\Collections\Arrhae
+{
 }

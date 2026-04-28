@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Body\Problem;
+namespace Avax\Components\HTTP\Response\Capabilities\Body\Problem;
 
 final readonly class ProblemDetails
 {

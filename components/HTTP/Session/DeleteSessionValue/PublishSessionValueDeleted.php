@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\DeleteSessionValue;
+namespace Avax\Components\HTTP\Session\DeleteSessionValue;
 
 final class PublishSessionValueDeleted
 {

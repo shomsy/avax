@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\ReadConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\ReadConnection;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Connections\Exceptions\ConnectionException;
-use Avax\Database\System\Capabilities\Connections\OpenConnection\BuildPhysicalConnection;
-use Avax\Database\System\Capabilities\Connections\OpenConnection\OpenConnection;
-use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
-use Avax\Database\System\Capabilities\Connections\Pools\PooledConnectionAuthority;
-use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Exceptions\ConnectionException;
+use Avax\Components\Database\System\Capabilities\Connections\OpenConnection\BuildPhysicalConnection;
+use Avax\Components\Database\System\Capabilities\Connections\OpenConnection\OpenConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\ConnectionPool;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\PooledConnectionAuthority;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use Random\RandomException;
 use Throwable;
 

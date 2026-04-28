@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Foundation\Exceptions;
+namespace Avax\Components\Database\System\Foundation\Exceptions;
 
 use RuntimeException;
 

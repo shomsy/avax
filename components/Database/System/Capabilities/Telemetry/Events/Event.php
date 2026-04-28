@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events;
 
-use Avax\Database\System\Capabilities\Telemetry\Support\SequenceTracker;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\SequenceTracker;
 
 /**
  * Abstract base class for all database telemetry events.

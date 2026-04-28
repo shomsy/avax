@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Grammar;
+namespace Avax\Components\Database\System\Capabilities\Query\Grammar;
 
-use components\Database\System\Capabilities\Query\State\QueryState;
-use components\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Override;
 
 /**

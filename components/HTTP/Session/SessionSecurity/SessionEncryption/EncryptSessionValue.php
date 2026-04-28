@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\SessionSecurity\SessionEncryption;
+namespace Avax\Components\HTTP\Session\SessionSecurity\SessionEncryption;
 
 final class EncryptSessionValue
 {

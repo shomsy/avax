@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Examples\Persistence;
+namespace Avax\Components\Auth\Examples\Persistence;
 
-use components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
-use components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
+use Avax\Components\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PDO;

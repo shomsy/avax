@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\CreateMigration;
+namespace Avax\Components\Database\System\Capabilities\Migrations\CreateMigration;
 
 use DateTime;
 use RuntimeException;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Flows\BuildResponse;
+namespace Avax\Components\HTTP\Response\Flows\BuildResponse;
 
-use Avax\HTTP\Response\Capabilities\Body\Json\EncodeJsonBody;
+use Avax\Components\HTTP\Response\Capabilities\Body\Json\EncodeJsonBody;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;

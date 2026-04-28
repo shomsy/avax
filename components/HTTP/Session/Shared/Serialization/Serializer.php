@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Shared\Serialization;
+namespace Avax\Components\HTTP\Session\Shared\Serialization;
 
 use InvalidArgumentException;
 

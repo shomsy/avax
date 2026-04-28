@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\IR;
+namespace Avax\Components\Database\System\Capabilities\Query\IR;
 
-use Avax\Database\System\Capabilities\Query\Exceptions\QueryException;
-use Avax\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
+use Avax\Components\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Components\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
 
 final class IRValidator
 {

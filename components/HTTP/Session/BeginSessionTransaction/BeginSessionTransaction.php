@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\BeginSessionTransaction;
+namespace Avax\Components\HTTP\Session\BeginSessionTransaction;
 
-use Avax\HTTP\Session\SessionRecovery\SessionRecovery;
+use Avax\Components\HTTP\Session\SessionRecovery\SessionRecovery;
 
 final class BeginSessionTransaction
 {

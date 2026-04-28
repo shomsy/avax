@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Attributes;
+namespace Avax\Components\Database\System\Capabilities\ORM\Attributes;
 
 use Attribute;
 

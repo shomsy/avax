@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\ExportSessionState;
+namespace Avax\Components\HTTP\Session\ExportSessionState;
 
 final class RecordSessionStateExported
 {

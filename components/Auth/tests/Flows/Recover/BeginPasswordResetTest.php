@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Flows\Recover;
+namespace Avax\Components\Auth\Tests\Flows\Recover;
 
-use components\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
-use components\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\Identity\User\User;
-use components\Auth\System\Capabilities\Identity\User\UserEmail;
-use components\Auth\System\Capabilities\Identity\User\UserId;
-use components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
-use components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
-use components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
-use components\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
-use components\Auth\Tests\Support\FrozenClock;
-use components\Tests\TestCase;
+use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
+use Avax\Components\Auth\System\Capabilities\Access\Authentication\Throttle\InMemoryAttemptThrottleStore;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
+use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordResetData;
+use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
+use Avax\Components\Auth\Tests\Support\FrozenClock;
+use Avax\Components\Tests\TestCase;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

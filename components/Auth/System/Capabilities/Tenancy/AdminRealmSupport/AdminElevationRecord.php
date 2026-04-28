@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Tenancy\AdminRealmSupport;
+namespace Avax\Components\Auth\System\Capabilities\Tenancy\AdminRealmSupport;
 
 use DateTimeImmutable;
 

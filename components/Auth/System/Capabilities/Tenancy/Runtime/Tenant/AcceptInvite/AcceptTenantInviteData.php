@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite;
+namespace Avax\Components\Auth\System\Capabilities\Tenancy\Runtime\Tenant\AcceptInvite;
 
 use SensitiveParameter;
 

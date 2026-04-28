@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use components\Auth\Integrations\Release\CreateReleaseProvenance;
+use Avax\Components\Auth\Integrations\Release\CreateReleaseProvenance;
 
 require dirname(path: __DIR__) . '/vendor/autoload.php';
 

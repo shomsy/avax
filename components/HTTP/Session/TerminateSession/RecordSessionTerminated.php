@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\TerminateSession;
+namespace Avax\Components\HTTP\Session\TerminateSession;
 
 final class RecordSessionTerminated
 {

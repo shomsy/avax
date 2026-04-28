@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request;
+namespace Avax\Components\HTTP\Request;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use ReflectionException;
 
 /**

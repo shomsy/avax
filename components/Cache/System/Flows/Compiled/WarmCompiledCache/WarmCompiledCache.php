@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Flows\Compiled\WarmCompiledCache;
+namespace Avax\Components\Cache\System\Flows\Compiled\WarmCompiledCache;
 
 use Closure;
-use components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheDirectory;
-use components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheManifest;
-use components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use components\Cache\System\Flows\Compiled\CompileCache\CompileCache;
+use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheDirectory;
+use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheManifest;
+use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Cache\System\Flows\Compiled\CompileCache\CompileCache;
 use Throwable;
 
 final class CompiledCacheArtifactDefinition

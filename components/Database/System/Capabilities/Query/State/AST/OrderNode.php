@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\State\AST;
+namespace Avax\Components\Database\System\Capabilities\Query\State\AST;
 
 /**
  * Immutable AST node representing a sorting instruction (ORDER BY).

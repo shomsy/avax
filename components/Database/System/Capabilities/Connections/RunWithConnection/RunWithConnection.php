@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\RunWithConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\RunWithConnection;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
-use Avax\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Avax\Components\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Throwable;
 
 /**

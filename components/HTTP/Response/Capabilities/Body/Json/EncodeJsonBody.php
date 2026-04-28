@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Body\Json;
+namespace Avax\Components\HTTP\Response\Capabilities\Body\Json;
 
 use JsonException;
 

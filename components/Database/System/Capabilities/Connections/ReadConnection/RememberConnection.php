@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\ReadConnection;
+namespace Avax\Components\Database\System\Capabilities\Connections\ReadConnection;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 
 /**
  * Owns in-memory remembering of direct connections and pools.

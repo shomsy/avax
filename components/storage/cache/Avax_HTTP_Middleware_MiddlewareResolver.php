@@ -3,8 +3,8 @@
 use Avax\Container\Features\Think\Model\MethodPrototype;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Middleware\MiddlewareGroupResolver;
-use Avax\HTTP\Middleware\MiddlewareResolver;
+use Avax\Components\HTTP\Middleware\MiddlewareGroupResolver;
+use Avax\Components\HTTP\Middleware\MiddlewareResolver;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => MiddlewareResolver::class,

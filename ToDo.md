@@ -1,624 +1,496 @@
-Ima viška. I ne samo viška, nego ima nekoliko mesta gde se vidi da repo trenutno ima **dve arhitekture plus migration lepak**.
+Da. Ako je HTTP suite sada rešen, sledeći plan mora da bude **stabilizacija jezgra**, ne novo širenje.
 
-Hladan review: **pravac je dobar, ali trenutno stanje nije čisto.** `framework/System` je dobar potez. `PublicSurface`, runtime lifecycle, worker flow, request scope i state reset su dobri. Ali oko toga još stoji gomila starog root-a, duplih ownership-a, generated fajlova, backup dumpova, namespace bridge-eva i polumigriranih komponenti.
-
-Najbitnije: ovo sada nije rewrite problem. Ovo je **normalization problem**.
-
-## Brzi sud
+Hladan redosled:
 
 ```text
-Decision: Keep and Improve
-
-Framework axis: good
-Migration discipline: partial
-Current repo cleanliness: weak
-Main risk: duplicate ownership + namespace drift
-Worst smell: old roots and new roots living together
-Next action: cleanup and ownership normalization, not more feature expansion
+1. Data stack
+2. Namespace/autoload cleanup
+3. PublicSurface audit
+4. Database/Persistence split
+5. Framework integration tests
+6. Docs/tests mirror cleanup
+7. Architecture guard tooling
+8. Tek onda novi feature-i
 ```
 
-U uploadovanom review-u već stoji da je `framework/System` uveden kao novi lifecycle owner, da se postojeći kod reusuje gde je bezbedno, i da su compatibility aliasi namerno uski. To je dobro. Ali isti review kaže da je najviši nerešen severity i dalje **High**, uz namespace drift, static-analysis probleme i non-migrated DataHandling/HTTP legacy blokere. 
+Ne bih sada grupisao sve ostale komponente. HTTP je bio poseban slučaj jer je već realno postao suite. Sledeći najopasniji nered je `DataFoundation -> Data`, `DataLayer -> Persistence`, i `Database` koji još verovatno drži ORM/persistence stvari. Trenutni planovi već prepoznaju da je `Data` partial, `DataFoundation` deprecated ali sa real behavior-om, `Persistence` partial, `DataLayer` uklonjen ili u migraciji, a `Database` ostaje ali sa ORM extraction pending. 
+
+## Phase 1: Zaključaj HTTP kao završenu odluku
+
+Prvo ne diraj dalje HTTP dok ne napraviš “closure report”.
+
+```text
+[ ] Create Code-Review-And-ToDo/http-suite-closure-report.md
+[ ] Confirm components/Session is deleted or bridge-only
+[ ] Confirm components/Middleware is deleted or bridge-only
+[ ] Confirm Request/Response/Router are not duplicated at top level
+[ ] Confirm docs no longer point to Foundation/HTTP as canonical
+[ ] Confirm tests pass for HTTP request lifecycle, Session, Middleware, Router
+[ ] Confirm framework/System/HandleIncomingHttp uses canonical HTTP paths
+```
+
+Ako je ovo rešeno, označi ga kao **closed**, ne “mostly done”. Taj mentalni rez je bitan.
 
 ---
 
-## Šta mi se dopada
+## Phase 2: DataFoundation -> Data
 
-`framework/System` je dobar novi centar. Ima `PublicSurface`, `Flows`, `Capabilities`, `Configuration`, `Foundation`. To je prava osa za Avax framework runtime. Review pokazuje da su dodati runtime abstractions, request scope, state reset, HTTP flow, console flow, worker runtime loop, shutdown flow, runtime public surface i runtime adapter shells. To je suštinski pravac koji smo hteli. 
+Ovo je sledeći najveći dug.
 
-`HandleWorkerRequest`, `StateReset`, `RequestScope`, `RuntimeKernel` su naročito bitni. To je ono što Avax razlikuje od “još jednog PHP component repo-a”.
-
-`components/compat.php` je za sada razuman kao uski bridge. Review kaže da šire aliasovanje može da pokvari autoload i da compatibility bridge treba ostati uzak dok se HTTP/router/request namespace-i ne normalizuju. To je ispravno. 
-
----
-
-## Šta mi se ne dopada
-
-Prvo, imaš **previše root-level ostataka**.
-
-Ovo je problematično:
+Cilj:
 
 ```text
-System/
-DI/
-ServerRequest/
-Components/
-Auth/
-Providers/
-Traits/
-Writers/
-Integrations/
-integrations/
-Config/
-Presentation/
-bootstrap/
-public/
-scripts/
-tools/
-var/
+components/DataFoundation -> deleted or bridge-only
+components/Data           -> real owner
 ```
 
-Neki od ovih foldera verovatno pripadaju starim komponentama, neki su legacy app shell, neki su tooling, neki su generated/runtime output. U novoj arhitekturi oni ne smeju živeti kao ravnopravni root-ovi.
+`DataFoundation` ne sme više da nosi real behavior. U trenutnom report-u stoji da `DataFoundation` i dalje poseduje kolekcije, Arrhae, DataTransfer, ObjectHandling/DTO, composites, structures, values i flow-like delove, dok je `Data` samo partial. 
 
-Repo root treba da bude dosadan:
-
-```text
-framework/
-components/
-docs/
-tests/
-examples/
-tooling/
-bin/
-config? only if repo-level config is truly needed
-```
-
-Sve ostalo mora ili da se premesti, ili obriše, ili eksplicitno označi kao compatibility bridge.
-
-Drugo, `System/` na root-u je ozbiljan smell. Iz uploadovanog tree-ja se vidi ogroman top-level `System/` koji izgleda kao Auth sistem, sa `Auth.php`, `AuthInterface.php`, `Capabilities/Access`, `ExternalIdentity`, `Diagnostics`, itd. To ne sme biti root-level system za ceo repo. Ako je to Auth komponenta, mora živeti u:
-
-```text
-components/Auth/System/
-```
-
-Ako je stari Auth snapshot, briše se. Ako je compatibility bridge, mora biti minimalan i označen.
-
-Treće, imaš **Data duple vlasnike**.
-
-Trenutno postoje:
+Target:
 
 ```text
 components/Data/
-components/DataFoundation/
-components/DataLayer/
-components/Persistence/
+  System/
+    PublicSurface/
+      Data.php
+      Arrhae.php
+      Collection.php
+
+    Flows/
+      ReadDataObject/
+      SerializeDataObject/
+      NormalizeData/
+      ReadDataValue/
+      WriteDataValue/
+
+    Capabilities/
+      Arrays/
+      Collections/
+      DataPath/
+      DataTransfer/
+      DataShape/
+      FieldVisibility/
+      Structures/
+      Values/
+      Composites/
+
+    Configuration/
+    Foundation/
 ```
 
-To je trenutno najopasniji deo, jer smo već odlučili finalnu podelu:
+AI ToDo:
 
 ```text
-DataFoundation -> Data
-DataLayer      -> Persistence
-Database       -> Database
-```
-
-Ne smeš imati `Data` i `DataFoundation` kao dva realna owner-a. Ne smeš imati `Persistence` i `DataLayer` kao dva realna owner-a. To mora da bude staged migration, ali sa jednim jasnim finalnim owner-om.
-
-Četvrto, `Database` i dalje ima ORM/persistence stvari. U Database review-u stoji da Database trenutno pokriva connections, query, migrations, transactions, ali i ORM metadata, hydration, identity map i repositories.  To je bilo OK u starom kontekstu, ali u novoj podeli moraš preseći:
-
-```text
-Database = SQL/database mechanics
-Persistence = EntityManager, Repository, UnitOfWork, IdentityMap, Hydration
-Data = in-memory data structures
-```
-
-Ne moraš to sve pomeriti odmah, ali mora postojati migration map.
-
-Peto, `Config/` root i `components/Config/` su potencijalno pomešani koncepti.
-
-`components/Config` je reusable config component.
-
-Root `Config/` deluje kao aplikacioni config:
-
-```text
-Config/app.php
-Config/bootstrap.php
-Config/database.php
-Config/filesystems.php
-Config/middleware.php
-```
-
-To ne treba da stoji u framework repo root-u kao production architecture. To treba da ode u:
-
-```text
-examples/minimal-http-app/config/
-```
-
-ili u test fixtures, osim ako je zaista repo-level config za sam framework.
-
-Šesto, `bootstrap/bootstrap.php` je mrtav ili opasan. Review eksplicitno kaže da stari bootstrap importuje `AppFactory` koji ne postoji i da ne može biti validan lifecycle owner. Novi owner je `framework/System/PublicSurface/Avax.php`. 
-
-Sedmo, governance fajl ima typo:
-
-```text
-AI Prompts/how-to-arhitecture-extension.md
-```
-
-Treba:
-
-```text
-AI Prompts/how-to-architecture-extension.md
-```
-
-Ovo nije estetski problem. Governance discovery može da promaši dokument ili da kasnije dobiješ dva fajla sa skoro istim imenom.
-
-Osmo, `.agents` unutar `components/Auth` je prevelik i verovatno ne pripada production component tree-u. Ako je to agent governance, prebaci u repo-level `.agents/`, `docs/governance/`, ili ga izbaci iz package/autoload/distribution. Komponenta ne sme nositi ceo agent operativni sistem u sebi.
-
-Deveto, generated/cache/backup fajlovi ne smeju biti deo repozitorijuma:
-
-```text
-avax-backup.txt
-.php-cs-fixer.cache
-.phpunit.result.cache
-.ruff_cache/
-.gigaide/
-var/
-```
-
-Ako je `avax-backup.txt` stvarno u repo-u, obriši ga odmah. To pravi lažan tree i duplira ceo sadržaj u analizama. Ako je samo artifact iz merge skripte, isključi ga iz sledećeg dump-a.
-
-Deseto, `components/Facade` kao komponenta ne treba da postoji. `Facade` nije capability. Facade je public-surface pattern. Treba ga rasturiti po komponentama:
-
-```text
-components/Router/System/PublicSurface/Facades/Route.php
-components/Cache/System/PublicSurface/Facades/CacheFacade.php
-```
-
-Ne:
-
-```text
-components/Facade/
-```
-
----
-
-## Prioriteti, hladno poređani
-
-### P0: Zaustavi dalje širenje
-
-Ne dodavati nove komponente, runtime adaptere, async, websocket, queue, scheduler, ORM feature-e, dok se ne očisti ownership.
-
-Sada nije trenutak za još moći. Sada je trenutak za čistoću.
-
-### P1: Ukloni lažne root-ove
-
-Ovo je najbitnije.
-
-Root mora ostati:
-
-```text
-framework/
-components/
-docs/
-tests/
-examples/
-tooling/
-bin/
-```
-
-Sve ostalo mora imati razlog.
-
-### P2: Sredi namespace drift
-
-Review i risk register eksplicitno kažu da mixed `Avax\...` i `components\...` namespace-i i dalje postoje i da PHPStan ne može pošteno da proveri bridge dok request/router subtree nije normalizovan. 
-
-### P3: Sredi Data stack
-
-`DataFoundation`, `DataLayer`, `Data`, `Persistence`, `Database` moraju dobiti jasan migration map.
-
-### P4: Sredi HTTP bridge
-
-Framework HTTP je sada executable, ali još zavisi od legacy request/router bridge-a. Sledeći realan korak je namespace-normalizovan Request/Router/Middleware path.
-
-### P5: Sredi tooling
-
-Risk register kaže da `composer validate` i dev-tool constraints još imaju drift, a review kaže da Rector toolchain ne radi pouzdano pod PHP 8.5. 
-
----
-
-# AI ToDo list
-
-Ovo možeš direktno dati Codex-u.
-
-```text
-You are working on Avax, a runtime-agnostic PHP framework migration.
+You are normalizing Avax Data ownership.
 
 Goal:
-Clean and normalize the current refactor without adding new feature scope.
-
-Primary rule:
-Do not expand the framework. Reduce duplicate ownership, remove stale roots, normalize namespaces, and protect the new framework/System axis.
-
-Current target architecture:
-framework/System/
-  PublicSurface/
-  Flows/
-  Capabilities/
-  Configuration/
-  Foundation/
-
-components/<Component>/System/
-  PublicSurface/
-  Flows/
-  Capabilities/
-  Configuration/
-  Foundation/
-
-docs/
-tests/
-examples/
-tooling/
-bin/
-
-Strict rules:
-- Follow every how-to-*.md governance document.
-- Treat framework/System as the canonical framework lifecycle owner.
-- Do not create new feature folders.
-- Do not widen components/compat.php.
-- Do not introduce more runtime aliases.
-- Do not duplicate component owners.
-- Do not keep dead root-level folders.
-- Do not move behavior without characterization tests.
-- Do not rewrite existing working components.
-- Normalize ownership before expanding behavior.
-
-Phase 1: Repo root cleanup inventory
-
-Create:
-Code-Review-And-ToDo/root-cleanup-inventory.md
-
-Inventory every top-level folder/file and classify it as one of:
-- keep
-- move to framework/
-- move to components/
-- move to docs/
-- move to tests/
-- move to examples/
-- move to tooling/
-- delete
-- temporary compatibility bridge
-
-Must inspect and classify at least:
-- System/
-- DI/
-- ServerRequest/
-- Components/
-- Auth/
-- Providers/
-- Traits/
-- Writers/
-- Integrations/
-- integrations/
-- Config/
-- Presentation/
-- bootstrap/
-- public/
-- scripts/
-- tools/
-- var/
-- .gigaide/
-- .ruff_cache/
-- .php-cs-fixer.cache
-- .phpunit.result.cache
-- avax-backup.txt
-- components/Facade
-- components/tests
-- components/Avax.php
-- components/compat.php
-
-Do not delete yet. First produce the inventory and proposed action.
-
-Phase 2: Governance filename correction
-
-Fix the misspelled architecture extension filename.
-
-Required action:
-- Rename AI Prompts/how-to-arhitecture-extension.md to AI Prompts/how-to-architecture-extension.md
-- Update every reference to the misspelled filename
-- Update Code-Review-And-ToDo/review.md governance inventory
-- Add a note that this was a governance discovery bug
-- Run grep to ensure "arhitecture" no longer exists except in old logs if intentionally preserved
-
-Phase 3: Delete generated/cache/backup artifacts
-
-Remove from repository if present:
-- avax-backup.txt
-- .php-cs-fixer.cache
-- .phpunit.result.cache
-- .ruff_cache/
-- var/ if it contains runtime-generated state only
-- any generated merged repository dump files
-
-Update .gitignore to include:
-- *.cache
-- .phpunit.result.cache
-- .php-cs-fixer.cache
-- .ruff_cache/
-- var/
-- *backup*.txt
-- merged-output files if used by local tooling
-
-Do not delete source files named avax or bin/avax.
-
-Phase 4: Remove or relocate invalid root-level architecture
-
-Handle root-level folders:
-
-1. System/
-   - If it is Auth, move or map it to components/Auth/System/
-   - If it duplicates components/Auth/System, delete the duplicate
-   - If it is compatibility-only, reduce it to a minimal bridge and document removal
-   - It must not remain as root-level System/
-
-2. DI/
-   - Move real DI behavior into components/Container/System/
-   - Delete duplicate DI wrappers
-   - Keep only compatibility bridge if needed
-
-3. ServerRequest/
-   - Move into components/HTTP or components/Request depending current ownership
-   - Do not keep root ServerRequest/
-
-4. Auth/
-   - Move into components/Auth/ or delete if duplicate
-   - Do not keep root Auth/
-
-5. Providers/
-   - Move provider behavior into each component's System/Configuration/
-   - Do not keep root Providers/
-
-6. Traits/
-   - Move traits to the true owning component
-   - Delete generic trait bucket if possible
-
-7. Writers/
-   - If logging/output related, move to components/Logging/System/Capabilities/Writers/
-   - If filesystem related, move to components/Filesystem/
-   - Do not keep root Writers/
-
-8. Integrations/ and integrations/
-   - Normalize casing
-   - If runtime adapters, move to framework/System/Capabilities/Runtime/Adapters/
-   - If external service integrations, create components/Integration only if real capability exists
-   - Otherwise delete or move to examples/tooling
-
-9. Config/
-   - Move app example config to examples/minimal-http-app/config/
-   - Move framework config fixtures to tests/Support/Fixtures/config/
-   - Keep root Config/ only if it is explicitly repo runtime config and documented
-
-10. Presentation/
-    - Move routes to examples/minimal-http-app/app/routes.php or tests fixtures
-    - Framework should not depend on root Presentation/ as a long-term source
-
-11. bootstrap/
-    - Replace bootstrap/bootstrap.php with a compatibility wrapper to framework/System/PublicSurface/Avax.php or delete it
-    - Do not let bootstrap/ own lifecycle
-
-Phase 5: Data stack normalization plan
-
-Create:
-Code-Review-And-ToDo/data-stack-normalization.md
-
-Final ownership:
-- components/DataFoundation -> components/Data
-- components/DataLayer -> components/Persistence
-- components/Database remains components/Database
+Move all real DataFoundation behavior into components/Data.
 
 Rules:
-- Data owns in-memory data structures and transformations
-- Database owns connections, query, transactions, schema, migrations
-- Persistence owns EntityManager, Repository, UnitOfWork, IdentityMap, Mapping, Hydration, ChangeTracking
-- Database must not own ORM long-term
-- Data must not depend on Database or Persistence
-- Database must not depend on Persistence
-- Persistence may depend on Database contracts and Data
-
-Specific tasks:
-- Inventory DataFoundation
-- Inventory DataLayer
-- Inventory Database ORM-related files
-- Move or map DataFoundation files into Data
-- Move or map DataLayer files into Persistence
-- Extract Database ORM capabilities into Persistence migration plan
-- Keep compatibility bridges only temporarily
-- Add removal plan for DataFoundation and DataLayer old namespaces
-
-Phase 6: HTTP/Request/Router namespace normalization
-
-Goal:
-Make framework/System/Flows/HandleIncomingHttp statically analyzable without widening components/compat.php.
+- DataFoundation must become bridge-only or be deleted.
+- Data owns in-memory data structures, collections, arrays, data paths, DTO/data transfer, object-to-array serialization, values, composites, and pure data transformations.
+- Data must not depend on Database, Persistence, HTTP, or framework runtime.
+- Do not delete behavior before comparing it.
+- Do not keep duplicate owners.
 
 Tasks:
-- Inventory all Request, Response, Router, Middleware classes used by framework HTTP bridge
-- Choose canonical namespace for each subtree
-- Normalize reused classes to Avax\...
-- Remove components\... declarations from migrated slices
-- Update imports in framework/System/Flows/HandleIncomingHttp
-- Keep components/compat.php narrow
-- Add tests proving route-backed HTTP still works
-- Run PHPStan against framework/System/Flows/HandleIncomingHttp
-
-Do not migrate unrelated HTTP client code in this phase.
-
-Phase 7: Middleware integration
-
-Goal:
-Stop framework HTTP from bypassing middleware.
-
-Tasks:
-- Identify current Middleware component owner
-- Rename components/Middlewares to components/Middleware if both exist
-- Move/normalize middleware pipeline into components/Middleware/System/
-- Add framework bridge from HandleIncomingHttp to Middleware pipeline
-- Add integration test:
-  test_it_runs_middleware_before_route_action()
-- Add integration test:
-  test_it_short_circuits_when_middleware_returns_response()
-
-Phase 8: Console integration
-
-Goal:
-Move framework console from metadata reuse to real command execution.
-
-Tasks:
-- Inventory components/Commands
-- Decide final owner:
-  components/Console/System/
-- Move command catalog and command execution there
-- Keep Commands as compatibility bridge only if needed
-- Wire framework/System/Flows/RunConsoleCommand to Console component
-- Add feature test for bin/avax running a framework command
-- Remove stale command aliases
-
-Phase 9: Database/Persistence split preparation
-
-Do not move ORM code yet unless tests exist.
-
-Tasks:
-- Mark Database ORM folders as "to be extracted to Persistence"
-- Add characterization tests for current EntityManager, Repository, UnitOfWork behavior
-- Create Persistence migration map
-- Create compatibility policy
-- Do not create duplicate EntityManager public APIs
-- Decide whether public EntityManager lives in Persistence/PublicSurface or Database compatibility facade
-
-Phase 10: Docs mirror cleanup
-
-Tasks:
-- Move docs/Foundation/DataLayer to docs/components/Persistence
-- Move docs/Foundation/DataHandling to docs/components/Data
-- Move docs/Foundation/Database to docs/components/Database if still present
-- Delete or redirect obsolete docs/Foundation tree
-- Ensure docs/framework/System mirrors framework/System
-- Ensure docs/components/<Component>/System mirrors migrated components
-- Add how-this-works.md only for real ownership folders
-- Do not keep docs for deleted structures
-
-Phase 11: Tests cleanup
-
-Tasks:
-- Move tests/Foundation/DataHandling to tests/Unit/Components/Data or tests/Integration/Components/Data
-- Move tests/Foundation/Container to tests/Unit/Components/Container
-- Move legacy HTTP/router tests to tests/Unit/Components/HTTP or tests/Unit/Components/Router
-- Remove tests for deleted dead architecture
-- Add characterization tests before moving behavior
-- Keep behavior names, not implementation names
-
-Phase 12: Quality gates
-
-Run in this order:
-1. composer validate --no-check-publish
-2. composer dump-autoload -o
-3. php -l on changed PHP files
-4. targeted PHPUnit for framework/System
-5. targeted PHPUnit for affected component
-6. PHPStan on framework/System and affected component
-7. docs validation
-8. runtime leak checker
-9. duplicate owner checker
-10. kluster code verification if configured
-
-Expected final report:
-Create Code-Review-And-ToDo/cleanup-review.md with:
-- GOVERNANCE INVENTORY
-- ROOT CLEANUP MATRIX
-- DUPLICATE OWNER REPORT
-- NAMESPACE NORMALIZATION REPORT
-- DATA STACK MIGRATION REPORT
-- REMOVED FILES/FOLDERS
-- COMPATIBILITY BRIDGES KEPT
-- COMPATIBILITY BRIDGES REMOVED
-- TEST RESULTS
-- STATIC ANALYSIS RESULTS
-- REMAINING RISKS
-- NEXT STEPS
+1. Inventory components/DataFoundation.
+2. Inventory components/Data.
+3. Create Code-Review-And-ToDo/data-ownership-normalization.md.
+4. Classify every DataFoundation file as:
+   - move to Data/PublicSurface
+   - move to Data/Flows
+   - move to Data/Capabilities
+   - move to Data/Configuration
+   - move to Data/Foundation
+   - bridge only
+   - delete
+5. Move unique behavior into Data.
+6. Add characterization tests before moving behavior.
+7. Reduce DataFoundation to bridge-only.
+8. Delete DataFoundation after compatibility window if no external usage exists.
+9. Normalize namespace.
+10. Move docs to docs/components/Data/System.
+11. Run Data tests and static analysis.
 ```
 
 ---
 
-## Moj konkretan cleanup matrix
+## Phase 3: Persistence + Database split
 
-Ovo bih odmah sproveo kao odluku, posle inventory-ja:
+Posle Data, rešavaš `Persistence`.
+
+Cilj:
 
 ```text
-DELETE:
-  avax-backup.txt
-  .php-cs-fixer.cache
-  .phpunit.result.cache
-  .ruff_cache/
-  components/Facade/
-  components/tests/
-  components/new-component.md
-  stale component-local ToDo/review docs if duplicated under Code-Review-And-ToDo
+Database    = database mechanics
+Persistence = object/query persistence
+Data        = pure in-memory data
+```
 
-MOVE:
-  Config/* -> examples/minimal-http-app/config/ or tests/Support/Fixtures/config/
-  Presentation/HTTP/routes/* -> examples/minimal-http-app/app/routes.php or tests fixtures
-  scripts/* -> tooling/
-  tools/* -> tooling/
-  public/* -> examples/minimal-http-app/public/ unless framework package needs it
-  docs/Foundation/DataLayer -> docs/components/Persistence
-  docs/Foundation/DataHandling -> docs/components/Data
-  tests/Foundation/* -> tests/Unit/Components/* or tests/Integration/Components/*
+Granica:
 
-NORMALIZE:
-  DataFoundation -> Data
-  DataLayer -> Persistence
-  Commands -> Console
-  Middlewares -> Middleware
-  ApplicationWorkflow -> Workflow
-  DumpDebugger -> Diagnostics or tooling/debug
-  Security -> Auth/Security or components/Security, but only if real standalone capability
+```text
+Database owns:
+- connections
+- query execution
+- query builder
+- transactions
+- schema
+- migrations
+- bindings
+- database telemetry
 
-KEEP:
-  framework/System
-  components/Auth
-  components/Cache
-  components/Container
-  components/Database
-  components/HTTP for now, until split decision
-  components/Config
-  components/Events if present
-  components/Filesystem
-  components/Logging
-  components/Validation
-  components/View
-  components/Session, after normalization
+Persistence owns:
+- EntityManager
+- Repository
+- UnitOfWork
+- IdentityMap
+- Mapping
+- Hydration
+- ChangeTracking
+- Query intent
+- Stored model shape
+- N+1 diagnostics
+```
 
-TEMPORARY ONLY:
-  components/compat.php
-  old DataFoundation namespace bridge
-  old DataLayer namespace bridge
-  old bootstrap wrapper if external scripts still depend on it
+Trenutni plan već kaže da `Database` ostaje, ali da ORM extraction ostaje pending.  To znači da sledeći pass nije “refactor Database”, nego **extract Persistence behavior out of Database**.
+
+AI ToDo:
+
+```text
+You are normalizing Avax Database and Persistence ownership.
+
+Goal:
+Separate database mechanics from object/query persistence.
+
+Rules:
+- Database must not own ORM long-term.
+- Persistence may depend on Database contracts.
+- Database must not depend on Persistence.
+- Data must remain lower-level than both.
+- Do not move SQL mechanics into Persistence.
+- Do not keep EntityManager/Repository/UnitOfWork in Database as final owner.
+
+Tasks:
+1. Inventory components/Database for ORM-like behavior.
+2. Inventory components/Persistence.
+3. Create Code-Review-And-ToDo/persistence-database-split.md.
+4. Classify Database files:
+   - keep in Database
+   - extract to Persistence
+   - bridge
+   - delete
+5. Move EntityManager, Repository, UnitOfWork, IdentityMap, Mapping, Hydration, ChangeTracking into Persistence.
+6. Keep connections, query execution, transactions, schema, migrations in Database.
+7. Add characterization tests before moving behavior.
+8. Add contract tests for DatabaseConnection and Transaction.
+9. Add Persistence tests for EntityManager, Repository, UnitOfWork, IdentityMap.
+10. Normalize namespaces.
+11. Update docs mirror.
 ```
 
 ---
 
-## Najveća greška koju sada treba izbeći
+## Phase 4: Namespace and autoload cleanup
 
-Nemoj dozvoliti AI agentu da “popravlja” ovo tako što će dodati još bridge-eva, još aliasa i još foldera.
+Ovo je sistemski dug. Trenutni autoload plan ima i `Avax\\` i `components\\` mapirane na `components/`, što direktno omogućava namespace drift. 
 
-Tvoj sledeći refactor treba da bude **reduction pass**:
+Cilj:
 
-```text
-less roots
-less aliases
-less duplicate docs
-less stale tests
-less namespace ambiguity
-less fake ownership
+```json
+"psr-4": {
+  "Avax\\Framework\\": "framework/",
+  "Avax\\Components\\": "components/"
+}
 ```
 
-Tek posle toga ide dalje širenje framework-a.
+Ne odmah ako još ima legacy namespace-a. Ali ovo mora biti krajnji cilj.
 
-Hladno: framework core izgleda obećavajuće. Repo oko njega još nije čist. Sada praviš hiruršku fazu čišćenja. 🧊
+AI ToDo:
+
+```text
+You are removing namespace drift from Avax.
+
+Goal:
+Move toward one canonical namespace.
+
+Canonical namespaces:
+- Avax\Framework\...
+- Avax\Components\<Component>\...
+
+Forbidden in canonical code:
+- namespace components\
+- namespace Avax\DataFoundation
+- namespace Avax\DataLayer
+- namespace Avax\HTTP
+- namespace Avax\Session
+- namespace Avax\Middleware
+
+Tasks:
+1. Create tooling/refactor/check-namespace-drift.php.
+2. Report every namespace components\ occurrence.
+3. Report every legacy Avax\DataFoundation, Avax\DataLayer, Avax\HTTP, Avax\Session, Avax\Middleware occurrence.
+4. Allow legacy namespaces only in explicit bridge files.
+5. Normalize migrated components one by one.
+6. Only after all migrated components are clean, remove "components\\": "components/" from composer.json.
+7. Run composer dump-autoload -o.
+8. Run PHPStan on migrated paths.
+```
+
+---
+
+## Phase 5: PublicSurface audit
+
+Ne sme ti se desiti da `PublicSurface` postane novi `Services`.
+
+Audituj:
+
+```text
+components/Config/System/PublicSurface
+components/Data/System/PublicSurface
+components/Database/System/PublicSurface
+components/Persistence/System/PublicSurface
+components/HTTP/System/PublicSurface
+components/Auth/System/PublicSurface
+components/Cache/System/PublicSurface
+```
+
+Posebno `Config`, jer raniji review je već pokazivao da `Config.php` verovatno drži state i loading behavior, što nije idealno za PublicSurface.
+
+AI ToDo:
+
+```text
+You are auditing PublicSurface in Avax.
+
+Goal:
+Make every PublicSurface thin, stable, and externally useful.
+
+Rules:
+- PublicSurface receives public calls.
+- PublicSurface delegates.
+- PublicSurface must not own heavy behavior.
+- PublicSurface must not hold mutable request/runtime state.
+- PublicSurface must not contain runtime machinery.
+- PublicSurface must be small enough to document.
+
+Tasks:
+1. Inventory all PublicSurface folders.
+2. For every public file, classify:
+   - valid public API
+   - too much behavior
+   - internal machinery
+   - duplicate facade
+   - bridge
+   - delete
+3. Move behavior into Flows or Capabilities.
+4. Move assembly into Configuration.
+5. Move small primitives/failures into Foundation.
+6. Add tests proving public API still works.
+7. Update docs.
+```
+
+---
+
+## Phase 6: Clean docs and tests
+
+Trenutno imaš staru dokumentaciju koja još pominje `Foundation/HTTP` i `Foundation/DataLayer`, dok ciljni model sada ide kroz `docs/components/...`. Prethodni sadržaj čak opisuje `Foundation/HTTP` kao mirror za HTTP shape, što je sada zastarela terminologija. 
+
+Cilj:
+
+```text
+docs/components/HTTP/...
+docs/components/Data/...
+docs/components/Database/...
+docs/components/Persistence/...
+docs/framework/System/...
+```
+
+AI ToDo:
+
+```text
+You are cleaning Avax docs and tests after ownership normalization.
+
+Goal:
+Make docs and tests mirror the real source ownership.
+
+Tasks:
+1. Move docs/Foundation/HTTP to docs/components/HTTP.
+2. Move docs/Foundation/DataLayer to docs/components/Persistence.
+3. Move DataFoundation docs to docs/components/Data.
+4. Delete docs for removed structures.
+5. Move tests/Foundation/* to tests/Unit/Components/* or tests/Integration/Components/*.
+6. Move component-local tests into repo-level tests unless the package intentionally owns local package tests.
+7. Remove tests for deleted dead architecture.
+8. Add how-this-works.md only for real ownership folders.
+9. Add docs mirror validator.
+```
+
+---
+
+## Phase 7: Component hardening order
+
+Kad ownership bude čist, onda kreće hardening komponenti, redom:
+
+```text
+1. Config
+2. Container
+3. Data
+4. Database
+5. Persistence
+6. HTTP
+7. Cache
+8. Auth
+9. Events
+10. Filesystem
+11. Logging
+12. Console
+13. Validation
+14. View
+```
+
+Zašto ovako?
+
+`Config` i `Container` su composition foundation. `Data`, `Database`, `Persistence` su sada najveći preostali nered. `HTTP` je već rešen ali treba integration hardening. `Cache` već ima ozbiljan contract-test pristup, što je dobar model za ostale komponente.  `Auth` ima već konkretne security/risk testove, što znači da ga ne treba lomiti, nego ga kasnije standardizovati u isti architecture shape. 
+
+---
+
+## Phase 8: Architecture guard tooling
+
+Ovo će sprečiti da se haos vrati.
+
+Napravi:
+
+```text
+tooling/refactor/check-duplicate-owners.php
+tooling/refactor/check-namespace-drift.php
+tooling/refactor/check-public-surface.php
+tooling/refactor/check-docs-mirror.php
+tooling/refactor/check-runtime-leaks.php
+tooling/refactor/check-forbidden-folders.php
+```
+
+AI ToDo:
+
+```text
+You are adding Avax architecture guard tooling.
+
+Goal:
+Prevent duplicate ownership and governance drift.
+
+Checks:
+1. No DataFoundation real behavior.
+2. No DataLayer real behavior.
+3. No top-level Session real behavior.
+4. No top-level Middleware real behavior.
+5. No namespace components\ in canonical code.
+6. No runtime-specific imports outside framework/System/Capabilities/Runtime/Adapters.
+7. No business logic inside PublicSurface.
+8. No docs pointing to obsolete Foundation/* ownership.
+9. No duplicate component owners.
+10. No Core/Shared/Helpers/Utils dumping ground.
+
+Each checker must:
+- print clear PASS/FAIL output
+- show offending paths
+- return non-zero exit code on failure
+```
+
+---
+
+## Phase 9: Framework runtime integration
+
+Tek kada komponente imaju jasne owner-e, radiš framework integration.
+
+Cilj:
+
+```text
+framework/System
+  boots application
+  registers components
+  opens request scope
+  handles HTTP
+  handles console
+  resets state
+  shuts down cleanly
+```
+
+AI ToDo:
+
+```text
+You are hardening framework/System integration.
+
+Goal:
+Make framework/System the real runtime lifecycle owner.
+
+Tasks:
+1. Verify BootApplication registers Config, Container, HTTP, Data, Database, Persistence, Cache, Auth.
+2. Verify HandleIncomingHttp uses HTTP suite only.
+3. Verify RunConsoleCommand uses Console component only.
+4. Verify RequestScope opens and closes around HTTP requests.
+5. Verify StateReset runs after worker request.
+6. Verify no component directly depends on Swoole/RoadRunner/FrankenPHP.
+7. Add feature test:
+   - app boots
+   - route handles request
+   - middleware runs
+   - session persists expected values
+   - response emits
+   - state resets
+8. Add fake worker test:
+   - same process handles two requests
+   - request-local state does not leak
+```
+
+---
+
+## Phase 10: Quality gates
+
+Za svaki sledeći pass:
+
+```text
+composer validate --no-check-publish
+composer dump-autoload -o
+php -l changed PHP files
+vendor/bin/phpunit targeted-suite
+vendor/bin/phpstan analyse changed-paths
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-docs-mirror.php
+php tooling/refactor/check-runtime-leaks.php
+```
+
+Pošto tvoja pravila zahtevaju kluster posle bilo kakve izmene fajlova i u planu eksplicitno traže kluster verification, svaki implementation pass treba da završi sa `kluster_code_review_auto`, ako je alat dostupan u tom okruženju. 
+
+---
+
+# Finalni plan, kratko
+
+```text
+NEXT PASS 1:
+DataFoundation -> Data
+
+NEXT PASS 2:
+Database/Persistence split
+
+NEXT PASS 3:
+Namespace/autoload cleanup
+
+NEXT PASS 4:
+PublicSurface audit
+
+NEXT PASS 5:
+Docs/tests mirror cleanup
+
+NEXT PASS 6:
+Architecture guard tooling
+
+NEXT PASS 7:
+Framework runtime integration tests
+
+NEXT PASS 8:
+Component hardening, Config -> Container -> Data -> Database -> Persistence -> HTTP -> Cache -> Auth
+```
+
+Ne bih sada uvodio nove feature-e. Avax trenutno treba da postane **istinit, čist i proverljiv**. Posle toga možeš da gradiš modernije stvari kao `runtime:doctor`, `architecture:check`, `container:graph`, `routes:explain`, tracing timeline, config schema validation i worker-safety inspector.

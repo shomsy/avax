@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials;
+namespace Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\ExchangeClientCredentials;
 
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
 use SensitiveParameter;
 
 final readonly class ExchangeClientCredentialsData

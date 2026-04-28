@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\Tests\Unit\Cache\Capabilities\Observability\IdentifyCachedValues;
+namespace Avax\Components\Cache\Tests\Unit\Cache\Capabilities\Observability\IdentifyCachedValues;
 
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheVersion;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\InvalidCacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheVersion;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\InvalidCacheKey;
 use PHPUnit\Framework\TestCase;
 
 final class CacheKeyTest extends TestCase

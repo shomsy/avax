@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Jwt;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Jwt;
 
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Issuer\TokenIssuerInterface;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Verify\TokenVerifierInterface;
-use components\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Issuer\TokenIssuerInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\ResolvedWorkloadToken;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Verify\TokenVerifierInterface;
+use Avax\Components\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;
 
 /**

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Flows\Lifecycle\InvalidateCachedValue;
+namespace Avax\Components\Cache\System\Flows\Lifecycle\InvalidateCachedValue;
 
-use components\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues\InvalidationReason;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheTag;
-use components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
-use components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues\InvalidationReason;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheTag;
+use Avax\Components\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
 
 final readonly class InvalidateCachedValue
 {

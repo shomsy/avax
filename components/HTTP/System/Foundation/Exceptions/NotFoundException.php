@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\System\Foundation\Exceptions;
+namespace Avax\Components\HTTP\System\Foundation\Exceptions;
 
 use Exception;
 

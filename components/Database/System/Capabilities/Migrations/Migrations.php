@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations;
+namespace Avax\Components\Database\System\Capabilities\Migrations;
 
-use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
-use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
-use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
-use Avax\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
-use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
-use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
-use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
-use Avax\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Query\Query;
-use Avax\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Components\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Query;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions;
 use InvalidArgumentException;
 use ReflectionException;
 use Throwable;

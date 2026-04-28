@@ -9,19 +9,27 @@ use RuntimeException;
 /**
  * Represents an absent value in an Option.
  */
-final readonly class None extends Option
+final class None extends Option
 {
-    private static self|null $instance = null;
+    private static ?self $instance = null;
 
-    public static function instance() : self
+    private function __construct()
+    {
+        // Empty - singleton
+    }
+
+    public static function instance(): self
     {
         return self::$instance ??= new self();
     }
 
-    public function isSome() : bool { return false; }
-
-    public function unwrap() : mixed
+    public function isSome(): bool
     {
-        throw new RuntimeException('Cannot unwrap None value.');
+        return false;
+    }
+
+    public function unwrap(): mixed
+    {
+        throw new RuntimeException('Cannot unwrap none value.');
     }
 }

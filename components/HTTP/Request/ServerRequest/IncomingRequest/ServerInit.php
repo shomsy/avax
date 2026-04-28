@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
 
 /**
  * ServerInit - Dependency context for ServerRequest.

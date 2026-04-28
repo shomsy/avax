@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query\Grammar;
+namespace Avax\Components\Database\System\Capabilities\Query\Grammar;
 
-use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-use Avax\Database\System\Capabilities\Query\State\AST\WhereNode;
-use Avax\Database\System\Capabilities\Query\State\QueryState;
-use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Components\Database\System\Capabilities\Query\State\AST\WhereNode;
+use Avax\Components\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\Database\System\Capabilities\Query\ValueObjects\Expression;
 use RuntimeException;
 
 /**

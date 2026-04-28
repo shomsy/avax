@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity\Mfa\Runtime;
+namespace Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime;
 
-use components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
+use Avax\Components\Auth\System\Capabilities\Identity\Mfa\Runtime\Enums\MfaChallengePurpose;
 use DateTimeImmutable;
 
 /**

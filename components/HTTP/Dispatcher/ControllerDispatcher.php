@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Dispatcher;
+namespace Avax\Components\HTTP\Dispatcher;
 
-use components\HTTP\Request\Request as RequestDto;
-use components\HTTP\Request\RequestDtoFactory;
-use components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use components\HTTP\Response\Response;
+use Avax\Components\HTTP\Request\Request as RequestDto;
+use Avax\Components\HTTP\Request\RequestDtoFactory;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Response\Response;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;

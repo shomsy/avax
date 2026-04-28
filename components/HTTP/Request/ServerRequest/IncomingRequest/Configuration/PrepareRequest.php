@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\Configuration;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\BodyAllowancePolicy;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
-use Avax\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
-use Avax\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
-use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestAttributes\RequestAttributes;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\BodyAllowancePolicy;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\ParsedBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestCookies\RequestCookies;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestInit;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestSession\RequestSession;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerEnvironment\ServerEnvironment;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\NormalizeUploadedFiles;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\UploadedFiles\UploadedFiles;
+use Avax\Components\HTTP\Request\ServerRequest\Network\ResolveClientAddress;
+use Avax\Components\HTTP\Request\ServerRequest\Network\TrustedIpv4ProxyPolicy;
+use Avax\Components\HTTP\Request\ServerRequest\Network\TrustedProxyPolicy;
+use Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Components\HTTP\URI\UriBuilder;
 use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use SensitiveParameter;

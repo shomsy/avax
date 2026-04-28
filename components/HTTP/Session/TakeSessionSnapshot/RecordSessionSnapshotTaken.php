@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\TakeSessionSnapshot;
+namespace Avax\Components\HTTP\Session\TakeSessionSnapshot;
 
 final class RecordSessionSnapshotTaken
 {

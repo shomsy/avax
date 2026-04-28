@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Kernel;
 
-use Avax\HTTP\Middleware\IpRestrictionMiddleware;
-use Avax\HTTP\Middleware\MiddlewareInterface;
-use Avax\HTTP\Middleware\MiddlewareRegistry;
-use Avax\HTTP\Middleware\RateLimiterInterface;
-use Avax\HTTP\Middleware\RateLimiterMiddleware;
-use Avax\HTTP\Middleware\RequestLoggerMiddleware;
-use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
-use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\Session\NullSession;
+use Avax\Components\HTTP\Middleware\IpRestrictionMiddleware;
+use Avax\Components\HTTP\Middleware\MiddlewareInterface;
+use Avax\Components\HTTP\Middleware\MiddlewareRegistry;
+use Avax\Components\HTTP\Middleware\RateLimiterInterface;
+use Avax\Components\HTTP\Middleware\RateLimiterMiddleware;
+use Avax\Components\HTTP\Middleware\RequestLoggerMiddleware;
+use Avax\Components\HTTP\Middleware\SessionLifecycleMiddleware;
+use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Session\NullSession;
 use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

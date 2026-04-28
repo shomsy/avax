@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Response\Response;
+use Avax\Components\HTTP\Response\Response;
 use Psr\Http\Message\ResponseInterface;
 
 if (! function_exists(function: 'response')) {

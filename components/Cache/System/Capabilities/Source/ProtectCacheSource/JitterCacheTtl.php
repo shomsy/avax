@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Randomness;
+namespace Avax\Components\Cache\System\Foundation\Randomness;
 
-use components\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Cache\System\Foundation\Time\Duration;
 use Random\RandomException;
 
 final readonly class JitterCacheTtl

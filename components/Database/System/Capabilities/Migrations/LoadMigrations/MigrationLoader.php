@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\LoadMigrations;
+namespace Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations;
 
-use Avax\Database\System\Capabilities\Migrations\Design\BaseMigration;
+use Avax\Components\Database\System\Capabilities\Migrations\Design\BaseMigration;
 use DirectoryIterator;
 
 /**

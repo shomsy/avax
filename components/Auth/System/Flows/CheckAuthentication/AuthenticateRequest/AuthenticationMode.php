@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
+namespace Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
 /**
  * Transport that established the current authentication context.

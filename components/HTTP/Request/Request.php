@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Request;
+namespace Avax\Components\HTTP\Request;
 
 use Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use LogicException;
 use Psr\Http\Message\UriInterface;
 use ReflectionException;
@@ -18,7 +18,7 @@ use ReflectionException;
  *
  * Usage:
  * ```php
- * class CreateNewProjectRequest extends \Avax\HTTP\Request\Request
+ * class CreateNewProjectRequest extends \Avax\Components\HTTP\Request\Request
  * {
  *     #[Required]
  *     #[Min(3)]

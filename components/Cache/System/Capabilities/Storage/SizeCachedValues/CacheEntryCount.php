@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Storage\SizeCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Storage\SizeCachedValues;
 
 readonly class CacheEntryCount
 {

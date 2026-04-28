@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\ValueObjects;
+namespace Avax\Components\Database\System\Capabilities\Connections\ValueObjects;
 
 /**
  * Immutable value object encapsulating a PDO Data Source Name string.

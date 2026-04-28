@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\ReadSessionValue;
+namespace Avax\Components\HTTP\Session\ReadSessionValue;
 
 final class ResolveSessionReadKey
 {

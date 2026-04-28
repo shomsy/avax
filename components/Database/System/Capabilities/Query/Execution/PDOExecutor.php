@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Execution;
+namespace Avax\Components\Database\System\Capabilities\Query\Execution;
 
-use components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use components\Database\System\Capabilities\Query\DTO\ExecutionResult;
-use components\Database\System\Capabilities\Query\Exceptions\QueryException;
-use components\Database\System\Capabilities\Telemetry\Events\EventBus;
-use components\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
-use components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Components\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use PDO;
 use Random\RandomException;
 use SensitiveParameter;

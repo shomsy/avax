@@ -1,8 +1,8 @@
 <?php
 
-use components\Container\Features\Think\Model\ServicePrototype;
-use components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
-use components\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\Components\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\Components\HTTP\Router\Validation\RouteConstraintValidator;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RouteConstraintValidator::class,

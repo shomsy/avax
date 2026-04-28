@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session;
+namespace Avax\Components\HTTP\Session;
 
-use Avax\HTTP\Session\Audit\Audit;
-use Avax\HTTP\Session\Events\Events;
-use Avax\HTTP\Session\Recovery\Recovery;
-use Avax\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\Audit\Audit;
+use Avax\Components\HTTP\Session\Events\Events;
+use Avax\Components\HTTP\Session\Recovery\Recovery;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 /**
  * Lightweight Session facade — delegates to concrete capabilities.

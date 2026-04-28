@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Audit;
+namespace Avax\Components\HTTP\Session\Audit;
 
-use Avax\HTTP\Context\HttpContextInterface;
-use Avax\HTTP\Session\Shared\Security\SessionContextInterface;
+use Avax\Components\HTTP\Context\HttpContextInterface;
+use Avax\Components\HTTP\Session\Shared\Security\SessionContextInterface;
 use Avax\Logging\LoggerFactory;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;

@@ -2,63 +2,199 @@
 
 declare(strict_types=1);
 
-/**
- * Check for namespace drift.
- * Ensures all files in components/ follow the Avax\Components\<Component>\System pattern
- * or are explicitly whitelisted (like compat.php).
- */
+namespace Avax\Tooling\Refactor;
 
-$componentsDir = __DIR__ . '/../../components';
-$errors        = [];
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
 
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($componentsDir));
+final class CheckNamespaceDrift
+{
+    private const FORBIDDEN_NAMESPACES = [
+        'namespace components\\' => 'Use Avax\Components\<Component>\System namespace',
+        'namespace Avax\\DataFoundation' => 'Use Avax\Components\Data\System namespace',
+        'namespace Avax\\DataLayer' => 'Use Avax\Components\Persistence\System namespace',
+    ];
 
-foreach ($iterator as $file) {
-    if (! $file->isFile() || $file->getExtension() !== 'php') {
-        continue;
+    private const ALLOWED_BRIDGE_PATHS = [
+        'components/DataFoundation/',
+        'components/DataLayer/',
+    ];
+
+    private const PHP_EXTENSIONS = ['.php'];
+
+    private const EXCEPTIONS = [
+        'CompileContainer.php' => 'Known: generates dynamic code with legacy namespace',
+    ];
+
+    private array $violations = [];
+    private array $checkedFiles = [];
+
+    public function check(string $rootPath = 'components'): array
+    {
+        $this->violations = [];
+        $this->checkedFiles = [];
+
+        $rootPath = realpath($rootPath);
+        if ($rootPath === false) {
+            throw new RuntimeException("Path does not exist: $rootPath");
+        }
+
+        $dirIterator = new RecursiveDirectoryIterator($rootPath);
+        $iterator = new RecursiveIteratorIterator(
+            $dirIterator,
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file) {
+            if (!$file->isFile()) {
+                continue;
+            }
+
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $filePath = $file->getPathname();
+            $this->checkedFiles[] = $filePath;
+            $this->checkFile($filePath);
+        }
+
+        return [
+            'checked_files' => count($this->checkedFiles),
+            'violations' => count($this->violations),
+            'details' => $this->violations,
+        ];
     }
 
-    $path         = $file->getRealPath();
-    $relativePath = str_replace(realpath($componentsDir) . '/', '', $path);
+    private function checkFile(string $filePath): void
+    {
+        $content = file_get_contents($filePath);
 
-    // Skip root files in components/
-    if (! str_contains($relativePath, '/')) {
-        continue;
+        if ($content === false) {
+            return;
+        }
+
+        if (!$this->isPhpFile($content)) {
+            return;
+        }
+
+        if ($this->isBridgeFile($filePath)) {
+            return;
+        }
+
+        if ($this->isGeneratedCodeFile($filePath)) {
+            return;
+        }
+
+        $inLegacyFolder = $this->isInLegacyFolder($filePath);
+
+        foreach (self::FORBIDDEN_NAMESPACES as $forbidden => $message) {
+            if ($this->containsNamespace($content, $forbidden)) {
+                if ($inLegacyFolder && $this->isLegacyNamespaceAllowed($forbidden)) {
+                    continue;
+                }
+                if ($this->isException($filePath)) {
+                    continue;
+                }
+                $this->violations[] = [
+                    'file' => $filePath,
+                    'forbidden_pattern' => $forbidden,
+                    'suggestion' => $message,
+                ];
+            }
+        }
     }
 
-    $content = file_get_contents($path);
-    if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
-        $namespace = trim($matches[1]);
+    private function isPhpFile(string $content): bool
+    {
+        return str_starts_with(trim($content), '<?php');
+    }
 
-        // Whitelist legacy components for now (to be migrated)
-        if (str_starts_with($relativePath, 'DataFoundation/') ||
-            str_starts_with($relativePath, 'DataLayer/') ||
-            str_starts_with($relativePath, 'ApplicationWorkflow/Saga/')) {
-            continue;
+    private function isBridgeFile(string $filePath): bool
+    {
+        foreach (self::ALLOWED_BRIDGE_PATHS as $bridgePath) {
+            if (str_contains($filePath, $bridgePath)) {
+                return true;
+            }
         }
+        return false;
+    }
 
-        // Check for lowercase 'components\'
-        if (str_starts_with($namespace, 'components\\')) {
-            $errors[] = "Legacy lowercase namespace in {$relativePath}: {$namespace}";
+    private function isInLegacyFolder(string $filePath): bool
+    {
+        foreach (self::ALLOWED_BRIDGE_PATHS as $bridgePath) {
+            if (str_contains($filePath, $bridgePath)) {
+                return true;
+            }
         }
+        return false;
+    }
 
-        // Check for missing 'Components' in Avax namespace for components
-        if (str_starts_with($namespace, 'Avax\\') &&
-            ! str_starts_with($namespace, 'Avax\\Components\\') &&
-            ! str_starts_with($namespace, 'Avax\\Database\\') && // Database is special
-            ! str_starts_with($namespace, 'Avax\\Framework\\')) {
-            $errors[] = "Missing 'Components' sub-namespace in {$relativePath}: {$namespace}";
+    private function isGeneratedCodeFile(string $filePath): bool
+    {
+        return str_contains($filePath, '/Generated/');
+    }
+
+    private function isLegacyNamespaceAllowed(string $forbiddenNamespace): bool
+    {
+        foreach (['Avax\\DataFoundation', 'Avax\\DataLayer'] as $legacyNs) {
+            if (str_contains($forbiddenNamespace, $legacyNs)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private function isException(string $filePath): bool
+    {
+        foreach (self::EXCEPTIONS as $exceptionFile => $reason) {
+            if (str_contains($filePath, $exceptionFile)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function containsNamespace(string $content, string $namespace): bool
+    {
+        return str_contains($content, $namespace);
     }
 }
 
-if (! empty($errors)) {
-    echo "Namespace drift detected:\n";
-    foreach ($errors as $error) {
-        echo "- {$error}\n";
-    }
-    exit(1);
-}
+if (php_sapi_name() === 'cli' && isset($argv[0])) {
+    $checker = new CheckNamespaceDrift();
+    $rootPath = $argv[1] ?? 'components';
+    error_reporting(E_ALL);
+    $results = $checker->check($rootPath);
 
-echo "No namespace drift detected.\n";
-exit(0);
+    echo "Namespace Drift Checker\n";
+    echo "=====================\n\n";
+    echo "Root path: {$rootPath}\n";
+    echo "Checked files: {$results['checked_files']}\n";
+    echo "Violations: {$results['violations']}\n\n";
+
+    if ($results['violations'] > 0) {
+        echo "VIOLATIONS FOUND:\n";
+        echo str_repeat('-', 60) . "\n";
+
+        $seenFile = null;
+
+        foreach ($results['details'] as $violation) {
+            $file = $violation['file'];
+            if ($file === $seenFile) {
+                continue;
+            }
+            $seenFile = $file;
+
+            echo "File: {$file}\n";
+            echo "Forbidden: {$violation['forbidden_pattern']}\n";
+            echo "Suggestion: {$violation['suggestion']}\n\n";
+        }
+
+        exit(1);
+    }
+
+    echo "No violations found.\n";
+    exit(0);
+}

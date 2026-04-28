@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Body\Problem;
+namespace Avax\Components\HTTP\Response\Capabilities\Body\Problem;
 
-use Avax\HTTP\Response\Capabilities\Body\Json\EncodeJsonBody;
+use Avax\Components\HTTP\Response\Capabilities\Body\Json\EncodeJsonBody;
 use JsonException;
 
 final class EncodeProblemDetails

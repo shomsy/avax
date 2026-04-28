@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\Database;
+namespace Avax\Components\Database;
 
-use components\Database\System\Capabilities\Connections\Connections;
-use components\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
-use components\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
-use components\Database\System\Capabilities\ORM\EntityManager as EntityManagerCapability;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\System\Capabilities\Query\Query as QueryCapability;
-use components\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
-use components\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
-use components\Database\System\Configuration\DatabaseBuilder;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\Database\System\Capabilities\ORM\EntityManager as EntityManagerCapability;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
+use Avax\Components\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
+use Avax\Components\Database\System\Configuration\DatabaseBuilder;
 use ReflectionException;
 use Throwable;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Foundation\Time;
+namespace Avax\Components\Cache\System\Foundation\Time;
 
 final class FrozenClock implements Clock
 {

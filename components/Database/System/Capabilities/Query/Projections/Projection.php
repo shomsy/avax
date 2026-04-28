@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Query\Projections;
+namespace Avax\Components\Database\System\Capabilities\Query\Projections;
 
 interface Projection
 {

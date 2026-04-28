@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Disks;
+namespace Avax\Components\Filesystem\Disks;
 
-use components\Filesystem\Configuration\FilesystemConfig;
-use components\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Filesystem\Configuration\FilesystemConfig;
+use Avax\Components\Filesystem\Disks\Local\LocalDisk;
 
 final readonly class ResolveDisk
 {

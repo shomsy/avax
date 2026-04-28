@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\CheckSessionValue;
+namespace Avax\Components\HTTP\Session\CheckSessionValue;
 
-use components\HTTP\Session\SessionStore\SessionStore;
+use Avax\Components\HTTP\Session\SessionStore\SessionStore;
 
 final class CheckSessionValue
 {

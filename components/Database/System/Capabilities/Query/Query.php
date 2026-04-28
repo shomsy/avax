@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Query;
+namespace Avax\Components\Database\System\Capabilities\Query;
 
-use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
-use Avax\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-use Avax\Database\System\Capabilities\Query\ValueObjects\Expression;
-use Avax\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
+use Avax\Components\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
 use ReflectionException;
 use Throwable;
 

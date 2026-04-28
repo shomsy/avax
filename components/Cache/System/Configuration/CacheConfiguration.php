@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Configuration;
+namespace Avax\Components\Cache\System\Configuration;
 
-use components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\StaleValuePolicy;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
-use components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\StaleValuePolicy;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 
 final readonly class CacheConfiguration
 {

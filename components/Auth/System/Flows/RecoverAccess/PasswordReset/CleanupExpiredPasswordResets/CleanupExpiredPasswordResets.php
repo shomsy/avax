@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets;
+namespace Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets;
 
-use components\Auth\System\Flows\RecoverAccess\PasswordReset\PruneExpiredPasswordResetsInterface;
-use components\Auth\System\Foundation\Clock;
+use Avax\Components\Auth\System\Flows\RecoverAccess\PasswordReset\PruneExpiredPasswordResetsInterface;
+use Avax\Components\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class CleanupExpiredPasswordResets

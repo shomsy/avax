@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Database\Integrations\Console;
+namespace Avax\Components\Database\Integrations\Console;
 
-use components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Throwable;
 
 final readonly class MigrateCommand

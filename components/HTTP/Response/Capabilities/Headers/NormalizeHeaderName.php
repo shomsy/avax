@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Headers;
+namespace Avax\Components\HTTP\Response\Capabilities\Headers;
 
 final class NormalizeHeaderName
 {

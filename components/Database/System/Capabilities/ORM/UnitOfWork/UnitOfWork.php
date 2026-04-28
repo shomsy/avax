@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\UnitOfWork;
+namespace Avax\Components\Database\System\Capabilities\ORM\UnitOfWork;
 
-use Avax\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
-use Avax\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
-use Avax\Database\System\Capabilities\ORM\Persisters\EntityPersister;
+use Avax\Components\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
+use Avax\Components\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
+use Avax\Components\Database\System\Capabilities\ORM\Persisters\EntityPersister;
 use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;

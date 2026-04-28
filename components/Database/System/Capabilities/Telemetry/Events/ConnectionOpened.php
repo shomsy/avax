@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Telemetry\Events;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\Events;
 
 /**
  * Event emitted when a fresh database connection is opened.

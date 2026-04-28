@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\Parsers;
 
 /**
  * ParseBodyByContentType - Routes body content-type to the appropriate parser.

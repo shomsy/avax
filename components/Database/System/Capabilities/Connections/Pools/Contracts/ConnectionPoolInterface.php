@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Connections\Pools\Contracts;
+namespace Avax\Components\Database\System\Capabilities\Connections\Pools\Contracts;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 
 /**
  * The "Shared Library Rules" (Pool Interface).

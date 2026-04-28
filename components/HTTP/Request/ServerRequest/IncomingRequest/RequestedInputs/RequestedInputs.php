@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
+namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs;
 
 use BackedEnum;
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\InputValue;
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
-use components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\SanitizedRequestedInputs;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Inputs;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\InputValue;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Mapping\MapRequestedInputsToDto;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\InputSanitizer;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Sanitization\SanitizedRequestedInputs;
 
 /**
  * RequestedInputs

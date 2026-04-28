@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Transactions\RunTransaction;
+namespace Avax\Components\Database\System\Capabilities\Transactions\RunTransaction;
 
-use Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
-use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
+use Avax\Components\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
 use Throwable;
 
 /**

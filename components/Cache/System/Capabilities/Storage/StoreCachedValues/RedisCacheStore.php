@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues;
 
-use components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
-use components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use components\Cache\System\Foundation\Serialization\CacheSerializer;
-use components\Cache\System\Foundation\Serialization\JsonCacheSerializer;
-use components\Cache\System\Foundation\Serialization\SerializedCachePayload;
-use components\Cache\System\Foundation\Time\Clock;
-use components\Cache\System\Foundation\Time\SystemClock;
-use components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Cache\System\Foundation\Serialization\CacheSerializer;
+use Avax\Components\Cache\System\Foundation\Serialization\JsonCacheSerializer;
+use Avax\Components\Cache\System\Foundation\Serialization\SerializedCachePayload;
+use Avax\Components\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
 use Redis;
 use RedisArray;

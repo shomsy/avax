@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Response\Capabilities\Downloads;
+namespace Avax\Components\HTTP\Response\Capabilities\Downloads;
 
 final class DetectDownloadMediaType
 {

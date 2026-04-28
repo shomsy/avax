@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\Migrations\RunMigrations;
+namespace Avax\Components\Database\System\Capabilities\Migrations\RunMigrations;
 
-use Avax\Database\System\Capabilities\Migrations\Schema\Schema;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Throwable;
 
 /**

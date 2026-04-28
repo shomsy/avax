@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Filesystem\Disks;
+namespace Avax\Components\Filesystem\Disks;
 
 use RuntimeException;
 

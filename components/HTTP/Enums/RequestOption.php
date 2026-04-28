@@ -10,7 +10,7 @@ declare(strict_types=1);
  * this ENUM are used to standardize the keys for various request parameters.
  */
 
-namespace Avax\HTTP\Enums;
+namespace Avax\Components\HTTP\Enums;
 
 /**
  * Enum RequestOption

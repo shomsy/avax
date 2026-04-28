@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Database\System\Capabilities\Telemetry\OpenTelemetry;
+namespace Avax\Components\Database\System\Capabilities\Telemetry\OpenTelemetry;
 
-use components\Database\System\Capabilities\Telemetry\DbMetricsCollector;
+use Avax\Components\Database\System\Capabilities\Telemetry\DbMetricsCollector;
 
 final class MetricsExporter
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Shared\Security;
+namespace Avax\Components\HTTP\Session\Shared\Security;
 
 interface SessionContextInterface
 {

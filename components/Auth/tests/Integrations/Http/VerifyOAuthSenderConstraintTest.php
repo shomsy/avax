@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Tests\Integrations\Http;
+namespace Avax\Components\Auth\Tests\Integrations\Http;
 
-use components\Auth\Integrations\Http\DpopProofFailed;
-use components\Auth\Integrations\Http\HttpOAuthProofInput;
-use components\Auth\Integrations\Http\MtlsBindingFailed;
-use components\Auth\Integrations\Http\SenderConstraintVerificationFailed;
-use components\Auth\Integrations\Http\VerifyDpopProof;
-use components\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
-use components\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
-use components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
-use components\Tests\TestCase;
+use Avax\Components\Auth\Integrations\Http\DpopProofFailed;
+use Avax\Components\Auth\Integrations\Http\HttpOAuthProofInput;
+use Avax\Components\Auth\Integrations\Http\MtlsBindingFailed;
+use Avax\Components\Auth\Integrations\Http\SenderConstraintVerificationFailed;
+use Avax\Components\Auth\Integrations\Http\VerifyDpopProof;
+use Avax\Components\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
+use Avax\Components\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
+use Avax\Components\Auth\System\Capabilities\Diagnostics\Audit\InMemoryAuditLog;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Auth\System\Capabilities\ExternalIdentity\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Tests\TestCase;
 use DateMalformedStringException;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;

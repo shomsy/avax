@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace components\Database\Integrations\AvaxContainer;
+namespace Avax\Components\Database\Integrations\AvaxContainer;
 
-use components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use components\Container\DI\ContainerInterface;
-use components\Database\Database;
-use components\Database\EntityManager;
-use components\Database\Migrations;
-use components\Database\Query;
-use components\Database\Schema;
-use components\Database\System\Capabilities\Connections\Connections;
-use components\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
-use components\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
-use components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
-use components\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
-use components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
-use components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
-use components\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use components\Database\Telemetry;
-use components\Database\Transactions;
+use Avax\Components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Container\DI\ContainerInterface;
+use Avax\Components\Database\Database;
+use Avax\Components\Database\EntityManager;
+use Avax\Components\Database\Migrations;
+use Avax\Components\Database\Query;
+use Avax\Components\Database\Schema;
+use Avax\Components\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Components\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Components\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Components\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\Database\Telemetry;
+use Avax\Components\Database\Transactions;
 use Random\RandomException;
 
 /**

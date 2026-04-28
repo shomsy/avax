@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\System\Capabilities\ORM\Persisters;
+namespace Avax\Components\Database\System\Capabilities\ORM\Persisters;
 
-use Avax\Database\System\Capabilities\ORM\Hydration\Hydrator;
-use Avax\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
-use Avax\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
-use Avax\Database\System\Capabilities\Query\Query;
+use Avax\Components\Database\System\Capabilities\ORM\Hydration\Hydrator;
+use Avax\Components\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
+use Avax\Components\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\Database\System\Capabilities\Query\Query;
 use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;

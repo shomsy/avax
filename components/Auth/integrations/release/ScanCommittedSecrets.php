@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\Integrations\Release;
+namespace Avax\Components\Auth\Integrations\Release;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

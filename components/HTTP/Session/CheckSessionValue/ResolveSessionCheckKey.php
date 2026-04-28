@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Session\CheckSessionValue;
+namespace Avax\Components\HTTP\Session\CheckSessionValue;
 
 final class ResolveSessionCheckKey
 {

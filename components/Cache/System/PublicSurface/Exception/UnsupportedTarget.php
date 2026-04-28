@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Cache\System\PublicSurface\Exception;
+namespace Avax\Components\Cache\System\PublicSurface\Exception;
 
 use RuntimeException;
 

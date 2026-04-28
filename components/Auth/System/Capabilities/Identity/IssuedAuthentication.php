@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Auth\System\Capabilities\Identity;
+namespace Avax\Components\Auth\System\Capabilities\Identity;
 
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
-use components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
-use components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedRefreshToken;
+use Avax\Components\Auth\System\Capabilities\Identity\Tokens\Runtime\Record\IssuedToken;
+use Avax\Components\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use DateTimeImmutable;
 use SensitiveParameter;
 

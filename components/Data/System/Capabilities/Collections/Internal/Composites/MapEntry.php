@@ -14,7 +14,13 @@ final readonly class MapEntry
         private mixed      $value,
     ) {}
 
-    public function key() : int|string { return $this->key; }
+    public function key() : int|string
+    {
+        return $this->key;
+    }
 
-    public function value() : mixed { return $this->value; }
+    public function value() : mixed
+    {
+        return $this->value;
+    }
 }

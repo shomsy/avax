@@ -1,16 +1,27 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Capabilities\Engines;
 
-use Avax\Components\Presentation\View\BladeTemplateEngine as RealBladeTemplateEngine;
+use Jenssegers\Blade\Blade;
+use Throwable;
 
-/**
- * Ultimate Blade Template Engine.
- *
- * Delegates to the real BladeTemplateEngine implementation which includes
- * advanced asset path management, dynamic base URLs, and deep integration
- * with Avax's Markdown, Auth, and Routing capabilities.
- */
-class BladeTemplateEngine extends RealBladeTemplateEngine {}
+class BladeTemplateEngine extends Blade implements TemplateEngineInterface
+{
+    public function __construct(string $viewsPath, string $cachePath)
+    {
+        parent::__construct($viewsPath, $cachePath);
+        $this->configureCustomDirectives();
+    }
+
+    private function configureCustomDirectives(): void
+    {
+        $this->compiler()->directive('csrf', fn() => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
+        $this->compiler()->directive('method', fn($expression) => "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . $expression . '\">'; ?>");
+    }
+
+    public function render(string $view, array $data = []): string
+    {
+        return parent::render($view, $data);
+    }
+}

@@ -1,15 +1,19 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Flows\DispatchEvent;
 
-use Avax\Components\Operations\Events\System\PublicSurface\Events;
+use Avax\Components\Operations\Events\System\PublicSurface\EventsInterface;
 
-final class DispatchEvent
+final readonly class DispatchEvent
 {
-    public function dispatch(Events $events, string $name, mixed $data = null) : void
+    public function __construct(
+        private EventsInterface $events
+    ) {
+    }
+
+    public function execute(string|object $event, mixed $data = null): void
     {
-        $events->dispatch($name, $data);
+        $this->events->dispatch($event, $data);
     }
 }

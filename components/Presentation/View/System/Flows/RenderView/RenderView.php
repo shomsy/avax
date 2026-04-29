@@ -1,15 +1,18 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Flows\RenderView;
 
-use Avax\Components\Presentation\View\System\PublicSurface\View;
+use Avax\Components\Presentation\View\System\Capabilities\Engines\TemplateEngineInterface;
 
-final class RenderView
+final readonly class RenderView
 {
-    public function render(View $view, string $template, array $data = []) : string
+    public function __construct(
+        private TemplateEngineInterface $engine
+    ) {}
+
+    public function handle(string $view, array $data = []): string
     {
-        return $view->render($template, $data);
+        return $this->engine->render($view, $data);
     }
 }

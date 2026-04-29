@@ -1,10 +1,9 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\Dispatcher;
 
-use Avax\Components\Operations\Events\System\Capabilities\ListenerRegistry\ListenerRegistry;
+use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;
 
 /**
  * Event dispatcher that coordinates listener execution.
@@ -17,9 +16,8 @@ final readonly class EventDispatcher
 
     /**
      * Dispatch an event to all registered listeners.
-     * Supports both string-named events and object-based events.
      */
-    public function dispatch(string|object $event, mixed $data = null) : object|string
+    public function dispatch(string|object $event, mixed $data = null): object|string
     {
         $eventName = is_object($event) ? $event::class : $event;
         $listeners = $this->registry->getListenersFor($eventName);

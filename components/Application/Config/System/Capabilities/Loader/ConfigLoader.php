@@ -1,51 +1,46 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Capabilities\Loader;
 
 use RuntimeException;
 
-/**
- * Loads configuration files from various formats.
- */
 final class ConfigLoader
 {
-    public function load(string $path) : array
+    public function load(string $path): array
     {
-        if (! file_exists($path)) {
-            throw new RuntimeException("Configuration file [{$path}] not found.");
+        if (is_dir($path)) {
+            return $this->loadDirectory($path);
         }
 
-        $extension = pathinfo($path, PATHINFO_EXTENSION);
-
-        return match ($extension) {
-            'php'   => $this->loadPhp($path),
-            'json'  => $this->loadJson($path),
-            default => throw new RuntimeException("Unsupported configuration format: [{$extension}]")
-        };
+        return $this->loadFile($path);
     }
 
-    private function loadPhp(string $path) : array
+    private function loadDirectory(string $directory): array
     {
-        $config = require $path;
+        $config = [];
+        $files = glob(rtrim($directory, '/') . '/*.php');
 
-        if (! is_array($config)) {
-            throw new RuntimeException("PHP configuration file [{$path}] must return an array.");
+        foreach ($files as $file) {
+            $namespace = pathinfo($file, PATHINFO_FILENAME);
+            $config[$namespace] = $this->loadFile($file);
         }
 
         return $config;
     }
 
-    private function loadJson(string $path) : array
+    private function loadFile(string $file): array
     {
-        $content = file_get_contents($path);
-        $config  = json_decode($content, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException("Failed to parse JSON configuration file [{$path}]: " . json_last_error_msg());
+        if (!file_exists($file)) {
+            throw new RuntimeException("Config file not found: {$file}");
         }
 
-        return $config;
+        $data = require $file;
+
+        if (!is_array($data)) {
+            throw new RuntimeException("Config file must return an array: {$file}");
+        }
+
+        return $data;
     }
 }

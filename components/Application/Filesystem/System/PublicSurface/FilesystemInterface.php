@@ -1,20 +1,21 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
 interface FilesystemInterface
 {
-    public function disk(string $name = 'local') : Disk;
-
-    public function exists(string $path) : bool;
-
-    public function read(string $path) : string;
-
-    public function write(string $path, string $contents) : void;
-
-    public function delete(string $path) : void;
-
-    public function mkdir(string $path, int $mode = 0755) : void;
+    public function read(string $path): string;
+    public function write(string $path, string $content, bool $append = false): bool;
+    public function copy(string $source, string $destination): bool;
+    public function move(string $source, string $destination): bool;
+    public function delete(string $path): bool;
+    public function exists(string $path): bool;
+    public function lastModified(string $path): ?int;
+    public function createDirectory(string $path, int $permissions = 0755): bool;
+    public function deleteDirectory(string $path): bool;
+    public function clearDirectory(string $path): bool;
+    public function listFiles(string $path): array;
+    public function isWritable(string $path): bool;
+    public function setPermissions(string $path, int $permissions): bool;
 }

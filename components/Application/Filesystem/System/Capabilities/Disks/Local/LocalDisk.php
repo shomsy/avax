@@ -1,216 +1,127 @@
 <?php
-
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Disks\Local;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local;
 
-use Avax\Components\Application\Filesystem\Directories\DirectoryClearFailed;
-use Avax\Components\Application\Filesystem\Directories\DirectoryCreateFailed;
-use Avax\Components\Application\Filesystem\Directories\DirectoryDeleteFailed;
-use Avax\Components\Application\Filesystem\Disks\Disk;
-use Avax\Components\Application\Filesystem\Files\FileCopyFailed;
-use Avax\Components\Application\Filesystem\Files\FileDeleteFailed as FileDeleteFailedException;
-use Avax\Components\Application\Filesystem\Files\FileMoveFailed;
-use Avax\Components\Application\Filesystem\Files\FileNotFound;
-use Avax\Components\Application\Filesystem\Files\FileWriteFailed;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 use FilesystemIterator;
 use RuntimeException;
 use SplFileInfo;
 use Throwable;
 
-readonly class LocalDisk implements Disk
+final readonly class LocalDisk implements Disk
 {
-    public function read(string $path) : string
+    public function read(string $path): string
     {
-        if (! file_exists(filename: $path)) {
-            throw new FileNotFound(path: $path);
+        if (!file_exists($path) || !is_readable($path)) {
+            throw new RuntimeException("File not found or not readable: {$path}");
         }
 
-        if (! is_readable(filename: $path)) {
-            throw new FileNotFound(path: $path);
-        }
-
-        $content = file_get_contents(filename: $path);
+        $content = file_get_contents($path);
         if ($content === false) {
-            throw new FileNotFound(path: $path);
+            throw new RuntimeException("Failed to read file: {$path}");
         }
 
         return $content;
     }
 
-    public function write(string $path, string $content, bool $append = false) : bool
+    public function write(string $path, string $content, bool $append = false): bool
     {
-        $directory = dirname(path: $path);
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new DirectoryCreateFailed(path: $directory);
+        $directory = dirname($path);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
         }
 
         $flags = $append ? FILE_APPEND | LOCK_EX : 0;
-        if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: $flags) === false) {
-            throw new FileWriteFailed(path: $path);
-        }
-
-        return true;
+        return file_put_contents($path, $content, $flags) !== false;
     }
 
-    public function copy(string $source, string $destination) : bool
+    public function copy(string $source, string $destination): bool
     {
-        if (! file_exists(filename: $source)) {
-            throw new FileNotFound(path: $source);
+        if (!file_exists($source)) {
+            throw new RuntimeException("Source file not found: {$source}");
         }
 
-        $directory = dirname(path: $destination);
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new DirectoryCreateFailed(path: $directory);
+        $directory = dirname($destination);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
         }
 
-        if (! copy(from: $source, to: $destination)) {
-            throw new FileCopyFailed(path: $destination);
-        }
-
-        return true;
+        return copy($source, $destination);
     }
 
-    public function move(string $source, string $destination) : bool
+    public function move(string $source, string $destination): bool
     {
-        if (! file_exists(filename: $source)) {
-            throw new FileNotFound(path: $source);
+        if (!file_exists($source)) {
+            throw new RuntimeException("Source file not found: {$source}");
         }
 
-        $directory = dirname(path: $destination);
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0755, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new DirectoryCreateFailed(path: $directory);
+        $directory = dirname($destination);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
         }
 
-        if (! rename(from: $source, to: $destination)) {
-            throw new FileMoveFailed(path: $destination);
-        }
-
-        return true;
+        return rename($source, $destination);
     }
 
-    public function exists(string $path) : bool
+    public function delete(string $path): bool
     {
-        return file_exists(filename: $path);
+        return file_exists($path) ? unlink($path) : true;
     }
 
-    public function lastModified(string $path) : int|null
+    public function exists(string $path): bool
     {
-        if (! file_exists(filename: $path)) {
-            return null;
-        }
-
-        $mtime = filemtime(filename: $path);
-
-        return $mtime !== false ? $mtime : null;
+        return file_exists($path);
     }
 
-    public function createDirectory(string $path, int $permissions = 0755) : bool
+    public function lastModified(string $path): ?int
     {
-        if (is_dir(filename: $path)) {
-            return true;
-        }
-
-        if (! mkdir(directory: $path, permissions: $permissions, recursive: true)) {
-            throw new DirectoryCreateFailed(path: $path);
-        }
-
-        return true;
+        return file_exists($path) ? (filemtime($path) ?: null) : null;
     }
 
-    public function deleteDirectory(string $path) : bool
+    public function createDirectory(string $path, int $permissions = 0755): bool
     {
-        if (! is_dir(filename: $path)) {
-            return true;
-        }
-
-        $this->clear(path: $path);
-
-        if (! rmdir(directory: $path)) {
-            throw new DirectoryDeleteFailed(path: $path);
-        }
-
-        return true;
+        return is_dir($path) || mkdir($path, $permissions, true);
     }
 
-    public function clear(string $path) : bool
+    public function deleteDirectory(string $path): bool
     {
-        if (! is_dir(filename: $path)) {
-            throw new DirectoryClearFailed(path: $path);
-        }
+        if (!is_dir($path)) return true;
+        $this->clear($path);
+        return rmdir($path);
+    }
 
-        foreach (new FilesystemIterator(directory: $path, flags: FilesystemIterator::SKIP_DOTS) as $item) {
+    public function clear(string $path): bool
+    {
+        if (!is_dir($path)) return false;
+
+        foreach (new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS) as $item) {
             $itemPath = $item->getPathname();
-
-            if ($item->isDir()) {
-                $this->deleteDirectory(path: $itemPath);
-            } else {
-                $this->delete(path: $itemPath);
-            }
+            $item->isDir() ? $this->deleteDirectory($itemPath) : $this->delete($itemPath);
         }
 
         return true;
     }
 
-    public function delete(string $path) : bool
+    public function isWritable(string $path): bool
     {
-        if (! file_exists(filename: $path)) {
-            return true;
-        }
-
-        if (! unlink(filename: $path)) {
-            throw new FileDeleteFailedException(path: $path);
-        }
-
-        return true;
+        return is_writable($path);
     }
 
-    public function isWritable(string $path) : bool
+    public function setPermissions(string $path, int $permissions): bool
     {
-        return is_writable(filename: $path);
+        return file_exists($path) && chmod($path, $permissions);
     }
 
-    public function setPermissions(string $path, int $permissions) : bool
+    public function listFiles(string $path): array
     {
-        if (! file_exists(filename: $path)) {
-            throw new RuntimeException(message: "Path does not exist: {$path}");
-        }
-
-        if (! chmod(filename: $path, permissions: $permissions)) {
-            error_log(message: "Failed to set permissions on: {$path}");
-
-            return false;
-        }
-
-        return true;
-    }
-
-    public function hasPermission(string $path, int $permissions) : bool
-    {
-        if (! file_exists(filename: $path)) {
-            return false;
-        }
-
-        $actualPermissions = fileperms(filename: $path) & 0777;
-
-        return $actualPermissions === $permissions;
-    }
-
-    public function listFiles(string $path) : array
-    {
-        if (! is_dir(filename: $path) || ! is_readable(filename: $path)) {
-            return [];
-        }
+        if (!is_dir($path) || !is_readable($path)) return [];
 
         try {
-            $iterator = new FilesystemIterator(
-                directory: $path,
-                flags    : FilesystemIterator::SKIP_DOTS
-            );
-
+            $iterator = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
             return array_map(
-                callback: static fn (SplFileInfo $file) => $file->getPathname(),
-                array   : iterator_to_array(iterator: $iterator, preserve_keys: false)
+                static fn (SplFileInfo $file) => $file->getPathname(),
+                iterator_to_array($iterator, false)
             );
         } catch (Throwable) {
             return [];

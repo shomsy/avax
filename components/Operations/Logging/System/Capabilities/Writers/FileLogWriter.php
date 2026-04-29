@@ -1,49 +1,25 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Capabilities\Writers;
 
-use Exception;
-use RuntimeException;
-
 /**
- * Writes log entries to a local file.
+ * Basic file log writer.
  */
-final class FileLogWriter implements LogWriterInterface
+final readonly class FileLogWriter
 {
-    private const string FALLBACK_PATH = '/tmp/avax-fallback.log';
-
     public function __construct(
-        private readonly string $filePath
-    )
-    {
-        $this->ensureDirectoryExists();
+        private string $path
+    ) {
     }
 
-    private function ensureDirectoryExists() : void
+    public function write(string $message): void
     {
-        $directory = dirname($this->filePath);
-
-        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
-            // Fallback to /tmp if we can't create the directory
-            return;
+        $dir = dirname($this->path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
         }
-    }
 
-    public function write(string $content) : void
-    {
-        try {
-            $this->writeFile($this->filePath, $content);
-        } catch (Exception) {
-            $this->writeFile(self::FALLBACK_PATH, $content);
-        }
-    }
-
-    private function writeFile(string $path, string $content) : void
-    {
-        if (file_put_contents($path, $content . PHP_EOL, FILE_APPEND | LOCK_EX) === false) {
-            throw new RuntimeException("Failed to write to log file: [{$path}]");
-        }
+        file_put_contents($this->path, $message . PHP_EOL, FILE_APPEND);
     }
 }

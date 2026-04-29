@@ -1,63 +1,68 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Uri;
 
-final class Uri
+use Stringable;
+
+final readonly class Uri implements Stringable
 {
     public function __construct(
-        private string $scheme = 'http',
-        private string $host = 'localhost',
-        private int $port = 80,
+        private string $scheme = '',
+        private string $host = '',
         private string $path = '/',
+        private ?int $port = null,
         private string $query = '',
+        private string $fragment = '',
+        private string $user = '',
+        private ?string $password = null
     ) {}
 
-    public function getScheme(): string
-    {
-        return $this->scheme;
-    }
+    public function getScheme(): string { return $this->scheme; }
+    public function getHost(): string { return $this->host; }
+    public function getPath(): string { return $this->path; }
+    public function getPort(): ?int { return $this->port; }
+    public function getQuery(): string { return $this->query; }
+    public function getFragment(): string { return $this->fragment; }
+    public function getUserInfo(): string { return $this->user . ($this->password !== null ? ':' . $this->password : ''); }
 
-    public function getHost(): string
+    public function getAuthority(): string
     {
-        return $this->host;
-    }
-
-    public function getPort(): ?int
-    {
-        return $this->port;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    public function getQuery(): string
-    {
-        return $this->query;
-    }
-
-    public function toString(): string
-    {
-        $url = "{$this->scheme}://{$this->host}";
-        
-        if ($this->port && !in_array($this->port, [80, 443])) {
-            $url .= ":{$this->port}";
+        $authority = $this->host;
+        $userInfo = $this->getUserInfo();
+        if ($userInfo !== '') {
+            $authority = $userInfo . '@' . $authority;
         }
-        
-        $url .= $this->path;
-        
-        if ($this->query) {
-            $url .= "?{$this->query}";
+
+        if ($this->port !== null && !$this->isDefaultPort()) {
+            $authority .= ':' . $this->port;
         }
-        
-        return $url;
+
+        return $authority;
+    }
+
+    private function isDefaultPort(): bool
+    {
+        return ($this->scheme === 'http' && $this->port === 80) || ($this->scheme === 'https' && $this->port === 443);
     }
 
     public function __toString(): string
     {
-        return $this->toString();
+        $uri = '';
+        if ($this->scheme !== '') {
+            $uri .= $this->scheme . '://';
+        }
+
+        $uri .= $this->getAuthority();
+        $uri .= $this->path;
+        if ($this->query !== '') {
+            $uri .= '?' . $this->query;
+        }
+
+        if ($this->fragment !== '') {
+            $uri .= '#' . $this->fragment;
+        }
+
+        return $uri;
     }
 }

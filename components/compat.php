@@ -136,6 +136,11 @@ $classAliases = [
     'Avax\\HTTP\\Response\\Flows\\BuildResponse\\BuildResponse'                                 => 'Avax\\Components\\Response\\System\\Flows\\BuildResponse\\BuildResponse',
     'Avax\\HTTP\\Response\\Flows\\EmitResponse\\EmitResponse'                                   => 'Avax\\Components\\Response\\System\\Flows\\EmitResponse\\EmitResponse',
     'Avax\\HTTP\\RouterBootstrapper'                                                          => 'Avax\\Components\\HTTP\\System\\Configuration\\RouterBootstrapper',
+    'Avax\\HTTP\\Session\\Session'                                                            => 'Avax\\Components\\HTTP\\Session\\System\\PublicSurface\\Session',
+    'Avax\\HTTP\\Context\\HttpContext'                                                        => 'Avax\\Components\\HTTP\\Context\\System\\PublicSurface\\HttpContext',
+    'Avax\\Presentation\\View\\View'                                                          => 'Avax\\Components\\Presentation\\View\\System\\PublicSurface\\View',
+    'Avax\\Application\\Filesystem\\Filesystem'                                               => 'Avax\\Components\\Application\\Filesystem\\System\\PublicSurface\\Filesystem',
+    'Avax\\Application\\Config\\Config'                                                       => 'Avax\\Components\\Application\\Config\\System\\PublicSurface\\Config',
 ];
 
 foreach ($classAliases as $alias => $target) {

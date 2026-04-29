@@ -11,11 +11,13 @@ use Avax\Components\HTTP\Middleware\RateLimiterInterface;
 use Avax\Components\HTTP\Middleware\RateLimiterMiddleware;
 use Avax\Components\HTTP\Middleware\RequestLoggerMiddleware;
 use Avax\Components\HTTP\Middleware\SessionLifecycleMiddleware;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\RouterRuntimeInterface;
 use Avax\Components\HTTP\Session\NullSession;
+use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
 use Override;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
@@ -27,9 +29,9 @@ use Stringable;
  * Combines Router, Kernel, and PSR-15 middleware pipeline into
  * a production-ready HTTP application runtime.
  */
-final readonly class AppKernel implements Kernel
+final readonly class AppKernel implements Kernel, HttpInterface
 {
-    private HttpKernel $kernel;
+    private array $middlewareStack;
 
     public function __construct(
         private RouterRuntimeInterface $router,
@@ -37,23 +39,17 @@ final readonly class AppKernel implements Kernel
         private array                  $globalMiddleware = []
     )
     {
-        $middlewareStack = empty($this->globalMiddleware)
-            ? $this->createDefaultMiddlewareStack($this->responseFactory)
+        $this->middlewareStack = empty($this->globalMiddleware)
+            ? $this->createDefaultMiddlewareStack()
             : $this->globalMiddleware;
-
-        $this->kernel = new HttpKernel(
-            $this->router,
-            $middlewareStack,
-            $this->responseFactory
-        );
     }
 
-    private function createDefaultMiddlewareStack(ResponseFactory $responseFactory) : array
+    private function createDefaultMiddlewareStack() : array
     {
         $middleware = [];
 
         if (MiddlewareRegistry::has('ip-restrict')) {
-            $middleware[] = $this->createOfficeIpRestriction($responseFactory);
+            $middleware[] = $this->createOfficeIpRestriction();
         }
 
         if (MiddlewareRegistry::has('session')) {
@@ -65,23 +61,23 @@ final readonly class AppKernel implements Kernel
         }
 
         if (MiddlewareRegistry::has('cors')) {
-            $middleware[] = MiddlewareRegistry::create('cors', [$responseFactory]);
+            $middleware[] = MiddlewareRegistry::create('cors', [$this->responseFactory]);
         }
 
         if (MiddlewareRegistry::has('rate-limit')) {
-            $middleware[] = $this->createRateLimiter($responseFactory);
+            $middleware[] = $this->createRateLimiter();
         }
 
         if (MiddlewareRegistry::has('json')) {
-            $middleware[] = MiddlewareRegistry::create('json', [$responseFactory]);
+            $middleware[] = MiddlewareRegistry::create('json', [$this->responseFactory]);
         }
 
         return $middleware;
     }
 
-    private function createOfficeIpRestriction(ResponseFactory $responseFactory) : MiddlewareInterface
+    private function createOfficeIpRestriction() : MiddlewareInterface
     {
-        return new class($responseFactory) extends IpRestrictionMiddleware {
+        return new class extends IpRestrictionMiddleware {
             #[Override]
             protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
@@ -93,7 +89,6 @@ final readonly class AppKernel implements Kernel
                         return true;
                     }
                 }
-
                 return false;
             }
         };
@@ -129,7 +124,7 @@ final readonly class AppKernel implements Kernel
         );
     }
 
-    private function createRateLimiter(ResponseFactory $responseFactory) : MiddlewareInterface
+    private function createRateLimiter() : MiddlewareInterface
     {
         return new RateLimiterMiddleware(
             new class implements RateLimiterInterface {
@@ -143,7 +138,12 @@ final readonly class AppKernel implements Kernel
 
                 public function clear(string $key) : void {}
             },
-            $responseFactory,
+            (new class {
+                public function rateLimited(int $retryAfter) : ResponseInterface
+                {
+                    return (new ResponseFactory())->rateLimited($retryAfter);
+                }
+            }),
             'ip',
             100,
             60
@@ -157,8 +157,32 @@ final readonly class AppKernel implements Kernel
 
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        return $this->kernel->handle($request);
+        if (! $request instanceof RequestInterface) {
+            return $this->responseFactory->error('Invalid request type', 400);
+        }
+
+        return $this->runPipeline($request);
     }
+
+    private function runPipeline(RequestInterface $request) : ResponseInterface
+    {
+        $core = fn (RequestInterface $req) : ResponseInterface => $this->router->resolve($req);
+
+        $pipeline = $this->middlewareStack;
+
+        while ( $middleware = array_pop($pipeline) ) {
+            $core = fn (RequestInterface $req) => $middleware->handle($req, $core);
+        }
+
+        return $core($request);
+    }
+
+    public function handleRequest(RequestInterface $request) : ResponseInterface
+    {
+        return $this->handle($request);
+    }
+
+    public function terminate(RequestInterface $r, ResponseInterface $res) : void {}
 
     public function getRouter() : RouterRuntimeInterface
     {
@@ -170,7 +194,7 @@ final readonly class AppKernel implements Kernel
         return new self(
             $this->router,
             $this->responseFactory,
-            [...$this->globalMiddleware, $middleware]
+            [...$this->middlewareStack, $middleware]
         );
     }
 }

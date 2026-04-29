@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Flows\StoreSessionValue;
 
-use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
+use Avax\Components\HTTP\Session\System\PublicSurface\Session;
 
 final readonly class StoreSessionValue
 {
     public function __construct(
-        private SessionScope $scope,
-    ) {
-    }
+        private Session $session
+    ) {}
 
-    public function execute(string $key, mixed $value): void
+    public function handle(string $key, mixed $value) : void
     {
-        $this->scope->set($key, $value);
+        $this->session->put($key, $value);
     }
 }

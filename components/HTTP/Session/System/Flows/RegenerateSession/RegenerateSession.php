@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Flows\RegenerateSession;
 
-use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
+use Avax\Components\HTTP\Session\System\PublicSurface\Session;
 
 final readonly class RegenerateSession
 {
     public function __construct(
-        private SessionScope $scope,
-    ) {
-    }
+        private Session $session
+    ) {}
 
-    public function execute(bool $destroy = false): bool
+    public function handle() : void
     {
-        return $this->scope->regenerate($destroy);
+        $this->session->regenerate();
     }
 }

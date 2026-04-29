@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Configuration;
@@ -13,7 +14,7 @@ final class SessionBuilder
     {
         $store = new NativeSessionStore();
         $scope = new SessionScope($store);
-        
+
         return new Session($scope);
     }
 }

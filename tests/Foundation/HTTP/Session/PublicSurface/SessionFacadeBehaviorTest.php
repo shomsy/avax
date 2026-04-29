@@ -4,33 +4,38 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Session\PublicSurface;
 
-use Avax\HTTP\Session\Session;
-use Avax\HTTP\Session\SessionStore\ArraySessionStore;
+use Avax\Components\HTTP\Session\System\Capabilities\Storage\ArraySessionStore;
+use Avax\Components\HTTP\Session\System\PublicSurface\Session;
+use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 use Avax\Tests\TestCase;
 
 final class SessionFacadeBehaviorTest extends TestCase
 {
-    public function test_session_facade_supports_basic_store_flows() : void
+    public function test_session_supports_basic_store_flows() : void
     {
-        $session = new Session(store: new ArraySessionStore());
+        $scope   = new SessionScope(new ArraySessionStore());
+        $session = new Session($scope);
+        $session->start();
 
-        $session->put(key: 'user_id', value: 7);
+        $session->put('user_id', 7);
 
-        self::assertTrue($session->has(key: 'user_id'));
-        self::assertSame(7, $session->get(key: 'user_id'));
+        self::assertTrue($session->has('user_id'));
+        self::assertSame(7, $session->get('user_id'));
 
-        $session->forget(key: 'user_id');
+        $session->forget('user_id');
 
-        self::assertFalse($session->has(key: 'user_id'));
+        self::assertFalse($session->has('user_id'));
     }
 
-    public function test_regenerate_id_changes_identifier() : void
+    public function test_regenerate_changes_identifier() : void
     {
-        $session = new Session(store: new ArraySessionStore());
-        $before  = $session->getId();
+        $scope   = new SessionScope(new ArraySessionStore());
+        $session = new Session($scope);
+        $session->start();
+        $before = $session->id();
 
-        $session->regenerateId();
+        $session->regenerate();
 
-        self::assertNotSame($before, $session->getId());
+        self::assertNotSame($before, $session->id());
     }
 }

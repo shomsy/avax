@@ -10,8 +10,25 @@ namespace Avax\Components\Application\Text\System\Capabilities\Transform;
  */
 final class ToPlural
 {
-    public function execute(string $value) : string
+    public function execute(string $value, int $count = 2) : string
     {
+        if ($count === 1) {
+            return $value;
+        }
+
+        $irregular = [
+            'person' => 'people', 'man' => 'men', 'woman' => 'women',
+            'child'  => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose'  => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+        ];
+
+        $lower = strtolower($value);
+        if (isset($irregular[$lower])) {
+            $replacement = $irregular[$lower];
+
+            return $value === ucfirst($value) ? ucfirst($replacement) : $replacement;
+        }
+
         if (preg_match('/[sxz]$|sh$|ch$/i', $value)) {
             return $value . 'es';
         }

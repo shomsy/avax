@@ -43,4 +43,23 @@ final class ListenerRegistry
         $this->listeners = [];
         $this->sorted = [];
     }
+
+    public function remove(string $event) : void
+    {
+        unset($this->listeners[$event], $this->sorted[$event]);
+    }
+
+    public function hasListeners(string $event) : bool
+    {
+        return isset($this->listeners[$event]) && ! empty($this->listeners[$event]);
+    }
+
+    public function listenerCount(string $event) : int
+    {
+        if (! isset($this->listeners[$event])) {
+            return 0;
+        }
+
+        return array_sum(array_map('count', $this->listeners[$event]));
+    }
 }

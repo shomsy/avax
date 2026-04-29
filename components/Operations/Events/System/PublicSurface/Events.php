@@ -34,4 +34,19 @@ final class Events implements EventsInterface
     {
         $this->registry->clear();
     }
+
+    public function forget(string $event) : void
+    {
+        $this->registry->remove($event);
+    }
+
+    public function hasListeners(string $event) : bool
+    {
+        return $this->registry->hasListeners($event);
+    }
+
+    public function listenerCount(string $event) : int
+    {
+        return $this->registry->listenerCount($event);
+    }
 }

@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Transaction;
 
-use Avax\Components\HTTP\Session\System\Capabilities\Storage\SessionStoreInterface;
+use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 use RuntimeException;
 
 final class SessionTransaction
@@ -12,7 +13,7 @@ final class SessionTransaction
     private bool   $active = false;
 
     public function __construct(
-        private readonly SessionStoreInterface $store
+        private readonly SessionScope $scope
     ) {}
 
     public function begin() : void
@@ -21,7 +22,7 @@ final class SessionTransaction
             throw new RuntimeException('Transaction already active');
         }
 
-        $this->backup = $this->store->all();
+        $this->backup = $this->scope->all();
         $this->active = true;
     }
 
@@ -41,10 +42,10 @@ final class SessionTransaction
             throw new RuntimeException('No active transaction');
         }
 
-        $this->store->flush();
+        $this->scope->clear();
 
         foreach ($this->backup as $key => $value) {
-            $this->store->put($key, $value);
+            $this->scope->set($key, $value);
         }
 
         $this->backup = null;

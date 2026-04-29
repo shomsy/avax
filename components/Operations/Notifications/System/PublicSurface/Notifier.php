@@ -4,30 +4,41 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Notifications\System\PublicSurface;
 
-final class Notifier
+use Avax\Components\Operations\Notifications\System\Capabilities\Notification;
+use Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel;
+use Avax\Components\Operations\Notifications\System\Flows\SendNotification;
+
+/**
+ * Notifier - main entry point for sending notifications.
+ */
+class Notifier
 {
-    private static ?\Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel $channel = null;
+    private SendNotification $flow;
 
-    public static function setChannel(\Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel $channel): void
+    public function __construct()
     {
-        self::$channel = $channel;
+        $this->flow = new SendNotification();
     }
 
-    public static function notify(string $message): void
+    public function registerChannel(NotificationChannel $channel) : self
     {
-        self::getChannel()->send($message);
+        $this->flow->registerChannel($channel);
+
+        return $this;
     }
 
-    public static function send(string $recipient, string $message): void
+    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null) : void
     {
-        self::getChannel()->sendTo($recipient, $message);
+        $this->flow->sendTo($notifiable, $notification, $channel);
     }
 
-    private static function getChannel(): \Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel
+    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null) : void
     {
-        if (self::$channel === null) {
-            throw new \RuntimeException('Notification channel not configured.');
-        }
-        return self::$channel;
+        $this->flow->sendToMany($notifiables, $notification, $channel);
+    }
+
+    public function hasChannel(string $name) : bool
+    {
+        return $this->flow->hasChannel($name);
     }
 }

@@ -1,3 +1,21 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Avax\Components\Operations\Notifications\System\Capabilities;
-interface NotificationChannel { public function send(string $message): void; public function sendTo(string $recipient, string $message): void; }
+
+/**
+ * Interface for notification channels.
+ */
+interface NotificationChannel
+{
+    /**
+     * Send a notification to a recipient.
+     */
+    public function send(mixed $notifiable, Notification $notification) : void;
+
+    /**
+     * Get the channel name.
+     */
+    public function name() : string;
+}

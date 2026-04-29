@@ -2,44 +2,49 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\HTTP\Session\Tests\Session\Flows;
+namespace Avax\Tests\Foundation\HTTP\Session\Flows;
 
-use Avax\HTTP\Session\ReadSessionValue\ReadSessionValue;
-use Avax\HTTP\Session\SessionStore\ArraySessionStore;
-use Avax\HTTP\Session\WriteSessionValue\WriteSessionValue;
+use Avax\Components\HTTP\Session\System\Capabilities\Storage\ArraySessionStore;
+use Avax\Components\HTTP\Session\System\Flows\ReadSessionValue\ReadSessionValue;
+use Avax\Components\HTTP\Session\System\Flows\StoreSessionValue\StoreSessionValue;
+use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 use Avax\Tests\TestCase;
 
 final class ReadWriteFlowTest extends TestCase
 {
-    public function test_read_value_from_store() : void
+    private function createScope() : SessionScope
     {
-        $store = new ArraySessionStore();
-        $store->put(key: 'user_id', value: 42);
-
-        $reader = new ReadSessionValue(store: $store);
-        $result = $reader->handle(key: 'user_id');
-
-        $this->assertSame(expected: 42, actual: $result);
+        return new SessionScope(new ArraySessionStore());
     }
 
-    public function test_write_value_to_store() : void
+    public function test_read_value_from_scope() : void
     {
-        $store = new ArraySessionStore();
+        $scope = $this->createScope();
+        $scope->set('user_id', 42);
 
-        $writer = new WriteSessionValue(store: $store);
-        $writer->handle(key: 'user_id', value: 42);
+        $reader = new ReadSessionValue($scope);
+        $result = $reader->execute('user_id');
 
-        $this->assertSame(expected: 42, actual: $store->get(key: 'user_id'));
+        $this->assertSame(42, $result);
     }
 
-    public function test_write_with_ttl() : void
+    public function test_write_value_to_scope() : void
     {
-        $store = new ArraySessionStore();
+        $scope = $this->createScope();
 
-        $writer = new WriteSessionValue(store: $store);
-        $writer->handle(key: 'token', value: 'abc', ttl: 3600);
+        $writer = new StoreSessionValue($scope);
+        $writer->execute('user_id', 42);
 
-        $this->assertSame(expected: 'abc', actual: $store->get(key: 'token'));
-        $this->assertIsInt(actual: $store->get(key: '_ttl.token'));
+        $this->assertSame(42, $scope->get('user_id'));
+    }
+
+    public function test_read_with_default() : void
+    {
+        $scope = $this->createScope();
+
+        $reader = new ReadSessionValue($scope);
+        $result = $reader->execute('missing', 'default');
+
+        $this->assertSame('default', $result);
     }
 }

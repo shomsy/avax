@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Flows\ForgetSessionValue;
 
-use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
+use Avax\Components\HTTP\Session\System\PublicSurface\Session;
 
 final readonly class ForgetSessionValue
 {
     public function __construct(
-        private SessionScope $scope,
-    ) {
-    }
+        private Session $session
+    ) {}
 
-    public function execute(string $key): void
+    public function handle(string $key) : void
     {
-        $this->scope->forget($key);
+        $this->session->forget($key);
     }
 }

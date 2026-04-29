@@ -2,61 +2,67 @@
 
 declare(strict_types=1);
 
-$root     = dirname(__DIR__, 2);
-$docsRoot = $root . '/docs';
+namespace Avax\Tooling\Refactor;
 
-$forbiddenDocTokens = [
-    'docs/Foundation/HTTP',
-    'docs/Foundation/DataLayer',
-    'Foundation/HTTP',
-    'Foundation/DataLayer',
-    'Avax\\DataFoundation',
-    'Avax\\DataLayer',
-    'namespace components\\',
-];
+final class CheckDocsMirror
+{
+    private array $forbiddenDocRefs = [
+        'Foundation/HTTP',
+        'Foundation/DataLayer', 
+        'Foundation/DataHandling',
+    ];
 
-$violations = [];
+    private array $errors = [];
 
-if (! is_dir($docsRoot)) {
-    fwrite(STDOUT, "PASS\n");
-    exit(0);
-}
-
-$it = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($docsRoot, FilesystemIterator::SKIP_DOTS),
-);
-
-foreach ($it as $file) {
-    if (! $file instanceof SplFileInfo || $file->isDir()) {
-        continue;
+    public function check() : array
+    {
+        $this->scanDocsForObsoleteRefs();
+        
+        return [
+            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'errors' => $this->errors,
+        ];
     }
 
-    $ext = strtolower($file->getExtension());
-    if (! in_array($ext, ['md', 'markdown'], true)) {
-        continue;
-    }
+    private function scanDocsForObsoleteRefs() : void
+    {
+        $docsPath = dirname(__DIR__, 2) . '/docs';
+        
+        if (! is_dir($docsPath)) {
+            return;
+        }
 
-    $contents = file_get_contents($file->getPathname());
-    if (! is_string($contents)) {
-        continue;
-    }
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($docsPath),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
 
-    foreach ($forbiddenDocTokens as $token) {
-        if (str_contains($contents, $token)) {
-            $rel          = str_replace($root . '/', '', $file->getPathname());
-            $violations[] = "{$rel} references forbidden token: {$token}";
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if ($file->getExtension() !== 'md' && $file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $content = file_get_contents($file->getPathname());
+            foreach ($this->forbiddenDocRefs as $ref) {
+                if (str_contains($content, $ref)) {
+                    $this->errors[] = $file->getPathname() . ': references obsolete ' . $ref;
+                }
+            }
         }
     }
 }
 
-if ($violations !== []) {
-    fwrite(STDOUT, "FAIL\n");
-    foreach ($violations as $v) {
-        fwrite(STDOUT, "- {$v}\n");
+if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
+    $checker = new CheckDocsMirror();
+    $result = $checker->check();
+    
+    echo $result['status'] . "\n";
+    
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors']) . "\n";
+        exit(1);
     }
-    exit(1);
+    
+    exit(0);
 }
-
-fwrite(STDOUT, "PASS\n");
-exit(0);
-

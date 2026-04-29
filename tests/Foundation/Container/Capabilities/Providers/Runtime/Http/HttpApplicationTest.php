@@ -9,7 +9,7 @@ use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\Middlew
 use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Response\Response;
-use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Tests\TestCase;
 use LogicException;

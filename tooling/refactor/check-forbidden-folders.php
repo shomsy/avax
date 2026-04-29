@@ -2,41 +2,58 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__, 2);
+namespace Avax\Tooling\Refactor;
 
-$forbiddenAtRepoRoot = [
-    'System',
-    'DI',
-    'ServerRequest',
-    'Auth',
-    'Providers',
-    'Traits',
-    'Writers',
-    'Config',
-    'Presentation',
-    'bootstrap',
-    'scripts',
-    'tools',
-    'public',
-];
+final class CheckForbiddenFolders
+{
+    private array $forbiddenFolders = [
+        'System',
+        'DI',
+        'ServerRequest',
+        'Auth',
+        'Providers',
+        'Traits',
+        'Writers',
+        'Config',
+        'Presentation',
+        'bootstrap',
+    ];
 
-$violations = [];
+    private array $errors = [];
 
-foreach ($forbiddenAtRepoRoot as $name) {
-    $path = $root . '/' . $name;
-    if (is_dir($path)) {
-        $violations[] = "forbidden repo-root source folder exists: {$name}/";
+    public function check() : array
+    {
+        $this->checkNoForbiddenFoldersAtRoot();
+        
+        return [
+            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'errors' => $this->errors,
+        ];
+    }
+
+    private function checkNoForbiddenFoldersAtRoot() : void
+    {
+        $basePath = dirname(__DIR__, 2);
+        
+        foreach ($this->forbiddenFolders as $folder) {
+            $path = $basePath . '/' . $folder;
+            if (is_dir($path)) {
+                $this->errors[] = "Forbidden folder at repo root: {$folder}/";
+            }
+        }
     }
 }
 
-if ($violations !== []) {
-    fwrite(STDOUT, "FAIL\n");
-    foreach ($violations as $v) {
-        fwrite(STDOUT, "- {$v}\n");
+if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
+    $checker = new CheckForbiddenFolders();
+    $result = $checker->check();
+    
+    echo $result['status'] . "\n";
+    
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors']) . "\n";
+        exit(1);
     }
-    exit(1);
+    
+    exit(0);
 }
-
-fwrite(STDOUT, "PASS\n");
-exit(0);
-

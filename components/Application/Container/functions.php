@@ -2,44 +2,84 @@
 
 declare(strict_types=1);
 
-if (! function_exists(function: 'appInstance')) {
+use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerFacade;
+use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
+
+if (! function_exists('appInstance')) {
     /**
-     * Store or retrieve the global kernel container instance used by helpers.
+     * Get or set the global container instance.
      */
-    function appInstance(mixed $instance = null) : mixed
+    function appInstance(DIContainerInterface|null $instance = null) : DIContainerInterface|null
     {
         static $container = null;
 
         if ($instance !== null) {
             $container = $instance;
-        }
-
-        if ($container === null) {
-            throw new RuntimeException(
-                message: 'Container instance is not initialized. Please set the container first.'
-            );
+            ContainerFacade::setContainer($instance);
+            Container::setContainer($instance);
         }
 
         return $container;
     }
 }
 
-if (! function_exists(function: 'app')) {
+if (! function_exists('app')) {
     /**
-     * Get the available container instance or resolve an abstract from the container.
+     * Get the container or resolve a service.
      *
-     * @param string|null $abstract
-     *
-     * @return mixed
+     * Usage:
+     *   app()              -> returns container
+     *   app(Service::class) -> resolves service
      */
     function app(string|null $abstract = null) : mixed
     {
-        $dependencyInjector = appInstance();
+        $container = appInstance();
 
         if ($abstract === null) {
-            return $dependencyInjector;
+            return $container;
         }
 
-        return $dependencyInjector->get(id: $abstract);
+        return $container->get($abstract);
+    }
+}
+
+if (! function_exists('make')) {
+    /**
+     * Build a service from the container.
+     */
+    function make(string $abstract, array $parameters = []) : object
+    {
+        return appInstance()->make($abstract, $parameters);
+    }
+}
+
+if (! function_exists('bind')) {
+    /**
+     * Bind a service to the container.
+     */
+    function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
+    {
+        appInstance()->bind($abstract, $concrete, $shared);
+    }
+}
+
+if (! function_exists('singleton')) {
+    /**
+     * Register a singleton in the container.
+     */
+    function singleton(string $abstract, mixed $concrete = null) : void
+    {
+        appInstance()->singleton($abstract, $concrete);
+    }
+}
+
+if (! function_exists('resolve')) {
+    /**
+     * Resolve a service from the container.
+     */
+    function resolve(string $abstract, array $parameters = []) : object
+    {
+        return appInstance()->make($abstract, $parameters);
     }
 }

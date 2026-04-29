@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
 interface AuthInterface
 {
-    public function user() : User|null;
+    public function user() : ?object;
 
     public function check() : bool;
 

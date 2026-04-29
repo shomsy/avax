@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\Filesystem;
+namespace Avax\Tests\Foundation\Filesystem;
 
+use Avax\Tests\TestCase;
 use components\Filesystem\Disks\Local\LocalDisk;
 use components\Filesystem\Filesystem;
-use components\Tests\TestCase;
 
 final class FilesystemTest extends TestCase
 {

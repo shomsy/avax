@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\Database\Stress;
+namespace Avax\Tests\Foundation\Database\Stress;
 
-use components\Tests\TestCase;
+use Avax\Tests\TestCase;
 use Throwable;
 
 /**

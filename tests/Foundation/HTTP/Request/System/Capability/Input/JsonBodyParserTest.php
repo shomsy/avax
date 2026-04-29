@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\HTTP\Request\System\Capability\Input;
+namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\Input;
 
+use Avax\Tests\TestCase;
 use components\HTTP\Request\System\Capability\Input\JsonBodyParser;
-use components\Tests\TestCase;
 use RuntimeException;
 
 final class JsonBodyParserTest extends TestCase

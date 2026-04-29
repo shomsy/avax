@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\DataFoundation\Arrhae;
+namespace Avax\Tests\Foundation\DataFoundation\Arrhae;
 
 use ArrayIterator;
+use Avax\Tests\TestCase;
 use components\DataFoundation\Arrhae;
-use components\Tests\TestCase;
 use RuntimeException;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\HTTP\URI\Parts;
+namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
 use components\HTTP\URI\Parts\Path;
 use PHPUnit\Framework\TestCase;

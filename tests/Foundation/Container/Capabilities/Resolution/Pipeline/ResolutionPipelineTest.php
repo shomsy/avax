@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Resolution\Pipeline;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Contracts\KernelStep;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\ResolutionPipeline;
 use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use components\Tests\TestCase;
 use RuntimeException;
 use Throwable;
 

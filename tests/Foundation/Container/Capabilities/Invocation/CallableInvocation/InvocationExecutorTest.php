@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Invocation\CallableInvocation;
+namespace Avax\Tests\Foundation\Container\Capabilities\Invocation\CallableInvocation;
 
 use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationContext;
 use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationExecutor;

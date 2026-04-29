@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-use components\Tests\TestCase;
+
+namespace Avax\Tests\Foundation\HTTP\Session\Flows;
+use Avax\Tests\TestCase;
 
 final class ReadSessionValueTest extends TestCase
 {

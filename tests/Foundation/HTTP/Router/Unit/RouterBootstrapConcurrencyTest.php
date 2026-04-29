@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 use Avax\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
 use Avax\Tests\TestCase;
 

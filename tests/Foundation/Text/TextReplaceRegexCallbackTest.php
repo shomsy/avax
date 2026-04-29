@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Text\Tests;
+namespace Avax\Tests\Foundation\Text;
 
 use Avax\Tests\TestCase;
 use Avax\Text\RegexException;

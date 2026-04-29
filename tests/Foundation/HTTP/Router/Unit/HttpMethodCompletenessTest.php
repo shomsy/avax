@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+use Avax\Tests\TestCase;
 use components\HTTP\Enums\HttpMethod;
-use components\Tests\TestCase;
 
 /**
  * Tests for HTTP method completeness - RFC 9110 coverage.

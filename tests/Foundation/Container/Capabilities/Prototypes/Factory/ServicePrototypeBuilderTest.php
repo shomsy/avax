@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Prototypes\Factory;
+namespace Avax\Tests\Foundation\Container\Capabilities\Prototypes\Factory;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeBuilder;
 use components\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
 use components\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
 use components\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
-use components\Tests\TestCase;
 use InvalidArgumentException;
 
 final class ServicePrototypeBuilderTest extends TestCase

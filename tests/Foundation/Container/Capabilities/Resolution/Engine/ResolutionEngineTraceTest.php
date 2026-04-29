@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Engine;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Engine;
 
 use Avax\Container\Container;
 use Avax\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;

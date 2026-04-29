@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Resolution\Errors;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Errors;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;
 use components\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionExceptionWithTrace;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
-use components\Tests\TestCase;
 
 final class ResolutionExceptionWithTraceTest extends TestCase
 {

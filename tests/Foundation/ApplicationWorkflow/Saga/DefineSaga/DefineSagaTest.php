@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\ApplicationWorkflow\Saga\DefineSaga;
+namespace Avax\Tests\Foundation\ApplicationWorkflow\Saga\DefineSaga;
 
+use Avax\Tests\TestCase;
 use components\ApplicationWorkflow\Saga\DefineSaga\DefineSaga;
 use components\ApplicationWorkflow\Saga\DefineSaga\InvalidSagaDefinition;
 use components\ApplicationWorkflow\Saga\DefineSaga\SagaCompensationDefinition;
 use components\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
 use components\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
-use components\Tests\TestCase;
 
 final class DefineSagaTest extends TestCase
 {

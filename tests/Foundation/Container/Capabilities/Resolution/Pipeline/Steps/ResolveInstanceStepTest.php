@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Resolution\Pipeline\Steps;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline\Steps;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use components\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\ResolveInstanceStep;
-use components\Tests\TestCase;
 use RuntimeException;
 use stdClass;
 

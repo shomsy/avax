@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\HTTP\Session\Capabilities;
+namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
 
+use Avax\Tests\TestCase;
 use components\HTTP\Session\Recovery\Recovery;
 use components\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
-use components\Tests\TestCase;
 use RuntimeException;
 use Throwable;
 

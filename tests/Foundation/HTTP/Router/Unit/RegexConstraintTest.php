@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;

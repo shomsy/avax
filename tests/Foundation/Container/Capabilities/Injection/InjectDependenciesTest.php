@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Injection;
+namespace Avax\Tests\Foundation\Container\Capabilities\Injection;
 
+use Avax\Tests\TestCase;
 use components\Container\ContainerInterface;
 use components\Container\DependencyInjection\Capability\Injection\InjectDependencies;
 use components\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
@@ -16,7 +17,6 @@ use components\Container\DependencyInjection\Capability\Prototypes\Model\Propert
 use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 use components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
 use components\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
-use components\Tests\TestCase;
 use ReflectionException;
 
 final class InjectDependenciesTest extends TestCase

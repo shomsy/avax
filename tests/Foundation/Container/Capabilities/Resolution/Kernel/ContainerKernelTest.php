@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Kernel;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Kernel;
 
 use Avax\Container\Container;
 use Avax\Container\DependencyInjection\Capability\Definitions\Store\DefinitionStore;

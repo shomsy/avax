@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Scopes;
+namespace Avax\Tests\Foundation\Container\Capabilities\Scopes;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
-use components\Tests\TestCase;
 use RuntimeException;
 use stdClass;
 

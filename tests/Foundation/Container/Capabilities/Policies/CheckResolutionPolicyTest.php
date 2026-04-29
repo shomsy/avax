@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Policies;
+namespace Avax\Tests\Foundation\Container\Capabilities\Policies;
 
 use Avax\Container\DependencyInjection\Capability\Policies\CheckResolutionPolicy;
 use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;

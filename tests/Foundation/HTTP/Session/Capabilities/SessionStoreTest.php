@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-use components\Tests\TestCase;
+
+namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
+use Avax\Tests\TestCase;
 
 final class SessionStoreTest extends TestCase
 {

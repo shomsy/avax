@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\Tests\Unit;
+namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;

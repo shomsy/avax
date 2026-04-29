@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\tests\Unit;
+namespace Avax\Tests\Unit;
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;

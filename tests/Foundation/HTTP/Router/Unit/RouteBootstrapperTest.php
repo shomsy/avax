@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace components\HTTP\Router\Tests\Unit;
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
+use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Flows\BootstrapRoutes\State\RouterBootstrapState;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteCollector;
-use components\Tests\TestCase;
 use RuntimeException;
 
 /**
  * Tests for route bootstrap determinism and security.
  */
-final class BootstrapRoutesTest extends TestCase
+final class RouteBootstrapperTest extends TestCase
 {
 
     /**

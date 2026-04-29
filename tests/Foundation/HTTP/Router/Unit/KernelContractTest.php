@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 use Avax\HTTP\Kernel;
 use Avax\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\PublicSurface;
+namespace Avax\Tests\Foundation\Container\PublicSurface;
 
 use Avax\Container\BindingBuilderInterface;
 use Avax\Container\Container;

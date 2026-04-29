@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Configuration;
+namespace Avax\Tests\Foundation\Container\Configuration;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Injection\InjectDependencies;
 use components\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
 use components\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
@@ -21,7 +22,6 @@ use components\Container\DependencyInjection\Capability\Resolution\Engine\Engine
 use components\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use components\Container\DependencyInjection\Configuration\KernelConfigFactory;
-use components\Tests\TestCase;
 
 final class KernelConfigFactoryTest extends TestCase
 {

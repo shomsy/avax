@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\Tests\Unit;
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\HTTP\Router\HttpMethod;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Attributes\AttributeRouteRegistrar;

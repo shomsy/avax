@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Regression\Foundation\HTTP\Request;
+namespace Avax\Tests\Regression\Foundation\HTTP\Request;
 
+use Avax\Tests\TestCase;
 use components\HTTP\Request\Request;
 use components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
 use components\HTTP\URI\Uri;
-use components\Tests\TestCase;
 use ReflectionClass;
 use ReflectionException;
 

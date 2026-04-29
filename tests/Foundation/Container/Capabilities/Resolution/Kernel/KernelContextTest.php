@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Resolution\Kernel;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Kernel;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use components\Tests\TestCase;
 use LogicException;
 use stdClass;
 

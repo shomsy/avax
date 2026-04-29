@@ -1,18 +1,17 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\PublicSurface;
 
-final class Http implements HttpInterface
-{
-    public function request(): Request
-    {
-        return new Request($_SERVER, $_GET, $_POST, $_FILES);
-    }
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
 
-    public function response(): Response
-    {
-        return new Response();
+final class Http implements HttpInterface {
+    public function __construct(private RouterInterface $r, private MiddlewarePipeline $p) {}
+    public function handle(RequestInterface $req): ResponseInterface {
+        return $this->p->run($req, function($req) { return $this->r->dispatch($req); });
     }
+    public function terminate(RequestInterface $req, ResponseInterface $res): void {}
 }

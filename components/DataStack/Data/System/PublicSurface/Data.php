@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\PublicSurface;
@@ -14,9 +13,6 @@ use Avax\Components\DataStack\Data\System\Flows\Write\WriteNestedValue;
 
 /**
  * Data PublicSurface.
- *
- * Orchestrates simple array capabilities and powerful nested/aggregation flows.
- * Restored from avax-backup.txt and restructured per refactor.md.
  */
 final readonly class Data implements DataInterface
 {

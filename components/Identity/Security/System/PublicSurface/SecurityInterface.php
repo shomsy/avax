@@ -1,16 +1,18 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Security\System\PublicSurface;
 
+/**
+ * SecurityInterface - Enterprise-grade security management contract.
+ */
 interface SecurityInterface
 {
-    public function encrypt(string $data) : string;
-
-    public function decrypt(string $data) : string;
-
-    public function hash(string $data) : string;
-
-    public function verify(string $data, string $hash) : bool;
+    public function readConfiguration(string $tenantId) : object;
+    
+    public function beginChange(string $tenantId, array $data) : object;
+    
+    public function approveChange(string $requestId) : void;
+    
+    public function applyChange(string $requestId) : void;
 }

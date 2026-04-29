@@ -1,28 +1,40 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Security\System\PublicSurface;
 
-final class Security implements SecurityInterface
+use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;
+use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\BeginSecurityChange;
+use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\ApproveSecurityChange;
+
+/**
+ * Security - Main entry point for Identity/Security component.
+ */
+final readonly class Security implements SecurityInterface
 {
-    public function encrypt(string $data) : string
+    public function __construct(
+        private SecurityConfigurationStore $configStore,
+        private BeginSecurityChange        $beginChange,
+        private ApproveSecurityChange      $approveChange
+    ) {}
+
+    public function readConfiguration(string $tenantId) : object
     {
-        return base64_encode($data);
+        return $this->configStore->read($tenantId);
     }
 
-    public function decrypt(string $data) : string
+    public function beginChange(string $tenantId, array $data) : object
     {
-        return base64_decode($data);
+        return $this->beginChange->execute($tenantId, $data);
     }
 
-    public function verify(string $data, string $hash) : bool
+    public function approveChange(string $requestId) : void
     {
-        return hash_equals($this->hash($data), $hash);
+        $this->approveChange->execute($requestId);
     }
 
-    public function hash(string $data) : string
+    public function applyChange(string $requestId) : void
     {
-        return hash('sha256', $data);
+        // Implementation
     }
 }

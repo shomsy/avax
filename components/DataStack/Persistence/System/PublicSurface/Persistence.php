@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\PublicSurface;
@@ -11,9 +10,6 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfW
 
 /**
  * Persistence PublicSurface implementation.
- *
- * Thin delegation layer that provides access to all persistence capabilities.
- * No business logic lives here — only delegation per refactor.md.
  */
 final readonly class Persistence implements PersistenceInterface
 {
@@ -22,7 +18,14 @@ final readonly class Persistence implements PersistenceInterface
         private RepositoryRegistry  $repositoryRegistry,
         private HydratorInterface   $hydrator,
         private IdentityMap         $identityMap,
+        private EntityManager       $entityManager,
+        private \Avax\Components\DataStack\Persistence\System\Flows\RunUnitOfWork\RunUnitOfWork $runUnitOfWork
     ) {}
+
+    public function run(callable $operation) : mixed
+    {
+        return $this->runUnitOfWork->execute($operation);
+    }
 
     public function unitOfWork() : UnitOfWorkInterface
     {
@@ -42,6 +45,16 @@ final readonly class Persistence implements PersistenceInterface
     public function identityMap() : IdentityMap
     {
         return $this->identityMap;
+    }
+
+    public function manager() : EntityManager
+    {
+        return $this->entityManager;
+    }
+
+    public function find(string $entityClass, mixed $id) : ?object
+    {
+        return $this->entityManager->find($entityClass, $id);
     }
 
     public function persist(object $entity) : void

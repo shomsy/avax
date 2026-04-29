@@ -1,0 +1,3 @@
+<?php
+namespace Avax\Components\DeveloperTools\Diagnostics\System\Configuration;
+final class DiagnosticsConfig { public static function isDebug(): bool { return $_ENV["APP_DEBUG"] ?? false; } }

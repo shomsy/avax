@@ -1,16 +1,24 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Logout;
 
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 
-final class Logout
+/**
+ * Logout - Flow orchestrator for user logout.
+ * 1:1 alignment with refactor.md.
+ */
+final readonly class Logout
 {
     public function __construct(
-        private readonly Auth $auth,
+        private ClearAuthenticatedIdentity $clearIdentity,
+        private Identity                   $identity
     ) {}
 
-    public function logout() : void {}
+    public function execute() : void
+    {
+        $this->clearIdentity->execute();
+        $this->identity->clear();
+    }
 }

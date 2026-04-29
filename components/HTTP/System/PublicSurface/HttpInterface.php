@@ -1,12 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\PublicSurface;
 
-interface HttpInterface
-{
-    public function request(): Request;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
-    public function response(): Response;
+interface HttpInterface {
+    public function handle(RequestInterface $r): ResponseInterface;
+    public function terminate(RequestInterface $r, ResponseInterface $res): void;
 }

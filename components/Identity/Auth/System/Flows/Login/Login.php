@@ -1,24 +1,38 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 
-final class Login
+/**
+ * Login - Flow orchestrator for user authentication.
+ * 1:1 alignment with refactor.md.
+ */
+final readonly class Login
 {
     public function __construct(
-        private readonly Auth $auth,
+        private FindUserByCredentials      $findUser,
+        private VerifyPassword             $verifyPassword,
+        private StartAuthenticatedSession  $startSession,
+        private Identity                   $identity
     ) {}
 
-    public function login(string $email, string $password) : User|null
+    /**
+     * @throws AuthenticationFailed
+     */
+    public function execute(Credentials $credentials) : AuthenticationResult
     {
-        $user = new User(id: '1', email: $email);
+        $user = $this->findUser->execute($credentials->email);
 
-        $this->auth->setUser($user);
+        if (!$user || !$this->verifyPassword->execute($user, $credentials->password)) {
+            throw new AuthenticationFailed('Invalid credentials');
+        }
 
-        return $user;
+        $issued = $this->identity->issue($user);
+        $this->startSession->execute($issued);
+
+        return new AuthenticationResult($user, $issued);
     }
 }

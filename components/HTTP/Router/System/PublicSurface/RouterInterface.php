@@ -1,31 +1,13 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\PublicSurface;
 
-use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
-/**
- * Public API Contract: Router DSL Interface.
- */
-interface RouterInterface
-{
-    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy;
-
-    public function fallback(callable|array|string $handler) : void;
+interface RouterInterface {
+    public function get(string $u, mixed $a): void;
+    public function post(string $u, mixed $a): void;
+    public function dispatch(RequestInterface $r): ResponseInterface;
 }

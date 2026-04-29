@@ -1,0 +1,31 @@
+<?php
+declare(strict_types=1);
+
+namespace Avax\Components\HTTP\Router\System\Flows\MatchRoute;
+
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+
+final class MatchRoute
+{
+    public function execute(RouteCollection $routes, RequestInterface $request): ?RouteDefinition
+    {
+        foreach ($routes->all() as $route) {
+            if ($route->method()->toString() !== $request->getMethod()) {
+                continue;
+            }
+
+            if ($this->matchUri($route->uri(), $request->getUri()->getPath())) {
+                return $route;
+            }
+        }
+
+        return null;
+    }
+
+    private function matchUri(string $pattern, string $path): bool
+    {
+        return $pattern === $path;
+    }
+}

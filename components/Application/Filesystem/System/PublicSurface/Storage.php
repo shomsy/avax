@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
-use Avax\Components\Application\Filesystem\System\Capabilities\Storage\LocalStorage;
+use Avax\Components\Application\Filesystem\System\Capabilities\Storage\StorageInterface;
 
 /**
  * Storage Public Surface.
@@ -12,34 +12,81 @@ use Avax\Components\Application\Filesystem\System\Capabilities\Storage\LocalStor
  * Main entry point for filesystem operations.
  * Delegated to internal storage capabilities.
  */
-final readonly class Storage
+final class Storage
 {
-    public function __construct(
-        private LocalStorage $storage
-    ) {}
+    private static ?StorageInterface $storage = null;
 
-    public function get(string $path) : string
+    public static function setStorage(StorageInterface $storage): void
     {
-        return $this->storage->get($path);
+        self::$storage = $storage;
     }
 
-    public function put(string $path, string $content) : void
+    public static function get(string $path): string
     {
-        $this->storage->put($path, $content);
+        return self::getStorage()->read($path);
     }
 
-    public function exists(string $path) : bool
+    public static function put(string $path, string $content): bool
     {
-        return $this->storage->exists($path);
+        return self::getStorage()->write($path, $content);
     }
 
-    public function delete(string $path) : void
+    public static function append(string $path, string $content): bool
     {
-        $this->storage->delete($path);
+        return self::getStorage()->write($path, $content, true);
     }
 
-    public function makeDirectory(string $path, int $permissions = 0755) : void
+    public static function exists(string $path): bool
     {
-        $this->storage->createDirectory($path, $permissions);
+        return self::getStorage()->exists($path);
+    }
+
+    public static function delete(string $path): bool
+    {
+        return self::getStorage()->delete($path);
+    }
+
+    public static function makeDirectory(string $path, int $permissions = 0755): bool
+    {
+        return self::getStorage()->createDirectory($path, $permissions);
+    }
+
+    public static function deleteDirectory(string $path): bool
+    {
+        return self::getStorage()->deleteDirectory($path);
+    }
+
+    public static function copy(string $source, string $destination): bool
+    {
+        return self::getStorage()->copy($source, $destination);
+    }
+
+    public static function move(string $source, string $destination): bool
+    {
+        return self::getStorage()->move($source, $destination);
+    }
+
+    public static function lastModified(string $path): int|null
+    {
+        return self::getStorage()->lastModified($path);
+    }
+
+    public static function isWritable(string $path): bool
+    {
+        return self::getStorage()->isWritable($path);
+    }
+
+    public static function listFiles(string $path): array
+    {
+        return self::getStorage()->listFiles($path);
+    }
+
+    private static function getStorage(): StorageInterface
+    {
+        if (self::$storage === null) {
+            throw new \RuntimeException('Storage not configured. Call Storage::setStorage() first.');
+        }
+
+        return self::$storage;
     }
 }

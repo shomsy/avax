@@ -1,30 +1,39 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Access\Access;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
-use Throwable;
+use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationData;
+use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
+use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 
 /**
- * Public surface for the Auth component.
- * Backed by the powerful Identity capability and Access control.
+ * Auth - Main entry point for Identity/Auth component.
+ * Orchestrates flows and capabilities.
  */
-final class Auth implements AuthInterface
+final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private readonly IdentityInterface $identity,
-        private readonly Access            $access
+        private Identity $identity,
     ) {}
+
+    public function login(Credentials $credentials) : AuthenticationResult
+    {
+        return $this->identity->login($credentials);
+    }
+
+    public function logout() : void
+    {
+        $this->identity->logout();
+    }
 
     public function user() : ?User
     {
-        return $this->identity->authentication()->user();
+        $entity = $this->identity->authentication()->user();
+        return $entity ? User::fromEntity($entity) : null;
     }
 
     public function check() : bool
@@ -34,42 +43,21 @@ final class Auth implements AuthInterface
 
     public function guest() : bool
     {
-        return $this->identity->authentication()->guest();
+        return ! $this->check();
     }
 
-    public function login(array $credentials) : bool
+    public function register(RegistrationData $data) : RegistrationResult
     {
-        try {
-            $this->identity->login(new Credentials($credentials['email'], $credentials['password']));
-
-            return true;
-        } catch (Throwable) {
-            return false;
-        }
+        return $this->identity->account()->register($data);
     }
 
-    public function logout() : void
+    public function changePassword(ChangePasswordData $data) : void
     {
-        $this->identity->logout();
+        $this->identity->account()->changePassword($data);
     }
 
-    public function cannot(string $permission, mixed $resource = null) : bool
+    public function logoutAllSessions() : void
     {
-        return ! $this->can($permission, $resource);
-    }
-
-    public function can(string $permission, mixed $resource = null) : bool
-    {
-        return $this->access->access()->allows($permission, $resource);
-    }
-
-    public function access() : Access
-    {
-        return $this->access;
-    }
-
-    public function identity() : IdentityInterface
-    {
-        return $this->identity;
+        $this->identity->sessions()->logoutAllSessions();
     }
 }

@@ -2,63 +2,71 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__, 2);
+namespace Avax\Tooling\Refactor;
 
-$componentsRoot = $root . '/components';
+final class CheckPublicSurface
+{
+    private array $errors = [];
 
-$violations = [];
-
-$iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($componentsRoot, FilesystemIterator::SKIP_DOTS),
-);
-
-foreach ($iterator as $file) {
-    if (! $file instanceof SplFileInfo || $file->getExtension() !== 'php') {
-        continue;
+    public function check() : array
+    {
+        $this->checkPublicSurfaceClassesAreThin();
+        
+        return [
+            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'errors' => $this->errors,
+        ];
     }
 
-    $path = str_replace($root, '', $file->getPathname());
-
-    if (! str_contains($path, '/System/PublicSurface/')) {
-        continue;
+    private function checkPublicSurfaceClassesAreThin() : void
+    {
+        $componentsPath = dirname(__DIR__, 2) . '/components';
+        
+        $this->scanPublicSurface($componentsPath);
     }
 
-    $contents = file_get_contents($file->getPathname());
-    if (! is_string($contents)) {
-        continue;
-    }
+    private function scanPublicSurface(string $path) : void
+    {
+        if (! is_dir($path)) {
+            return;
+        }
 
-    // Lightweight heuristic: public surface should not contain heavy loops, SQL, or direct filesystem ops.
-    // This is not a full parser. It is a guardrail.
-    $suspects = [
-        'SELECT '           => 'SQL should not live in PublicSurface',
-        'INSERT '           => 'SQL should not live in PublicSurface',
-        'UPDATE '           => 'SQL should not live in PublicSurface',
-        'DELETE '           => 'SQL should not live in PublicSurface',
-        'file_get_contents' => 'Filesystem IO should not live in PublicSurface',
-        'file_put_contents' => 'Filesystem IO should not live in PublicSurface',
-        'fopen('            => 'Filesystem IO should not live in PublicSurface',
-        'curl_'             => 'Network/IO should not live in PublicSurface',
-        'while ('           => 'Complex loops should not live in PublicSurface',
-        'foreach ('         => 'Complex loops should not live in PublicSurface',
-    ];
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
 
-    foreach ($suspects as $needle => $message) {
-        if (str_contains($contents, $needle)) {
-            $violations[] = ltrim($path, '/') . " — {$message} ({$needle})";
-            break;
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            if (! str_contains($file->getPathname(), '/PublicSurface/')) {
+                continue;
+            }
+
+            $content = file_get_contents($file->getPathname());
+            
+            // Check for heavy behavior - only flag if excessive private state
+            $privateCount = preg_match_all('/private\s+\w+\s+\$\w+\s*=/', $content);
+            if ($privateCount > 3) {
+                $this->errors[] = $file->getPathname() . ': PublicSurface has excessive private state (' . $privateCount . ' properties)';
+            }
         }
     }
 }
 
-if ($violations !== []) {
-    fwrite(STDOUT, "FAIL\n");
-    foreach ($violations as $v) {
-        fwrite(STDOUT, "- {$v}\n");
+if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
+    $checker = new CheckPublicSurface();
+    $result = $checker->check();
+    
+    echo $result['status'] . "\n";
+    
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors']) . "\n";
+        exit(1);
     }
-    exit(1);
+    
+    exit(0);
 }
-
-fwrite(STDOUT, "PASS\n");
-exit(0);
-

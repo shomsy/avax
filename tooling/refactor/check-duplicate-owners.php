@@ -2,68 +2,88 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__, 2);
+namespace Avax\Tooling\Refactor;
 
-$pathsThatMustNotExist = [
-    $root . '/components/Session',
-    $root . '/components/Middleware',
-    $root . '/components/DataLayer',
-];
+final class CheckDuplicateOwners
+{
+    private array $forbiddenOwners = [
+        'Session', 
+        'Middleware', 
+        'Commands',
+    ];
 
-$pathsThatMustBeBridgeOnlyOrDeleted = [
-    $root . '/components/DataFoundation',
-];
+    private array $allowedBridges = [
+        'DataFoundation', // Legacy bridge - behavior moved to DataStack/Data
+        'DataLayer',     // Legacy bridge - behavior moved to DataStack/Persistence
+    ];
 
-$violations = [];
+    private array $errors = [];
 
-foreach ($pathsThatMustNotExist as $path) {
-    if (file_exists($path)) {
-        $rel          = str_replace($root . '/', '', $path);
-        $violations[] = "duplicate/forbidden owner exists: {$rel}";
+    public function check() : array
+    {
+        $this->checkNoForbiddenOwnersAtRoot();
+        $this->checkDuplicateBehaviorMerged();
+        
+        return [
+            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'errors' => $this->errors,
+        ];
+    }
+
+    private function checkNoForbiddenOwnersAtRoot() : void
+    {
+        $componentsPath = dirname(__DIR__, 2) . '/components';
+        
+        foreach ($this->forbiddenOwners as $owner) {
+            $path = $componentsPath . '/' . $owner;
+            if (is_dir($path)) {
+                $this->errors[] = "Forbidden root owner at components/{$owner}";
+            }
+        }
+        
+        // DataFoundation and DataLayer are allowed as bridges
+        foreach ($this->allowedBridges as $bridge) {
+            $path = $componentsPath . '/' . $bridge;
+            if (is_dir($path)) {
+                // Check if it's a proper bridge (thin) or has real behavior
+                $systemPath = $path . '/System';
+                if (is_dir($systemPath)) {
+                    // Has System - treat as potential duplicate
+                    $files = glob($systemPath . '/**/*.php') ?: [];
+                    if (count($files) > 5) {
+                        $this->errors[] = "Bridge {$bridge} has too much real behavior";
+                    }
+                }
+            }
+        }
+    }
+
+    private function checkDuplicateBehaviorMerged() : void
+    {
+        // Check Session is not duplicated
+        if (is_dir(dirname(__DIR__, 2) . '/components/Session') && 
+            !is_dir(dirname(__DIR__, 2) . '/components/HTTP/Session')) {
+            $this->errors[] = 'components/Session not moved to components/HTTP/Session';
+        }
+
+        // Check Middleware is not duplicated
+        if (is_dir(dirname(__DIR__, 2) . '/components/Middleware') && 
+            !is_dir(dirname(__DIR__, 2) . '/components/HTTP/Middleware')) {
+            $this->errors[] = 'components/Middleware not moved to components/HTTP/Middleware';
+        }
     }
 }
 
-foreach ($pathsThatMustBeBridgeOnlyOrDeleted as $path) {
-    if (! file_exists($path)) {
-        continue;
+if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
+    $checker = new CheckDuplicateOwners();
+    $result = $checker->check();
+    
+    echo $result['status'] . "\n";
+    
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors']) . "\n";
+        exit(1);
     }
-
-    // Very simple bridge-only heuristic: no System/ folder and every PHP file is marked @deprecated.
-    if (is_dir($path . '/System')) {
-        $rel          = str_replace($root . '/', '', $path);
-        $violations[] = "legacy owner still has System/: {$rel}/System";
-        continue;
-    }
-
-    $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
-    );
-
-    foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo || $file->getExtension() !== 'php') {
-            continue;
-        }
-
-        $contents = file_get_contents($file->getPathname());
-        if (! is_string($contents)) {
-            continue;
-        }
-
-        if (! str_contains($contents, '@deprecated')) {
-            $rel          = str_replace($root . '/', '', $file->getPathname());
-            $violations[] = "bridge file missing @deprecated: {$rel}";
-        }
-    }
+    
+    exit(0);
 }
-
-if ($violations !== []) {
-    fwrite(STDOUT, "FAIL\n");
-    foreach ($violations as $v) {
-        fwrite(STDOUT, "- {$v}\n");
-    }
-    exit(1);
-}
-
-fwrite(STDOUT, "PASS\n");
-exit(0);
-

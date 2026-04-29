@@ -21,6 +21,17 @@ final readonly class Pattern
         return (bool) preg_match($this->getFinalPattern(), $subject);
     }
 
+    public function replace(string $replacement, string $subject) : string
+    {
+        return (string) preg_replace($this->getFinalPattern(), $replacement, $subject);
+    }
+
+    public function matchAll(string $subject) : array
+    {
+        preg_match_all($this->getFinalPattern(), $subject, $matches);
+        return $matches;
+    }
+
     private function getFinalPattern() : string
     {
         return "~{$this->raw}~{$this->flags}";

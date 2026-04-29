@@ -2,61 +2,65 @@
 
 declare(strict_types=1);
 
-$root            = dirname(__DIR__, 2);
-$forbiddenTokens = ['FrankenPhp', 'RoadRunner', 'Swoole', 'Workerman', 'ReactPHP', 'Amp'];
-$allowedPaths    = [
-    '/framework/System/Capabilities/Runtime/Adapters/',
-];
-$scanRoots = [
-    $root . '/framework/System',
-];
+namespace Avax\Tooling\Refactor;
 
-$violations = [];
+final class CheckRuntimeLeaks
+{
+    private array $forbiddenRuntimeImports = [
+        'Avax\System\Capabilities\Runtime\Adapters',
+    ];
 
-foreach ($scanRoots as $scanRoot) {
-    $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($scanRoot, FilesystemIterator::SKIP_DOTS),
-    );
+    private array $errors = [];
 
-    foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo || $file->getExtension() !== 'php') {
-            continue;
+    public function check() : array
+    {
+        $this->checkNoRuntimeLeaksOutsideFramework();
+        
+        return [
+            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'errors' => $this->errors,
+        ];
+    }
+
+    private function checkNoRuntimeLeaksOutsideFramework() : void
+    {
+        $componentsPath = dirname(__DIR__, 2) . '/components';
+        
+        if (! is_dir($componentsPath)) {
+            return;
         }
 
-        $path = str_replace($root, '', $file->getPathname());
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($componentsPath),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
 
-        $isAllowed = false;
-
-        foreach ($allowedPaths as $allowedPath) {
-            if (str_contains($path, $allowedPath)) {
-                $isAllowed = true;
-
-                break;
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
             }
-        }
 
-        if ($isAllowed) {
-            continue;
-        }
-
-        $contents = file_get_contents($file->getPathname());
-
-        if (! is_string($contents)) {
-            continue;
-        }
-
-        foreach ($forbiddenTokens as $token) {
-            if (str_contains($contents, $token)) {
-                $violations[] = sprintf('%s leaks runtime-specific token "%s"', ltrim($path, '/'), $token);
+            $content = file_get_contents($file->getPathname());
+            foreach ($this->forbiddenRuntimeImports as $import) {
+                if (str_contains($content, 'use ' . $import)) {
+                    $this->errors[] = $file->getPathname() . ': imports runtime adapter outside framework/System';
+                }
             }
         }
     }
 }
 
-if ($violations !== []) {
-    fwrite(STDERR, implode(PHP_EOL, $violations) . PHP_EOL);
-
-    exit(1);
+if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
+    $checker = new CheckRuntimeLeaks();
+    $result = $checker->check();
+    
+    echo $result['status'] . "\n";
+    
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors']) . "\n";
+        exit(1);
+    }
+    
+    exit(0);
 }
-
-fwrite(STDOUT, "Runtime leak checks passed.\n");

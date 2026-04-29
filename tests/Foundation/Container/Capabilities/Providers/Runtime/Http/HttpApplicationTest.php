@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Providers\Runtime\Http;
+namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Response\Response;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Text\Tests;
+namespace Avax\Tests\Foundation\Text;
 
-use components\Tests\TestCase;
+use Avax\Tests\TestCase;
 use components\Text\Pattern;
 
 final class MatchResultGroupsTest extends TestCase

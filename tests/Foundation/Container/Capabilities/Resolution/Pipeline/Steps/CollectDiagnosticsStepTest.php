@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Steps;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline\Steps;
 
 use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepStarted;

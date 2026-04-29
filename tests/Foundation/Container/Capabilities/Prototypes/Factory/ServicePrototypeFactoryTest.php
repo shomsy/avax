@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Prototypes\Factory;
+namespace Avax\Tests\Foundation\Container\Capabilities\Prototypes\Factory;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
 use components\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
 use components\Container\DependencyInjection\Capability\Prototypes\Cache\PrototypeCache;
 use components\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
 use components\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
-use components\Tests\TestCase;
 use Override;
 use RuntimeException;
 use stdClass;

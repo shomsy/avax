@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\Filesystem\Files;
+namespace Avax\Tests\Foundation\Filesystem\Files;
 
+use Avax\Tests\TestCase;
 use components\Filesystem\Disks\Local\LocalDisk;
 use components\Filesystem\Files\AppendToFile;
-use components\Tests\TestCase;
 
 class AppendToFileTest extends TestCase
 {

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Flow\RegisterBindings;
+namespace Avax\Tests\Foundation\Container\Flows\RegisterBindings;
 
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface as ComponentResponseInterface;
+use Avax\HTTP\Router\RouterInterface;
+use Avax\Tests\TestCase;
+use components\Container\Core\AppFactory;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
-use components\Container\Core\AppFactory;
 use components\HTTP\Request\Request;
-use components\Tests\TestCase;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use LogicException;
 use Override;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use stdClass;
@@ -98,57 +98,17 @@ final class RegisterBindingsTest extends TestCase
 
 final class RegistrationFakeRouter implements RouterInterface
 {
-    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        return $this->get(path: $path, action: $action);
-    }
-
-    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function get(string $u, mixed $a) : void
     {
         throw new LogicException(message: 'Fake router does not support route registration.');
     }
 
-    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function post(string $u, mixed $a) : void
     {
-        return $this->get(path: $path, action: $action);
+        throw new LogicException(message: 'Fake router does not support route registration.');
     }
 
-    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        return $this->get(path: $path, action: $action);
-    }
-
-    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        return $this->get(path: $path, action: $action);
-    }
-
-    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        return $this->get(path: $path, action: $action);
-    }
-
-    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        return $this->get(path: $path, action: $action);
-    }
-
-    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy
-    {
-        throw new LogicException(message: 'Fake router does not support wildcard registration.');
-    }
-
-    public function anyExpanded(string $path, callable|array|string $action) : array
-    {
-        throw new LogicException(message: 'Fake router does not support expanded wildcard registration.');
-    }
-
-    public function fallback(callable|array|string $handler) : void
-    {
-        throw new LogicException(message: 'Fake router does not support fallback.');
-    }
-
-    public function resolve(Request $request) : ResponseInterface
+    public function dispatch(RequestInterface $r) : ComponentResponseInterface
     {
         throw new LogicException(message: 'Fake router does not resolve requests in registration tests.');
     }

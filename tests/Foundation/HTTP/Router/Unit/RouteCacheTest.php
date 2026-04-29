@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\Tests\Unit;
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\HTTP\Router\RouterRuntimeInterface;

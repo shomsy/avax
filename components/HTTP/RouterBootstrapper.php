@@ -28,7 +28,7 @@ use ReflectionException;
  */
 final class RouterBootstrapper
 {
-    public array $globalMiddleware
+    public array  $globalMiddleware
         = [] {
             get {
                 return $this->globalMiddleware;
@@ -88,10 +88,7 @@ final class RouterBootstrapper
         $fullPath        = $this->qualifyPath(path: $path);
         $routeKey        = $this->routeKey(method: $method, path: $fullPath);
         $proxy           = $this->registerWithDsl(method: $method, path: $fullPath, handler: $handler);
-        $routeMiddleware = array_values(array_merge(
-                                            $this->activeMiddleware,
-                                            $this->routeMiddleware[$routeKey] ?? []
-                                        ));
+        $routeMiddleware = array_values(array_merge($this->activeMiddleware, $this->routeMiddleware[$routeKey] ?? []));
 
         if ($routeMiddleware !== []) {
             $proxy->middleware(middleware: $routeMiddleware);

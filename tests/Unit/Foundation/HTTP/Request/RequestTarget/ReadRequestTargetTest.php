@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
+namespace Avax\Tests\Unit\Foundation\HTTP\Request\RequestTarget;
 
+use Avax\Tests\TestCase;
 use components\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget;
 use components\HTTP\URI\UriBuilder;
-use components\Tests\TestCase;
 
 /**
  * TDD Tests for ReadRequestTarget according to the DeepRefactor plan.

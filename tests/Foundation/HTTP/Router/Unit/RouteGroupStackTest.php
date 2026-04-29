@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
-use components\Tests\TestCase;
 
 /**
  * Tests for instance-based RouteGroupFrames functionality.
  *
  * Ensures proper stack management and exception safety.
  */
-class RouteGroupFramesTest extends TestCase
+class RouteGroupStackTest extends TestCase
 {
     private RouteGroupFrames $stack;
 

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Providers\Runtime\Http;
+namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
+use Avax\Tests\TestCase;
 use components\Container\BindingBuilderInterface;
 use components\Container\ContainerInterface;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
 use components\Container\DependencyInjection\Configuration\Settings;
-use components\Tests\TestCase;
 use components\View\BladeTemplateEngine;
 
 final class ViewServiceProviderTest extends TestCase

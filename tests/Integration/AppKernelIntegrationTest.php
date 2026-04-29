@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Integration;
 use Avax\HTTP\AppKernel;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\CsrfVerificationMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\RouterBootstrapper;
-use components\Tests\TestCase;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
+use Avax\HTTP\RouterBootstrapper;
+use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;

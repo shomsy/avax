@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Injection\Properties;
+namespace Avax\Tests\Foundation\Container\Capabilities\Injection\Properties;
 
 use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;

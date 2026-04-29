@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Providers\Contracts;
+namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Contracts;
 
+use Avax\Tests\TestCase;
 use components\Container\ContainerInterface;
 use components\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
-use components\Tests\TestCase;
 use ReflectionMethod;
 
 final class ServiceProviderContractTest extends TestCase

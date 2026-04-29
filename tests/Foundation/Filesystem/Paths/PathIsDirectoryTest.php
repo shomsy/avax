@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Foundation\Filesystem\Paths;
+namespace Avax\Tests\Foundation\Filesystem\Paths;
 
+use Avax\Tests\TestCase;
 use components\Filesystem\Paths\PathIsDirectory;
-use components\Tests\TestCase;
 
 class PathIsDirectoryTest extends TestCase
 {

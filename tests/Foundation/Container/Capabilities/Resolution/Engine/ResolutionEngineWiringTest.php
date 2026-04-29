@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace components\Container\Tests\Capability\Resolution\Engine;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Engine;
 
+use Avax\Tests\TestCase;
 use components\Container\DependencyInjection\Capability\Definitions\Store\DefinitionStore;
 use components\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
 use components\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
@@ -13,7 +14,6 @@ use components\Container\DependencyInjection\Capability\Resolution\Engine\Instan
 use components\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
 use components\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use components\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use components\Tests\TestCase;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 

@@ -2,13 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Router\Tests\Unit;
+namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RouteStage;
-use Closure;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 final class FakeContainer implements PsrContainerInterface
@@ -20,22 +16,22 @@ final class FakeContainer implements PsrContainerInterface
 
     public function has(string $id) : bool
     {
-        return class_exists(class: $id);
+        return class_exists($id);
     }
 
     public function make(string $abstract, array $parameters = []) : object
     {
-        throw new RuntimeException(message: 'Not implemented.');
+        throw new RuntimeException('Not implemented.');
     }
 
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
-        throw new RuntimeException(message: 'Not implemented.');
+        throw new RuntimeException('Not implemented.');
     }
 
     public function injectInto(object $target) : object
     {
-        throw new RuntimeException(message: 'Not implemented.');
+        throw new RuntimeException('Not implemented.');
     }
 
     public function canInject(object $target) : bool
@@ -49,22 +45,6 @@ final class FakeContainer implements PsrContainerInterface
 
     public function instance(string $abstract, object $instance) : void
     {
-        throw new RuntimeException(message: 'Not implemented.');
-    }
-}
-
-final class SampleStage implements RouteStage
-{
-    public function handle(Request $request, Closure $next) : ResponseInterface
-    {
-        return $next($request);
-    }
-}
-
-final class SampleMiddleware
-{
-    public function handle(Request $request, Closure $next) : ResponseInterface
-    {
-        return $next($request);
+        throw new RuntimeException('Not implemented.');
     }
 }

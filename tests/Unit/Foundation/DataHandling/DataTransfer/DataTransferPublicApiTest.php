@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace components\Tests\Unit\Foundation\DataHandling\DataTransfer;
+namespace Avax\Tests\Unit\Foundation\DataHandling\DataTransfer;
 
 use components\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
 use components\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;

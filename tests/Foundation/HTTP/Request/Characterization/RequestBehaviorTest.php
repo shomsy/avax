@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Tests\Foundation\Request\Characterization;
+namespace Avax\Tests\Foundation\HTTP\Request\Characterization;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\URI\UriBuilder;

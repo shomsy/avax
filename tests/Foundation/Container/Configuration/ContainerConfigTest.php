@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Configuration;
+namespace Avax\Tests\Foundation\Container\Configuration;
 
 use Avax\Container\DependencyInjection\Configuration\ContainerConfig;
 use Avax\Tests\TestCase;

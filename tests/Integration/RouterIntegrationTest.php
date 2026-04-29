@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Integration;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\Auth\AuthenticationServiceProvider;
 use Avax\Container\Providers\Auth\SecurityServiceProvider;

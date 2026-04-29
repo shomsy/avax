@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Operations;
+namespace Avax\Tests\Operations;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\SagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface\Workflow;

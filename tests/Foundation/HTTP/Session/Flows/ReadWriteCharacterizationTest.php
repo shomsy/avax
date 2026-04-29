@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Session\Flows;
 use Avax\HTTP\Session\NullSession;
 use Avax\Tests\TestCase;
 

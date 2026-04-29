@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\HTTP\Request\Inputs\Examples;
+namespace Avax\Tests\Foundation\HTTP\Request\ServerRequest\IncomingRequest\Inputs\Examples;
 
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO;

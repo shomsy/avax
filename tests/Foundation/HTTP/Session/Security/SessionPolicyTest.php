@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Tests\Session\Security;
+namespace Avax\Tests\Foundation\HTTP\Session\Security;
 
 use Avax\HTTP\Session\SessionSecurity\SessionPolicy\AbsoluteLifetimePolicy;
 use Avax\HTTP\Session\SessionSecurity\SessionPolicy\IdleTimeoutPolicy;

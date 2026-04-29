@@ -35,7 +35,7 @@ namespace {
     }
 }
 
-namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
+namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http {
 
     use Avax\HTTP\Request\Request;
     use Avax\HTTP\Session\NullSession;

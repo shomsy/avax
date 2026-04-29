@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+
+namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RoutePathValidator;
-use components\Tests\TestCase;
 
 /**
  * Tests for RoutePathValidator wildcard and optional parameter validation.

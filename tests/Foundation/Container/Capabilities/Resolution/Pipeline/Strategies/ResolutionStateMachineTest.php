@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Strategies;
+namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline\Strategies;
 
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStateMachine;

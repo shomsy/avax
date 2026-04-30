@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
+use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
-use Avax\HTTP\Response\ResponseFactory;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Random\RandomException;

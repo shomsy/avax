@@ -35,4 +35,17 @@ final readonly class Concurrency
 
         return $runner->race($tasks);
     }
+
+    /**
+     * Alias for all() with maxConcurrent parameter.
+     *
+     * @param list<callable(): mixed> $tasks
+     * @param int                     $maxConcurrent
+     *
+     * @return list<mixed>
+     */
+    public static function run(array $tasks, int $maxConcurrent = 3) : array
+    {
+        return self::all($tasks);
+    }
 }

@@ -9,16 +9,26 @@ use Avax\Framework\System\PublicSurface\Avax;
 
 require_once dirname(path: __DIR__) . '/vendor/autoload.php';
 
-$application = Avax::boot(
-    builder: BuildApplication::fromProjectPath(
-        projectPath: dirname(path: __DIR__),
-        environment: $_ENV['APP_ENV'] ?? 'development'
-    )
-);
+try {
+    $application = Avax::boot(
+        builder: BuildApplication::fromProjectPath(
+                   projectPath: dirname(path: __DIR__),
+                   environment: $_ENV['APP_ENV'] ?? 'development'
+               )
+    );
 
-$cliRuntime = new CliRuntime(consoleKernel: $application->console());
-$result     = $cliRuntime->run(argv: $argv);
+    $cliRuntime = new CliRuntime(consoleKernel: $application->console());
+    $result     = $cliRuntime->run(argv: $argv);
 
-fwrite(stream: STDOUT, data: $cliRuntime->render(result: $result));
+    fwrite(stream: STDOUT, data: $cliRuntime->render(result: $result));
 
-exit($result->exitCode());
+    exit($result->exitCode());
+} catch (Throwable $e) {
+    fwrite(stream: STDERR, data: "Error: " . $e->getMessage() . "\n");
+
+    if (($_ENV['APP_DEBUG'] ?? false) === 'true') {
+        fwrite(stream: STDERR, data: $e->getTraceAsString() . "\n");
+    }
+
+    exit(1);
+}

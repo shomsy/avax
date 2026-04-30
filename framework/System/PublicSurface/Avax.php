@@ -43,9 +43,9 @@ final readonly class Avax implements AvaxInterface
         return new self(
             runtime              : $runtime,
             httpKernel           : new HttpKernel(runtime: $runtime, handleIncomingHttp: new HandleIncomingHttp()),
-            consoleKernel        : new ConsoleKernel(runtime: $runtime, runConsoleCommand: new RunConsoleCommand()),
+            consoleKernel        : new ConsoleKernel(runtime: $runtime, runConsoleCommand: new RunConsoleCommand($runtime)),
             runtimeKernel        : new RuntimeKernel(runtime: $runtime),
-            resetApplicationState: new ResetApplicationState(stateResetRegistry: $runtime->stateResetRegistry()),
+            resetApplicationState: new ResetApplicationState(),
         );
     }
 

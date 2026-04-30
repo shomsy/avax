@@ -4,8 +4,8 @@
     "psr-4": {
       "Avax\\Framework\\": "framework/",
       "Avax\\Components\\": "components/",
+      "Avax\\HTTP\\": "components/HTTP/",
       "Avax\\Database\\": "components/DataStack/Database/",
-      "Avax\\Migrations\\": "components/DataStack/Database/System/Capabilities/Migrations/",
       "Avax\\Cache\\": "components/Application/Cache/",
       "Avax\\Config\\": "components/Application/Config/",
       "Avax\\Container\\": "components/Application/Container/",
@@ -39,7 +39,8 @@
       "Avax\\Idempotency\\": "components/Idempotency/",
       "Avax\\ContentNegotiation\\": "components/ContentNegotiation/",
       "Avax\\ContractTesting\\": "components/ContractTesting/",
-      "Avax\\Pipeline\\": "components/Pipeline/"
+      "Avax\\Pipeline\\": "components/Pipeline/",
+      "Avax\\Migrations\\": "components/DataStack/Database/System/Capabilities/Migrations/"
     },
     "files": [
       "components/compat.php",

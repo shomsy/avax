@@ -11,40 +11,33 @@ use Psr\Http\Message\RequestInterface;
 
 final class Tenancy
 {
-    private static TenantContext $context;
-
     public static function resolve(RequestInterface $request) : string
     {
         return TenantResolver::resolve($request);
     }
 
-    public static function current() : string|null
+    public static function getTenantId() : string|null
     {
-        return self::context()->current();
+        return TenantContext::current();
     }
 
-    private static function context() : TenantContext
+    public static function setTenantId(string $tenantId) : void
     {
-        if (! isset(self::$context)) {
-            self::$context = new TenantContext();
-        }
+        TenantContext::set($tenantId);
+    }
 
-        return self::$context;
+    public static function clearTenant() : void
+    {
+        TenantContext::clear();
     }
 
     public static function run(string $tenantId, Closure $operation) : mixed
     {
-        $previous = self::context()->set($tenantId);
-
-        try {
-            return $operation();
-        } finally {
-            self::context()->restore($previous);
-        }
+        return TenantContext::with($tenantId, $operation);
     }
 
     public static function switch(string $tenantId) : void
     {
-        self::context()->set($tenantId);
+        TenantContext::set($tenantId);
     }
 }

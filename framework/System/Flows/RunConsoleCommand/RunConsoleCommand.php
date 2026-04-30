@@ -5,17 +5,33 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\RunConsoleCommand;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 
 final class RunConsoleCommand
 {
     public function __construct(
-        private readonly RuntimeContext $context,
-    ) {
+        private RuntimeInterface $runtime,
+    ) {}
+
+    public function getRuntimeContext() : RuntimeContext
+    {
+        return $this->runtime->context();
     }
 
-    public function run(array $argv) : int
+    public function run(mixed ...$args) : RuntimeResult
     {
-        $commandName = $argv[1] ?? 'help';
+        $argv = [];
+
+        foreach ($args as $arg) {
+            if (is_array($arg)) {
+                $argv = array_merge($argv, $arg);
+            } else {
+                $argv[] = $arg;
+            }
+        }
+
+        $commandName = $argv[0] ?? 'help';
 
         $input = $this->readConsoleInput($argv);
         $command = $this->resolveConsoleCommand($commandName);
@@ -24,7 +40,7 @@ final class RunConsoleCommand
 
         $this->writeConsoleOutput($output);
 
-        return 0;
+        return RuntimeResult::fromConsoleOutput(output: $output);
     }
 
     private function readConsoleInput(array $argv) : array

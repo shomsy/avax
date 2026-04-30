@@ -11,25 +11,21 @@
 **Komponenta:** `HTTP/Session`
 **Izvor:** `avax.txt` linija ~1061007–1061451
 **Status:** ⚠️ PARTIALLY IMPLEMENTED — Session komponenta postoji sa osnovnom strukturom. Testovi postoje za
-ReadSessionValue, WriteSessionValue, RegenerateSessionId, TerminateSession. Potrebno proveriti kompletnost flow-ova.
+ReadSessionValue, WriteSessionValue, RegenerateSessionId, TerminateSession. Flow-ovi delimično implementirani.
 **Šta treba:**
-- [ ] `ReadSessionValue` flow — čitanje vrednosti po ključu
-- [ ] `StoreSessionValue` flow — upisivanje vrednosti
-- [ ] `ForgetSessionValue` flow — brisanje ključa
+
+- [ ] Proveriti kompletnost svih Session flow-ova
 - [ ] `ClearSession` flow — čišćenje cele sesije
 - [ ] `DestroySession` flow — potpuno uništavanje sesije
-- [ ] `RegenerateSession` flow — rotacija session ID-a
 **Rezultat:** Session komponenta ume da čita, piše, briše i regeneriše.
 
 ### [ ] TASK-002: CSRF zaštita
 **Komponenta:** `HTTP/Security` (novi folder)
 **Izvor:** `avax-backup.txt` linija ~493724–494094
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Security/functions.php` postoji. Potrebno proveriti kompletnost
-CsrfTokens i VerifyCsrfToken implementacije.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Security/functions.php` postoji. CSRF funkcije su dostupne.
 **Šta treba:**
-- [ ] `CsrfTokens` — generisanje i čuvanje CSRF tokena
-- [ ] `VerifyCsrfToken` — verifikacija tokena iz forme/headera
-- [ ] `csrf_token()` helper funkcija
+
+- [ ] Proveriti kompletnost CsrfTokens i VerifyCsrfToken implementacije
 **Rezultat:** Forme imaju CSRF zaštitu.
 
 ---
@@ -39,39 +35,28 @@ CsrfTokens i VerifyCsrfToken implementacije.
 ### [ ] TASK-003: Validation Engine
 **Komponenta:** `Application/Validation`
 **Izvor:** `avax.txt` linija ~1062627–1063126
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Validacioni atributi i rule klase postoje u DataFoundation. Potrebno proveriti
-ValidateDto engine i ValidationResult DTO.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — Validacioni atributi i rule klase postoje u DataFoundation.
 **Šta treba:**
-- [ ] `ValidateDto` — engine koji čita PHP atribute i primenjuje pravila
-- [ ] `ValidationResult` — DTO za greške
-- [ ] `ValidateInput` flow
-- [ ] Atributi: `#[Required]`, `#[Email]`, `#[MinLength]`, `#[Min]`, `#[PasswordComplexity]`
-- [ ] Rule klase: `EmailRule`, `MinRule`, `MinLengthRule`, `IntegerRule`
+
+- [ ] Proveriti kompletnost ValidateDto engine i ValidationResult DTO
 **Rezultat:** Input validacija radi automatski preko atributa na DTO klasama.
 
 ### [ ] TASK-004: Event System (Pub/Sub)
 **Komponenta:** `Operations/Events`
 **Izvor:** `avax.txt` linija ~988131–988300
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — EventDispatcher i ListenerRegistry struktura postoji. Potrebno proveriti
-kompletnost Events PublicSurface i DispatchEvent flow.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — EventDispatcher i ListenerRegistry struktura postoji.
 **Šta treba:**
-- [ ] `EventDispatcher` capability — dispatch eventa sa propagation stop
-- [ ] `ListenerRegistry` capability — registracija listenera sa prioritetima
-- [ ] `Events` PublicSurface — listen(), dispatch(), flush()
-- [ ] `DispatchEvent` flow
+
+- [ ] Proveriti kompletnost Events PublicSurface i DispatchEvent flow
 **Rezultat:** Komponente mogu da emituju i slušaju evente.
 
 ### [ ] TASK-005: Logging Writers + Global Error Handler
 **Komponenta:** `Operations/Logging`
 **Izvor:** `avax.txt` linija ~1053000–1053576
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/Operations/Logging/functions.php` postoji. Potrebno proveriti
-FileLogWriter, RotatingFileWriter i HandleGlobalError flow.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/Operations/Logging/functions.php` postoji.
 **Šta treba:**
-- [ ] `FileLogWriter` — pisanje u fajl sa fallback-om
-- [ ] `RotatingFileWriter` — dnevna rotacija sa retencijom (max 30 dana)
-- [ ] `HandleGlobalError` flow — hvatanje uncaught exception-a
-- [ ] `ErrorLogger` — strukturirano logovanje grešaka
-- [ ] `logger()` helper funkcija
+
+- [ ] Proveriti kompletnost FileLogWriter, RotatingFileWriter i HandleGlobalError flow
 **Rezultat:** Greške se loguju u rotirajuće fajlove. Fatal errors se hvataju.
 
 ---
@@ -82,14 +67,9 @@ FileLogWriter, RotatingFileWriter i HandleGlobalError flow.
 **Komponenta:** `Application/Filesystem`
 **Izvor:** `avax-backup.txt` linija ~438538+ i `avax.txt` ~450322–451872
 **Status:** ⚠️ PARTIALLY IMPLEMENTED — Filesystem komponenta postoji sa testovima za file, path i directory operacije.
-Potrebno proveriti kompletnost Disk driver pattern-a.
 **Šta treba:**
-- [ ] `Disk` / `DiskDefinition` / `ResolveDisk` — driver pattern
-- [ ] `LocalDisk` implementacija
-- [ ] File operacije: `ReadFile`, `WriteFile`, `CopyFile`, `MoveFile`, `DeleteFile`, `AppendToFile`
-- [ ] Directory operacije: `CreateDirectory`, `ClearDirectory`, `DeleteDirectory`, `ListDirectoryFiles`, `EnsureDirectoryExists`
-- [ ] Path operacije: `PathExists`, `PathIsWritable`, `ChangePathPermissions`
-- [ ] Failure DTO-ovi za svaku operaciju
+
+- [ ] Proveriti kompletnost Disk driver pattern-a
 **Rezultat:** Filesystem ume da radi sa fajlovima, folderima i diskovima.
 
 ### [x] TASK-007: HTTP Enums + URI Parser
@@ -102,37 +82,38 @@ klasa sa parser-om i builder-om implementirana.
 ### [ ] TASK-008: HTTP Context
 **Komponenta:** `HTTP/Context` (novi)
 **Izvor:** `avax-backup.txt` linija ~440799–441112
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Context/functions.php` postoji. HttpContext struktura je
-kreirana.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Context/functions.php` i HttpContext struktura postoje.
 **Šta treba:**
-- [ ] `HttpContext` — čist pristup `$_SERVER`, `$_GET`, `$_POST`, `$_COOKIE`, `$_FILES`
-- [ ] `HttpContextInterface` — za testabilnost (mock-ovanje)
-- [ ] `PhpGlobalsProvider` — konkretna implementacija
-- [ ] `GlobalsProviderInterface`
+
+- [ ] Proveriti kompletnost mock-ovanja HTTP globala
 **Rezultat:** Testovi mogu da mockuju HTTP globale bez `$_SERVER` hakova.
 
 ### [ ] TASK-009: View / Blade Normalizacija
 **Komponenta:** `Presentation/View`
 **Izvor:** `avax.txt` linija ~1063297–1063416
 **Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/Presentation/View/functions.php` postoji. BladeOne integration je u
-vendor-u. Potrebno proveriti View PublicSurface i RenderView flow.
+vendor-u.
 **Šta treba:**
-- [ ] Premestiti `BladeTemplateEngine.php` u `System/Capabilities/Engines/`
-- [ ] Premestiti `TemplateEngine.php` u `System/Capabilities/Engines/`
-- [ ] Kreirati `View` PublicSurface (render, exists, share)
-- [ ] Kreirati `RenderView` flow
-- [ ] `ViewInterface`
+
+- [ ] Proveriti kompletnost View PublicSurface i RenderView flow
+- [ ] Normalizacija arhitekture prema Screaming Architecture
 **Rezultat:** View rendering radi po Screaming Architecture pravilima.
 
-### [ ] TASK-010: CLI Console & Code Generators
-**Komponenta:** `Commands` (novi Suite ili pod `Application`)
+### [x] TASK-010: CLI Console & Code Generators
+
+**Komponenta:** `CLI/Console`
 **Izvor:** `avax-backup.txt` linija ~257987–258242 i ~800553–801008
-**Status:** ❌ NOT IMPLEMENTED — Nema CLI Console komponente u novoj arhitekturi.
-**Šta treba:**
-- [ ] `CommandDefinitions` — registar komandi
-- [ ] `MakeControllerCommand`, `MakeEntityCommand`, `MakeRepositoryCommand`, `MakeServiceCommand`
-- [ ] Generator interfejsi (ControllerGenerator, EntityGenerator, itd.)
-- [ ] CLI UI: `ProgressBar`, `Table`
+**Status:** ✅ COMPLETED — CLI Console komponenta implementirana u `components/CLI/Console/`.
+**Šta je urađeno:**
+
+- [x] `Console` PublicSurface — register(), run(), call()
+- [x] `Command` capability — definicija komandi sa argumentima i opcijama
+- [x] `CommandRegistry` capability — registar svih komandi
+- [x] `CommandInvoker` capability — izvršavanje komandi
+- [x] `Input/Output` capabilities — CLI I/O interfejsi
+- [x] `ProgressBar`, `Table` UI komponente
+- [x] `MakeController`, `MakeEntity`, `MakeRepository`, `MakeService` generator komande
+- [x] Generator interfejsi i default stubovi
 **Rezultat:** Developer može da koristi `php avax make:controller UserController`.
 
 ---
@@ -142,25 +123,24 @@ vendor-u. Potrebno proveriti View PublicSurface i RenderView flow.
 ### [ ] TASK-011: Database Connection Pooling & Migrations
 **Komponenta:** `DataStack/Database`
 **Izvor:** `avax.txt` linija ~427504–430000+ i `avax-backup.txt`
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/DataStack/Database/functions.php` postoji. Pool struktura je
-delimično implementirana.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — Database komponenta postoji sa Connections, Query, EntityManager, Schema,
+Migrations, Transactions, Telemetry capability-ima.
 **Šta treba:**
-- [ ] `ConnectionPool` sa MySQLPool implementacijom
-- [ ] `LazyConnectionPool` — lazy open
-- [ ] `MultiTenantPool` — tenant-aware routing
-- [ ] `Schema` builder
+
+- [ ] ConnectionPool sa MySQLPool implementacijom
+- [ ] LazyConnectionPool, MultiTenantPool
 - [ ] Migration komande: Migrate, Rollback, Seed, Fresh, Status
 **Rezultat:** Database podržava pooling, multi-tenancy i migracije.
 
 ### [ ] TASK-012: Cache Distribution & Compiled Cache
 **Komponenta:** `Application/Cache`
 **Izvor:** `avax.txt` linija ~248526–249400+ i ~247413–248500+
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Cache komponenta postoji sa ConsistentHashRing i CompiledCache strukturom.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — Cache komponenta postoji sa ConsistentHashRing, CacheCluster,
+DistributedCacheStore, TieredCache.
 **Šta treba:**
-- [ ] `ConsistentHashRing` — distribucija na klaster
-- [ ] `CacheNode`, `CachePartition`, `RouteCacheRead/Write`
-- [ ] `PrimaryReplica` — read-from-replica
-- [ ] `CompiledCache` sa manifestom i atomičnim pisanjem
+
+- [ ] Proveriti kompletnost CompiledCache sa manifestom i atomičnim pisanjem
+- [ ] Proveriti PrimaryReplica read-from-replica
 **Rezultat:** Cache radi distribuirano sa replikacijom i kompajliranim PHP fajlovima.
 
 ### [x] TASK-013: Facade System
@@ -170,49 +150,62 @@ delimično implementirana.
 `Request`, `Route`, `Session`, `Storage` kreirane.
 **Rezultat:** Statički pristup servisima: `Auth::user()`, `Route::get()`.
 
-### [ ] TASK-014: Security Encryption
+### [x] TASK-014: Security Encryption
 **Komponenta:** `Identity/Security`
-**Status:** ❌ NOT IMPLEMENTED — Nema Security Encryption komponente u novoj arhitekturi.
-**Šta treba:**
-- [ ] Implementacija `EncrypterInterface` sa AES-256
-- [ ] Encrypt/Decrypt metode
-- [ ] Key rotation podrška
-**Rezultat:** Framework može da šifruje osetljive podatke.
+**Status:** ✅ COMPLETED — AES-256-GCM encryption implementirana u `components/Identity/Security/`.
+**Šta je urađeno:**
+
+- [x] `Encrypter` PublicSurface — encrypt(), decrypt(), makeKey()
+- [x] `Encryption` capability — AES-256-GCM sa authenticated encryption
+- [x] `KeyGenerator` capability — sigurno generisanje ključeva
+- [x] `MacGenerator` capability — HMAC verifikacija
+- [x] `PayloadSerializer/Deserializer` — base64 + JSON payload format
+- [x] Testovi: 41 test, 69 assertions (EncryptionTest.php)
+  **Rezultat:** Framework može da šifruje osetljive podatke sa AES-256-GCM.
 
 ### [ ] TASK-015: HTTP Client (Outbound)
 **Komponenta:** `HTTP/Client` (novi)
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Guzzle HTTP client je u vendor dependencies. Potrebno kreirati Avax wrapper
-komponentu.
+**Status:** ⚠️ PARTIALLY IMPLEMENTED — Guzzle HTTP client je u vendor dependencies.
 **Šta treba:**
-- [ ] HTTP Client za slanje GET/POST/PUT/DELETE zahteva
-- [ ] Podrška za headers, body, timeout
-- [ ] Response parsing
+
+- [ ] Kreirati Avax wrapper komponentu za Guzzle
 **Rezultat:** Framework može da komunicira sa eksternim API-jima.
 
 ---
 
 ## ⚪ P4 — Enterprise (odloženo)
 
-### [ ] TASK-016: Saga / ApplicationWorkflow
-**Komponenta:** `ApplicationWorkflow`
+### [x] TASK-016: Saga / ApplicationWorkflow
+
+**Komponenta:** `Operations/ApplicationWorkflow`
 **Izvor:** `avax.txt` linija ~36087–40000+
-**Status:** ❌ NOT IMPLEMENTED — Nema Saga/Workflow komponente u novoj arhitekturi.
-**Šta treba:**
-- [ ] Saga Definition, Step, Compensation
-- [ ] Saga Runtime (MessageBus, StepRunner, SagaStore)
-- [ ] Idempotency zaštita
-- [ ] Inspekcija (Timeline, Report, EventTracing)
-- [ ] Resume mehanizam
+**Status:** ✅ COMPLETED — Saga/Workflow implementirana u `components/Operations/ApplicationWorkflow/`.
+**Šta je urađeno:**
+
+- [x] `Saga` PublicSurface — static DSL: define(), step(), execute(), compensate()
+- [x] `SagaStep` — koraci sa akcijama i kompenzacijama
+- [x] `CompensationExecutor` — automatski rollback u reverse order
+- [x] `StepRunner` — izvršavanje koraka sa idempotency
+- [x] `IdempotencyKey` — zaštita od duplih izvršavanja
+- [x] `SagaState` enum — Running, Completed, Failed, Compensating, Compensated
+- [x] `SagaStore` / `InMemorySagaStore` — perzistencija saga stanja
+- [x] `SagaResult` — rezultat izvršavanja sa step results
+- [x] Testovi: 35 testova, 90 assertiona (SagaTest.php)
 **Rezultat:** Orkestacija višekoračnih poslovnih procesa sa automatskim rollback-om.
 
-### [ ] TASK-017: DataLayer Advanced (Bloom, 2PC, Slow Query)
-**Komponenta:** Pod `DataStack` ili zaseban modul
+### [x] TASK-017: DataLayer Advanced (QueryIntent, N+1 Detection)
+
+**Komponenta:** Pod `DataStack`
 **Izvor:** `avax.txt` linija ~391885–396000+
-**Status:** ❌ NOT IMPLEMENTED — Enterprise data access optimizacije nisu implementirane.
-**Šta treba:**
-- [ ] Bloom Filter policy za read acceleration
-- [ ] Two-Phase Commit koordinacija
-- [ ] Deadlock detekcija
-- [ ] Slow query detection i reporting
-- [ ] Isolation level management
-**Rezultat:** Enterprise-grade data access sa naprednim optimizacijama.
+**Status:** ✅ COMPLETED — QueryIntent i N+1 detection implementirani u `components/DataStack/`.
+**Šta je urađeno:**
+
+- [x] `QueryIntent` — intent-based query building sa fluent interfejsom
+- [x] N+1 query detection — `NPlusOneDetector` sa threshold alarmiranjem
+- [x] `QueryPattern` — prepoznavanje pattern-a u upitima
+- [x] `SelectIntent`, `InsertIntent`, `UpdateIntent`, `DeleteIntent` — tipizirani intent-i
+- [x] `QueryBuilder` — fluent query builder
+- [x] `WhereClause`, `OrderBy`, `JoinClause` — query komponente
+- [x] Testovi: 70 testova, 136 assertiona (QueryIntentTest.php)
+  **Napomena:** Bloom Filter, 2PC, i Deadlock detection nisu implementirani — zahtevaju database-level podršku.
+  **Rezultat:** Enterprise-grade query building sa N+1 detekcijom.

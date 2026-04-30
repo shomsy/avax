@@ -51,10 +51,6 @@ function readPackageName(rootDir) {
   }
 }
 
-function isSafePackageOutputName(value) {
-  return value !== '' && !value.includes('/') && !value.includes('\\');
-}
-
 if (args.length < 1) {
   usage();
   process.exit(1);
@@ -120,7 +116,6 @@ const ignoredDirs = new Set([
   '.cache',
   '.git',
   '.idea',
-  '.phpunit.cache',
   '__pycache__',
   'artifacts',
   'build',
@@ -173,22 +168,6 @@ const chunks = [];
 for (const absPath of files) {
   const rel = path.relative(rootDir, absPath).split(path.sep).join('/');
 
-  let fileStat;
-
-  try {
-    fileStat = fs.statSync(absPath);
-  } catch {
-    console.log(`Skipping (missing target or broken link): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  if (!fileStat.isFile()) {
-    console.log(`Skipping (not a regular file): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
   if (absPath === outputFile) {
     console.log(`Skipping (generated output file): ${rel}`);
     skipped += 1;
@@ -240,13 +219,13 @@ for (const absPath of files) {
 if (!dryRun) {
   fs.writeFileSync(outputFile, chunks.join(''), 'utf8');
 
-  if (isSafePackageOutputName(packageName) && packageName !== targetBasename) {
+  if (packageName && packageName !== targetBasename) {
     const renamedOutput = path.join(rootDir, `${packageName}.txt`);
     fs.renameSync(outputFile, renamedOutput);
   }
 }
 
-const finalOutputFile = isSafePackageOutputName(packageName) && packageName !== targetBasename
+const finalOutputFile = packageName && packageName !== targetBasename
   ? path.join(rootDir, `${packageName}.txt`)
   : outputFile;
 

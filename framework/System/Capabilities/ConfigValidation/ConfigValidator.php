@@ -1,0 +1,147 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Framework\System\Capabilities\ConfigValidation;
+
+/**
+ * Validates configuration against registered schemas.
+ */
+final class ConfigValidator
+{
+    /**
+     * @var array<string, ConfigSchema>
+     */
+    private array $schemas = [];
+
+    public function register(ConfigSchema $schema) : self
+    {
+        $this->schemas[$schema->name] = $schema;
+
+        return $this;
+    }
+
+    /**
+     * Validate all registered schemas against config sections.
+     *
+     * @param array<string, array<string, mixed>> $allConfig
+     *
+     * @return list<ConfigSchemaViolation>
+     */
+    public function validateAll(array $allConfig) : array
+    {
+        $violations = [];
+
+        foreach ($this->schemas as $name => $schema) {
+            $section    = $allConfig[$name] ?? [];
+            $violations = [...$violations, ...$this->validate($name, $section)];
+        }
+
+        return $violations;
+    }
+
+    /**
+     * Validate a config section against its schema.
+     *
+     * @param array<string, mixed> $config
+     *
+     * @return list<ConfigSchemaViolation>
+     */
+    public function validate(string $schemaName, array $config) : array
+    {
+        if (! isset($this->schemas[$schemaName])) {
+            return [new ConfigSchemaViolation(
+                        severity: ConfigSchemaViolation::SEVERITY_WARNING,
+                        key     : $schemaName,
+                        message : "No schema registered for '{$schemaName}'",
+                    )];
+        }
+
+        $schema     = $this->schemas[$schemaName];
+        $violations = [];
+
+        foreach ($schema->fields as $fieldName => $field) {
+            $dotKey = "{$schemaName}.{$fieldName}";
+            $exists = array_key_exists($fieldName, $config);
+            $value  = $exists ? $config[$fieldName] : null;
+
+            if (! $exists) {
+                if ($field->required) {
+                    $violations[] = new ConfigSchemaViolation(
+                        severity   : ConfigSchemaViolation::SEVERITY_ERROR,
+                        key        : $dotKey,
+                        message    : "Required config key '{$dotKey}' is missing",
+                        remediation: $field->description !== null
+                                         ? "Set {$dotKey} ({$field->description})"
+                                         : "Set {$dotKey} in config/{$schemaName}.php or via environment variable",
+                    );
+                }
+
+                continue;
+            }
+
+            $typeViolations = $this->validateType($dotKey, $value, $field);
+            $violations     = [...$violations, ...$typeViolations];
+
+            if (! empty($field->allowed) && ! in_array($value, $field->allowed, true)) {
+                $violations[] = new ConfigSchemaViolation(
+                    severity   : ConfigSchemaViolation::SEVERITY_ERROR,
+                    key        : $dotKey,
+                    message    : sprintf(
+                                     "Config '%s' has invalid value '%s'. Allowed: %s",
+                                     $dotKey,
+                                     var_export($value, true),
+                                     implode(', ', array_map(fn ($v) => var_export($v, true), $field->allowed)),
+                                 ),
+                    remediation: sprintf(
+                                     "Change %s to one of: %s",
+                                     $dotKey,
+                                     implode(', ', $field->allowed),
+                                 ),
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * @return list<ConfigSchemaViolation>
+     */
+    private function validateType(string $key, mixed $value, ConfigSchemaField $field) : array
+    {
+        $violations = [];
+
+        $isValid = match ($field->type) {
+            ConfigSchemaField::TYPE_STRING           => is_string($value),
+            ConfigSchemaField::TYPE_NON_EMPTY_STRING => is_string($value) && $value !== '',
+            ConfigSchemaField::TYPE_INT              => is_int($value),
+            ConfigSchemaField::TYPE_FLOAT            => is_float($value) || is_int($value),
+            ConfigSchemaField::TYPE_BOOL             => is_bool($value),
+            ConfigSchemaField::TYPE_ARRAY            => is_array($value),
+            ConfigSchemaField::TYPE_URL              => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
+            ConfigSchemaField::TYPE_EMAIL            => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
+            default                                  => true,
+        };
+
+        if (! $isValid) {
+            $violations[] = new ConfigSchemaViolation(
+                severity   : ConfigSchemaViolation::SEVERITY_ERROR,
+                key        : $key,
+                message    : sprintf(
+                                 "Config '%s' expected type '%s', got '%s'",
+                                 $key,
+                                 $field->type,
+                                 get_debug_type($value),
+                             ),
+                remediation: sprintf(
+                                 "Change %s to a %s value",
+                                 $key,
+                                 $field->type,
+                             ),
+            );
+        }
+
+        return $violations;
+    }
+}

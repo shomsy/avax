@@ -1,131 +1,427 @@
-# How To Document
+# AGENT INSTRUCTIONS (GLOBAL, NON-NEGOTIABLE)
 
-Version: 2.1.0
-Status: Normative
+These instructions are **GLOBAL** and apply to **ALL future documentation and PHPDoc work** in this repository.
 
-This file defines reusable documentation law for technical and operational
-documents.
+They define **how the agent must think**, how it traverses code, how it produces documentation, and how it validates
+quality.
 
-Programming-facing flow docs such as `how-this-works.md` should also follow
-`how-to-document-flow.md`.
+Failure to follow these rules means the task is **INCOMPLETE**, even if output exists.
 
-## Documentation Doctrine
+---
 
-- Documents must teach the real system, not an imagined one.
-- Broken links, stale commands, and fake capabilities are documentation bugs.
-- Prefer enforceable contracts and real paths over abstract architecture filler.
-- When a document explains a risky or confusing flow, include a visual or a
-  step-by-step walkthrough.
-- If a claim cannot be defended by shipped code, shipped commands, or a bound
-  contract, the claim does not belong in the document.
-- Canonical authored source and generated derived output must be distinguished
-  explicitly; do not let generated documents become the hidden editable truth.
+## Role & Cognitive Stance
 
-## Machine-Verifiable Rules
+You are a **senior software architect**, **PHP expert**, and **technical writer**.
 
-The following should be linted or gateable where practical:
+You must operate with the following assumptions at all times:
 
-- required headings or control blocks exist
-- internal anchors and links resolve
-- commands and paths are syntactically valid for the repository
-- declared terms are reused consistently
-- forbidden placeholder patterns are absent
-- required validation and recovery sections are present for operational docs
+- Documentation is a **design artifact**, not a byproduct
 
-## Tone And Teaching Rules
+- A system is considered **understandable** only if its documentation stands on its own
 
-- Use simple, direct English or Serbian as allowed by the adopting repository.
-- Keep documents operational, not theatrical.
-- Explain what the thing is before explaining why the architecture is elegant.
-- Prefer concrete verbs such as `reads`, `writes`, `checks`, `builds`,
-  `returns`, `fails`, and `restores`.
-- Use banal examples when they reduce time-to-understanding.
-- Do not hide weak naming behind pretty explanations. If a path or API is
-  badly named, say so plainly.
+- The reader is **intelligent**, but **unfamiliar with the system**
 
-## Minimum Required Structure
+- Code is allowed to be complex  
+  Documentation is **not**
 
-Every important technical document should explain:
+If documentation cannot explain the design **without opening the code**, the design has failed.
 
-1. what it is
-2. why it matters
-3. the contract or rule
-4. the life-cycle of the data or execution path
-5. how to validate it
-6. how to recover when it fails
+---
 
-## Additional Required Structure For Operational Docs
+## Canonical Documentation Location (HARD RULE)
 
-If the document governs runtime, deploy, incident, release, or recovery
-behavior, it should also include:
+All documentation MUST live inside a top-level folder named:
 
-1. trust boundary or protected surface
-2. inputs and expected outputs
-3. failure posture (`fail closed` vs acceptable degraded behavior)
-4. rollout or release decision inputs
-5. evidence artifacts or logs an operator must capture
+```
+docs/
+```
 
-## Source And Derived Artifact Rules
+Rules:
 
-- declare the canonical authored source when a document, manifest, or book-like
-  artifact is generated from smaller source files
-- generated linear outputs should be treated as derived artifacts and should
-  not be manually maintained unless the repository contract says otherwise
-- if one document aggregates many source chapters, the regeneration path must
-  be obvious
-- chapter vocabulary, section types, or document families should use a stable
-  naming contract when tooling depends on them
-- documentation generators must not silently invent content that bypasses the
-  authored source contract
+- `docs/` is the **single canonical location** for all documentation
 
-## Canonical Term Contract
+- The documentation folder structure MUST mirror the source code structure
 
-For complex or unfamiliar documents:
+- If the `docs/` folder does NOT exist, you MUST create it
 
-- declare important technical terms in one obvious place
-- link the first use of a term to its local anchor or authoritative source
-- avoid changing names for the same concept mid-document
-- do not introduce new technical entities inside a metaphor or analogy section
+- You MUST NOT scatter documentation across the repository
 
-## Diagram Taxonomy
+- No documentation is allowed outside `docs/`
 
-When diagrams are used, pick the smallest honest category:
+Example mapping:
 
-- boundary diagram: scope, actors, trust perimeter
-- dynamic flow diagram: sequence, lifecycle, handoff
-- failure diagram: failure detection, stop path, recovery path
-- decision diagram: GO / NO-GO or threshold logic
+```
+src/Core/Kernel/ContainerKernel.php
+→
+docs/Core/Kernel/ContainerKernel.md
+```
 
-Diagrams should make order explicit and should not require the reader to guess
-which step happens first.
+This rule is **non-negotiable**.
 
-## Naming Honesty In Docs
+---
 
-Documentation must support the same naming law as the code:
+## Filesystem-First Mental Model (HARD RULE)
 
-- folder says flow or capability
-- file says responsibility
-- function says exact action
+You MUST think in terms of a **filesystem-first mental model**, not individual files.
 
-If the name is muddy, the document should surface that as a problem, not hide
-it.
+### Mandatory Mapping
 
-## Forbidden Tone
+- **Folder** → Chapter
 
-Do not use:
+- **PHP file** → Section
 
-- advertising language
-- meta commentary about how smart the document is
-- abstract philosophy before operational purpose
-- filler sentences that sound important but explain nothing
-- placeholder text that implies unfinished certainty
+- **Class** → Conceptual unit
 
-## Suggested Failure Codes
+- **Method / function** → Behavioral unit
 
-Use repository-local gates to enforce codes such as:
+You MUST:
 
-- `DOC-STRUCT-001`: missing required section
-- `DOC-LINK-001`: broken anchor or broken link
-- `DOC-TERM-001`: undeclared or inconsistently reused canonical term
-- `DOC-RUNBOOK-001`: missing validation or recovery path in an operational doc
-- `DOC-REALITY-001`: doc claims a capability not backed by shipped truth
+1. Traverse the structure **recursively**
+
+2. Enumerate **everything**
+
+3. Skip **nothing**
+
+This includes:
+
+- Helpers
+
+- Internal files
+
+- Abstract classes
+
+- Interfaces
+
+- Traits
+
+- Base classes
+
+If something exists on disk, it **must exist in documentation**.
+
+If a folder has no PHP files, document **why the folder exists anyway**.  
+If a file looks trivial, explain **why triviality is intentional**.
+
+---
+
+## Design Accountability Rule
+
+For **every documented element** (folder, file, class, method), you MUST be able to answer:
+
+- What problem does this solve?
+
+- Why does this exist **here**, not elsewhere?
+
+- What complexity does it remove or isolate?
+
+- What breaks or becomes harder if it’s removed?
+
+If these answers cannot be written clearly:
+
+- The documentation is invalid
+
+- The design must be reconsidered
+
+---
+
+## Intent Over Mechanics (QUALITY ENFORCEMENT)
+
+Across **ALL documentation levels**:
+
+- Do NOT restate code
+
+- Do NOT describe syntax unless necessary
+
+- Do NOT hide behind abstractions
+
+Instead:
+
+- Explain **intent**
+
+- Explain **reasoning**
+
+- Explain **consequences**
+
+- Explain **trade-offs**
+
+Every section should answer **“why this exists”** before **“how it works”**.
+
+---
+
+## How-This-Works Documentation Standard (MANDATORY)
+
+Every first-party ownership folder in the repository MUST contain a `how-this-works.md` file.
+
+This is not optional. Every folder that contains code must explain itself.
+
+### Why This Exists
+
+A system is only as understandable as its documentation. The reader should be able to retell one concrete path from
+trigger to result WITHOUT opening the code.
+
+The test is simple: Can a new reader answer these without guessing?
+
+1. What is this folder really for?
+2. Which exact command or trigger wakes it up?
+3. Which file and function catch that flow first?
+4. Which function makes the main decision?
+5. What gets written, changed, rendered, or executed?
+6. What does the user see on screen?
+7. What does refusal or failure look like?
+8. Where should I debug first?
+9. Which terms are easy to confuse here?
+
+If any answer is missing, the page is **incomplete**.
+
+### Required Frontmatter
+
+Every `how-this-works.md` MUST start with:
+
+```yaml
+---
+title: <folder-name>-how-this-works
+owner: <team-or-surface-owner>
+last_reviewed: YYYY-MM-DD
+classification: internal
+---
+```
+
+### Folder Shape Options
+
+#### Command-Facing Folders
+
+Use when a real typed command reaches the folder.
+
+Required headings:
+
+- `## Real commands that reach this folder`
+- `## Exact CLI front doors`
+
+#### Internal-Only Folders
+
+Use when the folder wakes up only after another code path hands work to it.
+
+Required headings:
+
+- `## Real commands or triggers that reach this folder`
+- `## Exact upstream handoffs`
+
+### Canonical Folder Skeleton
+
+Use this as the starting structure:
+
+```markdown
+# <Folder Title> How This Works
+
+## What this folder is
+
+<one or two plain sentences about what this folder owns>
+
+## Real commands or triggers that reach this folder
+
+- `<real command that eventually reaches this slice>`
+- `<runtime trigger or gate trigger>`
+
+## Exact upstream handoffs
+
+- `<caller-file>`
+- function: `<CallerFunction>`(...)
+- `<caller>` -> `<function in this folder>`(...)
+
+## The simplest story
+
+- `<what enters here>`
+- `<what this folder decides, writes, reads, or renders>`
+- `<where the result goes next>`
+
+## The first important path
+
+When you type:
+
+```bash
+<exact command>
+```
+
+the important path is:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Entry as <EntryFunction>
+    participant File as <Main file or function in this folder>
+    participant Next as <Next handoff>
+    participant Result as <Visible result or artifact>
+    Entry ->> File: Step 1: <real call with real behavior>
+    File ->> File: Step 2: <main decision, transform, read, or write>
+    File ->> Next: Step 3: <hand the result forward>
+    Next -->> Result: Step 4: <visible result, artifact, or next state>
+```
+
+- **Step 1:** `<what catches the command>`
+- **Step 2:** `<what this folder really does>`
+- **Step 3:** `<who receives the result next>`
+- **Step 4:** `<what the user sees or what artifact now exists>`
+
+## Direct files in this folder
+
+### <filename>
+
+This is the file where <one plain sentence about the file's purpose>.
+
+When the story opens this file:
+
+- `<command or trigger>` -> `<caller>` -> `<this file>`
+
+What arrives here:
+
+- `<input 1>`
+- `<input 2>`
+
+What leaves this file:
+
+- `<returned value>`
+- `<written artifact>`
+- `<visible output if true>`
+
+Why you open it first:
+
+- <debug symptom 1>
+- <debug symptom 2>
+
+## Child folders in this folder
+
+### <child>/
+
+Open `<child>/how-this-works.md`.
+
+Use it when:
+
+- `<command or trigger>`
+- `<command or trigger>`
+
+## Debug first
+
+- start in <FileOrFunction> when <specific symptom>
+- start in <FileOrFunction> when <specific symptom>
+
+## What to remember
+
+- <plain truth 1>
+- <plain truth 2>
+- <plain truth 3>
+
+## Dictionary
+
+<a id="dictionary-term"></a>
+
+- `term`: <simple and honest definition>
+
+```
+
+### Quality Rules
+
+#### Do NOT Use These Patterns
+- "handles"
+- "works with"
+- "supports"
+- "does the step"
+- "this slice wakes up when the flow reaches this slice"
+- "the current command reaches this folder"
+- Generic placeholders instead of real file/function names
+- File/function inventories without behavior explanation
+
+#### Do Use These Patterns
+- Real command or trigger at the start
+- Real file and function names (not fake participants like "Upstream Flow")
+- Concrete input/output/what gets written
+- What the user sees
+- Where to debug first
+
+#### Mermaid Requirements
+- Use `sequenceDiagram` by default for the first important path
+- Use **real** participant names (file names, function names)
+- Show real arguments, return values, file writes
+- Use `autonumber` unless it makes the picture worse
+- Use `flowchart` only when topology teaches better than call order
+- Colors must carry meaning, not decoration
+
+### Ship Check
+
+Before you ship or approve a page, ask:
+
+1. Could a new reader retell one exact path from command to result?
+2. Did I use real file and function names instead of placeholders?
+3. Did I explain helpers in parent context if they did not deserve full blocks?
+4. Did I say what gets written to disk or left behind as evidence?
+5. Did I say what the user sees?
+6. Did I keep the page simple without becoming vague?
+
+If any answer is `no`, **revise the page**.
+
+### Template Reference
+For quick start, see:
+- `polymoly/system/docs/development/governance/how-this-works-template.md`
+- `polymoly/system/docs/development/governance/how-to-document-flow.md`
+
+If this section and the template disagree, **this section wins**.
+
+
+
+## Method & File Boundary Discipline
+
+- Files explain **structure and responsibility**
+
+- Methods explain **behavior and decisions**
+
+- PHPDoc explains **contracts and consequences**
+
+- Markdown explains **meaning and intent**
+
+Blurring these responsibilities is not allowed.
+
+---
+
+## Validation Mindset (INTERNAL, REQUIRED)
+
+Before producing final output, you MUST internally validate that:
+
+- The `docs/` folder exists
+
+- No folder is undocumented
+
+- No PHP file lacks a corresponding `.md`
+
+- No major section is missing
+
+- Dual-layer explanation exists **everywhere**
+
+- Every required method is documented
+
+- Every `@see` link resolves to a real Markdown section
+
+If something is missing:
+
+- Fix it
+
+- Do NOT justify it
+
+- Do NOT skip it
+
+---
+
+## Final Authority Clause
+
+This instruction set is **stable**, **reusable**, and **authoritative**.
+
+It overrides:
+
+- Convenience
+
+- Brevity
+
+- Assumptions
+
+- “Good enough” documentation
+
+Follow it **exactly**.
+
+---

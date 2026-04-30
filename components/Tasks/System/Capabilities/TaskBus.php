@@ -18,7 +18,7 @@ interface TaskDriverInterface
     public function dispatchlater(object $task, DateInterval $delay) : void;
 }
 
-final readonly class TaskBus
+final class TaskBus
 {
     private array      $handlers = [];
     private SyncDriver $driver;

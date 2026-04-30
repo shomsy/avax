@@ -6,7 +6,7 @@ namespace Avax\Components\Security\System\Capabilities\Csrf;
 
 final readonly class CsrfToken
 {
-    private static string $sessionKey = '_token';
+    private const SESSION_KEY = '_token';
 
     public static function token() : string
     {
@@ -15,21 +15,21 @@ final readonly class CsrfToken
 
     public static function generate() : string
     {
-        if (! isset($_SESSION[self::$sessionKey])) {
-            $_SESSION[self::$sessionKey] = bin2hex(random_bytes(32));
+        if (session_status() !== PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli') {
+            session_start();
         }
 
-        return $_SESSION[self::$sessionKey];
-    }
-}
+        if (! isset($_SESSION[self::SESSION_KEY])) {
+            $_SESSION[self::SESSION_KEY] = bin2hex(random_bytes(length: 32));
+        }
 
-final readonly class CsrfVerifier
-{
-    public static function verify(string $token, string|null $sessionToken = null) : bool
+        return $_SESSION[self::SESSION_KEY];
+    }
+
+    public static function rotate() : string
     {
-        return hash_equals(
-            $sessionToken ?? $_SESSION['_token'] ?? '',
-            $token,
-        );
+        $_SESSION[self::SESSION_KEY] = bin2hex(random_bytes(length: 32));
+
+        return $_SESSION[self::SESSION_KEY];
     }
 }

@@ -20,7 +20,7 @@ final readonly class Persistence implements PersistenceInterface
         private RepositoryRegistry                                                              $repositoryRegistry,
         private HydratorInterface                                                               $hydrator,
         private IdentityMap                                                                     $identityMap,
-        private EntityManager                                                                   $entityManager,
+        private Entities $entities,
         private RunUnitOfWork $runUnitOfWork,
     ) {}
 
@@ -49,14 +49,14 @@ final readonly class Persistence implements PersistenceInterface
         return $this->identityMap;
     }
 
-    public function manager() : EntityManager
+    public function entities() : Entities
     {
-        return $this->entityManager;
+        return $this->entities;
     }
 
     public function find(string $entityClass, mixed $id) : ?object
     {
-        return $this->entityManager->find($entityClass, $id);
+        return $this->entities->find($entityClass, $id);
     }
 
     public function persist(object $entity) : void

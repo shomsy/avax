@@ -7,29 +7,8 @@ namespace Avax\Components\Resilience\System\Capabilities\Retry;
 use Closure;
 use Throwable;
 
-final readonly class RetryOptions
+final class RetryExecutor
 {
-    public function __construct(
-        public int      $attempts,
-        public int      $backoffMs,
-        public int|null $timeoutMs = null,
-    ) {}
-
-    public function withAttempts(int $attempts) : self
-    {
-        return new self($attempts, $this->backoffMs, $this->timeoutMs);
-    }
-
-    public function withBackoff(int $backoffMs) : self
-    {
-        return new self($this->attempts, $backoffMs, $this->timeoutMs);
-    }
-}
-
-final readonly class RetryExecutor
-{
-    private int $attemptNumber = 0;
-
     public function __construct(
         private Closure     $operation,
         private RetryOptions $options,
@@ -38,9 +17,10 @@ final readonly class RetryExecutor
     public function execute() : RetryResult
     {
         $lastException = null;
+        $attemptNumber = 0;
 
-        while ( $this->attemptNumber < $this->options->attempts ) {
-            $this->attemptNumber++;
+        while ( $attemptNumber < $this->options->attempts ) {
+            $attemptNumber++;
 
             try {
                 $result = ($this->operation)();
@@ -48,13 +28,13 @@ final readonly class RetryExecutor
                 return new RetryResult(
                     success      : true,
                     result       : $result,
-                    attempts     : $this->attemptNumber,
+                    attempts     : $attemptNumber,
                     lastException: null,
                 );
             } catch (Throwable $e) {
                 $lastException = $e;
 
-                if ($this->attemptNumber < $this->options->attempts) {
+                if ($attemptNumber < $this->options->attempts) {
                     $this->sleep();
                 }
             }
@@ -63,7 +43,7 @@ final readonly class RetryExecutor
         return new RetryResult(
             success      : false,
             result       : null,
-            attempts     : $this->attemptNumber,
+            attempts     : $attemptNumber,
             lastException: $lastException,
         );
     }
@@ -73,14 +53,4 @@ final readonly class RetryExecutor
         $delay = (int) ($this->options->backoffMs * (1 + random_int(0, 100) / 100));
         usleep($delay * 1000);
     }
-}
-
-final readonly class RetryResult
-{
-    public function __construct(
-        public bool           $success,
-        public mixed          $result,
-        public int            $attempts,
-        public Throwable|null $lastException,
-    ) {}
 }

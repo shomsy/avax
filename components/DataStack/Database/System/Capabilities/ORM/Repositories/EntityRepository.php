@@ -56,8 +56,8 @@ class EntityRepository
         array  $criteria,
         string|null $orderBy = null,
         string|null $direction = null,
-        int    $limit = null,
-        int    $offset = null,
+        int|null $limit = null,
+        int|null $offset = null,
         string|null $connectionName = null,
     ) : array
     {

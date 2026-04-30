@@ -38,6 +38,10 @@
         <testsuite name="FrameworkContract">
             <directory>tests/Contract/Runtime</directory>
         </testsuite>
+        <testsuite name="EnterpriseRecovery">
+            <directory>tests/Integration/Components</directory>
+            <directory>tests/Unit/Components/Enterprise</directory>
+        </testsuite>
     </testsuites>
     <logging/>
     <source/>

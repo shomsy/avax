@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Security\System\Capabilities\SignedUrls;
 
 use DateInterval;
-use Exception;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
-final readonly class SignedUrlGenerator
+final class SignedUrlGenerator
 {
     private static string $secret = '';
     private static string $algo   = 'HS256';
@@ -30,33 +28,18 @@ final readonly class SignedUrlGenerator
             'iat'  => time(),
         ];
 
-        $token = JWT::encode($payload, self::$secret, self::$algo);
+        $token = JWT::encode($payload, self::secret(), self::$algo);
 
         return $path . '?signature=' . $token;
     }
-}
 
-final readonly class SignedUrlVerifier
-{
-    public static function verify(string $url) : bool
+    public static function secret() : string
     {
-        $parsed = parse_url($url, PHP_URL_QUERY);
-        $query  = [];
-        parse_str($parsed ?? '', $query);
+        return self::$secret !== '' ? self::$secret : 'avax-signed-url';
+    }
 
-        if (! isset($query['signature'])) {
-            return false;
-        }
-
-        try {
-            $decoded = JWT::decode(
-                $query['signature'],
-                new Key(SignedUrlGenerator::$secret, SignedUrlGenerator::$algo),
-            );
-
-            return $decoded->exp > time();
-        } catch (Exception) {
-            return false;
-        }
+    public static function algorithm() : string
+    {
+        return self::$algo;
     }
 }

@@ -4,82 +4,59 @@ declare(strict_types=1);
 
 namespace Avax\Components\Realtime\System\Capabilities\Channels;
 
+use Avax\Components\Realtime\System\Capabilities\Connections\Connection;
+
 final class ChannelManager
 {
-    /** @var array<string, list<Connection>> */
+    /** @var array<string, array<string, Connection>> */
     private array $channels = [];
 
     public function get(string $name) : Channel
     {
-        return new Channel($name, $this);
+        return new Channel(name: $name, manager: $this);
     }
 
     public function subscribe(Connection $connection, string $channel) : void
     {
-        if (! isset($this->channels[$channel])) {
-            $this->channels[$channel] = [];
-        }
-
-        if (! in_array($connection, $this->channels[$channel], true)) {
-            $this->channels[$channel][] = $connection;
-        }
+        $this->channels[$channel][$connection->id] = $connection;
     }
 
     public function unsubscribe(Connection $connection, string $channel) : void
     {
-        if (! isset($this->channels[$channel])) {
-            return;
-        }
+        unset($this->channels[$channel][$connection->id]);
+    }
 
-        $index = array_search($connection, $this->channels[$channel], true);
+    public function forget(Connection|string $connection) : void
+    {
+        $connectionId = $connection instanceof Connection ? $connection->id : $connection;
 
-        if ($index !== false) {
-            unset($this->channels[$channel][$index]);
-            $this->channels[$channel] = array_values($this->channels[$channel]);
+        foreach ($this->channels as $channel => $connections) {
+            unset($this->channels[$channel][$connectionId]);
         }
     }
 
-    public function broadcast(string $channel, mixed $message) : void
+    public function broadcast(string $channel, mixed $message) : int
     {
-        if (! isset($this->channels[$channel])) {
-            return;
+        $sent = 0;
+
+        foreach ($this->channels[$channel] ?? [] as $connection) {
+            $connection->send(message: $message);
+            $sent++;
         }
 
-        foreach ($this->channels[$channel] as $connection) {
-            $connection->send($message);
-        }
+        return $sent;
     }
 
     public function subscriberCount(string $channel) : int
     {
         return count($this->channels[$channel] ?? []);
     }
-}
 
-final class Channel
-{
-    public function __construct(
-        public string          $name,
-        private ChannelManager $manager,
-    ) {}
-
-    public function subscribe(Connection $connection) : void
+    /**
+     * @return list<string>
+     */
+    public function connectionIds(string $channel) : array
     {
-        $this->manager->subscribe($connection, $this->name);
-    }
-
-    public function unsubscribe(Connection $connection) : void
-    {
-        $this->manager->unsubscribe($connection, $this->name);
-    }
-
-    public function broadcast(mixed $message) : void
-    {
-        $this->manager->broadcast($this->name, $message);
-    }
-
-    public function subscriberCount() : int
-    {
-        return $this->manager->subscriberCount($this->name);
+        return array_keys(array: $this->channels[$channel] ?? []);
     }
 }

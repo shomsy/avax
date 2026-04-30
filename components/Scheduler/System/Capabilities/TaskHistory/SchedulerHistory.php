@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Scheduler\System\Capabilities\TaskHistory;
 
-final readonly class SchedulerHistory
+final class SchedulerHistory
 {
     private static array $history = [];
 

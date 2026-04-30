@@ -8,39 +8,35 @@ use Avax\Components\Operations\Mail\System\Capabilities\Address\Envelope;
 use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 use Avax\Components\Operations\Mail\System\Flows\Send\SendMail;
 
-final class Mailer
+final readonly class Mailer
 {
-    private SendMail $sender;
-    private Envelope $envelope;
-
-    public function __construct(SendMail $sender, Envelope $envelope)
-    {
-        $this->sender   = $sender;
-        $this->envelope = $envelope;
-    }
+    public function __construct(
+        private SendMail $sendMail,
+        private Envelope $envelope = new Envelope(from: 'noreply@localhost'),
+    ) {}
 
     public function send(MimeMessage $message) : SendResult
     {
-        return $this->sender->send($message, $this->envelope);
+        return $this->sendMail->send(message: $message, envelope: $this->envelope);
     }
 
     public function queue(MimeMessage $message) : void
     {
-        $this->sender->queue($message, $this->envelope);
+        $this->sendMail->queue(message: $message, envelope: $this->envelope);
     }
 
     public function raw() : RawMailBuilder
     {
-        return new RawMailBuilder($this->sender, $this->envelope);
+        return new RawMailBuilder(sender: $this->sendMail, envelope: $this->envelope);
     }
 }
 
-final class SendResult
+final readonly class SendResult
 {
     public function __construct(
-        public readonly bool        $success,
-        public readonly string|null $messageId = null,
-        public readonly string|null $error = null,
+        public bool        $success,
+        public string|null $messageId = null,
+        public string|null $error = null,
     ) {}
 
     public static function success(string $messageId) : self
@@ -56,30 +52,32 @@ final class SendResult
 
 final class RawMailBuilder
 {
-    private SendMail $sender;
-    private Envelope $envelope;
-    private string|null $from    = null;
-    private string|null $to      = null;
-    private string|null $subject = null;
-    private string|null $body    = null;
-    private array    $headers = [];
+    private string|null $from = null;
 
-    public function __construct(SendMail $sender, Envelope $envelope)
-    {
-        $this->sender   = $sender;
-        $this->envelope = $envelope;
-    }
+    private string|null $to = null;
+
+    private string|null $subject = null;
+
+    private string|null $body = null;
+
+    /** @var array<string, string> */
+    private array $headers = [];
+
+    public function __construct(
+        private readonly SendMail $sender,
+        private readonly Envelope $envelope,
+    ) {}
 
     public function from(string $address, string|null $name = null) : self
     {
-        $this->from = $name !== null ? "$name <$address>" : $address;
+        $this->from = $name !== null ? "{$name} <{$address}>" : $address;
 
         return $this;
     }
 
     public function to(string $address, string|null $name = null) : self
     {
-        $this->to = $name !== null ? "$name <$address>" : $address;
+        $this->to = $name !== null ? "{$name} <{$address}>" : $address;
 
         return $this;
     }
@@ -108,17 +106,18 @@ final class RawMailBuilder
     public function send() : SendResult
     {
         if ($this->from === null || $this->to === null || $this->subject === null || $this->body === null) {
-            return SendResult::failure('Missing required fields: from, to, subject, body');
+            return SendResult::failure(error: 'Missing required fields: from, to, subject, body');
         }
 
-        $message = new MimeMessage(
-            from   : $this->from,
-            to     : $this->to,
-            subject: $this->subject,
-            body   : $this->body,
-            headers: $this->headers,
+        return $this->sender->send(
+            message : new MimeMessage(
+                          from   : $this->from,
+                          to     : $this->to,
+                          subject: $this->subject,
+                          body   : $this->body,
+                          headers: $this->headers,
+                      ),
+            envelope: $this->envelope->withFrom(from: $this->from),
         );
-
-        return $this->sender->send($message, $this->envelope);
     }
 }

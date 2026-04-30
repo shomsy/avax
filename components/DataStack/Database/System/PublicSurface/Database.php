@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Database\System\PublicSurface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager as EntitiesCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
@@ -20,11 +21,12 @@ final readonly class Database
 {
     public function __construct(
         private Connections            $connections,
-        private QueryCapability        $query,
-        private SchemaCapability       $schema,
-        private MigrationsCapability   $migrations,
-        private TransactionsCapability $transactions,
-        private TelemetryCapability    $telemetry,
+        private QueryCapability        $queryCapability,
+        private EntitiesCapability     $entitiesCapability,
+        private SchemaCapability       $schemaCapability,
+        private MigrationsCapability   $migrationsCapability,
+        private TransactionsCapability $transactionsCapability,
+        private TelemetryCapability    $telemetryCapability,
     ) {}
 
     public static function configuration() : DatabaseBuilder
@@ -39,31 +41,36 @@ final readonly class Database
 
     public function query() : Query
     {
-        return new Query($this->query);
+        return new Query(query: $this->queryCapability);
+    }
+
+    public function entities() : Entities
+    {
+        return new Entities(entities: $this->entitiesCapability);
     }
 
     public function schema() : Schema
     {
-        return new Schema($this->schema);
+        return new Schema(schema: $this->schemaCapability);
     }
 
     public function migrations() : Migrations
     {
-        return new Migrations($this->migrations);
+        return new Migrations(migrations: $this->migrationsCapability);
     }
 
     public function transactions() : Transactions
     {
-        return new Transactions($this->transactions);
+        return new Transactions(transactions: $this->transactionsCapability);
     }
 
     public function telemetry() : Telemetry
     {
-        return new Telemetry($this->telemetry);
+        return new Telemetry(telemetry: $this->telemetryCapability);
     }
 
     public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
-        return $this->query->from($table, $connectionName);
+        return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }
 }

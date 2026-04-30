@@ -35,14 +35,14 @@ abstract class Repository implements RepositoryInterface
      */
     abstract protected function entityClass() : string;
 
-    public function findAll(int $limit = null, int $offset = 0) : array
+    public function findAll(int|null $limit = null, int $offset = 0) : array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
 
     public function findBy(
         array $criteria,
-        array $orderBy = null,
+        array|null $orderBy = null,
         int   $limit = null,
         int   $offset = null,
     ) : array

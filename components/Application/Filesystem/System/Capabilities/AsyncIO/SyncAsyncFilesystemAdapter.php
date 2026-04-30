@@ -386,7 +386,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
 
     private mixed $result = null;
 
-    private ?Throwable $throwable = null;
+    private Throwable|null $throwable = null;
 
     /**
      * @param mixed          $result    The resolved value (if resolved)
@@ -394,7 +394,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
      */
     public function __construct(
         mixed      $result = null,
-        ?Throwable $throwable = null,
+        Throwable|null $throwable = null,
     )
     {
         if ($throwable instanceof Throwable) {

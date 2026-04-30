@@ -26,7 +26,7 @@ final readonly class PDOExecutor implements ExecutorInterface
 
     public function __construct(
         DatabaseConnection $connection,
-        EventBus $eventBus = null,
+        EventBus|null $eventBus = null,
         string   $connectionName = 'default',
     )
     {
@@ -42,7 +42,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string         $sql,
         #[SensitiveParameter]
         array          $bindings = [],
-        ExecutionScope $scope = null,
+        ExecutionScope|null $scope = null,
     ) : array
     {
         $start = microtime(as_float: true);
@@ -83,7 +83,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string         $sql,
         #[SensitiveParameter]
         array          $bindings = [],
-        ExecutionScope $scope = null,
+        ExecutionScope|null $scope = null,
     ) : ExecutionResult
     {
         $start = microtime(as_float: true);
@@ -123,7 +123,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         #[SensitiveParameter]
         array          $bindings,
         float          $start,
-        ExecutionScope $scope = null,
+        ExecutionScope|null $scope = null,
         bool           $redactBindings = true,
     ) : void
     {

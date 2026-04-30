@@ -21,12 +21,12 @@ final readonly class BackupCodeRecord
     ) {
     }
 
-    public function isUsed(): bool
+    public function isUsed() : bool
     {
         return $this->usedAt !== null;
     }
 
-    public function markUsed(DateTimeImmutable $moment): self
+    public function markUsed(DateTimeImmutable $moment) : self
     {
         return new self(
             backupCodeId: $this->backupCodeId,

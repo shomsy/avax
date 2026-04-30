@@ -18,7 +18,7 @@ final class RotatingFileWriter
         private readonly int $maxLogFiles = 30,
     ) {}
 
-    public function write(string $message, string $level = 'info', array $context = []): void
+    public function write(string $message, string $level = 'info', array $context = []) : void
     {
         $date     = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
         $directory = dirname($this->baseLogPath);
@@ -38,7 +38,7 @@ final class RotatingFileWriter
         $this->rotate();
     }
 
-    private function rotate(): void
+    private function rotate() : void
     {
         $directory = dirname($this->baseLogPath);
         $filename = basename($this->baseLogPath);

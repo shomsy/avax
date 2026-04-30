@@ -29,7 +29,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         string                $clientId = null,
         array                 $scopes = [],
         string                $refreshTokenFamilyId = null,
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -41,14 +41,14 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         string                $subject,
         string                $clientId,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
         string                $audience = null,
     ) : IssuedToken;
 
     public function resolveWorkloadToken(
         string $token,
-        string $expectedAudience = null,
-        string $expectedIssuer = null,
+        string|null $expectedAudience = null,
+        string|null $expectedIssuer = null,
     ) : ResolvedWorkloadToken|null;
 
     /**
@@ -60,7 +60,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         bool                  $phishingResistant = false,
         string                $clientId = null,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;

@@ -18,7 +18,7 @@ final readonly class GenerateRollbackEvidence
      */
     public function execute(
         string $repositoryRoot,
-        string $rollbackTarget = null,
+        string|null $rollbackTarget = null,
         array  $artifacts = null,
         array  $validationCommands = [],
     ) : array

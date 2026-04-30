@@ -397,7 +397,7 @@ final class ServiceRegistration
 
     public function pooled(
         int    $maxSize = null,
-        string $scopeKind = null,
+        string|null $scopeKind = null,
         bool   $resetBeforeReuse = true,
     ) : self
     {

@@ -24,7 +24,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
     public function __construct(
         array  $events = null,
         array  $data = null,
-        string $currentStep = null,
+        string|null $currentStep = null,
         int    $currentStepIndex = null,
         array  $stepResults = [],
     )
@@ -184,7 +184,7 @@ final readonly class SagaEvent
         string $sagaName,
         string $type,
         array  $payload = null,
-        string $stepName = null,
+        string|null $stepName = null,
     ) : self
     {
         $payload ??= [];

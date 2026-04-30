@@ -13,19 +13,19 @@ final class StartWorker
     ) {
     }
 
-    public function start(callable $bootstrap): void
+    public function start(callable $bootstrap) : void
     {
         $this->bootWorkerApplication($bootstrap);
 
         $this->startWorkerLoop();
     }
 
-    private function bootWorkerApplication(callable $bootstrap): void
+    private function bootWorkerApplication(callable $bootstrap) : void
     {
         $bootstrap();
     }
 
-    private function startWorkerLoop(): void
+    private function startWorkerLoop() : void
     {
         $this->context->getRuntime()->run();
     }

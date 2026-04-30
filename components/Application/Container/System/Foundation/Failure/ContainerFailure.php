@@ -6,6 +6,6 @@ namespace Avax\Components\Application\Container\System\Foundation\Failure;
 
 use RuntimeException;
 
-class ContainerFailure extends RuntimeException
+final class ContainerFailure extends RuntimeException
 {
 }

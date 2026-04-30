@@ -25,7 +25,7 @@ final class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if encryption fails
      */
-    public function encrypt(mixed $value): string
+    public function encrypt(mixed $value) : string
     {
         $ivLen = openssl_cipher_iv_length($this->cipher);
         $iv    = random_bytes($ivLen);
@@ -46,7 +46,7 @@ final class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if decryption fails or payload is tampered
      */
-    public function decrypt(string $payload): mixed
+    public function decrypt(string $payload) : mixed
     {
         $payload = base64_decode($payload, true);
         if ($payload === false) {

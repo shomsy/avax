@@ -22,7 +22,7 @@ final readonly class CacheEntry
     /**
      * Checks if this cache entry has expired.
      */
-    public function isExpired(float $now = null) : bool
+    public function isExpired(float|null $now = null) : bool
     {
         $now ??= microtime(true);
 
@@ -32,7 +32,7 @@ final readonly class CacheEntry
     /**
      * Returns the remaining time-to-live in seconds.
      */
-    public function remainingTtl(float $now = null) : float
+    public function remainingTtl(float|null $now = null) : float
     {
         $now ??= microtime(true);
         $elapsed = $now - $this->createdAt;
@@ -43,7 +43,7 @@ final readonly class CacheEntry
     /**
      * Returns the age of this entry in seconds.
      */
-    public function age(float $now = null) : float
+    public function age(float|null $now = null) : float
     {
         $now ??= microtime(true);
 
@@ -134,7 +134,7 @@ final class ReadCache
     public function __construct(
         float              $defaultTtl = 60.0,
         int                $maxEntries = 0,
-        QueryFingerprinter $fingerprinter = null,
+        QueryFingerprinter|null $fingerprinter = null,
     )
     {
         $this->defaultTtl    = $defaultTtl;
@@ -146,11 +146,11 @@ final class ReadCache
      * Retrieves or computes a value using a callback on cache miss.
      *
      * @template T
-     * @param callable(): T $callback
+     * @param callable() : T $callback
      *
      * @return T
      */
-    public function remember(string $key, callable $callback, float $ttl = null, array $tags = []) : mixed
+    public function remember(string $key, callable $callback, float|null $ttl = null, array $tags = []) : mixed
     {
         $result = $this->get($key);
 
@@ -233,7 +233,7 @@ final class ReadCache
         mixed  $value,
         float  $ttl = null,
         array  $tags = [],
-        string $fingerprint = null,
+        string|null $fingerprint = null,
     ) : void
     {
         $ttl ??= $this->defaultTtl;

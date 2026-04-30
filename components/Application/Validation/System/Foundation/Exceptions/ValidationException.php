@@ -11,7 +11,7 @@ use Throwable;
  * Thrown when input data fails validation rules.
  * Carries structured metadata so callers can build user-facing error responses.
  */
-class ValidationException extends RuntimeException
+final class ValidationException extends RuntimeException
 {
     public function __construct(
         string                 $message,

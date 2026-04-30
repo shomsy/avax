@@ -96,7 +96,7 @@ final readonly class HttpReasonPhrase
     /**
      * Get the standard HTTP reason phrase for a given status code.
      */
-    public static function fromStatusCode(int $code) : ?string
+    public static function fromStatusCode(int $code) : string|null
     {
         return match ($code) {
             // 1xx Informational

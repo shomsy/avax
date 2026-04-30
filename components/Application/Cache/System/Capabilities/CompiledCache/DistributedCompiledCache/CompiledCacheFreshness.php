@@ -26,7 +26,7 @@ final class CompiledCacheFreshness
     /**
      * Create a new freshness checker.
      */
-    public static function create(?Clock $clock = null) : self
+    public static function create(Clock|null $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }

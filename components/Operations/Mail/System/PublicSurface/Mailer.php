@@ -70,14 +70,14 @@ final class RawMailBuilder
         $this->envelope = $envelope;
     }
 
-    public function from(string $address, string $name = null) : self
+    public function from(string $address, string|null $name = null) : self
     {
         $this->from = $name !== null ? "$name <$address>" : $address;
 
         return $this;
     }
 
-    public function to(string $address, string $name = null) : self
+    public function to(string $address, string|null $name = null) : self
     {
         $this->to = $name !== null ? "$name <$address>" : $address;
 

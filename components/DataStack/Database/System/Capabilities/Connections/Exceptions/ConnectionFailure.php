@@ -29,7 +29,7 @@ use Throwable;
  * - "Fatal": The line is permanently dead or blocked.
  * - "Unreachable": We couldn't even find the server on the network.
  */
-class ConnectionFailure extends DatabaseException
+final class ConnectionFailure extends DatabaseException
 {
     /**
      * @param string         $name      The nickname of the connection that failed.

@@ -27,7 +27,7 @@ interface RefreshTokenStoreInterface
         bool                  $phishingResistant = false,
         string                $clientId = null,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken;
 
     public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null;

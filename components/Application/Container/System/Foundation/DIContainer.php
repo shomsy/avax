@@ -285,7 +285,7 @@ final readonly class Container implements ContainerInterface
         return new OpenScope(resolver: $this->resolver);
     }
 
-    public function closeScope(string $kind = null) : void
+    public function closeScope(string|null $kind = null) : void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }

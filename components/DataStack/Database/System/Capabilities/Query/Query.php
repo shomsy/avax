@@ -41,7 +41,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, string $connectionName = null) : QueryBuilder
+    public function from(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->builder(connectionName: $connectionName)->from(table: $table);
     }
@@ -50,7 +50,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(string $connectionName = null) : QueryBuilder
+    public function builder(string|null $connectionName = null) : QueryBuilder
     {
         return $this->createBuilder->for(connectionName: $connectionName);
     }
@@ -59,7 +59,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, string $connectionName = null) : Expression
+    public function raw(string $value, string|null $connectionName = null) : Expression
     {
         return $this->builder(connectionName: $connectionName)->raw(value: $value);
     }

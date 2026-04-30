@@ -17,7 +17,7 @@ final readonly class ReadPdo
     /**
      * @throws Throwable
      */
-    public function for(?string $connectionName = null) : PDO
+    public function for(string|null $connectionName = null) : PDO
     {
         return $this->readConnection->connection(name: $connectionName)->getConnection();
     }

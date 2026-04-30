@@ -20,32 +20,32 @@ final class RuntimeState
     {
     }
 
-    public function runtimeName(): string
+    public function runtimeName() : string
     {
         return $this->runtimeName;
     }
 
-    public function isBooted(): bool
+    public function isBooted() : bool
     {
         return $this->booted;
     }
 
-    public function bootCount(): int
+    public function bootCount() : int
     {
         return $this->bootCount;
     }
 
-    public function bootedAt(): DateTimeImmutable|null
+    public function bootedAt() : DateTimeImmutable|null
     {
         return $this->bootedAt;
     }
 
-    public function shutdownAt(): DateTimeImmutable|null
+    public function shutdownAt() : DateTimeImmutable|null
     {
         return $this->shutdownAt;
     }
 
-    public function markBooted(DateTimeImmutable $bootedAt): void
+    public function markBooted(DateTimeImmutable $bootedAt) : void
     {
         $this->booted = true;
         $this->bootCount += 1;
@@ -53,7 +53,7 @@ final class RuntimeState
         $this->shutdownAt = null;
     }
 
-    public function markShutdown(DateTimeImmutable $shutdownAt): void
+    public function markShutdown(DateTimeImmutable $shutdownAt) : void
     {
         $this->booted     = false;
         $this->shutdownAt = $shutdownAt;

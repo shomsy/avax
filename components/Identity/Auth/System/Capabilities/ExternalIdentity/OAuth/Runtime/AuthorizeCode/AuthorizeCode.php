@@ -42,7 +42,7 @@ final readonly class AuthorizeCode
      * @throws OAuthAuthorizationFailed
      * @throws DateMalformedStringException
      */
-    public function execute(AuthorizeCodeData $data): IssuedAuthorizationCode
+    public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
     {
         $context = $this->currentAuthentication->read();
         $actor   = $context->user();
@@ -184,7 +184,7 @@ final readonly class AuthorizeCode
         return $issued;
     }
 
-    private function recordFailure(AuthorizeCodeData $data, string $reason): void
+    private function recordFailure(AuthorizeCodeData $data, string $reason) : void
     {
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.authorization_code.failed',
@@ -204,7 +204,7 @@ final readonly class AuthorizeCode
      *
      * @return list<string>
      */
-    private function normalizeScopes(array $scopes): array
+    private function normalizeScopes(array $scopes) : array
     {
         $normalized = [];
 

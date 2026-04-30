@@ -14,7 +14,7 @@ final class BuildResponse
         private NormalizeResponseHeaders $headerNormalizer,
     ) {}
 
-    public function execute(mixed $content, int $status = 200, array $headers = []): ResponseInterface
+    public function execute(mixed $content, int $status = 200, array $headers = []) : ResponseInterface
     {
         return new Response(
             statusCode: $status,

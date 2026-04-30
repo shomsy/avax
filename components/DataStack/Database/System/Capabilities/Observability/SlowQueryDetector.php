@@ -203,7 +203,7 @@ final class SlowQueryDetector
 
     public function __construct(
         float              $thresholdMs = 1000.0,
-        QueryFingerprinter $fingerprinter = null,
+        QueryFingerprinter|null $fingerprinter = null,
         int                $maxEntries = 0,
     )
     {

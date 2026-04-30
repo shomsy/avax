@@ -21,17 +21,17 @@ final readonly class RegisteredHttpRoutes
     /**
      * @return array<string, list<RouteDefinition>>
      */
-    public function routesByMethod(): array
+    public function routesByMethod() : array
     {
         return $this->routesByMethod;
     }
 
-    public function hasFallback(): bool
+    public function hasFallback() : bool
     {
         return $this->fallback !== null;
     }
 
-    public function fallback(): Closure|array|string|null
+    public function fallback() : Closure|array|string|null
     {
         return $this->fallback;
     }

@@ -14,7 +14,7 @@ final readonly class OAuthClientApprovalPolicy
     public function requiresApproval(
         bool                      $workloadIdentity = null,
         bool                      $phishingResistantRequired = null,
-        OAuthSenderConstraintType $requiredSenderConstraint = null,
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
     ) : bool
     {
         $workloadIdentity          ??= false;

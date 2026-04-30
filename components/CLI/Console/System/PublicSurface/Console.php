@@ -24,8 +24,8 @@ class Console
 
 
     public function __construct(
-        ?string                        $name = null,
-        ?string                        $version = null,
+        string|null $name = null,
+        string|null $version = null,
         private readonly ConsoleOutput $consoleOutput = new ConsoleOutput(),
     )
     {
@@ -72,7 +72,7 @@ class Console
      *
      * Parses argv, resolves the command, and executes it.
      */
-    public function run(?array $argv = null) : int
+    public function run(array|null $argv = null) : int
     {
         $argv ??= $_SERVER['argv'] ?? [];
 

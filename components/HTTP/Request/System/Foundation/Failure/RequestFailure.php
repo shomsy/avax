@@ -9,4 +9,4 @@ use RuntimeException;
 /**
  * Exception thrown when request processing fails.
  */
-class RequestFailure extends RuntimeException {}
+final class RequestFailure extends RuntimeException {}

@@ -15,7 +15,7 @@ final readonly class MakeEntityCommand
         private LoggerInterface          $logger,
     ) {}
 
-    public function execute(array $arguments): void
+    public function execute(array $arguments) : void
     {
         $table = $arguments['table'] ?? null;
         $fieldsInput = $arguments['fields'] ?? '';
@@ -35,7 +35,7 @@ final readonly class MakeEntityCommand
         }
     }
 
-    private function parseFields(string $input): array
+    private function parseFields(string $input) : array
     {
         if ($input === '') {
             return [];

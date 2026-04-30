@@ -10,13 +10,13 @@ final class ProgressBar
 
     public function __construct(private readonly int $total, private readonly int $width = 50) {}
 
-    public function advance(int $step = 1): void
+    public function advance(int $step = 1) : void
     {
         $this->current += $step;
         $this->display();
     }
 
-    public function display(): void
+    public function display() : void
     {
         $percent = ($this->current / $this->total);
         $bar = (int) ($percent * $this->width);

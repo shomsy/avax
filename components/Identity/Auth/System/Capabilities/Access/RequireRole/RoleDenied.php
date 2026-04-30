@@ -10,7 +10,7 @@ use Exception;
 /**
  * Exception for insufficient role within the Auth System.
  */
-class RoleDenied extends Exception
+final class RoleDenied extends Exception
 {
     public function __construct(
         private readonly UserRole $requirement,

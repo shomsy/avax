@@ -9,7 +9,7 @@ use Exception;
 
 final class ReportExceptionToLogger
 {
-    public function report(Exception $e, RequestInterface $request): void
+    public function report(Exception $e, RequestInterface $request) : void
     {
         // Integration with Logger component would go here
     }

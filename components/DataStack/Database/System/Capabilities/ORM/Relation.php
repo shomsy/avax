@@ -13,12 +13,12 @@ abstract class Relation
         protected string $localKey,
     ) {}
 
-    abstract public function getResults(): mixed;
+    abstract public function getResults() : mixed;
 }
 
 final class HasMany extends Relation
 {
-    public function getResults(): array
+    public function getResults() : array
     {
         // Placeholder for ORM logic
         return [];

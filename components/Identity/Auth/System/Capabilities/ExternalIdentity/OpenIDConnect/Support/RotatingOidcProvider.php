@@ -20,7 +20,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         string            $clientId,
         array             $scopes,
         string            $nonce = null,
-        DateTimeImmutable $authenticatedAt = null,
+        DateTimeImmutable|null $authenticatedAt = null,
         #[SensitiveParameter]
         string            $sessionId = null,
         bool              $phishingResistant = false,

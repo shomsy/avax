@@ -17,7 +17,7 @@ final readonly class ApproveClientRegistration
     {
     }
 
-    public function execute(ApproveClientRegistrationData $data): OAuthClient
+    public function execute(ApproveClientRegistrationData $data) : OAuthClient
     {
         $client = $this->clientRegistry->approve(
             clientId  : $data->clientId,

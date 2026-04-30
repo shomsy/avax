@@ -117,7 +117,7 @@ final class ElasticsearchGrammar extends BaseGrammar
         return json_encode(value: ['range' => [$field => $range]]);
     }
 
-    public function compileBool(array $must = null, array $mustNot = null, array $should = []) : string
+    public function compileBool(array|null $must = null, array|null $mustNot = null, array $should = []) : string
     {
         $must    ??= [];
         $mustNot ??= [];

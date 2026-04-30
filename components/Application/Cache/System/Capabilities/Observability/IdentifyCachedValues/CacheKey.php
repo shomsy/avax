@@ -61,7 +61,7 @@ final readonly class CacheKey implements Stringable
         }
     }
 
-    public static function create(string $key, ?string $namespace = null, ?CacheVersion $cacheVersion = null) : self
+    public static function create(string $key, string|null $namespace = null, CacheVersion|null $cacheVersion = null) : self
     {
         return new self(original: $key, namespace: $namespace, version: $cacheVersion);
     }

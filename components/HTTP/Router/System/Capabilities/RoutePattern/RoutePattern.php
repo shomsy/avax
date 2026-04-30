@@ -10,7 +10,7 @@ final class RoutePattern
         private string $pattern,
     ) {}
 
-    public function toString(): string
+    public function toString() : string
     {
         return $this->pattern;
     }

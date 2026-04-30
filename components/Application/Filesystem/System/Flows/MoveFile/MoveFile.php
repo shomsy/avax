@@ -10,7 +10,7 @@ use Throwable;
 
 final class MoveFile
 {
-    public static function execute(string $source, string $destination): bool
+    public static function execute(string $source, string $destination) : bool
     {
         try {
             return Storage::move($source, $destination);

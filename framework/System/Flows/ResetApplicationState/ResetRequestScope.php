@@ -13,7 +13,7 @@ final class ResetRequestScope
     ) {
     }
 
-    public function reset(): void
+    public function reset() : void
     {
         $this->requestScope->clear();
     }

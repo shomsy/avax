@@ -27,7 +27,7 @@ final readonly class EncryptValue
      *
      * @return EncryptedPayload The encrypted payload
      */
-    public function execute(mixed $value, EncryptionKey $key = null) : EncryptedPayload
+    public function execute(mixed $value, EncryptionKey|null $key = null) : EncryptedPayload
     {
         $encryptionKey = $key ?? $this->keyResolver->getCurrentKey();
 

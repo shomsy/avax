@@ -18,7 +18,7 @@ final readonly class EventDispatcher
     /**
      * Dispatch an event to all registered listeners.
      */
-    public function dispatch(string|object $event, mixed $data = null): object|string
+    public function dispatch(string|object $event, mixed $data = null) : object|string
     {
         $eventName = is_object($event) ? $event::class : $event;
         $listeners = $this->registry->getListenersFor($eventName);

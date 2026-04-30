@@ -25,7 +25,7 @@ final readonly class SagaStepResult
         string            $error = null,
         int               $attempt = null,
         float             $durationMs = null,
-        DateTimeImmutable $completedAt = null,
+        DateTimeImmutable|null $completedAt = null,
     )
     {
         $output     ??= [];
@@ -105,7 +105,7 @@ final readonly class SagaStepExecutionPolicy
         int  $maxRetries = null,
         int  $retryDelayMs = null,
         int  $timeoutSeconds = null,
-        bool $continueOnFailure = null,
+        bool|null $continueOnFailure = null,
         bool $isolationPerStep = true,
     )
     {

@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class CurlClient
 {
-    public function send(ClientRequest $request): ClientResponse
+    public function send(ClientRequest $request) : ClientResponse
     {
         $ch = curl_init();
 

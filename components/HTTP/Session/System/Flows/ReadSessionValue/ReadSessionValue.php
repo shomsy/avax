@@ -13,7 +13,7 @@ final readonly class ReadSessionValue
     ) {
     }
 
-    public function execute(string $key, mixed $default = null): mixed
+    public function execute(string $key, mixed $default = null) : mixed
     {
         return $this->scope->get($key, $default);
     }

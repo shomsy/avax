@@ -14,7 +14,7 @@ final class MultiTenantPool implements ConnectionPool
 
     public function __construct(private readonly array $tenantConfigs) {}
 
-    public function getForTenant(string $tenantId): PDO
+    public function getForTenant(string $tenantId) : PDO
     {
         if (! isset($this->pools[$tenantId])) {
             $config = $this->tenantConfigs[$tenantId];

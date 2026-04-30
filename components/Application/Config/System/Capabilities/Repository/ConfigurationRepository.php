@@ -11,7 +11,7 @@ final class ConfigurationRepository
 {
     private array $items = [];
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         if (isset($this->items[$key])) {
             return $this->items[$key];
@@ -24,7 +24,7 @@ final class ConfigurationRepository
         return $this->getDot($key, $default);
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         if (! str_contains($key, '.')) {
             $this->items[$key] = $value;

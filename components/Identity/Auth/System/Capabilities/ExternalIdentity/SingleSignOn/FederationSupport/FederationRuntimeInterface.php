@@ -9,7 +9,7 @@ interface FederationRuntimeInterface
     public function startLogin(
         FederationConnection $connection,
         string $redirectUri,
-        string $state = null,
+        string|null $state = null,
     ) : StartedFederatedLogin;
 
     /**

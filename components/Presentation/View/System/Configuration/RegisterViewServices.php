@@ -12,7 +12,8 @@ final class RegisterViewServices
     public static function register(
         TemplateEngineInterface $engine,
         array $config = [],
-    ): void {
+    ) : void
+    {
         $defaults = [
             'path'      => base_path('resources/views'),
             'cache_path' => base_path('storage/views'),

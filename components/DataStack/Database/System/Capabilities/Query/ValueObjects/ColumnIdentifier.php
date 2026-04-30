@@ -20,7 +20,7 @@ final readonly class ColumnIdentifier
      */
     public function __construct(
         string $name,
-        string $alias = null,
+        string|null $alias = null,
     )
     {
         $this->name  = $name;

@@ -14,7 +14,7 @@ use Throwable;
 final readonly class LocalDisk implements Disk
 {
     #[Override]
-    public function read(string $path): string
+    public function read(string $path) : string
     {
         if (! file_exists($path) || ! is_readable($path)) {
             throw new RuntimeException('File not found or not readable: ' . $path);
@@ -29,7 +29,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function write(string $path, string $content, bool $append = false): bool
+    public function write(string $path, string $content, bool $append = false) : bool
     {
         $directory = dirname($path);
         if (! is_dir($directory)) {
@@ -42,7 +42,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function copy(string $source, string $destination): bool
+    public function copy(string $source, string $destination) : bool
     {
         if (! file_exists($source)) {
             throw new RuntimeException('Source file not found: ' . $source);
@@ -57,7 +57,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function move(string $source, string $destination): bool
+    public function move(string $source, string $destination) : bool
     {
         if (! file_exists($source)) {
             throw new RuntimeException('Source file not found: ' . $source);
@@ -72,19 +72,19 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function delete(string $path): bool
+    public function delete(string $path) : bool
     {
         return file_exists($path) ? unlink($path) : true;
     }
 
     #[Override]
-    public function exists(string $path): bool
+    public function exists(string $path) : bool
     {
         return file_exists($path);
     }
 
     #[Override]
-    public function lastModified(string $path): ?int
+    public function lastModified(string $path) : int|null
     {
         return file_exists($path) ? (filemtime($path) ?: null) : null;
     }
@@ -96,7 +96,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function deleteDirectory(string $path): bool
+    public function deleteDirectory(string $path) : bool
     {
         if (! is_dir($path)) {
             return true;
@@ -108,7 +108,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function clear(string $path): bool
+    public function clear(string $path) : bool
     {
         if (! is_dir($path)) {
             return false;
@@ -123,19 +123,19 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function isWritable(string $path): bool
+    public function isWritable(string $path) : bool
     {
         return is_writable($path);
     }
 
     #[Override]
-    public function setPermissions(string $path, int $permissions): bool
+    public function setPermissions(string $path, int $permissions) : bool
     {
         return file_exists($path) && chmod($path, $permissions);
     }
 
     #[Override]
-    public function listFiles(string $path): array
+    public function listFiles(string $path) : array
     {
         if (! is_dir($path) || ! is_readable($path)) {
             return [];

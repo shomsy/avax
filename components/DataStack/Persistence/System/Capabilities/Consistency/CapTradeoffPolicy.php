@@ -9,9 +9,9 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Consistency;
  *
  * The CAP theorem states that a distributed system can only guarantee
  * two of three properties simultaneously:
- * - Consistency (C): Every read receives the most recent write
- * - Availability (A): Every request receives a response
- * - Partition tolerance (P): System continues despite network partitions
+ * - Consistency (C) : Every read receives the most recent write
+ * - Availability (A) : Every request receives a response
+ * - Partition tolerance (P) : System continues despite network partitions
  *
  * Since partitions are inevitable in distributed systems, the practical
  * choice is between CP (Consistency + Partition tolerance) and

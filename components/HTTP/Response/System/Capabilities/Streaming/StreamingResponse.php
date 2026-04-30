@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 
 final class StreamingResponse
 {
-    public function create(callable $callback): Response
+    public function create(callable $callback) : Response
     {
         return new Response(); // Placeholder
     }

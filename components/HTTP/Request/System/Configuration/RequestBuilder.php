@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\Request;
 
 final class RequestBuilder
 {
-    public function build(): Request
+    public function build() : Request
     {
         return new Request(...); // Placeholder
     }

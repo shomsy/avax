@@ -49,7 +49,7 @@ final readonly class ClientMiddlewarePipeline
      * Convenience method that resolves and executes in one call.
      *
      * @param OutboundRequest $request The outbound request
-     * @param Closure(OutboundRequest): ClientResponse $finalHandler The terminal handler
+     * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
      */
     public function execute(OutboundRequest $request, Closure $finalHandler) : ClientResponse
     {
@@ -64,9 +64,9 @@ final readonly class ClientMiddlewarePipeline
      * Wraps each middleware around the final handler, creating
      * a composed function that processes requests through the entire chain.
      *
-     * @param Closure(OutboundRequest): ClientResponse $finalHandler The terminal handler
+     * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
      *
-     * @return Closure(OutboundRequest): ClientResponse The composed handler
+     * @return Closure(OutboundRequest) : ClientResponse The composed handler
      */
     public function resolve(Closure $finalHandler) : Closure
     {

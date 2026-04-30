@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\System\PublicSurface\Container;
 
 final class RegisterBinding
 {
-    public function register(Container $container, string $id, callable $factory): void
+    public function register(Container $container, string $id, callable $factory) : void
     {
         $container->bind($id, $factory);
     }

@@ -26,7 +26,7 @@ final class AttributeMetadataReader
     /**
      * @param class-string $entityClass
      */
-    public function for(string $entityClass): EntityMetadata
+    public function for(string $entityClass) : EntityMetadata
     {
         return $this->cache[$entityClass] ??= $this->read(entityClass: $entityClass);
     }
@@ -34,7 +34,7 @@ final class AttributeMetadataReader
     /**
      * @param class-string $entityClass
      */
-    private function read(string $entityClass): EntityMetadata
+    private function read(string $entityClass) : EntityMetadata
     {
         $reflection = new ReflectionClass(objectOrClass: $entityClass);
 

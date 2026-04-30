@@ -76,7 +76,7 @@ final class RedisGrammar extends BaseGrammar
         return "HSET {$key} " . implode(separator: ' ', array: $pairs);
     }
 
-    public function compileHashGet(string $key, string $field = null) : string
+    public function compileHashGet(string $key, string|null $field = null) : string
     {
         if ($field === null) {
             return "HGETALL {$key}";

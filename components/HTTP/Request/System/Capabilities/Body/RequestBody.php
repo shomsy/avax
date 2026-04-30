@@ -11,12 +11,12 @@ final class RequestBody
         private ParsedBody $parsed,
     ) {}
 
-    public function raw(): RawBody
+    public function raw() : RawBody
     {
         return $this->raw;
     }
 
-    public function parsed(): ParsedBody
+    public function parsed() : ParsedBody
     {
         return $this->parsed;
     }

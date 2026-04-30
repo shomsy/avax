@@ -93,7 +93,7 @@ final readonly class PublishSagaCompleted
 
 final class SagaCompletionFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga completion failed.', Throwable $previous = null)
+    public function __construct(string $message = 'Saga completion failed.', Throwable|null $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

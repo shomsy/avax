@@ -29,9 +29,9 @@ final readonly class AuthenticatedUser
         #[SensitiveParameter]
         public string $email,
         public string $username,
-        array $roles = null,
-        array $permissions = null,
-        bool $emailVerified = null,
+        array|null $roles = null,
+        array|null $permissions = null,
+        bool|null  $emailVerified = null,
         public bool $mfaEnabled = false,
     ) {
         $roles         ??= [];
@@ -44,17 +44,18 @@ final readonly class AuthenticatedUser
 
     public static function fromUser(
         User $user,
-        bool $emailVerified = null,
+        bool|null $emailVerified = null,
         bool $mfaEnabled = false,
-    ): self {
+    ) : self
+    {
         $emailVerified ??= false;
         $roles = array_map(
-            callback: static fn (UserRole $role): string => $role->value,
+            callback: static fn (UserRole $role) : string => $role->value,
             array   : $user->getRoles(),
         );
 
         $permissions = array_map(
-            callback: static fn (UserPermission $permission): string => $permission->value,
+            callback: static fn (UserPermission $permission) : string => $permission->value,
             array   : $user->getPermissions(),
         );
 
@@ -69,17 +70,17 @@ final readonly class AuthenticatedUser
         );
     }
 
-    public function hasRole(UserRole $role): bool
+    public function hasRole(UserRole $role) : bool
     {
         return in_array(needle: $role->value, haystack: $this->roles, strict: true);
     }
 
-    public function canAccessRole(UserRole $requiredRole): bool
+    public function canAccessRole(UserRole $requiredRole) : bool
     {
         return array_any(array: $this->roles, callback: static fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
     }
 
-    public function hasPermission(UserPermission $permission): bool
+    public function hasPermission(UserPermission $permission) : bool
     {
         return in_array(needle: $permission->value, haystack: $this->permissions, strict: true);
     }

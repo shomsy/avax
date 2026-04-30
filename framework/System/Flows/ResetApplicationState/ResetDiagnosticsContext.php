@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Flows\ResetApplicationState;
 
 final class ResetDiagnosticsContext
 {
-    public function reset(): void
+    public function reset() : void
     {
     }
 }

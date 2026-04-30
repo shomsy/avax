@@ -13,7 +13,7 @@ final class ResetApplicationState
     ) {
     }
 
-    public function reset(): StateResetReport
+    public function reset() : StateResetReport
     {
         $this->resetRequestScope();
         $this->resetRuntimeContext();
@@ -26,19 +26,19 @@ final class ResetApplicationState
         );
     }
 
-    private function resetRequestScope(): void
+    private function resetRequestScope() : void
     {
     }
 
-    private function resetRuntimeContext(): void
+    private function resetRuntimeContext() : void
     {
     }
 
-    private function resetDiagnosticsContext(): void
+    private function resetDiagnosticsContext() : void
     {
     }
 
-    private function resetComponentState(): void
+    private function resetComponentState() : void
     {
         $this->registry->resetAll();
     }

@@ -35,62 +35,62 @@ final readonly class Runtime implements RuntimeInterface
     ) {
     }
 
-    public function state(): RuntimeState
+    public function state() : RuntimeState
     {
         return $this->state;
     }
 
-    public function context(): RuntimeContext
+    public function context() : RuntimeContext
     {
         return $this->context;
     }
 
-    public function requestScopes(): RequestScopeStore
+    public function requestScopes() : RequestScopeStore
     {
         return $this->requestScopes;
     }
 
-    public function components(): ComponentRegistry
+    public function components() : ComponentRegistry
     {
         return $this->components;
     }
 
-    public function stateResetRegistry(): StateResetRegistry
+    public function stateResetRegistry() : StateResetRegistry
     {
         return $this->stateResetRegistry;
     }
 
-    public function projectPath(): ProjectPath
+    public function projectPath() : ProjectPath
     {
         return $this->projectPath;
     }
 
-    public function environment(): EnvironmentName
+    public function environment() : EnvironmentName
     {
         return $this->environment;
     }
 
-    public function clock(): Clock
+    public function clock() : Clock
     {
         return $this->clock;
     }
 
-    public function runtimeName(): string
+    public function runtimeName() : string
     {
         return $this->runtimeName;
     }
 
-    public function httpHandler(): Closure|null
+    public function httpHandler() : Closure|null
     {
         return $this->httpHandler;
     }
 
-    public function consoleCommands(): array
+    public function consoleCommands() : array
     {
         return $this->consoleCommands;
     }
 
-    public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
+    public function runWorker(WorkerRuntimeInterface $workerRuntime) : WorkerLifecycle
     {
         $workerLoop = new WorkerLoop(
             runtime      : $this,

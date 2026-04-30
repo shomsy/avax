@@ -26,7 +26,7 @@ final readonly class EntityManager
      *
      * @throws Throwable
      */
-    public function find(string $entityClass, mixed $id, ?string $connectionName = null) : object|null
+    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
     {
         return $this->entityManagerCapability->find(
             entityClass   : $entityClass,
@@ -48,7 +48,7 @@ final readonly class EntityManager
     /**
      * @throws Throwable
      */
-    public function flush(?string $connectionName = null) : void
+    public function flush(string|null $connectionName = null) : void
     {
         $this->entityManagerCapability->flush(connectionName: $connectionName);
     }
@@ -61,7 +61,7 @@ final readonly class EntityManager
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, ?string $connectionName = null) : object
+    public function refresh(object $entity, string|null $connectionName = null) : object
     {
         return $this->entityManagerCapability->refresh(entity: $entity, connectionName: $connectionName);
     }
@@ -77,7 +77,7 @@ final readonly class EntityManager
     /**
      * @throws Throwable
      */
-    public function transactional(callable $callback, ?string $connectionName = null) : mixed
+    public function transactional(callable $callback, string|null $connectionName = null) : mixed
     {
         return $this->entityManagerCapability->transactional(callback: $callback, connectionName: $connectionName);
     }

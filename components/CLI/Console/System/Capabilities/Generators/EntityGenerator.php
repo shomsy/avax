@@ -119,6 +119,6 @@ class EntityGenerator extends CodeGenerator
     {
         $methodName = 'set' . Str::studly($fieldName);
 
-        return "\n    public function {$methodName}({$fieldType} \${$fieldName}): self\n    {\n        \$this->{$fieldName} = \${$fieldName};\n\n        return \$this;\n    }\n";
+        return "\n    public function {$methodName}({$fieldType} \${$fieldName}) : self\n    {\n        \$this->{$fieldName} = \${$fieldName};\n\n        return \$this;\n    }\n";
     }
 }

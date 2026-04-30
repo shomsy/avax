@@ -15,7 +15,7 @@ final class DispatchRoute
         private InvokeRouteAction $invoker,
     ) {}
 
-    public function execute(RouteDefinition $route, RequestInterface $request): ResponseInterface
+    public function execute(RouteDefinition $route, RequestInterface $request) : ResponseInterface
     {
         $action = $this->resolver->resolve($route);
 

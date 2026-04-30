@@ -24,7 +24,7 @@ final readonly class ActiveSession
         #[SensitiveParameter]
         public string|null $ipAddress = null,
         public string|null $userAgent = null,
-        bool $current = null,
+        bool|null $current = null,
         public DateTimeImmutable|null $revokedAt = null,
         public string|null $revokeReason = null,
     ) {

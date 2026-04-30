@@ -66,7 +66,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         return $currentData !== $this->snapshots[$objectId];
     }
 
-    public function flush(string $connectionName = null) : void
+    public function flush(string|null $connectionName = null) : void
     {
         // Process inserts
         foreach ($this->new as $objectId => $entity) {

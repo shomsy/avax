@@ -13,7 +13,7 @@ final class HeaderName
         $this->name = strtolower($name);
     }
 
-    public function toString(): string
+    public function toString() : string
     {
         return $this->name;
     }

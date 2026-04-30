@@ -30,7 +30,7 @@ final readonly class VerifyOAuthSenderConstraint
     public function execute(
         HttpOAuthProofInput       $input,
         OAuthSenderConstraint     $expectedSenderConstraint = null,
-        OAuthSenderConstraintType $requiredSenderConstraint = null,
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
     ) : OAuthSenderConstraint|null
     {
         $requiredType = $expectedSenderConstraint !== null ? $expectedSenderConstraint->type : $requiredSenderConstraint;

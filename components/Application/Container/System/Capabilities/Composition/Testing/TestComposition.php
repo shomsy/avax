@@ -39,7 +39,7 @@ final readonly class TestComposition
         string $slice,
         string $abstract,
         mixed  $concrete = null,
-        ?bool  $entry = null,
+        bool|null $entry = null,
         array  $imports = [],
     ) : ServiceRegistration
     {

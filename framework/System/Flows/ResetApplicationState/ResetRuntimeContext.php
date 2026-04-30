@@ -13,7 +13,7 @@ final class ResetRuntimeContext
     ) {
     }
 
-    public function reset(): void
+    public function reset() : void
     {
         $this->context->clear();
     }

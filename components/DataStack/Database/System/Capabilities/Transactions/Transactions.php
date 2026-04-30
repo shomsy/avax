@@ -21,7 +21,7 @@ final readonly class Transactions
     public function __construct(
         private Connections $connections,
         OnConnection   $onConnection = null,
-        RunTransaction $runTransaction = null,
+        RunTransaction|null $runTransaction = null,
     )
     {
         $this->onConnection = $onConnection ?? new OnConnection(connections: $this->connections);
@@ -31,7 +31,7 @@ final readonly class Transactions
     /**
      * @throws Throwable
      */
-    public function on(string $connectionName = null) : Transaction
+    public function on(string|null $connectionName = null) : Transaction
     {
         return $this->onConnection->for(connectionName: $connectionName);
     }
@@ -39,7 +39,7 @@ final readonly class Transactions
     /**
      * @throws Throwable
      */
-    public function run(callable $callback, string $connectionName = null) : mixed
+    public function run(callable $callback, string|null $connectionName = null) : mixed
     {
         return $this->runTransaction->run(callback: $callback, connectionName: $connectionName);
     }

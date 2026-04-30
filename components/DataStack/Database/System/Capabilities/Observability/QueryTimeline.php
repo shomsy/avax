@@ -32,7 +32,7 @@ final readonly class QueryEntry
         string $type = 'unknown',
         string $connection = '',
         int    $affectedRows = 0,
-        string $error = null,
+        string|null $error = null,
     ) : self
     {
         return new self(
@@ -142,7 +142,7 @@ final class QueryTimeline
         string $type = 'unknown',
         string $connection = '',
         int    $affectedRows = 0,
-        string $error = null,
+        string|null $error = null,
     ) : QueryEntry
     {
         $entry = new QueryEntry(

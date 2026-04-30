@@ -13,27 +13,27 @@ final class Response
     ) {
     }
 
-    public function statusCode(): int
+    public function statusCode() : int
     {
         return $this->statusCode;
     }
 
-    public function headers(): array
+    public function headers() : array
     {
         return $this->headers;
     }
 
-    public function body(): string
+    public function body() : string
     {
         return $this->body;
     }
 
-    public function withStatus(int $code): self
+    public function withStatus(int $code) : self
     {
         return new self($code, $this->headers, $this->body);
     }
 
-    public function withHeader(string $name, string $value): self
+    public function withHeader(string $name, string $value) : self
     {
         $headers = $this->headers;
         $headers[$name] = $value;
@@ -41,7 +41,7 @@ final class Response
         return new self($this->statusCode, $headers, $this->body);
     }
 
-    public function withBody(string $body): self
+    public function withBody(string $body) : self
     {
         return new self($this->statusCode, $this->headers, $body);
     }

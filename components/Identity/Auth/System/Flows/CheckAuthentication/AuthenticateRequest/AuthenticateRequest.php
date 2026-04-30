@@ -34,7 +34,7 @@ final readonly class AuthenticateRequest
     ) {
     }
 
-    public function execute(AuthenticationRequest $request): AuthenticationContext
+    public function execute(AuthenticationRequest $request) : AuthenticationContext
     {
         [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $request);
         $resolvedToken                                                               = $request->bearerToken !== null
@@ -118,7 +118,7 @@ final readonly class AuthenticateRequest
     /**
      * @return array{0: User|null, 1: string|null, 2: DateTimeImmutable|null, 3: bool}
      */
-    private function resolveSessionUser(AuthenticationRequest $request): array
+    private function resolveSessionUser(AuthenticationRequest $request) : array
     {
         if (! $request->allowSession || $this->sessionIdentity === null) {
             return [null, null, null, false];
@@ -147,7 +147,8 @@ final readonly class AuthenticateRequest
     private function latestMfaMoment(
         DateTimeImmutable|null $left,
         DateTimeImmutable|null $right,
-    ): DateTimeImmutable|null {
+    ) : DateTimeImmutable|null
+    {
         if ($left === null) {
             return $right;
         }

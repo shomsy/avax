@@ -11,7 +11,7 @@ final readonly class CliInputReader
      *
      * @return array{command: string, arguments: list<string>}
      */
-    public function read(array $argv): array
+    public function read(array $argv) : array
     {
         $command   = $argv[1] ?? 'help';
         $arguments = array_slice($argv, 2);

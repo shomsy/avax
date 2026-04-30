@@ -126,7 +126,7 @@ final class CompileContainer
      * @throws JsonException
      * @throws ReflectionException
      */
-    public function compile(array $serviceIds = null, array $validationIssues = null, bool $warmed = false) : CompiledContainer
+    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer
     {
         $serviceIds       ??= [];
         $validationIssues ??= [];

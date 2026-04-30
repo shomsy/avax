@@ -40,7 +40,7 @@ final class DecodeHttpResponse
         float  $connectTimeMs = 0.0,
         float  $totalTimeMs = 0.0,
         int    $redirectCount = 0,
-        string $effectiveUrl = null,
+        string|null $effectiveUrl = null,
     ) : ClientResponse
     {
         // Normalize headers to array of arrays

@@ -50,7 +50,7 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -120,7 +120,7 @@ final readonly class StartMfaChallenge
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

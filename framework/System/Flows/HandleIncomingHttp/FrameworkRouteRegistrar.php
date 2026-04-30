@@ -19,47 +19,47 @@ final class FrameworkRouteRegistrar implements RouterInterface
     {
     }
 
-    public function get(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::GET->value, path: $path, action: $action);
     }
 
-    public function post(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::POST->value, path: $path, action: $action);
     }
 
-    public function put(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::PUT->value, path: $path, action: $action);
     }
 
-    public function patch(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::PATCH->value, path: $path, action: $action);
     }
 
-    public function delete(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::DELETE->value, path: $path, action: $action);
     }
 
-    public function options(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::OPTIONS->value, path: $path, action: $action);
     }
 
-    public function head(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::HEAD->value, path: $path, action: $action);
     }
 
-    public function any(string $path, callable|array|string $action): RouteRegistrarProxy
+    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         return $this->register(method: HttpMethod::ANY->value, path: $path, action: $action);
     }
 
-    public function anyExpanded(string $path, callable|array|string $action): array
+    public function anyExpanded(string $path, callable|array|string $action) : array
     {
         $proxies = [];
 
@@ -74,7 +74,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
         return $proxies;
     }
 
-    public function fallback(callable|array|string $handler): void
+    public function fallback(callable|array|string $handler) : void
     {
         $this->fallback = is_string($handler) || is_array($handler)
             ? $handler
@@ -83,7 +83,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
         $this->routeRegistry->setFallback(fallback: $this->fallback);
     }
 
-    public function collectRoutes(): RegisteredHttpRoutes
+    public function collectRoutes() : RegisteredHttpRoutes
     {
         $routesByMethod = [];
 
@@ -101,7 +101,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
         );
     }
 
-    private function register(string $method, string $path, callable|array|string $action): RouteRegistrarProxy
+    private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         $builder = RouteBuilder::make(method: $method, path: $path);
         $builder->action(action: $action);

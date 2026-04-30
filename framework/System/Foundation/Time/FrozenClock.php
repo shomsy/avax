@@ -13,12 +13,12 @@ final readonly class FrozenClock implements Clock
     ) {
     }
 
-    public function now(): DateTimeImmutable
+    public function now() : DateTimeImmutable
     {
         return $this->frozenTime;
     }
 
-    public function withFrozenTime(DateTimeImmutable $newTime): self
+    public function withFrozenTime(DateTimeImmutable $newTime) : self
     {
         return new self(frozenTime: $newTime);
     }

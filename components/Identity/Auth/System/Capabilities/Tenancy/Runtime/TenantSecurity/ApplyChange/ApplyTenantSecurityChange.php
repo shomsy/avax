@@ -23,7 +23,7 @@ final readonly class ApplyTenantSecurityChange
     /**
      * @throws TenantSecurityFailed
      */
-    public function execute(string $changeId): TenantSecurityConfiguration
+    public function execute(string $changeId) : TenantSecurityConfiguration
     {
         $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 

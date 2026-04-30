@@ -13,7 +13,7 @@ interface RepositoryInterface
 
     public function findAll() : array;
 
-    public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null) : array;
+    public function findBy(array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null) : array;
 
     public function findOneBy(array $criteria) : ?object;
 }

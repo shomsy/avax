@@ -16,12 +16,12 @@ final class RuntimeContext implements ResettableState
 
     private RuntimeResult|null $lastResult = null;
 
-    public function hasActiveRequest(): bool
+    public function hasActiveRequest() : bool
     {
         return $this->currentRequest !== null;
     }
 
-    public function startRequest(RequestScopeId $scopeId, RuntimeRequest $request): void
+    public function startRequest(RequestScopeId $scopeId, RuntimeRequest $request) : void
     {
         if ($this->hasActiveRequest()) {
             throw new FrameworkMisconfigured(message: 'Runtime context already has an active request.');
@@ -31,34 +31,34 @@ final class RuntimeContext implements ResettableState
         $this->currentRequest = $request;
     }
 
-    public function finishRequest(RuntimeResult $result): void
+    public function finishRequest(RuntimeResult $result) : void
     {
         $this->lastResult     = $result;
         $this->currentRequest = null;
         $this->currentScopeId = null;
     }
 
-    public function recordResult(RuntimeResult $result): void
+    public function recordResult(RuntimeResult $result) : void
     {
         $this->lastResult = $result;
     }
 
-    public function currentRequest(): RuntimeRequest|null
+    public function currentRequest() : RuntimeRequest|null
     {
         return $this->currentRequest;
     }
 
-    public function currentScopeId(): RequestScopeId|null
+    public function currentScopeId() : RequestScopeId|null
     {
         return $this->currentScopeId;
     }
 
-    public function lastResult(): RuntimeResult|null
+    public function lastResult() : RuntimeResult|null
     {
         return $this->lastResult;
     }
 
-    public function resetState(): void
+    public function resetState() : void
     {
         $this->currentRequest = null;
         $this->currentScopeId = null;

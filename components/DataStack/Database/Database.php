@@ -72,7 +72,7 @@ final readonly class Database
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }

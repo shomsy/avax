@@ -38,7 +38,7 @@ final class BootHttpKernel
      *
      * Idempotent - calling multiple times has no additional effect.
      */
-    public function boot(): void
+    public function boot() : void
     {
         if ($this->booted) {
             return;

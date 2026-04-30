@@ -17,12 +17,12 @@ final class MatchHttpRoute
 {
     private RouteMatcher $routeMatcher;
 
-    public function __construct(RouteMatcher $routeMatcher = null)
+    public function __construct(RouteMatcher|null $routeMatcher = null)
     {
         $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger());
     }
 
-    public function match(RegisteredHttpRoutes $routes, ServerRequest $request): MatchedHttpRoute
+    public function match(RegisteredHttpRoutes $routes, ServerRequest $request) : MatchedHttpRoute
     {
         [$resolvedRequest, $route, $matches] = $this->resolveMatch(
             routes  : $routes,
@@ -44,7 +44,7 @@ final class MatchHttpRoute
     /**
      * @return array{0: ServerRequest, 1: RouteDefinition, 2: array<string, string>}
      */
-    private function resolveMatch(RegisteredHttpRoutes $routes, ServerRequest $request): array
+    private function resolveMatch(RegisteredHttpRoutes $routes, ServerRequest $request) : array
     {
         $matchedRoute = $this->routeMatcher->match(
             routes  : $routes->routesByMethod(),
@@ -89,7 +89,7 @@ final class MatchHttpRoute
     /**
      * @return array<int, string>
      */
-    private function allowedMethodsFor(RegisteredHttpRoutes $routes, ServerRequest $request): array
+    private function allowedMethodsFor(RegisteredHttpRoutes $routes, ServerRequest $request) : array
     {
         $allowedMethods = [];
         $path           = $request->getUri()->getPath();
@@ -113,7 +113,7 @@ final class MatchHttpRoute
         return $allowedMethods;
     }
 
-    private function matchesPathAndDomain(RouteDefinition $route, string $path, string $host): bool
+    private function matchesPathAndDomain(RouteDefinition $route, string $path, string $host) : bool
     {
         if ($route->domain !== null) {
             $compiledDomain = DomainPatternCompiler::compile(pattern: $route->domain);
@@ -130,7 +130,7 @@ final class MatchHttpRoute
      * @param array<int|string, mixed> $matches
      * @return array<string, string>
      */
-    private function extractParameters(array $matches): array
+    private function extractParameters(array $matches) : array
     {
         $parameters = [];
 

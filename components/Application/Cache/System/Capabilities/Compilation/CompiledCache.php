@@ -8,13 +8,13 @@ final readonly class CompiledCache
 {
     public function __construct(private string $path) {}
 
-    public function compile(string $key, mixed $value): void
+    public function compile(string $key, mixed $value) : void
     {
         $content = '<?php return ' . var_export($value, true) . ';';
         file_put_contents($this->path . '/' . md5($key) . '.php', $content);
     }
 
-    public function get(string $key): mixed
+    public function get(string $key) : mixed
     {
         $file = $this->path . '/' . md5($key) . '.php';
 

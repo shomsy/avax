@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 final class InvokeRouteAction
 {
-    public function invoke(mixed $action, RequestInterface $request): ResponseInterface
+    public function invoke(mixed $action, RequestInterface $request) : ResponseInterface
     {
         if (is_callable($action)) {
             return $action($request);

@@ -30,7 +30,7 @@ final readonly class AsyncWriteFile
         public string                 $path,
         public string                 $contents,
         public array                  $options = [],
-        public ?AsyncOperationPromise $asyncOperationPromise = null,
+        public AsyncOperationPromise|null $asyncOperationPromise = null,
     ) {}
 
     /**

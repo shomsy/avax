@@ -14,17 +14,17 @@ final class Request
     ) {
     }
 
-    public function method(): string
+    public function method() : string
     {
         return $this->server['REQUEST_METHOD'] ?? 'GET';
     }
 
-    public function uri(): string
+    public function uri() : string
     {
         return $this->server['REQUEST_URI'] ?? '/';
     }
 
-    public function header(string $name): string|null
+    public function header(string $name) : string|null
     {
         $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
 

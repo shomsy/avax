@@ -16,7 +16,7 @@ final readonly class CompensationResult
         public bool  $success,
         public array $compensatedSteps,
         public array $failedSteps,
-        public ?string $failureReason = null,
+        public string|null $failureReason = null,
     ) {}
 }
 

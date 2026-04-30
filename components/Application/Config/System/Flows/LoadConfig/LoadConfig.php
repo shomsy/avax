@@ -14,7 +14,7 @@ final readonly class LoadConfig
         private ConfigurationRepository $configurationRepository,
     ) {}
 
-    public function fromDirectory(string $directory): void
+    public function fromDirectory(string $directory) : void
     {
         $configs = $this->configLoader->load($directory);
         foreach ($configs as $namespace => $data) {

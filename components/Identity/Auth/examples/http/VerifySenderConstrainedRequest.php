@@ -33,7 +33,7 @@ final readonly class VerifySenderConstrainedRequest
         #[SensitiveParameter]
         string|null               $accessToken,
         OAuthSenderConstraint     $expectedSenderConstraint = null,
-        OAuthSenderConstraintType $requiredSenderConstraint = null,
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
     ) : OAuthSenderConstraint|null
     {
         $auditLog = new NullAuditLog();

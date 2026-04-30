@@ -30,7 +30,7 @@ final class CompiledCacheManifest
     /**
      * Create a new empty manifest.
      */
-    public static function empty(?Clock $clock = null) : self
+    public static function empty(Clock|null $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }
@@ -40,7 +40,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, ?Clock $clock = null) : self
+    public static function load(string $path, Clock|null $clock = null) : self
     {
         $manifest               = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
@@ -78,7 +78,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(?string $path = null) : void
+    public function save(string|null $path = null) : void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -127,9 +127,9 @@ final class CompiledCacheManifest
         string  $name,
         string  $compiledPath,
         array   $sourceFiles,
-        ?string $type = null,
-        ?string $phpVersion = null,
-        ?string $frameworkVersion = null,
+        string|null $type = null,
+        string|null $phpVersion = null,
+        string|null $frameworkVersion = null,
     ) : CompiledCacheManifestEntry
     {
         $now = $this->clock->now();

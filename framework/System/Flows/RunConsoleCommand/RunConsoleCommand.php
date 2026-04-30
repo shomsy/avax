@@ -13,7 +13,7 @@ final class RunConsoleCommand
     ) {
     }
 
-    public function run(array $argv): int
+    public function run(array $argv) : int
     {
         $commandName = $argv[1] ?? 'help';
 
@@ -27,17 +27,17 @@ final class RunConsoleCommand
         return 0;
     }
 
-    private function readConsoleInput(array $argv): array
+    private function readConsoleInput(array $argv) : array
     {
         return $argv;
     }
 
-    private function resolveConsoleCommand(string $commandName): callable
+    private function resolveConsoleCommand(string $commandName) : callable
     {
         return static fn () => print "Command: {$commandName}\n";
     }
 
-    private function executeConsoleCommand(callable $command, array $input): string
+    private function executeConsoleCommand(callable $command, array $input) : string
     {
         ob_start();
         $command($input);
@@ -45,7 +45,7 @@ final class RunConsoleCommand
         return ob_get_clean();
     }
 
-    private function writeConsoleOutput(string $output): void
+    private function writeConsoleOutput(string $output) : void
     {
         echo $output;
     }

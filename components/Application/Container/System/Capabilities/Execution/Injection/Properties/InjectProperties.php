@@ -16,7 +16,7 @@ use Throwable;
  */
 final class InjectProperties
 {
-    /** @var array<string, Closure(object, mixed): void> */
+    /** @var array<string, Closure(object, mixed) : void> */
     private array $writers = [];
 
     /**
@@ -58,7 +58,7 @@ final class InjectProperties
     }
 
     /**
-     * @return Closure(object, mixed): void
+     * @return Closure(object, mixed) : void
      */
     private function writerFor(string $class, string $property) : Closure
     {

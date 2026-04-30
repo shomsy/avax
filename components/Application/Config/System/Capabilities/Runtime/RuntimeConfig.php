@@ -17,7 +17,7 @@ final class RuntimeConfig
         private readonly ConfigurationRepository $configurationRepository,
     ) {}
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         if (isset($this->overrides[$key])) {
             return $this->overrides[$key];
@@ -32,17 +32,17 @@ final class RuntimeConfig
         return $this->configurationRepository->get($key, $default);
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         $this->overrides[$key] = $value;
     }
 
-    public function clear(): void
+    public function clear() : void
     {
         $this->overrides = [];
     }
 
-    private function getDot(string $key): mixed
+    private function getDot(string $key) : mixed
     {
         $array = $this->overrides;
         foreach (explode('.', $key) as $segment) {

@@ -16,30 +16,30 @@ use Closure;
 
 interface RuntimeInterface
 {
-    public function state(): RuntimeState;
+    public function state() : RuntimeState;
 
-    public function context(): RuntimeContext;
+    public function context() : RuntimeContext;
 
-    public function requestScopes(): RequestScopeStore;
+    public function requestScopes() : RequestScopeStore;
 
-    public function components(): ComponentRegistry;
+    public function components() : ComponentRegistry;
 
-    public function stateResetRegistry(): StateResetRegistry;
+    public function stateResetRegistry() : StateResetRegistry;
 
-    public function projectPath(): ProjectPath;
+    public function projectPath() : ProjectPath;
 
-    public function environment(): EnvironmentName;
+    public function environment() : EnvironmentName;
 
-    public function clock(): Clock;
+    public function clock() : Clock;
 
-    public function runtimeName(): string;
+    public function runtimeName() : string;
 
-    public function httpHandler(): Closure|null;
+    public function httpHandler() : Closure|null;
 
     /**
      * @return array<string, Closure>
      */
-    public function consoleCommands(): array;
+    public function consoleCommands() : array;
 
-    public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle;
+    public function runWorker(WorkerRuntimeInterface $workerRuntime) : WorkerLifecycle;
 }

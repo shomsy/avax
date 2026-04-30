@@ -18,8 +18,8 @@ final readonly class SubjectIdentifier
      */
     public function generate(
         string $localSubject,
-        string $sectorIdentifier = null,
-        string $pairwiseSalt = null,
+        string|null $sectorIdentifier = null,
+        string|null $pairwiseSalt = null,
     ) : string
     {
         return match ($this->strategy) {

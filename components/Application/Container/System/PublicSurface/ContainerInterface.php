@@ -10,7 +10,7 @@ interface ContainerInterface
 
     public function get(string $id) : mixed;
 
-    public function has(string $id): bool;
+    public function has(string $id) : bool;
 
     public function call(callable $callback, array $parameters = []) : mixed;
 

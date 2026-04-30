@@ -18,7 +18,7 @@ interface OidcProviderInterface
         string            $clientId,
         array             $scopes,
         string            $nonce = null,
-        DateTimeImmutable $authenticatedAt = null,
+        DateTimeImmutable|null $authenticatedAt = null,
         string            $sessionId = null,
         bool              $phishingResistant = false,
     ) : OidcIdToken;

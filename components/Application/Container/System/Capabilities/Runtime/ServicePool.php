@@ -150,7 +150,7 @@ final class ServicePool
         string $abstract,
         mixed  $instance,
         int    $maxSize,
-        ?bool  $resetBeforeReuse = null,
+        bool|null $resetBeforeReuse = null,
         bool   $disposable = false,
     ) : array
     {

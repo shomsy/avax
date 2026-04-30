@@ -18,7 +18,7 @@ final class ResolveSessionAllowance
         array  $cookies,
         bool   $allowSession = null,
         #[SensitiveParameter]
-        string $sessionCookieName = null,
+        string|null $sessionCookieName = null,
     ) : bool
     {
         $allowSession ??= true;

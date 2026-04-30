@@ -14,7 +14,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
     }
 
     #[Override]
-    public function name(): string
+    public function name() : string
     {
         return $this->peerName;
     }
@@ -23,7 +23,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
      * @throws JsonException
      */
     #[Override]
-    public function load(): array
+    public function load() : array
     {
         if (! is_file(filename: $this->path)) {
             throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not exist.', $this->path));

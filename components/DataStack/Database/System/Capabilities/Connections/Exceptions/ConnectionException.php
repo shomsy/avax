@@ -29,7 +29,7 @@ use Throwable;
  * - "Immutable": Once this error is created, you can't change its details.
  *    It's a permanent record of what happened at that moment.
  */
-class ConnectionException extends DatabaseException
+final class ConnectionException extends DatabaseException
 {
     /**
      * @param string         $name      The nickname of the database connection that failed.

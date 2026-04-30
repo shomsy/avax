@@ -11,7 +11,7 @@ final class CompiledCacheCouldNotBeRead extends RuntimeException
 {
     public function __construct(
         string     $name,
-        ?Throwable $throwable = null,
+        Throwable|null $throwable = null,
     )
     {
         parent::__construct(

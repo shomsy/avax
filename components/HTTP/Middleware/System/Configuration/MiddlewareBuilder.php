@@ -21,7 +21,7 @@ final class MiddlewareBuilder
     /** @var list<MiddlewareInterface> */
     private array $middleware = [];
 
-    private ?MiddlewareInterface $fallback = null;
+    private MiddlewareInterface|null $fallback = null;
 
     /**
      * Add middleware to the pipeline (appended to the end).

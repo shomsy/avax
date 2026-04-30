@@ -11,7 +11,7 @@ final readonly class MatchTextPartially
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(string $query, ?string $key = null, bool $caseSensitive = false) : array
+    public function __invoke(string $query, string|null $key = null, bool $caseSensitive = false) : array
     {
         return array_values(array_filter(
                                 $this->items,

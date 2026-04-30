@@ -20,7 +20,7 @@ final class ExplainDataQuery
 {
     private CompileDataQuery $compiler;
 
-    public function __construct(CompileDataQuery $compiler = null)
+    public function __construct(CompileDataQuery|null $compiler = null)
     {
         $this->compiler = $compiler ?? new CompileDataQuery();
     }

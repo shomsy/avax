@@ -18,14 +18,14 @@ final readonly class BuildCache
 {
     public function __construct(private Clock $clock = new SystemClock()) {}
 
-    public function inMemory(?CacheConfiguration $cacheConfiguration = null) : AvaxCache
+    public function inMemory(CacheConfiguration|null $cacheConfiguration = null) : AvaxCache
     {
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->clock);
 
         return $this->fromStore(store: $inMemoryCacheStore, config: $cacheConfiguration);
     }
 
-    public function fromStore(CacheStore $cacheStore, ?CacheConfiguration $cacheConfiguration = null) : AvaxCache
+    public function fromStore(CacheStore $cacheStore, CacheConfiguration|null $cacheConfiguration = null) : AvaxCache
     {
         $cacheConfiguration ??= new CacheConfiguration();
 
@@ -39,12 +39,12 @@ final readonly class BuildCache
         );
     }
 
-    public function inDirectory(string $directory, ?CacheConfiguration $cacheConfiguration = null) : AvaxCache
+    public function inDirectory(string $directory, CacheConfiguration|null $cacheConfiguration = null) : AvaxCache
     {
         return $this->file(basePath: $directory, config: $cacheConfiguration);
     }
 
-    public function file(string $basePath, ?CacheConfiguration $cacheConfiguration = null) : AvaxCache
+    public function file(string $basePath, CacheConfiguration|null $cacheConfiguration = null) : AvaxCache
     {
         $fileCacheStore = new FileCacheStore(
             basePath: $basePath,
@@ -57,7 +57,7 @@ final readonly class BuildCache
     public function redis(
         string              $host = '127.0.0.1',
         int                 $port = 6379,
-        ?CacheConfiguration $cacheConfiguration = null,
+        CacheConfiguration|null $cacheConfiguration = null,
     ) : AvaxCache
     {
         $redisCacheStore = new RedisCacheStore(
@@ -72,7 +72,7 @@ final readonly class BuildCache
     public function tiered(
         CacheStore          $l1,
         CacheStore          $l2,
-        ?CacheConfiguration $cacheConfiguration = null,
+        CacheConfiguration|null $cacheConfiguration = null,
     ) : AvaxCache
     {
         $chainCacheStore = new ChainCacheStore($l1, $l2);

@@ -21,7 +21,7 @@ final class SessionIdentity
         private readonly string  $lastSeenAtKey = 'auth_session_last_seen_at',
     ) {}
 
-    public function issue(int $userId, DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false) : string
+    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null, bool $phishingResistant = false) : string
     {
         $this->session->regenerate();
         $now = (new DateTimeImmutable())->format(DATE_ATOM);
@@ -35,7 +35,7 @@ final class SessionIdentity
         return $this->session->id();
     }
 
-    public function resolveUserId() : ?int
+    public function resolveUserId() : int|null
     {
         if (! $this->isSessionActive()) {
             return null;

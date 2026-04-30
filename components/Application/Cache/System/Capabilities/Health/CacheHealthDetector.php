@@ -204,7 +204,7 @@ final class CacheHealthDetector
      * Create a new health detector with default settings.
      */
     public static function create(
-        ?Clock $clock = null,
+        Clock|null $clock = null,
         int    $latencyThresholdMs = 100,
         float  $memoryUsageThreshold = 90.0,
         float  $hitRateThreshold = 0.5,

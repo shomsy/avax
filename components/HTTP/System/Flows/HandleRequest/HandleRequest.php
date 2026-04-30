@@ -16,7 +16,7 @@ final class HandleRequest
         private CatchUnhandledExceptions $exceptionHandler,
     ) {}
 
-    public function execute(RequestInterface $request): ResponseInterface
+    public function execute(RequestInterface $request) : ResponseInterface
     {
         try {
             return $this->http->handle($request);

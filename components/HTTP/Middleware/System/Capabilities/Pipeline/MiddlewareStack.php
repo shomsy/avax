@@ -9,12 +9,12 @@ final class MiddlewareStack
     /** @var array */
     private array $stack = [];
 
-    public function push($middleware): void
+    public function push($middleware) : void
     {
         $this->stack[] = $middleware;
     }
 
-    public function all(): array
+    public function all() : array
     {
         return $this->stack;
     }

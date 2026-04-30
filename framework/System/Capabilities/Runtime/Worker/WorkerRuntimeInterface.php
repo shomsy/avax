@@ -8,11 +8,11 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
 interface WorkerRuntimeInterface
 {
-    public function run(): void;
+    public function run() : void;
 
-    public function handleRequest(object $request): object;
+    public function handleRequest(object $request) : object;
 
-    public function stop(): void;
+    public function stop() : void;
 
-    public function getContext(): RuntimeContext;
+    public function getContext() : RuntimeContext;
 }

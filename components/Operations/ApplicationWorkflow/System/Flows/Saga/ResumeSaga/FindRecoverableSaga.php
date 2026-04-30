@@ -13,7 +13,7 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(string $tenantId = null, int $limit = 100) : array
+    public function find(string|null $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas    = $this->store->all();

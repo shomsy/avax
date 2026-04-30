@@ -12,7 +12,8 @@ final readonly class BuildApplication
     public static function fromProjectPath(
         string $projectPath,
         string $environment = 'production',
-    ): ApplicationBuilder {
+    ) : ApplicationBuilder
+    {
         return new ApplicationBuilder(
             projectPath: new ProjectPath(value: $projectPath),
             environment: new EnvironmentName(value: $environment),

@@ -40,7 +40,7 @@ final class LazySingletonService
 
 final class RequestScopedDisposableService implements DisposableInterface
 {
-    public function dispose(): void
+    public function dispose() : void
     {
         AdvancedLifetimeSequence::$requestDisposals++;
     }
@@ -48,7 +48,7 @@ final class RequestScopedDisposableService implements DisposableInterface
 
 final class SharedDisposableService implements DisposableInterface
 {
-    public function dispose(): void
+    public function dispose() : void
     {
         AdvancedLifetimeSequence::$sharedDisposals++;
     }

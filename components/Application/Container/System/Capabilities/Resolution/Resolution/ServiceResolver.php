@@ -93,7 +93,7 @@ final class ServiceResolver
         ResolutionTimeline       $timeline = null,
         ResolutionPolicy         $policy = null,
         CompiledRuntime          $compiledRuntime = null,
-        DeferredProviderRegistry $deferredProviders = null,
+        DeferredProviderRegistry|null $deferredProviders = null,
         string                   $diagnosticsMode = null,
         string                   $environment = null,
         string                   $sliceBoundaryMode = null,
@@ -3028,7 +3028,7 @@ final class ServiceResolver
         return $description;
     }
 
-    public function exportGraph(string $format = null, string $kind = null, string $id = '') : string
+    public function exportGraph(string|null $format = null, string|null $kind = null, string $id = '') : string
     {
         $format ??= 'json';
         $kind   ??= 'dependency';
@@ -3044,7 +3044,7 @@ final class ServiceResolver
      *
      * @return array<string, mixed>
      */
-    private function graphArtifact(string $kind, string $id = null, array $context = []) : array
+    private function graphArtifact(string $kind, string|null $id = null, array $context = []) : array
     {
         $id ??= '';
         $normalizedKind = strtolower(string: trim(string: $kind));
@@ -3569,7 +3569,7 @@ final class ServiceResolver
         );
     }
 
-    public function diffGraph(string $format = null, string $id = '') : string
+    public function diffGraph(string|null $format = null, string $id = '') : string
     {
         $format ??= 'json';
 
@@ -3584,7 +3584,7 @@ final class ServiceResolver
      *
      * @return array<string, mixed>
      */
-    private function graphDiffArtifact(string $id = null, array $context = []) : array
+    private function graphDiffArtifact(string|null $id = null, array $context = []) : array
     {
         $id ??= '';
         $slice = SliceContext::from(context: $context);
@@ -4445,7 +4445,7 @@ final class ServiceResolver
     /**
      * Opens one new scope layer.
      */
-    public function openScope(string $kind = null, string $scopeId = '') : void
+    public function openScope(string|null $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes->openScope(kind: $kind, scopeId: $scopeId);
@@ -4454,7 +4454,7 @@ final class ServiceResolver
     /**
      * Closes the current scope layer.
      */
-    public function closeScope(string $kind = null) : void
+    public function closeScope(string|null $kind = null) : void
     {
         $this->scopes->closeScope(kind: $kind);
     }

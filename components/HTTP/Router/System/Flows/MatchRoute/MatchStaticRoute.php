@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Router\System\Flows\MatchRoute;
 
 final class MatchStaticRoute
 {
-    public function match(string $pattern, string $path): bool
+    public function match(string $pattern, string $path) : bool
     {
         return $pattern === $path;
     }

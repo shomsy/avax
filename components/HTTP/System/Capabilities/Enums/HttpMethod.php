@@ -16,7 +16,7 @@ enum HttpMethod: string
     case TRACE  = 'TRACE';
     case CONNECT = 'CONNECT';
 
-    public static function isSupported(string $method): bool
+    public static function isSupported(string $method) : bool
     {
         return self::tryFrom(strtoupper($method)) !== null;
     }

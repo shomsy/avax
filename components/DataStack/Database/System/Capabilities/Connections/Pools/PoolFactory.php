@@ -25,7 +25,7 @@ final class PoolFactory
     public static function create(
         string $driver,
         array  $config,
-        ?int   $minConnections = null,
+        int|null $minConnections = null,
         int    $maxConnections = 20,
     ) : ConnectionPoolInterface
     {

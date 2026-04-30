@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class ConfigLoader
 {
-    public function load(string $path): array
+    public function load(string $path) : array
     {
         if (is_dir($path)) {
             return $this->loadDirectory($path);
@@ -17,7 +17,7 @@ final class ConfigLoader
         return $this->loadFile($path);
     }
 
-    private function loadDirectory(string $directory): array
+    private function loadDirectory(string $directory) : array
     {
         $config = [];
         $files = glob(rtrim($directory, '/') . '/*.php');
@@ -30,7 +30,7 @@ final class ConfigLoader
         return $config;
     }
 
-    private function loadFile(string $file): array
+    private function loadFile(string $file) : array
     {
         if (! file_exists($file)) {
             throw new RuntimeException('Config file not found: ' . $file);

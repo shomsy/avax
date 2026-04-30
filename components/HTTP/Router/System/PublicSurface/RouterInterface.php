@@ -9,7 +9,9 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 interface RouterInterface
 {
-    public function get(string $u, mixed $a): void;
-    public function post(string $u, mixed $a): void;
-    public function dispatch(RequestInterface $r): ResponseInterface;
+    public function get(string $u, mixed $a) : void;
+
+    public function post(string $u, mixed $a) : void;
+
+    public function dispatch(RequestInterface $r) : ResponseInterface;
 }

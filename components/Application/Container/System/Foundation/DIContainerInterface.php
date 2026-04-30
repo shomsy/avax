@@ -36,7 +36,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     /**
      * Returns a thin factory closure over one container entry.
      *
-     * @return Closure(array<string, mixed>=): object
+     * @return Closure(array<string, mixed>=) : object
      */
     public function factory(string $abstract) : Closure;
 
@@ -191,7 +191,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      *
      * @throws ContainerException
      */
-    public function closeScope(?string $kind = null) : void;
+    public function closeScope(string|null $kind = null) : void;
 
     /**
      * @param list<string> $serviceIds

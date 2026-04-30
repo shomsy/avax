@@ -12,7 +12,7 @@ final readonly class EncryptCachedValue
 
     public function encrypt(mixed $value) : string
     {
-        $serialized = serialize($value);
+        $serialized = json_encode($value, JSON_THROW_ON_ERROR);
 
         return $this->encryptedCache->encrypt(plaintext: $serialized);
     }
@@ -21,6 +21,6 @@ final readonly class EncryptCachedValue
     {
         $decrypted = $this->encryptedCache->decrypt(encrypted: $encrypted);
 
-        return unserialize($decrypted);
+        return json_decode($decrypted, true, 512, JSON_THROW_ON_ERROR);
     }
 }

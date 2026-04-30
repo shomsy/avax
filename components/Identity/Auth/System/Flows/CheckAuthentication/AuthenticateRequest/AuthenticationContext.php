@@ -40,7 +40,7 @@ final readonly class AuthenticationContext
         }
     }
 
-    public static function guest(string $reason = null): self
+    public static function guest(string|null $reason = null) : self
     {
         return new self(
             authenticated: false,
@@ -53,18 +53,19 @@ final readonly class AuthenticationContext
         AuthenticatedUser $user,
         AuthenticationMode $mode,
         #[SensitiveParameter]
-        string $sessionId = null,
+        string|null            $sessionId = null,
         #[SensitiveParameter]
-        string $accessTokenId = null,
+        string|null            $accessTokenId = null,
         #[SensitiveParameter]
-        DateTimeImmutable $accessTokenExpiresAt = null,
+        DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        string $refreshTokenId = null,
+        string|null            $refreshTokenId = null,
         #[SensitiveParameter]
-        string $refreshTokenFamilyId = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        string|null            $refreshTokenFamilyId = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
-    ): self {
+    ) : self
+    {
         return new self(
             authenticated       : true,
             mode                : $mode,
@@ -79,57 +80,57 @@ final readonly class AuthenticationContext
         );
     }
 
-    public function isAuthenticated(): bool
+    public function isAuthenticated() : bool
     {
         return $this->authenticated;
     }
 
-    public function mode(): AuthenticationMode
+    public function mode() : AuthenticationMode
     {
         return $this->mode;
     }
 
-    public function user(): AuthenticatedUser|null
+    public function user() : AuthenticatedUser|null
     {
         return $this->user;
     }
 
-    public function reason(): string|null
+    public function reason() : string|null
     {
         return $this->reason;
     }
 
-    public function sessionId(): string|null
+    public function sessionId() : string|null
     {
         return $this->sessionId;
     }
 
-    public function accessTokenId(): string|null
+    public function accessTokenId() : string|null
     {
         return $this->accessTokenId;
     }
 
-    public function accessTokenExpiresAt(): DateTimeImmutable|null
+    public function accessTokenExpiresAt() : DateTimeImmutable|null
     {
         return $this->accessTokenExpiresAt;
     }
 
-    public function refreshTokenId(): string|null
+    public function refreshTokenId() : string|null
     {
         return $this->refreshTokenId;
     }
 
-    public function refreshTokenFamilyId(): string|null
+    public function refreshTokenFamilyId() : string|null
     {
         return $this->refreshTokenFamilyId;
     }
 
-    public function mfaVerifiedAt(): DateTimeImmutable|null
+    public function mfaVerifiedAt() : DateTimeImmutable|null
     {
         return $this->mfaVerifiedAt;
     }
 
-    public function isPhishingResistant(): bool
+    public function isPhishingResistant() : bool
     {
         return $this->phishingResistant;
     }

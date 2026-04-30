@@ -10,7 +10,7 @@ use Exception;
 /**
  * Exception for missing permission within the Auth System.
  */
-class PermissionDenied extends Exception
+final class PermissionDenied extends Exception
 {
     public function __construct(
         private readonly UserPermission $requirement,

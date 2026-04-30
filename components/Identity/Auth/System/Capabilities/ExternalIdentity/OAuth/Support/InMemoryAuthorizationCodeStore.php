@@ -35,7 +35,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string            $codeChallenge = null,
         #[SensitiveParameter]
         PkceMethod        $codeChallengeMethod = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool              $phishingResistant = false,
     ) : IssuedAuthorizationCode
     {

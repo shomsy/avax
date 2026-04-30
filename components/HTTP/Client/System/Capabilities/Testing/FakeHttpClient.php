@@ -37,7 +37,7 @@ final class FakeHttpClient implements HttpClientInterface
     public function __construct(
         private array $responses = [],
         private array $recordedRequests = [],
-        private ?string $baseUrl = null,
+        private string|null $baseUrl = null,
     ) {}
 
     /**
@@ -53,7 +53,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public static function fromResponses(array $responses, string $baseUrl = null) : self
+    public static function fromResponses(array $responses, string|null $baseUrl = null) : self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }
@@ -61,7 +61,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the base URL configured for this client.
      */
-    public function getBaseUrl() : ?string
+    public function getBaseUrl() : string|null
     {
         return $this->baseUrl;
     }
@@ -276,7 +276,7 @@ final class FakeHttpClientBuilder
      */
     private array $responses = [];
 
-    private ?string $baseUrl = null;
+    private string|null $baseUrl = null;
 
     private string $pendingMethod = '*';
 

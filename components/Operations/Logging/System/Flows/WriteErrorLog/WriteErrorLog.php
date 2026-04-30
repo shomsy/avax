@@ -21,8 +21,8 @@ final readonly class WriteErrorLog
     public function __construct(
         private Logging $logger,
         private SecretRedactor $redactor = new SecretRedactor(),
-        private ?string $correlationId = null,
-        private ?string $traceId = null,
+        private string|null $correlationId = null,
+        private string|null $traceId = null,
     ) {}
 
     /**

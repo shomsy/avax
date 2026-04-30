@@ -10,7 +10,7 @@ use Throwable;
 
 final class HandleException
 {
-    public function handle(Throwable $e): RuntimeResponse
+    public function handle(Throwable $e) : RuntimeResponse
     {
         $classification = $this->classifyFrameworkFailure($e);
 
@@ -21,7 +21,7 @@ final class HandleException
         };
     }
 
-    private function classifyFrameworkFailure(Throwable $e): string
+    private function classifyFrameworkFailure(Throwable $e) : string
     {
         if ($e instanceof BadMethodCallException) {
             return 'http';
@@ -30,7 +30,7 @@ final class HandleException
         return 'console';
     }
 
-    private function renderHttpFailure(Throwable $e): RuntimeResponse
+    private function renderHttpFailure(Throwable $e) : RuntimeResponse
     {
         return new RuntimeResponse(
             statusCode: 500,
@@ -39,7 +39,7 @@ final class HandleException
         );
     }
 
-    private function renderConsoleFailure(Throwable $e): RuntimeResponse
+    private function renderConsoleFailure(Throwable $e) : RuntimeResponse
     {
         return new RuntimeResponse(
             statusCode: 0,
@@ -48,7 +48,7 @@ final class HandleException
         );
     }
 
-    private function reportFrameworkFailure(Throwable $e): RuntimeResponse
+    private function reportFrameworkFailure(Throwable $e) : RuntimeResponse
     {
         error_log($e->getMessage());
 

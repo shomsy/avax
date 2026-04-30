@@ -99,7 +99,7 @@ class RepositoryGenerator extends CodeGenerator
                  *
                  * @return {$entityClass}[]
                  */
-                public function findAll(): array
+                public function findAll() : array
                 {
                     // TODO: Implement
                     return [];
@@ -108,7 +108,7 @@ class RepositoryGenerator extends CodeGenerator
                 /**
                  * Save an entity.
                  */
-                public function save({$entityClass} \$entity): void
+                public function save({$entityClass} \$entity) : void
                 {
                     // TODO: Implement
                 }
@@ -116,7 +116,7 @@ class RepositoryGenerator extends CodeGenerator
                 /**
                  * Delete an entity.
                  */
-                public function delete({$entityClass} \$entity): void
+                public function delete({$entityClass} \$entity) : void
                 {
                     // TODO: Implement
                 }
@@ -126,7 +126,7 @@ class RepositoryGenerator extends CodeGenerator
                  *
                  * @return {$entityClass}[]
                  */
-                public function findBy(array \$criteria): array
+                public function findBy(array \$criteria) : array
                 {
                     // TODO: Implement
                     return [];

@@ -168,7 +168,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         string                $subject,
         string                $clientId,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
         string                $audience = null,
     ) : IssuedToken
     {
@@ -215,8 +215,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function resolveWorkloadToken(
         #[SensitiveParameter]
         string $token,
-        string $expectedAudience = null,
-        string $expectedIssuer = null,
+        string|null $expectedAudience = null,
+        string|null $expectedIssuer = null,
     ) : ResolvedWorkloadToken|null
     {
         try {
@@ -311,7 +311,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         bool                  $phishingResistant = false,
         string                $clientId = null,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken|null
     {
         if ($this->refreshTokenStore === null) {
@@ -343,7 +343,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         array                 $scopes = [],
         #[SensitiveParameter]
         string                $refreshTokenFamilyId = null,
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedToken
     {
         if (! $user->isActive()) {

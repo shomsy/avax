@@ -37,7 +37,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         array                        $allowedGrantTypes = [],
         array                        $audienceScopeBoundaries = [],
         #[SensitiveParameter]
-        OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType    $requiredSenderConstraint = null,
         bool                         $workloadIdentity = false,
         bool                         $phishingResistantRequired = false,

@@ -368,7 +368,7 @@ final readonly class ServeScimHttpSurface
         );
     }
 
-    private function provisionData(HttpEndpointInput $input, string $forcedExternalId = null) : ProvisionScimUserData
+    private function provisionData(HttpEndpointInput $input, string|null $forcedExternalId = null) : ProvisionScimUserData
     {
         $body        = $input->body;
         $directoryId = $this->directoryId(input: $input);
@@ -400,7 +400,7 @@ final readonly class ServeScimHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function email(array $body, string $fallback = null) : string
+    private function email(array $body, string|null $fallback = null) : string
     {
         $emails = $body['emails'] ?? null;
 
@@ -426,7 +426,7 @@ final readonly class ServeScimHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function username(array $body, string $fallback = null) : string
+    private function username(array $body, string|null $fallback = null) : string
     {
         if (is_scalar(value: $body['userName'] ?? null) || is_scalar(value: $body['username'] ?? null)) {
             return trim(string: (string) ($body['userName'] ?? $body['username']));

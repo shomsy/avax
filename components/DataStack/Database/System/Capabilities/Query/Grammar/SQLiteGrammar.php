@@ -151,7 +151,7 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {

@@ -14,6 +14,6 @@ final readonly class DecryptCachedValue
     {
         $decrypted = $this->encryptedCache->decrypt(encrypted: $encrypted);
 
-        return unserialize($decrypted);
+        return json_decode($decrypted, true, 512, JSON_THROW_ON_ERROR);
     }
 }

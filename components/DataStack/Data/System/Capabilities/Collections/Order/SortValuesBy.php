@@ -13,14 +13,14 @@ final readonly class SortValuesBy
         private array $items = [],
     ) {}
 
-    public function __invoke(string|callable $key, ?int $options = null, bool $descending = false) : array
+    public function __invoke(string|callable $key, int|null $options = null, bool $descending = false) : array
     {
         $options ??= SORT_REGULAR;
 
         return $this->sortBy(key: $key, options: $options, descending: $descending);
     }
 
-    public function sortBy(string|callable $key, ?int $options = null, bool $descending = false) : array
+    public function sortBy(string|callable $key, int|null $options = null, bool $descending = false) : array
     {
         $options ??= SORT_REGULAR;
         $items = $this->items;

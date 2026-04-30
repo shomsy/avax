@@ -13,11 +13,11 @@ interface SessionIdentityInterface
 {
     public function issue(
         int               $userId,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool              $phishingResistant = false,
     ) : string|null;
 
-    public function captureCurrentSession(string $ipAddress = null, string $userAgent = null) : void;
+    public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void;
 
     public function resolveUserId() : int|null;
 

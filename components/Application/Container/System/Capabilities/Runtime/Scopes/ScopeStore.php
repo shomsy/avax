@@ -95,7 +95,7 @@ final class ScopeStore
     public function setFor(
         string  $abstract,
         mixed   $instance,
-        ?string $kind = null,
+        string|null $kind = null,
         bool    $disposable = false,
     ) : void
     {
@@ -120,7 +120,7 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(?string $kind = null, string $scopeId = '') : void
+    public function open(string|null $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes[] = [
@@ -144,7 +144,7 @@ final class ScopeStore
      * }
      * @throws ContainerException
      */
-    public function close(?string $kind = null) : array
+    public function close(string|null $kind = null) : array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -186,7 +186,7 @@ final class ScopeStore
         mixed  $instance,
         string $kind,
         int    $maxSize,
-        ?bool  $resetBeforeReuse = null,
+        bool|null $resetBeforeReuse = null,
         bool   $disposable = false,
     ) : void
     {

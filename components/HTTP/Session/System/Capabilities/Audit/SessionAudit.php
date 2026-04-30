@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 final readonly class SessionAudit
 {
     public function __construct(
-        private ?LoggerInterface $logger = null,
+        private LoggerInterface|null $logger = null,
     ) {}
 
     public function record(string $event, array $data = []) : void

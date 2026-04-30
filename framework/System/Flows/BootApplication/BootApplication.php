@@ -15,7 +15,7 @@ final readonly class BootApplication
     ) {
     }
 
-    public function boot(ApplicationBuilder $builder): Runtime
+    public function boot(ApplicationBuilder $builder) : Runtime
     {
         try {
             return $this->buildApplicationState->build(builder: $builder);

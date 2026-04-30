@@ -163,7 +163,7 @@ final class SQLServerGrammar extends BaseGrammar
         return "UNPIVOT ({$column} IN ({$unpivcols}))";
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         $sql = $function . '(';

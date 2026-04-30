@@ -121,7 +121,7 @@ class ColumnDefinition
      *
      * @return $this
      */
-    public function index(?string $name = null) : self
+    public function index(string|null $name = null) : self
     {
         $this->attributes['index'] = $name ?? true;
 
@@ -228,7 +228,7 @@ class ColumnDefinition
      *
      * @return $this
      */
-    public function references(string $table, ?string $column = null, ?string $onDelete = null, string $onUpdate = 'CASCADE') : self
+    public function references(string $table, string|null $column = null, string|null $onDelete = null, string $onUpdate = 'CASCADE') : self
     {
         $column   ??= 'id';
         $onDelete ??= 'CASCADE';

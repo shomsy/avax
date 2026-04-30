@@ -46,7 +46,7 @@ final class DeferredProviderRegistry
     /**
      * @param list<string> $serviceIds
      */
-    public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics $metrics = null) : void
+    public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
@@ -56,7 +56,7 @@ final class DeferredProviderRegistry
         }
     }
 
-    public function bootIfNeeded(string $serviceId, ResolutionMetrics $metrics = null) : void
+    public function bootIfNeeded(string $serviceId, ResolutionMetrics|null $metrics = null) : void
     {
         $providerClass = $this->serviceOwners[$serviceId] ?? null;
         if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
@@ -69,7 +69,7 @@ final class DeferredProviderRegistry
     /**
      * @param class-string<ServiceProviderInterface> $providerClass
      */
-    private function bootProvider(string $providerClass, ResolutionMetrics $metrics = null) : void
+    private function bootProvider(string $providerClass, ResolutionMetrics|null $metrics = null) : void
     {
         $provider = $this->providers[$providerClass] ?? null;
         if (! $provider instanceof ServiceProviderInterface) {
@@ -90,7 +90,7 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics $metrics = null) : void
+    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
         $providerClass = $provider::class;
         $ids           = array_map(

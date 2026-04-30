@@ -46,7 +46,7 @@ final readonly class SagaStepDefinition
         array               $compensationInput = null,
         int                 $maxRetries = null,
         int                 $retryDelayMs = null,
-        SagaStepRetryPolicy $retryPolicy = null,
+        SagaStepRetryPolicy|null $retryPolicy = null,
         int                 $timeoutSeconds = null,
         bool                $optional = null,
         string              $description = null,

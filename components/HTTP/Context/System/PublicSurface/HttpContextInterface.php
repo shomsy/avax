@@ -22,47 +22,47 @@ interface HttpContextInterface
     /**
      * Get the request scheme (http or https).
      */
-    public function scheme(): string;
+    public function scheme() : string;
 
     /**
      * Get the request host.
      */
-    public function host(): string;
+    public function host() : string;
 
     /**
      * Get the base URL (scheme + host + optional port).
      */
-    public function baseUrl(): string;
+    public function baseUrl() : string;
 
     /**
      * Check if the request is using HTTPS.
      */
-    public function isSecure(): bool;
+    public function isSecure() : bool;
 
     /**
      * Get the client IP address (supports forwarded headers).
      */
-    public function clientIp(): ?string;
+    public function clientIp() : string|null;
 
     /**
      * Get the User-Agent header value.
      */
-    public function userAgent(): ?string;
+    public function userAgent() : string|null;
 
     /**
      * Get the Authorization header value.
      */
-    public function authHeader(): ?string;
+    public function authHeader() : string|null;
 
     /**
      * Get mockable access to $_COOKIE.
      */
-    public function cookies(): array;
+    public function cookies() : array;
 
     /**
      * Get mockable access to $_SERVER.
      */
-    public function serverParams(): array;
+    public function serverParams() : array;
 
     /**
      * Get mockable access to $_GET.

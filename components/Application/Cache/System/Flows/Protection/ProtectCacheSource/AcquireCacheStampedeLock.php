@@ -17,12 +17,12 @@ final readonly class StampedeLockGuard
     ) {
     }
 
-    public function release(): void
+    public function release() : void
     {
         $this->cacheLock->release(key: $this->key);
     }
 
-    public function key(): string
+    public function key() : string
     {
         return $this->key;
     }
@@ -37,14 +37,14 @@ final readonly class AcquireCacheStampedeLock
     ) {
     }
 
-    public function isLocked(string $key): bool
+    public function isLocked(string $key) : bool
     {
         $cacheLock = new CacheLock(store: $this->cacheLockStore);
 
         return $cacheLock->isAcquired(key: $key);
     }
 
-    public function waitForLock(string $key, int $maxWaitSeconds = 5): bool
+    public function waitForLock(string $key, int $maxWaitSeconds = 5) : bool
     {
         $cacheLock      = new CacheLock(store: $this->cacheLockStore);
         $startTime = hrtime(true);
@@ -63,7 +63,7 @@ final readonly class AcquireCacheStampedeLock
         return false;
     }
 
-    public function acquire(string $key): StampedeLockGuard
+    public function acquire(string $key) : StampedeLockGuard
     {
         $cacheLock = new CacheLock(
             store: $this->cacheLockStore,

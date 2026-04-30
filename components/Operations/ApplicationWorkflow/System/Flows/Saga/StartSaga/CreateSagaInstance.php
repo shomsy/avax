@@ -65,7 +65,7 @@ final readonly class CreateSagaCorrelationId
     /**
      * @throws RandomException
      */
-    public function create(string $prefix = null, string $suffix = null) : string
+    public function create(string|null $prefix = null, string|null $suffix = null) : string
     {
         $parts = array_filter([
                                   $prefix,
@@ -121,7 +121,7 @@ final readonly class ScheduleFirstSagaStep
 
 final class SagaStartFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Failed to start saga.', Throwable $previous = null)
+    public function __construct(string $message = 'Failed to start saga.', Throwable|null $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

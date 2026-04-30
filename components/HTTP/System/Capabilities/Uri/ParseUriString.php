@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 final readonly class ParseUriString
 {
-    public static function parse(string $uri): Uri
+    public static function parse(string $uri) : Uri
     {
         $parts = parse_url($uri);
         if ($parts === false) {

@@ -53,8 +53,8 @@ final readonly class MigrationRunner
         string       $method,
         string       $name,
         QueryBuilder $queryBuilder,
-        ?int         $batch = null,
-        ?string      $checksum = null,
+        int|null    $batch = null,
+        string|null $checksum = null,
     ) : void
     {
         try {

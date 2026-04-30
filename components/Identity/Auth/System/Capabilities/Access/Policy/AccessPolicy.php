@@ -20,9 +20,9 @@ final readonly class AccessPolicy
         public UserRole|null $requiredRole = null,
         public UserPermission|null $requiredPermission = null,
         public int|null $resourceOwnerUserId = null,
-        bool $freshMfa = null,
-        bool $adminElevation = null,
-        bool $phishingResistantRequired = null,
+        bool|null $freshMfa = null,
+        bool|null $adminElevation = null,
+        bool|null $phishingResistantRequired = null,
         public int|null $freshMfaMaxAgeSeconds = null,
         public IdentityPolicy|null $identityPolicy = null,
     ) {
@@ -35,9 +35,10 @@ final readonly class AccessPolicy
     }
 
     public static function admin(
-        UserPermission $requiredPermission = null,
-        int $resourceOwnerUserId = null,
-    ): self {
+        UserPermission|null $requiredPermission = null,
+        int|null            $resourceOwnerUserId = null,
+    ) : self
+    {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::admin(),
             requiredRole       : UserRole::ADMIN,
@@ -48,10 +49,11 @@ final readonly class AccessPolicy
 
     public static function forIdentityPolicy(
         IdentityPolicy $identityPolicy,
-        UserRole $requiredRole = null,
-        UserPermission $requiredPermission = null,
-        int $resourceOwnerUserId = null,
-    ): self {
+        UserRole|null       $requiredRole = null,
+        UserPermission|null $requiredPermission = null,
+        int|null            $resourceOwnerUserId = null,
+    ) : self
+    {
         return new self(
             requiredRole             : $requiredRole,
             requiredPermission       : $requiredPermission,
@@ -65,9 +67,10 @@ final readonly class AccessPolicy
     }
 
     public static function tenantAdmin(
-        UserPermission $requiredPermission = null,
-        int $resourceOwnerUserId = null,
-    ): self {
+        UserPermission|null $requiredPermission = null,
+        int|null            $resourceOwnerUserId = null,
+    ) : self
+    {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::tenantAdmin(),
             requiredRole       : UserRole::ADMIN,

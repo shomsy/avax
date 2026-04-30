@@ -17,65 +17,72 @@ final class MailMessage
         'attachments' => [],
     ];
 
-    public function from(string $address, ?string $name = null): self
+    public function from(string $address, string|null $name = null) : self
     {
-        $this->data['from'] = $name ? ["$name <$address>" : $address];
+        $this->data['from'] = $name ? ["$name <$address>" : $address]
         return $this;
     }
 
-    public function to(string $address, ?string $name = null): self
+    public function to(string $address, string|null $name = null) : self
     {
-        $this->data['to'][] = $name ? ["$name <$address>" : $address];
+        $this->data['to'][] = $name ? ["$name <$address>" : $address]
         return $this;
     }
 
-    public function cc(string $address, ?string $name = null): self
+    public function cc(string $address, string|null $name = null) : self
     {
-        $this->data['cc'][] = $name ? ["$name <$address>" : $address];
+        $this->data['cc'][] = $name ? ["$name <$address>" : $address]
         return $this;
     }
 
-    public function bcc(string $address, ?string $name = null): self
+    public function bcc(string $address, string|null $name = null) : self
     {
-        $this->data['bcc'][] = $name ? ["$name <$address>" : $address];
+        $this->data['bcc'][] = $name ? ["$name <$address>" : $address]
         return $this;
     }
 
-    public function subject(string $subject): self
+    public function subject(string $subject) : self
     {
         $this->data['subject'] = $subject;
         return $this;
     }
 
-    public function body(string $body): self
+    public function body(string $body) : self
     {
         $this->data['body'] = $body;
         return $this;
     }
 
-    public function html(string $html): self
+    public function html(string $html) : self
     {
         $this->data['html'] = $html;
         return $this;
     }
 
-    public function attach(string $path, ?string $name = null): self
+    public function attach(string $path, string|null $name = null) : self
     {
         $this->data['attachments'][] = ['path' => $path, 'name' => $name ?? basename($path)];
         return $this;
     }
 
-    public function send(Mailer $mailer): void
+    public function send(Mailer $mailer) : void
     {
         $mailer->send($this);
     }
 
-    public function getFrom(): array { return $this->data['from']; }
-    public function getTo(): array { return $this->data['to']; }
-    public function getCc(): array { return $this->data['cc']; }
-    public function getBcc(): array { return $this->data['bcc']; }
-    public function getSubject(): string { return $this->data['subject']; }
-    public function getBody(): string { return $this->data['body']; }
-    public function getHtml(): ?string { return $this->data['html']; }
-    public function getAttachments(): array { return $this->data['attachments']; }
+    public function getFrom() : array { return $this->data['from']; }
+
+    public function getTo() : array { return $this->data['to']; }
+
+    public function getCc() : array { return $this->data['cc']; }
+
+    public function getBcc() : array { return $this->data['bcc']; }
+
+    public function getSubject() : string { return $this->data['subject']; }
+
+    public function getBody() : string { return $this->data['body']; }
+
+    public function getHtml() : string|null { return $this->data['html']; }
+
+    public function getAttachments() : array { return $this->data['attachments']; }
 }

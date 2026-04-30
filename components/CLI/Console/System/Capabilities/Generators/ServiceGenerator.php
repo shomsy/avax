@@ -79,11 +79,11 @@ class ServiceGenerator extends CodeGenerator
         $methodName = Str::camel($method);
 
         return match ($methodName) {
-            'create' => "\n    public function create(array \$data): mixed\n    {\n        // TODO: Implement create\n    }\n",
-            'update' => "\n    public function update(int \$id, array \$data): mixed\n    {\n        // TODO: Implement update\n    }\n",
-            'delete' => "\n    public function delete(int \$id): void\n    {\n        // TODO: Implement delete\n    }\n",
-            'find'   => "\n    public function find(int \$id): mixed\n    {\n        // TODO: Implement find\n    }\n",
-            default  => "\n    public function {$methodName}(): void\n    {\n        // TODO: Implement {$methodName}\n    }\n",
+            'create' => "\n    public function create(array \$data) : mixed\n    {\n        // TODO: Implement create\n    }\n",
+            'update' => "\n    public function update(int \$id, array \$data) : mixed\n    {\n        // TODO: Implement update\n    }\n",
+            'delete' => "\n    public function delete(int \$id) : void\n    {\n        // TODO: Implement delete\n    }\n",
+            'find'   => "\n    public function find(int \$id) : mixed\n    {\n        // TODO: Implement find\n    }\n",
+            default  => "\n    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n",
         };
     }
 }

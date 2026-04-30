@@ -10,7 +10,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Validation;
  */
 final class Validator
 {
-    public static function validate(array $data, array $rules): bool
+    public static function validate(array $data, array $rules) : bool
     {
         foreach ($rules as $field => $rule) {
             if (! isset($data[$field]) && str_contains((string) $rule, 'required')) {
@@ -21,7 +21,7 @@ final class Validator
         return true;
     }
 
-    public static function fails(array $data, array $rules): bool
+    public static function fails(array $data, array $rules) : bool
     {
         return ! self::validate($data, $rules);
     }

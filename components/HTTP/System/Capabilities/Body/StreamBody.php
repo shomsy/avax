@@ -10,12 +10,12 @@ final class StreamBody
         private string $content = '',
     ) {}
 
-    public function getContents(): string
+    public function getContents() : string
     {
         return $this->content;
     }
 
-    public function __toString(): string
+    public function __toString() : string
     {
         return $this->content;
     }

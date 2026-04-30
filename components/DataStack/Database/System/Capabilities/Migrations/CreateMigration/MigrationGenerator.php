@@ -24,7 +24,7 @@ final class MigrationGenerator
      *
      * @return string Created file path
      */
-    public function generate(string $name, string $path, string $table = null, bool $create = false) : string
+    public function generate(string $name, string $path, string|null $table = null, bool $create = false) : string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);

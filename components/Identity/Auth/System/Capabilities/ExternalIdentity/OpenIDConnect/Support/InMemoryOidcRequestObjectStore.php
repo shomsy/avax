@@ -16,8 +16,8 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         array  $claims,
         DateTimeImmutable $expiresAt,
         bool   $signatureVerified = false,
-        string $signingAlgorithm = null,
-        string $signingClientId = null,
+        string|null $signingAlgorithm = null,
+        string|null $signingClientId = null,
     ) : OidcRequestObject
     {
         $object = new OidcRequestObject(

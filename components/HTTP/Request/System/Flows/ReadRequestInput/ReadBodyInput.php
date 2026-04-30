@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final class ReadBodyInput
 {
-    public function read(RequestInterface $request, string $key): mixed
+    public function read(RequestInterface $request, string $key) : mixed
     {
         $body = $request->getParsedBody();
         if (is_array($body)) {

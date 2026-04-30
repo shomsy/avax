@@ -12,7 +12,7 @@ final readonly class CloseHttpRequestScope
     {
     }
 
-    public function close(): void
+    public function close() : void
     {
         if ($this->requestScopes->hasCurrent()) {
             $this->requestScopes->closeCurrent();

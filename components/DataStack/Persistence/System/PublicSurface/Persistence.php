@@ -69,7 +69,7 @@ final readonly class Persistence implements PersistenceInterface
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(string $connectionName = null) : void
+    public function flush(string|null $connectionName = null) : void
     {
         $this->unitOfWork->flush($connectionName);
     }

@@ -14,7 +14,7 @@ final class UploadedFiles
         $this->files = $files;
     }
 
-    public function all(): array
+    public function all() : array
     {
         return $this->files;
     }

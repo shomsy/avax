@@ -55,7 +55,7 @@ trait HasControlStructures
      * /docs/Foundation/Database/DSL/Transactions.md#transaction logic
      * when a specific flag is absent.
      */
-    public function unless(mixed $condition, callable $callback, callable $default = null) : self
+    public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
     {
         return $this->when(condition: ! $condition, callback: $callback, default: $default);
     }
@@ -81,7 +81,7 @@ trait HasControlStructures
      *                                           conditional
      *                                           logic.
      */
-    public function when(mixed $condition, callable $callback, callable $default = null) : self
+    public function when(mixed $condition, callable $callback, callable|null $default = null) : self
     {
         if ($condition) {
             return $callback($this, $condition) ?: $this;

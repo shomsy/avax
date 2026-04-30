@@ -39,8 +39,8 @@ final class Encrypter implements EncrypterInterface
      */
     public function encrypt(mixed $value, EncryptionKey $key) : EncryptedPayload
     {
-        // Serialize non-string values
-        $plaintext = is_string($value) ? $value : serialize($value);
+        // Serialize to JSON for safe, portable encoding
+        $plaintext = is_string($value) ? $value : json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
 
         // Generate random IV (12 bytes for GCM)
         $iv = random_bytes(self::IV_LENGTH);

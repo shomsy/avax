@@ -23,12 +23,12 @@ enum AppPath: string
     case ROUTE_CACHE_PATH = 'storage/cache/routes.cache.php';
     case STUBS_PATH       = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
 
-    public function get(): string
+    public function get() : string
     {
         return self::getRoot() . $this->value;
     }
 
-    public static function getRoot(): string
+    public static function getRoot() : string
     {
         $currentDir   = __DIR__;
         $composerFile = 'composer.json';

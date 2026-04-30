@@ -139,7 +139,7 @@ interface HttpClientInterface
     /**
      * Get the base URL configured for this client.
      */
-    public function getBaseUrl() : ?string;
+    public function getBaseUrl() : string|null;
 
     /**
      * Get the default timeout in milliseconds.

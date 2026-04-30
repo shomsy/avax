@@ -18,7 +18,7 @@ final readonly class AuthorizeCodeData
     public function __construct(
         public string $clientId,
         public string $redirectUri,
-        array $scopes = null,
+        array|null $scopes = null,
         public string|null $state = null,
         public string|null $nonce = null,
         public string|null $requestUri = null,

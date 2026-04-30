@@ -117,7 +117,7 @@ final class DeadlockDetector
      */
     private DeadlockDetectorConfig $config;
 
-    public function __construct(DeadlockDetectorConfig $config = null)
+    public function __construct(DeadlockDetectorConfig|null $config = null)
     {
         $this->config = $config ?? new DeadlockDetectorConfig();
     }

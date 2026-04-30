@@ -57,7 +57,7 @@ final readonly class CacheFacade
         return $this->cacheRegistry->default()->has(key: $key);
     }
 
-    public function store(?string $name = null) : CacheContract
+    public function store(string|null $name = null) : CacheContract
     {
         if ($name === null) {
             return $this->cacheRegistry->default();

@@ -26,7 +26,7 @@ final readonly class HttpContext implements HttpContextInterface
         return $this->request;
     }
 
-    public function baseUrl(): string
+    public function baseUrl() : string
     {
         $scheme = $this->scheme();
         $host = $this->host();
@@ -40,7 +40,7 @@ final readonly class HttpContext implements HttpContextInterface
         return sprintf('%s://%s', $scheme, $authority);
     }
 
-    public function scheme(): string
+    public function scheme() : string
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($scheme = $uri->getScheme()) !== '') {
@@ -52,7 +52,7 @@ final readonly class HttpContext implements HttpContextInterface
         return (! empty($server['HTTPS']) && $server['HTTPS'] !== 'off') ? 'https' : 'http';
     }
 
-    public function host(): string
+    public function host() : string
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($host = $uri->getHost()) !== '') {
@@ -64,12 +64,12 @@ final readonly class HttpContext implements HttpContextInterface
         return $server['HTTP_HOST'] ?? $server['SERVER_NAME'] ?? 'localhost';
     }
 
-    public function serverParams(): array
+    public function serverParams() : array
     {
         return $this->request?->getServerParams() ?? $this->globals->server();
     }
 
-    private function port(): ?int
+    private function port() : int|null
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($port = $uri->getPort()) !== null) {
@@ -82,7 +82,7 @@ final readonly class HttpContext implements HttpContextInterface
         return ($value !== null && $value !== '') ? (int) $value : null;
     }
 
-    private function isStandardPort(string $scheme, int $port): bool
+    private function isStandardPort(string $scheme, int $port) : bool
     {
         return ($scheme === 'http' && $port === 80) || ($scheme === 'https' && $port === 443);
     }
@@ -92,7 +92,7 @@ final readonly class HttpContext implements HttpContextInterface
         return $this->scheme() === 'https';
     }
 
-    public function clientIp(): ?string
+    public function clientIp() : string|null
     {
         $server = $this->serverParams();
 
@@ -102,14 +102,14 @@ final readonly class HttpContext implements HttpContextInterface
             ?? null;
     }
 
-    public function userAgent(): ?string
+    public function userAgent() : string|null
     {
         return $this->request?->getHeaderLine('User-Agent')
             ?? $this->serverParams()['HTTP_USER_AGENT']
             ?? null;
     }
 
-    public function authHeader(): ?string
+    public function authHeader() : string|null
     {
         return $this->request?->getHeaderLine('Authorization')
             ?? $this->serverParams()['HTTP_AUTHORIZATION']
@@ -117,7 +117,7 @@ final readonly class HttpContext implements HttpContextInterface
             ?? null;
     }
 
-    public function cookies(): array
+    public function cookies() : array
     {
         return $this->request?->getCookieParams() ?? $this->globals->cookies();
     }

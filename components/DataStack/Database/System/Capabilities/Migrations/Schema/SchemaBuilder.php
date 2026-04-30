@@ -12,7 +12,7 @@ final class SchemaBuilder
         echo sprintf('Creating table: %s%s', $table, PHP_EOL);
     }
 
-    public function drop(string $table): void
+    public function drop(string $table) : void
     {
         echo sprintf('Dropping table: %s%s', $table, PHP_EOL);
     }

@@ -67,7 +67,7 @@ final class MemoryStateAdapter implements StateAdapter
 
     public function get(string $key) : mixed
     {
-        if (isset($this->ttls[$key]) {
+        if (isset($this->ttls[$key])) {
             if ($this->ttls[$key] < time()) {
                 unset($this->store[$key], $this->ttls[$key]);
 

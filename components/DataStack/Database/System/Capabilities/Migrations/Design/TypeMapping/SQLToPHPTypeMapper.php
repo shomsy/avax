@@ -19,74 +19,74 @@ final class SQLToPHPTypeMapper
     private const array TYPE_MAP
         = [
             // NUMERIC TYPES
-            'TINYINT'          => 'int',
-            'SMALLINT'         => 'int',
-            'MEDIUMINT'        => 'int',
-            'INT'              => 'int',
-            'INTEGER'          => 'int',
-            'BIGINT'           => 'int',
-            'SERIAL'           => 'int',
-            'BIGSERIAL'        => 'int',
-            'DECIMAL'          => 'string',
-            'NUMERIC'          => 'string',
-            'FLOAT'            => 'float',
-            'REAL'             => 'float',
-            'DOUBLE'           => 'float',
-            'BOOLEAN'          => 'bool',
-            'BOOL'             => 'bool',
-            'BIT'              => 'int',
+            'TINYINT'    => 'int',
+            'SMALLINT'   => 'int',
+            'MEDIUMINT'  => 'int',
+            'INT'        => 'int',
+            'INTEGER'    => 'int',
+            'BIGINT'     => 'int',
+            'SERIAL'     => 'int',
+            'BIGSERIAL'  => 'int',
+            'DECIMAL'    => 'string',
+            'NUMERIC'    => 'string',
+            'FLOAT'      => 'float',
+            'REAL'       => 'float',
+            'DOUBLE'     => 'float',
+            'BOOLEAN'    => 'bool',
+            'BOOL'       => 'bool',
+            'BIT'        => 'int',
 
             // STRING TYPES
-            'CHAR'             => 'string',
-            'VARCHAR'          => 'string',
-            'TEXT'             => 'string',
-            'TINYTEXT'         => 'string',
-            'MEDIUMTEXT'       => 'string',
-            'LONGTEXT'         => 'string',
-            'NCHAR'            => 'string',
-            'NVARCHAR'         => 'string',
-            'NTEXT'            => 'string',
+            'CHAR'       => 'string',
+            'VARCHAR'    => 'string',
+            'TEXT'       => 'string',
+            'TINYTEXT'   => 'string',
+            'MEDIUMTEXT' => 'string',
+            'LONGTEXT'   => 'string',
+            'NCHAR'      => 'string',
+            'NVARCHAR'   => 'string',
+            'NTEXT'      => 'string',
 
             // BINARY TYPES
-            'BINARY'           => 'string',
-            'VARBINARY'        => 'string',
-            'BLOB'             => 'string',
-            'TINYBLOB'         => 'string',
-            'MEDIUMBLOB'       => 'string',
-            'LONGBLOB'         => 'string',
-            'BYTEA'            => 'string',
+            'BINARY'     => 'string',
+            'VARBINARY'  => 'string',
+            'BLOB'       => 'string',
+            'TINYBLOB'   => 'string',
+            'MEDIUMBLOB' => 'string',
+            'LONGBLOB'   => 'string',
+            'BYTEA'      => 'string',
 
             // DATE/TIME TYPES
-            'DATE'             => 'DateTimeImmutable',
-            'DATETIME'         => 'DateTimeImmutable',
-            'TIMESTAMP'        => 'DateTimeImmutable',
-            'TIME'             => 'DateTimeImmutable',
-            'YEAR'             => 'int',
-            'INTERVAL'         => 'DateInterval',
+            'DATE'       => 'DateTimeImmutable',
+            'DATETIME'   => 'DateTimeImmutable',
+            'TIMESTAMP'  => 'DateTimeImmutable',
+            'TIME'       => 'DateTimeImmutable',
+            'YEAR'       => 'int',
+            'INTERVAL'   => 'DateInterval',
 
             // JSON TYPES
-            'JSON'             => 'array',
-            'JSONB'            => 'array',
+            'JSON'       => 'array',
+            'JSONB'      => 'array',
 
             // SPECIAL TYPES
-            'ENUM'             => 'string',
-            'SET'              => 'array',
-            'UUID'             => 'string',
-            'XML'              => 'string',
+            'ENUM'       => 'string',
+            'SET'        => 'array',
+            'UUID'       => 'string',
+            'XML'        => 'string',
 
             // GIS / SPATIAL TYPES
-            'POINT'            => 'array',
-            'LINESTRING'       => 'array',
-            'POLYGON'          => 'array',
-            'GEOMETRY'         => 'array',
-            'GEOGRAPHY'        => 'array',
+            'POINT'      => 'array',
+            'LINESTRING' => 'array',
+            'POLYGON'    => 'array',
+            'GEOMETRY'   => 'array',
+            'GEOGRAPHY'  => 'array',
 
             // POSTGRESQL SPECIFIC
-            'INET'             => 'string',
-            'CIDR'             => 'string',
-            'MACADDR'          => 'string',
-            'TSVECTOR'         => 'string',
-            'TSQUERY'          => 'string',
+            'INET'       => 'string',
+            'CIDR'       => 'string',
+            'MACADDR'    => 'string',
+            'TSVECTOR'   => 'string',
+            'TSQUERY'    => 'string',
 
             // SQL SERVER SPECIFIC
             'MONEY'            => 'string',
@@ -107,7 +107,7 @@ final class SQLToPHPTypeMapper
             default => $phpType,
         };
 
-        return $nullable ? "{$enhancedType}|null" : $enhancedType;
+        return $nullable ? $enhancedType . '|null' : $enhancedType;
     }
 
     /**
@@ -124,7 +124,7 @@ final class SQLToPHPTypeMapper
     {
         $baseType = preg_replace(pattern: '/[\(\s].*/', replacement: '', subject: $sqlType);
 
-        return strtoupper(string: trim(string: $baseType));
+        return strtoupper(string: trim(string: (string) $baseType));
     }
 
     private function getArrayDocType(string $sqlType) : string

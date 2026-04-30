@@ -15,7 +15,7 @@ use ReflectionProperty;
 final readonly class ReadPublicDataFields
 {
     /**
-     * @param ReflectionClass<object>  $class
+     * @param ReflectionClass<object> $class
      * @param array<string, DataField> $existingFields
      *
      * @return array<string, DataField>

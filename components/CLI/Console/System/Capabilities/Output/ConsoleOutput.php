@@ -15,15 +15,20 @@ use Avax\Components\CLI\Console\System\Capabilities\UI\Table;
 class ConsoleOutput
 {
     /** ANSI color codes */
-    private const COLOR_RESET  = "\033[0m";
-    private const COLOR_GREEN  = "\033[32m";
-    private const COLOR_RED    = "\033[31m";
-    private const COLOR_YELLOW = "\033[33m";
-    private const COLOR_CYAN   = "\033[36m";
-    private const COLOR_BOLD   = "\033[1m";
+    private const string COLOR_RESET = "\033[0m";
+
+    private const string COLOR_GREEN = "\033[32m";
+
+    private const string COLOR_RED = "\033[31m";
+
+    private const string COLOR_YELLOW = "\033[33m";
+
+    private const string COLOR_CYAN = "\033[36m";
+
+    private const string COLOR_BOLD = "\033[1m";
 
     /** Whether ANSI colors are enabled */
-    private bool $colorsEnabled;
+    private readonly bool $colorsEnabled;
 
     public function __construct(?bool $colorsEnabled = null)
     {

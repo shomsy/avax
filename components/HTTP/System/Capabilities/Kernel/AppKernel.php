@@ -35,8 +35,8 @@ final readonly class AppKernel implements Kernel, HttpInterface
 
     public function __construct(
         private RouterRuntimeInterface $router,
-        private ResponseFactory        $responseFactory,
-        private array                  $globalMiddleware = []
+        private ResponseFactory $responseFactory,
+        private array           $globalMiddleware = [],
     )
     {
         $this->middlewareStack = empty($this->globalMiddleware)
@@ -77,18 +77,21 @@ final readonly class AppKernel implements Kernel, HttpInterface
 
     private function createOfficeIpRestriction() : MiddlewareInterface
     {
-        return new class extends IpRestrictionMiddleware {
+        return new class () extends IpRestrictionMiddleware {
             #[Override]
             protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
                 $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
                 foreach ($allowed as $allowedIp) {
                     if (str_contains($allowedIp, '/')) {
-                        if (str_starts_with($ipAddress, '192.168.1.')) return true;
+                        if (str_starts_with($ipAddress, '192.168.1.')) {
+                            return true;
+                        }
                     } elseif ($ipAddress === $allowedIp) {
                         return true;
                     }
                 }
+
                 return false;
             }
         };
@@ -102,43 +105,79 @@ final readonly class AppKernel implements Kernel, HttpInterface
     private function createRequestLogger() : MiddlewareInterface
     {
         return new RequestLoggerMiddleware(
-            new class implements LoggerInterface {
-                public function emergency(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+            new class () implements LoggerInterface {
+                public function emergency(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function alert(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function alert(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function critical(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function critical(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function error(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function error(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function warning(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function warning(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function notice(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function notice(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function info(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function info(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function debug(Stringable|string $message, array $context = []) : void { error_log((string) $message); }
+                public function debug(Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
 
-                public function log($level, Stringable|string $message, array $context = []) : void { error_log((string) $message); }
-            }
+                public function log($level, Stringable|string $message, array $context = []) : void
+                {
+                    error_log((string) $message);
+                }
+            },
         );
     }
 
     private function createRateLimiter() : MiddlewareInterface
     {
         return new RateLimiterMiddleware(
-            new class implements RateLimiterInterface {
-                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool { return true; }
+            new class () implements RateLimiterInterface {
+                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
+                {
+                    return true;
+                }
 
                 public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void {}
 
-                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int { return 60; }
+                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int
+                {
+                    return 60;
+                }
 
-                public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int { return 0; }
+                public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int
+                {
+                    return 0;
+                }
 
                 public function clear(string $key) : void {}
             },
-            (new class {
+            (new class () {
                 public function rateLimited(int $retryAfter) : ResponseInterface
                 {
                     return (new ResponseFactory())->rateLimited($retryAfter);
@@ -146,7 +185,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
             }),
             'ip',
             100,
-            60
+            60,
         );
     }
 
@@ -171,7 +210,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
         $pipeline = $this->middlewareStack;
 
         while ( $middleware = array_pop($pipeline) ) {
-            $core = fn (RequestInterface $req) => $middleware->handle($req, $core);
+            $core = static fn (RequestInterface $req) => $middleware->handle($req, $core);
         }
 
         return $core($request);
@@ -194,7 +233,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
         return new self(
             $this->router,
             $this->responseFactory,
-            [...$this->middlewareStack, $middleware]
+            [...$this->middlewareStack, $middleware],
         );
     }
 }

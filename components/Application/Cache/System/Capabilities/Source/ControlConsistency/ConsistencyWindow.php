@@ -9,7 +9,7 @@ readonly class ConsistencyWindow
     public function __construct(
         public int $readWindowMs = 1000,
         public int $writeWindowMs = 500,
-        public int $propagationDelayMs = 100
+        public int $propagationDelayMs = 100,
     ) {}
 
     public static function relaxed() : self

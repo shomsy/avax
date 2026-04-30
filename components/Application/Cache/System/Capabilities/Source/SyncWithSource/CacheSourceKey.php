@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource;
 
+use Override;
 use Stringable;
 
 final readonly class CacheSourceKey implements Stringable
 {
     public function __construct(
         public string      $key,
-        public string|null $namespace = null
+        public string|null $namespace = null,
     ) {}
 
-    public static function create(string $key, string|null $namespace = null) : self
+    public static function create(string $key, ?string $namespace = null) : self
     {
         return new self(key: $key, namespace: $namespace);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->toString();

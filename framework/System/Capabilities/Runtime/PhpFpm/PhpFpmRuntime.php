@@ -24,14 +24,14 @@ final readonly class PhpFpmRuntime
 
     /**
      * @param array<string, string> $server
-     * @param array<string, mixed>  $query
-     * @param array<string, mixed>  $parsedBody
+     * @param array<string, mixed> $query
+     * @param array<string, mixed> $parsedBody
      */
     public function handleGlobals(
         array $server,
         array $query = [],
         array $parsedBody = [],
-        string|null $body = null,
+        string $body = null,
     ): RuntimeResponse {
         return $this->handle(
             request: $this->requestReader->read(

@@ -13,18 +13,14 @@ use Avax\Components\Application\Container\System\Foundation\Time\Clock;
  */
 final readonly class ObservabilityAssembly
 {
-    public ResolutionTimeline $timeline;
-    public ResolutionMetrics  $metrics;
-    public Clock              $clock;
+    public Clock $clock;
 
     public function __construct(
-        Clock              $clock,
-        ResolutionMetrics  $metrics,
-        ResolutionTimeline $timeline
+        Clock                     $clock,
+        public ResolutionMetrics  $resolutionMetrics,
+        public ResolutionTimeline $resolutionTimeline,
     )
     {
         $this->clock    = $clock;
-        $this->metrics  = $metrics;
-        $this->timeline = $timeline;
     }
 }

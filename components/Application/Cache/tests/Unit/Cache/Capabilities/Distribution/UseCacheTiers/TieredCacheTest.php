@@ -16,11 +16,12 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class TieredCacheTest extends TestCase
 {
-    private FrozenClock $clock;
+    private FrozenClock $frozenClock;
 
     public function test_read_promotes_to_faster_tier_on_hit() : void
     {
@@ -28,24 +29,24 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
-        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->clock);
+        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
 
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->exists(key: $this->makeKey(key: 'key_1')));
     }
 
     private function createTieredCache() : TieredCache
     {
-        $l1Tier = CacheTier::l1(name: 'l1_memory', maxSize: 100);
+        $cacheTier = CacheTier::l1(name: 'l1_memory', maxSize: 100);
         $l2Tier = CacheTier::l2(name: 'l2_distributed', maxSize: 1000);
 
-        $l1Store = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
-        $l2Store = new InMemoryCacheStore(clock: $this->clock, maxEntries: 1000);
+        $l1Store = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $l2Store = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 1000);
 
-        $tieredCache = new TieredCache($this->clock, $l1Tier, $l2Tier);
-        $tieredCache->registerTier(tier: $l1Tier, store: $l1Store);
+        $tieredCache = new TieredCache($this->frozenClock, $cacheTier, $l2Tier);
+        $tieredCache->registerTier(tier: $cacheTier, store: $l1Store);
         $tieredCache->registerTier(tier: $l2Tier, store: $l2Store);
 
         return $tieredCache;
@@ -58,14 +59,14 @@ final class TieredCacheTest extends TestCase
 
     private function makeRecord(string $value, int $ttlSeconds = 3600) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
-        $lifecycle = CachedValueLifecycle::create(
+        $now                  = $this->frozenClock->now();
+        $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds)),
-            clock    : $this->clock
+            clock    : $this->frozenClock,
         );
 
-        return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
+        return new StoredCacheRecord(value: $value, lifecycle: $cachedValueLifecycle);
     }
 
     public function test_read_falls_through_to_l2_on_l1_miss() : void
@@ -74,10 +75,10 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_2'),
-            record: $this->makeRecord(value: 'value_2')
+            record: $this->makeRecord(value: 'value_2'),
         );
 
-        $result = $tieredCache->read(key: $this->makeKey(key: 'key_2'), clock: $this->clock);
+        $result = $tieredCache->read(key: $this->makeKey(key: 'key_2'), clock: $this->frozenClock);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
     }
@@ -86,7 +87,7 @@ final class TieredCacheTest extends TestCase
     {
         $tieredCache = $this->createTieredCache();
 
-        $result = $tieredCache->read(key: $this->makeKey(key: 'missing'), clock: $this->clock);
+        $result = $tieredCache->read(key: $this->makeKey(key: 'missing'), clock: $this->frozenClock);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
@@ -131,7 +132,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
         $this->assertTrue(condition: $tieredCache->exists(key: $this->makeKey(key: 'key_1')));
@@ -143,10 +144,10 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
-        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->clock);
+        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
 
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->exists(key: $this->makeKey(key: 'key_1')));
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->exists(key: $this->makeKey(key: 'key_1')));
@@ -165,8 +166,9 @@ final class TieredCacheTest extends TestCase
         $this->assertInstanceOf(expected: InMemoryCacheStore::class, actual: $l2);
     }
 
+    #[Override]
     protected function setUp() : void
     {
-        $this->clock = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
     }
 }

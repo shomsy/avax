@@ -41,27 +41,27 @@ class QueryBuilder
         }
     }
 
-    protected QueryOrchestrator         $orchestrator;
+    protected QueryOrchestrator $orchestrator;
     protected readonly GrammarInterface $grammar;
 
     /**
      * Set up the builder with its two "helpers".
      *
-     * @param GrammarInterface  $grammar         The "Translator". It knows how to turn your PHP code into specific SQL
-     *                                           for MySQL/SQLite/etc.
-     * @param QueryOrchestrator $orchestrator    The "Conductor". It doesn't write SQL, but it knows how to send the
-     *                                           final SQL to the database and get results back.
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                        for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the
+     *                                        final SQL to the database and get results back.
      *
      * @throws ReflectionException
      */
     public function __construct(
         GrammarInterface  $grammar,
-        QueryOrchestrator $orchestrator
+        QueryOrchestrator $orchestrator,
     )
     {
         $this->grammar      = $grammar;
         $this->orchestrator = $orchestrator;
-        $this->state        = new QueryState;
+        $this->state = new QueryState();
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {
@@ -97,7 +97,7 @@ class QueryBuilder
     {
         return new static(
             grammar     : $this->grammar,
-            orchestrator: $this->orchestrator
+            orchestrator: $this->orchestrator,
         );
     }
 
@@ -123,7 +123,7 @@ class QueryBuilder
      * Security Check: Make sure raw SQL fragments aren't dangerous.
      *
      * @param string $expression The text to check.
-     * @param string $context    Where this check is happening (for error messages).
+     * @param string $context Where this check is happening (for error messages).
      *
      * @throws InvalidCriteriaException If dangerous characters are found.
      */
@@ -136,21 +136,21 @@ class QueryBuilder
         if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: 'Raw expressions must not contain statement terminators or comments.'
+                reason: 'Raw expressions must not contain statement terminators or comments.',
             );
         }
 
         if (preg_match(pattern: '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/', subject: $expression) === 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: 'Raw expressions must not contain control characters.'
+                reason: 'Raw expressions must not contain control characters.',
             );
         }
 
         if (preg_match(pattern: '/^[\\x20-\\x7E]+$/', subject: $expression) !== 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: 'Raw expressions must be plain ASCII characters to allow safe inspection.'
+                reason: 'Raw expressions must be plain ASCII characters to allow safe inspection.',
             );
         }
     }
@@ -193,7 +193,7 @@ class QueryBuilder
     public function from(string $table) : self
     {
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withFrom(table: $table)
+            'state' => $this->state->withFrom(table: $table),
         ]);
     }
 
@@ -213,7 +213,7 @@ class QueryBuilder
         }
 
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions))
+            'state' => $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions)),
         ]);
     }
 
@@ -225,7 +225,7 @@ class QueryBuilder
     public function distinct() : self
     {
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withDistinct(distinct: true)
+            'state' => $this->state->withDistinct(distinct: true),
         ]);
     }
 
@@ -247,7 +247,7 @@ class QueryBuilder
         }
 
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withOffset(offset: $offset)
+            'state' => $this->state->withOffset(offset: $offset),
         ]);
     }
 
@@ -284,7 +284,7 @@ class QueryBuilder
         }
 
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withLimit(limit: $limit)
+            'state' => $this->state->withLimit(limit: $limit),
         ]);
     }
 
@@ -300,13 +300,13 @@ class QueryBuilder
     public function insert(array $values) : bool
     {
         $clone = clone(object: $this, withProperties: [
-            "state" => $this->state->withValues(values: $values)
+            'state' => $this->state->withValues(values: $values),
         ]);
         $sql   = $clone->grammar->compileInsert(state: $clone->state);
 
         return $clone->orchestrator->execute(
             sql     : $sql,
-            bindings: $clone->extractMutationBindings(values: $values)
+            bindings: $clone->extractMutationBindings(values: $values),
         )->isSuccessful();
     }
 
@@ -354,12 +354,12 @@ class QueryBuilder
         }
 
         $clone  = clone(object: $this, withProperties: [
-            "state" => $this->state->withValues(values: $values)
+            'state' => $this->state->withValues(values: $values),
         ]);
         $sql    = $clone->grammar->compileInsert(state: $clone->state);
         $result = $clone->orchestrator->execute(
             sql     : $sql,
-            bindings: $clone->extractMutationBindings(values: $values)
+            bindings: $clone->extractMutationBindings(values: $values),
         );
 
         if (! $result->isSuccessful()) {
@@ -400,8 +400,8 @@ class QueryBuilder
             sql     : $sql,
             bindings: array_merge(
                           $instance->extractMutationBindings(values: $values),
-                          $instance->state->getBindings()
-                      )
+                          $instance->state->getBindings(),
+                      ),
         )->isSuccessful();
     }
 
@@ -424,7 +424,7 @@ class QueryBuilder
 
         return $instance->orchestrator->execute(
             sql     : $sql,
-            bindings: $instance->state->getBindings()
+            bindings: $instance->state->getBindings(),
         )->isSuccessful();
     }
 
@@ -436,7 +436,7 @@ class QueryBuilder
      *
      * @throws Throwable
      */
-    public function pluck(string $value, string|null $key = null) : array
+    public function pluck(string $value, string $key = null) : array
     {
         $columns = $key ? [$value, $key] : [$value];
         $results = $this->select(...$columns)->get();
@@ -484,7 +484,7 @@ class QueryBuilder
     public function select(string ...$columns) : self
     {
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns)
+            'state' => $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns),
         ]);
     }
 
@@ -511,7 +511,7 @@ class QueryBuilder
      *
      * @throws Throwable
      */
-    public function first(string|callable|null $key = null, mixed $default = null) : mixed
+    public function first(string|callable $key = null, mixed $default = null) : mixed
     {
         $instance = clone $this;
         $result   = $instance->limit(limit: 1)->get();
@@ -567,7 +567,7 @@ class QueryBuilder
     /**
      * Retrieve a single record by its primary identity.
      *
-     * @param mixed  $id     Identity value.
+     * @param mixed $id Identity value.
      * @param string $column Field name for the identity (defaults to 'id').
      *
      * @throws Throwable

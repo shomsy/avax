@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\PublicSurface;
 
 use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
+use RuntimeException;
 
 /**
  * Container - Laravel-style static access to the DI container.
@@ -98,7 +99,7 @@ class Container
     private static function getContainer(): DIContainerInterface
     {
         if (self::$container === null) {
-            throw new \RuntimeException('Container not set. Call Container::setContainer() first.');
+            throw new RuntimeException('Container not set. Call Container::setContainer() first.');
         }
 
         return self::$container;

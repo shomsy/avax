@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Configuration;
@@ -12,6 +13,6 @@ final readonly class SessionCookieSettings
         public string $domain = '',
         public bool   $secure = false,
         public bool   $httpOnly = true,
-        public string $sameSite = 'Lax'
+        public string $sameSite = 'Lax',
     ) {}
 }

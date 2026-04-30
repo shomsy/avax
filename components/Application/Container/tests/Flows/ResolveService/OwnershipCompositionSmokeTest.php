@@ -36,21 +36,30 @@ final class BillingFlowUsesGateway
 {
     public OwnershipGateway $gateway;
 
-    public function __construct(OwnershipGateway $gateway) { $this->gateway = $gateway; }
+    public function __construct(OwnershipGateway $gateway)
+    {
+        $this->gateway = $gateway;
+    }
 }
 
 final class BillingFlowUsesInternalAudit
 {
     public InternalAuditTrail $audit;
 
-    public function __construct(InternalAuditTrail $audit) { $this->audit = $audit; }
+    public function __construct(InternalAuditTrail $audit)
+    {
+        $this->audit = $audit;
+    }
 }
 
 final class SharedOwnershipFacade
 {
     public ScopedOwnershipState $state;
 
-    public function __construct(ScopedOwnershipState $state) { $this->state = $state; }
+    public function __construct(ScopedOwnershipState $state)
+    {
+        $this->state = $state;
+    }
 }
 
 final class DevOnlyOwnershipProbe {}
@@ -121,19 +130,19 @@ assertSame(expected: 'shared', actual: $description['ownership']['visibility'] ?
 assertSame(
     expected: 'service is shared and explicitly exported',
     actual  : $description['topLevelAccess']['reason'] ?? null,
-    message : 'Service descriptions should explain why a service is on the top-level surface.'
+    message : 'Service descriptions should explain why a service is on the top-level surface.',
 );
 assertSame(
     expected: ['capability.payments'],
     actual  : $graph['owner']['imports'] ?? [],
-    message : 'Service graph reports should expose declared slice imports.'
+    message : 'Service graph reports should expose declared slice imports.',
 );
 assertTrue(condition: isset($fullGraph['slices']['capability.payments']), message: 'Full graph reports should include slice manifests.');
 assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), message: 'Full graph reports should include duplicate concept reports.');
 assertTrue(condition: in_array(needle: BillingFlowUsesGateway::class, haystack: $fullGraph['deadRegistrations'], strict: true) === false, message: 'Live flow services should not be reported as dead.');
 array_filter(
     array   : $validGatewayIssues,
-    callback: static fn (string $issue) : bool => str_contains(haystack: $issue, needle: BillingFlowUsesGateway::class)
+    callback: static fn (string $issue) : bool => str_contains(haystack: $issue, needle: BillingFlowUsesGateway::class),
 )
     |> array_values(...)
     |> (static fn ($x) => assertSame(expected: [], actual: $x, message: 'Imported shared capability dependencies should validate cleanly.'));
@@ -141,30 +150,30 @@ array_filter(
 $invalidAuditText = implode(separator: "\n", array: $invalidAuditIssues);
 assertTrue(
     condition: str_contains(haystack: $invalidAuditText, needle: 'cannot use dependency [' . InternalAuditTrail::class . ']'),
-    message  : 'Validation should block illegal internal cross-slice dependencies.'
+    message  : 'Validation should block illegal internal cross-slice dependencies.',
 );
 
 $lifetimeText = implode(separator: "\n", array: $lifetimeIssues);
 assertTrue(
     condition: str_contains(haystack: $lifetimeText, needle: 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
-    message  : 'Validation should detect shared-to-scoped lifetime capture.'
+    message  : 'Validation should detect shared-to-scoped lifetime capture.',
 );
 
 $profileText = implode(separator: "\n", array: $profileIssues);
 assertTrue(
     condition: str_contains(haystack: $profileText, needle: 'environment [prod] is not in [dev]'),
-    message  : 'Validation should explain environment/profile mismatches.'
+    message  : 'Validation should explain environment/profile mismatches.',
 );
 
 assertSame(
     expected: 'shared-gateway',
     actual  : $container->get(id: OwnershipGateway::class)->label(),
-    message : 'Exported shared capabilities should still resolve normally.'
+    message : 'Exported shared capabilities should still resolve normally.',
 );
 assertSame(
     expected: 'shared-gateway',
     actual  : $container->get(id: BillingFlowUsesGateway::class)->gateway->label(),
-    message : 'Importing flows should resolve exported shared capabilities.'
+    message : 'Importing flows should resolve exported shared capabilities.',
 );
 
 assertThrows(
@@ -178,11 +187,12 @@ assertThrows(
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: InternalAuditTrail::class);
     },
-    message      : 'Top-level internal services should be blocked from direct resolution.'
+    message      : 'Top-level internal services should be blocked from direct resolution.',
 );
 
 assertThrows(
@@ -196,11 +206,12 @@ assertThrows(
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: BillingFlowUsesInternalAudit::class);
     },
-    message      : 'Illegal cross-slice runtime dependencies should fail fast during resolution.'
+    message      : 'Illegal cross-slice runtime dependencies should fail fast during resolution.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

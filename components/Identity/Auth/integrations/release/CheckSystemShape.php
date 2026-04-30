@@ -56,6 +56,7 @@ final readonly class CheckSystemShape
 
             if (is_dir(filename: $fullPath) && ! in_array(needle: $entry, haystack: $allowedTopLevelDirectories, strict: true)) {
                 $unexpectedTopLevel[] = 'System/' . $entry;
+
                 continue;
             }
 
@@ -64,7 +65,7 @@ final readonly class CheckSystemShape
             }
         }
 
-        $forbiddenNames       = [
+        $forbiddenNames = [
             'Actions',
             'Adapters',
             'Contracts',
@@ -86,7 +87,7 @@ final readonly class CheckSystemShape
 
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(directory: $systemRoot, flags: FilesystemIterator::SKIP_DOTS),
-            mode    : RecursiveIteratorIterator::SELF_FIRST
+            mode    : RecursiveIteratorIterator::SELF_FIRST,
         );
 
         /** @var SplFileInfo $node */
@@ -124,7 +125,7 @@ final readonly class CheckSystemShape
                                 'Register',
                                 'VerifyIdentity',
                             ],
-            relativePrefix: 'System/Flows/'
+            relativePrefix: 'System/Flows/',
         );
 
         if ($flowTopLevel['unexpected'] !== []) {
@@ -145,7 +146,7 @@ final readonly class CheckSystemShape
                                 'IdentitySync',
                                 'Tenancy',
                             ],
-            relativePrefix: 'System/Capabilities/'
+            relativePrefix: 'System/Capabilities/',
         );
 
         if ($capabilityTopLevel['unexpected'] !== []) {
@@ -180,7 +181,7 @@ final readonly class CheckSystemShape
     private function validateCanonicalChildDirectories(
         string $root,
         array  $expected,
-        string $relativePrefix
+        string $relativePrefix,
     ) : array
     {
         if (! is_dir(filename: $root)) {
@@ -188,7 +189,7 @@ final readonly class CheckSystemShape
                 'unexpected' => [],
                 'missing'    => array_map(
                     callback: static fn (string $directory) : string => $relativePrefix . $directory,
-                    array   : $expected
+                    array   : $expected,
                 ),
             ];
         }
@@ -214,11 +215,11 @@ final readonly class CheckSystemShape
         return [
             'unexpected' => array_map(
                 callback: static fn (string $directory) : string => $relativePrefix . $directory,
-                array   : $unexpected
+                array   : $unexpected,
             ),
             'missing'    => array_map(
                 callback: static fn (string $directory) : string => $relativePrefix . $directory,
-                array   : $missing
+                array   : $missing,
             ),
         ];
     }

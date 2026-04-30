@@ -11,17 +11,17 @@ require_once dirname(path: __DIR__) . '/bootstrap.php';
 function readBenchmarkArtifact(string $path) : array
 {
     if (! is_file(filename: $path)) {
-        throw new RuntimeException(message: "Benchmark artifact [{$path}] does not exist.");
+        throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not exist.', $path));
     }
 
     $json = file_get_contents(filename: $path);
     if (! is_string(value: $json) || $json === '') {
-        throw new RuntimeException(message: "Benchmark artifact [{$path}] could not be read.");
+        throw new RuntimeException(message: sprintf('Benchmark artifact [%s] could not be read.', $path));
     }
 
     $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
     if (! is_array(value: $decoded)) {
-        throw new RuntimeException(message: "Benchmark artifact [{$path}] is invalid.");
+        throw new RuntimeException(message: sprintf('Benchmark artifact [%s] is invalid.', $path));
     }
 
     $meta = $decoded['meta'] ?? [];
@@ -31,7 +31,7 @@ function readBenchmarkArtifact(string $path) : array
 
     $results = $decoded['results'] ?? $decoded;
     if (! is_array(value: $results)) {
-        throw new RuntimeException(message: "Benchmark artifact [{$path}] does not contain benchmark results.");
+        throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not contain benchmark results.', $path));
     }
 
     return [
@@ -57,7 +57,7 @@ function benchmarkTargets(array $arguments) : array
         $parts = explode(separator: '=', string: $argument, limit: 2);
         if (count(value: $parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
             throw new RuntimeException(
-                message: 'Comparison targets must use the form name=/absolute/or/relative/path/to/report.json.'
+                message: 'Comparison targets must use the form name=/absolute/or/relative/path/to/report.json.',
             );
         }
 
@@ -80,12 +80,12 @@ function commonScenarios(array $reports) : array
 {
     $scenarioSets = array_map(
         callback: static fn (array $results) : array => array_keys(array: $results),
-        array   : $reports
+        array   : $reports,
     );
 
     $common = array_shift(array: $scenarioSets) ?? [];
-    foreach ($scenarioSets as $set) {
-        $common = array_values(array: array_intersect($common, $set));
+    foreach ($scenarioSets as $scenarioSet) {
+        $common = array_values(array: array_intersect($common, $scenarioSet));
     }
 
     sort(array: $common);
@@ -100,14 +100,14 @@ function commonScenarios(array $reports) : array
  */
 function comparisonPayload(array $artifacts, string $baselineName) : array
 {
-    $reports  = array_map(
+    $reports = array_map(
         callback: static fn (array $artifact) : array => $artifact['results'],
-        array   : $artifacts
+        array   : $artifacts,
     );
     $common   = commonScenarios(reports: $reports);
     $baseline = $reports[$baselineName] ?? null;
     if (! is_array(value: $baseline)) {
-        throw new RuntimeException(message: "Baseline report [{$baselineName}] is missing.");
+        throw new RuntimeException(message: sprintf('Baseline report [%s] is missing.', $baselineName));
     }
 
     $scenarios = [];
@@ -126,13 +126,13 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
                 'ops_per_s'              => $ops,
                 'peak_mb'                => $peak,
                 'time_ratio_vs_baseline' => $baselineTime > 0 ? $time / $baselineTime : 0.0,
-                'ops_ratio_vs_baseline'  => $baselineOps > 0 ? $ops / $baselineOps : 0.0,
+                'ops_ratio_vs_baseline' => $baselineOps > 0 ? $ops / $baselineOps : 0.0,
             ];
         }
 
         uasort(
             array   : $rows,
-            callback: static fn (array $left, array $right) : int => $left['time_ms'] <=> $right['time_ms']
+            callback: static fn (array $left, array $right) : int => $left['time_ms'] <=> $right['time_ms'],
         );
 
         $fastest              = array_key_first(array: $rows);
@@ -143,11 +143,11 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     }
 
     return [
-        'baseline'        => $baselineName,
-        'targets'         => array_keys(array: $reports),
-        'targetMeta'      => array_map(
+        'baseline'   => $baselineName,
+        'targets'    => array_keys(array: $reports),
+        'targetMeta' => array_map(
             callback: static fn (array $artifact) : array => $artifact['meta'],
-            array   : $artifacts
+            array   : $artifacts,
         ),
         'commonScenarios' => $common,
         'scenarioCount'   => count(value: $common),
@@ -188,12 +188,12 @@ foreach ($comparison['scenarios'] as $scenario => $row) {
     foreach ($row['results'] as $name => $result) {
         fwrite(
             stream: STDOUT,
-            data  : str_pad(string: $name, length: 18)
+            data  : str_pad(string: (string) $name, length: 18)
                     . str_pad(string: number_format(num: (float) $result['time_ms'], decimals: 2) . ' ms', length: 14)
                     . str_pad(string: number_format(num: (float) $result['ops_per_s'], decimals: 2) . ' ops/s', length: 18)
                     . 'ratio '
                     . number_format(num: (float) $result['time_ratio_vs_baseline'], decimals: 2)
-                    . PHP_EOL
+                    . PHP_EOL,
         );
     }
 }

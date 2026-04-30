@@ -29,15 +29,15 @@ interface ConsistencyPolicy
      * Determines if a write should be accepted.
      *
      * @param mixed $currentValue The current value
-     * @param mixed $newValue     The proposed new value
+     * @param mixed $newValue The proposed new value
      */
     public function canWrite(mixed $currentValue, mixed $newValue) : bool;
 
     /**
      * Resolves a conflict between two values.
      *
-     * @param mixed                $valueA  First conflicting value
-     * @param mixed                $valueB  Second conflicting value
+     * @param mixed $valueA First conflicting value
+     * @param mixed $valueB Second conflicting value
      * @param array<string, mixed> $context Additional context for resolution
      *
      * @return mixed The resolved value
@@ -139,11 +139,12 @@ final class VectorClock
         $atLeastOneLess = false;
 
         foreach ($allNodes as $nodeId) {
-            $thisValue  = $this->clock[$nodeId] ?? 0;
+            $thisValue = $this->clock[$nodeId] ?? 0;
             $otherValue = $other->clock[$nodeId] ?? 0;
 
             if ($thisValue > $otherValue) {
                 $allLessOrEqual = false;
+
                 break;
             }
 

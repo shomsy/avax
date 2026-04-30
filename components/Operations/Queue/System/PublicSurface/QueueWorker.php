@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\PublicSurface;
 
-use Avax\Components\Operations\Queue\System\Capabilities\QueueDriverInterface;
 use Avax\Components\Operations\Queue\System\Capabilities\Job;
+use Avax\Components\Operations\Queue\System\Capabilities\QueueDriverInterface;
+use Throwable;
 
 final class QueueWorker
 {
@@ -19,9 +20,9 @@ final class QueueWorker
 
     public function daemon(string $queue = 'default'): void
     {
-        while (!$this->shouldStop) {
+        while ( ! $this->shouldStop ) {
             $job = $this->driver->pop($queue);
-            
+
             if ($job !== null) {
                 $this->process($job);
             } else {
@@ -36,13 +37,13 @@ final class QueueWorker
             $payload = $job->getPayload();
             $class = $payload['job'] ?? null;
             $data = $payload['data'] ?? [];
-            
+
             if ($class && class_exists($class)) {
                 $instance = new $class(...$data);
                 $instance->handle();
                 $job->delete();
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if ($job->attempts() >= $this->maxTries) {
                 $job->delete();
             } else {

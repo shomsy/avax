@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 interface InvalidateByVersion
 {
-    public function invalidateVersion(CacheVersion $version) : int;
+    public function invalidateVersion(CacheVersion $cacheVersion) : int;
 
-    public function isVersionInvalidated(CacheVersion $version) : bool;
+    public function isVersionInvalidated(CacheVersion $cacheVersion) : bool;
 }

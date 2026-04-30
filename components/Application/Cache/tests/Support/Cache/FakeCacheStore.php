@@ -11,25 +11,24 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Override;
 
 final class FakeCacheStore implements CacheStore
 {
     /** @var array<string, StoredCacheRecord> */
     private array $records = [];
 
-    private Clock $clock;
-
-    public function __construct(Clock|null $clock = null)
+    public function __construct(private readonly Clock $clock = new SystemClock())
     {
-        $this->clock = $clock ?? new SystemClock();
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    #[Override]
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $fullKey = $key->fullKey();
+        $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $record = $this->records[$fullKey];
@@ -37,30 +36,34 @@ final class FakeCacheStore implements CacheStore
         if ($record->lifecycle->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
+        return new CacheStoreRecordWasFound(key: $cacheKey, record: $record, clock: $clock);
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    #[Override]
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->records[$key->fullKey()] = $record;
+        $this->records[$cacheKey->fullKey()] = $storedCacheRecord;
     }
 
-    public function forget(CacheKey $key) : void
+    #[Override]
+    public function forget(CacheKey $cacheKey) : void
     {
-        unset($this->records[$key->fullKey()]);
+        unset($this->records[$cacheKey->fullKey()]);
     }
 
+    #[Override]
     public function clear() : void
     {
         $this->records = [];
     }
 
-    public function exists(CacheKey $key) : bool
+    #[Override]
+    public function exists(CacheKey $cacheKey) : bool
     {
-        $fullKey = $key->fullKey();
+        $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
             return false;

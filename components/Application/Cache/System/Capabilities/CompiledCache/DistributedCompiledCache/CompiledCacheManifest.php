@@ -24,13 +24,13 @@ final class CompiledCacheManifest
     private string|null $manifestPath = null;
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock()
+        private readonly Clock $clock = new SystemClock(),
     ) {}
 
     /**
      * Create a new empty manifest.
      */
-    public static function empty(Clock|null $clock = null) : self
+    public static function empty(?Clock $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }
@@ -40,7 +40,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, Clock|null $clock = null) : self
+    public static function load(string $path, ?Clock $clock = null) : self
     {
         $manifest               = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
@@ -53,7 +53,7 @@ final class CompiledCacheManifest
 
         if ($content === false) {
             throw new RuntimeException(
-                sprintf('Failed to read manifest file: %s', $path)
+                sprintf('Failed to read manifest file: %s', $path),
             );
         }
 
@@ -61,7 +61,7 @@ final class CompiledCacheManifest
 
         if (! is_array($data)) {
             throw new RuntimeException(
-                sprintf('Invalid manifest file format: %s', $path)
+                sprintf('Invalid manifest file format: %s', $path),
             );
         }
 
@@ -78,7 +78,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(string|null $path = null) : void
+    public function save(?string $path = null) : void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -88,20 +88,18 @@ final class CompiledCacheManifest
 
         $directory = dirname($savePath);
 
-        if (! is_dir($directory)) {
-            if (! mkdir($directory, 0755, true)) {
-                throw new RuntimeException(
-                    sprintf('Failed to create manifest directory: %s', $directory)
-                );
-            }
+        if (! is_dir($directory) && ! mkdir($directory, 0o755, true)) {
+            throw new RuntimeException(
+                sprintf('Failed to create manifest directory: %s', $directory),
+            );
         }
 
         $data = [
             'version'     => '1.0',
             'generatedAt' => $this->clock->now()->seconds,
             'entries'     => array_map(
-                static fn (CompiledCacheManifestEntry $entry) => $entry->toArray(),
-                $this->entries
+                static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry) : array => $compiledCacheManifestEntry->toArray(),
+                $this->entries,
             ),
         ];
 
@@ -115,7 +113,7 @@ final class CompiledCacheManifest
 
         if ($result === false) {
             throw new RuntimeException(
-                sprintf('Failed to write manifest file: %s', $savePath)
+                sprintf('Failed to write manifest file: %s', $savePath),
             );
         }
 
@@ -126,12 +124,12 @@ final class CompiledCacheManifest
      * Add an entry to the manifest.
      */
     public function addEntry(
-        string      $name,
-        string      $compiledPath,
-        array       $sourceFiles,
-        string|null $type = null,
-        string|null $phpVersion = null,
-        string|null $frameworkVersion = null
+        string  $name,
+        string  $compiledPath,
+        array   $sourceFiles,
+        ?string $type = null,
+        ?string $phpVersion = null,
+        ?string $frameworkVersion = null,
     ) : CompiledCacheManifestEntry
     {
         $now = $this->clock->now();
@@ -139,7 +137,7 @@ final class CompiledCacheManifest
         // Calculate fingerprint from source files
         $fingerprint = $this->calculateFingerprint($sourceFiles);
 
-        $entry = new CompiledCacheManifestEntry(
+        $compiledCacheManifestEntry = new CompiledCacheManifestEntry(
             name            : $name,
             compiledPath    : $compiledPath,
             sourceFiles     : $sourceFiles,
@@ -148,12 +146,12 @@ final class CompiledCacheManifest
             updatedAt       : $now,
             type            : $type,
             phpVersion      : $phpVersion ?? PHP_VERSION,
-            frameworkVersion: $frameworkVersion
+            frameworkVersion: $frameworkVersion,
         );
 
-        $this->entries[$name] = $entry;
+        $this->entries[$name] = $compiledCacheManifestEntry;
 
-        return $entry;
+        return $compiledCacheManifestEntry;
     }
 
     /**
@@ -165,12 +163,8 @@ final class CompiledCacheManifest
     {
         $hashParts = [];
 
-        foreach ($sourceFiles as $file) {
-            if (file_exists($file)) {
-                $hashParts[] = $file . ':' . filemtime($file);
-            } else {
-                $hashParts[] = $file . ':missing';
-            }
+        foreach ($sourceFiles as $sourceFile) {
+            $hashParts[] = file_exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));
@@ -179,9 +173,9 @@ final class CompiledCacheManifest
     /**
      * Set an entry directly.
      */
-    public function setEntry(CompiledCacheManifestEntry $entry) : void
+    public function setEntry(CompiledCacheManifestEntry $compiledCacheManifestEntry) : void
     {
-        $this->entries[$entry->name] = $entry;
+        $this->entries[$compiledCacheManifestEntry->name] = $compiledCacheManifestEntry;
     }
 
     /**
@@ -341,7 +335,7 @@ final readonly class CompiledCacheManifestEntry
         public Timestamp   $updatedAt,
         public string|null $type = null,
         public string|null $phpVersion = null,
-        public string|null $frameworkVersion = null
+        public string|null $frameworkVersion = null,
     ) {}
 
     /**
@@ -370,7 +364,7 @@ final readonly class CompiledCacheManifestEntry
             updatedAt       : Timestamp::fromUnixTime($data['updatedAt']),
             type            : $data['type'] ?? null,
             phpVersion      : $data['phpVersion'] ?? null,
-            frameworkVersion: $data['frameworkVersion'] ?? null
+            frameworkVersion: $data['frameworkVersion'] ?? null,
         );
     }
 
@@ -407,7 +401,7 @@ final readonly class CompiledCacheManifestEntry
     /**
      * Create a copy with an updated timestamp.
      */
-    public function withUpdatedAt(Timestamp $updatedAt) : self
+    public function withUpdatedAt(Timestamp $timestamp) : self
     {
         return new self(
             name            : $this->name,
@@ -415,10 +409,10 @@ final readonly class CompiledCacheManifestEntry
             sourceFiles     : $this->sourceFiles,
             fingerprint     : $this->fingerprint,
             createdAt       : $this->createdAt,
-            updatedAt       : $updatedAt,
+            updatedAt       : $timestamp,
             type            : $this->type,
             phpVersion      : $this->phpVersion,
-            frameworkVersion: $this->frameworkVersion
+            frameworkVersion: $this->frameworkVersion,
         );
     }
 

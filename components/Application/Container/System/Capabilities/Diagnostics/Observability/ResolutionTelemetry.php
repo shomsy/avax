@@ -9,17 +9,8 @@ namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\
  */
 final readonly class ResolutionTelemetry
 {
-    private ResolutionMetrics $metrics;
-
-    private ResolutionTimeline $timeline;
-
-    public function __construct(
-        ResolutionMetrics|null  $metrics = null,
-        ResolutionTimeline|null $timeline = null
-    )
+    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics(), private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline())
     {
-        $this->metrics  = $metrics ?? new ResolutionMetrics;
-        $this->timeline = $timeline ?? new ResolutionTimeline;
     }
 
     /**
@@ -27,7 +18,7 @@ final readonly class ResolutionTelemetry
      */
     public function metrics() : ResolutionMetrics
     {
-        return $this->metrics;
+        return $this->resolutionMetrics;
     }
 
     /**
@@ -35,7 +26,7 @@ final readonly class ResolutionTelemetry
      */
     public function timeline() : ResolutionTimeline
     {
-        return $this->timeline;
+        return $this->resolutionTimeline;
     }
 
     /**
@@ -43,7 +34,7 @@ final readonly class ResolutionTelemetry
      */
     public function exportMetrics() : string
     {
-        return $this->metrics->export();
+        return $this->resolutionMetrics->export();
     }
 
     /**
@@ -51,7 +42,7 @@ final readonly class ResolutionTelemetry
      */
     public function reset() : void
     {
-        $this->metrics->reset();
-        $this->timeline->reset();
+        $this->resolutionMetrics->reset();
+        $this->resolutionTimeline->reset();
     }
 }

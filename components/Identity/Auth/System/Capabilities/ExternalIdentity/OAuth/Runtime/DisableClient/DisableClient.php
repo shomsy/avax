@@ -29,7 +29,7 @@ final readonly class DisableClient
                                            context   : [
                                                            'client_id'   => $client->clientId,
                                                            'tenant_slug' => $client->tenantSlug,
-                                                       ]
+                                                       ],
                                        ));
 
         return $client;

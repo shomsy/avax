@@ -16,20 +16,20 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\Where
  */
 final readonly class QueryState
 {
-    public bool        $distinct;
-    public array       $updateColumns;
-    public array       $values;
-    public int|null    $offset;
-    public int|null    $limit;
-    public array       $orders;
-    public array       $havings;
-    public array       $groups;
-    public array       $wheres;
-    public array       $joins;
+    public bool     $distinct;
+    public array    $updateColumns;
+    public array    $values;
+    public int|null $offset;
+    public int|null $limit;
+    public array    $orders;
+    public array    $havings;
+    public array    $groups;
+    public array    $wheres;
+    public array    $joins;
     public string|null $from;
-    public array       $columns;
-    public array       $ctes;
-    public array       $windows;
+    public array    $columns;
+    public array    $ctes;
+    public array    $windows;
     private BindingBag $bindings;
 
     /**
@@ -63,32 +63,32 @@ final readonly class QueryState
      *                                                        tokens.
      */
     public function __construct(
-        array|null  $columns = null,
-        string|null $from = null,
-        array|null  $joins = null,
-        array|null  $wheres = null,
-        array|null  $groups = null,
-        array|null  $havings = null,
-        array|null  $orders = null,
-        int|null    $limit = null,
-        int|null    $offset = null,
-        array|null  $values = null,
-        array|null  $updateColumns = null,
-        bool|null   $distinct = null,
-        array|null  $ctes = null,
-        array|null  $windows = null,
-        BindingBag  $bindings = new BindingBag
+        array      $columns = null,
+        string     $from = null,
+        array      $joins = null,
+        array      $wheres = null,
+        array      $groups = null,
+        array      $havings = null,
+        array      $orders = null,
+        int        $limit = null,
+        int        $offset = null,
+        array      $values = null,
+        array      $updateColumns = null,
+        bool       $distinct = null,
+        array      $ctes = null,
+        array      $windows = null,
+        BindingBag $bindings = new BindingBag(),
     )
     {
-        $columns             ??= ['*'];
-        $joins               ??= [];
-        $wheres              ??= [];
-        $groups              ??= [];
-        $havings             ??= [];
-        $orders              ??= [];
-        $values              ??= [];
-        $updateColumns       ??= [];
-        $distinct            ??= false;
+        $columns       ??= ['*'];
+        $joins         ??= [];
+        $wheres        ??= [];
+        $groups        ??= [];
+        $havings       ??= [];
+        $orders        ??= [];
+        $values        ??= [];
+        $updateColumns ??= [];
+        $distinct      ??= false;
         $this->columns       = $columns;
         $this->from          = $from;
         $this->joins         = $joins;
@@ -101,7 +101,7 @@ final readonly class QueryState
         $this->values        = $values;
         $this->updateColumns = $updateColumns;
         $this->distinct      = $distinct;
-        $this->ctes          = $ctes ?? [];
+        $this->ctes    = $ctes ?? [];
         $this->windows       = $windows ?? [];
         $this->bindings      = $bindings;
     }
@@ -114,7 +114,7 @@ final readonly class QueryState
     public function withFrom(string $table) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'from' => $table]
+            ...[...get_object_vars(object: $this), 'from' => $table],
         );
     }
 
@@ -126,7 +126,7 @@ final readonly class QueryState
     public function withColumns(array $columns) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'columns' => $columns]
+            ...[...get_object_vars(object: $this), 'columns' => $columns],
         );
     }
 
@@ -138,7 +138,7 @@ final readonly class QueryState
     public function withDistinct(bool $distinct = true) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'distinct' => $distinct]
+            ...[...get_object_vars(object: $this), 'distinct' => $distinct],
         );
     }
 
@@ -156,7 +156,7 @@ final readonly class QueryState
     public function withLimit(int|null $limit) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'limit' => $limit]
+            ...[...get_object_vars(object: $this), 'limit' => $limit],
         );
     }
 
@@ -174,7 +174,7 @@ final readonly class QueryState
     public function withOffset(int|null $offset) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'offset' => $offset]
+            ...[...get_object_vars(object: $this), 'offset' => $offset],
         );
     }
 
@@ -192,7 +192,7 @@ final readonly class QueryState
     public function withValues(array $values) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'values' => $values]
+            ...[...get_object_vars(object: $this), 'values' => $values],
         );
     }
 
@@ -210,7 +210,7 @@ final readonly class QueryState
     public function withUpdateColumns(array $columns) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'updateColumns' => $columns]
+            ...[...get_object_vars(object: $this), 'updateColumns' => $columns],
         );
     }
 
@@ -228,7 +228,7 @@ final readonly class QueryState
     public function addJoin(JoinNode $join) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'joins' => [...$this->joins, $join]]
+            ...[...get_object_vars(object: $this), 'joins' => [...$this->joins, $join]],
         );
     }
 
@@ -240,7 +240,7 @@ final readonly class QueryState
     public function addWhere(WhereNode|NestedWhereNode $where) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'wheres' => [...$this->wheres, $where]]
+            ...[...get_object_vars(object: $this), 'wheres' => [...$this->wheres, $where]],
         );
     }
 
@@ -258,7 +258,7 @@ final readonly class QueryState
     public function addGroup(string $column) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'groups' => [...$this->groups, $column]]
+            ...[...get_object_vars(object: $this), 'groups' => [...$this->groups, $column]],
         );
     }
 
@@ -276,7 +276,7 @@ final readonly class QueryState
     public function withGroups(array $groups) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'groups' => $groups]
+            ...[...get_object_vars(object: $this), 'groups' => $groups],
         );
     }
 
@@ -294,7 +294,7 @@ final readonly class QueryState
     public function addHaving(array $having) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'havings' => [...$this->havings, $having]]
+            ...[...get_object_vars(object: $this), 'havings' => [...$this->havings, $having]],
         );
     }
 
@@ -312,21 +312,21 @@ final readonly class QueryState
     public function addOrder(OrderNode $order) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $order]]
+            ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $order]],
         );
     }
 
     public function withCte(string $name, mixed $query, bool $recursive = false) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, compact('name', 'query', 'recursive')]]
+            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, compact('name', 'query', 'recursive')]],
         );
     }
 
     public function withWindow(string $name, mixed $window) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'windows' => [...$this->windows, $name => $window]]
+            ...[...get_object_vars(object: $this), 'windows' => [...$this->windows, $name => $window]],
         );
     }
 
@@ -338,7 +338,7 @@ final readonly class QueryState
     public function addBinding(mixed $value) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->with(value: $value)]
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->with(value: $value)],
         );
     }
 
@@ -356,7 +356,7 @@ final readonly class QueryState
     public function mergeBindings(array $values) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->merge(parameters: $values)]
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->merge(parameters: $values)],
         );
     }
 
@@ -372,7 +372,7 @@ final readonly class QueryState
     public function resetBindings() : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag]
+            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag()],
         );
     }
 

@@ -9,6 +9,7 @@ use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
 use Avax\Components\DataStack\Data\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -35,8 +36,9 @@ final readonly class Window implements IteratorAggregate, Countable
 
         $source  = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
         $windows = [];
+        $counter = count($source);
 
-        for ($index = 0; $index < count($source); $index += $step) {
+        for ($index = 0; $index < $counter; $index += $step) {
             $window = array_slice($source, $index, $size);
 
             if (count($window) < $size) {
@@ -57,11 +59,13 @@ final readonly class Window implements IteratorAggregate, Countable
         return $this->windows;
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->windows);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->windows);

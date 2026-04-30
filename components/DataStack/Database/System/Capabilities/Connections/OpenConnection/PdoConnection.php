@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConnection;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Override;
 use PDO;
 use Throwable;
 
@@ -15,22 +16,18 @@ use Throwable;
  */
 final readonly class PdoConnection implements DatabaseConnection
 {
-    private PDO    $pdo;
-    private string $name;
-
     /**
      * @param string $name The nickname for this connection (e.g., 'primary').
-     * @param PDO    $pdo  The active technical engine already plugged into the DB.
+     * @param PDO $pdo The active technical engine already plugged into the DB.
      */
-    public function __construct(string $name, PDO $pdo)
+    public function __construct(private string $name, private PDO $pdo)
     {
-        $this->name = $name;
-        $this->pdo  = $pdo;
     }
 
     /**
      * Get the actual technical engine (PDO) to run your SQL.
      */
+    #[Override]
     public function getConnection() : PDO
     {
         return $this->pdo;
@@ -39,6 +36,7 @@ final readonly class PdoConnection implements DatabaseConnection
     /**
      * Send a heartbeat query to verify connection health.
      */
+    #[Override]
     public function ping() : bool
     {
         try {
@@ -53,6 +51,7 @@ final readonly class PdoConnection implements DatabaseConnection
     /**
      * Get the nickname assigned to this connection.
      */
+    #[Override]
     public function getName() : string
     {
         return $this->name;

@@ -22,8 +22,8 @@ abstract class AbstractDTO implements DataObject
      */
     public function __construct(array $data = [])
     {
-        $reflection = new ReflectionClass($this);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $reflectionClass = new ReflectionClass($this);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             $name = $property->getName();
@@ -41,9 +41,9 @@ abstract class AbstractDTO implements DataObject
      */
     public function toArray() : array
     {
-        $result = [];
-        $reflection = new ReflectionClass($this);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $result          = [];
+        $reflectionClass = new ReflectionClass($this);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             if ($property->isInitialized($this)) {

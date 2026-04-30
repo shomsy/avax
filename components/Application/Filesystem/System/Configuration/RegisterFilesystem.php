@@ -13,35 +13,35 @@ use Avax\Components\Application\Filesystem\FilesystemInterface;
 
 final class RegisterFilesystem
 {
-    public function execute(BindingRepository $container) : void
+    public function execute(BindingRepository $bindingRepository) : void
     {
-        $container->singleton(
+        $bindingRepository->singleton(
             abstract: FilesystemConfig::class,
-            concrete: static fn () => FilesystemConfig::defaults()
+            concrete: static fn () : FilesystemConfig => FilesystemConfig::defaults(),
         );
 
-        $container->singleton(
+        $bindingRepository->singleton(
             abstract: ResolveDisk::class,
-            concrete: static fn (Binder $binder) => new ResolveDisk(
-                config: $binder->make(abstract: FilesystemConfig::class)
-            )
+            concrete: static fn (Binder $binder) : ResolveDisk => new ResolveDisk(
+                config: $binder->make(abstract: FilesystemConfig::class),
+            ),
         );
 
-        $container->singleton(
+        $bindingRepository->singleton(
             abstract: Disk::class,
-            concrete: static fn (Binder $binder) => $binder->make(abstract: ResolveDisk::class)->execute()
+            concrete: static fn (Binder $binder) => $binder->make(abstract: ResolveDisk::class)->execute(),
         );
 
-        $container->singleton(
+        $bindingRepository->singleton(
             abstract: Filesystem::class,
-            concrete: static fn (Binder $binder) => new Filesystem(
-                disk: $binder->make(abstract: Disk::class)
-            )
+            concrete: static fn (Binder $binder) : Filesystem => new Filesystem(
+                disk: $binder->make(abstract: Disk::class),
+            ),
         );
 
-        $container->singleton(
+        $bindingRepository->singleton(
             abstract: FilesystemInterface::class,
-            concrete: static fn (Binder $binder) => $binder->make(abstract: Filesystem::class)
+            concrete: static fn (Binder $binder) => $binder->make(abstract: Filesystem::class),
         );
     }
 }

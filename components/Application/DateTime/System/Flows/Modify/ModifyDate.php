@@ -75,11 +75,11 @@ final class ModifyDate
 
     public function next(DateTimeImmutable $date, string $dayOfWeek) : DateTimeImmutable
     {
-        return $date->modify("next $dayOfWeek");
+        return $date->modify('next ' . $dayOfWeek);
     }
 
     public function previous(DateTimeImmutable $date, string $dayOfWeek) : DateTimeImmutable
     {
-        return $date->modify("previous $dayOfWeek");
+        return $date->modify('previous ' . $dayOfWeek);
     }
 }

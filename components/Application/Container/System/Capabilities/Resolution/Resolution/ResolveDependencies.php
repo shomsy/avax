@@ -18,26 +18,26 @@ use Throwable;
 final class ResolveDependencies
 {
     /**
-     * @param array                $parameters
+     * @param array               $parameters
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver      $resolver
-     * @param ResolveRequest|null  $request
+     * @param ServiceResolver     $resolver
+     * @param ResolveRequest|null $request
      *
      * @return array<int, mixed>
      * @throws Throwable
      */
     public function resolveParameters(
-        array               $parameters,
-        array               $overrides,
-        ServiceResolver     $resolver,
-        ResolveRequest|null $request = null
+        array           $parameters,
+        array           $overrides,
+        ServiceResolver $resolver,
+        ResolveRequest  $request = null,
     ) : array
     {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
             resolver : $resolver,
-            request  : $request
+            request  : $request,
         );
     }
 
@@ -52,7 +52,7 @@ final class ResolveDependencies
         ResolvePlan         $plan,
         array               $overrides,
         ServiceResolver     $resolver,
-        ResolveRequest|null $request
+        ResolveRequest|null $request,
     ) : array
     {
         $resolved = [];
@@ -62,7 +62,7 @@ final class ResolveDependencies
                 parameter: $parameter,
                 overrides: $overrides,
                 resolver : $resolver,
-                request  : $request
+                request  : $request,
             );
         }
 
@@ -72,9 +72,9 @@ final class ResolveDependencies
     /**
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
      *                            string, allowsNull: bool} $parameter
-     * @param array<string, mixed>                          $overrides
-     * @param ServiceResolver                               $resolver
-     * @param ResolveRequest|null                           $request
+     * @param array<string, mixed> $overrides
+     * @param ServiceResolver      $resolver
+     * @param ResolveRequest|null  $request
      *
      * @return mixed
      * @throws Throwable
@@ -83,7 +83,7 @@ final class ResolveDependencies
         array               $parameter,
         array               $overrides,
         ServiceResolver     $resolver,
-        ResolveRequest|null $request
+        ResolveRequest|null $request,
     ) : mixed
     {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
@@ -101,7 +101,7 @@ final class ResolveDependencies
         if ($parameter['serviceId'] !== null) {
             return $resolver->resolveRequest(
                 request: $request?->child(serviceId: $parameter['serviceId'])
-                             ?? new ResolveRequest(serviceId: $parameter['serviceId'])
+                             ?? new ResolveRequest(serviceId: $parameter['serviceId']),
             );
         }
 
@@ -118,7 +118,7 @@ final class ResolveDependencies
                          ? "Runtime input [\${$parameter['inputName']}] is missing for [{$request?->serviceId}]. "
                        . "Dependency path [{$request?->getPath()}]. Likely fix: pass an explicit override, use forContext(), or add a default value."
                          : "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]. "
-                       . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override."
+                       . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override.",
         );
     }
 

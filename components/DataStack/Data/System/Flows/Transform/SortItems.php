@@ -8,11 +8,11 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class SortItems
 {
-    public function __invoke(Collection $collection, callable|null $callback = null, bool $descending = false) : Collection
+    public function __invoke(Collection $collection, ?callable $callback = null, bool $descending = false) : Collection
     {
         $items = $collection->all();
         if ($callback !== null) {
-            $descending ? uksort($items, fn ($a, $b) => $callback($b, $a)) : uksort($items, $callback);
+            $descending ? uksort($items, static fn ($a, $b) => $callback($b, $a)) : uksort($items, $callback);
         } else {
             $descending ? rsort($items) : sort($items);
         }

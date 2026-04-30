@@ -10,9 +10,9 @@ final class UpsertBuilder
 {
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $table,
-        private readonly array            $columns,
-        private readonly OnConflict       $conflict,
+        private readonly string     $table,
+        private readonly array      $columns,
+        private readonly OnConflict $conflict,
     ) {}
 
     /**
@@ -49,7 +49,7 @@ final class UpsertBuilder
 
         $assignments = array_map(
             callback: fn ($column) => $this->grammar->wrap(value: $column) . ' = EXCLUDED.' . $this->grammar->wrap(value: $column),
-            array   : $updateColumns
+            array   : $updateColumns,
         );
 
         $sql .= " ON CONFLICT ({$conflictColumns}) DO UPDATE SET " . implode(separator: ', ', array: $assignments);

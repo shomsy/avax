@@ -12,9 +12,12 @@ use SensitiveParameter;
 final readonly class ResetPasswordData
 {
     public function __construct(
-        #[SensitiveParameter] public string      $token,
-        #[SensitiveParameter] public string      $newPassword,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
+        #[SensitiveParameter]
+        public string      $token,
+        #[SensitiveParameter]
+        public string      $newPassword,
+        #[SensitiveParameter]
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

@@ -28,17 +28,17 @@ final readonly class ClientResponse
      * @param array<string, mixed>        $context        Additional response context
      */
     public function __construct(
-        public int     $statusCode = 200,
-        public array   $headers = [],
-        public string  $body = '',
-        public string  $reasonPhrase = 'OK',
-        public string  $protocol = '1.1',
-        public float   $transferTimeMs = 0.0,
-        public float   $connectTimeMs = 0.0,
-        public float   $totalTimeMs = 0.0,
-        public int     $redirectCount = 0,
+        public int    $statusCode = 200,
+        public array  $headers = [],
+        public string $body = '',
+        public string $reasonPhrase = 'OK',
+        public string $protocol = '1.1',
+        public float  $transferTimeMs = 0.0,
+        public float  $connectTimeMs = 0.0,
+        public float  $totalTimeMs = 0.0,
+        public int    $redirectCount = 0,
         public ?string $effectiveUrl = null,
-        public array   $context = [],
+        public array  $context = [],
     ) {}
 
     /**
@@ -47,11 +47,11 @@ final readonly class ClientResponse
      * @param array<string, string|string[]> $headers Headers as name => value or name => [values]
      */
     public static function fromRaw(
-        int    $statusCode,
-        array  $headers = [],
+        int   $statusCode,
+        array $headers = [],
         string $body = '',
         string $reasonPhrase = '',
-        float  $transferTimeMs = 0.0,
+        float $transferTimeMs = 0.0,
     ) : self
     {
         $normalizedHeaders = [];
@@ -195,7 +195,7 @@ final readonly class ClientResponse
      *
      * @param string|null $format Force a specific format ('json', 'xml', 'text')
      */
-    public function decoded(?string $format = null) : mixed
+    public function decoded(string $format = null) : mixed
     {
         $decoder = new ResponseDecoder();
 

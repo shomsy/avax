@@ -16,11 +16,13 @@ use SensitiveParameter;
 final readonly class RevokeToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface                     $clientRegistry,
-        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                $auditLog,
-        private Clock                                            $clock
+        private OAuthClientRegistryInterface $clientRegistry,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface   $refreshTokenStore,
+        #[SensitiveParameter]
+        private JwtIdentityInterface         $jwtIdentity,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
     ) {}
 
     /**
@@ -70,7 +72,7 @@ final readonly class RevokeToken
                                                            'revoked'         => $revoked ? 1 : 0,
                                                            'ip_address'      => $data->ipAddress,
                                                            'user_agent'      => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

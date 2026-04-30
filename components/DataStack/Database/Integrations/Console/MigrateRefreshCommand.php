@@ -12,19 +12,19 @@ final readonly class MigrateRefreshCommand
 {
     public function __construct(
         private RollbackMigrations  $rollbackMigrations,
-        private MigrationRepository $repository,
-        private MigrateCommand      $migrateCommand
+        private MigrationRepository $migrationRepository,
+        private MigrateCommand      $migrateCommand,
     ) {}
 
     public function handle(string $path, bool $dryRun = false) : int
     {
         try {
-            $this->repository->ensureTableExists();
+            $this->migrationRepository->ensureTableExists();
             $rolledBack = $this->rollbackMigrations->run(path: $path, steps: PHP_INT_MAX);
 
-            if (! empty($rolledBack)) {
+            if ($rolledBack !== []) {
                 foreach ($rolledBack as $name) {
-                    echo "  ✓ {$name}\n";
+                    echo sprintf('  ✓ %s%s', $name, PHP_EOL);
                 }
 
                 echo "\033[32mRolled back " . count(value: $rolledBack) . " migration(s).\033[0m\n";
@@ -32,7 +32,7 @@ final readonly class MigrateRefreshCommand
 
             return $this->migrateCommand->handle(path: $path, dryRun: $dryRun);
         } catch (Throwable $throwable) {
-            echo "\033[31mRefresh failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mRefresh failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }

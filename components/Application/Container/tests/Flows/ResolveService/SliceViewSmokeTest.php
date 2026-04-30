@@ -27,7 +27,10 @@ final class SliceBillingEntry
 {
     public SlicePaymentGateway $gateway;
 
-    public function __construct(SlicePaymentGateway $gateway) { $this->gateway = $gateway; }
+    public function __construct(SlicePaymentGateway $gateway)
+    {
+        $this->gateway = $gateway;
+    }
 }
 
 final class SliceBillingHelper {}
@@ -137,7 +140,7 @@ assertThrows(
     callback     : static function () use ($ownedRegistration) : void {
         $ownedRegistration->asCapability(ownerSlice: 'capability.payments');
     },
-    message      : 'Strict slice views should lock registration ownership against cross-slice mutation.'
+    message      : 'Strict slice views should lock registration ownership against cross-slice mutation.',
 );
 
 assertThrows(
@@ -145,7 +148,7 @@ assertThrows(
     callback     : static function () use ($billing) : void {
         $billing->tag(abstracts: SlicePaymentGateway::class, tags: 'illegal');
     },
-    message      : 'Strict slice views should block mutating imported services.'
+    message      : 'Strict slice views should block mutating imported services.',
 );
 
 assertThrows(
@@ -153,7 +156,7 @@ assertThrows(
     callback     : static function () use ($billing) : void {
         $billing->alias(alias: 'billing.gateway', abstract: SlicePaymentGateway::class);
     },
-    message      : 'Strict slice views should block global alias mutation.'
+    message      : 'Strict slice views should block global alias mutation.',
 );
 
 assertThrows(
@@ -161,7 +164,7 @@ assertThrows(
     callback     : static function () use ($billing) : void {
         $billing->flushCompiled();
     },
-    message      : 'Strict slice views should block global compiled artifact mutation.'
+    message      : 'Strict slice views should block global compiled artifact mutation.',
 );
 
 assertThrows(
@@ -177,11 +180,12 @@ assertThrows(
  */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static function () use ($billing) : void {
         $billing->get(id: SliceInternalAudit::class);
     },
-    message      : 'Flow slice views should block direct resolution of hidden capability internals.'
+    message      : 'Flow slice views should block direct resolution of hidden capability internals.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

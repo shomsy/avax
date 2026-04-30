@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\SizeCach
 readonly class CacheValueSize
 {
     public function __construct(
-        public int $bytes
+        public int $bytes,
     ) {}
 
     public static function zero() : self

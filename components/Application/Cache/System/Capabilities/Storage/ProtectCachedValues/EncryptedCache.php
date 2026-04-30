@@ -9,8 +9,8 @@ use Random\RandomException;
 final readonly class EncryptedCache
 {
     public function __construct(
-        private CacheEncryptionKey $key,
-        private bool               $enabled = true
+        private CacheEncryptionKey $cacheEncryptionKey,
+        private bool               $enabled = true,
     ) {}
 
     /**
@@ -27,10 +27,10 @@ final readonly class EncryptedCache
         $ciphertext = openssl_encrypt(
             $plaintext,
             'aes-256-gcm',
-            $this->key->toString(),
+            $this->cacheEncryptionKey->toString(),
             0,
             $iv,
-            $tag
+            $tag,
         );
 
         return $iv . $tag . $ciphertext;
@@ -50,15 +50,15 @@ final readonly class EncryptedCache
         $plaintext = openssl_decrypt(
             $ciphertext,
             'aes-256-gcm',
-            $this->key->toString(),
+            $this->cacheEncryptionKey->toString(),
             0,
             $iv,
-            $tag
+            $tag,
         );
 
         if ($plaintext === false) {
             throw new CachePayloadWasTampered(
-                message: 'Failed to decrypt cache payload'
+                message: 'Failed to decrypt cache payload',
             );
         }
 

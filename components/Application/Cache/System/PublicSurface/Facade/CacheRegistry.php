@@ -15,9 +15,9 @@ final class CacheRegistry
 
     private string|null $defaultName = null;
 
-    public function register(string $name, CacheContract $cache) : void
+    public function register(string $name, CacheContract $cacheContract) : void
     {
-        $this->caches[$name] = $cache;
+        $this->caches[$name] = $cacheContract;
 
         if ($this->defaultName === null) {
             $this->defaultName = $name;
@@ -28,7 +28,7 @@ final class CacheRegistry
     {
         if ($this->defaultName === null) {
             throw new NotConfigured(
-                message: 'No default cache configured. Use Cache::use() or CacheRegistry::register() first.'
+                message: 'No default cache configured. Use Cache::use() or CacheRegistry::register() first.',
             );
         }
 
@@ -39,7 +39,7 @@ final class CacheRegistry
     {
         if (! isset($this->caches[$name])) {
             throw new NotFound(
-                name: sprintf('Cache "%s" not found in registry. Available: %s', $name, implode(', ', array_keys($this->caches)))
+                name: sprintf('Cache "%s" not found in registry. Available: %s', $name, implode(', ', array_keys($this->caches))),
             );
         }
 

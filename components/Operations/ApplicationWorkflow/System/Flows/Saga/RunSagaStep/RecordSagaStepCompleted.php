@@ -23,7 +23,7 @@ final readonly class RecordSagaStepCompleted
                                                        instanceId   : $instanceId,
                                                        type         : 'saga.step.completed',
                                                        payload      : ['step' => $stepName],
-                                                       correlationId: $correlationId
+                                                       correlationId: $correlationId,
                                                    ));
     }
 }

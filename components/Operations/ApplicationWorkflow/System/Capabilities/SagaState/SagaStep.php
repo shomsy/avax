@@ -13,8 +13,8 @@ use Throwable;
 final class SagaStep
 {
     public function __construct(
-        public string   $name,
-        public Closure  $action,
+        public string  $name,
+        public Closure $action,
         public ?Closure $compensation = null,
     ) {}
 

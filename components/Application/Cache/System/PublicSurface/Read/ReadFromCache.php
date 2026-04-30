@@ -10,14 +10,14 @@ use Avax\Components\Application\Cache\System\PublicSurface\Exception\CompiledNot
 final readonly class ReadFromCache
 {
     public function __construct(
-        private CacheRegistry              $runtimeCaches,
-        private CompiledCacheContract|null $compiledCache = null,
+        private CacheRegistry              $cacheRegistry,
+        private CompiledCacheContract|null $compiledCacheContract = null,
     ) {}
 
     public function read(CacheReadTarget|string $target, mixed $default = null) : mixed
     {
         if (is_string($target)) {
-            return $this->runtimeCaches->default()->get($target, $default);
+            return $this->cacheRegistry->default()->get($target, $default);
         }
 
         return match ($target->kind()) {
@@ -26,25 +26,25 @@ final readonly class ReadFromCache
         };
     }
 
-    private function readRuntime(RuntimeCacheTarget $target) : mixed
+    private function readRuntime(RuntimeCacheTarget $runtimeCacheTarget) : mixed
     {
-        $cache = $target->store === null
-            ? $this->runtimeCaches->default()
-            : $this->runtimeCaches->get($target->store);
+        $cache = $runtimeCacheTarget->store === null
+            ? $this->cacheRegistry->default()
+            : $this->cacheRegistry->get($runtimeCacheTarget->store);
 
-        return $cache->get($target->key, $target->default);
+        return $cache->get($runtimeCacheTarget->key, $runtimeCacheTarget->default);
     }
 
-    private function readCompiled(CompiledCacheTarget $target) : mixed
+    private function readCompiled(CompiledCacheTarget $compiledCacheTarget) : mixed
     {
-        if ($this->compiledCache === null) {
+        if ($this->compiledCacheContract === null) {
             throw new CompiledNotConfigured();
         }
 
-        return $this->compiledCache->read(
-            name   : $target->name,
-            build  : $target->builder(),
-            sources: $target->sources
+        return $this->compiledCacheContract->read(
+            name   : $compiledCacheTarget->name,
+            build  : $compiledCacheTarget->builder(),
+            sources: $compiledCacheTarget->sources,
         );
     }
 }

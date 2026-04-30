@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
+use Override;
+
 abstract class BaseConnectionPool implements ConnectionPoolInterface
 {
     /** @var list<PooledConnection> */
@@ -18,6 +20,7 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
         protected int $idleTimeoutMs = 300000,
     ) {}
 
+    #[Override]
     public function get() : PooledConnection
     {
         while ( $connection = array_shift(array: $this->connections) ) {
@@ -37,16 +40,18 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
         throw PoolException::poolExhausted();
     }
 
-    abstract protected function validateConnection(PooledConnection $connection) : bool;
+    abstract protected function validateConnection(PooledConnection $pooledConnection) : bool;
 
     abstract protected function createConnection() : PooledConnection;
 
+    #[Override]
     public function destroy() : void
     {
         $this->connections  = [];
         $this->createdCount = 0;
     }
 
+    #[Override]
     public function stats() : PoolStats
     {
         return new PoolStats(
@@ -65,9 +70,10 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
         }
     }
 
-    public function release(PooledConnection $connection) : void
+    #[Override]
+    public function release(PooledConnection $pooledConnection) : void
     {
-        if (! $this->validateConnection(connection: $connection)) {
+        if (! $this->validateConnection(connection: $pooledConnection)) {
             $this->createdCount--;
 
             return;
@@ -79,6 +85,6 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
             return;
         }
 
-        $this->connections[] = $connection;
+        $this->connections[] = $pooledConnection;
     }
 }

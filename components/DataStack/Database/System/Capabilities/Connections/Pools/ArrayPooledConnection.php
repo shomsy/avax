@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
+use Override;
+
 final class ArrayPooledConnection implements PooledConnection
 {
     private readonly float $createdAt;
@@ -20,6 +22,7 @@ final class ArrayPooledConnection implements PooledConnection
         $this->lastUsedAt = $this->createdAt;
     }
 
+    #[Override]
     public function getResource() : object
     {
         $this->lastUsedAt = microtime(as_float: true);
@@ -27,21 +30,25 @@ final class ArrayPooledConnection implements PooledConnection
         return (object) ['config' => $this->config];
     }
 
+    #[Override]
     public function isValid() : bool
     {
         return true;
     }
 
+    #[Override]
     public function getCreatedAt() : float
     {
         return $this->createdAt;
     }
 
+    #[Override]
     public function getLastUsedAt() : float
     {
         return $this->lastUsedAt;
     }
 
+    #[Override]
     public function executeCount() : int
     {
         return $this->executeCount;

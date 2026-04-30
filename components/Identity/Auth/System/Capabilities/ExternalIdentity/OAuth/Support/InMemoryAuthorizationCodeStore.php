@@ -24,23 +24,25 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
      * @throws RandomException
      */
     public function issue(
-        UserId                                $userId,
-        string                                $clientId,
-        string                                $redirectUri,
-        array                                 $scopes,
-        DateTimeImmutable                     $expiresAt,
-        string|null                           $state = null,
-        string|null                           $nonce = null,
-        #[SensitiveParameter] string|null     $codeChallenge = null,
-        #[SensitiveParameter] PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null                $mfaVerifiedAt = null,
-        bool                                  $phishingResistant = false
+        UserId            $userId,
+        string            $clientId,
+        string            $redirectUri,
+        array             $scopes,
+        DateTimeImmutable $expiresAt,
+        string            $state = null,
+        string            $nonce = null,
+        #[SensitiveParameter]
+        string            $codeChallenge = null,
+        #[SensitiveParameter]
+        PkceMethod        $codeChallengeMethod = null,
+        DateTimeImmutable $mfaVerifiedAt = null,
+        bool              $phishingResistant = false,
     ) : IssuedAuthorizationCode
     {
         $plainCode = bin2hex(string: random_bytes(length: 32));
         $codeId    = 'code_' . bin2hex(string: random_bytes(length: 12));
 
-        $this->records[$codeId]                                 = new AuthorizationCodeRecord(
+        $this->records[$codeId] = new AuthorizationCodeRecord(
             codeId             : $codeId,
             clientId           : $clientId,
             userId             : $userId,
@@ -51,7 +53,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             codeChallenge      : $codeChallenge,
             codeChallengeMethod: $codeChallengeMethod,
             mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
+            phishingResistant  : $phishingResistant,
         );
         $this->hashToCodeId[$this->hash(plainCode: $plainCode)] = $codeId;
 
@@ -59,7 +61,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             code     : $plainCode,
             codeId   : $codeId,
             expiresAt: $expiresAt,
-            state    : $state
+            state    : $state,
         );
     }
 
@@ -99,7 +101,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             codeChallengeMethod: $record->codeChallengeMethod,
             usedAt             : $usedAt,
             mfaVerifiedAt      : $record->mfaVerifiedAt,
-            phishingResistant  : $record->phishingResistant
+            phishingResistant  : $record->phishingResistant,
         );
     }
 
@@ -122,7 +124,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
 
         $this->hashToCodeId = array_filter(
             array   : $this->hashToCodeId,
-            callback: fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId])
+            callback: fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId]),
         );
 
         return $removed;

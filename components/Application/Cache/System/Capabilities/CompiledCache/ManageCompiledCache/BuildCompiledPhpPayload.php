@@ -32,14 +32,14 @@ final class BuildCompiledPhpPayload
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(
-                reason: 'Closures cannot be serialized to compiled PHP files'
+                reason: 'Closures cannot be serialized to compiled PHP files',
             );
         }
 
         if (! is_array($payload) && ! is_scalar($payload) && $payload !== null) {
             throw new CompiledCachePayloadWasInvalid(reason: sprintf(
                                                                  'Type %s cannot be exported to PHP',
-                                                                 gettype($payload)
+                                                                 gettype($payload),
                                                              ));
         }
 
@@ -53,7 +53,7 @@ final class BuildCompiledPhpPayload
         foreach ($data as $key => $value) {
             if (is_string($key) && $key === '') {
                 throw new CompiledCachePayloadWasInvalid(
-                    reason: 'Empty array keys are not allowed'
+                    reason: 'Empty array keys are not allowed',
                 );
             }
 
@@ -63,13 +63,13 @@ final class BuildCompiledPhpPayload
 
             if ($value instanceof Closure) {
                 throw new CompiledCachePayloadWasInvalid(
-                    reason: 'Closures in arrays cannot be serialized'
+                    reason: 'Closures in arrays cannot be serialized',
                 );
             }
 
             if (is_resource($value)) {
                 throw new CompiledCachePayloadWasInvalid(
-                    reason: 'Resources cannot be serialized'
+                    reason: 'Resources cannot be serialized',
                 );
             }
         }
@@ -86,7 +86,7 @@ final class BuildCompiledPhpPayload
         }
 
         throw new CompiledCachePayloadWasInvalid(
-            reason: 'Unsupported payload type'
+            reason: 'Unsupported payload type',
         );
     }
 }

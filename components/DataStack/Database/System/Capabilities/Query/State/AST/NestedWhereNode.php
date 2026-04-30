@@ -13,7 +13,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBu
  */
 final readonly class NestedWhereNode
 {
-    public string       $boolean;
+    public string $boolean;
     public QueryBuilder $query;
 
     /**
@@ -23,7 +23,7 @@ final readonly class NestedWhereNode
      */
     public function __construct(
         QueryBuilder $query,
-        string       $boolean = 'AND'
+        string $boolean = 'AND',
     )
     {
         $this->query   = $query;

@@ -67,10 +67,10 @@ final class ServiceRegistration
     public array $arguments = [];
 
     public RegistrationMetadata $metadata;
-    public readonly string      $abstract;
+    public readonly string $abstract;
 
     public function __construct(
-        string $abstract
+        string $abstract,
     )
     {
         $this->abstract = $abstract;
@@ -83,22 +83,22 @@ final class ServiceRegistration
     public static function __set_state(array $array) : self
     {
         $registration                       = new self(abstract: $array['abstract']);
-        $registration->concrete             = $array['concrete'] ?? null;
-        $registration->lifetime             = $array['lifetime'] ?? TransientLifetime::NAME;
-        $registration->deferred             = $array['deferred'] ?? false;
-        $registration->warm                 = $array['warm'] ?? false;
-        $registration->lazy                 = $array['lazy'] ?? false;
+        $registration->concrete = $array['concrete'] ?? null;
+        $registration->lifetime = $array['lifetime'] ?? TransientLifetime::NAME;
+        $registration->deferred = $array['deferred'] ?? false;
+        $registration->warm = $array['warm'] ?? false;
+        $registration->lazy = $array['lazy'] ?? false;
         $registration->disposable           = $array['disposable'] ?? false;
         $registration->poolSize             = max(1, (int) ($array['poolSize'] ?? 8));
         $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
         $registration->poolScopeKind        = ScopeKind::normalize(
-            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
+            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION),
         );
-        $registration->group                = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
-        $registration->groupOrder           = (int) ($array['groupOrder'] ?? 0);
-        $registration->tags                 = $array['tags'] ?? [];
-        $registration->arguments            = $array['arguments'] ?? [];
-        $metadata                           = $array['metadata'] ?? null;
+        $registration->group = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
+        $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
+        $registration->tags = $array['tags'] ?? [];
+        $registration->arguments = $array['arguments'] ?? [];
+        $metadata = $array['metadata'] ?? null;
         if ($metadata instanceof RegistrationMetadata) {
             $registration->metadata = $metadata;
         } elseif (is_array(value: $metadata)) {
@@ -174,7 +174,7 @@ final class ServiceRegistration
     {
         $items = array_map(
                 callback: static fn (mixed $value) : string => is_string(value: $value) ? trim(string: $value) : '',
-                array   : (array) $values
+                array   : (array) $values,
             )
                 |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $value) : bool => $value !== ''))
                 |> array_values(...);
@@ -266,7 +266,7 @@ final class ServiceRegistration
     {
         $this->metadata = $this->metadata->lockOwnership(
             ownerSlice: $ownerSlice,
-            category  : $category
+            category  : $category,
         );
 
         return $this;
@@ -396,13 +396,13 @@ final class ServiceRegistration
     }
 
     public function pooled(
-        int|null    $maxSize = null,
-        string|null $scopeKind = null,
-        bool        $resetBeforeReuse = true
+        int    $maxSize = null,
+        string $scopeKind = null,
+        bool   $resetBeforeReuse = true,
     ) : self
     {
-        $maxSize                    ??= 8;
-        $scopeKind                  ??= ScopeKind::OPERATION;
+        $maxSize   ??= 8;
+        $scopeKind ??= ScopeKind::OPERATION;
         $this->lifetime             = PooledLifetime::NAME;
         $this->poolSize             = max(1, $maxSize);
         $this->poolScopeKind        = ScopeKind::normalize(kind: $scopeKind);

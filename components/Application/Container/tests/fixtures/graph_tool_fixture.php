@@ -12,12 +12,11 @@ final class GraphToolIdentitySecret {}
 
 final class GraphToolLoginEntry
 {
-    public GraphToolIdentityService $identity;
-
-    public function __construct(GraphToolIdentityService $identity) { $this->identity = $identity; }
+    public function __construct(public GraphToolIdentityService $graphToolIdentityService) {}
 }
 
-final class GraphToolStructureTarget {}
+final class GraphToolStructureTarget {
+}
 
 final class GraphToolStepOne {}
 

@@ -14,7 +14,7 @@ interface ServiceProviderInterface
     /**
      * Creates one provider bound to one container facade.
      */
-    public function __construct(ContainerInterface $app);
+    public function __construct(ContainerInterface $container);
 
     /**
      * Returns provider dependencies that must be resolved first.

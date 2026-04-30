@@ -9,27 +9,27 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class LoadValueFromSource
 {
     public function __construct(
-        private CacheSource $source
+        private CacheSource $cacheSource,
     ) {}
 
-    public function loadOrFail(CacheKey $key) : mixed
+    public function loadOrFail(CacheKey $cacheKey) : mixed
     {
-        $sourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
-        if (! $this->source->exists(key: $sourceKey)) {
+        if (! $this->cacheSource->exists(key: $cacheSourceKey)) {
             throw new CacheSourceFailed(
-                message  : sprintf('Source key "%s" does not exist', $key->fullKey()),
-                sourceKey: $sourceKey
+                message  : sprintf('Source key "%s" does not exist', $cacheKey->fullKey()),
+                sourceKey: $cacheSourceKey,
             );
         }
 
-        return $this->source->load(key: $sourceKey);
+        return $this->cacheSource->load(key: $cacheSourceKey);
     }
 
-    public function load(CacheKey $key) : mixed
+    public function load(CacheKey $cacheKey) : mixed
     {
-        $sourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
-        return $this->source->load(key: $sourceKey);
+        return $this->cacheSource->load(key: $cacheSourceKey);
     }
 }

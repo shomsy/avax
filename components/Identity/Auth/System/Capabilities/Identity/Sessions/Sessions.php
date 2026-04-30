@@ -14,9 +14,12 @@ use SensitiveParameter;
 final readonly class Sessions
 {
     public function __construct(
-        #[SensitiveParameter] private LogoutAllSessions  $logoutAllSessions,
-        #[SensitiveParameter] private ReadActiveSessions $readActiveSessions,
-        #[SensitiveParameter] private RevokeSession      $revokeSession
+        #[SensitiveParameter]
+        private LogoutAllSessions  $logoutAllSessions,
+        #[SensitiveParameter]
+        private ReadActiveSessions $readActiveSessions,
+        #[SensitiveParameter]
+        private RevokeSession      $revokeSession,
     ) {}
 
     /**

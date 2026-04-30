@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -11,7 +11,7 @@ final class StrictSharedFlowService {}
 final class ConditionalInternalService {}
 
 $relaxed = makeTestContainer(config: CreateContainerConfig::create(
-    policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED
+    policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED,
 ));
 $relaxed->bind(abstract: StrictSharedFlowService::class, concrete: StrictSharedFlowService::class)
     ->asFlow(ownerSlice: 'flow.relaxed')
@@ -25,7 +25,7 @@ $strict = makeTestContainer(config: CreateContainerConfig::create(
     settings      : ['app_env' => 'prod'],
     policyProfile : CreateContainerConfig::POLICY_PROFILE_RELAXED,
     policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_CLOSED,
-    policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT]
+    policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
 ));
 $strict->bind(abstract: StrictSharedFlowService::class, concrete: StrictSharedFlowService::class)
     ->asFlow(ownerSlice: 'flow.strict')

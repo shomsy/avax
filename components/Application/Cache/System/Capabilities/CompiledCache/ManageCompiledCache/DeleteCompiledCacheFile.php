@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
-final class DeleteCompiledCacheFile
+final readonly class DeleteCompiledCacheFile
 {
     public function __construct(
-        private CompiledCacheDirectory $directory
+        private CompiledCacheDirectory $compiledCacheDirectory,
     ) {}
 
-    public function delete(CompiledCacheName $name) : void
+    public function delete(CompiledCacheName $compiledCacheName) : void
     {
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $path         = $pathResolver->resolveArtifactPath(name: $name);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
-        if (file_exists($path->toString())) {
-            unlink($path->toString());
+        if (file_exists($compiledCachePath->toString())) {
+            unlink($compiledCachePath->toString());
         }
     }
 
-    public function deleteIfExists(CompiledCacheName $name) : bool
+    public function deleteIfExists(CompiledCacheName $compiledCacheName) : bool
     {
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $path         = $pathResolver->resolveArtifactPath(name: $name);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
-        if (! file_exists($path->toString())) {
+        if (! file_exists($compiledCachePath->toString())) {
             return false;
         }
 
-        return unlink($path->toString());
+        return unlink($compiledCachePath->toString());
     }
 }

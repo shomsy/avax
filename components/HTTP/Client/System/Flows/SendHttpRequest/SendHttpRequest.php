@@ -29,9 +29,9 @@ final readonly class SendHttpRequest
      * @param HttpTransportInterface $transport      HTTP transport backend
      */
     public function __construct(
-        public BuildOutboundRequest   $buildRequest,
-        public DecodeHttpResponse     $decodeResponse,
-        public HandleHttpFailure      $handleFailure,
+        public BuildOutboundRequest $buildRequest,
+        public DecodeHttpResponse   $decodeResponse,
+        public HandleHttpFailure    $handleFailure,
         public HttpTransportInterface $transport,
     ) {}
 

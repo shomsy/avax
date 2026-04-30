@@ -14,52 +14,52 @@ use Throwable;
 final readonly class ReadCachedValue
 {
     public function __construct(
-        private CacheStore        $store,
+        private CacheStore        $cacheStore,
         private Clock             $clock,
-        private CacheMetrics|null $metrics = null
+        private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
-    public function read(CacheKey $key, mixed $default = null) : mixed
+    public function read(CacheKey $cacheKey, mixed $default = null) : mixed
     {
         $startTime = hrtime(as_integer: true);
 
         try {
-            $result = $this->store->read(key: $key, clock: $this->clock);
+            $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
 
             if ($result instanceof CacheStoreRecordWasMissing) {
-                $this->recordLatency(startTime: $startTime, operation: 'miss');
-                $this->metrics?->recordMiss();
+                $this->recordLatency(startTime: $startTime);
+                $this->cacheMetrics?->recordMiss();
 
                 return $default;
             }
 
             if ($result->record->isExpired(clock: $this->clock)) {
-                $this->recordLatency(startTime: $startTime, operation: 'miss');
-                $this->metrics?->recordMiss();
+                $this->recordLatency(startTime: $startTime);
+                $this->cacheMetrics?->recordMiss();
 
                 return $default;
             }
 
-            $this->recordLatency(startTime: $startTime, operation: 'hit');
-            $this->metrics?->recordHit();
+            $this->recordLatency(startTime: $startTime);
+            $this->cacheMetrics?->recordHit();
 
             return $result->value();
-        } catch (Throwable $e) {
-            $this->metrics?->recordStoreFailure();
+        } catch (Throwable) {
+            $this->cacheMetrics?->recordStoreFailure();
 
             return $default;
         }
     }
 
-    private function recordLatency(int $startTime, string $operation) : void
+    private function recordLatency(int $startTime) : void
     {
-        if ($this->metrics === null) {
+        if ($this->cacheMetrics === null) {
             return;
         }
 
         $endTime             = hrtime(as_integer: true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
-        $this->metrics->recordLatency(microseconds: $latencyMicroseconds);
+        $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);
     }
 }

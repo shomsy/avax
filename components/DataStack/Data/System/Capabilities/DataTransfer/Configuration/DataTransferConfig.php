@@ -10,16 +10,16 @@ final readonly class DataTransferConfig
 {
     /**
      * @param array<class-string, class-string|object|callable> $valueCasters
-     * @param array<class-string, object|callable>              $validationRules
+     * @param array<class-string, object|callable> $validationRules
      */
     public function __construct(
         public UnknownFieldPolicy $unknownFieldPolicy = UnknownFieldPolicy::Reject,
-        public bool               $allowPublicPropertyHydration = true,
-        public bool               $collectUnknownFields = false,
-        public int                $maxDepth = 32,
-        private Closure|null      $namingPolicy = null,
-        private array             $valueCasters = [],
-        private array             $validationRules = [],
+        public bool          $allowPublicPropertyHydration = true,
+        public bool          $collectUnknownFields = false,
+        public int           $maxDepth = 32,
+        private Closure|null $namingPolicy = null,
+        private array        $valueCasters = [],
+        private array        $validationRules = [],
     ) {}
 
     public static function default() : self
@@ -34,17 +34,17 @@ final readonly class DataTransferConfig
 
     public function inputNameFor(string $fieldName) : string
     {
-        if ($this->namingPolicy === null) {
+        if (! $this->namingPolicy instanceof Closure) {
             return $fieldName;
         }
 
         return ($this->namingPolicy)($fieldName);
     }
 
-    public function withUnknownFieldPolicy(UnknownFieldPolicy $policy) : self
+    public function withUnknownFieldPolicy(UnknownFieldPolicy $unknownFieldPolicy) : self
     {
         return new self(
-            unknownFieldPolicy          : $policy,
+            unknownFieldPolicy          : $unknownFieldPolicy,
             allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
             collectUnknownFields        : $this->collectUnknownFields,
             maxDepth                    : $this->maxDepth,

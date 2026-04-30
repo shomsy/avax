@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final class FrequencyTracker
 {
-    private const DECAY_INTERVAL_SECONDS = 300;
+    private const int DECAY_INTERVAL_SECONDS = 300;
 
     /** @var array<string, int> */
     private array $frequencies = [];
@@ -19,8 +19,8 @@ final class FrequencyTracker
     private int $lastGlobalDecay = 0;
 
     public function __construct(
-        private Clock $clock,
-        private float $decayFactor = 0.5
+        private readonly Clock $clock,
+        private readonly float $decayFactor = 0.5,
     ) {}
 
     public function recordAccess(string $key) : void
@@ -54,7 +54,7 @@ final class FrequencyTracker
             $decayPeriods       = (int) floor($timeSinceLastDecay / self::DECAY_INTERVAL_SECONDS);
 
             if ($decayPeriods > 0) {
-                $this->frequencies[$key]    = (int) ($freq * pow($this->decayFactor, $decayPeriods));
+                $this->frequencies[$key] = (int) ($freq * $this->decayFactor ** $decayPeriods);
                 $this->lastDecayTimes[$key] = $now;
             }
         }
@@ -88,7 +88,7 @@ final class FrequencyTracker
 
     public function getLeastFrequent(array $keys) : string|null
     {
-        if (count($keys) === 0) {
+        if ($keys === []) {
             return null;
         }
 

@@ -35,7 +35,7 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
             purpose    : $record->purpose,
             expiresAt  : $record->expiresAt,
             userId     : $record->userId,
-            usedAt     : $usedAt
+            usedAt     : $usedAt,
         );
     }
 

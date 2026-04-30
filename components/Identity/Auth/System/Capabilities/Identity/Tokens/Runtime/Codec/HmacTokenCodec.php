@@ -22,9 +22,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         ];
 
     public function __construct(
-        #[SensitiveParameter] private string $secret,
-        private string                       $algorithm = 'HS256',
-        private string|null                  $keyId = null
+        #[SensitiveParameter]
+        private string      $secret,
+        private string      $algorithm = 'HS256',
+        private string|null $keyId = null,
     )
     {
         if ($this->secret === '') {
@@ -36,8 +37,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
                 message: sprintf(
                              'Unsupported HMAC token algorithm "%s". Supported algorithms: %s.',
                              $this->algorithm,
-                             implode(separator: ', ', array: array_keys(array: self::SUPPORTED_ALGORITHMS))
-                         )
+                             implode(separator: ', ', array: array_keys(array: self::SUPPORTED_ALGORITHMS)),
+                         ),
             );
         }
     }
@@ -63,7 +64,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             algo  : self::SUPPORTED_ALGORITHMS[$this->algorithm],
             data  : $signingInput,
             key   : $this->secret,
-            binary: true
+            binary: true,
         );
 
         return "{$signingInput}.{$this->base64UrlEncode(value: $signature)}";
@@ -99,8 +100,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             }
 
             [$encodedHeader, $encodedClaims, $encodedSignature] = $parts;
-            $header = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedHeader));
-            $claims = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedClaims));
+            $header            = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedHeader));
+            $claims            = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedClaims));
 
             $headerAlgorithm = $header['alg'] ?? null;
             $headerKeyId     = $header['kid'] ?? null;
@@ -122,7 +123,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
                 algo  : self::SUPPORTED_ALGORITHMS[$this->algorithm],
                 data  : "{$encodedHeader}.{$encodedClaims}",
                 key   : $this->secret,
-                binary: true
+                binary: true,
             );
 
             if (! hash_equals(known_string: $expectedSignature, user_string: $providedSignature)) {
@@ -158,7 +159,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         $padding = (4 - (strlen(string: $value) % 4)) % 4;
         $decoded = base64_decode(
             string: strtr($value . str_repeat(string: '=', times: $padding), '-_', '+/'),
-            strict: true
+            strict: true,
         );
 
         if ($decoded === false) {

@@ -16,7 +16,7 @@ final class CompiledCacheArtifactDefinition
     public function __construct(
         public string               $name,
         public Closure              $builder,
-        public CompiledCacheSources $sources
+        public CompiledCacheSources $compiledCacheSources,
     ) {}
 }
 
@@ -26,21 +26,21 @@ final class WarmCompiledCacheFlow
     private array $definitions = [];
 
     public function __construct(
-        private CompiledCacheDirectory $directory,
-        private CompiledCacheManifest  $manifest
+        private readonly CompiledCacheDirectory $compiledCacheDirectory,
+        private readonly CompiledCacheManifest  $compiledCacheManifest,
     ) {}
 
     public static function create(
-        CompiledCacheDirectory $directory,
-        CompiledCacheManifest  $manifest
+        CompiledCacheDirectory $compiledCacheDirectory,
+        CompiledCacheManifest  $compiledCacheManifest,
     ) : self
     {
-        return new self(directory: $directory, manifest: $manifest);
+        return new self(directory: $compiledCacheDirectory, manifest: $compiledCacheManifest);
     }
 
-    public function add(CompiledCacheArtifactDefinition $definition) : self
+    public function add(CompiledCacheArtifactDefinition $compiledCacheArtifactDefinition) : self
     {
-        $this->definitions[$definition->name] = $definition;
+        $this->definitions[$compiledCacheArtifactDefinition->name] = $compiledCacheArtifactDefinition;
 
         return $this;
     }
@@ -52,14 +52,14 @@ final class WarmCompiledCacheFlow
         foreach ($this->definitions as $definition) {
             try {
                 $compileFlow = new CompileCache(
-                    directory: $this->directory,
-                    manifest : $this->manifest
+                    directory: $this->compiledCacheDirectory,
+                    manifest : $this->compiledCacheManifest,
                 );
 
                 $artifact = $compileFlow->compile(
                     name   : $definition->name,
                     build  : $definition->builder,
-                    sources: $definition->sources
+                    sources: $definition->sources,
                 );
 
                 $results[$definition->name] = ['success' => true, 'artifact' => $artifact];

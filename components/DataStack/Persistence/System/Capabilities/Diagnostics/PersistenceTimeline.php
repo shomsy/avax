@@ -32,13 +32,13 @@ final class PersistenceTimeline
     /**
      * Records a query execution in the timeline.
      *
-     * @param string     $query     The SQL query
-     * @param float      $duration  Duration in milliseconds
+     * @param string $query    The SQL query
+     * @param float  $duration Duration in milliseconds
      * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, float|null $timestamp = null) : void
+    public function record(string $query, float $duration, float $timestamp = null) : void
     {
-        $timestamp   = $timestamp ?? microtime(true) * 1000;
+        $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);
 
         $this->entries[] = [
@@ -76,7 +76,7 @@ final class PersistenceTimeline
     {
         return array_values(array_filter(
                                 $this->entries,
-                                static fn (array $entry) : bool => $entry['fingerprint']->matchesFingerprint($fingerprint)
+                                static fn (array $entry) : bool => $entry['fingerprint']->matchesFingerprint($fingerprint),
                             ));
     }
 
@@ -91,7 +91,7 @@ final class PersistenceTimeline
     {
         return array_values(array_filter(
                                 $this->entries,
-                                static fn (array $entry) : bool => $entry['duration'] > $thresholdMs
+                                static fn (array $entry) : bool => $entry['duration'] > $thresholdMs,
                             ));
     }
 

@@ -11,7 +11,7 @@ if (! function_exists(function: 'view')) {
      * Renders a Blade view and returns an HTTP response.
      *
      * @param string $template The view template to render.
-     * @param array  $data     The data to pass to the view.
+     * @param array $data The data to pass to the view.
      *
      * @return ResponseInterface
      */

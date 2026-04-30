@@ -14,29 +14,29 @@ enum CompiledCacheFreshness: string
 final readonly class CheckCompiledCacheIsFresh
 {
     public function __construct(
-        private CompiledCacheDirectory $directory,
-        private CompiledCacheManifest  $manifest
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private CompiledCacheManifest  $compiledCacheManifest,
     ) {}
 
-    public function requiresRebuild(CompiledCacheName $name, CompiledCacheSources $sources) : bool
+    public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : bool
     {
-        return $this->check(name: $name, sources: $sources) !== CompiledCacheFreshness::FRESH;
+        return $this->check(name: $compiledCacheName, sources: $compiledCacheSources) !== CompiledCacheFreshness::FRESH;
     }
 
-    public function check(CompiledCacheName $name, CompiledCacheSources $sources) : CompiledCacheFreshness
+    public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : CompiledCacheFreshness
     {
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $artifactPath = $pathResolver->resolveArtifactPath(name: $name);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
-        if (! file_exists($artifactPath->toString())) {
+        if (! file_exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;
         }
 
-        if (! $this->manifest->has(name: $name->toString())) {
+        if (! $this->compiledCacheManifest->has(name: $compiledCacheName->toString())) {
             return CompiledCacheFreshness::STALE;
         }
 
-        if (! $this->manifest->isFresh(name: $name->toString(), sources: $sources)) {
+        if (! $this->compiledCacheManifest->isFresh(name: $compiledCacheName->toString(), sources: $compiledCacheSources)) {
             return CompiledCacheFreshness::STALE;
         }
 

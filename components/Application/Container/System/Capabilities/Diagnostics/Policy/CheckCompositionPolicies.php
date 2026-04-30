@@ -35,11 +35,11 @@ final readonly class CheckCompositionPolicies
      * @throws ReflectionException
      */
     public function check(
-        array                  $graph,
-        array                  $dependents,
-        ServiceRegistry        $registrations,
+        array            $graph,
+        array            $dependents,
+        ServiceRegistry  $registrations,
         CreateServiceBlueprint $blueprints,
-        ResolutionPolicy       $policy
+        ResolutionPolicy $policy,
     ) : array
     {
         $findings = [];
@@ -63,7 +63,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-001',
                         severity: 'warn',
                         category: 'composition',
-                        message : "constructor arity is {$constructorArity}; this unit may be over-injected"
+                        message : "constructor arity is {$constructorArity}; this unit may be over-injected",
                     );
                 }
             }
@@ -77,7 +77,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-002',
                     severity: 'warn',
                     category: 'ownership',
-                    message : 'shared visibility has one or zero known consumers; this may be premature extraction'
+                    message : 'shared visibility has one or zero known consumers; this may be premature extraction',
                 );
             }
 
@@ -87,7 +87,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-003',
                     severity: 'warn',
                     category: 'architecture',
-                    message : 'foundation unit depends on many services; check for overgrown foundation'
+                    message : 'foundation unit depends on many services; check for overgrown foundation',
                 );
             }
 
@@ -105,7 +105,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-004',
                         severity: 'error',
                         category: 'architecture',
-                        message : "flow slice [{$metadata->ownerSlice}] depends directly on flow slice [{$dependencyMetadata->ownerSlice}]"
+                        message : "flow slice [{$metadata->ownerSlice}] depends directly on flow slice [{$dependencyMetadata->ownerSlice}]",
                     );
                 }
 
@@ -121,7 +121,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-008',
                         severity: 'error',
                         category: 'runtime',
-                        message : 'service depends on container runtime internals; this is service locator drift'
+                        message : 'service depends on container runtime internals; this is service locator drift',
                     );
                 }
 
@@ -134,7 +134,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-009',
                         severity: 'warn',
                         category: 'runtime',
-                        message : 'service depends on raw settings/config globals outside configuration ownership'
+                        message : 'service depends on raw settings/config globals outside configuration ownership',
                     );
                 }
             }
@@ -145,7 +145,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-005',
                     severity: 'warn',
                     category: 'naming',
-                    message : "concept name [{$metadata->concept}] is too generic for ownership-aware diagnostics"
+                    message : "concept name [{$metadata->concept}] is too generic for ownership-aware diagnostics",
                 );
             }
 
@@ -159,7 +159,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-010',
                     severity: 'warn',
                     category: 'architecture',
-                    message : "capability slice [{$metadata->ownerSlice}] reads like a generic bucket"
+                    message : "capability slice [{$metadata->ownerSlice}] reads like a generic bucket",
                 );
             }
 
@@ -173,7 +173,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-006',
                     severity: 'warn',
                     category: 'ownership',
-                    message : 'flow unit uses shared or public visibility without entry intent; this may be an everything-shared-by-default smell'
+                    message : 'flow unit uses shared or public visibility without entry intent; this may be an everything-shared-by-default smell',
                 );
             }
 
@@ -186,7 +186,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-011',
                     severity: 'warn',
                     category: 'ownership',
-                    message : 'ownership posture still depends on the default slice; clarify the owning slice explicitly'
+                    message : 'ownership posture still depends on the default slice; clarify the owning slice explicitly',
                 );
             }
 
@@ -200,7 +200,7 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-013',
                     severity: 'warn',
                     category: 'runtime',
-                    message : 'conditional registration is hidden behind internal runtime-only posture'
+                    message : 'conditional registration is hidden behind internal runtime-only posture',
                 );
             }
 
@@ -212,7 +212,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-007',
                         severity: 'error',
                         category: 'runtime',
-                        message : 'pooled lifetime requires a class-backed container-owned object'
+                        message : 'pooled lifetime requires a class-backed container-owned object',
                     );
                 } elseif ($lifetime->poolResetBeforeReuse && ! is_subclass_of(object_or_class: $candidate, class: ResettableInterface::class)) {
                     $findings[$serviceId][] = $this->finding(
@@ -220,7 +220,7 @@ final readonly class CheckCompositionPolicies
                         code    : 'POL-007',
                         severity: 'error',
                         category: 'runtime',
-                        message : 'pooled lifetime enables reset-before-reuse but the class does not implement ResettableInterface'
+                        message : 'pooled lifetime enables reset-before-reuse but the class does not implement ResettableInterface',
                     );
                 }
             }
@@ -231,14 +231,14 @@ final readonly class CheckCompositionPolicies
                     code    : 'POL-012',
                     severity: 'warn',
                     category: 'composition',
-                    message : 'service has a long decorator chain; check for decorator sprawl'
+                    message : 'service has a long decorator chain; check for decorator sprawl',
                 );
             }
 
             usort(
                 array   : $findings[$serviceId],
                 callback: static fn (array $left, array $right) : int => [$left['severity'], $left['code']]
-                    <=> [$right['severity'], $right['code']]
+                    <=> [$right['severity'], $right['code']],
             );
         }
 
@@ -251,11 +251,12 @@ final readonly class CheckCompositionPolicies
      * @return array{code: string, severity: string, category: string, message: string}
      */
     private function finding(
-        ResolutionPolicy             $policy,
-        #[SensitiveParameter] string $code,
-        string                       $severity,
-        string                       $category,
-        string                       $message
+        ResolutionPolicy $policy,
+        #[SensitiveParameter]
+        string           $code,
+        string           $severity,
+        string           $category,
+        string           $message,
     ) : array
     {
         return [

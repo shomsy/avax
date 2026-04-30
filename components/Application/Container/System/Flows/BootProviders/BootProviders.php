@@ -22,7 +22,7 @@ final readonly class BootProviders
     private ContainerInterface $container;
 
     public function __construct(
-        ContainerInterface $container
+        ContainerInterface $container,
     )
     {
         $this->container = $container;
@@ -54,8 +54,9 @@ final readonly class BootProviders
 
                 $resolver->registerDeferredProvider(
                     provider  : $provider,
-                    serviceIds: $this->providedServices(provider: $provider)
+                    serviceIds: $this->providedServices(provider: $provider),
                 );
+
                 continue;
             }
 
@@ -150,7 +151,7 @@ final readonly class BootProviders
             $this->markDependenciesAsEager(
                 class       : $class,
                 dependencies: $plan->dependencies,
-                eager       : $eager
+                eager       : $eager,
             );
         }
 
@@ -168,7 +169,7 @@ final readonly class BootProviders
 
     /**
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
-     * @param array<class-string<ServiceProviderInterface>, true>                                         $eager
+     * @param array<class-string<ServiceProviderInterface>, true> $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager) : void
     {
@@ -181,7 +182,7 @@ final readonly class BootProviders
             $this->markDependenciesAsEager(
                 class       : $dependencyClass,
                 dependencies: $dependencies,
-                eager       : $eager
+                eager       : $eager,
             );
         }
     }

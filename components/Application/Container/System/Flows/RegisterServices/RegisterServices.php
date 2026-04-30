@@ -19,7 +19,7 @@ final readonly class RegisterServices implements ServiceRegistryInterface
     private ServiceResolver $resolver;
 
     public function __construct(
-        ServiceResolver $resolver
+        ServiceResolver $resolver,
     )
     {
         $this->resolver = $resolver;

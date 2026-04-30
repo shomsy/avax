@@ -52,8 +52,9 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(
                 message: 'Failed to find one entity by conditions.',
-                context: compact('conditions', 'exception')
+                context: compact('conditions', 'exception'),
             );
+
             throw $exception;
         }
     }
@@ -78,8 +79,8 @@ abstract class Repository
             throw new RuntimeException(
                 message: sprintf(
                              'Entity class %s must implement a getTableName() method.',
-                             $entityClass
-                         )
+                             $entityClass,
+                         ),
             );
         }
 
@@ -111,7 +112,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findAll(int|null $limit = null, int $offset = 0) : array
+    public function findAll(int $limit = null, int $offset = 0) : array
     {
         $limit ??= 100;
 
@@ -122,10 +123,10 @@ abstract class Repository
      * Find entities by conditions with optional pagination and sorting.
      *
      * @param array<string, mixed> $conditions Conditions for filtering.
-     * @param string|null          $orderBy    Column to order by.
-     * @param string|null          $direction  Sorting direction (ASC|DESC).
-     * @param int|null             $limit      Max results to return.
-     * @param int|null             $offset     Offset for pagination.
+     * @param string|null $orderBy   Column to order by.
+     * @param string|null $direction Sorting direction (ASC|DESC).
+     * @param int|null    $limit     Max results to return.
+     * @param int|null    $offset    Offset for pagination.
      *
      * @return array<object> The found entities.
      *
@@ -133,11 +134,11 @@ abstract class Repository
      * @throws Throwable
      */
     public function findBy(
-        array       $conditions,
-        string|null $orderBy = null,
-        string|null $direction = null,
-        int|null    $limit = null,
-        int|null    $offset = null
+        array  $conditions,
+        string $orderBy = null,
+        string $direction = null,
+        int    $limit = null,
+        int    $offset = null,
     ) : array
     {
         try {
@@ -171,6 +172,7 @@ abstract class Repository
                 'offset'     => $offset,
                 'exception'  => $exception,
             ]);
+
             throw $exception;
         }
     }
@@ -257,6 +259,7 @@ abstract class Repository
                 'conditions' => $conditions,
                 'exception'  => $exception,
             ]);
+
             throw $exception;
         }
     }
@@ -284,6 +287,7 @@ abstract class Repository
                 'conditions' => $conditions,
                 'exception'  => $exception,
             ]);
+
             throw $exception;
         }
     }

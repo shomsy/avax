@@ -9,7 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Interna
  */
 final readonly class DotPath
 {
-    private const DELIMITER = '.';
+    private const string DELIMITER = '.';
 
     public function __construct(
         private string $path,

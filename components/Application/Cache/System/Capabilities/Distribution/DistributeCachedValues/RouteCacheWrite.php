@@ -9,22 +9,22 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class RouteCacheWrite
 {
     public function __construct(
-        private ChooseCacheNodeForKey $router
+        private ChooseCacheNodeForKey $chooseCacheNodeForKey,
     ) {}
 
-    public function routeToPrimary(CacheKey $key) : CacheNode|null
+    public function routeToPrimary(CacheKey $cacheKey) : CacheNode|null
     {
-        return $this->router->choose(key: $key);
+        return $this->chooseCacheNodeForKey->choose(key: $cacheKey);
     }
 
-    public function routeToAll(CacheKey $key, int $replicaCount) : array
+    public function routeToAll(CacheKey $cacheKey, int $replicaCount) : array
     {
-        return $this->routeToReplicas(key: $key, replicaCount: $replicaCount);
+        return $this->routeToReplicas(key: $cacheKey, replicaCount: $replicaCount);
     }
 
-    public function routeToReplicas(CacheKey $key, int $replicaCount) : array
+    public function routeToReplicas(CacheKey $cacheKey) : array
     {
-        $primary = $this->router->choose(key: $key);
+        $primary = $this->chooseCacheNodeForKey->choose(key: $cacheKey);
 
         if ($primary === null) {
             return [];

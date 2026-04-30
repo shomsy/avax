@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
 use InvalidArgumentException;
+use Override;
 use Stringable;
 
 final readonly class CacheNodeId implements Stringable
 {
     public function __construct(
-        public string $id
+        public string $id,
     )
     {
         if ($id === '') {
@@ -28,9 +29,10 @@ final readonly class CacheNodeId implements Stringable
         return new self(id: uniqid(more_entropy: true));
     }
 
+    #[Override]
     public function __toString() : string
     {
-        return $this->toString();
+        return $this->id;
     }
 
     public function toString() : string

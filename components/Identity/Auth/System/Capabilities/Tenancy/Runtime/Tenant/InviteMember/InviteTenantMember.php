@@ -35,7 +35,7 @@ final readonly class InviteTenantMember
             role     : $data->role,
             tokenHash: hash(algo: 'sha256', data: $plainTextToken),
             invitedBy: trim(string: $data->invitedBy),
-            createdAt: $this->clock->now()
+            createdAt: $this->clock->now(),
         );
         $this->tenantStore->saveInvite(invite: $invite);
         $this->auditLog->record(event: new AuditEvent(
@@ -48,7 +48,7 @@ final readonly class InviteTenantMember
                                                            'email'       => $invite->email,
                                                            'role'        => $invite->role->value,
                                                            'invited_by'  => $invite->invitedBy,
-                                                       ]
+                                                       ],
                                        ));
 
         return new IssuedTenantInvite(invite: $invite, plainTextToken: $plainTextToken);

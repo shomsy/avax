@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Override;
 
 final readonly class CacheLifecyclePolicy implements DecideCachedValueState
 {
     public function __construct(
         private int $expiringSoonThresholdSeconds = 60,
-        private int $staleGracePeriodSeconds = 300
+        private int $staleGracePeriodSeconds = 300,
     ) {}
 
+    #[Override]
     public function decide(
         CachedValueLifecycle|null $lifecycle,
-        Clock                     $clock,
-        bool                      $wasExplicitlyInvalidated = false,
-        bool                      $wasEvicted = false
+        Clock $clock,
+        bool  $wasExplicitlyInvalidated = false,
+        bool  $wasEvicted = false,
     ) : CachedValueState
     {
         if ($wasEvicted) {
@@ -28,7 +30,7 @@ final readonly class CacheLifecyclePolicy implements DecideCachedValueState
             return CachedValueState::INVALIDATED;
         }
 
-        if ($lifecycle === null) {
+        if (! $lifecycle instanceof CachedValueLifecycle) {
             return CachedValueState::MISSING;
         }
 

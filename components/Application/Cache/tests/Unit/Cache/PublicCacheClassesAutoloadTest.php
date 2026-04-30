@@ -43,15 +43,15 @@ final class PublicCacheClassesAutoloadTest extends TestCase
 
     public function test_cache_contract_defines_correct_interface() : void
     {
-        $reflection = new ReflectionClass(objectOrClass: CacheContract::class);
-        self::assertTrue(condition: $reflection->isInterface(), message: 'CacheContract should be an interface');
-        self::assertSame(expected: 'CacheContract', actual: $reflection->getShortName());
+        $reflectionClass = new ReflectionClass(objectOrClass: CacheContract::class);
+        self::assertTrue(condition: $reflectionClass->isInterface(), message: 'CacheContract should be an interface');
+        self::assertSame(expected: 'CacheContract', actual: $reflectionClass->getShortName());
     }
 
     public function test_avax_cache_implements_cache_contract() : void
     {
-        $avaxCache  = new ReflectionClass(objectOrClass: AvaxCache::class);
-        $interfaces = $avaxCache->getInterfaceNames();
+        $reflectionClass = new ReflectionClass(objectOrClass: AvaxCache::class);
+        $interfaces      = $reflectionClass->getInterfaceNames();
 
         self::assertContains(needle: CacheContract::class, haystack: $interfaces, message: 'AvaxCache should implement CacheContract');
     }

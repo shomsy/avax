@@ -12,24 +12,16 @@ use ReflectionException;
  */
 final readonly class CallFunction
 {
-    private ServiceResolver $resolver;
-
-    public function __construct(
-        ServiceResolver $resolver
-    )
+    public function __construct(private ServiceResolver $serviceResolver)
     {
-        $this->resolver = $resolver;
     }
 
     /**
-     * @param callable|string      $target
      * @param array<string, mixed> $parameters
-     *
-     * @return mixed
      * @throws ReflectionException
      */
     public function call(callable|string $target, array $parameters = []) : mixed
     {
-        return $this->resolver->call(callable: $target, parameters: $parameters);
+        return $this->serviceResolver->call(callable: $target, parameters: $parameters);
     }
 }

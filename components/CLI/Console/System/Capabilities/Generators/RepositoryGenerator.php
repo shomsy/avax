@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\CLI\Console\System\Capabilities\Generators;
 
 use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
+use Override;
 
 /**
  * Generates repository class stubs.
@@ -15,10 +16,11 @@ class RepositoryGenerator extends CodeGenerator
      * Generate a repository class file.
      *
      * @param string $name Repository name (e.g. "UserRepository" or "User")
-     * @param array  $data Additional data (e.g. ['entity' => 'UserEntity'])
+     * @param array $data Additional data (e.g. ['entity' => 'UserEntity'])
      *
      * @return string The generated file path
      */
+    #[Override]
     public function generate(string $name, array $data = []) : string
     {
         $className = Str::studly($name);
@@ -30,7 +32,7 @@ class RepositoryGenerator extends CodeGenerator
 
         $subDir          = $data['subDir'] ?? 'Repositories';
         $namespace       = $this->getNamespace($subDir);
-        $entity          = $data['entity'] ?? $this->inferEntity($className);
+        $entity = $data['entity'] ?? $this->inferEntity($className);
         $entityNamespace = $data['entityNamespace'] ?? $this->getNamespace('Entities');
 
         $stub = $this->buildStub($className, $namespace, $entity, $entityNamespace);
@@ -48,7 +50,7 @@ class RepositoryGenerator extends CodeGenerator
     {
         $base = preg_replace('/Repository$/', '', $repositoryName);
 
-        return $base ?: 'Entity';
+        return $base !== '' && $base !== '0' && $base !== [] ? $base : 'Entity';
     }
 
     /**
@@ -58,7 +60,7 @@ class RepositoryGenerator extends CodeGenerator
         string $className,
         string $namespace,
         string $entity,
-        string $entityNamespace
+        string $entityNamespace,
     ) : string
     {
         $entityClass = Str::studly($entity);
@@ -67,7 +69,7 @@ class RepositoryGenerator extends CodeGenerator
             $entityClass .= 'Entity';
         }
 
-        $entityBaseName = preg_replace('/Entity$/', '', $entityClass) ?: $entityClass;
+        $entityBaseName = ! in_array(preg_replace('/Entity$/', '', $entityClass), ['', '0'], true) && preg_replace('/Entity$/', '', $entityClass) !== [] ? preg_replace('/Entity$/', '', $entityClass) : $entityClass;
 
         return <<<PHP
             <?php

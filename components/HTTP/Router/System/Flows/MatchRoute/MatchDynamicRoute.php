@@ -18,7 +18,7 @@ final class MatchDynamicRoute
      * Match a route pattern against a path.
      *
      * @param string $pattern Route pattern (e.g., "/users/{id}")
-     * @param string $path    Request path (e.g., "/users/42")
+     * @param string $path Request path (e.g., "/users/42")
      *
      * @return array<string, string>|null Matched parameters or null if no match
      */
@@ -64,7 +64,7 @@ final class MatchDynamicRoute
 
                 return '(?P<' . $name . '>[^/]+)';
             },
-            $pattern
+            $pattern,
         );
 
         if ($regex === null) {

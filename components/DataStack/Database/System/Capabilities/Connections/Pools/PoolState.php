@@ -38,7 +38,7 @@ final class PoolState
         }
 
     /** @var int A persistent counter of every single time someone borrowed a connection. */
-    public int           $totalAcquisitions
+    public int $totalAcquisitions
         = 0 {
             get {
                 return $this->totalAcquisitions;
@@ -49,7 +49,10 @@ final class PoolState
     /**
      * @param int $maxConnections The absolute maximum number of people allowed in at once.
      */
-    public function __construct(int $maxConnections) { $this->maxConnections = $maxConnections; }
+    public function __construct(int $maxConnections)
+    {
+        $this->maxConnections = $maxConnections;
+    }
 
     /**
      * Try to "Check in" and reserve a space for a new connection.

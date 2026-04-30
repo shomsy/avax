@@ -16,12 +16,11 @@ final readonly class AttemptThrottle
 
     public function __construct(
         private AttemptThrottleStoreInterface $store,
-        private Clock                         $clock,
-        int|null                              $maxAttempts = null,
-        private int                           $decaySeconds = 900
-    )
-    {
-        $maxAttempts       ??= 5;
+        private Clock $clock,
+        int $maxAttempts = null,
+        private int $decaySeconds = 900,
+    ) {
+        $maxAttempts ??= 5;
         $this->maxAttempts = $maxAttempts;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
@@ -35,7 +34,7 @@ final readonly class AttemptThrottle
     /**
      * @throws AttemptThrottleExceeded
      */
-    public function check(string $key) : void
+    public function check(string $key): void
     {
         $attempts = $this->store->get(key: $key);
 
@@ -54,12 +53,12 @@ final readonly class AttemptThrottle
         throw new AttemptThrottleExceeded(retryAfter: max(0, $this->decaySeconds - $elapsed));
     }
 
-    public function reset(string $key) : void
+    public function reset(string $key): void
     {
         $this->store->reset(key: $key);
     }
 
-    public function recordAttempt(string $key) : void
+    public function recordAttempt(string $key): void
     {
         $this->store->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
     }

@@ -8,7 +8,7 @@ interface ConnectionPoolInterface
 {
     public function get() : PooledConnection;
 
-    public function release(PooledConnection $connection) : void;
+    public function release(PooledConnection $pooledConnection) : void;
 
     public function destroy() : void;
 

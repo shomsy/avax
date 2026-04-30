@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
@@ -14,6 +14,7 @@ interface DiagnosticsContract
 
 final class DiagnosticsService implements DiagnosticsContract
 {
+    #[Override]
     public function label() : string
     {
         return 'diagnostics';
@@ -22,27 +23,17 @@ final class DiagnosticsService implements DiagnosticsContract
 
 final class ContextualNameConsumer
 {
-    public string $name;
-
-    public function __construct(string $name) { $this->name = $name; }
+    public function __construct(public string $name) {}
 }
 
 final class DiagnosticsScopedService
 {
-    public string $id = 'scoped';
-
-    public function __construct(string $id = 'scoped') { $this->id = $id; }
+    public function __construct(public string $id = 'scoped') {}
 }
 
 final class ContextualInjectionTarget
 {
     public string $name = 'unset';
-
-    #[Inject]
-    protected function wire(string $name) : void
-    {
-        $this->name = $name;
-    }
 }
 
 $envKey = 'AVAX_CONTAINER_ENV_' . uniqid();
@@ -74,9 +65,9 @@ $runtimeReport    = $container->runtimeReport();
 $validated        = $container->validate(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class]);
 $contextual       = $container->forContext(context: ['name' => 'from-context'])->make(abstract: ContextualNameConsumer::class);
 $called           = $container->forContext(context: ['name' => 'from-call'])->call(
-    callable: static fn (string $name) : string => $name
+    callable: static fn (string $name) : string => $name,
 );
-$injected         = $container->forContext(context: ['name' => 'from-injection'])->injectInto(target: new ContextualInjectionTarget());
+$injected = $container->forContext(context: ['name' => 'from-injection'])->injectInto(target: new ContextualInjectionTarget());
 
 assertSame(expected: 'test', actual: $container->env(key: $envKey), message: 'Environment access should prefer configured env values.');
 assertSame(expected: [], actual: $validated, message: 'Validation should pass for explicitly checked services.');
@@ -105,7 +96,7 @@ assertTrue(condition: $runtimeReport->timelineEnabled === false, message: 'Minim
 assertSame(expected: 0, actual: $runtimeReport->sharedServiceCount, message: 'Runtime report should summarize shared service counts without inventing unresolved shared instances.');
 assertSame(expected: 1, actual: $runtimeReport->scopedServiceCount, message: 'Runtime report should summarize scoped service counts.');
 assertSame(expected: 'fresh', actual: $runtimeReport->hotPath['freshnessState'], message: 'Runtime report should expose hot-path artifact freshness.');
-assertTrue(condition: str_contains(haystack: $runtimeReport->toJson(), needle: '"metrics"'), message: 'Runtime report should be JSON serializable.');
+assertTrue(condition: str_contains(haystack: (string) $runtimeReport->toJson(), needle: '"metrics"'), message: 'Runtime report should be JSON serializable.');
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, actual: $runtimeReport->diagnosticsMode, message: 'Runtime report should expose the active diagnostics mode.');
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, actual: $description['diagnosticsMode'], message: 'Service diagnostics should expose the active diagnostics mode.');
 assertSame(expected: ['diagnostics.service', DiagnosticsContract::class], actual: $aliasDescription['aliasChain'], message: 'Alias diagnostics should expose the alias expansion chain.');
@@ -116,31 +107,31 @@ assertSame(expected: 'compiled', actual: $description['compiledState']['decision
 assertSame(
     expected: ['diagnostics.service', DiagnosticsContract::class],
     actual  : $aliasDescription['explain']['aliasExpansion']['chain'],
-    message : 'Explain diagnostics should expose alias expansion chains.'
+    message : 'Explain diagnostics should expose alias expansion chains.',
 );
 assertTrue(
     condition: isset($description['explain']['dependencyChain']['dependencies']),
-    message  : 'Explain diagnostics should expose dependency chain output.'
+    message  : 'Explain diagnostics should expose dependency chain output.',
 );
 assertSame(
     expected: 'no contextual override is registered for this service',
     actual  : $description['explain']['contextualWinner']['reason'],
-    message : 'Explain diagnostics should expose contextual winner output even when there is no active contextual override.'
+    message : 'Explain diagnostics should expose contextual winner output even when there is no active contextual override.',
 );
 assertSame(
     expected: 'compiled hot path is attached and usable',
     actual  : $description['explain']['compiled']['reason'],
-    message : 'Explain diagnostics should expose why the compiled path was selected.'
+    message : 'Explain diagnostics should expose why the compiled path was selected.',
 );
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_COMPILED,
     actual  : $description['compiledState']['executionMode'],
-    message : 'Service diagnostics should expose compiled execution mode.'
+    message : 'Service diagnostics should expose compiled execution mode.',
 );
 assertSame(
     expected: 'service will resolve through a fresh build path and then enter lifetime storage if needed',
     actual  : $description['explain']['cache']['reason'],
-    message : 'Explain diagnostics should expose cache hit and miss reasoning.'
+    message : 'Explain diagnostics should expose cache hit and miss reasoning.',
 );
 assertSame(expected: [], actual: $description['explain']['failureChain'], message: 'Healthy diagnostics should expose an empty failure chain.');
 assertTrue(condition: $tags['ordered'], message: 'Debug tags should declare deterministic ordering.');
@@ -156,8 +147,8 @@ assertSame(expected: 'from-context', actual: $contextual->name, message: 'Contex
 assertSame(expected: 'from-call', actual: $called, message: 'Context views should feed scalar callable arguments.');
 assertSame(expected: 'from-injection', actual: $injected->name, message: 'Context views should feed scalar injection arguments.');
 $container->closeScope();
-assertTrue(condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_scope_open_total'), message: 'Scope lifecycle metrics should be exported.');
-assertTrue(condition: str_contains(haystack: $container->exportMetrics(), needle: 'container_scope_close_total'), message: 'Scope lifecycle metrics should be exported.');
+assertTrue(condition: str_contains(haystack: (string) $container->exportMetrics(), needle: 'container_scope_open_total'), message: 'Scope lifecycle metrics should be exported.');
+assertTrue(condition: str_contains(haystack: (string) $container->exportMetrics(), needle: 'container_scope_close_total'), message: 'Scope lifecycle metrics should be exported.');
 
 $lazyProxy = $container->lazy(abstract: DiagnosticsContract::class);
 assertSame(expected: 'diagnostics', actual: $lazyProxy->label(), message: 'Lazy proxies should still resolve the target service.');
@@ -165,7 +156,7 @@ assertTrue(condition: $container->isLazy(id: DiagnosticsContract::class), messag
 
 $detailedContainer = makeTestContainer(config: CreateContainerConfig::create(
     debug          : true,
-    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
 ));
 $detailedContainer->get(id: DiagnosticsService::class);
 $detailedReport = $detailedContainer->runtimeReport();
@@ -175,7 +166,7 @@ assertTrue(condition: $detailedReport->timeline !== [], message: 'Detailed diagn
 assertTrue(condition: $detailedReport->timelineEnabled, message: 'Detailed diagnostics mode should report timeline state as enabled.');
 
 $ciContainer = makeTestContainer(config: CreateContainerConfig::create(
-    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI,
 ));
 $ciContainer->get(id: DiagnosticsService::class);
 $ciReport = $ciContainer->runtimeReport();

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Client\System\Capabilities\Http;
@@ -36,12 +37,13 @@ final class CurlClient
         if ($response === false) {
             $error = curl_error($ch);
             curl_close($ch);
+
             throw new RuntimeException("HTTP Request failed: {$error}");
         }
 
         $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
+
         $headerContent = substr($response, 0, $headerSize);
         $body = substr($response, $headerSize);
 

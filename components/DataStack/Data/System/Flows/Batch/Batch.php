@@ -9,6 +9,7 @@ use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
 use Avax\Components\DataStack\Data\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -32,8 +33,8 @@ final readonly class Batch implements IteratorAggregate, Countable
         return new self(
             batches: array_chunk(
                          array : array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items)),
-                         length: $size
-                     )
+                         length: $size,
+                     ),
         );
     }
 
@@ -45,11 +46,13 @@ final readonly class Batch implements IteratorAggregate, Countable
         return $this->batches;
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->batches);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->batches);

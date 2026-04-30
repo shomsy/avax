@@ -12,8 +12,8 @@ final class TransformToSnake
     {
         $value = $text->toString();
         $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/[\s\-]+/', $delimiter, $value);
+        $value = preg_replace('/[\s\-]+/', $delimiter, (string) $value);
 
-        return new Text(strtolower($value));
+        return new Text(strtolower((string) $value));
     }
 }

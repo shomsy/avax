@@ -24,11 +24,11 @@ final readonly class Record
         return new self(fields: $fields);
     }
 
-    public static function fromFields(RecordField ...$fields) : self
+    public static function fromFields(RecordField ...$recordField) : self
     {
         $mapped = [];
 
-        foreach ($fields as $field) {
+        foreach ($recordField as $field) {
             $mapped[$field->name()] = $field->value();
         }
 

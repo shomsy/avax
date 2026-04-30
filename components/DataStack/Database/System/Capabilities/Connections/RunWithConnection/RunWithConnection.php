@@ -21,7 +21,7 @@ final readonly class RunWithConnection
      *
      * @throws Throwable
      */
-    public function run(callable $callback, string|null $connectionName = null) : mixed
+    public function run(callable $callback, ?string $connectionName = null) : mixed
     {
         return $callback($this->readConnection->connection(name: $connectionName));
     }
@@ -31,7 +31,7 @@ final readonly class RunWithConnection
      *
      * @throws Throwable
      */
-    public function pool(callable $callback, string|null $connectionName = null) : mixed
+    public function pool(callable $callback, ?string $connectionName = null) : mixed
     {
         $connection = $this->readConnection->connection(name: $connectionName);
 
@@ -39,12 +39,12 @@ final readonly class RunWithConnection
             return $callback($connection);
         }
 
-        $borrowed = $connection->acquire();
+        $databaseConnection = $connection->acquire();
 
         try {
-            return $callback($borrowed);
+            return $callback($databaseConnection);
         } finally {
-            $connection->release(connection: $borrowed);
+            $connection->release(connection: $databaseConnection);
         }
     }
 }

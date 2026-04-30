@@ -19,13 +19,15 @@ final readonly class VerifyTrustedProxyHeaders
      * @param list<string> $proxyOnlyClientCertificateHeaders
      */
     public function __construct(
-        array|null                          $trustedProxies = null,
-        #[SensitiveParameter] array|null    $forwardedHeaders = null,
-        #[SensitiveParameter] private array $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256']
+        array         $trustedProxies = null,
+        #[SensitiveParameter]
+        array         $forwardedHeaders = null,
+        #[SensitiveParameter]
+        private array $proxyOnlyClientCertificateHeaders = ['X-Client-Cert', 'X-Client-Cert-Fingerprint', 'X-TLS-Client-Cert-Verify', 'X-TLS-Client-Cert-SHA256'],
     )
     {
-        $trustedProxies         ??= [];
-        $forwardedHeaders       ??= ['X-Forwarded-For', 'X-Forwarded-Proto', 'X-Forwarded-Host'];
+        $trustedProxies   ??= [];
+        $forwardedHeaders ??= ['X-Forwarded-For', 'X-Forwarded-Proto', 'X-Forwarded-Host'];
         $this->trustedProxies   = $trustedProxies;
         $this->forwardedHeaders = $forwardedHeaders;
     }
@@ -80,7 +82,8 @@ final readonly class VerifyTrustedProxyHeaders
     }
 
     private function matchesForwardedHeader(
-        #[SensitiveParameter] string $header
+        #[SensitiveParameter]
+        string $header,
     ) : bool
     {
         return array_any(array: $this->forwardedHeaders, callback: static fn ($candidate) => strcasecmp(string1: $header, string2: $candidate) === 0);

@@ -37,34 +37,76 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
         }
 
         // Fallback: anonymous class implementing ResponseInterface
-        return new class implements ResponseInterface {
-            public function getStatusCode() : int { return 403; }
+        return new class () implements ResponseInterface {
+            public function getStatusCode() : int
+            {
+                return 403;
+            }
 
-            public function withStatus(int $code, string $reasonPhrase = '') : self { return $this; }
+            public function withStatus(int $code, string $reasonPhrase = '') : self
+            {
+                return $this;
+            }
 
-            public function getReasonPhrase() : string { return 'Forbidden'; }
+            public function getReasonPhrase() : string
+            {
+                return 'Forbidden';
+            }
 
-            public function getProtocolVersion() : string { return '1.1'; }
+            public function getProtocolVersion() : string
+            {
+                return '1.1';
+            }
 
-            public function withProtocolVersion(string $version) : self { return $this; }
+            public function withProtocolVersion(string $version) : self
+            {
+                return $this;
+            }
 
-            public function getHeaders() : array { return ['Content-Type' => ['text/plain']]; }
+            public function getHeaders() : array
+            {
+                return ['Content-Type' => ['text/plain']];
+            }
 
-            public function hasHeader(string $name) : bool { return isset($this->getHeaders()[$name]); }
+            public function hasHeader(string $name) : bool
+            {
+                return isset($this->getHeaders()[$name]);
+            }
 
-            public function getHeader(string $name) : array { return $this->getHeaders()[$name] ?? []; }
+            public function getHeader(string $name) : array
+            {
+                return $this->getHeaders()[$name] ?? [];
+            }
 
-            public function getHeaderLine(string $name) : string { return implode(', ', $this->getHeader($name)); }
+            public function getHeaderLine(string $name) : string
+            {
+                return implode(', ', $this->getHeader($name));
+            }
 
-            public function withHeader(string $name, $value) : self { return $this; }
+            public function withHeader(string $name, $value) : self
+            {
+                return $this;
+            }
 
-            public function withAddedHeader(string $name, $value) : self { return $this; }
+            public function withAddedHeader(string $name, $value) : self
+            {
+                return $this;
+            }
 
-            public function withoutHeader(string $name) : self { return $this; }
+            public function withoutHeader(string $name) : self
+            {
+                return $this;
+            }
 
-            public function getBody() : mixed { return 'Forbidden'; }
+            public function getBody() : mixed
+            {
+                return 'Forbidden';
+            }
 
-            public function withBody(mixed $body) : self { return $this; }
+            public function withBody(mixed $body) : self
+            {
+                return $this;
+            }
         };
     }
 }

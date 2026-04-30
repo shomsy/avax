@@ -14,7 +14,7 @@ final readonly class LifecycleOrchestrator
 {
     public function __construct(private ProvisionableUserSourceInterface $userSource, private LifecycleStoreInterface $store, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function activate(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function activate(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::ACTIVE, source: $source, reason: $reason);
     }
@@ -45,7 +45,7 @@ final readonly class LifecycleOrchestrator
             state    : $target,
             source   : $source,
             changedAt: $this->clock->now(),
-            reason   : $reason
+            reason   : $reason,
         );
 
         $this->store->save(record: $record);
@@ -57,7 +57,7 @@ final readonly class LifecycleOrchestrator
                                                            'state'   => $record->state->value,
                                                            'source'  => $record->source->value,
                                                            'reason'  => $record->reason,
-                                                       ]
+                                                       ],
                                        ));
 
         return $record;
@@ -78,12 +78,12 @@ final readonly class LifecycleOrchestrator
         $this->userSource->deactivate(id: $userId);
     }
 
-    public function suspend(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function suspend(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::SUSPENDED, source: $source, reason: $reason);
     }
 
-    public function deprovision(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function deprovision(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::DEPROVISIONED, source: $source, reason: $reason);
     }

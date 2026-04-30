@@ -22,13 +22,13 @@ use Throwable;
 final readonly class Database implements DatabaseInterface
 {
     public function __construct(
-        private Connections   $connections,
-        private Query         $query,
+        private Connections  $connections,
+        private Query        $query,
         private EntityManager $entityManager,
-        private Schema        $schema,
-        private Migrations    $migrations,
-        private Transactions  $transactions,
-        private Telemetry     $telemetry
+        private Schema       $schema,
+        private Migrations   $migrations,
+        private Transactions $transactions,
+        private Telemetry    $telemetry,
     ) {}
 
     public static function configuration() : DatabaseBuilder
@@ -75,7 +75,7 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder
+    public function table(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->query->from(table: $table, connectionName: $connectionName);
     }

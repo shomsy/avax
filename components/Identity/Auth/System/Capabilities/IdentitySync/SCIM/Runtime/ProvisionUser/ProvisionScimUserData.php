@@ -16,16 +16,18 @@ final readonly class ProvisionScimUserData
      * @param list<string> $groups
      */
     public function __construct(
-        public string                       $directoryId,
-        #[SensitiveParameter] public string $directoryToken,
-        public string                       $externalId,
-        #[SensitiveParameter] public string $email,
-        public string                       $username,
-        array|null                          $groups = null,
-        public ScimAccountState             $state = ScimAccountState::ACTIVE
+        public string           $directoryId,
+        #[SensitiveParameter]
+        public string           $directoryToken,
+        public string           $externalId,
+        #[SensitiveParameter]
+        public string           $email,
+        public string           $username,
+        array                   $groups = null,
+        public ScimAccountState $state = ScimAccountState::ACTIVE,
     )
     {
-        $groups       ??= [];
+        $groups ??= [];
         $this->groups = $groups;
     }
 }

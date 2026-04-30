@@ -15,17 +15,17 @@ final readonly class DetectUnsafeDeploymentMode
      */
     public function execute(
         HttpOAuthProofInput $input,
-        bool|null           $production = null,
-        bool|null           $senderConstraintExpected = null,
-        array               $trustedProxies = []
+        bool  $production = null,
+        bool  $senderConstraintExpected = null,
+        array $trustedProxies = [],
     ) : array
     {
         $production               ??= true;
         $senderConstraintExpected ??= false;
-        $warnings                 = [];
-        $scheme                   = strtolower(string: (string) parse_url(url: $input->uri, component: PHP_URL_SCHEME));
-        $forwardedProto           = $this->readHeader(headers: $input->headers, name: 'X-Forwarded-Proto');
-        $remoteAddress            = $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR');
+        $warnings = [];
+        $scheme = strtolower(string: (string) parse_url(url: $input->uri, component: PHP_URL_SCHEME));
+        $forwardedProto = $this->readHeader(headers: $input->headers, name: 'X-Forwarded-Proto');
+        $remoteAddress = $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR');
 
         if ($production && $scheme !== 'https' && strtolower(string: (string) $forwardedProto) !== 'https') {
             $warnings[] = 'plain_http_in_production';

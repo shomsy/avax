@@ -6,10 +6,10 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 use InvalidArgumentException;
 
-final class CompiledCacheDirectory
+final readonly class CompiledCacheDirectory
 {
     public function __construct(
-        public readonly string $path
+        public string $path,
     )
     {
         $this->validate();
@@ -25,7 +25,7 @@ final class CompiledCacheDirectory
         if (is_file($this->path)) {
             throw new InvalidArgumentException(message: sprintf(
                                                             'Expected directory but found file: %s',
-                                                            $this->path
+                                                            $this->path,
                                                         ));
         }
     }
@@ -33,7 +33,7 @@ final class CompiledCacheDirectory
     private function ensureExists() : void
     {
         if (! is_dir($this->path)) {
-            mkdir($this->path, 0755, true);
+            mkdir($this->path, 0o755, true);
         }
     }
 

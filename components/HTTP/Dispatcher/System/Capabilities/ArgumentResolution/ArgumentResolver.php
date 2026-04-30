@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution;
@@ -15,7 +16,7 @@ use RuntimeException;
 final readonly class ArgumentResolver
 {
     public function __construct(
-        private ContainerInterface $container
+        private ContainerInterface $container,
     ) {}
 
     public function resolve(ReflectionMethod $reflection, ServerRequestInterface $request) : array
@@ -27,11 +28,12 @@ final readonly class ArgumentResolver
             $paramType = $param->getType();
 
             // 1. Resolve typed objects (ServerRequestInterface, DTOs, Services)
-            if ($paramType instanceof ReflectionNamedType && !$paramType->isBuiltin()) {
+            if ($paramType instanceof ReflectionNamedType && ! $paramType->isBuiltin()) {
                 $typeName = $paramType->getName();
 
                 if (is_a($typeName, ServerRequestInterface::class, true)) {
                     $arguments[] = $request;
+
                     continue;
                 }
 
@@ -41,6 +43,7 @@ final readonly class ArgumentResolver
                 // we'll rely on the DI container for complex resolution.
                 if ($this->container->has($typeName)) {
                     $arguments[] = $this->container->get($typeName);
+
                     continue;
                 }
             }
@@ -49,12 +52,14 @@ final readonly class ArgumentResolver
             $attributeValue = $request->getAttribute($paramName);
             if ($attributeValue !== null) {
                 $arguments[] = $attributeValue;
+
                 continue;
             }
 
             // 3. Fallback to default value
             if ($param->isDefaultValueAvailable()) {
                 $arguments[] = $param->getDefaultValue();
+
                 continue;
             }
 
@@ -63,8 +68,8 @@ final readonly class ArgumentResolver
                     'Unable to resolve parameter "%s" for method "%s" in "%s"',
                     $paramName,
                     $reflection->getName(),
-                    $reflection->getDeclaringClass()->getName()
-                )
+                    $reflection->getDeclaringClass()->getName(),
+                ),
             );
         }
 

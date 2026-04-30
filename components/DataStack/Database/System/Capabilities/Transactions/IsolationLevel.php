@@ -20,7 +20,7 @@ enum IsolationLevel: string
     /**
      * Returns the SQL statement to set this isolation level.
      */
-    public function toSql(string|null $dialect = null) : string
+    public function toSql(string $dialect = null) : string
     {
         $sql = match ($this) {
             self::READ_UNCOMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',

@@ -19,7 +19,7 @@ final class TransportResult
     public function __construct(
         public readonly bool        $success,
         public readonly string|null $messageId = null,
-        public readonly string|null $error = null
+        public readonly string|null $error = null,
     ) {}
 }
 
@@ -34,10 +34,10 @@ final class SmtpTransport implements MailTransport
 
     public function send(MimeMessage $message, Envelope $envelope) : TransportResult
     {
-        $host       = $this->config['host'] ?? 'localhost';
-        $port       = $this->config['port'] ?? 25;
-        $username   = $this->config['username'] ?? '';
-        $password   = $this->config['password'] ?? '';
+        $host     = $this->config['host'] ?? 'localhost';
+        $port     = $this->config['port'] ?? 25;
+        $username = $this->config['username'] ?? '';
+        $password = $this->config['password'] ?? '';
         $encryption = $this->config['encryption'] ?? null;
 
         $socket = @fsockopen(
@@ -45,13 +45,13 @@ final class SmtpTransport implements MailTransport
             $port,
             $errno,
             $errstr,
-            30
+            30,
         );
 
         if (! $socket) {
             return new TransportResult(
                 success: false,
-                error  : "Failed to connect to mail server: $errstr ($errno)"
+                error  : "Failed to connect to mail server: $errstr ($errno)",
             );
         }
 
@@ -62,28 +62,28 @@ final class SmtpTransport implements MailTransport
             return new TransportResult(success: false, error: "SMTP connection failed: $response");
         }
 
-        $this->sendCommand($socket, "EHLO " . gethostname());
+        $this->sendCommand($socket, 'EHLO ' . gethostname());
         if (! empty($username)) {
-            $this->sendCommand($socket, "AUTH LOGIN");
+            $this->sendCommand($socket, 'AUTH LOGIN');
             $this->sendCommand($socket, base64_encode($username));
             $this->sendCommand($socket, base64_encode($password));
         }
 
         $this->sendCommand($socket, "MAIL FROM:<{$envelope->from}>");
         $this->sendCommand($socket, "RCPT TO:<{$message->to}>");
-        $this->sendCommand($socket, "DATA");
+        $this->sendCommand($socket, 'DATA');
 
         $rawMessage = $message->toRaw();
         fwrite($socket, $rawMessage . "\r\n.\r\n");
         $response = fgets($socket, 515);
 
-        $this->sendCommand($socket, "QUIT");
+        $this->sendCommand($socket, 'QUIT');
         fclose($socket);
 
         if ((int) substr($response, 0, 3) === 250) {
             return new TransportResult(
                 success  : true,
-                messageId: '<' . uniqid('msg-') . '@' . gethostname() . '>'
+                messageId: '<' . uniqid('msg-') . '@' . gethostname() . '>',
             );
         }
 
@@ -137,7 +137,7 @@ final class SendmailTransport implements MailTransport
         if ($exitCode === 0) {
             return new TransportResult(
                 success  : true,
-                messageId: '<' . uniqid('msg-') . '@' . gethostname() . '>'
+                messageId: '<' . uniqid('msg-') . '@' . gethostname() . '>',
             );
         }
 
@@ -169,7 +169,7 @@ final class LogTransport implements MailTransport
 
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid('msg-') . '-logged@local>'
+            messageId: '<' . uniqid('msg-') . '-logged@local>',
         );
     }
 
@@ -185,7 +185,7 @@ final class NullTransport implements MailTransport
     {
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid('msg-') . '-null@local>'
+            messageId: '<' . uniqid('msg-') . '-null@local>',
         );
     }
 

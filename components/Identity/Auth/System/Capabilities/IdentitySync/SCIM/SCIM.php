@@ -36,17 +36,18 @@ use SensitiveParameter;
 final readonly class SCIM
 {
     public function __construct(
-        private RegisterScimDirectory|null                 $registerScimDirectory,
-        private ReadScimDirectories|null                   $readScimDirectories,
-        #[SensitiveParameter] private RotateScimToken|null $rotateScimToken,
-        private MarkScimDirectoryOutage|null               $markScimDirectoryOutage,
-        private RecoverScimDirectoryOutage|null            $recoverScimDirectoryOutage,
-        private ProvisionScimUser|null                     $provisionScimUser,
-        private DeleteScimUser|null                        $deleteScimUser,
-        private ReadScimUsers|null                         $readScimUsers,
-        private ReadScimGroups|null                        $readScimGroups,
-        private SyncScimGroups|null                        $syncScimGroups,
-        private RunScimBulk|null                           $runScimBulk
+        private RegisterScimDirectory|null      $registerScimDirectory,
+        private ReadScimDirectories|null        $readScimDirectories,
+        #[SensitiveParameter]
+        private RotateScimToken|null            $rotateScimToken,
+        private MarkScimDirectoryOutage|null    $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null $recoverScimDirectoryOutage,
+        private ProvisionScimUser|null          $provisionScimUser,
+        private DeleteScimUser|null             $deleteScimUser,
+        private ReadScimUsers|null              $readScimUsers,
+        private ReadScimGroups|null             $readScimGroups,
+        private SyncScimGroups|null             $syncScimGroups,
+        private RunScimBulk|null                $runScimBulk,
     ) {}
 
     public function isConfigured() : bool
@@ -80,7 +81,7 @@ final readonly class SCIM
     /**
      * @return list<ScimDirectory>
      */
-    public function readDirectories(string|null $tenantSlug = null) : array
+    public function readDirectories(string $tenantSlug = null) : array
     {
         return $this->readScimDirectoriesOrFail()->execute(tenantSlug: $tenantSlug);
     }

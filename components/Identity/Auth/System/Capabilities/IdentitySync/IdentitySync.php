@@ -16,7 +16,7 @@ final readonly class IdentitySync
 {
     public function __construct(
         private SCIM         $scim,
-        private Provisioning $provisioning
+        private Provisioning $provisioning,
     ) {}
 
     public function scim() : SCIM

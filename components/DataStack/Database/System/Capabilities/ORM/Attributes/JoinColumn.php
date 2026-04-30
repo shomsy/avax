@@ -11,6 +11,6 @@ final readonly class JoinColumn
 {
     public function __construct(
         public string|null $name = null,
-        public string      $referencedColumnName = 'id'
+        public string $referencedColumnName = 'id',
     ) {}
 }

@@ -13,7 +13,7 @@ final class QuerySpan
         public readonly float       $endTime = 0.0,
         public readonly string|null $connection = null,
         public readonly int|null    $rows = null,
-        public readonly string|null $error = null
+        public readonly string|null $error = null,
     ) {}
 
     public function isSlow(int $thresholdMs = 1000) : bool

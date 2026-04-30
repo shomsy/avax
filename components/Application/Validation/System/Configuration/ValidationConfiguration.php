@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Validation\System\Configuration;
 
-final class ValidationConfiguration
+final readonly class ValidationConfiguration
 {
     public function __construct(
-        public readonly bool $stopOnFirstFailure = false,
-        public readonly bool $trimStrings = true,
+        public bool $stopOnFirstFailure = false,
+        public bool $trimStrings = true,
     ) {}
 }

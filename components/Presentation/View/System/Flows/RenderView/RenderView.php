@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Flows\RenderView;
@@ -8,7 +9,7 @@ use Avax\Components\Presentation\View\System\Capabilities\Engines\TemplateEngine
 final readonly class RenderView
 {
     public function __construct(
-        private TemplateEngineInterface $engine
+        private TemplateEngineInterface $engine,
     ) {}
 
     public function handle(string $view, array $data = []): string

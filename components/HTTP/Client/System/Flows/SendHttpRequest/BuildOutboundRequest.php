@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Client\System\Flows\SendHttpRequest;
 
 use Avax\Components\HTTP\Client\System\Capabilities\Requests\OutboundRequest;
-use Avax\Components\HTTP\Client\System\Capabilities\Responses\ClientResponse;
 use GuzzleHttp\Psr7\Request;
 
 /**

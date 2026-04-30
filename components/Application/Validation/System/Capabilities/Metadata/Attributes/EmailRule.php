@@ -18,10 +18,8 @@ use InvalidArgumentException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class EmailRule
 {
-    private const RFC5321_PATTERN = '/^[a-zA-Z0-9.!#$%&\x27*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+)*$/';
-
     public function __construct(
-        private bool   $requireDnsValidation = false,
+        private bool $requireDnsValidation = false,
         private string $message = 'Field "{property}" must be a valid email address.',
     ) {}
 
@@ -36,13 +34,13 @@ final readonly class EmailRule
 
         if (! is_string($value)) {
             throw new InvalidArgumentException(
-                str_replace('{property}', $property, $this->message)
+                str_replace('{property}', $property, $this->message),
             );
         }
 
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(
-                str_replace('{property}', $property, $this->message)
+                str_replace('{property}', $property, $this->message),
             );
         }
 
@@ -50,7 +48,7 @@ final readonly class EmailRule
             $domain = substr($value, strpos($value, '@') + 1);
             if ($domain && ! checkdnsrr($domain, 'MX') && ! checkdnsrr($domain, 'A')) {
                 throw new InvalidArgumentException(
-                    "Field \"{$property}\" email domain does not exist."
+                    sprintf('Field "%s" email domain does not exist.', $property),
                 );
             }
         }

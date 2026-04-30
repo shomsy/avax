@@ -21,62 +21,61 @@ use Throwable;
 final readonly class RefreshCachedValue
 {
     public function __construct(
-        private CacheStore               $store,
+        private CacheStore               $cacheStore,
         private Clock                    $clock,
-        private ShouldRefreshCachedValue $shouldRefresh
+        private ShouldRefreshCachedValue $shouldRefreshCachedValue
         = new ShouldRefreshCachedValue(
-            clock: new SystemClock()
+            clock: new SystemClock(),
         ),
-        private CacheTtl                 $ttlCalculator = new CacheTtl()
+        private CacheTtl                 $cacheTtl = new CacheTtl(),
     ) {}
 
     public function refreshIfNeeded(
-        CacheKey              $key,
-        callable              $loader,
+        CacheKey      $cacheKey,
+        callable      $loader,
         int|DateInterval|null $ttl = null,
-        RefreshPolicy         $policy = RefreshPolicy::DO_NOT_REFRESH
+        RefreshPolicy $refreshPolicy = RefreshPolicy::DO_NOT_REFRESH,
     ) : mixed
     {
-        $result = $this->store->read(key: $key, clock: $this->clock);
+        $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
 
         if ($result instanceof CacheStoreRecordWasMissing) {
-            return $this->refresh(key: $key, loader: $loader, ttl: $ttl, policy: $policy);
+            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl, policy: $refreshPolicy);
         }
 
-        if ($this->shouldRefresh->shouldRefresh(lifecycle: $result->record->lifecycle)) {
-            return $this->refresh(key: $key, loader: $loader, ttl: $ttl, policy: $policy);
+        if ($this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $result->record->lifecycle)) {
+            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl, policy: $refreshPolicy);
         }
 
         return $result->value();
     }
 
     public function refresh(
-        CacheKey              $key,
-        callable              $loader,
+        CacheKey $cacheKey,
+        callable $loader,
         int|DateInterval|null $ttl = null,
-        RefreshPolicy         $policy = RefreshPolicy::DO_NOT_REFRESH
     ) : mixed
     {
         try {
             $value = $loader();
 
-            $this->store->write(
-                key   : $key,
+            $this->cacheStore->write(
+                key   : $cacheKey,
                 record: new StoredCacheRecord(
                             value    : $value,
                             lifecycle: CachedValueLifecycle::create(
                                            createdAt: $this->clock->now(),
-                                           expiresAt: $this->ttlCalculator->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
+                                           expiresAt: $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
                                                           ?? $this->clock->now()->add(
-                                               duration: Duration::ofSeconds(seconds: 3600)
+                                               duration: Duration::ofSeconds(seconds: 3600),
                                            ),
-                                           clock    : $this->clock
-                                       )
-                        )
+                                           clock    : $this->clock,
+                                       ),
+                        ),
             );
 
             return $value;
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }

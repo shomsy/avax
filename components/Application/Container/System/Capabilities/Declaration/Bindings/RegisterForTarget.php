@@ -11,13 +11,13 @@ use LogicException;
  */
 final class RegisterForTarget
 {
-    private string                   $needs = '';
-    private readonly string          $consumer;
+    private string          $needs = '';
+    private readonly string $consumer;
     private readonly ServiceRegistry $registry;
 
     public function __construct(
         ServiceRegistry $registry,
-        string          $consumer
+        string $consumer,
     )
     {
         $this->registry = $registry;
@@ -35,14 +35,14 @@ final class RegisterForTarget
     {
         if ($this->needs === '') {
             throw new LogicException(
-                message: 'Call needs() before give() when registering a target-specific dependency.'
+                message: 'Call needs() before give() when registering a target-specific dependency.',
             );
         }
 
         $this->registry->addContextual(
             consumer: $this->consumer,
             needs   : $this->needs,
-            give    : $implementation
+            give    : $implementation,
         );
     }
 }

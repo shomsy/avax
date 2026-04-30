@@ -13,6 +13,6 @@ final readonly class FindMaxValue
 
     public function __invoke() : mixed
     {
-        return empty($this->items) ? null : max($this->items);
+        return $this->items === [] ? null : max($this->items);
     }
 }

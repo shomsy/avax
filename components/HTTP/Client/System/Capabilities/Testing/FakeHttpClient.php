@@ -35,8 +35,8 @@ final class FakeHttpClient implements HttpClientInterface
      * @param list<OutboundRequest>               $recordedRequests All requests made through this client
      */
     public function __construct(
-        private array   $responses = [],
-        private array   $recordedRequests = [],
+        private array $responses = [],
+        private array $recordedRequests = [],
         private ?string $baseUrl = null,
     ) {}
 
@@ -53,7 +53,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public static function fromResponses(array $responses, ?string $baseUrl = null) : self
+    public static function fromResponses(array $responses, string $baseUrl = null) : self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }

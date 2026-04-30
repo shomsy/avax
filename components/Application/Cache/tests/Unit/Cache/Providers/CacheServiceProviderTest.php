@@ -10,15 +10,17 @@ use Avax\Components\Application\Cache\System\AvaxCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class CacheServiceProviderTest extends TestCase
 {
-    private FrozenClock        $clock;
-    private InMemoryCacheStore $defaultStore;
-    private InMemoryCacheStore $apiStore;
-    private CacheContract      $defaultCache;
-    private CacheContract      $apiCache;
+    private FrozenClock $frozenClock;
+
+    private InMemoryCacheStore $inMemoryCacheStore;
+
+
+    private CacheContract $cacheContract;
 
     public function test_cache_store_with_name_requires_provider() : void
     {
@@ -32,16 +34,16 @@ final class CacheServiceProviderTest extends TestCase
 
     public function test_cache_store_returns_default() : void
     {
-        Cache::use(cache: $this->defaultCache);
+        Cache::use(cache: $this->cacheContract);
 
         $store = Cache::store();
 
-        $this->assertSame(expected: $this->defaultCache, actual: $store);
+        $this->assertSame(expected: $this->cacheContract, actual: $store);
     }
 
     public function test_cache_use_sets_default() : void
     {
-        Cache::use(cache: $this->defaultCache);
+        Cache::use(cache: $this->cacheContract);
 
         $result = Cache::get(key: 'non_existent', default: 'default');
         $this->assertSame(expected: 'default', actual: $result);
@@ -64,7 +66,7 @@ final class CacheServiceProviderTest extends TestCase
 
     public function test_cache_reset_clears_static_instance() : void
     {
-        Cache::use(cache: $this->defaultCache);
+        Cache::use(cache: $this->cacheContract);
 
         Cache::reset();
 
@@ -72,26 +74,22 @@ final class CacheServiceProviderTest extends TestCase
         Cache::get(key: 'key');
     }
 
+    #[Override]
     protected function setUp() : void
     {
         Cache::reset();
         CompiledCache::reset();
 
-        $this->clock        = new FrozenClock();
-        $this->defaultStore = new InMemoryCacheStore(clock: $this->clock);
-        $this->apiStore     = new InMemoryCacheStore(clock: $this->clock);
+        $this->frozenClock        = new FrozenClock();
+        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
 
-        $this->defaultCache = new AvaxCache(
-            store: $this->defaultStore,
-            clock: $this->clock
-        );
-
-        $this->apiCache = new AvaxCache(
-            store: $this->apiStore,
-            clock: $this->clock
+        $this->cacheContract = new AvaxCache(
+            store: $this->inMemoryCacheStore,
+            clock: $this->frozenClock,
         );
     }
 
+    #[Override]
     protected function tearDown() : void
     {
         Cache::reset();

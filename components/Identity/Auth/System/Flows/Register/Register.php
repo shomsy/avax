@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Register;
@@ -13,9 +14,9 @@ final readonly class Register
 {
     public function __construct(
         private ValidateRegistrationData $validator,
-        private HashRegisteredPassword   $hasher,
-        private CreateRegisteredUser     $creator,
-        private Identity                 $identity
+        private HashRegisteredPassword $hasher,
+        private CreateRegisteredUser   $creator,
+        private Identity               $identity,
     ) {}
 
     /**
@@ -24,13 +25,13 @@ final readonly class Register
     public function execute(RegistrationData $data) : RegistrationResult
     {
         $this->validator->execute($data);
-        
+
         $hashedPassword = $this->hasher->execute($data->password);
-        
+
         $user = $this->creator->execute($data, $hashedPassword);
-        
+
         $issued = $this->identity->issue($user);
-        
+
         return new RegistrationResult($user, $issued);
     }
 }

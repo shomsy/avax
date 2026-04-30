@@ -19,7 +19,7 @@ $config = CreateContainerConfig::create(
     policyFailMode   : CreateContainerConfig::POLICY_FAIL_MODE_OPEN,
     policyProfiles   : ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
     sliceBoundaryMode: CreateContainerConfig::SLICE_BOUNDARY_MODE_PROJECTED,
-    asyncTarget      : CreateContainerConfig::ASYNC_TARGET_WORKER
+    asyncTarget      : CreateContainerConfig::ASYNC_TARGET_WORKER,
 );
 
 $changed = $config

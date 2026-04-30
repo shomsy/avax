@@ -13,10 +13,12 @@ final class TransformLimit
         if ($max <= 0) {
             return new Text('');
         }
+
         $len = $text->length();
         if ($len <= $max) {
             return $text;
         }
+
         $cut = function_exists('mb_substr')
             ? mb_substr($text->toString(), 0, $max, 'UTF-8')
             : substr($text->toString(), 0, $max);

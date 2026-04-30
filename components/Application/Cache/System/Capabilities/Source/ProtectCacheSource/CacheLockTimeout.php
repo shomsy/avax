@@ -11,10 +11,10 @@ final readonly class CacheLockTimeout
 {
     public function __construct(public int $seconds = 5) {}
 
-    public function isExpired(int $acquiredAt, Clock|null $clock = null) : bool
+    public function isExpired(int $acquiredAt, ?Clock $clock = null) : bool
     {
         $clock ??= new SystemClock();
-        $now   = $clock->now();
+        $now = $clock->now();
 
         return ($now->seconds - $acquiredAt) > $this->seconds;
     }

@@ -27,7 +27,7 @@ final readonly class RecordSagaCommandKey
     {
         $this->idempotency->record(
             key   : $key,
-            result: SagaCommandResult::success(sagaId: $sagaId, output: $output)
+            result: SagaCommandResult::success(sagaId: $sagaId, output: $output),
         );
     }
 
@@ -40,7 +40,7 @@ final readonly class RecordSagaCommandKey
     {
         $this->idempotency->record(
             key   : $key,
-            result: SagaCommandResult::failure(sagaId: $sagaId, error: $error)
+            result: SagaCommandResult::failure(sagaId: $sagaId, error: $error),
         );
     }
 }

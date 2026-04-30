@@ -13,6 +13,6 @@ final readonly class SagaCompensationDefinition
 {
     public function __construct(
         public string       $name,
-        public Closure|null $runCompensation = null
+        public Closure|null $runCompensation = null,
     ) {}
 }

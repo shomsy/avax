@@ -20,14 +20,17 @@ use SensitiveParameter;
 final readonly class FrontChannelLogout
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private IdentityInterface                                     $identity,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private OidcProviderInterface|null                            $oidcProvider = null,
-        private OAuthClientRegistryInterface|null                     $clientRegistry = null
+        #[SensitiveParameter]
+        private CurrentAuthentication             $currentAuthentication,
+        private IdentityInterface                 $identity,
+        private AuditLogInterface                 $auditLog,
+        private Clock                             $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null     $sessionRegistry = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null   $refreshTokenStore = null,
+        private OidcProviderInterface|null        $oidcProvider = null,
+        private OAuthClientRegistryInterface|null $clientRegistry = null,
     ) {}
 
     public function execute(FrontChannelLogoutData $data) : LogoutResult
@@ -64,7 +67,7 @@ final readonly class FrontChannelLogout
                                                                'client_id'                      => $client?->clientId,
                                                                'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
                                                                'back_channel_logout_supported'  => $client?->backChannelLogoutSupported,
-                                                           ]
+                                                           ],
                                            ));
         }
 
@@ -78,7 +81,7 @@ final readonly class FrontChannelLogout
             revoked              : $sessionId !== null,
             sessionId            : $sessionId,
             postLogoutRedirectUri: $data->postLogoutRedirectUri,
-            state                : $data->state
+            state                : $data->state,
         );
     }
 

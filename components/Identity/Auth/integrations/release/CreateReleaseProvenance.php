@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Auth\Integrations\Release;
 final readonly class CreateReleaseProvenance
 {
     public function __construct(
-        private ReadGitOutput $readGitOutput = new ReadGitOutput()
+        private ReadGitOutput $readGitOutput = new ReadGitOutput(),
     ) {}
 
     /**

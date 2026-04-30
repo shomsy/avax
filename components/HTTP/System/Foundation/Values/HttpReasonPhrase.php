@@ -100,33 +100,33 @@ final readonly class HttpReasonPhrase
     {
         return match ($code) {
             // 1xx Informational
-            self::CONTINUE                        => 'Continue',
-            self::SWITCHING_PROTOCOLS             => 'Switching Protocols',
-            self::PROCESSING                      => 'Processing',
-            self::EARLY_HINTS                     => 'Early Hints',
+            self::CONTINUE                      => 'Continue',
+            self::SWITCHING_PROTOCOLS           => 'Switching Protocols',
+            self::PROCESSING                    => 'Processing',
+            self::EARLY_HINTS                   => 'Early Hints',
 
             // 2xx Success
-            self::OK                              => 'OK',
-            self::CREATED                         => 'Created',
-            self::ACCEPTED                        => 'Accepted',
-            self::NON_AUTHORITATIVE_INFORMATION   => 'Non-Authoritative Information',
-            self::NO_CONTENT                      => 'No Content',
-            self::RESET_CONTENT                   => 'Reset Content',
-            self::PARTIAL_CONTENT                 => 'Partial Content',
-            self::MULTI_STATUS                    => 'Multi-Status',
-            self::ALREADY_REPORTED                => 'Already Reported',
-            self::IM_USED                         => 'IM Used',
+            self::OK                            => 'OK',
+            self::CREATED                       => 'Created',
+            self::ACCEPTED                      => 'Accepted',
+            self::NON_AUTHORITATIVE_INFORMATION => 'Non-Authoritative Information',
+            self::NO_CONTENT                    => 'No Content',
+            self::RESET_CONTENT                 => 'Reset Content',
+            self::PARTIAL_CONTENT               => 'Partial Content',
+            self::MULTI_STATUS                  => 'Multi-Status',
+            self::ALREADY_REPORTED              => 'Already Reported',
+            self::IM_USED                       => 'IM Used',
 
             // 3xx Redirection
-            self::MULTIPLE_CHOICES                => 'Multiple Choices',
-            self::MOVED_PERMANENTLY               => 'Moved Permanently',
-            self::FOUND                           => 'Found',
-            self::SEE_OTHER                       => 'See Other',
-            self::NOT_MODIFIED                    => 'Not Modified',
-            self::USE_PROXY                       => 'Use Proxy',
-            self::SWITCH_PROXY                    => 'Switch Proxy',
-            self::TEMPORARY_REDIRECT              => 'Temporary Redirect',
-            self::PERMANENT_REDIRECT              => 'Permanent Redirect',
+            self::MULTIPLE_CHOICES              => 'Multiple Choices',
+            self::MOVED_PERMANENTLY             => 'Moved Permanently',
+            self::FOUND                         => 'Found',
+            self::SEE_OTHER                     => 'See Other',
+            self::NOT_MODIFIED                  => 'Not Modified',
+            self::USE_PROXY                     => 'Use Proxy',
+            self::SWITCH_PROXY                  => 'Switch Proxy',
+            self::TEMPORARY_REDIRECT            => 'Temporary Redirect',
+            self::PERMANENT_REDIRECT            => 'Permanent Redirect',
 
             // 4xx Client Error
             self::BAD_REQUEST                     => 'Bad Request',
@@ -172,7 +172,7 @@ final readonly class HttpReasonPhrase
             self::NOT_EXTENDED                    => 'Not Extended',
             self::NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required',
 
-            default                               => null,
+            default                             => null,
         };
     }
 

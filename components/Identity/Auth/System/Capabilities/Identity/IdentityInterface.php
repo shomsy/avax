@@ -16,12 +16,12 @@ use DateTimeImmutable;
 interface IdentityInterface
 {
     public function issue(
-        User                   $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false
+        User              $user,
+        DateTimeImmutable $mfaVerifiedAt = null,
+        bool              $phishingResistant = false,
     ) : IssuedAuthentication;
 
-    public function clear(AuthenticationContext|null $context = null) : void;
+    public function clear(AuthenticationContext $context = null) : void;
 
     public function sessionIdentity() : SessionIdentityInterface|null;
 

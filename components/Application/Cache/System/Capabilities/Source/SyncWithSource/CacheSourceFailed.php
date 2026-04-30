@@ -11,37 +11,37 @@ final class CacheSourceFailed extends RuntimeException
 {
     public function __construct(
         string                         $message,
-        public readonly CacheSourceKey $sourceKey,
-        Throwable|null                 $previous = null
+        public readonly CacheSourceKey $cacheSourceKey,
+        ?Throwable                     $throwable = null,
     )
     {
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
-    public static function unavailable(string $reason, CacheSourceKey $key, Throwable|null $previous = null) : self
+    public static function unavailable(string $reason, CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
             message  : sprintf('System source unavailable: %s', $reason),
-            sourceKey: $key,
-            previous : $previous
+            sourceKey: $cacheSourceKey,
+            previous : $throwable,
         );
     }
 
-    public static function timeout(CacheSourceKey $key, Throwable|null $previous = null) : self
+    public static function timeout(CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
-            message  : sprintf('System source timeout for key "%s"', $key->fullKey()),
-            sourceKey: $key,
-            previous : $previous
+            message  : sprintf('System source timeout for key "%s"', $cacheSourceKey->fullKey()),
+            sourceKey: $cacheSourceKey,
+            previous : $throwable,
         );
     }
 
-    public static function notFound(CacheSourceKey $key, Throwable|null $previous = null) : self
+    public static function notFound(CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
-            message  : sprintf('System source key "%s" not found', $key->fullKey()),
-            sourceKey: $key,
-            previous : $previous
+            message  : sprintf('System source key "%s" not found', $cacheSourceKey->fullKey()),
+            sourceKey: $cacheSourceKey,
+            previous : $throwable,
         );
     }
 }

@@ -15,9 +15,9 @@ use Throwable;
 final readonly class RollbackMigrations
 {
     public function __construct(
-        private MigrationRepository $repository,
-        private MigrationRunner     $runner,
-        private MigrationLoader     $loader
+        private MigrationRepository $migrationRepository,
+        private MigrationRunner     $migrationRunner,
+        private MigrationLoader     $migrationLoader,
     ) {}
 
     /**
@@ -27,13 +27,13 @@ final readonly class RollbackMigrations
      */
     public function run(string $path, int $steps = 1) : array
     {
-        $records = $this->repository->getLastBatch(steps: $steps);
+        $records = $this->migrationRepository->getLastBatch(steps: $steps);
 
         if (empty($records)) {
             return [];
         }
 
-        $all        = $this->loader->load(path: $path);
+        $all = $this->migrationLoader->load(path: $path);
         $toRollback = [];
 
         foreach ($records as $record) {
@@ -44,7 +44,7 @@ final readonly class RollbackMigrations
             }
         }
 
-        $this->runner->rollback(migrations: $toRollback, steps: $steps);
+        $this->migrationRunner->rollback(migrations: $toRollback, steps: $steps);
 
         return array_column(array: $records, column_key: 'migration');
     }

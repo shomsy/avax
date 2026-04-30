@@ -24,15 +24,17 @@ final readonly class MfaMethodRecord
      * @param list<BackupCodeRecord> $backupCodes
      */
     public function __construct(
-        public UserId                       $userId,
-        public MfaMethod                    $method,
-        #[SensitiveParameter] public string $secret,
-        public DateTimeImmutable            $enabledAt,
-        #[SensitiveParameter] array|null    $backupCodes = null,
-        public int|null                     $lastAcceptedTimeStep = null
+        public UserId            $userId,
+        public MfaMethod         $method,
+        #[SensitiveParameter]
+        public string            $secret,
+        public DateTimeImmutable $enabledAt,
+        #[SensitiveParameter]
+        array                    $backupCodes = null,
+        public int|null          $lastAcceptedTimeStep = null,
     )
     {
-        $backupCodes       ??= [];
+        $backupCodes ??= [];
         $this->backupCodes = $backupCodes;
     }
 
@@ -47,7 +49,7 @@ final readonly class MfaMethodRecord
             secret              : $this->secret,
             enabledAt           : $this->enabledAt,
             backupCodes         : $backupCodes,
-            lastAcceptedTimeStep: $this->lastAcceptedTimeStep
+            lastAcceptedTimeStep: $this->lastAcceptedTimeStep,
         );
     }
 
@@ -59,7 +61,7 @@ final readonly class MfaMethodRecord
             secret              : $this->secret,
             enabledAt           : $this->enabledAt,
             backupCodes         : $this->backupCodes,
-            lastAcceptedTimeStep: $timeStep
+            lastAcceptedTimeStep: $timeStep,
         );
     }
 }

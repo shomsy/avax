@@ -18,7 +18,7 @@ final readonly class Pipeline
         private array $pipes = [],
     ) {}
 
-    public function pipe(callable $callback, string|null $name = null) : self
+    public function pipe(callable $callback, ?string $name = null) : self
     {
         $pipes   = $this->pipes;
         $pipes[] = Pipe::from(callback: $callback, name: $name);

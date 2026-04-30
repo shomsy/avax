@@ -11,6 +11,6 @@ final readonly class SagaStepExecutionPolicy
 {
     public function __construct(
         public bool $idempotent = true,
-        public int  $maxAttempts = 1
+        public int $maxAttempts = 1,
     ) {}
 }

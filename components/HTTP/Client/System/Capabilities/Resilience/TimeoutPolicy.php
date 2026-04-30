@@ -28,9 +28,9 @@ final readonly class TimeoutPolicy
      * @param bool $enforce           Whether to strictly enforce timeouts
      */
     public function __construct(
-        public int  $connectTimeoutMs = 5000,
-        public int  $transferTimeoutMs = 30000,
-        public int  $timeoutMs = 30000,
+        public int $connectTimeoutMs = 5000,
+        public int $transferTimeoutMs = 30000,
+        public int $timeoutMs = 30000,
         public bool $enforce = true,
     ) {}
 

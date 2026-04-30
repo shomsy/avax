@@ -48,9 +48,9 @@ final class ResponseBuilder
      */
     public function withHeader(string $name, string $value) : self
     {
-        $self                  = clone $this;
-        $key                   = strtolower($name);
-        $self->headers[$key]   ??= [];
+        $self                = clone $this;
+        $key                 = strtolower($name);
+        $self->headers[$key] ??= [];
         $self->headers[$key][] = $value;
 
         return $self;
@@ -95,8 +95,8 @@ final class ResponseBuilder
      * Convenience: build a JSON response.
      *
      * @param mixed $data
-     * @param int   $statusCode
-     * @param int   $jsonFlags
+     * @param int $statusCode
+     * @param int $jsonFlags
      */
     public function json(mixed $data, int $statusCode = 200, int $jsonFlags = JSON_THROW_ON_ERROR) : self
     {
@@ -118,7 +118,7 @@ final class ResponseBuilder
             headers        : $this->headers,
             body           : null,
             reasonPhrase   : $this->reasonPhrase,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
 
         if ($this->body !== null) {

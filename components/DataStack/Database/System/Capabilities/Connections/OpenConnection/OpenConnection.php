@@ -18,8 +18,8 @@ final readonly class OpenConnection
 {
     public function __construct(
         private BuildPhysicalConnection $buildPhysicalConnection,
-        private EventBus|null           $eventBus = null,
-        private ExecutionScope|null     $scope = null
+        private EventBus|null       $eventBus = null,
+        private ExecutionScope|null $executionScope = null,
     ) {}
 
     /**
@@ -30,14 +30,14 @@ final readonly class OpenConnection
     public function using(array $config) : DatabaseConnection
     {
         $label = $config['name'] ?? 'default';
-        $scope = $this->scope ?? ExecutionScope::fresh();
+        $scope = $this->executionScope ?? ExecutionScope::fresh();
 
         try {
             $connection = $this->buildPhysicalConnection->from(config: $config);
 
             $this->eventBus?->dispatch(event: new ConnectionOpened(
                                                   connectionName: $label,
-                                                  correlationId : $scope->correlationId
+                                                  correlationId : $scope->correlationId,
                                               ));
 
             return $connection;
@@ -45,7 +45,7 @@ final readonly class OpenConnection
             $this->eventBus?->dispatch(event: new ConnectionFailed(
                                                   connectionName: $label,
                                                   exception     : $throwable,
-                                                  correlationId : $scope->correlationId
+                                                  correlationId : $scope->correlationId,
                                               ));
 
             throw $throwable;
@@ -57,16 +57,16 @@ final readonly class OpenConnection
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,
             eventBus               : $eventBus,
-            scope                  : $this->scope
+            scope                  : $this->executionScope,
         );
     }
 
-    public function withScope(ExecutionScope $scope) : self
+    public function withScope(ExecutionScope $executionScope) : self
     {
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,
             eventBus               : $this->eventBus,
-            scope                  : $scope
+            scope                  : $executionScope,
         );
     }
 }

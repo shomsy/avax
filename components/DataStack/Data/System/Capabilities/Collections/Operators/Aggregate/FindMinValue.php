@@ -13,6 +13,6 @@ final readonly class FindMinValue
 
     public function __invoke() : mixed
     {
-        return empty($this->items) ? null : min($this->items);
+        return $this->items === [] ? null : min($this->items);
     }
 }

@@ -13,7 +13,7 @@ final readonly class RecordField
 {
     public function __construct(
         private string $name,
-        private mixed  $value,
+        private mixed $value,
     )
     {
         if (trim($name) === '') {

@@ -147,14 +147,14 @@ final class ServicePool
      * @return array{returned: bool, overflow: bool, unsafe: bool, reason: string}
      */
     public function releasePooled(
-        string    $abstract,
-        mixed     $instance,
-        int       $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool      $disposable = false
+        string $abstract,
+        mixed  $instance,
+        int    $maxSize,
+        ?bool  $resetBeforeReuse = null,
+        bool   $disposable = false,
     ) : array
     {
-        $resetBeforeReuse               ??= true;
+        $resetBeforeReuse ??= true;
         $this->pooledOptions[$abstract] = [
             'maxSize'          => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
@@ -230,7 +230,7 @@ final class ServicePool
 
         return array_sum(array: array_map(
                                     callback: static fn (array $bucket) : int => count(value: $bucket),
-                                    array   : $this->pooled
+                                    array   : $this->pooled,
                                 ));
     }
 
@@ -270,8 +270,8 @@ final class ServicePool
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                callback: static fn (mixed $instance) : string => is_object(value: $instance) ? $instance::class : get_debug_type(value: $instance),
-                array   : $bucket
+                callback: static fn (mixed $instance) : string => get_debug_type($instance),
+                array   : $bucket,
             );
         }
 

@@ -15,7 +15,7 @@ final readonly class Transactions
     /**
      * @throws Throwable
      */
-    public function on(string|null $connectionName = null) : Transaction
+    public function on(string $connectionName = null) : Transaction
     {
         return $this->transactions->on(connectionName: $connectionName);
     }
@@ -23,7 +23,7 @@ final readonly class Transactions
     /**
      * @throws Throwable
      */
-    public function run(callable $callback, string|null $connectionName = null) : mixed
+    public function run(callable $callback, string $connectionName = null) : mixed
     {
         return $this->transactions->run(callback: $callback, connectionName: $connectionName);
     }

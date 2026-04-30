@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\ProtectC
 final readonly class SignCachedPayload
 {
     public function __construct(
-        private string $secret
+        private string $secret,
     ) {}
 
     public function verify(string $payload, string $signature) : bool

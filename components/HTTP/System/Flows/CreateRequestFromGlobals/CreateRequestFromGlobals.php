@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\CreateRequestFromGlobals;
 
+use Avax\Components\HTTP\System\Capabilities\Request;
 use Avax\Components\HTTP\System\Capabilities\Uri;
 
 final class CreateRequestFromGlobals
 {
-    public static function execute(): \Avax\Components\HTTP\System\Capabilities\Request
+    public static function execute(): Request
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $uri = self::getUri();
+        $uri    = self::getUri();
         $headers = self::getHeaders();
-        $body = self::getBody();
+        $body   = self::getBody();
 
-        return new \Avax\Components\HTTP\System\Capabilities\Request(
+        return new Request(
             $method,
             $uri,
             'HTTP/1.1',
@@ -26,11 +27,11 @@ final class CreateRequestFromGlobals
 
     private static function getUri(): Uri
     {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-        $port = $_SERVER['SERVER_PORT'] ?? 80;
-        $path = $_SERVER['REQUEST_URI'] ?? '/';
-        $query = $_SERVER['QUERY_STRING'] ?? '';
+        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host   = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+        $port   = $_SERVER['SERVER_PORT'] ?? 80;
+        $path   = $_SERVER['REQUEST_URI'] ?? '/';
+        $query  = $_SERVER['QUERY_STRING'] ?? '';
 
         return new Uri($scheme, $host, $port, $path, $query);
     }
@@ -44,6 +45,7 @@ final class CreateRequestFromGlobals
                 $headers[$name] = $value;
             }
         }
+
         return $headers;
     }
 

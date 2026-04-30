@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Container;
 use Avax\Components\Application\Container\DI\ContainerInterface;
@@ -76,8 +76,8 @@ $expectedMethods = [
 ];
 
 foreach ($expectedMethods as $method) {
-    assertTrue(condition: method_exists(object_or_class: ContainerInterface::class, method: $method), message: "ContainerInterface should expose [{$method}].");
-    assertTrue(condition: method_exists(object_or_class: Container::class, method: $method), message: "Container should implement [{$method}].");
+    assertTrue(condition: method_exists(object_or_class: ContainerInterface::class, method: $method), message: sprintf('ContainerInterface should expose [%s].', $method));
+    assertTrue(condition: method_exists(object_or_class: Container::class, method: $method), message: sprintf('Container should implement [%s].', $method));
 }
 
 $forbiddenLegacyMethods = [
@@ -85,9 +85,9 @@ $forbiddenLegacyMethods = [
     'endScope',
 ];
 
-foreach ($forbiddenLegacyMethods as $method) {
-    assertTrue(condition: ! method_exists(object_or_class: ContainerInterface::class, method: $method), message: "Legacy public method [{$method}] must stay absent from ContainerInterface.");
-    assertTrue(condition: ! method_exists(object_or_class: Container::class, method: $method), message: "Legacy public method [{$method}] must stay absent from Container.");
+foreach ($forbiddenLegacyMethods as $forbiddenLegacyMethod) {
+    assertTrue(condition: ! method_exists(object_or_class: ContainerInterface::class, method: $forbiddenLegacyMethod), message: sprintf('Legacy public method [%s] must stay absent from ContainerInterface.', $forbiddenLegacyMethod));
+    assertTrue(condition: ! method_exists(object_or_class: Container::class, method: $forbiddenLegacyMethod), message: sprintf('Legacy public method [%s] must stay absent from Container.', $forbiddenLegacyMethod));
 }
 
 echo basename(path: __FILE__) . " ok\n";

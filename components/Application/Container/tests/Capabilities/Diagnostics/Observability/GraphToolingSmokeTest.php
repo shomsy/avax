@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
-$tool    = dirname(path: __DIR__, levels: 4) . '/tools/graph.php';
-$fixture = dirname(path: __DIR__, levels: 3) . '/fixtures/graph_tool_fixture.php';
+$tool    = dirname(path: __DIR__, 4) . '/tools/graph.php';
+$fixture = dirname(path: __DIR__, 3) . '/fixtures/graph_tool_fixture.php';
 
 $dependencyJson        = shell_exec(command: 'php ' . escapeshellarg(arg: $tool) . ' graph:export ' . escapeshellarg(arg: $fixture) . ' json dependency');
 $sliceMermaid          = shell_exec(command: 'php ' . escapeshellarg(arg: $tool) . ' graph:export ' . escapeshellarg(arg: $fixture) . ' mermaid slice');
@@ -30,7 +30,7 @@ assertTrue(condition: is_string(value: $governanceJson) && str_contains(haystack
 assertTrue(condition: is_string(value: $diffJson) && str_contains(haystack: $diffJson, needle: '"kind": "diff"'), message: 'Graph diff export should expose a diff artifact.');
 assertTrue(
     condition: is_string(value: $diffJson) && (str_contains(haystack: $diffJson, needle: '"ownershipMoves"') || str_contains(haystack: $diffJson, needle: '"addedEdges"')),
-    message  : 'Graph diff export should expose structural changes.'
+    message  : 'Graph diff export should expose structural changes.',
 );
 assertTrue(condition: is_string(value: $sliceJson) && str_contains(haystack: $sliceJson, needle: '"slice": "flow.login"'), message: 'graph:slice should return per-slice diagnostics.');
 assertTrue(condition: is_string(value: $whyJson) && str_contains(haystack: $whyJson, needle: '"why"'), message: 'Architectural debugger commands should return story-grade payloads.');

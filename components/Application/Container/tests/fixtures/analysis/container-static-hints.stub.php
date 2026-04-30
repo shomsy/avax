@@ -16,82 +16,60 @@ declare(strict_types=1);
  */
 return [
     'schemaVersion' => 1,
-    'serviceIds'    =>
-        [
+    'serviceIds'    => [
             'HintConditionalService',
             'HintIdentityService',
             'HintPipelineStepA',
             'HintPipelineStepB',
             'HintRuntimeInputConsumer',
         ],
-    'sliceExports'  =>
-        [
-            'capability.identity' =>
-                [
+    'sliceExports'  => [
+        'capability.identity' => [
                     'HintConditionalService',
                     'HintIdentityService',
                 ],
-            'flow.hints'          =>
-                [
+        'flow.hints'          => [
                 ],
         ],
-    'sliceImports'  =>
-        [
-            'capability.identity' =>
-                [
+    'sliceImports'  => [
+        'capability.identity' => [
                 ],
-            'flow.hints'          =>
-                [
+        'flow.hints'          => [
                     'capability.identity',
                 ],
         ],
-    'groups'        =>
-        [
-            'hint.pipeline' =>
-                [
+    'groups'        => [
+        'hint.pipeline' => [
                     'HintPipelineStepA',
                     'HintPipelineStepB',
                 ],
         ],
-    'runtimeInputs' =>
-        [
-            'HintConditionalService'   =>
-                [
+    'runtimeInputs' => [
+        'HintConditionalService'   => [
                 ],
-            'HintIdentityService'      =>
-                [
+        'HintIdentityService'      => [
                 ],
-            'HintPipelineStepA'        =>
-                [
+        'HintPipelineStepA'        => [
                 ],
-            'HintPipelineStepB'        =>
-                [
+        'HintPipelineStepB'        => [
                 ],
-            'HintRuntimeInputConsumer' =>
-                [
+        'HintRuntimeInputConsumer' => [
                     'token',
                 ],
         ],
-    'conditionals'  =>
-        [
-            'HintConditionalService' =>
-                [
-                    'profiles' =>
-                        [
+    'conditionals'  => [
+        'HintConditionalService' => [
+            'profiles' => [
                             'prod',
                         ],
-                    'flags'    =>
-                        [
+            'flags'    => [
                             'beta',
                         ],
-                    'tenants'  =>
-                        [
+            'tenants'  => [
                         ],
-                    'regions'  =>
-                        [
+            'regions'  => [
                         ],
-                    'modes'    =>
-                        [
+            'modes'    => [
                         ],
                     'fallback' => false,
                 ],

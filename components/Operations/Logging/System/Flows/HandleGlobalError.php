@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Flows;
@@ -14,20 +15,20 @@ final readonly class HandleGlobalError
     public function execute(Throwable $throwable): void
     {
         $this->logger->error($throwable->getMessage(), [
-            'file' => $throwable->getFile(),
-            'line' => $throwable->getLine(),
-            'trace' => $throwable->getTraceAsString()
+            'file'  => $throwable->getFile(),
+            'line'  => $throwable->getLine(),
+            'trace' => $throwable->getTraceAsString(),
         ]);
 
-        if (!headers_sent()) {
+        if (! headers_sent()) {
             header('Content-Type: application/json');
             http_response_code(500);
         }
 
         echo json_encode([
-            'status' => 500,
+                             'status' => 500,
             'message' => 'Internal Server Error',
-            'error' => $throwable->getMessage()
+                             'error'  => $throwable->getMessage(),
         ]);
     }
 

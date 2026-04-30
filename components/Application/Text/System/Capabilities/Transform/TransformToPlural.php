@@ -14,6 +14,7 @@ final class TransformToPlural
         if (preg_match('/[sxz]$|sh$|ch$/i', $value)) {
             return new Text($value . 'es');
         }
+
         if (preg_match('/([^aeiou])y$/i', $value)) {
             return new Text(substr($value, 0, -1) . 'ies');
         }

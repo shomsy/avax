@@ -37,15 +37,20 @@ use SensitiveParameter;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        #[SensitiveParameter] private Authentication|null           $authentication = null,
-        #[SensitiveParameter] private Sessions|null                 $sessions = null,
-        #[SensitiveParameter] private Account|null                  $account = null,
-        private Recovery|null                                       $recovery = null,
-        private Verification|null                                   $verification = null,
-        private Mfa|null                                            $mfa = null,
-        private Passkey|null                                        $passkey = null,
-        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter]
+        private Authentication|null           $authentication = null,
+        #[SensitiveParameter]
+        private Sessions|null                 $sessions = null,
+        #[SensitiveParameter]
+        private Account|null                  $account = null,
+        private Recovery|null                 $recovery = null,
+        private Verification|null             $verification = null,
+        private Mfa|null                      $mfa = null,
+        private Passkey|null                  $passkey = null,
+        #[SensitiveParameter]
+        private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter]
+        private JwtIdentityInterface|null     $jwtIdentity = null,
     )
     {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
@@ -54,22 +59,24 @@ final readonly class Identity implements IdentityInterface
     }
 
     public static function fromBackends(
-        #[SensitiveParameter] SessionIdentityInterface|null $sessionIdentity = null,
-        #[SensitiveParameter] JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter]
+        SessionIdentityInterface $sessionIdentity = null,
+        #[SensitiveParameter]
+        JwtIdentityInterface     $jwtIdentity = null,
     ) : self
     {
         return new self(
             sessionIdentity: $sessionIdentity,
-            jwtIdentity    : $jwtIdentity
+            jwtIdentity    : $jwtIdentity,
         );
     }
 
     // ── Owned behavior (cross-cutting identity lifecycle) ──
 
     public function issue(
-        User                   $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false
+        User              $user,
+        DateTimeImmutable $mfaVerifiedAt = null,
+        bool              $phishingResistant = false,
     ) : IssuedAuthentication
     {
         if (! $user->isActive()) {
@@ -79,18 +86,18 @@ final readonly class Identity implements IdentityInterface
         $refreshToken = $this->jwtIdentity?->issueRefreshToken(
             user             : $user,
             mfaVerifiedAt    : $mfaVerifiedAt,
-            phishingResistant: $phishingResistant
+            phishingResistant: $phishingResistant,
         );
         $sessionId    = $this->sessionIdentity?->issue(
             userId           : $user->getId()->value,
             mfaVerifiedAt    : $mfaVerifiedAt,
-            phishingResistant: $phishingResistant
+            phishingResistant: $phishingResistant,
         );
         $accessToken  = $this->jwtIdentity?->issue(
             user                : $user,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant,
-            refreshTokenFamilyId: $refreshToken?->familyId
+            refreshTokenFamilyId: $refreshToken?->familyId,
         );
 
         return new IssuedAuthentication(
@@ -99,7 +106,7 @@ final readonly class Identity implements IdentityInterface
             accessToken      : $accessToken,
             refreshToken     : $refreshToken,
             mfaVerifiedAt    : $mfaVerifiedAt,
-            phishingResistant: $phishingResistant
+            phishingResistant: $phishingResistant,
         );
     }
 
@@ -116,7 +123,7 @@ final readonly class Identity implements IdentityInterface
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(AuthenticationContext|null $context = null) : void
+    public function clear(AuthenticationContext $context = null) : void
     {
         $this->sessionIdentity?->clear();
 
@@ -128,7 +135,7 @@ final readonly class Identity implements IdentityInterface
         ) {
             $this->jwtIdentity->revoke(
                 tokenId  : $context->accessTokenId(),
-                expiresAt: $context->accessTokenExpiresAt()
+                expiresAt: $context->accessTokenExpiresAt(),
             );
         }
     }

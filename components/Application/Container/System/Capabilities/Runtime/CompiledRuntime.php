@@ -20,20 +20,20 @@ use ReflectionException;
  */
 final class CompiledRuntime
 {
-    private int                             $compiledRevision = -1;
-    private readonly string                 $executionMode;
+    private int                            $compiledRevision = -1;
+    private readonly string                $executionMode;
     private readonly ResolutionMetrics|null $metrics;
-    private readonly HotPathInliner         $inliner;
-    private readonly CompileContainer|null  $compiler;
+    private readonly HotPathInliner        $inliner;
+    private readonly CompileContainer|null $compiler;
 
     public function __construct(
-        CompileContainer|null  $compiler = null,
-        HotPathInliner|null    $inliner = null,
-        ResolutionMetrics|null $metrics = null,
-        string                 $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
+        CompileContainer  $compiler = null,
+        HotPathInliner    $inliner = null,
+        ResolutionMetrics $metrics = null,
+        string            $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
     )
     {
-        $inliner             ??= new HotPathInliner;
+        $inliner ??= new HotPathInliner();
         $this->compiler      = $compiler;
         $this->inliner       = $inliner;
         $this->metrics       = $metrics;
@@ -66,7 +66,7 @@ final class CompiledRuntime
      * @throws ReflectionException
      * @throws JsonException
      */
-    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
+    public function compile(array $serviceIds = null, array $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {
         $serviceIds       ??= [];
         $validationIssues ??= [];
@@ -74,7 +74,7 @@ final class CompiledRuntime
         return $this->compiler?->compile(
             serviceIds      : $serviceIds,
             validationIssues: $validationIssues,
-            warmed          : $warmed
+            warmed          : $warmed,
         );
     }
 
@@ -111,7 +111,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function refresh(ServiceRegistry $registrations, string|null $serviceId = null) : void
+    public function refresh(ServiceRegistry $registrations, string $serviceId = null) : void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             $this->inliner->detach();
@@ -130,7 +130,7 @@ final class CompiledRuntime
         }
 
         $compiled = $this->compiler->load(
-            serviceIds: $serviceId !== null ? [$serviceId] : []
+            serviceIds: $serviceId !== null ? [$serviceId] : [],
         );
         if ($compiled !== null) {
             $this->inliner->attach(compiled: $compiled);
@@ -181,10 +181,10 @@ final class CompiledRuntime
     public function state(ServiceRegistry $registrations, string $serviceId) : array
     {
         $this->refresh(registrations: $registrations, serviceId: $serviceId);
-        $report       = $this->compiler?->report(serviceIds: [$serviceId]);
-        $decision     = $this->decision(
+        $report   = $this->compiler?->report(serviceIds: [$serviceId]);
+        $decision = $this->decision(
             registrations: $registrations,
-            request      : new ResolveRequest(serviceId: $serviceId)
+            request      : new ResolveRequest(serviceId: $serviceId),
         );
         $inlinerState = $this->inliner->state(serviceId: $serviceId);
 
@@ -271,7 +271,7 @@ final class CompiledRuntime
             'decision'    => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
                 ? 'generated'
                 : 'compiled',
-            'reason'      => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
+            'reason' => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
                 ? 'generated execution path is attached and usable'
                 : 'compiled hot path is attached and usable',
         ];
@@ -299,7 +299,7 @@ final class CompiledRuntime
 
         return $registrations->getContextualMatch(
                 consumer: $consumer,
-                needs   : $request->serviceId
+                needs   : $request->serviceId,
             ) === null;
     }
 
@@ -310,7 +310,7 @@ final class CompiledRuntime
         return $this->inliner->resolve(
             serviceId: $request->serviceId,
             resolver : $resolver,
-            request  : $request
+            request  : $request,
         );
     }
 }

@@ -9,7 +9,7 @@ final class TypedResult
     /**
      * @template T of object
      *
-     * @param class-string<T>         $className
+     * @param class-string<T> $className
      * @param array<array-key, mixed> $rows
      *
      * @return list<T>
@@ -19,15 +19,15 @@ final class TypedResult
         $mapper = new ResultMapper(className: $className);
 
         return array_map(
-            callback: fn (array $row) => $mapper->map(row: $row),
-            array   : $rows
+            callback: static fn (array $row) => $mapper->map(row: $row),
+            array   : $rows,
         );
     }
 
     /**
      * @template T of object
      *
-     * @param class-string<T>         $className
+     * @param class-string<T> $className
      * @param array<array-key, mixed> $row
      *
      * @return T|null

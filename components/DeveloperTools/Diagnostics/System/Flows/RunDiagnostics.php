@@ -1,3 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Avax\Components\DeveloperTools\Diagnostics\System\Flows;
-final class RunDiagnostics { public static function execute(): array { return [\Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\Diagnostics::health()]; } }
+
+use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\Diagnostics;
+
+final class RunDiagnostics
+{
+    public static function execute() : array
+    {
+        return [Diagnostics::health()];
+    }
+}

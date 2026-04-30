@@ -8,10 +8,10 @@ $tool      = dirname(path: __DIR__, levels: 4) . '/tools/generate-runtime-artifa
 $fixture   = dirname(path: __DIR__, levels: 3) . '/fixtures/generated_runtime_fixture.php';
 $outputDir = sys_get_temp_dir() . '/generated-artifacts-smoke-' . uniqid();
 
-mkdir(directory: $outputDir, permissions: 0777, recursive: true);
+mkdir(directory: $outputDir, permissions: 0o777, recursive: true);
 
 $result = shell_exec(
-    command: 'php ' . escapeshellarg(arg: $tool) . ' ' . escapeshellarg(arg: $fixture) . ' ' . escapeshellarg(arg: $outputDir)
+    command: 'php ' . escapeshellarg(arg: $tool) . ' ' . escapeshellarg(arg: $fixture) . ' ' . escapeshellarg(arg: $outputDir),
 );
 
 assertTrue(condition: is_string(value: $result) && str_contains(haystack: $result, needle: 'compile-report.json'), message: 'Generated artifact tool should report emitted files.');

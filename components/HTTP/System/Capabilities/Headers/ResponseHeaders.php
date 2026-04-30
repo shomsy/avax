@@ -11,12 +11,14 @@ final class ResponseHeaders
     public function set(string $name, string $value): self
     {
         $this->headers[$name] = [$value];
+
         return $this;
     }
 
     public function add(string $name, string $value): self
     {
         $this->headers[$name][] = $value;
+
         return $this;
     }
 

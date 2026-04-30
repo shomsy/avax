@@ -18,14 +18,14 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_stores_and_retrieves_values() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $cache->set(key: 'key', value: 'value');
+        $avaxCache->set(key: 'key', value: 'value');
 
-        $this->assertSame(expected: 'value', actual: $cache->get(key: 'key'));
+        $this->assertSame(expected: 'value', actual: $avaxCache->get(key: 'key'));
     }
 
     /**
@@ -33,12 +33,12 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_returns_default_for_missing_key() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $this->assertSame(expected: 'default', actual: $cache->get(key: 'missing', default: 'default'));
+        $this->assertSame(expected: 'default', actual: $avaxCache->get(key: 'missing', default: 'default'));
     }
 
     /**
@@ -46,15 +46,15 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_stores_null_without_confusion() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $cache->set(key: 'null-key', value: null);
+        $avaxCache->set(key: 'null-key', value: null);
 
-        $this->assertTrue(condition: $cache->has(key: 'null-key'));
-        $this->assertNull(actual: $cache->get(key: 'null-key'));
+        $this->assertTrue(condition: $avaxCache->has(key: 'null-key'));
+        $this->assertNull(actual: $avaxCache->get(key: 'null-key'));
     }
 
     /**
@@ -62,16 +62,16 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_deletes_value() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $cache->set(key: 'delete-key', value: 'value');
-        $this->assertTrue(condition: $cache->has(key: 'delete-key'));
+        $avaxCache->set(key: 'delete-key', value: 'value');
+        $this->assertTrue(condition: $avaxCache->has(key: 'delete-key'));
 
-        $cache->delete(key: 'delete-key');
-        $this->assertFalse(condition: $cache->has(key: 'delete-key'));
+        $avaxCache->delete(key: 'delete-key');
+        $this->assertFalse(condition: $avaxCache->has(key: 'delete-key'));
     }
 
     /**
@@ -79,18 +79,18 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_clears_all_values() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $cache->set(key: 'key1', value: 'value1');
-        $cache->set(key: 'key2', value: 'value2');
+        $avaxCache->set(key: 'key1', value: 'value1');
+        $avaxCache->set(key: 'key2', value: 'value2');
 
-        $cache->clear();
+        $avaxCache->clear();
 
-        $this->assertFalse(condition: $cache->has(key: 'key1'));
-        $this->assertFalse(condition: $cache->has(key: 'key2'));
+        $this->assertFalse(condition: $avaxCache->has(key: 'key1'));
+        $this->assertFalse(condition: $avaxCache->has(key: 'key2'));
     }
 
     /**
@@ -98,15 +98,15 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_remembers_missing_value() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
 
-        $result = $cache->remember(key: 'compute-key', ttl: 3600, loader: static fn () => 'computed');
+        $result = $avaxCache->remember(key: 'compute-key', ttl: 3600, loader: static fn () : string => 'computed');
 
         $this->assertSame(expected: 'computed', actual: $result);
-        $this->assertSame(expected: 'computed', actual: $cache->get(key: 'compute-key'));
+        $this->assertSame(expected: 'computed', actual: $avaxCache->get(key: 'compute-key'));
     }
 
     /**
@@ -114,14 +114,14 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_does_not_reload_existing_value() : void
     {
-        $clock = new FrozenClock(timestamp: Timestamp::now());
-        $store = new InMemoryCacheStore(clock: $clock);
+        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $cache = new AvaxCache(store: $store, clock: $clock);
-        $cache->set(key: 'existing', value: 'original');
+        $avaxCache = new AvaxCache(store: $inMemoryCacheStore, clock: $frozenClock);
+        $avaxCache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result    = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result    = $avaxCache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';

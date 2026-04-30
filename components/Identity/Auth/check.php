@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 $baseDir       = '/home/shomsy/projects/components/Foundation/Auth/System';
 $baseNamespace = 'Avax\\Auth\\System';
 
@@ -19,7 +21,7 @@ foreach ($iterator as $file) {
                 $mismatches[] = [
                     'file'     => $file->getPathname(),
                     'actual'   => $actualNamespace,
-                    'expected' => $expectedNamespace
+                    'expected' => $expectedNamespace,
                 ];
             }
         }

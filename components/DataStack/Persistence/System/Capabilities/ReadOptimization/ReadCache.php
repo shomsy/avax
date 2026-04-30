@@ -12,9 +12,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Observability\QueryFi
 final readonly class CacheEntry
 {
     public function __construct(
-        public mixed  $value,
-        public float  $createdAt,
-        public float  $ttl,
+        public mixed $value,
+        public float $createdAt,
+        public float $ttl,
         public string $fingerprint = '',
         public string $key = '',
     ) {}
@@ -22,9 +22,9 @@ final readonly class CacheEntry
     /**
      * Checks if this cache entry has expired.
      */
-    public function isExpired(float|null $now = null) : bool
+    public function isExpired(float $now = null) : bool
     {
-        $now = $now ?? microtime(true);
+        $now ??= microtime(true);
 
         return ($now - $this->createdAt) >= $this->ttl;
     }
@@ -32,9 +32,9 @@ final readonly class CacheEntry
     /**
      * Returns the remaining time-to-live in seconds.
      */
-    public function remainingTtl(float|null $now = null) : float
+    public function remainingTtl(float $now = null) : float
     {
-        $now     = $now ?? microtime(true);
+        $now ??= microtime(true);
         $elapsed = $now - $this->createdAt;
 
         return max(0.0, $this->ttl - $elapsed);
@@ -43,9 +43,9 @@ final readonly class CacheEntry
     /**
      * Returns the age of this entry in seconds.
      */
-    public function age(float|null $now = null) : float
+    public function age(float $now = null) : float
     {
-        $now = $now ?? microtime(true);
+        $now ??= microtime(true);
 
         return $now - $this->createdAt;
     }
@@ -57,10 +57,10 @@ final readonly class CacheEntry
 final readonly class CacheResult
 {
     public function __construct(
-        public bool   $hit,
-        public mixed  $value = null,
+        public bool  $hit,
+        public mixed $value = null,
         public string $key = '',
-        public float  $ttl = 0.0,
+        public float $ttl = 0.0,
     ) {}
 
     /**
@@ -132,9 +132,9 @@ final class ReadCache
     private int $misses = 0;
 
     public function __construct(
-        float                   $defaultTtl = 60.0,
-        int                     $maxEntries = 0,
-        QueryFingerprinter|null $fingerprinter = null,
+        float              $defaultTtl = 60.0,
+        int                $maxEntries = 0,
+        QueryFingerprinter $fingerprinter = null,
     )
     {
         $this->defaultTtl    = $defaultTtl;
@@ -150,7 +150,7 @@ final class ReadCache
      *
      * @return T
      */
-    public function remember(string $key, callable $callback, float|null $ttl = null, array $tags = []) : mixed
+    public function remember(string $key, callable $callback, float $ttl = null, array $tags = []) : mixed
     {
         $result = $this->get($key);
 
@@ -229,14 +229,14 @@ final class ReadCache
      * @param string|null  $fingerprint Query fingerprint for pattern invalidation
      */
     public function put(
-        string      $key,
-        mixed       $value,
-        float|null  $ttl = null,
-        array       $tags = [],
-        string|null $fingerprint = null,
+        string $key,
+        mixed  $value,
+        float  $ttl = null,
+        array  $tags = [],
+        string $fingerprint = null,
     ) : void
     {
-        $ttl = $ttl ?? $this->defaultTtl;
+        $ttl ??= $this->defaultTtl;
 
         $entry = new CacheEntry(
             value      : $value,
@@ -297,10 +297,10 @@ final class ReadCache
      * @param list<string> $tags  Tags for invalidation
      */
     public function cacheQuery(
-        string     $sql,
-        mixed      $value,
-        float|null $ttl = null,
-        array      $tags = [],
+        string $sql,
+        mixed  $value,
+        float  $ttl = null,
+        array  $tags = [],
     ) : void
     {
         $key         = $this->generateQueryKey($sql);
@@ -462,7 +462,7 @@ final class ReadCache
 
         return count(array_filter(
                          $this->store,
-                         fn (CacheEntry $entry) : bool => ! $entry->isExpired($now),
+                         static fn (CacheEntry $entry) : bool => ! $entry->isExpired($now),
                      ));
     }
 

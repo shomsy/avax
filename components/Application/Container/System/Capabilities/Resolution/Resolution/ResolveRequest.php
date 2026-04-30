@@ -9,34 +9,29 @@ namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
  */
 final readonly class ResolveRequest
 {
-    public string|null $consumer;
-    public bool        $manualInjection;
-    public self|null   $parent;
-    public array       $context;
-    public array       $overrides;
-    public string      $serviceId;
+    public bool  $manualInjection;
+    public array $context;
+
+    public array $overrides;
 
     /**
      * @param array<string, mixed> $overrides
      */
     public function __construct(
-        string      $serviceId,
-        array|null  $overrides = null,
-        array|null  $context = null,
-        self|null   $parent = null,
-        bool|null   $manualInjection = null,
-        string|null $consumer = null
+        public string      $serviceId,
+        ?array             $overrides = null,
+        ?array             $context = null,
+        public self|null   $parent = null,
+        ?bool              $manualInjection = null,
+        public string|null $consumer = null,
     )
     {
-        $overrides             ??= [];
-        $context               ??= [];
-        $manualInjection       ??= false;
-        $this->serviceId       = $serviceId;
+        $overrides       ??= [];
+        $context         ??= [];
+        $manualInjection ??= false;
         $this->overrides       = $overrides;
         $this->context         = $context;
-        $this->parent          = $parent;
         $this->manualInjection = $manualInjection;
-        $this->consumer        = $consumer;
     }
 
     /**
@@ -50,7 +45,7 @@ final readonly class ResolveRequest
             context        : $this->context,
             parent         : $this,
             manualInjection: $this->manualInjection,
-            consumer       : $this->serviceId
+            consumer       : $this->serviceId,
         );
     }
 
@@ -67,7 +62,7 @@ final readonly class ResolveRequest
             context        : $context,
             parent         : $this->parent,
             manualInjection: $this->manualInjection,
-            consumer       : $this->consumer
+            consumer       : $this->consumer,
         );
     }
 
@@ -77,10 +72,11 @@ final readonly class ResolveRequest
     public function contains(string $serviceId) : bool
     {
         $current = $this->parent;
-        while ( $current !== null ) {
+        while ( $current instanceof ResolveRequest ) {
             if ($current->serviceId === $serviceId) {
                 return true;
             }
+
             $current = $current->parent;
         }
 

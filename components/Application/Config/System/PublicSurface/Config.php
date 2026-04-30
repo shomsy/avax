@@ -16,7 +16,7 @@ use RuntimeException;
 final readonly class Config
 {
     public function __construct(
-        private ConfigurationRepository $repository
+        private ConfigurationRepository $configurationRepository,
     ) {}
 
     /**
@@ -26,11 +26,11 @@ final readonly class Config
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        if (! $this->repository->has($key) && $default === null) {
-            throw new RuntimeException("Configuration key [{$key}] does not exist.");
+        if (! $this->configurationRepository->has($key) && $default === null) {
+            throw new RuntimeException(sprintf('Configuration key [%s] does not exist.', $key));
         }
 
-        return $this->repository->get($key, $default);
+        return $this->configurationRepository->get($key, $default);
     }
 
     /**
@@ -38,7 +38,7 @@ final readonly class Config
      */
     public function has(string $key): bool
     {
-        return $this->repository->has($key);
+        return $this->configurationRepository->has($key);
     }
 
     /**
@@ -46,7 +46,7 @@ final readonly class Config
      */
     public function all() : array
     {
-        return $this->repository->all();
+        return $this->configurationRepository->all();
     }
 
     /**
@@ -56,6 +56,6 @@ final readonly class Config
      */
     public function set(string $key, mixed $value) : void
     {
-        $this->repository->set($key, $value);
+        $this->configurationRepository->set($key, $value);
     }
 }

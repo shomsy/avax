@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Access;
@@ -15,8 +16,10 @@ final readonly class ArrayPath
             if (! is_array($items) || ! array_key_exists($key, $items)) {
                 return $default;
             }
+
             $items = $items[$key];
         }
+
         return $items;
     }
 
@@ -28,8 +31,10 @@ final readonly class ArrayPath
             if (! isset($items[$key]) || ! is_array($items[$key])) {
                 $items[$key] = [];
             }
+
             $items = &$items[$key];
         }
+
         $items[array_shift($keys)] = $value;
     }
 }

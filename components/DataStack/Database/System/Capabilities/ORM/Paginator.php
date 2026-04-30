@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM;
@@ -9,7 +10,7 @@ final readonly class Paginator
         public array $items,
         public int $total,
         public int $perPage,
-        public int $currentPage
+        public int $currentPage,
     ) {}
 
     public function lastPage(): int

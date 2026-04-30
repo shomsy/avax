@@ -8,7 +8,7 @@ readonly class FilesystemConfig
 {
     public function __construct(
         public string $default = 'local',
-        public array  $disks = []
+        public array $disks = [],
     ) {}
 
     public static function defaults() : self
@@ -19,7 +19,7 @@ readonly class FilesystemConfig
                          'local' => [
                              'driver' => 'local',
                          ],
-                     ]
+                     ],
         );
     }
 

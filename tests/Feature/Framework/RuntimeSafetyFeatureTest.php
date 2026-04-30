@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Feature\Framework;
 
-use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
-use Avax\Framework\System\Capabilities\RequestScope\RequestScopeId;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -89,12 +87,18 @@ final class RuntimeSafetyFeatureTest extends TestCase
         $scopeB = $scopeStore->current();
 
         // Assert: Request A session data must NOT be present
-        self::assertNull($scopeB->read(key: 'session_user_id'),
-                         'Request A session_user_id must not leak into Request B');
-        self::assertNull($scopeB->read(key: 'session_role'),
-                         'Request A session_role must not leak into Request B');
-        self::assertNull($scopeB->read(key: 'session_tenant'),
-                         'Request A session_tenant must not leak into Request B');
+        self::assertNull(
+            $scopeB->read(key: 'session_user_id'),
+            'Request A session_user_id must not leak into Request B',
+        );
+        self::assertNull(
+            $scopeB->read(key: 'session_role'),
+            'Request A session_role must not leak into Request B',
+        );
+        self::assertNull(
+            $scopeB->read(key: 'session_tenant'),
+            'Request A session_tenant must not leak into Request B',
+        );
 
         // Request B can write its own data
         $scopeB->write(key: 'session_user_id', value: 99);
@@ -190,20 +194,29 @@ final class RuntimeSafetyFeatureTest extends TestCase
         $registry = new StateResetRegistry();
 
         // Create a mock resettable that tracks reset calls
-        $mockResettable = new class implements ResettableState {
+        $mockResettable = new class () implements ResettableState {
             public int $resetCount = 0;
 
-            public function resetState() : void { $this->resetCount++; }
+            public function resetState() : void
+            {
+                $this->resetCount++;
+            }
         };
 
         $registry->register(name: 'test-component', state: $mockResettable);
 
         $report = $registry->resetAll();
 
-        self::assertSame(1, $mockResettable->resetCount,
-                         'ResettableState::resetState should be called once');
-        self::assertCount(1, $report->resetComponents(),
-                          'Reset report should contain one component');
+        self::assertSame(
+            1,
+            $mockResettable->resetCount,
+            'ResettableState::resetState should be called once',
+        );
+        self::assertCount(
+            1,
+            $report->resetComponents(),
+            'Reset report should contain one component',
+        );
     }
 
     #[Test]
@@ -222,15 +235,21 @@ final class RuntimeSafetyFeatureTest extends TestCase
         // Reset the store
         $store->resetState();
 
-        self::assertFalse($store->hasCurrent(),
-                          'Store should not have current scope after reset');
+        self::assertFalse(
+            $store->hasCurrent(),
+            'Store should not have current scope after reset',
+        );
 
         // Open a new scope -- should be completely fresh
         $newScope = $store->open();
-        self::assertNull($newScope->read(key: 'leaked_data'),
-                         'Leaked data from previous scope must not be present');
-        self::assertNull($newScope->read(key: 'user_id'),
-                         'User ID from previous scope must not be present');
+        self::assertNull(
+            $newScope->read(key: 'leaked_data'),
+            'Leaked data from previous scope must not be present',
+        );
+        self::assertNull(
+            $newScope->read(key: 'user_id'),
+            'User ID from previous scope must not be present',
+        );
     }
 
     #[Test]

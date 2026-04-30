@@ -20,10 +20,10 @@ final class ValidateData
      */
     public function executeOrFail(array $data, array $rules, array $messages = []) : array
     {
-        $result = $this->execute($data, $rules, $messages);
+        $validationFailure = $this->execute($data, $rules, $messages);
 
-        if ($result->fails()) {
-            throw new InvalidArgumentException($result->first() ?? 'Validation failed');
+        if ($validationFailure->fails()) {
+            throw new InvalidArgumentException($validationFailure->first() ?? 'Validation failed');
         }
 
         return $data;

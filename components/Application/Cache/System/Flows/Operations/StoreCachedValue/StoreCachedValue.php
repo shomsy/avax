@@ -18,41 +18,41 @@ use Throwable;
 final readonly class StoreCachedValue
 {
     public function __construct(
-        private CacheStore        $store,
+        private CacheStore        $cacheStore,
         private Clock             $clock,
-        private CacheMetrics|null $metrics = null,
-        private CacheTtl          $ttlCalculator = new CacheTtl()
+        private CacheMetrics|null $cacheMetrics = null,
+        private CacheTtl          $cacheTtl = new CacheTtl(),
     ) {}
 
-    public function store(CacheKey $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         $startTime = hrtime(as_integer: true);
 
         try {
-            $expiresAt     = $this->ttlCalculator->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
+            $expiresAt     = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
             $defaultExpiry = $expiresAt ?? $this->clock->now()->add(
-                duration: Duration::ofSeconds(seconds: 86400)
+                duration: Duration::ofSeconds(seconds: 86400),
             );
 
             $lifecycle = CachedValueLifecycle::create(
                 createdAt: $this->clock->now(),
                 expiresAt: $defaultExpiry,
-                clock    : $this->clock
+                clock    : $this->clock,
             );
 
-            $record = new StoredCacheRecord(
+            $storedCacheRecord = new StoredCacheRecord(
                 value    : $value,
-                lifecycle: $lifecycle
+                lifecycle: $lifecycle,
             );
 
-            $this->store->write(key: $key, record: $record);
+            $this->cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
 
             $this->recordLatency(startTime: $startTime);
-            $this->metrics?->recordWrite();
+            $this->cacheMetrics?->recordWrite();
 
             return true;
-        } catch (Throwable $e) {
-            $this->metrics?->recordStoreFailure();
+        } catch (Throwable) {
+            $this->cacheMetrics?->recordStoreFailure();
 
             return false;
         }
@@ -60,13 +60,13 @@ final readonly class StoreCachedValue
 
     private function recordLatency(int $startTime) : void
     {
-        if ($this->metrics === null) {
+        if ($this->cacheMetrics === null) {
             return;
         }
 
         $endTime             = hrtime(as_integer: true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
-        $this->metrics->recordLatency(microseconds: $latencyMicroseconds);
+        $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);
     }
 }

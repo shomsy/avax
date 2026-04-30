@@ -11,7 +11,7 @@ use Closure;
  */
 final readonly class RegisterSagaStepRunner
 {
-    public function register(Closure $stepRunner, SagaRuntimeConfig|null $config = null) : SagaRuntimeConfig
+    public function register(Closure $stepRunner, SagaRuntimeConfig $config = null) : SagaRuntimeConfig
     {
         return ($config ?? new SagaRuntimeConfig())->withStepRunner(stepRunner: $stepRunner);
     }

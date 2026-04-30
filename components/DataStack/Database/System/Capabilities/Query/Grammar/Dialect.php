@@ -22,18 +22,18 @@ enum Dialect: string
     public function grammar() : GrammarInterface
     {
         return match ($this) {
-            self::MYSQL         => new MySQLGrammar,
-            self::POSTGRESQL    => new PostgreSQLGrammar,
-            self::SQLITE        => new SQLiteGrammar,
-            self::SQLSERVER     => new SQLServerGrammar,
-            self::MONGODB       => new MongoDBGrammar,
-            self::REDIS         => new RedisGrammar,
-            self::ELASTICSEARCH => new ElasticsearchGrammar,
-            self::CASSANDRA     => new CassandraGrammar,
-            self::NEO4J         => new Neo4jGrammar,
-            self::CLICKHOUSE    => new ClickHouseGrammar,
-            self::COCKROACHDB   => new CockroachDBGrammar,
-            self::YUGABYTEDB    => new YugabyteDBGrammar,
+            self::MYSQL         => new MySQLGrammar(),
+            self::POSTGRESQL    => new PostgreSQLGrammar(),
+            self::SQLITE        => new SQLiteGrammar(),
+            self::SQLSERVER     => new SQLServerGrammar(),
+            self::MONGODB       => new MongoDBGrammar(),
+            self::REDIS         => new RedisGrammar(),
+            self::ELASTICSEARCH => new ElasticsearchGrammar(),
+            self::CASSANDRA     => new CassandraGrammar(),
+            self::NEO4J         => new Neo4jGrammar(),
+            self::CLICKHOUSE    => new ClickHouseGrammar(),
+            self::COCKROACHDB   => new CockroachDBGrammar(),
+            self::YUGABYTEDB    => new YugabyteDBGrammar(),
         };
     }
 

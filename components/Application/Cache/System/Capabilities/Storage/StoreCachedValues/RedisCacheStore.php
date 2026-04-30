@@ -13,6 +13,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
+use Override;
 use Redis;
 use RedisArray;
 use RedisCluster;
@@ -21,70 +22,76 @@ use SensitiveParameter;
 
 final class RedisCacheStore implements CacheStore
 {
-    private const DEFAULT_PORT    = 6379;
-    private const DEFAULT_TIMEOUT = 5.0;
-    private const DEFAULT_PREFIX  = 'avax_cache:';
+    private const int DEFAULT_PORT = 6379;
 
-    private Redis|RedisArray|RedisCluster|null $redis     = null;
-    private bool                               $connected = false;
-    private CacheSerializer                    $serializer;
+    private const float DEFAULT_TIMEOUT = 5.0;
+
+    private const string DEFAULT_PREFIX = 'avax_cache:';
+
+    private Redis|RedisArray|RedisCluster|null $redis = null;
+
+    private bool $connected = false;
+
+    private readonly CacheSerializer $cacheSerializer;
 
     public function __construct(
-        private readonly string                            $host = '127.0.0.1',
-        private readonly int                               $port = self::DEFAULT_PORT,
-        #[SensitiveParameter] private readonly string|null $connectionSecret = null,
-        private readonly int                               $database = 0,
-        private readonly float                             $timeout = self::DEFAULT_TIMEOUT,
-        private readonly string                            $prefix = self::DEFAULT_PREFIX,
-        private readonly Clock                             $clock = new SystemClock(),
-        CacheSerializer|null                               $serializer = null
+        private readonly string      $host = '127.0.0.1',
+        private readonly int         $port = self::DEFAULT_PORT,
+        #[SensitiveParameter]
+        private readonly string|null $connectionSecret = null,
+        private readonly int         $database = 0,
+        private readonly float       $timeout = self::DEFAULT_TIMEOUT,
+        private readonly string      $prefix = self::DEFAULT_PREFIX,
+        private readonly Clock       $clock = new SystemClock(),
+        ?CacheSerializer             $cacheSerializer = null,
     )
     {
-        $this->serializer = $serializer ?? new JsonCacheSerializer(clock: $this->clock);
+        $this->cacheSerializer = $cacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
     }
 
     /**
      * @throws RedisClusterException
      */
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    #[Override]
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
         $data    = $this->redis->get($fullKey);
 
         if ($data === false || $data === null) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $decoded = json_decode($data, associative: true);
 
         if ($decoded === null) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        $lifecycle = $this->deserializeLifecycle(data: $decoded['lifecycle'] ?? [], clock: $clock);
+        $cachedValueLifecycle = $this->deserializeLifecycle(data: $decoded['lifecycle'] ?? [], clock: $clock);
 
-        if ($lifecycle->isExpired(clock: $clock)) {
-            $this->forget(key: $key);
+        if ($cachedValueLifecycle->isExpired(clock: $clock)) {
+            $this->forget(key: $cacheKey);
 
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        $valuePayload = SerializedCachePayload::create(
+        $serializedCachePayload = SerializedCachePayload::create(
             data  : $decoded['value'] ?? '',
             format: $decoded['format'] ?? 'json',
-            clock : $clock
+            clock : $clock,
         );
 
-        $value = $this->serializer->unserialize(payload: $valuePayload);
+        $value = $this->cacheSerializer->unserialize(payload: $serializedCachePayload);
 
-        $record = new StoredCacheRecord(
+        $storedCacheRecord = new StoredCacheRecord(
             value    : $value,
-            lifecycle: $lifecycle
+            lifecycle: $cachedValueLifecycle,
         );
 
-        return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
+        return new CacheStoreRecordWasFound(key: $cacheKey, record: $storedCacheRecord, clock: $clock);
     }
 
     private function ensureConnected() : void
@@ -124,18 +131,19 @@ final class RedisCacheStore implements CacheStore
             expiresAt     : Timestamp::fromUnixTime(timestamp: $data['expiresAt'] ?? $now->seconds),
             refreshedAt   : Timestamp::fromUnixTime(timestamp: $data['refreshedAt'] ?? $now->seconds),
             hitCount      : $data['hitCount'] ?? 0,
-            refreshCount  : $data['refreshCount'] ?? 0
+            refreshCount  : $data['refreshCount'] ?? 0,
         );
     }
 
     /**
      * @throws RedisClusterException
      */
-    public function forget(CacheKey $key) : void
+    #[Override]
+    public function forget(CacheKey $cacheKey) : void
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
         $this->redis->del($fullKey);
     }
 
@@ -143,44 +151,46 @@ final class RedisCacheStore implements CacheStore
      * @throws JsonException
      * @throws RedisClusterException
      */
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    #[Override]
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
 
-        $serializedPayload = $this->serializer->serialize(value: $record->value);
+        $serializedPayload = $this->cacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = json_encode([
-                                'value' => $serializedPayload->data,
-                                                                                                                                                                                                                                                                                               'format' => $serializedPayload->format,
-                                                                                                                                                                                                                                                                                                                                                                                                                             'lifecycle' => $this->serializeLifecycle(lifecycle: $record->lifecycle),
+                                'value'     => $serializedPayload->data,
+                                'format'    => $serializedPayload->format,
+                                'lifecycle' => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
                             ], JSON_THROW_ON_ERROR);
 
-        $ttl = $record->lifecycle->timeToLive(clock: $this->clock);
+        $ttl = $storedCacheRecord->lifecycle->timeToLive(clock: $this->clock);
 
         if ($ttl > 0 && $ttl < PHP_INT_MAX) {
-            $this->redis->setex($fullKey, (int) $ttl, $data);
+            $this->redis->setex($fullKey, $ttl, $data);
         } else {
             $this->redis->set($fullKey, $data);
         }
     }
 
-    private function serializeLifecycle(CachedValueLifecycle $lifecycle) : array
+    private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle) : array
     {
         return [
-            'createdAt'      => $lifecycle->createdAt->toUnixTime(),
-            'lastAccessedAt' => $lifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'      => $lifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'    => $lifecycle->refreshedAt->toUnixTime(),
-            'hitCount'       => $lifecycle->hitCount,
-            'refreshCount'   => $lifecycle->refreshCount,
+            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
+            'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
+            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
+            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
+            'hitCount'       => $cachedValueLifecycle->hitCount,
+            'refreshCount'   => $cachedValueLifecycle->refreshCount,
         ];
     }
 
     /**
      * @throws RedisClusterException
      */
+    #[Override]
     public function clear() : void
     {
         $this->ensureConnected();
@@ -208,11 +218,12 @@ final class RedisCacheStore implements CacheStore
     /**
      * @throws RedisClusterException
      */
-    public function exists(CacheKey $key) : bool
+    #[Override]
+    public function exists(CacheKey $cacheKey) : bool
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
 
         return (bool) $this->redis->exists($fullKey);
     }

@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Foundation\Time;
 
+use Override;
 use Stringable;
 
 final readonly class Timestamp implements Stringable
 {
     public function __construct(
         public int $seconds,
-        public int $nanoseconds = 0
+        public int $nanoseconds = 0,
     ) {}
 
     public static function now() : self
     {
         return new self(
             seconds    : (int) floor(microtime(true)),
-            nanoseconds: (int) ((microtime(true) - floor(microtime(true))) * 1_000_000_000)
+            nanoseconds: (int) ((microtime(true) - floor(microtime(true))) * 1_000_000_000),
         );
     }
 
@@ -38,12 +39,12 @@ final readonly class Timestamp implements Stringable
 
     public function add(Duration $duration) : self
     {
-        $totalSeconds = $this->seconds + $duration->seconds;
+        $totalSeconds   = $this->seconds + $duration->seconds;
         $totalNanos   = $this->nanoseconds + $duration->nanoseconds;
 
         if ($totalNanos >= 1_000_000_000) {
             $totalSeconds += (int) floor($totalNanos / 1_000_000_000);
-            $totalNanos   = $totalNanos % 1_000_000_000;
+            $totalNanos %= 1_000_000_000;
         }
 
         return new self(seconds: $totalSeconds, nanoseconds: $totalNanos);
@@ -96,9 +97,10 @@ final readonly class Timestamp implements Stringable
         return new Duration(seconds: $diffSeconds, nanoseconds: $diffNanos);
     }
 
+    #[Override]
     public function __toString() : string
     {
-        return (string) $this->toUnixTime();
+        return (string) $this->seconds;
     }
 
     public function toUnixTime() : int

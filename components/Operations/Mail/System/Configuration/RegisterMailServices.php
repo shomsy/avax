@@ -17,8 +17,8 @@ final class RegisterMailServices
     {
         return new Mailer(
             sendMail: new SendMail(
-                          transport: new LogTransport()
-                      )
+                          transport: new LogTransport(),
+                      ),
         );
     }
 }

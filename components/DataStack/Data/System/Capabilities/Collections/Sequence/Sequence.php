@@ -9,6 +9,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\DataList\Data
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -59,11 +60,13 @@ final readonly class Sequence implements IteratorAggregate, Countable
         return new DataList(items: $this->items);
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->items);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->items);

@@ -10,7 +10,8 @@ use SensitiveParameter;
 final readonly class JarmResponse
 {
     public function __construct(
-        #[SensitiveParameter] public string $responseJwt,
-        public DateTimeImmutable            $expiresAt
+        #[SensitiveParameter]
+        public string            $responseJwt,
+        public DateTimeImmutable $expiresAt,
     ) {}
 }

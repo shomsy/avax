@@ -44,9 +44,9 @@ final class GenerateUrl
     /**
      * Generate a URL from a named route.
      *
-     * @param string               $name   Route name
+     * @param string               $name  Route name
      * @param array<string, mixed> $params Route parameters to substitute
-     * @param array<string, mixed> $extra  Query string parameters
+     * @param array<string, mixed> $extra Query string parameters
      *
      * @throws RouterFailure If the route is not found or parameters are missing
      */
@@ -66,13 +66,13 @@ final class GenerateUrl
                 $param = $matches[1];
                 if (! array_key_exists($param, $params)) {
                     throw new RouterFailure(
-                        "Missing required parameter '{$param}' for route '{$name}'"
+                        "Missing required parameter '{$param}' for route '{$name}'",
                     );
                 }
 
                 return (string) $params[$param];
             },
-            $pattern
+            $pattern,
         );
 
         // Append query string from extra parameters

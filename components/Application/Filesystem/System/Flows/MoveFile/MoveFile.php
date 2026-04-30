@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\MoveFile;
 
-use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
 use Avax\Components\Application\Filesystem\System\Flows\Files\FileMoveFailed;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
+use Throwable;
 
 final class MoveFile
 {
@@ -13,8 +14,8 @@ final class MoveFile
     {
         try {
             return Storage::move($source, $destination);
-        } catch (\Throwable $e) {
-            throw new FileMoveFailed(path: $destination, previous: $e);
+        } catch (Throwable $throwable) {
+            throw new FileMoveFailed(path: $destination, code: $throwable->getCode(), previous: $throwable);
         }
     }
 }

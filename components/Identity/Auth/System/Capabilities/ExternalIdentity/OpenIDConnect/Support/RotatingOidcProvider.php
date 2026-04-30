@@ -16,13 +16,14 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     public function __construct(private OidcProviderInterface $activeProvider, private array $verificationProviders = []) {}
 
     public function issueIdToken(
-        User                              $user,
-        string                            $clientId,
-        array                             $scopes,
-        string|null                       $nonce = null,
-        DateTimeImmutable|null            $authenticatedAt = null,
-        #[SensitiveParameter] string|null $sessionId = null,
-        bool                              $phishingResistant = false
+        User              $user,
+        string            $clientId,
+        array             $scopes,
+        string            $nonce = null,
+        DateTimeImmutable $authenticatedAt = null,
+        #[SensitiveParameter]
+        string            $sessionId = null,
+        bool              $phishingResistant = false,
     ) : OidcIdToken
     {
         return $this->activeProvider->issueIdToken(
@@ -32,7 +33,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
             nonce            : $nonce,
             authenticatedAt  : $authenticatedAt,
             sessionId        : $sessionId,
-            phishingResistant: $phishingResistant
+            phishingResistant: $phishingResistant,
         );
     }
 

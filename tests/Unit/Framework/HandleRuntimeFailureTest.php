@@ -371,7 +371,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedMessages = [];
         $logger         = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedMessages) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedMessages) : void {
                 $loggedMessages[] = ['message' => $message, 'context' => $context];
             });
 
@@ -395,7 +395,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -425,7 +425,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -449,7 +449,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -472,7 +472,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -511,7 +511,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -549,7 +549,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedMessage = '';
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedMessage) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedMessage) : void {
                 $loggedMessage = $message;
             });
 
@@ -572,7 +572,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedMessage = '';
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message) use (&$loggedMessage) : void {
+            ->willReturnCallback(static function (string $message) use (&$loggedMessage) : void {
                 $loggedMessage = $message;
             });
 
@@ -598,7 +598,7 @@ final class HandleRuntimeFailureTest extends TestCase
         $loggedContext = [];
         $logger        = $this->createMock(Logging::class);
         $logger->method('critical')
-            ->willReturnCallback(function (string $message, array $context) use (&$loggedContext) : void {
+            ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
             });
 
@@ -929,7 +929,7 @@ final class HandleRuntimeFailureTest extends TestCase
 
         $reporter->expects(self::once())
             ->method('report')
-            ->with(self::callback(fn (Throwable $e) => $e instanceof PhpErrorException));
+            ->with(self::callback(static fn (Throwable $e) => $e instanceof PhpErrorException));
 
         // handle() calls exit(1), so we need to test in isolation
         // We verify the converter produces the right exception type
@@ -965,7 +965,7 @@ final class HandleRuntimeFailureTest extends TestCase
 
         $reporter->expects(self::once())
             ->method('report')
-            ->with(self::callback(fn (Throwable $e) => $e instanceof RuntimeException));
+            ->with(self::callback(static fn (Throwable $e) => $e instanceof RuntimeException));
 
         // handleException() calls exit(1), so we verify through the mock
         // that report() is called with the right exception
@@ -1022,13 +1022,12 @@ final class HandleRuntimeFailureTest extends TestCase
 
         $reporter->expects(self::once())
             ->method('report')
-            ->with(self::callback(function (Throwable $e) {
-                return $e instanceof ErrorException
-                    && str_contains($e->getMessage(), 'Test warning');
-            }));
+            ->with(self::callback(static fn (Throwable $e) => $e instanceof ErrorException
+                && str_contains($e->getMessage(), 'Test warning')));
 
         // Test warning path (non-fatal)
         $converter = new ConvertPhpErrorToThrowable();
+
         try {
             $converter->convert(E_WARNING, 'Test warning', '/file.php', 50);
         } catch (ErrorException $e) {

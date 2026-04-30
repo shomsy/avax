@@ -6,7 +6,6 @@ namespace Avax\Components\Operations\Notifications\System\Capabilities\Channels;
 
 use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 use Avax\Components\Operations\Mail\System\Capabilities\Transport\MailTransport;
-use Avax\Components\Operations\Mail\System\Capabilities\Transport\TransportResult;
 use Avax\Components\Operations\Notifications\System\Capabilities\Notification;
 use Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel;
 
@@ -17,7 +16,7 @@ final readonly class MailChannel implements NotificationChannel
 {
     public function __construct(
         private MailTransport $transport,
-        private string        $fromAddress = 'notifications@example.com',
+        private string $fromAddress = 'notifications@example.com',
     ) {}
 
     public function send(mixed $notifiable, Notification $notification) : void
@@ -44,7 +43,7 @@ final readonly class MailChannel implements NotificationChannel
         );
 
         // Create a minimal envelope
-        $envelope = new class($this->fromAddress, $email) {
+        $envelope = new class ($this->fromAddress, $email) {
             public function __construct(
                 public readonly string $from,
                 public readonly string $to,

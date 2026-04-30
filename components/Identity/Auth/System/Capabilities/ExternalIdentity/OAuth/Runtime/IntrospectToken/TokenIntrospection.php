@@ -17,22 +17,22 @@ final readonly class TokenIntrospection
      * @param list<string> $scopes
      */
     public function __construct(
-        public bool                       $active,
-        public string|null                $clientId = null,
-        public int|null                   $userId = null,
-        array|null                        $scopes = null,
-        public DateTimeImmutable|null     $expiresAt = null,
-        public DateTimeImmutable|null     $mfaVerifiedAt = null,
-        bool|null                         $phishingResistant = null,
+        public bool                   $active,
+        public string|null            $clientId = null,
+        public int|null               $userId = null,
+        array                         $scopes = null,
+        public DateTimeImmutable|null $expiresAt = null,
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                          $phishingResistant = null,
         public OAuthSenderConstraint|null $senderConstraint = null,
-        public string|null                $subject = null,
-        public string|null                $audience = null,
-        public string|null                $issuer = null,
-        public bool                       $workloadIdentity = false
+        public string|null            $subject = null,
+        public string|null            $audience = null,
+        public string|null            $issuer = null,
+        public bool                   $workloadIdentity = false,
     )
     {
-        $scopes                  ??= [];
-        $phishingResistant       ??= false;
+        $scopes            ??= [];
+        $phishingResistant ??= false;
         $this->scopes            = $scopes;
         $this->phishingResistant = $phishingResistant;
     }

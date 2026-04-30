@@ -10,10 +10,10 @@ use RuntimeException;
 final class SessionTransaction
 {
     private ?array $backup = null;
-    private bool   $active = false;
+    private bool $active = false;
 
     public function __construct(
-        private readonly SessionScope $scope
+        private readonly SessionScope $scope,
     ) {}
 
     public function begin() : void

@@ -24,15 +24,19 @@ use SensitiveParameter;
 final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
-        private OAuthClientRegistryInterface                          $clientRegistry,
-        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private JwtIdentityInterface            $jwtIdentity,
-        #[SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
-        private OidcProviderInterface|null                            $oidcProvider = null
+        private OAuthClientRegistryInterface    $clientRegistry,
+        #[SensitiveParameter]
+        private AuthorizationCodeStoreInterface $codeStore,
+        private UserSourceInterface             $userSource,
+        #[SensitiveParameter]
+        private JwtIdentityInterface            $jwtIdentity,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface      $refreshTokenStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private CurrentAuthentication|null      $currentAuthentication = null,
+        private OidcProviderInterface|null      $oidcProvider = null,
     ) {}
 
     /**
@@ -46,11 +50,13 @@ final readonly class ExchangeAuthorizationCode
 
         if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
             $this->recordFailure(data: $data, reason: 'client_authentication_failed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE)) {
             $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
@@ -58,21 +64,25 @@ final readonly class ExchangeAuthorizationCode
 
         if ($record === null) {
             $this->recordFailure(data: $data, reason: 'grant_not_found');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if ($record->wasUsed()) {
             $this->recordFailure(data: $data, reason: 'grant_reused', suspicious: true);
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if ($record->isExpiredAt(moment: $now) || $record->clientId !== $data->clientId) {
             $this->recordFailure(data: $data, reason: 'grant_expired_or_mismatch');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if ($record->redirectUri !== $data->redirectUri) {
             $this->recordFailure(data: $data, reason: 'redirect_uri_mismatch');
+
             throw OAuthTokenExchangeFailed::invalidRedirectUri();
         }
 
@@ -82,6 +92,7 @@ final readonly class ExchangeAuthorizationCode
                 || $data->senderConstraint->type !== $client->requiredSenderConstraint
             ) {
                 $this->recordFailure(data: $data, reason: 'sender_constraint_missing_or_wrong_type');
+
                 throw OAuthTokenExchangeFailed::invalidSenderConstraint();
             }
         }
@@ -89,16 +100,18 @@ final readonly class ExchangeAuthorizationCode
         if ($record->codeChallenge !== null) {
             if ($record->codeChallengeMethod !== PkceMethod::S256 || $data->codeVerifier === null) {
                 $this->recordFailure(data: $data, reason: 'pkce_verifier_missing');
+
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
 
             $expectedChallenge = rtrim(
                 string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $data->codeVerifier, binary: true)), '+/', '-_'),
-                characters: '='
+                characters: '=',
             );
 
             if (! hash_equals(known_string: $record->codeChallenge, user_string: $expectedChallenge)) {
                 $this->recordFailure(data: $data, reason: 'pkce_verifier_mismatch');
+
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
         }
@@ -107,6 +120,7 @@ final readonly class ExchangeAuthorizationCode
 
         if ($user === null || ! $user->isActive()) {
             $this->recordFailure(data: $data, reason: 'user_not_active');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -119,7 +133,7 @@ final readonly class ExchangeAuthorizationCode
             phishingResistant: $record->phishingResistant,
             clientId         : $client->clientId,
             scopes           : $record->scopes,
-            senderConstraint : $data->senderConstraint
+            senderConstraint : $data->senderConstraint,
         );
         $accessToken  = $this->jwtIdentity->issue(
             user                : $user,
@@ -128,13 +142,14 @@ final readonly class ExchangeAuthorizationCode
             clientId            : $client->clientId,
             scopes              : $record->scopes,
             senderConstraint    : $data->senderConstraint,
-            refreshTokenFamilyId: $refreshToken->familyId
+            refreshTokenFamilyId: $refreshToken->familyId,
         );
         $idToken      = null;
 
         if (in_array(needle: 'openid', haystack: $record->scopes, strict: true)) {
             if ($this->oidcProvider === null) {
                 $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
+
                 throw OAuthTokenExchangeFailed::invalidGrant();
             }
 
@@ -145,7 +160,7 @@ final readonly class ExchangeAuthorizationCode
                 nonce            : $record->nonce,
                 authenticatedAt  : $record->mfaVerifiedAt,
                 sessionId        : $this->currentAuthentication?->read()->sessionId(),
-                phishingResistant: $record->phishingResistant
+                phishingResistant: $record->phishingResistant,
             )->token;
         }
 
@@ -159,7 +174,7 @@ final readonly class ExchangeAuthorizationCode
                                                            'scope'      => implode(separator: ' ', array: $record->scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return new OAuthTokenGrant(
@@ -171,14 +186,14 @@ final readonly class ExchangeAuthorizationCode
             userId              : $user->getId()->value,
             scopes              : $record->scopes,
             tokenType           : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint    : $data->senderConstraint
+            senderConstraint    : $data->senderConstraint,
         );
     }
 
     private function recordFailure(
         ExchangeAuthorizationCodeData $data,
-        string                        $reason,
-        bool                          $suspicious = false
+        string $reason,
+        bool   $suspicious = false,
     ) : void
     {
         $name = $suspicious
@@ -194,7 +209,7 @@ final readonly class ExchangeAuthorizationCode
                                                            'reason'       => $reason,
                                                            'ip_address'   => $data->ipAddress,
                                                            'user_agent'   => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

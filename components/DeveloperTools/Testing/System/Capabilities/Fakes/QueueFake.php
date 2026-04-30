@@ -101,7 +101,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushed($job),
-            "The expected [{$job}] job was not pushed."
+            "The expected [{$job}] job was not pushed.",
         );
     }
 
@@ -120,7 +120,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertFalse(
             $this->hasPushed($job),
-            "The unexpected [{$job}] job was pushed."
+            "The unexpected [{$job}] job was pushed.",
         );
     }
 
@@ -134,7 +134,7 @@ class QueueFake implements QueueDriverInterface
         Assert::assertSame(
             $times,
             $count,
-            "The [{$job}] job was pushed {$count} times instead of {$times} times."
+            "The [{$job}] job was pushed {$count} times instead of {$times} times.",
         );
     }
 
@@ -156,7 +156,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushedWith($job, $expectedData),
-            "The [{$job}] job was not pushed with the expected data."
+            "The [{$job}] job was not pushed with the expected data.",
         );
     }
 
@@ -185,7 +185,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushed($job),
-            "The [{$job}] job was not pushed."
+            "The [{$job}] job was not pushed.",
         );
     }
 
@@ -196,7 +196,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushedLater($job),
-            "The expected [{$job}] job was not pushed with a delay."
+            "The expected [{$job}] job was not pushed with a delay.",
         );
     }
 

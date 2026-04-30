@@ -8,30 +8,32 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 final class ConsistentHashRing
 {
-    private const VIRTUAL_NODES     = 150;
-    private const MIN_RING_POSITION = 0;
-    private const MAX_RING_POSITION = PHP_INT_MAX;
+    private const int VIRTUAL_NODES = 150;
+
+
 
     /** @var array<int, CacheNode> */
     private array $ring = [];
+
     /** @var array<CacheNodeId, array<int>> */
     private array $nodePositions = [];
+
     /** @var array<CacheNodeId, CacheNode> */
     private array $nodes = [];
 
     public function __construct(
-        private int $virtualNodes = self::VIRTUAL_NODES
+        private readonly int $virtualNodes = self::VIRTUAL_NODES,
     ) {}
 
-    public function addNode(CacheNode $node) : self
+    public function addNode(CacheNode $cacheNode) : self
     {
-        $this->nodes[$node->id->toString()]         = $node;
-        $this->nodePositions[$node->id->toString()] = [];
+        $this->nodes[$cacheNode->id->toString()]         = $cacheNode;
+        $this->nodePositions[$cacheNode->id->toString()] = [];
 
         for ($i = 0; $i < $this->virtualNodes; $i++) {
-            $position                                     = $this->hash(value: sprintf('%s:%d', $node->id->toString(), $i));
-            $this->ring[$position]                        = $node;
-            $this->nodePositions[$node->id->toString()][] = $position;
+            $position                                          = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
+            $this->ring[$position]                             = $cacheNode;
+            $this->nodePositions[$cacheNode->id->toString()][] = $position;
         }
 
         $this->sortRing();
@@ -49,9 +51,9 @@ final class ConsistentHashRing
         ksort($this->ring, SORT_NUMERIC);
     }
 
-    public function removeNode(CacheNodeId $nodeId) : self
+    public function removeNode(CacheNodeId $cacheNodeId) : self
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->nodes[$nodeIdStr])) {
             return $this;
@@ -73,28 +75,30 @@ final class ConsistentHashRing
         $partitionHash = $this->hash(value: (string) $partitionIndex);
 
         return $this->getNodeForKey(
-            key: CacheKey::create(key: (string) $partitionHash)
+            key: CacheKey::create(key: (string) $partitionHash),
         );
     }
 
-    public function getNodeForKey(CacheKey $key) : CacheNode|null
+    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
     {
-        if (count($this->ring) === 0) {
+        if ($this->ring === []) {
             return null;
         }
 
-        $keyHash = $this->hash(value: $key->fullKey());
+        $keyHash = $this->hash(value: $cacheKey->fullKey());
 
         $closestNode     = null;
         $closestPosition = null;
 
         foreach ($this->ring as $position => $node) {
-            if ($position >= $keyHash) {
-                if ($closestNode === null || $position < $closestPosition) {
-                    $closestNode     = $node;
-                    $closestPosition = $position;
-                }
+            if ($position < $keyHash) {
+                continue;
             }
+            if ($closestNode !== null && $position >= $closestPosition) {
+                continue;
+            }
+            $closestNode     = $node;
+            $closestPosition = $position;
         }
 
         if ($closestNode === null) {
@@ -114,6 +118,6 @@ final class ConsistentHashRing
 
     public function isEmpty() : bool
     {
-        return count($this->nodes) === 0;
+        return $this->nodes === [];
     }
 }

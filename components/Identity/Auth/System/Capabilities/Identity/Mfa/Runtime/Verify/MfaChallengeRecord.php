@@ -23,16 +23,16 @@ final readonly class MfaChallengeRecord
      * @param list<MfaVerificationAttempt> $attempts
      */
     public function __construct(
-        public string              $challengeId,
-        public UserId              $userId,
+        public string            $challengeId,
+        public UserId            $userId,
         public MfaChallengePurpose $purpose,
-        public DateTimeImmutable   $createdAt,
-        public DateTimeImmutable   $expiresAt,
-        int|null                   $maxAttempts = null,
-        public array               $attempts = []
+        public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $expiresAt,
+        int                      $maxAttempts = null,
+        public array             $attempts = [],
     )
     {
-        $maxAttempts       ??= 5;
+        $maxAttempts ??= 5;
         $this->maxAttempts = $maxAttempts;
     }
 
@@ -58,7 +58,7 @@ final readonly class MfaChallengeRecord
             createdAt  : $this->createdAt,
             expiresAt  : $this->expiresAt,
             maxAttempts: $this->maxAttempts,
-            attempts   : $attempts
+            attempts   : $attempts,
         );
     }
 
@@ -68,7 +68,7 @@ final readonly class MfaChallengeRecord
             challengeId      : $this->challengeId,
             purpose          : $this->purpose,
             expiresAt        : $this->expiresAt,
-            remainingAttempts: $this->remainingAttempts()
+            remainingAttempts: $this->remainingAttempts(),
         );
     }
 

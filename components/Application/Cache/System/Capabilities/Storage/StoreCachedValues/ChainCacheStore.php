@@ -7,64 +7,68 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCac
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use InvalidArgumentException;
+use Override;
 
-final class ChainCacheStore implements CacheStore
+final readonly class ChainCacheStore implements CacheStore
 {
     /** @var CacheStore[] */
     private array $stores;
 
     public function __construct(
-        CacheStore ...$stores
+        CacheStore ...$cacheStore,
     )
     {
-        if (count($stores) === 0) {
+        if ($cacheStore === []) {
             throw new InvalidArgumentException(message: 'At least one cache store must be provided');
         }
 
-        $this->stores = $stores;
+        $this->stores = $cacheStore;
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    #[Override]
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(key: $key, clock: $clock);
+            $result = $store->read(key: $cacheKey, clock: $clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
-                $this->propagateToLowerTiers(key: $key, record: $result->record, clock: $clock);
+                $this->propagateToLowerTiers(key: $cacheKey, record: $result->record);
 
                 return $result;
             }
         }
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
-    private function propagateToLowerTiers(CacheKey $key, StoredCacheRecord $record, Clock $clock) : void
+    private function propagateToLowerTiers(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $found = false;
 
-        foreach ($this->stores as $index => $store) {
+        foreach ($this->stores as $store) {
             if ($found) {
-                $store->write(key: $key, record: $record);
+                $store->write(key: $cacheKey, record: $storedCacheRecord);
             }
 
-            if ($store->exists(key: $key)) {
+            if ($store->exists(key: $cacheKey)) {
                 $found = true;
             }
         }
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    #[Override]
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         foreach ($this->stores as $store) {
-            $store->write(key: $key, record: $record);
+            $store->write(key: $cacheKey, record: $storedCacheRecord);
         }
     }
 
-    public function exists(CacheKey $key) : bool
+    #[Override]
+    public function exists(CacheKey $cacheKey) : bool
     {
         foreach ($this->stores as $store) {
-            if ($store->exists(key: $key)) {
+            if ($store->exists(key: $cacheKey)) {
                 return true;
             }
         }
@@ -72,13 +76,15 @@ final class ChainCacheStore implements CacheStore
         return false;
     }
 
-    public function forget(CacheKey $key) : void
+    #[Override]
+    public function forget(CacheKey $cacheKey) : void
     {
         foreach ($this->stores as $store) {
-            $store->forget(key: $key);
+            $store->forget(key: $cacheKey);
         }
     }
 
+    #[Override]
     public function clear() : void
     {
         foreach ($this->stores as $store) {

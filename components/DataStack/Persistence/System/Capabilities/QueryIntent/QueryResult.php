@@ -18,9 +18,9 @@ final readonly class QueryResult
      * @param array<array<string, mixed>> $rows
      */
     public function __construct(
-        private array                $rows = [],
-        public int|null              $count = null,
-        public float|null            $tookMs = null,
+        private array     $rows = [],
+        public int|null   $count = null,
+        public float|null $tookMs = null,
         public QueryFingerprint|null $fingerprint = null,
     ) {}
 

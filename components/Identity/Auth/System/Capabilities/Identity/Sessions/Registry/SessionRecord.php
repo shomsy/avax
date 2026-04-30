@@ -15,16 +15,17 @@ use SensitiveParameter;
 final readonly class SessionRecord
 {
     public function __construct(
-        #[SensitiveParameter] public string $sessionId,
-        public UserId                       $userId,
-        public DateTimeImmutable            $createdAt,
-        public DateTimeImmutable            $lastSeenAt,
-        public DateTimeImmutable            $idleExpiresAt,
-        public DateTimeImmutable            $absoluteExpiresAt,
-        public string|null                  $ipCreated = null,
-        public string|null                  $userAgentCreated = null,
-        public DateTimeImmutable|null       $revokedAt = null,
-        public string|null                  $revokeReason = null
+        #[SensitiveParameter]
+        public string                 $sessionId,
+        public UserId                 $userId,
+        public DateTimeImmutable      $createdAt,
+        public DateTimeImmutable      $lastSeenAt,
+        public DateTimeImmutable      $idleExpiresAt,
+        public DateTimeImmutable      $absoluteExpiresAt,
+        public string|null            $ipCreated = null,
+        public string|null            $userAgentCreated = null,
+        public DateTimeImmutable|null $revokedAt = null,
+        public string|null            $revokeReason = null,
     ) {}
 
     public function isActiveAt(DateTimeImmutable $moment) : bool
@@ -57,7 +58,7 @@ final readonly class SessionRecord
             ipCreated        : $this->ipCreated,
             userAgentCreated : $this->userAgentCreated,
             revokedAt        : $this->revokedAt,
-            revokeReason     : $this->revokeReason
+            revokeReason     : $this->revokeReason,
         );
     }
 
@@ -73,7 +74,7 @@ final readonly class SessionRecord
             ipCreated        : $ipAddress ?? $this->ipCreated,
             userAgentCreated : $userAgent ?? $this->userAgentCreated,
             revokedAt        : $this->revokedAt,
-            revokeReason     : $this->revokeReason
+            revokeReason     : $this->revokeReason,
         );
     }
 
@@ -89,7 +90,7 @@ final readonly class SessionRecord
             ipCreated        : $this->ipCreated,
             userAgentCreated : $this->userAgentCreated,
             revokedAt        : $revokedAt,
-            revokeReason     : $revokeReason
+            revokeReason     : $revokeReason,
         );
     }
 }

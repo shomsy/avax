@@ -14,7 +14,7 @@ final readonly class Provisioning
     public function __construct(
         private SuspendUser|null     $suspendUser,
         private ReactivateUser|null  $reactivateUser,
-        private DeprovisionUser|null $deprovisionUser
+        private DeprovisionUser|null $deprovisionUser,
     ) {}
 
     public function isConfigured() : bool

@@ -12,7 +12,7 @@ final class GroupByNode
 
     public function getSql(GrammarInterface $grammar) : string
     {
-        $columns = array_map(callback: fn ($column) => $grammar->wrap(value: $column), array: $this->columns);
+        $columns = array_map(callback: static fn ($column) => $grammar->wrap(value: $column), array: $this->columns);
 
         return 'GROUP BY ' . implode(separator: ', ', array: $columns);
     }

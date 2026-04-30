@@ -55,7 +55,7 @@ final readonly class PushAuthorizationRequest
             expiresAt        : $expiresAt,
             signatureVerified: ($signed['signature_verified'] ?? false) === true,
             signingAlgorithm : is_string(value: $signed['signing_algorithm'] ?? null) ? $signed['signing_algorithm'] : null,
-            signingClientId  : ($signed['signature_verified'] ?? false) === true ? $clientId : null
+            signingClientId  : ($signed['signature_verified'] ?? false) === true ? $clientId : null,
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -67,7 +67,7 @@ final readonly class PushAuthorizationRequest
                                                            'redirect_uri'                      => $redirectUri,
                                                            'request_object_signature_verified' => ($signed['signature_verified'] ?? false) === true ? 1 : 0,
                                                            'request_object_signing_alg'        => $signed['signing_algorithm'] ?? null,
-                                                       ]
+                                                       ],
                                        ));
 
         return new PushedAuthorizationRequest(
@@ -79,7 +79,7 @@ final readonly class PushAuthorizationRequest
             state              : $this->readStringValue(value: $claims['state'] ?? null),
             nonce              : $this->readStringValue(value: $claims['nonce'] ?? null),
             codeChallenge      : $this->readStringValue(value: $claims['code_challenge'] ?? null),
-            codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null)
+            codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null),
         );
     }
 
@@ -117,11 +117,11 @@ final readonly class PushAuthorizationRequest
                 jwt         : $jwt,
                 clientId    : $clientId,
                 clientSecret: $clientSecret,
-                algorithm   : $algorithm
+                algorithm   : $algorithm,
             ),
             'RS256'                   => $this->verifyRsaRequestObject(
                 jwt         : $jwt,
-                publicKeyPem: $client->requestObjectVerificationKeyPem
+                publicKeyPem: $client->requestObjectVerificationKeyPem,
             ),
             default                   => null,
         };
@@ -221,10 +221,12 @@ final readonly class PushAuthorizationRequest
      * @return array<string, mixed>|null
      */
     private function verifyHmacRequestObject(
-        #[SensitiveParameter] string $jwt,
-        string                       $clientId,
-        #[SensitiveParameter] string $clientSecret,
-        string                       $algorithm
+        #[SensitiveParameter]
+        string $jwt,
+        string $clientId,
+        #[SensitiveParameter]
+        string $clientSecret,
+        string $algorithm,
     ) : array|null
     {
         if ($clientSecret === '' || ! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
@@ -307,8 +309,8 @@ final readonly class PushAuthorizationRequest
             'client_id'             => trim(string: $data->clientId),
             'redirect_uri'          => trim(string: $data->redirectUri),
             'scope'                 => implode(separator: ' ', array: $this->normalizeScopes(scopes: $data->scopes)),
-            'state'                 => $data->state !== null ? trim(string: $data->state) : null,
-            'nonce'                 => $data->nonce !== null ? trim(string: $data->nonce) : null,
+            'state' => $data->state !== null ? trim(string: $data->state) : null,
+            'nonce' => $data->nonce !== null ? trim(string: $data->nonce) : null,
             'code_challenge'        => $data->codeChallenge !== null ? trim(string: $data->codeChallenge) : null,
             'code_challenge_method' => $data->codeChallengeMethod?->value,
         ];

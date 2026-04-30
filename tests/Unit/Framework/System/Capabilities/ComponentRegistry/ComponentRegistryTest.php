@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Framework\System\Capabilities\ComponentRegistry;
 
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentDefinition;
-use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentNotRegistered;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
@@ -83,7 +82,7 @@ final class ComponentRegistryTest extends TestCase
     {
         $registry = new ComponentRegistry();
 
-        $provider = new class implements ComponentProviderInterface {
+        $provider = new class () implements ComponentProviderInterface {
             public static function name(): string
             {
                 return 'test';
@@ -105,7 +104,7 @@ final class ComponentRegistryTest extends TestCase
         $registry = new ComponentRegistry();
         $booted = [];
 
-        $provider = new class($booted) implements ComponentProviderInterface {
+        $provider = new class ($booted) implements ComponentProviderInterface {
             public function __construct(private array &$booted)
             {
             }

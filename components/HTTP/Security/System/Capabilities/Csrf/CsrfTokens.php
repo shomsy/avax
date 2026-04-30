@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Security\System\Capabilities\Csrf;
@@ -8,15 +9,15 @@ use Psr\Log\LoggerInterface;
 
 final readonly class CsrfTokens
 {
-    private const string SESSION_KEY = '_csrf_tokens';
+    private const string SESSION_KEY            = '_csrf_tokens';
     private const int TOKEN_EXPIRATION_MINUTES = 30;
-    private const int MAX_TOKENS_PER_SESSION = 5;
+    private const int    MAX_TOKENS_PER_SESSION = 5;
 
     public function __construct(
         private Session $session,
         private LoggerInterface $logger,
         private int $tokenExpirationMinutes = self::TOKEN_EXPIRATION_MINUTES,
-        private int $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION
+        private int $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION,
     ) {}
 
     public function getToken(): string
@@ -26,6 +27,7 @@ final readonly class CsrfTokens
 
         if ($activeToken !== null) {
             $this->storeTokens($tokens);
+
             return $activeToken;
         }
 
@@ -40,12 +42,15 @@ final readonly class CsrfTokens
 
     public function validateToken(?string $token) : bool
     {
-        if ($token === null) return false;
+        if ($token === null) {
+            return false;
+        }
 
         $tokens = $this->pruneExpiredTokens($this->getTokens());
 
         if (! isset($tokens[$token])) {
             $this->logger->warning('CSRF validation failed: Invalid or missing token.');
+
             return false;
         }
 
@@ -54,6 +59,7 @@ final readonly class CsrfTokens
         $this->storeTokens($tokens);
 
         $this->logger->info('CSRF token validated and consumed.');
+
         return true;
     }
 
@@ -73,6 +79,7 @@ final readonly class CsrfTokens
             return $tokens;
         }
         asort($tokens);
+
         return array_slice($tokens, -$this->maxTokensPerSession, null, true);
     }
 
@@ -81,13 +88,16 @@ final readonly class CsrfTokens
         $now    = time();
         $expiry = $this->tokenExpirationMinutes * 60;
 
-        return array_filter($tokens, fn ($ts) => $now - $ts <= $expiry);
+        return array_filter($tokens, static fn ($ts) => $now - $ts <= $expiry);
     }
 
     private function readMostRecentToken(array $tokens): ?string
     {
-        if (empty($tokens)) return null;
+        if (empty($tokens)) {
+            return null;
+        }
         arsort($tokens);
+
         return (string) array_key_first($tokens);
     }
 

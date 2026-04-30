@@ -14,8 +14,8 @@ final class ShardedPool
     private array $pools = [];
 
     public function __construct(
-        private int     $shardCount,
-        private Closure $poolFactory,
+        private readonly int     $shardCount,
+        private readonly Closure $poolFactory,
     )
     {
         if ($shardCount < 1) {
@@ -84,6 +84,6 @@ final class ShardedPool
             );
         }
 
-        return ['total' => $totalStats, 'shards' => array_map(callback: fn ($pool) => $pool->stats(), array: $this->pools)];
+        return ['total' => $totalStats, 'shards' => array_map(callback: static fn ($pool) : PoolStats => $pool->stats(), array: $this->pools)];
     }
 }

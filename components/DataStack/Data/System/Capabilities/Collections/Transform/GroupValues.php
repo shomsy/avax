@@ -14,8 +14,6 @@ final readonly class GroupValues
     ) {}
 
     /**
-     * @param string|callable $key
-     *
      * @return array<mixed>
      */
     public function __invoke(string|callable $key) : array
@@ -24,8 +22,6 @@ final readonly class GroupValues
     }
 
     /**
-     * @param string|callable $key
-     *
      * @return array<mixed>
      */
     public function group(string|callable $key) : array

@@ -54,7 +54,7 @@ final class RouterBootstrapper
     /**
      * Create bootstrapper with router and route collection.
      */
-    public function __construct(RouterInterface $router, RouterRuntimeInterface|null $runtimeRouter = null)
+    public function __construct(RouterInterface $router, RouterRuntimeInterface $runtimeRouter = null)
     {
         $this->router        = $router;
         $this->runtimeRouter = $runtimeRouter ?? ($router instanceof RouterRuntimeInterface ? $router : null);
@@ -63,8 +63,8 @@ final class RouterBootstrapper
     /**
      * Register multiple routes for different HTTP methods on the same path.
      *
-     * @param array                 $methods
-     * @param string                $path
+     * @param array  $methods
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -143,7 +143,7 @@ final class RouterBootstrapper
     /**
      * Register GET route.
      *
-     * @param string                $path
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -156,7 +156,7 @@ final class RouterBootstrapper
     /**
      * Register POST route.
      *
-     * @param string                $path
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -169,7 +169,7 @@ final class RouterBootstrapper
     /**
      * Register PUT route.
      *
-     * @param string                $path
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -182,7 +182,7 @@ final class RouterBootstrapper
     /**
      * Register PATCH route.
      *
-     * @param string                $path
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -195,7 +195,7 @@ final class RouterBootstrapper
     /**
      * Register DELETE route.
      *
-     * @param string                $path
+     * @param string $path
      * @param callable|array|string $handler
      *
      * @return RouterBootstrapper
@@ -213,7 +213,7 @@ final class RouterBootstrapper
         $middlewareArray                  = is_array(value: $middleware) ? $middleware : [$middleware];
         $this->routeMiddleware[$routeKey] = array_merge(
             $this->routeMiddleware[$routeKey] ?? [],
-            $middlewareArray
+            $middlewareArray,
         );
 
         return $this;
@@ -222,15 +222,15 @@ final class RouterBootstrapper
     /**
      * Group routes with common middleware or prefix.
      */
-    public function group(callable $routes, array|null $middleware = null, string $prefix = '') : self
+    public function group(callable $routes, array $middleware = null, string $prefix = '') : self
     {
-        $middleware         ??= [];
+        $middleware ??= [];
         $previousMiddleware = $this->activeMiddleware;
         $previousPrefixes   = $this->groupPrefixes;
 
         $this->activeMiddleware = array_values(array_merge(
                                                    $this->activeMiddleware,
-                                                   $middleware
+                                                   $middleware,
                                                ));
         $this->groupPrefixes[]  = $prefix;
 
@@ -263,7 +263,7 @@ final class RouterBootstrapper
 
         $this->activeMiddleware = array_values(array_merge(
                                                    $this->activeMiddleware,
-                                                   $this->middlewareGroups[$name]
+                                                   $this->middlewareGroups[$name],
                                                ));
 
         return $this;
@@ -294,7 +294,7 @@ final class RouterBootstrapper
      */
     public function createApp(
         ControllerDispatcher $dispatcher,
-        ResponseFactory      $responseFactory
+        ResponseFactory $responseFactory,
     ) : AppKernel
     {
         $router = $this->bootstrap();
@@ -303,7 +303,7 @@ final class RouterBootstrapper
             router          : $router,
             dispatcher      : $dispatcher,
             responseFactory : $responseFactory,
-            globalMiddleware: $this->globalMiddleware
+            globalMiddleware: $this->globalMiddleware,
         );
     }
 
@@ -314,7 +314,7 @@ final class RouterBootstrapper
     {
         if ($this->runtimeRouter === null) {
             throw new LogicException(
-                message: 'RouterBootstrapper requires a runtime router instance to build an AppKernel.'
+                message: 'RouterBootstrapper requires a runtime router instance to build an AppKernel.',
             );
         }
 

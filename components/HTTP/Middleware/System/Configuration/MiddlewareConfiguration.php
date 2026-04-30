@@ -24,7 +24,7 @@ final readonly class MiddlewareConfiguration
         private bool  $stopOnException = true,
         private array $priorityOrder = [],
         private bool  $enableMetrics = false,
-        private array $skipPaths = []
+        private array $skipPaths = [],
     ) {}
 
     public function timeoutMs() : int
@@ -99,7 +99,7 @@ final readonly class MiddlewareConfiguration
             stopOnException: $overrides['stop_on_exception'] ?? $this->stopOnException,
             priorityOrder  : $overrides['priority_order'] ?? $this->priorityOrder,
             enableMetrics  : $overrides['enable_metrics'] ?? $this->enableMetrics,
-            skipPaths      : $overrides['skip_paths'] ?? $this->skipPaths
+            skipPaths      : $overrides['skip_paths'] ?? $this->skipPaths,
         );
     }
 
@@ -115,7 +115,7 @@ final readonly class MiddlewareConfiguration
             stopOnException: $config['stop_on_exception'] ?? true,
             priorityOrder  : $config['priority_order'] ?? [],
             enableMetrics  : $config['enable_metrics'] ?? false,
-            skipPaths      : $config['skip_paths'] ?? []
+            skipPaths      : $config['skip_paths'] ?? [],
         );
     }
 }

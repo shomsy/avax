@@ -16,7 +16,7 @@ final class MimeMessage
         public readonly array       $attachments = [],
         public readonly string|null $replyTo = null,
         public readonly string|null $cc = null,
-        public readonly string|null $bcc = null
+        public readonly string|null $bcc = null,
     ) {}
 
     public function withReplyTo(string $replyTo) : self
@@ -31,7 +31,7 @@ final class MimeMessage
             attachments: $this->attachments,
             replyTo    : $replyTo,
             cc         : $this->cc,
-            bcc        : $this->bcc
+            bcc        : $this->bcc,
         );
     }
 
@@ -47,7 +47,7 @@ final class MimeMessage
             attachments: $this->attachments,
             replyTo    : $this->replyTo,
             cc         : $cc,
-            bcc        : $this->bcc
+            bcc        : $this->bcc,
         );
     }
 
@@ -63,7 +63,7 @@ final class MimeMessage
             attachments: $this->attachments,
             replyTo    : $this->replyTo,
             cc         : $this->cc,
-            bcc        : $bcc
+            bcc        : $bcc,
         );
     }
 
@@ -79,7 +79,7 @@ final class MimeMessage
             attachments: $this->attachments,
             replyTo    : $this->replyTo,
             cc         : $this->cc,
-            bcc        : $this->bcc
+            bcc        : $this->bcc,
         );
     }
 
@@ -102,7 +102,7 @@ final class MimeMessage
             attachments: $attachments,
             replyTo    : $this->replyTo,
             cc         : $this->cc,
-            bcc        : $this->bcc
+            bcc        : $this->bcc,
         );
     }
 

@@ -14,9 +14,9 @@ use Throwable;
  */
 final class QueryOrchestrator
 {
-    private bool                       $isPretending = false;
-    private ExecutionScope|null        $scope
-                                                     = null {
+    private bool                $isPretending = false;
+    private ExecutionScope|null $scope
+                                              = null {
             get {
                 return $this->scope;
             }
@@ -30,13 +30,13 @@ final class QueryOrchestrator
      * @throws RandomException
      */
     public function __construct(
-        ExecutorInterface   $executor,
-        ExecutionScope|null $scope = null
+        ExecutorInterface $executor,
+        ExecutionScope    $scope = null,
     )
     {
         $this->executor = $executor;
         $this->scope    = $scope;
-        $this->scope    ??= ExecutionScope::fresh();
+        $this->scope ??= ExecutionScope::fresh();
     }
 
     public function __clone()
@@ -81,8 +81,8 @@ final class QueryOrchestrator
      * @throws Throwable
      */
     public function execute(
-        string     $sql,
-        array|null $bindings = null
+        string $sql,
+        array  $bindings = null,
     ) : ExecutionResult
     {
         $bindings ??= [];
@@ -99,7 +99,7 @@ final class QueryOrchestrator
     public function withScope(ExecutionScope $scope) : self
     {
         return clone(object: $this, withProperties: [
-            "scope" => $scope
+            'scope' => $scope,
         ]);
     }
 

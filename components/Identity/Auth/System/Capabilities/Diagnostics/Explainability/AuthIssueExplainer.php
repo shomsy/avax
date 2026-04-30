@@ -9,12 +9,11 @@ use SensitiveParameter;
 final readonly class AuthIssueExplainer
 {
     public function explainAccessDenied(
-        string      $resource,
-        string|null $requiredPermission = null,
-        string|null $tenant = null,
-        string|null $resourceTenant = null
-    ) : AuthIssueExplanation
-    {
+        string $resource,
+        string $requiredPermission = null,
+        string $tenant = null,
+        string $resourceTenant = null,
+    ): AuthIssueExplanation {
         $resourceName = trim(string: $resource) !== '' ? trim(string: $resource) : 'resource';
 
         return new AuthIssueExplanation(
@@ -29,20 +28,19 @@ final readonly class AuthIssueExplainer
             context   : [
                             'resource'            => $resourceName,
                             'required_permission' => $requiredPermission !== null && trim(string: $requiredPermission) !== '' ? trim(string: $requiredPermission) : null,
-                            'tenant'              => $tenant !== null && trim(string: $tenant) !== '' ? trim(string: $tenant) : null,
-                            'resource_tenant'     => $resourceTenant !== null && trim(string: $resourceTenant) !== '' ? trim(string: $resourceTenant) : null,
-                        ]
+                            'tenant'              => $tenant             !== null && trim(string: $tenant) !== '' ? trim(string: $tenant) : null,
+                            'resource_tenant'     => $resourceTenant     !== null && trim(string: $resourceTenant) !== '' ? trim(string: $resourceTenant) : null,
+                        ],
         );
     }
 
     public function explainStepUpRequired(
-        string    $action,
-        bool|null $phishingResistantRequired = null,
-        int|null  $freshAfterSeconds = null
-    ) : AuthIssueExplanation
-    {
+        string $action,
+        bool $phishingResistantRequired = null,
+        int $freshAfterSeconds = null,
+    ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
-        $actionName                = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
+        $actionName = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
 
         return new AuthIssueExplanation(
             code      : 'step_up_required',
@@ -61,15 +59,14 @@ final readonly class AuthIssueExplainer
                             'action'                      => $actionName,
                             'phishing_resistant_required' => $phishingResistantRequired ? 1 : 0,
                             'fresh_after_seconds'         => $freshAfterSeconds,
-                        ]
+                        ],
         );
     }
 
     public function explainSenderConstraintFailure(
-        string      $reason,
-        string|null $requiredConstraint = null
-    ) : AuthIssueExplanation
-    {
+        string $reason,
+        string $requiredConstraint = null,
+    ): AuthIssueExplanation {
         $normalizedReason = trim(string: $reason) !== '' ? trim(string: $reason) : 'unknown_reason';
 
         return new AuthIssueExplanation(
@@ -84,11 +81,11 @@ final readonly class AuthIssueExplainer
             context   : [
                             'reason'              => $normalizedReason,
                             'required_constraint' => $requiredConstraint !== null && trim(string: $requiredConstraint) !== '' ? trim(string: $requiredConstraint) : null,
-                        ]
+                        ],
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null): AuthIssueExplanation
     {
         $normalizedStatus = strtoupper(string: trim(string: $status));
         $meaning          = match ($normalizedStatus) {
@@ -109,12 +106,12 @@ final readonly class AuthIssueExplainer
                         ],
             context   : [
                             'status'     => $normalizedStatus !== '' ? $normalizedStatus : 'UNKNOWN',
-                            'session_id' => $sessionId !== null && trim(string: $sessionId) !== '' ? trim(string: $sessionId) : null,
-                        ]
+                            'session_id' => $sessionId        !== null && trim(string: $sessionId) !== '' ? trim(string: $sessionId) : null,
+                        ],
         );
     }
 
-    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(string $deviceId = null): AuthIssueExplanation
     {
         return new AuthIssueExplanation(
             code      : 'trusted_device_not_supported',
@@ -127,7 +124,7 @@ final readonly class AuthIssueExplainer
                         ],
             context   : [
                             'device_id' => $deviceId !== null && trim(string: $deviceId) !== '' ? trim(string: $deviceId) : null,
-                        ]
+                        ],
         );
     }
 }

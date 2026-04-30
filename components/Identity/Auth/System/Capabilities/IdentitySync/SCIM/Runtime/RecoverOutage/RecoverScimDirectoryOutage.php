@@ -31,7 +31,7 @@ final readonly class RecoverScimDirectoryOutage
                                            context   : [
                                                            'directory_id' => $recovered->directoryId,
                                                            'tenant'       => $recovered->tenantSlug,
-                                                       ]
+                                                       ],
                                        ));
 
         return $recovered;

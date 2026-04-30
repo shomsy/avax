@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\Configurator\FileLoader;
 
+use Override;
 use RuntimeException;
 
 /**
@@ -24,6 +25,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
      * The method determines the file extension to decide which loader method to use.
      * Throws exceptions for unsupported file formats and invalid configurations.
      */
+    #[Override]
     public function loadConfigFile(string $filePath) : array
     {
         // Ensure the file exists before attempting to load it.
@@ -109,7 +111,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
     /**
      * Ensure the given configuration is an array.
      *
-     * @param mixed  $config   The loaded configuration data.
+     * @param mixed $config The loaded configuration data.
      * @param string $filePath The path to the configuration file.
      *
      * @throws RuntimeException if the configuration is not an array.

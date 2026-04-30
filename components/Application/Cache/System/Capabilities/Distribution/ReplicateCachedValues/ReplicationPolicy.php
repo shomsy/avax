@@ -15,7 +15,7 @@ final readonly class ReplicaCount
 {
     public function __construct(
         public int $primary = 1,
-        public int $secondaries = 2
+        public int $secondaries = 2,
     ) {}
 
     public static function single() : self

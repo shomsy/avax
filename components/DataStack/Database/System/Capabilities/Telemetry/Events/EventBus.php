@@ -16,15 +16,15 @@ use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\Stra
 final class EventBus implements EventBusInterface
 {
     /** @var array<string, array<int, callable>> A list of everyone signed up for each type of news. */
-    private array                              $listeners = [];
+    private array $listeners = [];
     private readonly DispatchStrategyInterface $strategy;
 
     /**
-     * @param DispatchStrategyInterface $strategy    The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
-     *                                               it").
+     * @param DispatchStrategyInterface $strategy The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
+     *                                            it").
      */
     public function __construct(
-        DispatchStrategyInterface $strategy = new SyncDispatchStrategy
+        DispatchStrategyInterface $strategy = new SyncDispatchStrategy(),
     )
     {
         $this->strategy = $strategy;
@@ -61,7 +61,7 @@ final class EventBus implements EventBusInterface
     /**
      * Register a listener for a specific event type.
      *
-     * @param string   $event    Event class name.
+     * @param string $event Event class name.
      * @param callable $listener Callback to invoke.
      */
     public function subscribe(string $event, callable $listener) : void

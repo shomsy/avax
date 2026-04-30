@@ -18,12 +18,15 @@ use SensitiveParameter;
 final readonly class RunAuthMaintenanceJobs
 {
     public function __construct(
-        #[SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
-        #[SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
-        private CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
-        #[SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
-        private CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
-        private ExportAuditEvents                                      $exportAuditEvents
+        #[SensitiveParameter]
+        private CleanupExpiredSessions           $cleanupExpiredSessions,
+        #[SensitiveParameter]
+        private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
+        private CleanupExpiredMfaChallenges      $cleanupExpiredMfaChallenges,
+        #[SensitiveParameter]
+        private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
+        private CleanupExpiredPasskeyChallenges  $cleanupExpiredPasskeyChallenges,
+        private ExportAuditEvents                $exportAuditEvents,
     ) {}
 
     /**

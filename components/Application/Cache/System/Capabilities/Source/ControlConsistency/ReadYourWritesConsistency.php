@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlCo
 final class ReadYourWritesConsistency
 {
     public function __construct(
-        private array $writtenKeys = []
+        private array $writtenKeys = [],
     ) {}
 
     public function recordWrite(string $key, int $timestamp) : void

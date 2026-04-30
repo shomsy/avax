@@ -20,11 +20,11 @@ final class ResponseDecoder
      * Decode a response body based on the specified or detected format.
      *
      * @param ClientResponse $response The response to decode
-     * @param string|null    $format   Force a specific format ('json', 'xml', 'text')
+     * @param string|null $format Force a specific format ('json', 'xml', 'text')
      *
      * @throws InvalidHttpResponse if decoding fails
      */
-    public function decode(ClientResponse $response, ?string $format = null) : mixed
+    public function decode(ClientResponse $response, string $format = null) : mixed
     {
         $format ??= $this->detectFormat($response);
 
@@ -61,7 +61,7 @@ final class ResponseDecoder
      * Decode JSON response body.
      *
      * @param ClientResponse $response The response to decode
-     * @param bool           $assoc    When true, return associative array
+     * @param bool $assoc When true, return associative array
      *
      * @throws InvalidHttpResponse if JSON is invalid
      */
@@ -105,6 +105,7 @@ final class ResponseDecoder
         }
 
         $previousError = libxml_use_internal_errors(true);
+
         try {
             $xml = simplexml_load_string($response->body);
             if ($xml === false) {
@@ -112,6 +113,7 @@ final class ResponseDecoder
                     static fn ($error) => $error->message,
                     libxml_get_errors(),
                 );
+
                 throw new InvalidHttpResponse(
                     message   : 'Failed to decode XML response: ' . implode('; ', $errors),
                     statusCode: $response->statusCode,

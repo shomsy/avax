@@ -31,18 +31,20 @@ use SensitiveParameter;
 final readonly class VerifyMfaChallenge
 {
     public function __construct(
-        private MfaChallengeStoreInterface                  $challengeStore,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        #[SensitiveParameter] private VerifyBackupCode      $verifyBackupCode,
-        private UserSourceInterface                         $userSource,
-        private IdentityInterface                           $identity,
-        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private LimitMfaAttempts|null                       $attemptLimit = null,
-        private DeterministicRiskEngine|null                $riskEngine = null
+        private MfaChallengeStoreInterface   $challengeStore,
+        private MfaStoreInterface            $mfaStore,
+        private TotpInterface                $totp,
+        #[SensitiveParameter]
+        private VerifyBackupCode             $verifyBackupCode,
+        private UserSourceInterface          $userSource,
+        private IdentityInterface            $identity,
+        private ProjectAuthenticatedUser     $projectAuthenticatedUser,
+        #[SensitiveParameter]
+        private CurrentAuthentication        $currentAuthentication,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
+        private LimitMfaAttempts|null        $attemptLimit = null,
+        private DeterministicRiskEngine|null $riskEngine = null,
     ) {}
 
     /**
@@ -57,7 +59,7 @@ final readonly class VerifyMfaChallenge
                 challengeId: $data->challengeId,
                 reason     : 'not_found',
                 ipAddress  : $data->ipAddress,
-                userAgent  : $data->userAgent
+                userAgent  : $data->userAgent,
             );
 
             throw MfaChallengeFailed::notFound();
@@ -72,7 +74,7 @@ final readonly class VerifyMfaChallenge
                 reason     : 'expired',
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
-                userId     : $record->userId->value
+                userId     : $record->userId->value,
             );
 
             throw MfaChallengeFailed::expired();
@@ -85,7 +87,7 @@ final readonly class VerifyMfaChallenge
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
                 userId     : $record->userId->value,
-                suspicious : true
+                suspicious : true,
             );
 
             throw MfaChallengeFailed::locked(retryAfter: 0);
@@ -102,7 +104,7 @@ final readonly class VerifyMfaChallenge
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
                 userId     : $record->userId->value,
-                suspicious : true
+                suspicious : true,
             );
 
             throw MfaChallengeFailed::locked(retryAfter: $exception->retryAfter());
@@ -118,7 +120,7 @@ final readonly class VerifyMfaChallenge
                 reason     : 'not_enabled',
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
-                userId     : $record->userId->value
+                userId     : $record->userId->value,
             );
 
             throw MfaChallengeFailed::notEnabled();
@@ -130,7 +132,7 @@ final readonly class VerifyMfaChallenge
             secret              : $method->secret,
             code                : $data->code,
             moment              : $now,
-            lastAcceptedTimeStep: $method->lastAcceptedTimeStep
+            lastAcceptedTimeStep: $method->lastAcceptedTimeStep,
         );
 
         if ($verification->accepted && $verification->timeStep !== null) {
@@ -146,7 +148,7 @@ final readonly class VerifyMfaChallenge
             $updatedRecord = $record->recordAttempt(attempt: new MfaVerificationAttempt(
                                                                  occurredAt: $now,
                                                                  accepted  : false,
-                                                                 reason    : $verification->reason
+                                                                 reason    : $verification->reason,
                                                              ));
             $this->challengeStore->save(record: $updatedRecord);
             $this->recordFailure(
@@ -155,7 +157,7 @@ final readonly class VerifyMfaChallenge
                 ipAddress  : $data->ipAddress,
                 userAgent  : $data->userAgent,
                 userId     : $record->userId->value,
-                suspicious : $updatedRecord->isLocked()
+                suspicious : $updatedRecord->isLocked(),
             );
 
             throw MfaChallengeFailed::invalidCode();
@@ -166,7 +168,7 @@ final readonly class VerifyMfaChallenge
         $issued = $this->identity->issue(user: $user, mfaVerifiedAt: $now);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent
+            userAgent: $data->userAgent,
         );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser(user: $user),
@@ -176,14 +178,14 @@ final readonly class VerifyMfaChallenge
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
             mfaVerifiedAt       : $now,
-            phishingResistant   : $issued->phishingResistant
+            phishingResistant   : $issued->phishingResistant,
         );
 
         $this->currentAuthentication->store(context: $context);
         $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
             user     : $user,
             ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent
+            userAgent: $data->userAgent,
         );
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.challenge.passed',
@@ -196,23 +198,24 @@ final readonly class VerifyMfaChallenge
                                                            'risk_action'  => $riskDecision?->action->value,
                                                            'ip_address'   => $data->ipAddress,
                                                            'user_agent'   => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return AuthenticationResult::success(
             context     : $context,
             accessToken : $issued->accessToken?->token,
-            refreshToken: $issued->refreshToken?->token
+            refreshToken: $issued->refreshToken?->token,
         );
     }
 
     private function recordFailure(
-        string                            $challengeId,
-        string                            $reason,
-        #[SensitiveParameter] string|null $ipAddress,
-        string|null                       $userAgent,
-        int|null                          $userId = null,
-        bool                              $suspicious = false
+        string      $challengeId,
+        string      $reason,
+        #[SensitiveParameter]
+        string|null $ipAddress,
+        string|null $userAgent,
+        int         $userId = null,
+        bool        $suspicious = false,
     ) : void
     {
         $this->auditLog->record(event: new AuditEvent(
@@ -224,7 +227,7 @@ final readonly class VerifyMfaChallenge
                                                            'reason'       => $reason,
                                                            'ip_address'   => $ipAddress,
                                                            'user_agent'   => $userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         if (! $suspicious) {
@@ -240,7 +243,7 @@ final readonly class VerifyMfaChallenge
                                                            'reason'       => $reason,
                                                            'ip_address'   => $ipAddress,
                                                            'user_agent'   => $userAgent,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

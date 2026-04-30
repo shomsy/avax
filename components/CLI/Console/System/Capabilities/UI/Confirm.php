@@ -15,7 +15,7 @@ class Confirm
     public static function ask(string $question, bool $default = false) : bool
     {
         $defaultStr = $default ? 'yes' : 'no';
-        echo "{$question} (yes/no) [{$defaultStr}]: ";
+        echo sprintf('%s (yes/no) [%s]: ', $question, $defaultStr);
 
         $input = self::readLine();
 

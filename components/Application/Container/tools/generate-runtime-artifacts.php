@@ -11,8 +11,8 @@ if ($argc < 3) {
 
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
-$fixturePath = (string) ($argv[1] ?? '');
-$outputDir   = (string) ($argv[2] ?? '');
+$fixturePath = $argv[1] ?? '';
+$outputDir   = $argv[2] ?? '';
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -34,7 +34,7 @@ if (! $loaded instanceof ContainerInterface) {
     exit(1);
 }
 
-if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0777, recursive: true) && ! is_dir(filename: $outputDir)) {
+if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0o777, recursive: true) && ! is_dir(filename: $outputDir)) {
     fwrite(stream: STDERR, data: "Output directory [{$outputDir}] could not be created.\n");
     exit(1);
 }
@@ -48,7 +48,7 @@ $container->warmCompiled();
 $writeJson = static function (string $path, array $payload) : void {
     file_put_contents(
         filename: $path,
-        data    : json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL
+        data    : json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
     );
 };
 
@@ -72,5 +72,5 @@ echo json_encode(
                        'dependency-graph.html',
                    ],
                ],
-        flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+        flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
     ) . PHP_EOL;

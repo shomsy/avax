@@ -26,7 +26,7 @@ final class AttributeMetadataReader
     /**
      * @param class-string $entityClass
      */
-    public function for(string $entityClass) : EntityMetadata
+    public function for(string $entityClass): EntityMetadata
     {
         return $this->cache[$entityClass] ??= $this->read(entityClass: $entityClass);
     }
@@ -34,7 +34,7 @@ final class AttributeMetadataReader
     /**
      * @param class-string $entityClass
      */
-    private function read(string $entityClass) : EntityMetadata
+    private function read(string $entityClass): EntityMetadata
     {
         $reflection = new ReflectionClass(objectOrClass: $entityClass);
 
@@ -53,8 +53,8 @@ final class AttributeMetadataReader
         $relations = [];
 
         foreach ($reflection->getProperties() as $property) {
-            $columnAttribute    = $property->getAttributes(name: Column::class)[0] ?? null;
-            $idAttribute        = $property->getAttributes(name: Id::class)[0] ?? null;
+            $columnAttribute    = $property->getAttributes(name: Column::class)[0]         ?? null;
+            $idAttribute        = $property->getAttributes(name: Id::class)[0]             ?? null;
             $generatedAttribute = $property->getAttributes(name: GeneratedValue::class)[0] ?? null;
 
             if ($columnAttribute !== null || $idAttribute !== null) {
@@ -63,9 +63,9 @@ final class AttributeMetadataReader
                     property : $property->getName(),
                     column   : $column->name ?? $property->getName(),
                     type     : $column->type,
-                    id       : $idAttribute !== null,
+                    id       : $idAttribute        !== null,
                     generated: $generatedAttribute !== null,
-                    nullable : $column->nullable
+                    nullable : $column->nullable,
                 );
             }
 
@@ -92,12 +92,12 @@ final class AttributeMetadataReader
                 property        : $property->getName(),
                 kind            : $kind,
                 targetEntity    : $instance->targetEntity,
-                mappedBy        : $instance->mappedBy ?? null,
-                inversedBy      : $instance->inversedBy ?? null,
-                joinColumn      : $joinColumn?->newInstance()->name ?? null,
+                mappedBy        : $instance->mappedBy                               ?? null,
+                inversedBy      : $instance->inversedBy                             ?? null,
+                joinColumn      : $joinColumn?->newInstance()->name                 ?? null,
                 referencedColumn: $joinColumn?->newInstance()->referencedColumnName ?? 'id',
-                cascade         : $instance->cascade ?? [],
-                lazy            : $instance->lazy ?? true
+                cascade         : $instance->cascade                                ?? [],
+                lazy            : $instance->lazy                                   ?? true,
             );
         }
 
@@ -106,7 +106,7 @@ final class AttributeMetadataReader
             table          : $table,
             fields         : $fields,
             relations      : $relations,
-            repositoryClass: $entity->repositoryClass
+            repositoryClass: $entity->repositoryClass,
         );
     }
 }

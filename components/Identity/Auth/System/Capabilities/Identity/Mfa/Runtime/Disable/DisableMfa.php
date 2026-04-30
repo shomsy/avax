@@ -25,13 +25,15 @@ use SensitiveParameter;
 final readonly class DisableMfa
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                       $requireFreshMfa,
-        private MfaStoreInterface                                     $mfaStore,
-        private MfaChallengeStoreInterface                            $mfaChallengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                 $requireFreshMfa,
+        private MfaStoreInterface               $mfaStore,
+        private MfaChallengeStoreInterface      $mfaChallengeStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     /**
@@ -65,13 +67,13 @@ final readonly class DisableMfa
                                       roles        : $user->roles,
                                       permissions  : $user->permissions,
                                       emailVerified: $user->emailVerified,
-                                      mfaEnabled   : false
+                                      mfaEnabled   : false,
                                   ),
             mode                : $context->mode(),
             sessionId           : $context->sessionId(),
             accessTokenId       : $context->accessTokenId(),
             accessTokenExpiresAt: $context->accessTokenExpiresAt(),
-            refreshTokenId      : $context->refreshTokenId()
+            refreshTokenId      : $context->refreshTokenId(),
         ));
 
         $this->auditLog->record(event: new AuditEvent(
@@ -79,7 +81,7 @@ final readonly class DisableMfa
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'user_id' => $user->id,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

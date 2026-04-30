@@ -13,15 +13,15 @@ final class MultiTenantPool
     private array $pools = [];
 
     public function __construct(
-        private Closure $poolFactory,
-        private int     $maxTenants = 100,
+        private readonly Closure $poolFactory,
+        private readonly int     $maxTenants = 100,
     ) {}
 
     public function getForTenant(string $tenantId) : ConnectionPoolInterface
     {
         if (! isset($this->pools[$tenantId])) {
             if (count(value: $this->pools) >= $this->maxTenants) {
-                throw new RuntimeException(message: "Max tenants reached: {$this->maxTenants}");
+                throw new RuntimeException(message: 'Max tenants reached: ' . $this->maxTenants);
             }
 
             $pool = ($this->poolFactory)($tenantId);
@@ -35,10 +35,10 @@ final class MultiTenantPool
         return $this->pools[$tenantId];
     }
 
-    public function releaseForTenant(string $tenantId, PooledConnection $connection) : void
+    public function releaseForTenant(string $tenantId, PooledConnection $pooledConnection) : void
     {
         if (isset($this->pools[$tenantId])) {
-            $this->pools[$tenantId]->release(connection: $connection);
+            $this->pools[$tenantId]->release(connection: $pooledConnection);
         }
     }
 

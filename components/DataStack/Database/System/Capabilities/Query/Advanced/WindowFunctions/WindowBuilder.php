@@ -10,10 +10,10 @@ final class WindowBuilder
 {
     public function __construct(
         private GrammarInterface $grammar,
-        private string           $function,
-        private array|null       $partitionBy = null,
-        private string|null      $orderBy = null,
-        private string           $frame = 'ROWS UNBOUNDED PRECEDING'
+        private string      $function,
+        private array|null  $partitionBy = null,
+        private string|null $orderBy = null,
+        private string      $frame = 'ROWS UNBOUNDED PRECEDING',
     )
     {
         $this->partitionBy ??= [];
@@ -76,7 +76,7 @@ final class WindowBuilder
     public function rowsBetween(int $start, int $end) : self
     {
         $startExpr = $start < 0 ? "{$start} PRECEDING" : "{$start} FOLLOWING";
-        $endExpr   = $end < 0 ? "{$end} PRECEDING" : "{$end} FOLLOWING";
+        $endExpr = $end < 0 ? "{$end} PRECEDING" : "{$end} FOLLOWING";
 
         $this->frame = "ROWS BETWEEN {$startExpr} AND {$endExpr}";
 
@@ -92,7 +92,7 @@ final class WindowBuilder
             if (! empty($this->partitionBy)) {
                 $partition = implode(separator: ', ', array: array_map(
                     callback: fn ($col) => $this->grammar->wrap(value: $col),
-                    array   : $this->partitionBy
+                    array   : $this->partitionBy,
                 ));
                 $parts[]   = 'PARTITION BY ' . $partition;
             }

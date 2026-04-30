@@ -12,7 +12,7 @@ final readonly class MigrateFreshCommand
 {
     public function __construct(
         private Connections    $connections,
-        private MigrateCommand $migrateCommand
+        private MigrateCommand $migrateCommand,
     ) {}
 
     public function handle(string $path, bool $dryRun = false) : int
@@ -26,7 +26,7 @@ final readonly class MigrateFreshCommand
 
             return $this->migrateCommand->handle(path: $path, dryRun: $dryRun);
         } catch (Throwable $throwable) {
-            echo "\033[31mFresh migration failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mFresh migration failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }
@@ -80,8 +80,8 @@ final readonly class MigrateFreshCommand
         $rows      = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
 
         return array_values(array: array_filter(
-                                       array   : array_map(callback: static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', array: $rows),
-                                       callback: static fn (string $value) => $value !== ''
+                                       array   : array_map(callback: static fn (array $row) : string => isset($row[0]) ? (string) $row[0] : '', array: $rows),
+                                       callback: static fn (string $value) : bool => $value !== '',
                                    ));
     }
 
@@ -90,8 +90,8 @@ final readonly class MigrateFreshCommand
         $quoted = $this->quoteIdentifier(name: $table, driver: $driver);
 
         return match ($driver) {
-            'pgsql' => "DROP TABLE IF EXISTS {$quoted} CASCADE",
-            default => "DROP TABLE IF EXISTS {$quoted}",
+            'pgsql' => sprintf('DROP TABLE IF EXISTS %s CASCADE', $quoted),
+            default => 'DROP TABLE IF EXISTS ' . $quoted,
         };
     }
 

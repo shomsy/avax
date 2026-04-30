@@ -36,7 +36,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
 
         return new MultiKeyHmacTokenCodec(
             primaryCodec      : $primary,
-            verificationCodecs: $verification
+            verificationCodecs: $verification,
         );
     }
 
@@ -82,7 +82,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     }
 
     /**
-     * @param mixed  $candidate
+     * @param mixed $candidate
      * @param string $label
      *
      * @return array{secret:string, algorithm:string, kid:string|null}
@@ -116,7 +116,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         return new HmacTokenCodec(
             secret   : $configuration['secret'],
             algorithm: $configuration['algorithm'],
-            keyId    : $configuration['kid']
+            keyId    : $configuration['kid'],
         );
     }
 

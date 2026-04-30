@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
@@ -18,9 +18,9 @@ final class HotPathInlinerSmokeTest extends CompiledContainer
             'inline.service' => 'resolveInlineService',
         ];
 
-    public function resolveInlineService(mixed $resolver, ResolveRequest $request, array $overrides) : string
+    public function resolveInlineService(mixed $resolver, ResolveRequest $resolveRequest, array $overrides) : string
     {
-        return 'compiled:' . $request->serviceId . ':' . ($overrides['suffix'] ?? 'none');
+        return 'compiled:' . $resolveRequest->serviceId . ':' . ($overrides['suffix'] ?? 'none');
     }
 }
 
@@ -38,12 +38,12 @@ assertSame(expected: 1, actual: $inliner->state(serviceId: 'inline.service')['en
 assertSame(
     expected: 'compiled:inline.service:smoke',
     actual  : $inliner->resolve(serviceId: 'inline.service', resolver: $resolver, request: new ResolveRequest(serviceId: 'inline.service', overrides: ['suffix' => 'smoke'])),
-    message : 'HotPathInliner should dispatch attached compiled methods.'
+    message : 'HotPathInliner should dispatch attached compiled methods.',
 );
 assertSame(
     expected: 'compiled runtime is attached but the requested entry is missing',
     actual  : $inliner->state(serviceId: 'missing.entry')['reason'],
-    message : 'HotPathInliner should explain partial compiled misses.'
+    message : 'HotPathInliner should explain partial compiled misses.',
 );
 
 $inliner->detach();

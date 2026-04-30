@@ -15,28 +15,31 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class SourceSyncCoordinatorTest extends TestCase
 {
-    private FrozenClock        $clock;
-    private InMemoryCacheStore $cache;
-    private TestCacheSource    $source;
+    private FrozenClock $frozenClock;
+
+    private InMemoryCacheStore $inMemoryCacheStore;
+
+    private TestCacheSource $testCacheSource;
 
     public function test_write_through_invalidates_cache_after_source_write() : void
     {
-        $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_THROUGH
+        $sourceSyncCoordinator = new SourceSyncCoordinator(
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::WRITE_THROUGH,
         );
 
-        $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
+        $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $coordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
+        $sourceSyncCoordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
 
-        $this->assertFalse(condition: $this->cache->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertEquals(expected: 'new_value', actual: $this->source->get(key: 'key_1'));
+        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
     }
 
     private function makeKey(string $key) : CacheKey
@@ -46,90 +49,91 @@ final class SourceSyncCoordinatorTest extends TestCase
 
     private function makeRecord(string $value) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
-        $lifecycle = CachedValueLifecycle::create(
+        $now                  = $this->frozenClock->now();
+        $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
-            clock    : $this->clock
+            clock    : $this->frozenClock,
         );
 
-        return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
+        return new StoredCacheRecord(value: $value, lifecycle: $cachedValueLifecycle);
     }
 
     public function test_write_around_invalidates_cache_and_writes_to_source() : void
     {
-        $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+        $sourceSyncCoordinator = new SourceSyncCoordinator(
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
-        $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
+        $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $coordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
+        $sourceSyncCoordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
 
-        $this->assertFalse(condition: $this->cache->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertEquals(expected: 'new_value', actual: $this->source->get(key: 'key_1'));
+        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
     }
 
     public function test_delete_through_invalidates_cache_after_source_delete() : void
     {
-        $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_THROUGH
+        $sourceSyncCoordinator = new SourceSyncCoordinator(
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::WRITE_THROUGH,
         );
 
-        $this->source->set(key: 'key_1', value: 'value');
-        $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
+        $this->testCacheSource->set(key: 'key_1', value: 'value');
+        $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $coordinator->delete(key: $this->makeKey(key: 'key_1'));
+        $sourceSyncCoordinator->delete(key: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->cache->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $this->source->has(key: 'key_1'));
+        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertFalse(condition: $this->testCacheSource->has(key: 'key_1'));
     }
 
     public function test_delete_around_invalidates_cache_only() : void
     {
-        $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+        $sourceSyncCoordinator = new SourceSyncCoordinator(
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
-        $this->source->set(key: 'key_1', value: 'value');
-        $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
+        $this->testCacheSource->set(key: 'key_1', value: 'value');
+        $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $coordinator->delete(key: $this->makeKey(key: 'key_1'));
+        $sourceSyncCoordinator->delete(key: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->cache->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $this->source->has(key: 'key_1'));
+        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertTrue(condition: $this->testCacheSource->has(key: 'key_1'));
     }
 
     public function test_should_populate_cache_on_miss() : void
     {
         $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::CACHE_ASIDE
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::CACHE_ASIDE,
         );
 
         $this->assertTrue(condition: $coordinator->shouldPopulateCacheOnMiss());
 
         $coordinator = new SourceSyncCoordinator(
-            source: $this->source,
-            cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+            source: $this->testCacheSource,
+            cache : $this->inMemoryCacheStore,
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
         $this->assertFalse(condition: $coordinator->shouldPopulateCacheOnMiss());
     }
 
+    #[Override]
     protected function setUp() : void
     {
-        $this->clock  = new FrozenClock(timestamp: Timestamp::now());
-        $this->cache  = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
-        $this->source = new TestCacheSource();
+        $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $this->testCacheSource    = new TestCacheSource();
     }
 }
 
@@ -138,24 +142,28 @@ final class TestCacheSource implements CacheSource
     /** @var array<string, mixed> */
     private array $data = [];
 
-    public function load(CacheSourceKey $key) : mixed
+    #[Override]
+    public function load(CacheSourceKey $cacheSourceKey) : mixed
     {
-        return $this->data[$key->fullKey()] ?? null;
+        return $this->data[$cacheSourceKey->fullKey()] ?? null;
     }
 
-    public function write(CacheSourceKey $key, mixed $value) : void
+    #[Override]
+    public function write(CacheSourceKey $cacheSourceKey, mixed $value) : void
     {
-        $this->data[$key->fullKey()] = $value;
+        $this->data[$cacheSourceKey->fullKey()] = $value;
     }
 
-    public function delete(CacheSourceKey $key) : void
+    #[Override]
+    public function delete(CacheSourceKey $cacheSourceKey) : void
     {
-        unset($this->data[$key->fullKey()]);
+        unset($this->data[$cacheSourceKey->fullKey()]);
     }
 
-    public function exists(CacheSourceKey $key) : bool
+    #[Override]
+    public function exists(CacheSourceKey $cacheSourceKey) : bool
     {
-        return isset($this->data[$key->fullKey()]);
+        return isset($this->data[$cacheSourceKey->fullKey()]);
     }
 
     public function get(string $key) : mixed

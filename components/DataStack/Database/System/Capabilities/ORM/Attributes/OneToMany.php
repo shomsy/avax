@@ -15,7 +15,7 @@ final readonly class OneToMany
     public function __construct(
         public string $targetEntity,
         public string $mappedBy,
-        public array  $cascade = [],
-        public bool   $lazy = true
+        public array $cascade = [],
+        public bool  $lazy = true,
     ) {}
 }

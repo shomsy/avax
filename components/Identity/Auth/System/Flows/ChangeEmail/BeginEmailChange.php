@@ -19,14 +19,17 @@ use SensitiveParameter;
 final readonly class BeginEmailChange
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication     $currentAuthentication,
-        private UserSourceInterface                             $userSource,
-        #[SensitiveParameter] private PasswordHasher            $passwordHasher,
-        #[SensitiveParameter] private EmailChangeStoreInterface $emailChangeStore,
-        private RequireFreshMfa                                 $requireFreshMfa,
-        private AuditLogInterface                               $auditLog,
-        private Clock                                           $clock,
-        private int                                             $expiresAfterSeconds = 1800
+        #[SensitiveParameter]
+        private CurrentAuthentication     $currentAuthentication,
+        private UserSourceInterface       $userSource,
+        #[SensitiveParameter]
+        private PasswordHasher            $passwordHasher,
+        #[SensitiveParameter]
+        private EmailChangeStoreInterface $emailChangeStore,
+        private RequireFreshMfa           $requireFreshMfa,
+        private AuditLogInterface         $auditLog,
+        private Clock                     $clock,
+        private int                       $expiresAfterSeconds = 1800,
     ) {}
 
     /**
@@ -64,7 +67,7 @@ final readonly class BeginEmailChange
                                                                'reason'     => 'invalid_password',
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             throw EmailChangeFailed::invalidPassword();
@@ -78,7 +81,7 @@ final readonly class BeginEmailChange
         $challenge = $this->emailChangeStore->issue(
             userId   : $user->getId(),
             newEmail : $newEmail,
-            expiresAt: $this->clock->now()->modify(modifier: "+$this->expiresAfterSeconds seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+$this->expiresAfterSeconds seconds"),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -89,7 +92,7 @@ final readonly class BeginEmailChange
                                                            'new_email'  => $newEmail,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return $challenge;

@@ -33,7 +33,7 @@ final class QueryNode
         return $this;
     }
 
-    public function from(string $table, string|null $alias = null) : self
+    public function from(string $table, string $alias = null) : self
     {
         $this->from = new FromNode(table: $table, alias: $alias);
 

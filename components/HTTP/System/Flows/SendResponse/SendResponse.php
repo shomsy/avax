@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\SendResponse;
 
+use Avax\Components\HTTP\System\Capabilities\Body\StreamBody;
 use Avax\Components\HTTP\System\Capabilities\Response;
 
 final class SendResponse
@@ -12,7 +13,7 @@ final class SendResponse
     {
         $status = $response->getStatusCode();
         $reason = $response->getReasonPhrase();
-        
+
         $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
         header("{$protocol} {$status} {$reason}");
 
@@ -23,7 +24,7 @@ final class SendResponse
         }
 
         $body = $response->getBody();
-        if ($body instanceof \Avax\Components\HTTP\System\Capabilities\Body\StreamBody) {
+        if ($body instanceof StreamBody) {
             echo $body->getContents();
         }
     }

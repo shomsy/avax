@@ -10,7 +10,7 @@ final readonly class InspectDataShape
 {
     public function __construct(
         private DataTransferConfig|null $config = null,
-        private CacheDataShape          $cache = new CacheDataShape(),
+        private CacheDataShape $cache = new CacheDataShape(),
     ) {}
 
     /**
@@ -23,7 +23,7 @@ final readonly class InspectDataShape
 
         return $this->cache->remember(
             key    : $cacheKey,
-            builder: fn () : DataShape => new ReadClassDataShape()->read(class: $class, config: $config),
+            builder: static fn () : DataShape => new ReadClassDataShape()->read(class: $class, config: $config),
         );
     }
 }

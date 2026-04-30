@@ -6,31 +6,32 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 
 use Closure;
 use InvalidArgumentException;
+use Override;
 
 final class LazyConnectionPool implements ConnectionPoolInterface
 {
-    private ConnectionPoolInterface|null $pool = null;
+    private ConnectionPoolInterface|null $connectionPool = null;
 
     public function __construct(
-        private readonly array        $config,
-        private readonly int          $maxConnections = 20,
         private readonly Closure|null $factory = null,
     )
     {
-        if ($this->factory === null) {
+        if (! $this->factory instanceof Closure) {
             throw new InvalidArgumentException(message: 'Pool factory is required.');
         }
     }
 
+    #[Override]
     public function destroy() : void
     {
-        $this->pool?->destroy();
-        $this->pool = null;
+        $this->connectionPool?->destroy();
+        $this->connectionPool = null;
     }
 
+    #[Override]
     public function stats() : PoolStats
     {
-        return $this->pool?->stats() ?? new PoolStats(
+        return $this->connectionPool?->stats() ?? new PoolStats(
             totalConnections : 0,
             activeConnections: 0,
             idleConnections  : 0,
@@ -51,6 +52,7 @@ final class LazyConnectionPool implements ConnectionPoolInterface
         }
     }
 
+    #[Override]
     public function get() : PooledConnection
     {
         return $this->pool()->get();
@@ -58,21 +60,22 @@ final class LazyConnectionPool implements ConnectionPoolInterface
 
     private function pool() : ConnectionPoolInterface
     {
-        if ($this->pool === null) {
+        if ($this->connectionPool === null) {
             $pool = ($this->factory)();
 
             if (! $pool instanceof ConnectionPoolInterface) {
                 throw new InvalidArgumentException(message: 'Pool factory must return a ConnectionPoolInterface.');
             }
 
-            $this->pool = $pool;
+            $this->connectionPool = $pool;
         }
 
-        return $this->pool;
+        return $this->connectionPool;
     }
 
-    public function release(PooledConnection $connection) : void
+    #[Override]
+    public function release(PooledConnection $pooledConnection) : void
     {
-        $this->pool()->release(connection: $connection);
+        $this->pool()->release(connection: $pooledConnection);
     }
 }

@@ -9,12 +9,12 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 final readonly class GenerateJitteredTtl
 {
     public function __construct(
-        private RandomJitter $jitter = new RandomJitter()
+        private RandomJitter $randomJitter = new RandomJitter(),
     ) {}
 
     public function forSeconds(int $ttlInSeconds) : int
     {
-        return $this->jitter->apply(ttlInSeconds: $ttlInSeconds);
+        return $this->randomJitter->apply(ttlInSeconds: $ttlInSeconds);
     }
 
     public function forDuration(Duration $duration) : Duration
@@ -26,6 +26,6 @@ final readonly class GenerateJitteredTtl
 
     public function forMilliseconds(int $ttlInMilliseconds) : int
     {
-        return $this->jitter->applyToDuration(ttlInMilliseconds: $ttlInMilliseconds);
+        return $this->randomJitter->applyToDuration(ttlInMilliseconds: $ttlInMilliseconds);
     }
 }

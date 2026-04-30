@@ -12,33 +12,35 @@ final readonly class FederationConnection
     public FederationConnectionHealth $health;
     /** @var array<string, list<string>> */
     public array $groupRoleMap;
-    public bool  $ssoOnly;
+    public bool $ssoOnly;
 
     /**
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string                            $connectionId,
-        public string                            $tenantSlug,
-        public string                            $name,
-        public FederationProvider                $provider,
-        public string                            $domain,
-        bool|null                                $ssoOnly = null,
-        array|null                               $groupRoleMap = null,
-        public string|null                       $metadataUrl = null,
-        public string|null                       $metadataIssuer = null,
-        #[SensitiveParameter] public string|null $metadataHash = null,
-        public DateTimeImmutable|null            $metadataSyncedAt = null,
-        #[SensitiveParameter] public string|null $domainVerificationToken = null,
-        public DateTimeImmutable|null            $domainVerifiedAt = null,
-        FederationConnectionHealth|null          $health = null,
-        public DateTimeImmutable|null            $healthCheckedAt = null,
-        public bool                              $breakGlassAllowed = false
+        public string                 $connectionId,
+        public string                 $tenantSlug,
+        public string                 $name,
+        public FederationProvider     $provider,
+        public string                 $domain,
+        bool                          $ssoOnly = null,
+        array                         $groupRoleMap = null,
+        public string|null            $metadataUrl = null,
+        public string|null            $metadataIssuer = null,
+        #[SensitiveParameter]
+        public string|null            $metadataHash = null,
+        public DateTimeImmutable|null $metadataSyncedAt = null,
+        #[SensitiveParameter]
+        public string|null            $domainVerificationToken = null,
+        public DateTimeImmutable|null $domainVerifiedAt = null,
+        FederationConnectionHealth    $health = null,
+        public DateTimeImmutable|null $healthCheckedAt = null,
+        public bool                   $breakGlassAllowed = false,
     )
     {
-        $ssoOnly            ??= false;
-        $groupRoleMap       ??= [];
-        $health             ??= FederationConnectionHealth::UNKNOWN;
+        $ssoOnly      ??= false;
+        $groupRoleMap ??= [];
+        $health       ??= FederationConnectionHealth::UNKNOWN;
         $this->ssoOnly      = $ssoOnly;
         $this->groupRoleMap = $groupRoleMap;
         $this->health       = $health;
@@ -67,14 +69,15 @@ final readonly class FederationConnection
             domainVerifiedAt       : $verifiedAt,
             health                 : $this->health,
             healthCheckedAt        : $this->healthCheckedAt,
-            breakGlassAllowed      : $this->breakGlassAllowed
+            breakGlassAllowed      : $this->breakGlassAllowed,
         );
     }
 
     public function withMetadata(
-        string                       $metadataIssuer,
-        #[SensitiveParameter] string $metadataHash,
-        DateTimeImmutable            $syncedAt
+        string            $metadataIssuer,
+        #[SensitiveParameter]
+        string            $metadataHash,
+        DateTimeImmutable $syncedAt,
     ) : self
     {
         return new self(
@@ -93,13 +96,13 @@ final readonly class FederationConnection
             domainVerifiedAt       : $this->domainVerifiedAt,
             health                 : $this->health,
             healthCheckedAt        : $this->healthCheckedAt,
-            breakGlassAllowed      : $this->breakGlassAllowed
+            breakGlassAllowed      : $this->breakGlassAllowed,
         );
     }
 
     public function withHealth(
         FederationConnectionHealth $health,
-        DateTimeImmutable          $checkedAt
+        DateTimeImmutable $checkedAt,
     ) : self
     {
         return new self(
@@ -118,7 +121,7 @@ final readonly class FederationConnection
             domainVerifiedAt       : $this->domainVerifiedAt,
             health                 : $health,
             healthCheckedAt        : $checkedAt,
-            breakGlassAllowed      : $this->breakGlassAllowed
+            breakGlassAllowed      : $this->breakGlassAllowed,
         );
     }
 }

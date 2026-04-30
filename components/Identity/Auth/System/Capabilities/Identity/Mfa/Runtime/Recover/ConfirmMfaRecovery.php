@@ -22,14 +22,17 @@ use SensitiveParameter;
 final readonly class ConfirmMfaRecovery
 {
     public function __construct(
-        private MfaStoreInterface                                     $mfaStore,
-        private MfaChallengeStoreInterface                            $mfaChallengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
-        private IdentityInterface|null                                $identity = null
+        private MfaStoreInterface               $mfaStore,
+        private MfaChallengeStoreInterface      $mfaChallengeStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[SensitiveParameter]
+        private CurrentAuthentication|null      $currentAuthentication = null,
+        private IdentityInterface|null          $identity = null,
     ) {}
 
     /**
@@ -48,6 +51,7 @@ final readonly class ConfirmMfaRecovery
 
         if ($record->isExpiredAt(moment: $now)) {
             $this->mfaStore->forgetRecovery(tokenHash: $tokenHash);
+
             throw MfaRecoveryFailed::expiredToken();
         }
 
@@ -71,7 +75,7 @@ final readonly class ConfirmMfaRecovery
                                                            'user_id'    => $record->userId->value,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.reset',
@@ -79,7 +83,7 @@ final readonly class ConfirmMfaRecovery
                                            context   : [
                                                            'user_id' => $record->userId->value,
                                                            'reason'  => 'recovery',
-                                                       ]
+                                                       ],
                                        ));
     }
 

@@ -14,7 +14,7 @@ use Stringable;
 final readonly class SessionId implements Stringable
 {
     public function __construct(
-        private string $value
+        private string $value,
     )
     {
         if ($this->value === '') {

@@ -20,14 +20,14 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    private string             $connectionName;
-    private EventBus|null      $eventBus;
+    private string        $connectionName;
+    private EventBus|null $eventBus;
     private DatabaseConnection $connection;
 
     public function __construct(
         DatabaseConnection $connection,
-        EventBus|null      $eventBus = null,
-        string             $connectionName = 'default'
+        EventBus $eventBus = null,
+        string   $connectionName = 'default',
     )
     {
         $this->connection     = $connection;
@@ -39,9 +39,10 @@ final readonly class PDOExecutor implements ExecutorInterface
      * Execute a "Read" query (SELECT) and get the rows back.
      */
     public function query(
-        string                      $sql,
-        #[SensitiveParameter] array $bindings = [],
-        ExecutionScope|null         $scope = null
+        string         $sql,
+        #[SensitiveParameter]
+        array          $bindings = [],
+        ExecutionScope $scope = null,
     ) : array
     {
         $start = microtime(as_float: true);
@@ -56,7 +57,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 bindings      : $bindings,
                 start         : $start,
                 scope         : $scope,
-                redactBindings: $this->shouldRedactBindings()
+                redactBindings: $this->shouldRedactBindings(),
             );
 
             return $results;
@@ -65,7 +66,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 message    : 'Query execution failed: ' . $e->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $e
+                previous   : $e,
             );
         }
     }
@@ -79,9 +80,10 @@ final readonly class PDOExecutor implements ExecutorInterface
      * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
      */
     public function execute(
-        string                      $sql,
-        #[SensitiveParameter] array $bindings = [],
-        ExecutionScope|null         $scope = null
+        string         $sql,
+        #[SensitiveParameter]
+        array          $bindings = [],
+        ExecutionScope $scope = null,
     ) : ExecutionResult
     {
         $start = microtime(as_float: true);
@@ -95,20 +97,20 @@ final readonly class PDOExecutor implements ExecutorInterface
                 bindings      : $bindings,
                 start         : $start,
                 scope         : $scope,
-                redactBindings: $this->shouldRedactBindings()
+                redactBindings: $this->shouldRedactBindings(),
             );
 
             return new ExecutionResult(
                 success     : $success,
                 affectedRows: $statement->rowCount(),
-                lastInsertId: $this->resolveLastInsertId(sql: $sql)
+                lastInsertId: $this->resolveLastInsertId(sql: $sql),
             );
         } catch (Throwable $e) {
             throw new QueryException(
                 message    : 'Execution failed: ' . $e->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $e
+                previous   : $e,
             );
         }
     }
@@ -117,11 +119,12 @@ final readonly class PDOExecutor implements ExecutorInterface
      * @throws RandomException
      */
     private function dispatch(
-        string                      $sql,
-        #[SensitiveParameter] array $bindings,
-        float                       $start,
-        ExecutionScope|null         $scope = null,
-        bool                        $redactBindings = true
+        string         $sql,
+        #[SensitiveParameter]
+        array          $bindings,
+        float          $start,
+        ExecutionScope $scope = null,
+        bool           $redactBindings = true,
     ) : void
     {
         if ($this->eventBus === null) {
@@ -136,7 +139,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                                              timeMs        : (microtime(as_float: true) - $start) * 1000,
                                              connectionName: $this->connectionName,
                                              correlationId : $correlationId,
-                                             redactBindings: $redactBindings
+                                             redactBindings: $redactBindings,
                                          ));
     }
 

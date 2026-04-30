@@ -20,30 +20,33 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     private array $clients = [];
 
     public function __construct(
-        #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
+        #[SensitiveParameter]
+        private readonly PasswordHasher $passwordHasher,
     ) {}
 
     /**
      * @throws RandomException
      */
     public function register(
-        string                                                  $name,
-        OAuthClientType                                         $type,
-        array                                                   $redirectUris,
-        string|null                                             $tenantSlug = null,
-        array                                                   $allowedScopes = [],
-        array                                                   $allowedAudiences = [],
-        array                                                   $allowedGrantTypes = [],
-        array                                                   $audienceScopeBoundaries = [],
-        #[SensitiveParameter] OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
-        bool                                                    $workloadIdentity = false,
-        bool                                                    $phishingResistantRequired = false,
-        bool                                                    $requestObjectSignatureRequired = false,
-        bool                                                    $frontChannelLogoutSupported = false,
-        bool                                                    $backChannelLogoutSupported = false,
-        bool|null                                               $approvalRequired = null,
-        #[SensitiveParameter] string|null                       $requestObjectVerificationKeyPem = null
+        string                       $name,
+        OAuthClientType              $type,
+        array                        $redirectUris,
+        string                       $tenantSlug = null,
+        array                        $allowedScopes = [],
+        array                        $allowedAudiences = [],
+        array                        $allowedGrantTypes = [],
+        array                        $audienceScopeBoundaries = [],
+        #[SensitiveParameter]
+        OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        OAuthSenderConstraintType    $requiredSenderConstraint = null,
+        bool                         $workloadIdentity = false,
+        bool                         $phishingResistantRequired = false,
+        bool                         $requestObjectSignatureRequired = false,
+        bool                         $frontChannelLogoutSupported = false,
+        bool                         $backChannelLogoutSupported = false,
+        bool                         $approvalRequired = null,
+        #[SensitiveParameter]
+        string                       $requestObjectVerificationKeyPem = null,
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris            = $this->normalizeRedirectUris(redirectUris: $redirectUris);
@@ -71,7 +74,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $normalizedTokenEndpointAuthMethod = new OAuthTokenEndpointAuthMethodPolicy()->resolve(
             type            : $type,
             requested       : $tokenEndpointAuthMethod,
-            workloadIdentity: $workloadIdentity
+            workloadIdentity: $workloadIdentity,
         );
         $requiresApproval                  = $approvalRequired ?? false;
 
@@ -114,14 +117,14 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvedBy                     : $requiresApproval ? null : 'system',
             active                         : ! $requiresApproval,
             secretHash                     : $secretHash,
-            requestObjectVerificationKeyPem: $requestObjectVerificationKeyPem
+            requestObjectVerificationKeyPem: $requestObjectVerificationKeyPem,
         );
 
         $this->clients[$clientId] = $client;
 
         return new RegisteredOAuthClient(
             client         : $client,
-            plainTextSecret: $plainSecret
+            plainTextSecret: $plainSecret,
         );
     }
 
@@ -256,7 +259,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $inactive                 = new OAuthClient(
+        $inactive = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -277,7 +280,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvedAt                    : $client->approvedAt,
             approvedBy                    : $client->approvedBy,
             active                        : false,
-            secretHash                    : $client->secretHash
+            secretHash                    : $client->secretHash,
         );
         $this->clients[$clientId] = $inactive;
 
@@ -297,7 +300,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $approved                 = new OAuthClient(
+        $approved = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -318,7 +321,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvedAt                    : new DateTimeImmutable(),
             approvedBy                    : trim(string: $approvedBy),
             active                        : true,
-            secretHash                    : $client->secretHash
+            secretHash                    : $client->secretHash,
         );
         $this->clients[$clientId] = $approved;
 
@@ -340,8 +343,8 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return new RegisteredOAuthClient(client: $client, plainTextSecret: null);
         }
 
-        $plainSecret              = bin2hex(string: random_bytes(length: 24));
-        $rotated                  = new OAuthClient(
+        $plainSecret = bin2hex(string: random_bytes(length: 24));
+        $rotated     = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -362,7 +365,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvedAt                    : $client->approvedAt,
             approvedBy                    : $client->approvedBy,
             active                        : $client->active,
-            secretHash                    : $this->passwordHasher->hash(password: $plainSecret)
+            secretHash                    : $this->passwordHasher->hash(password: $plainSecret),
         );
         $this->clients[$clientId] = $rotated;
 
@@ -375,8 +378,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     public function verifySecret(
-        string                            $clientId,
-        #[SensitiveParameter] string|null $plainTextSecret
+        string      $clientId,
+        #[SensitiveParameter]
+        string|null $plainTextSecret,
     ) : bool
     {
         $client = $this->find(clientId: $clientId);

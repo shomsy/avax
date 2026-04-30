@@ -32,14 +32,14 @@ class ConsoleInput
     private function parse(array $argv) : void
     {
         foreach ($argv as $arg) {
-            if (str_starts_with($arg, '--')) {
+            if (str_starts_with((string) $arg, '--')) {
                 // Long option: --key=value or --key
-                $parts               = explode('=', substr($arg, 2), 2);
+                $parts = explode('=', substr((string) $arg, 2), 2);
                 $key                 = $parts[0];
                 $this->options[$key] = $parts[1] ?? true;
-            } elseif (str_starts_with($arg, '-') && strlen($arg) > 1) {
+            } elseif (str_starts_with((string) $arg, '-') && strlen((string) $arg) > 1) {
                 // Short option: -k=value or -k or -abc
-                $rest = substr($arg, 1);
+                $rest = substr((string) $arg, 1);
 
                 if (str_contains($rest, '=')) {
                     $parts                    = explode('=', $rest, 2);
@@ -76,10 +76,6 @@ class ConsoleInput
      */
     public function getArgument(int|string $key, mixed $default = null) : mixed
     {
-        if (is_int($key)) {
-            return $this->arguments[$key] ?? $default;
-        }
-
         // Named arguments mapped from command definition
         return $this->arguments[$key] ?? $default;
     }

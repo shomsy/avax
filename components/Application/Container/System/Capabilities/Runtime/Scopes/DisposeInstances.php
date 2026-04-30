@@ -11,7 +11,7 @@ final class DisposeInstances
 {
     /**
      * @param array<string, mixed> $instances
-     * @param array<string, bool>  $disposable
+     * @param array<string, bool> $disposable
      */
     public function disposeMany(array $instances, array $disposable = []) : void
     {
@@ -19,7 +19,7 @@ final class DisposeInstances
             $this->dispose(
                 instance  : $instance,
                 disposable: ($disposable[$serviceId] ?? false)
-                            || $instance instanceof DisposableInterface
+                            || $instance instanceof DisposableInterface,
             );
         }
     }

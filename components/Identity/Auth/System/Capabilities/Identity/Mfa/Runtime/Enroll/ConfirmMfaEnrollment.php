@@ -27,12 +27,14 @@ use SensitiveParameter;
 final readonly class ConfirmMfaEnrollment
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface     $mfaStore,
+        private TotpInterface         $totp,
+        #[SensitiveParameter]
+        private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface     $auditLog,
+        private Clock                 $clock,
     ) {}
 
     /**
@@ -61,6 +63,7 @@ final readonly class ConfirmMfaEnrollment
 
         if ($record->isExpiredAt(moment: $now)) {
             $this->mfaStore->cancelEnrollment(userId: $userId);
+
             throw MfaEnrollmentFailed::expiredEnrollment();
         }
 
@@ -73,7 +76,7 @@ final readonly class ConfirmMfaEnrollment
                                                context   : [
                                                                'user_id' => $user->id,
                                                                'reason'  => $verification->reason,
-                                                           ]
+                                                           ],
                                            ));
 
             throw MfaEnrollmentFailed::invalidCode();
@@ -86,7 +89,7 @@ final readonly class ConfirmMfaEnrollment
                                                 secret              : $record->secret,
                                                 enabledAt           : $now,
                                                 backupCodes         : $generated->records,
-                                                lastAcceptedTimeStep: $verification->timeStep
+                                                lastAcceptedTimeStep: $verification->timeStep,
                                             ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.enrollment.completed',
@@ -94,7 +97,7 @@ final readonly class ConfirmMfaEnrollment
                                            context   : [
                                                            'user_id' => $user->id,
                                                            'method'  => $record->method->value,
-                                                       ]
+                                                       ],
                                        ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.enabled',
@@ -102,7 +105,7 @@ final readonly class ConfirmMfaEnrollment
                                            context   : [
                                                            'user_id' => $user->id,
                                                            'method'  => $record->method->value,
-                                                       ]
+                                                       ],
                                        ));
         $context = $this->currentAuthentication->read();
         $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
@@ -113,14 +116,14 @@ final readonly class ConfirmMfaEnrollment
                                       roles        : $user->roles,
                                       permissions  : $user->permissions,
                                       emailVerified: $user->emailVerified,
-                                      mfaEnabled   : true
+                                      mfaEnabled   : true,
                                   ),
             mode                : $context->mode(),
             sessionId           : $context->sessionId(),
             accessTokenId       : $context->accessTokenId(),
             accessTokenExpiresAt: $context->accessTokenExpiresAt(),
             refreshTokenId      : $context->refreshTokenId(),
-            mfaVerifiedAt       : $now
+            mfaVerifiedAt       : $now,
         ));
 
         return $generated->backupCodeSet;

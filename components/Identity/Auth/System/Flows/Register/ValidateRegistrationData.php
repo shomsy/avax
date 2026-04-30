@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Register;
@@ -17,7 +18,7 @@ final readonly class ValidateRegistrationData
         if (empty($data->email) || empty($data->password)) {
             throw new RegistrationFailed('Email and password are required');
         }
-        
+
         if (strlen($data->password) < 8) {
             throw new RegistrationFailed('Password must be at least 8 characters');
         }

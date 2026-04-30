@@ -18,8 +18,8 @@ final readonly class BuildSagaTimeline
             instanceId: $instanceId,
             events    : array_values(array: array_filter(
                                                 array   : $events,
-                                                callback: static fn (SagaRuntimeEvent $event) : bool => $event->instanceId === $instanceId
-                                            ))
+                                                callback: static fn (SagaRuntimeEvent $event) : bool => $event->instanceId === $instanceId,
+                                            )),
         );
     }
 }

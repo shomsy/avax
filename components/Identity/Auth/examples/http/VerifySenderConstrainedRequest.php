@@ -25,13 +25,15 @@ final readonly class VerifySenderConstrainedRequest
      * @param array<string, mixed> $server
      */
     public function execute(
-        string                            $method,
-        string                            $uri,
-        #[SensitiveParameter] array       $headers,
-        array                             $server,
-        #[SensitiveParameter] string|null $accessToken,
-        OAuthSenderConstraint|null        $expectedSenderConstraint = null,
-        OAuthSenderConstraintType|null    $requiredSenderConstraint = null
+        string                    $method,
+        string                    $uri,
+        #[SensitiveParameter]
+        array                     $headers,
+        array                     $server,
+        #[SensitiveParameter]
+        string|null               $accessToken,
+        OAuthSenderConstraint     $expectedSenderConstraint = null,
+        OAuthSenderConstraintType $requiredSenderConstraint = null,
     ) : OAuthSenderConstraint|null
     {
         $auditLog = new NullAuditLog();
@@ -40,20 +42,20 @@ final readonly class VerifySenderConstrainedRequest
             verifyDpopProof           : new VerifyDpopProof(
                                             codec      : new HmacTokenCodec(secret: 'replace-me'),
                                             replayStore: new InMemoryDpopProofReplayStore(),
-                                            auditLog   : $auditLog
+                                            auditLog   : $auditLog,
                                         ),
             verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
-            auditLog                  : $auditLog
+            auditLog                  : $auditLog,
         )->execute(
             input                   : new HttpOAuthProofInput(
                                           method     : $method,
                                           uri        : $uri,
                                           headers    : $headers,
                                           server     : $server,
-                                          accessToken: $accessToken
+                                          accessToken: $accessToken,
                                       ),
             expectedSenderConstraint: $expectedSenderConstraint,
-            requiredSenderConstraint: $requiredSenderConstraint
+            requiredSenderConstraint: $requiredSenderConstraint,
         );
     }
 }

@@ -2,8 +2,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . '/framework')
+    ->in(__DIR__ . '/components')
     ->in(__DIR__ . '/tooling')
-    ->in(__DIR__ . '/scripts')
     ->in(__DIR__ . '/tests/Unit/Framework')
     ->in(__DIR__ . '/tests/Feature/Framework')
     ->in(__DIR__ . '/tests/Contract')
@@ -15,6 +15,10 @@ $config = new PhpCsFixer\Config();
 
 return $config->setRules([
                              '@PSR12'                            => true,
+                             '@PHP80Migration'                                  => true,
+                             '@PHP81Migration'                                  => true,
+                             '@PHP82Migration'                                  => true,
+                             '@PHP83Migration'                                  => true,
                              'array_syntax'                      => ['syntax' => 'short'],
                              'ordered_imports'                   => ['sort_algorithm' => 'alpha'],
                              'no_unused_imports'                 => true,
@@ -58,6 +62,14 @@ return $config->setRules([
                                      'use',
                                  ],
                              ],
+                             'nullable_type_declaration_for_default_null_value' => ['use_nullable_type_declaration' => false],
+                             'static_lambda'                                    => true,
+                             'phpdoc_to_comment'                                => false,
+                             'phpdoc_align'                                     => ['align' => 'left'],
+                             'modernize_strpos'                                 => true,
+                             'no_alias_functions'                               => true,
+                             'use_arrow_functions'                              => true,
+                             'void_return'                                      => true,
                          ])
     ->setFinder($finder)
     ->setRiskyAllowed(true);

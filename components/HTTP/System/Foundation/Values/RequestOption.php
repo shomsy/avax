@@ -118,23 +118,23 @@ enum RequestOption: string
             self::HEADERS_ONLY,
             self::FOLLOW_REDIRECTS,
             self::DECODE_CONTENT,
-            self::SYNCHRONOUS     => 'bool',
+            self::SYNCHRONOUS  => 'bool',
 
             self::MAX_REDIRECTS,
             self::RETRY_COUNT,
-            self::HTTP_VERSION    => 'int',
+            self::HTTP_VERSION => 'int',
 
             self::PROXY,
             self::SSL_CERT,
             self::SSL_KEY,
             self::SSL_CA_PATH,
-            self::SSL_CA_FILE     => 'string',
+            self::SSL_CA_FILE  => 'string',
 
-            self::RETRY_DELAY     => 'float',
+            self::RETRY_DELAY  => 'float',
 
             self::ON_HEADERS,
             self::ON_PROGRESS,
-            self::ON_STATS        => 'callable',
+            self::ON_STATS     => 'callable',
 
             self::STREAM_RESPONSE => 'bool',
         };
@@ -229,24 +229,24 @@ enum RequestOption: string
             self::HEADERS_ONLY,
             self::FOLLOW_REDIRECTS,
             self::DECODE_CONTENT,
-            self::SYNCHRONOUS     => is_bool($value),
+            self::SYNCHRONOUS  => is_bool($value),
 
             self::MAX_REDIRECTS,
-            self::RETRY_COUNT     => is_int($value),
+            self::RETRY_COUNT  => is_int($value),
 
-            self::HTTP_VERSION    => is_int($value),
+            self::HTTP_VERSION => is_int($value),
 
             self::PROXY,
             self::SSL_CERT,
             self::SSL_KEY,
             self::SSL_CA_PATH,
-            self::SSL_CA_FILE     => is_string($value),
+            self::SSL_CA_FILE  => is_string($value),
 
-            self::RETRY_DELAY     => is_float($value) || is_int($value),
+            self::RETRY_DELAY  => is_float($value) || is_int($value),
 
             self::ON_HEADERS,
             self::ON_PROGRESS,
-            self::ON_STATS        => is_callable($value),
+            self::ON_STATS     => is_callable($value),
 
             self::STREAM_RESPONSE => is_bool($value),
         };

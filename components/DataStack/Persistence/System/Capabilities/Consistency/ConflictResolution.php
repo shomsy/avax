@@ -26,7 +26,7 @@ final class ConflictResolution
 
     /**
      * @param Closure $resolver Function(mixed $a, mixed $b, array $context): mixed
-     * @param string  $name     Strategy name
+     * @param string $name Strategy name
      */
     private function __construct(Closure $resolver, string $name)
     {
@@ -169,14 +169,12 @@ final class ConflictResolution
     public static function manualIntervention() : self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
-                return new ConflictPair(
-                    valueA   : $valueA,
-                    valueB   : $valueB,
-                    context  : $context,
-                    createdAt: microtime(true),
-                );
-            },
+            resolver: static fn (mixed $valueA, mixed $valueB, array $context) : mixed => new ConflictPair(
+                valueA   : $valueA,
+                valueB   : $valueB,
+                context  : $context,
+                createdAt: microtime(true),
+            ),
             name    : 'manual_intervention',
         );
     }
@@ -224,8 +222,8 @@ final class ConflictResolution
     /**
      * Executes the resolution strategy.
      *
-     * @param mixed                $valueA  First conflicting value
-     * @param mixed                $valueB  Second conflicting value
+     * @param mixed $valueA First conflicting value
+     * @param mixed $valueB Second conflicting value
      * @param array<string, mixed> $context Additional context
      *
      * @return mixed The resolved value

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Security\System\PublicSurface;
 
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
 use Avax\Components\Identity\Security\System\Flows\DecryptValue\DecryptValue;
 use Avax\Components\Identity\Security\System\Flows\EncryptValue\EncryptValue;
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
+use Throwable;
 
 /**
  * Encryption - Public API for encryption operations.
@@ -22,7 +22,7 @@ final readonly class Encryption
     public function __construct(
         private EncryptValue $encryptFlow,
         private DecryptValue $decryptFlow,
-        private KeyResolver  $keyResolver,
+        private KeyResolver $keyResolver,
     ) {}
 
     /**
@@ -51,10 +51,24 @@ final readonly class Encryption
     {
         $plaintext = $this->decryptFlow->execute($serialized);
 
-        // Try to unserialize; if it fails, return as string
-        $unserialized = @unserialize($plaintext);
+        // Try to unserialize; if it fails, throw explicit exception
+        try {
+            $unserialized = @unserialize($plaintext);
+            if ($unserialized !== false) {
+                return $unserialized;
+            }
 
-        return $unserialized !== false ? $unserialized : $plaintext;
+            // If unserialize failed, try JSON decode for backward compatibility
+            $decoded = json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded !== null || json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+
+            // Last resort: return as plain string
+            return $plaintext;
+        } catch (Throwable $e) {
+            throw new DecryptionFailed('Failed to deserialize decrypted payload: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     /**

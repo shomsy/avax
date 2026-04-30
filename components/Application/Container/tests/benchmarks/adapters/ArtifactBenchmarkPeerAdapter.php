@@ -9,19 +9,12 @@ require_once __DIR__ . '/BenchmarkPeerAdapter.php';
  */
 final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapter
 {
-    private string $path;
-    private string $peerName;
-
-    public function __construct(
-        string $peerName,
-        string $path
-    )
+    public function __construct(private string $peerName, private string $path)
     {
-        $this->peerName = $peerName;
-        $this->path     = $path;
     }
 
-    public function name() : string
+    #[Override]
+    public function name(): string
     {
         return $this->peerName;
     }
@@ -29,20 +22,21 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
     /**
      * @throws JsonException
      */
-    public function load() : array
+    #[Override]
+    public function load(): array
     {
         if (! is_file(filename: $this->path)) {
-            throw new RuntimeException(message: "Benchmark artifact [{$this->path}] does not exist.");
+            throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not exist.', $this->path));
         }
 
         $json = file_get_contents(filename: $this->path);
         if (! is_string(value: $json) || $json === '') {
-            throw new RuntimeException(message: "Benchmark artifact [{$this->path}] could not be read.");
+            throw new RuntimeException(message: sprintf('Benchmark artifact [%s] could not be read.', $this->path));
         }
 
         $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         if (! is_array(value: $decoded) || ! is_array(value: $decoded['results'] ?? null)) {
-            throw new RuntimeException(message: "Benchmark artifact [{$this->path}] is invalid.");
+            throw new RuntimeException(message: sprintf('Benchmark artifact [%s] is invalid.', $this->path));
         }
 
         $meta = $decoded['meta'] ?? [];

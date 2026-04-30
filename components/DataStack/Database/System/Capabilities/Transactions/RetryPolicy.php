@@ -24,9 +24,9 @@ final readonly class RetryPolicy
      * @param list<string>                  $errorCodes  Database error codes that should trigger a retry
      */
     public function __construct(
-        public int   $maxAttempts = 3,
-        public int   $baseDelayMs = 100,
-        public int   $maxDelayMs = 5000,
+        public int $maxAttempts = 3,
+        public int $baseDelayMs = 100,
+        public int $maxDelayMs = 5000,
         public float $multiplier = 2.0,
         public array $retryOn = [],
         public array $errorCodes = [],
@@ -87,7 +87,7 @@ final readonly class RetryPolicy
      * Determines if the given exception should trigger a retry.
      *
      * @param Throwable $exception The exception to check
-     * @param int       $attempt   The current attempt number (1-based, before retry)
+     * @param int $attempt The current attempt number (1-based, before retry)
      */
     public function shouldRetry(Throwable $exception, int $attempt) : bool
     {

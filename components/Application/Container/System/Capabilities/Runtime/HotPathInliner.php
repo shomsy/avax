@@ -15,7 +15,7 @@ use Closure;
  */
 final class HotPathInliner
 {
-    private CompiledContainer|null $compiled = null;
+    private CompiledContainer|null $compiledContainer = null;
 
     /** @var array<string, Closure(ServiceResolver, ResolveRequest, array): mixed> */
     private array $calls = [];
@@ -23,13 +23,13 @@ final class HotPathInliner
     /**
      * Attaches one compiled runtime artifact.
      */
-    public function attach(CompiledContainer $compiled) : void
+    public function attach(CompiledContainer $compiledContainer) : void
     {
-        if ($this->compiled === $compiled) {
+        if ($this->compiledContainer === $compiledContainer) {
             return;
         }
 
-        $this->compiled = $compiled;
+        $this->compiledContainer = $compiledContainer;
         $this->calls    = [];
     }
 
@@ -38,7 +38,7 @@ final class HotPathInliner
      */
     public function detach() : void
     {
-        $this->compiled = null;
+        $this->compiledContainer = null;
         $this->calls    = [];
     }
 
@@ -47,21 +47,21 @@ final class HotPathInliner
      */
     public function isAttached() : bool
     {
-        return $this->compiled !== null;
+        return $this->compiledContainer !== null;
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function state(string|null $serviceId = null) : array
+    public function state(?string $serviceId = null) : array
     {
-        $attached = $this->compiled !== null;
-        $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiled->has(serviceId: $serviceId);
+        $attached = $this->compiledContainer !== null;
+        $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
 
         return [
             'attached'   => $attached,
-            'entryCount' => $this->compiled?->entryCount() ?? 0,
-            'entryIds'   => $this->compiled?->entryIds() ?? [],
+            'entryCount' => $this->compiledContainer?->entryCount() ?? 0,
+            'entryIds'   => $this->compiledContainer?->entryIds() ?? [],
             'hasEntry'   => $hasEntry,
             'reason'     => match (true) {
                 ! $attached                              => 'no compiled runtime is attached',
@@ -77,7 +77,7 @@ final class HotPathInliner
      */
     public function has(string $serviceId) : bool
     {
-        return $this->compiled?->has(serviceId: $serviceId) ?? false;
+        return $this->compiledContainer?->has(serviceId: $serviceId) ?? false;
     }
 
     /**
@@ -85,19 +85,19 @@ final class HotPathInliner
      *
      * @throws ContainerException
      */
-    public function resolve(string $serviceId, ServiceResolver $resolver, ResolveRequest $request) : mixed
+    public function resolve(string $serviceId, ServiceResolver $serviceResolver, ResolveRequest $resolveRequest) : mixed
     {
-        if ($this->compiled === null) {
+        if ($this->compiledContainer === null) {
             throw new ContainerException(message: 'HotPathInliner has no compiled runtime attached.');
         }
 
-        $method = $this->compiled->methodFor(serviceId: $serviceId);
+        $method = $this->compiledContainer->methodFor(serviceId: $serviceId);
         if ($method === null) {
-            throw new ContainerException(message: "No compiled entry exists for [{$serviceId}].");
+            throw new ContainerException(message: sprintf('No compiled entry exists for [%s].', $serviceId));
         }
 
-        $call = $this->calls[$method] ??= Closure::fromCallable(callback: [$this->compiled, $method]);
+        $call = $this->calls[$method] ??= Closure::fromCallable(callback: [$this->compiledContainer, $method]);
 
-        return $call($resolver, $request, $request->overrides);
+        return $call($serviceResolver, $resolveRequest, $resolveRequest->overrides);
     }
 }

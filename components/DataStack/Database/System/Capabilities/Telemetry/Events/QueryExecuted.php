@@ -23,9 +23,9 @@ final readonly class QueryExecuted extends Event
     public bool $bindingsRedacted;
 
     /** @var array<array-key, mixed> THE "Raw" original values (Hidden from logs). */
-    public array  $rawBindings;
+    public array $rawBindings;
     public string $connectionName;
-    public float  $timeMs;
+    public float $timeMs;
     public string $sql;
 
     /**
@@ -37,12 +37,13 @@ final readonly class QueryExecuted extends Event
      * @param bool   $redactBindings Should we use the "Black Marker" to hide values in the main report?
      */
     public function __construct(
-        string                      $sql,
-        #[SensitiveParameter] array $bindings,
-        float                       $timeMs,
-        string                      $connectionName,
-        string                      $correlationId,
-        bool                        $redactBindings = true
+        string $sql,
+        #[SensitiveParameter]
+        array  $bindings,
+        float  $timeMs,
+        string $connectionName,
+        string $correlationId,
+        bool   $redactBindings = true,
     )
     {
         $this->sql              = $sql;

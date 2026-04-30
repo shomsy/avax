@@ -13,8 +13,10 @@ use SensitiveParameter;
 final readonly class RenamePasskey
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        #[SensitiveParameter]
+        private PasskeyCredentialStoreInterface $credentialStore,
     ) {}
 
     /**

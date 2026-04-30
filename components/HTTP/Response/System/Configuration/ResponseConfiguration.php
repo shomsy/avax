@@ -24,7 +24,7 @@ final readonly class ResponseConfiguration
         private string $defaultContentType = 'text/html',
         private array  $defaultHeaders = [],
         private bool   $compress = false,
-        private string $protocolVersion = '1.1'
+        private string $protocolVersion = '1.1',
     ) {}
 
     public function charset() : string
@@ -67,7 +67,7 @@ final readonly class ResponseConfiguration
             defaultContentType: $overrides['default_content_type'] ?? $this->defaultContentType,
             defaultHeaders    : $overrides['default_headers'] ?? $this->defaultHeaders,
             compress          : $overrides['compress'] ?? $this->compress,
-            protocolVersion   : $overrides['protocol_version'] ?? $this->protocolVersion
+            protocolVersion   : $overrides['protocol_version'] ?? $this->protocolVersion,
         );
     }
 
@@ -83,7 +83,7 @@ final readonly class ResponseConfiguration
             defaultContentType: $config['default_content_type'] ?? 'text/html',
             defaultHeaders    : $config['default_headers'] ?? [],
             compress          : $config['compress'] ?? false,
-            protocolVersion   : $config['protocol_version'] ?? '1.1'
+            protocolVersion   : $config['protocol_version'] ?? '1.1',
         );
     }
 

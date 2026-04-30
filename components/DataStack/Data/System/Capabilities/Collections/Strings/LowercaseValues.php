@@ -22,7 +22,7 @@ final readonly class LowercaseValues
     {
         return array_map(
             callback: static fn (mixed $value) : string => strtolower(string: (string) $value),
-            array   : $this->items
+            array   : $this->items,
         );
     }
 

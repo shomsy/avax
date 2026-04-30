@@ -9,7 +9,7 @@ final class OnConflict
     public function __construct(
         public readonly array $columns,
         public readonly array $updateColumns = [],
-        public readonly bool  $doNothing = false,
+        public readonly bool $doNothing = false,
     ) {}
 
     public static function columns(array $columns, array $updateColumns = []) : self

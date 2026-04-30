@@ -12,13 +12,8 @@ use ReflectionException;
  */
 final readonly class ExportGraph
 {
-    private ServiceResolver $resolver;
-
-    public function __construct(
-        ServiceResolver $resolver
-    )
+    public function __construct(private ServiceResolver $serviceResolver)
     {
-        $this->resolver = $resolver;
     }
 
     /**
@@ -26,48 +21,48 @@ final readonly class ExportGraph
      *
      * @throws ReflectionException
      */
-    public function debugGraph(string|null $id = null, array $context = []) : array
+    public function debugGraph(?string $id = null, array $context = []) : array
     {
         $id ??= '';
         if ($context === []) {
-            return $this->resolver->debugGraph(id: $id);
+            return $this->serviceResolver->debugGraph(id: $id);
         }
 
-        return $this->resolver->debugGraphInContext(id: $id, context: $context);
+        return $this->serviceResolver->debugGraphInContext(id: $id, context: $context);
     }
 
     /**
      * @param array<string, mixed> $context
      */
-    public function export(string|null $format = null, string|null $kind = null, string|null $id = null, array $context = []) : string
+    public function export(?string $format = null, ?string $kind = null, ?string $id = null, array $context = []) : string
     {
         $format ??= 'json';
         $kind   ??= 'dependency';
         $id     ??= '';
         if ($context === []) {
-            return $this->resolver->exportGraph(format: $format, kind: $kind, id: $id);
+            return $this->serviceResolver->exportGraph(format: $format, kind: $kind, id: $id);
         }
 
-        return $this->resolver->exportGraphInContext(
+        return $this->serviceResolver->exportGraphInContext(
             format : $format,
             kind   : $kind,
             id     : $id,
-            context: $context
+            context: $context,
         );
     }
 
     /**
      * @param array<string, mixed> $context
      */
-    public function diff(string|null $format = null, string|null $id = null, array $context = []) : string
+    public function diff(?string $format = null, ?string $id = null, array $context = []) : string
     {
         $format ??= 'json';
         $id     ??= '';
         if ($context === []) {
-            return $this->resolver->diffGraph(format: $format, id: $id);
+            return $this->serviceResolver->diffGraph(format: $format, id: $id);
         }
 
-        return $this->resolver->diffGraphInContext(format: $format, id: $id, context: $context);
+        return $this->serviceResolver->diffGraphInContext(format: $format, id: $id, context: $context);
     }
 
     /**
@@ -79,14 +74,13 @@ final readonly class ExportGraph
     public function why(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->resolver->why(id: $id);
+            return $this->serviceResolver->why(id: $id);
         }
 
-        return $this->resolver->whyInContext(id: $id, context: $context);
+        return $this->serviceResolver->whyInContext(id: $id, context: $context);
     }
 
     /**
-     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -95,14 +89,13 @@ final readonly class ExportGraph
     public function whoUses(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->resolver->whoUses(id: $id);
+            return $this->serviceResolver->whoUses(id: $id);
         }
 
-        return $this->resolver->whoUsesInContext(id: $id, context: $context);
+        return $this->serviceResolver->whoUsesInContext(id: $id, context: $context);
     }
 
     /**
-     * @param string               $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -111,10 +104,10 @@ final readonly class ExportGraph
     public function whatBreaksIf(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->resolver->whatBreaksIf(id: $id);
+            return $this->serviceResolver->whatBreaksIf(id: $id);
         }
 
-        return $this->resolver->whatBreaksIfInContext(id: $id, context: $context);
+        return $this->serviceResolver->whatBreaksIfInContext(id: $id, context: $context);
     }
 
     /**
@@ -126,10 +119,10 @@ final readonly class ExportGraph
     public function showOwner(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->resolver->showOwner(id: $id);
+            return $this->serviceResolver->showOwner(id: $id);
         }
 
-        return $this->resolver->showOwnerInContext(id: $id, context: $context);
+        return $this->serviceResolver->showOwnerInContext(id: $id, context: $context);
     }
 
     /**
@@ -137,13 +130,13 @@ final readonly class ExportGraph
      *
      * @return array<string, mixed>
      */
-    public function showSlice(string|null $slice = null, array $context = []) : array
+    public function showSlice(?string $slice = null, array $context = []) : array
     {
         $slice ??= '';
         if ($context === []) {
-            return $this->resolver->debugSlice(slice: $slice);
+            return $this->serviceResolver->debugSlice(slice: $slice);
         }
 
-        return $this->resolver->debugSliceInContext(slice: $slice, context: $context);
+        return $this->serviceResolver->debugSliceInContext(slice: $slice, context: $context);
     }
 }

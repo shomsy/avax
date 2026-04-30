@@ -36,8 +36,8 @@ final class MigrationLoader
 
         return array_filter(
             array   : $all,
-            callback: static fn ($name) => ! in_array(needle: $name, haystack: $ranNames, strict: true),
-            mode    : ARRAY_FILTER_USE_KEY
+            callback: static fn ($name) : bool => ! in_array(needle: $name, haystack: $ranNames, strict: true),
+            mode    : ARRAY_FILTER_USE_KEY,
         );
     }
 
@@ -53,7 +53,7 @@ final class MigrationLoader
         foreach ($files as $file) {
             $migration = $this->loadMigrationFile(file: $file);
 
-            if ($migration !== null) {
+            if ($migration instanceof BaseMigration) {
                 $migrations[$this->getMigrationName(file: $file)] = $migration;
             }
         }
@@ -68,10 +68,12 @@ final class MigrationLoader
         $files = [];
 
         foreach (new DirectoryIterator(directory: $path) as $fileInfo) {
-            if ($fileInfo->isDot() || ! $fileInfo->isFile()) {
+            if ($fileInfo->isDot()) {
                 continue;
             }
-
+            if (! $fileInfo->isFile()) {
+                continue;
+            }
             if ($fileInfo->getExtension() === 'php') {
                 $files[] = $fileInfo->getPathname();
             }

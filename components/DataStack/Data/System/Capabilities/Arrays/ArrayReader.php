@@ -25,7 +25,7 @@ final readonly class ArrayReader
         return array_diff_key($data, array_flip($keys));
     }
 
-    public function getString(array $data, string $key, string|null $default = null) : string|null
+    public function getString(array $data, string $key, ?string $default = null) : string|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -47,14 +47,14 @@ final readonly class ArrayReader
 
         if ($value === null || ! is_string($value)) {
             throw new InvalidArgumentException(
-                message: "Key '{$key}' is required and must be a string.",
+                message: sprintf("Key '%s' is required and must be a string.", $key),
             );
         }
 
         return $value;
     }
 
-    public function getInt(array $data, string $key, int|null $default = null) : int|null
+    public function getInt(array $data, string $key, ?int $default = null) : int|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -75,14 +75,14 @@ final readonly class ArrayReader
 
         if ($value === null || (! is_int($value) && ! is_numeric($value))) {
             throw new InvalidArgumentException(
-                message: "Key '{$key}' is required and must be an integer.",
+                message: sprintf("Key '%s' is required and must be an integer.", $key),
             );
         }
 
         return (int) $value;
     }
 
-    public function getFloat(array $data, string $key, float|null $default = null) : float|null
+    public function getFloat(array $data, string $key, ?float $default = null) : float|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -93,7 +93,7 @@ final readonly class ArrayReader
         return (float) $value;
     }
 
-    public function getBool(array $data, string $key, bool|null $default = null) : bool|null
+    public function getBool(array $data, string $key, ?bool $default = null) : bool|null
     {
         $value = $this->get($data, $key);
 
@@ -122,7 +122,7 @@ final readonly class ArrayReader
     {
         if (! $this->has($data, $key)) {
             throw new InvalidArgumentException(
-                message: "Required key '{$key}' is missing from the data array.",
+                message: sprintf("Required key '%s' is missing from the data array.", $key),
             );
         }
 
@@ -141,7 +141,7 @@ final readonly class ArrayReader
     {
         if (! $this->hasNested($data, $path)) {
             throw new InvalidArgumentException(
-                message: "Required nested path '{$path}' is missing from the data array.",
+                message: sprintf("Required nested path '%s' is missing from the data array.", $path),
             );
         }
 
@@ -188,7 +188,7 @@ final readonly class ArrayReader
         $result = [];
 
         foreach ($data as $key => $value) {
-            $compositeKey = $prefix !== '' ? "{$prefix}.{$key}" : (string) $key;
+            $compositeKey = $prefix !== '' ? sprintf('%s.%s', $prefix, $key) : (string) $key;
 
             if (is_array($value) && $value !== []) {
                 $result = array_merge($result, $this->dot($value, $compositeKey));
@@ -206,10 +206,10 @@ final readonly class ArrayReader
     public function undot(array $data) : array
     {
         $result = [];
-        $writer = new ArrayWriter();
+        $arrayWriter = new ArrayWriter();
 
         foreach ($data as $key => $value) {
-            $writer->setNested($result, (string) $key, $value);
+            $arrayWriter->setNested($result, (string) $key, $value);
         }
 
         return $result;

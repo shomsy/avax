@@ -29,7 +29,7 @@ final readonly class UpdateClient
             type            : $data->type,
             requested       : $data->tokenEndpointAuthMethod,
             current         : $existing->tokenEndpointAuthMethod,
-            workloadIdentity: $data->workloadIdentity
+            workloadIdentity: $data->workloadIdentity,
         );
         $approvalRequired        = $data->approvalRequired;
         $approvalStatus          = $approvalRequired
@@ -60,7 +60,7 @@ final readonly class UpdateClient
             approvedBy                     : $approvedBy,
             active                         : $existing->active,
             secretHash                     : $existing->secretHash,
-            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem
+            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem,
         );
         $this->clientRegistry->replace(client: $updated);
         $this->auditLog->record(event: new AuditEvent(
@@ -73,7 +73,7 @@ final readonly class UpdateClient
                                                            'active'                            => $updated->active ? 1 : 0,
                                                            'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
                                                            'approval_status'                   => $updated->approvalStatus->value,
-                                                       ]
+                                                       ],
                                        ));
 
         return $updated;

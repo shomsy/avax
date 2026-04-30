@@ -27,39 +27,43 @@ use SensitiveParameter;
 final readonly class Access
 {
     public function __construct(
-        private AuthenticateRequest                         $authenticateRequest,
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        #[SensitiveParameter] private CheckAuthentication   $checkAuthentication,
-        private ReadCurrentUser                             $readCurrentUser,
-        #[SensitiveParameter] private AccessInterface       $access,
-        private BeginAdminElevation                         $beginAdminElevation,
-        private EndAdminElevation                           $endAdminElevation,
-        private RequireAdminElevation                       $requireAdminElevation,
-        private AssessCurrentRisk                           $assessCurrentRisk,
-        private ReadRiskSignals                             $readRiskSignals
-    ) {}
+        private AuthenticateRequest $authenticateRequest,
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        #[SensitiveParameter]
+        private CheckAuthentication $checkAuthentication,
+        private ReadCurrentUser $readCurrentUser,
+        #[SensitiveParameter]
+        private AccessInterface $access,
+        private BeginAdminElevation $beginAdminElevation,
+        private EndAdminElevation $endAdminElevation,
+        private RequireAdminElevation $requireAdminElevation,
+        private AssessCurrentRisk $assessCurrentRisk,
+        private ReadRiskSignals $readRiskSignals,
+    ) {
+    }
 
-    public function authenticateRequest(AuthenticationRequest $request) : AuthenticationContext
+    public function authenticateRequest(AuthenticationRequest $request): AuthenticationContext
     {
         return $this->authenticateRequest->execute(request: $request);
     }
 
-    public function current() : AuthenticationContext
+    public function current(): AuthenticationContext
     {
         return $this->currentAuthentication->read();
     }
 
-    public function check() : bool
+    public function check(): bool
     {
         return $this->checkAuthentication->execute();
     }
 
-    public function user() : AuthenticatedUser|null
+    public function user(): AuthenticatedUser|null
     {
         return $this->readCurrentUser->execute();
     }
 
-    public function access() : AccessInterface
+    public function access(): AccessInterface
     {
         return $this->access;
     }
@@ -68,12 +72,12 @@ final readonly class Access
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function beginAdminElevation() : AdminElevation
+    public function beginAdminElevation(): AdminElevation
     {
         return $this->beginAdminElevation->execute();
     }
 
-    public function endAdminElevation() : void
+    public function endAdminElevation(): void
     {
         $this->endAdminElevation->execute();
     }
@@ -81,12 +85,12 @@ final readonly class Access
     /**
      * @throws AdminElevationFailed
      */
-    public function requireAdminElevation() : void
+    public function requireAdminElevation(): void
     {
         $this->requireAdminElevation->execute();
     }
 
-    public function assessCurrentRisk(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    public function assessCurrentRisk(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null): RiskDecision|null
     {
         return $this->assessCurrentRisk->execute(ipAddress: $ipAddress, userAgent: $userAgent);
     }
@@ -94,7 +98,7 @@ final readonly class Access
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(int|null $userId = null) : array
+    public function readRiskSignals(int $userId = null): array
     {
         return $this->readRiskSignals->execute(userId: $userId);
     }

@@ -14,7 +14,7 @@ final readonly class Percentage
     public function __construct(public float $value)
     {
         if ($value < 0 || $value > 100) {
-            throw new InvalidArgumentException("Percentage must be between 0 and 100.");
+            throw new InvalidArgumentException('Percentage must be between 0 and 100.');
         }
     }
 

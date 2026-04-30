@@ -9,11 +9,11 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class JoinNode
 {
     public function __construct(
-        public readonly string         $type,
-        public readonly string         $table,
-        public readonly string|null    $alias = null,
+        public readonly string      $type,
+        public readonly string      $table,
+        public readonly string|null $alias = null,
         public readonly WhereNode|null $on = null,
-        public readonly string|null    $using = null
+        public readonly string|null $using = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string

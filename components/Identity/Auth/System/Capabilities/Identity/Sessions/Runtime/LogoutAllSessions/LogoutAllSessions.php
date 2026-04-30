@@ -22,12 +22,15 @@ use SensitiveParameter;
 final readonly class LogoutAllSessions
 {
     public function __construct(
-        private IdentityInterface                                     $identity,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private IdentityInterface               $identity,
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     /**
@@ -60,7 +63,7 @@ final readonly class LogoutAllSessions
                                            context   : [
                                                            'user_id' => $user->id,
                                                            'reason'  => 'logout_all',
-                                                       ]
+                                                       ],
                                        ));
     }
 }

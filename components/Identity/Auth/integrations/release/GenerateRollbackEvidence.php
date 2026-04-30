@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Auth\Integrations\Release;
 final readonly class GenerateRollbackEvidence
 {
     public function __construct(
-        private ReadGitOutput $readGitOutput = new ReadGitOutput()
+        private ReadGitOutput $readGitOutput = new ReadGitOutput(),
     ) {}
 
     /**
@@ -17,13 +17,13 @@ final readonly class GenerateRollbackEvidence
      * @return array<string, mixed>
      */
     public function execute(
-        string      $repositoryRoot,
-        string|null $rollbackTarget = null,
-        array|null  $artifacts = null,
-        array       $validationCommands = []
+        string $repositoryRoot,
+        string $rollbackTarget = null,
+        array  $artifacts = null,
+        array  $validationCommands = [],
     ) : array
     {
-        $artifacts      ??= [];
+        $artifacts ??= [];
         $resolvedTarget = $this->resolveRollbackTarget(repositoryRoot: $repositoryRoot, rollbackTarget: $rollbackTarget);
 
         return [

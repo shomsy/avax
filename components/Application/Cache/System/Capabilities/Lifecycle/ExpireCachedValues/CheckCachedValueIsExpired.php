@@ -10,12 +10,12 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CheckCachedValueIsExpired
 {
     public function __construct(
-        private Clock $clock
+        private Clock $clock,
     ) {}
 
     public function check(Timestamp|null $expiresAt) : bool
     {
-        if ($expiresAt === null) {
+        if (! $expiresAt instanceof Timestamp) {
             return false;
         }
 
@@ -24,12 +24,12 @@ final readonly class CheckCachedValueIsExpired
 
     public function secondsUntilExpiry(Timestamp|null $expiresAt) : int
     {
-        if ($expiresAt === null) {
+        if (! $expiresAt instanceof Timestamp) {
             return PHP_INT_MAX;
         }
 
-        $diff = $expiresAt->difference(other: $this->clock->now());
+        $duration = $expiresAt->difference(other: $this->clock->now());
 
-        return max(0, $diff->toSeconds());
+        return max(0, $duration->toSeconds());
     }
 }

@@ -11,28 +11,28 @@ use stdClass;
 
 final readonly class SerializeLegacyDTO
 {
-    private SerializeDataObject $serializer;
+    private SerializeDataObject $serializeDataObject;
 
     public function __construct()
     {
-        $this->serializer = new SerializeDataObject(config: DataTransferConfig::legacy());
+        $this->serializeDataObject = new SerializeDataObject(config: DataTransferConfig::legacy());
     }
 
-    public function toJson(object $object, int|null $flags = null, int $depth = 512) : string
+    public function toJson(object $object, ?int $flags = null, int $depth = 512) : string
     {
         $flags ??= 0;
 
-        return $this->serializer->toJson(object: $object, flags: $flags, depth: $depth);
+        return $this->serializeDataObject->toJson(object: $object, flags: $flags, depth: $depth);
     }
 
     public function toFlatArray(object $object) : array
     {
-        return $this->serializer->toFlatArray(object: $object);
+        return $this->serializeDataObject->toFlatArray(object: $object);
     }
 
     public function toStdClass(object $object) : stdClass
     {
-        return $this->serializer->toStdClass(object: $object);
+        return $this->serializeDataObject->toStdClass(object: $object);
     }
 
     public function toCollection(object $object) : Collection
@@ -41,13 +41,13 @@ final readonly class SerializeLegacyDTO
         return collect(items: $this->toArray(object: $object));
     }
 
-    public function toArray(object $object, int|null $depth = null, bool $excludeHidden = true) : array
+    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true) : array
     {
-        return $this->serializer->toArray(object: $object, depth: $depth, excludeHidden: $excludeHidden);
+        return $this->serializeDataObject->toArray(object: $object, depth: $depth, excludeHidden: $excludeHidden);
     }
 
     public function toJsonApi(object $object, string $type) : array
     {
-        return $this->serializer->toJsonApi(object: $object, type: $type);
+        return $this->serializeDataObject->toJsonApi(object: $object, type: $type);
     }
 }

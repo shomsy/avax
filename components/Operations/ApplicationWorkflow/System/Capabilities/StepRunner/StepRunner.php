@@ -29,29 +29,29 @@ final class StepRunner
     private array $failureLog = [];
 
     public function __construct(
-        ?IdempotencyStore $idempotencyStore = null,
-        ?RetryPolicy      $retryPolicy = null,
-        ?SagaTimeout      $timeout = null,
+        IdempotencyStore $idempotencyStore = null,
+        RetryPolicy      $retryPolicy = null,
+        SagaTimeout      $timeout = null,
     )
     {
         $this->idempotencyStore = $idempotencyStore ?? new IdempotencyStore();
-        $this->retryPolicy      = $retryPolicy ?? RetryPolicy::none();
-        $this->timeout          = $timeout ?? SagaTimeout::seconds(30);
+        $this->retryPolicy = $retryPolicy ?? RetryPolicy::none();
+        $this->timeout = $timeout ?? SagaTimeout::seconds(30);
     }
 
     /**
      * Execute a saga step with idempotency check, retry, and timeout handling.
      *
-     * @param SagaStep       $step           The step to execute
-     * @param mixed          $context        The saga context
+     * @param SagaStep $step    The step to execute
+     * @param mixed    $context The saga context
      * @param IdempotencyKey $idempotencyKey The idempotency key for this execution
      *
      * @return mixed The result of the step execution
      * @throws Throwable If the step fails after all retries
      */
     public function execute(
-        SagaStep       $step,
-        mixed          $context,
+        SagaStep $step,
+        mixed    $context,
         IdempotencyKey $idempotencyKey,
     ) : mixed
     {

@@ -97,8 +97,8 @@ final class MySQLGrammar extends BaseGrammar
                 separator: '.',
                 array    : array_map(
                                callback: fn ($segment) => $this->wrapSegment(segment: $segment),
-                               array   : $segments
-                           )
+                               array   : $segments,
+                           ),
             );
         }
 

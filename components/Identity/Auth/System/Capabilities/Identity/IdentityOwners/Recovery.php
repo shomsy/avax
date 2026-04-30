@@ -15,8 +15,10 @@ use SensitiveParameter;
 final readonly class Recovery
 {
     public function __construct(
-        #[SensitiveParameter] private BeginPasswordReset $beginPasswordReset,
-        #[SensitiveParameter] private ResetPassword      $resetPassword
+        #[SensitiveParameter]
+        private BeginPasswordReset $beginPasswordReset,
+        #[SensitiveParameter]
+        private ResetPassword      $resetPassword,
     ) {}
 
     /**

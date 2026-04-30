@@ -12,20 +12,20 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 final readonly class DataQuery
 {
     /**
-     * @param class-string|null                                     $entityType
-     * @param array<string, mixed>                                  $conditions
-     * @param array<string, string>                                 $orderBy
-     * @param array<string>                                         $select
+     * @param class-string|null     $entityType
+     * @param array<string, mixed>  $conditions
+     * @param array<string, string> $orderBy
+     * @param array<string>         $select
      * @param array<array{type: string, table: string, on: string}> $joins
      */
     public function __construct(
         public string|null $entityType = null,
-        public array       $conditions = [],
-        public array       $orderBy = [],
-        public int|null    $limit = null,
-        public int|null    $offset = null,
-        public array       $joins = [],
-        public array       $select = ['*'],
+        public array    $conditions = [],
+        public array    $orderBy = [],
+        public int|null $limit = null,
+        public int|null $offset = null,
+        public array    $joins = [],
+        public array    $select = ['*'],
     ) {}
 
     /**

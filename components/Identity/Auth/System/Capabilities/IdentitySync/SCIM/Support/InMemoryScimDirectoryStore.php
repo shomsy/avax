@@ -13,7 +13,8 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
     private array $directories = [];
 
     public function __construct(
-        #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
+        #[SensitiveParameter]
+        private readonly PasswordHasher $passwordHasher,
     ) {}
 
     public function save(ScimDirectory $directory) : void
@@ -27,8 +28,9 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
     }
 
     public function verifyToken(
-        string                       $directoryId,
-        #[SensitiveParameter] string $plainTextToken
+        string $directoryId,
+        #[SensitiveParameter]
+        string $plainTextToken,
     ) : bool
     {
         $directory = $this->find(directoryId: $directoryId);

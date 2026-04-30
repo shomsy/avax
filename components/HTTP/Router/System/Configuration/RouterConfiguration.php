@@ -21,10 +21,10 @@ final readonly class RouterConfiguration
      */
     public function __construct(
         private string $prefix = '',
-        private bool   $cacheEnabled = true,
-        private bool   $strictMode = false,
-        private array  $defaults = [],
-        private int    $maxRouteCount = 1000
+        private bool  $cacheEnabled = true,
+        private bool  $strictMode = false,
+        private array $defaults = [],
+        private int   $maxRouteCount = 1000,
     ) {}
 
     public function prefix() : string
@@ -67,7 +67,7 @@ final readonly class RouterConfiguration
             cacheEnabled : $overrides['cache_enabled'] ?? $this->cacheEnabled,
             strictMode   : $overrides['strict_mode'] ?? $this->strictMode,
             defaults     : $overrides['defaults'] ?? $this->defaults,
-            maxRouteCount: $overrides['max_route_count'] ?? $this->maxRouteCount
+            maxRouteCount: $overrides['max_route_count'] ?? $this->maxRouteCount,
         );
     }
 
@@ -83,7 +83,7 @@ final readonly class RouterConfiguration
             cacheEnabled : $config['cache_enabled'] ?? true,
             strictMode   : $config['strict_mode'] ?? false,
             defaults     : $config['defaults'] ?? [],
-            maxRouteCount: $config['max_route_count'] ?? 1000
+            maxRouteCount: $config['max_route_count'] ?? 1000,
         );
     }
 }

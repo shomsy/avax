@@ -45,10 +45,10 @@ final readonly class ProtectSagaIdempotency
 
 final readonly class SagaCommandKey
 {
-    public string      $value;
-    public string      $aggregateType;
-    public string      $aggregateId;
-    public string      $action;
+    public string $value;
+    public string $aggregateType;
+    public string $aggregateId;
+    public string $action;
     public string|null $tenantId;
 
     private function __construct(
@@ -56,7 +56,7 @@ final readonly class SagaCommandKey
         string      $aggregateType,
         string      $aggregateId,
         string      $action,
-        string|null $tenantId
+        string|null $tenantId,
     )
     {
         $this->value         = $value;
@@ -67,10 +67,10 @@ final readonly class SagaCommandKey
     }
 
     public static function create(
-        string      $aggregateType,
-        string      $aggregateId,
-        string      $action,
-        string|null $tenantId = null
+        string $aggregateType,
+        string $aggregateId,
+        string $action,
+        string $tenantId = null,
     ) : self
     {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
@@ -81,7 +81,7 @@ final readonly class SagaCommandKey
             aggregateType: $aggregateType,
             aggregateId  : $aggregateId,
             action       : $action,
-            tenantId     : $tenantId
+            tenantId     : $tenantId,
         );
     }
 
@@ -98,10 +98,10 @@ final readonly class SagaCommandKey
 
 final readonly class SagaCommandResult
 {
-    public string            $sagaId;
-    public bool              $success;
-    public array             $output;
-    public string|null       $error;
+    public string      $sagaId;
+    public bool        $success;
+    public array       $output;
+    public string|null $error;
     public DateTimeImmutable $occurredAt;
 
     private function __construct(
@@ -109,7 +109,7 @@ final readonly class SagaCommandResult
         bool              $success,
         array             $output,
         string|null       $error,
-        DateTimeImmutable $occurredAt
+        DateTimeImmutable $occurredAt,
     )
     {
         $this->sagaId     = $sagaId;
@@ -126,7 +126,7 @@ final readonly class SagaCommandResult
             success   : true,
             output    : $output,
             error     : null,
-            occurredAt: new DateTimeImmutable()
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -137,7 +137,7 @@ final readonly class SagaCommandResult
             success   : false,
             output    : [],
             error     : $error,
-            occurredAt: new DateTimeImmutable()
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -155,13 +155,13 @@ final readonly class SagaCommandResult
 
 final class DuplicateSagaCommand extends Exception
 {
-    public string|null            $sagaId;
+    public string|null $sagaId;
     public SagaCommandResult|null $previousResult;
 
     public function __construct(
-        string                 $message = 'Duplicate saga command detected.',
-        string|null            $sagaId = null,
-        SagaCommandResult|null $previousResult = null
+        string            $message = 'Duplicate saga command detected.',
+        string            $sagaId = null,
+        SagaCommandResult $previousResult = null,
     )
     {
         parent::__construct(message: $message);

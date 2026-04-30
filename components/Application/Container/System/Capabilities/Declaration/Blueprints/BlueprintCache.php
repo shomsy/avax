@@ -13,26 +13,26 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 final class BlueprintCache
 {
     /** @var array<string, ServiceBlueprint> */
-    private array                           $items = [];
-    private readonly ResolutionMetrics|null $metrics;
-    private readonly bool                   $debug;
-    private readonly string                 $cacheVersion;
-    private readonly string                 $cacheDir;
+    private array         $items = [];
+    private readonly bool $debug;
+
+    private readonly string $cacheVersion;
+
+    private readonly string $cacheDir;
 
     public function __construct(
-        string|null            $cacheDir = null,
-        string|null            $cacheVersion = null,
-        bool|null              $debug = null,
-        ResolutionMetrics|null $metrics = null
+        ?string                                 $cacheDir = null,
+        ?string                                 $cacheVersion = null,
+        ?bool                                   $debug = null,
+        private readonly ResolutionMetrics|null $resolutionMetrics = null,
     )
     {
-        $cacheDir           ??= '';
-        $cacheVersion       ??= 'container-v1';
-        $debug              ??= false;
+        $cacheDir     ??= '';
+        $cacheVersion ??= 'container-v1';
+        $debug        ??= false;
         $this->cacheDir     = $cacheDir;
         $this->cacheVersion = $cacheVersion;
         $this->debug        = $debug;
-        $this->metrics      = $metrics;
     }
 
     /**
@@ -51,7 +51,7 @@ final class BlueprintCache
         $cached = $this->items[$class] ?? null;
         if ($cached instanceof ServiceBlueprint) {
             if (! $this->debug || $fingerprint === '' || $cached->fingerprint === $fingerprint) {
-                $this->metrics?->increment(name: 'container_blueprint_cache_memory_hits_total');
+                $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_memory_hits_total');
 
                 return $cached;
             }
@@ -60,34 +60,34 @@ final class BlueprintCache
         }
 
         if (! $this->isEnabled()) {
-            $this->metrics?->increment(name: 'container_blueprint_cache_misses_total');
+            $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
         }
 
         $path = $this->pathFor(class: $class);
         if (! is_file(filename: $path)) {
-            $this->metrics?->increment(name: 'container_blueprint_cache_misses_total');
+            $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
         }
 
         $loaded = require $path;
         if (! $loaded instanceof ServiceBlueprint) {
-            $this->metrics?->increment(name: 'container_blueprint_cache_misses_total');
+            $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
         }
 
         if ($this->debug && $fingerprint !== '' && $loaded->fingerprint !== $fingerprint) {
             $this->forget(class: $class);
-            $this->metrics?->increment(name: 'container_blueprint_cache_misses_total');
+            $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
         }
 
         $this->items[$class] = $loaded;
-        $this->metrics?->increment(name: 'container_blueprint_cache_disk_hits_total');
+        $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_disk_hits_total');
 
         return $loaded;
     }
@@ -125,34 +125,35 @@ final class BlueprintCache
      *
      * @throws ContainerException
      */
-    public function put(ServiceBlueprint $blueprint) : ServiceBlueprint
+    public function put(ServiceBlueprint $serviceBlueprint) : ServiceBlueprint
     {
-        $this->items[$blueprint->class] = $blueprint;
-        $this->metrics?->increment(name: 'container_blueprint_compiles_total');
+        $this->items[$serviceBlueprint->class] = $serviceBlueprint;
+        $this->resolutionMetrics?->increment(name: 'container_blueprint_compiles_total');
 
         if (! $this->isEnabled()) {
-            return $blueprint;
+            return $serviceBlueprint;
         }
 
-        $directory = dirname(path: $this->pathFor(class: $blueprint->class));
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0777, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new ContainerException(message: "Cannot create blueprint cache directory [{$directory}].");
+        $directory = dirname(path: $this->pathFor(class: $serviceBlueprint->class));
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o777, recursive: true) && ! is_dir(filename: $directory)) {
+            throw new ContainerException(message: sprintf('Cannot create blueprint cache directory [%s].', $directory));
         }
 
-        $path = $this->pathFor(class: $blueprint->class);
+        $path = $this->pathFor(class: $serviceBlueprint->class);
         $temp = $path . '.' . uniqid(prefix: 'tmp', more_entropy: true);
-        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $blueprint, return: true) . ';' . PHP_EOL;
+        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $serviceBlueprint, return: true) . ';' . PHP_EOL;
 
         if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
-            throw new ContainerException(message: "Cannot write blueprint cache file [{$temp}].");
+            throw new ContainerException(message: sprintf('Cannot write blueprint cache file [%s].', $temp));
         }
 
         if (! rename(from: $temp, to: $path)) {
             unlink(filename: $temp);
-            throw new ContainerException(message: "Cannot publish blueprint cache file [{$path}].");
+
+            throw new ContainerException(message: sprintf('Cannot publish blueprint cache file [%s].', $path));
         }
 
-        return $blueprint;
+        return $serviceBlueprint;
     }
 
     /**
@@ -173,13 +174,16 @@ final class BlueprintCache
         }
 
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') {
+            if ($file === '.') {
                 continue;
             }
-
+            if ($file === '..') {
+                continue;
+            }
             $path = $directory . '/' . $file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
+
                 continue;
             }
 
@@ -195,13 +199,16 @@ final class BlueprintCache
         }
 
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') {
+            if ($file === '.') {
                 continue;
             }
-
+            if ($file === '..') {
+                continue;
+            }
             $path = $directory . '/' . $file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
+
                 continue;
             }
 

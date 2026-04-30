@@ -24,40 +24,40 @@ enum SagaStepRetryPolicy: string
 
 final readonly class SagaStepDefinition
 {
-    public string              $name;
-    public string              $component;
-    public SagaStepKind        $kind;
-    public array               $input;
-    public string|null         $compensationComponent;
-    public array|null          $compensationInput;
-    public int                 $maxRetries;
-    public int                 $retryDelayMs;
+    public string       $name;
+    public string       $component;
+    public SagaStepKind $kind;
+    public array        $input;
+    public string|null  $compensationComponent;
+    public array|null   $compensationInput;
+    public int          $maxRetries;
+    public int          $retryDelayMs;
     public SagaStepRetryPolicy $retryPolicy;
-    public int                 $timeoutSeconds;
-    public bool                $optional;
-    public string|null         $description;
+    public int          $timeoutSeconds;
+    public bool         $optional;
+    public string|null  $description;
 
     private function __construct(
-        string                   $name,
-        string                   $component,
-        SagaStepKind             $kind,
-        array|null               $input = null,
-        string|null              $compensationComponent = null,
-        array|null               $compensationInput = null,
-        int|null                 $maxRetries = null,
-        int|null                 $retryDelayMs = null,
-        SagaStepRetryPolicy|null $retryPolicy = null,
-        int|null                 $timeoutSeconds = null,
-        bool|null                $optional = null,
-        string|null              $description = null
+        string              $name,
+        string              $component,
+        SagaStepKind        $kind,
+        array               $input = null,
+        string              $compensationComponent = null,
+        array               $compensationInput = null,
+        int                 $maxRetries = null,
+        int                 $retryDelayMs = null,
+        SagaStepRetryPolicy $retryPolicy = null,
+        int                 $timeoutSeconds = null,
+        bool                $optional = null,
+        string              $description = null,
     )
     {
-        $input                       ??= [];
-        $maxRetries                  ??= 0;
-        $retryDelayMs                ??= 1000;
-        $retryPolicy                 ??= SagaStepRetryPolicy::NONE;
-        $timeoutSeconds              ??= 30;
-        $optional                    ??= false;
+        $input          ??= [];
+        $maxRetries     ??= 0;
+        $retryDelayMs   ??= 1000;
+        $retryPolicy    ??= SagaStepRetryPolicy::NONE;
+        $timeoutSeconds ??= 30;
+        $optional       ??= false;
         $this->name                  = $name;
         $this->component             = $component;
         $this->kind                  = $kind;
@@ -73,10 +73,10 @@ final readonly class SagaStepDefinition
     }
 
     public static function action(
-        string     $name,
-        string     $component,
-        array|null $input = null,
-        array      $options = []
+        string $name,
+        string $component,
+        array  $input = null,
+        array  $options = [],
     ) : self
     {
         $input ??= [];
@@ -87,7 +87,7 @@ final readonly class SagaStepDefinition
     public static function create(
         string $name,
         string $component,
-        array  $options = []
+        array $options = [],
     ) : self
     {
         if (empty(trim($name))) {
@@ -112,17 +112,17 @@ final readonly class SagaStepDefinition
             retryPolicy          : SagaStepRetryPolicy::from(value: $options['retry_policy'] ?? 'none'),
             timeoutSeconds       : $options['timeout'] ?? 30,
             optional             : $options['optional'] ?? false,
-            description          : $options['description'] ?? null
+            description          : $options['description'] ?? null,
         );
     }
 
     public static function withCompensation(
         string $name,
         string $component,
-        array  $input,
+        array $input,
         string $compensationComponent,
-        array  $compensationInput,
-        array  $options = []
+        array $compensationInput,
+        array $options = [],
     ) : self
     {
         return self::create(name: $name, component: $component, options: array_merge($options, [

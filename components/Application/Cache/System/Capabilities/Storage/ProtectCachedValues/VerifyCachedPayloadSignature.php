@@ -7,20 +7,20 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\ProtectC
 final readonly class VerifyCachedPayloadSignature
 {
     public function __construct(
-        private SignCachedPayload $signer
+        private SignCachedPayload $signCachedPayload,
     ) {}
 
     public function verifyOrFail(string $payload, string $signature) : void
     {
         if (! $this->verify(payload: $payload, signature: $signature)) {
             throw new CachePayloadWasTampered(
-                message: 'System payload signature verification failed'
+                message: 'System payload signature verification failed',
             );
         }
     }
 
     public function verify(string $payload, string $signature) : bool
     {
-        return $this->signer->verify(payload: $payload, signature: $signature);
+        return $this->signCachedPayload->verify(payload: $payload, signature: $signature);
     }
 }

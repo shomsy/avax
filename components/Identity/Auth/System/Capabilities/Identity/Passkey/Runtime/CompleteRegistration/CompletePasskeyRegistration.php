@@ -18,13 +18,15 @@ use SensitiveParameter;
 final readonly class CompletePasskeyRegistration
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private PasskeyRuntimeInterface         $runtime,
+        #[SensitiveParameter]
+        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface  $challengeStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        private string                          $rpId,
     ) {}
 
     /**
@@ -50,20 +52,21 @@ final readonly class CompletePasskeyRegistration
 
         if ($challenge->isExpiredAt(moment: $this->clock->now())) {
             $this->challengeStore->forget(challengeId: $data->challengeId);
+
             throw PasskeyOperationFailed::expired();
         }
 
         $resolved = $this->runtime->completeRegistration(
             rpId     : $this->rpId,
             challenge: $challenge->challenge,
-            response : $data->response
+            response : $data->response,
         );
 
         $credential = new PasskeyCredential(
             userId      : $user->id,
             credentialId: $resolved->credentialId,
             label       : $resolved->label,
-            registeredAt: $this->clock->now()
+            registeredAt: $this->clock->now(),
         );
 
         $this->credentialStore->save(credential: $credential);
@@ -76,7 +79,7 @@ final readonly class CompletePasskeyRegistration
                                                            'credential_id' => $credential->credentialId,
                                                            'ip_address'    => $data->ipAddress,
                                                            'user_agent'    => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return $credential;

@@ -17,25 +17,26 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class DistributedCacheStoreTest extends TestCase
 {
-    private FrozenClock $clock;
+    private FrozenClock $frozenClock;
 
     public function test_write_then_read_uses_same_resolved_node() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
 
-        $cache = (new DistributedCacheStore(ring: $ring, clock: $this->clock))
-            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $storeA);
+        $distributedCacheStore = (new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock))
+            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $inMemoryCacheStore);
 
-        $cache->write(key: $this->makeKey(key: 'user:1'), record: $this->makeRecord(value: 'value_1'));
+        $distributedCacheStore->write(key: $this->makeKey(key: 'user:1'), record: $this->makeRecord(value: 'value_1'));
 
-        $result = $cache->read(key: $this->makeKey(key: 'user:1'), clock: $this->clock);
+        $result = $distributedCacheStore->read(key: $this->makeKey(key: 'user:1'), clock: $this->frozenClock);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
     }
@@ -47,68 +48,68 @@ final class DistributedCacheStoreTest extends TestCase
 
     private function makeRecord(string $value) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
-        $lifecycle = CachedValueLifecycle::create(
+        $now                  = $this->frozenClock->now();
+        $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
-            clock    : $this->clock
+            clock    : $this->frozenClock,
         );
 
-        return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
+        return new StoredCacheRecord(value: $value, lifecycle: $cachedValueLifecycle);
     }
 
     public function test_distributed_store_fails_when_node_store_is_missing() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
-        $ring->addNode(node: CacheNode::create(id: 'node_b'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
 
-        $cache = (new DistributedCacheStore(ring: $ring, clock: $this->clock))
-            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $storeA);
+        $distributedCacheStore = (new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock))
+            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $inMemoryCacheStore);
 
-        $result = $cache->read(key: $this->makeKey(key: 'user:2'), clock: $this->clock);
+        $result = $distributedCacheStore->read(key: $this->makeKey(key: 'user:2'), clock: $this->frozenClock);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
 
     public function test_forget_removes_from_correct_node() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
 
-        $cache = (new DistributedCacheStore(ring: $ring, clock: $this->clock))
-            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $storeA);
+        $distributedCacheStore = (new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock))
+            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $inMemoryCacheStore);
 
-        $cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1'));
+        $distributedCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1'));
 
-        $this->assertTrue(condition: $storeA->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
 
-        $cache->forget(key: $this->makeKey(key: 'key_1'));
+        $distributedCacheStore->forget(key: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $storeA->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertFalse(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
     }
 
     public function test_clear_removes_from_all_nodes() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
-        $ring->addNode(node: CacheNode::create(id: 'node_b'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
-        $storeB = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
+        $storeA = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $storeB = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
 
-        $cache = (new DistributedCacheStore(ring: $ring, clock: $this->clock))
+        $distributedCacheStore = (new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock))
             ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $storeA)
             ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_b'), store: $storeB);
 
-        $cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1'));
-        $cache->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2'));
+        $distributedCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1'));
+        $distributedCacheStore->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2'));
 
-        $cache->clear();
+        $distributedCacheStore->clear();
 
         $this->assertEquals(expected: 0, actual: $storeA->count());
         $this->assertEquals(expected: 0, actual: $storeB->count());
@@ -116,31 +117,32 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_node_count_returns_ring_count() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
-        $ring->addNode(node: CacheNode::create(id: 'node_b'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
-        $cache = new DistributedCacheStore(ring: $ring, clock: $this->clock);
+        $distributedCacheStore = new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock);
 
-        $this->assertEquals(expected: 2, actual: $cache->nodeCount());
+        $this->assertEquals(expected: 2, actual: $distributedCacheStore->nodeCount());
     }
 
     public function test_has_node_store_returns_true_when_registered() : void
     {
-        $ring = new ConsistentHashRing();
-        $ring->addNode(node: CacheNode::create(id: 'node_a'));
+        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
 
-        $cache = (new DistributedCacheStore(ring: $ring, clock: $this->clock))
-            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $storeA);
+        $distributedCacheStore = (new DistributedCacheStore(ring: $consistentHashRing, clock: $this->frozenClock))
+            ->registerNodeStore(nodeId: CacheNodeId::from(id: 'node_a'), store: $inMemoryCacheStore);
 
-        $this->assertTrue(condition: $cache->hasNodeStore(nodeId: CacheNodeId::from(id: 'node_a')));
-        $this->assertFalse(condition: $cache->hasNodeStore(nodeId: CacheNodeId::from(id: 'node_b')));
+        $this->assertTrue(condition: $distributedCacheStore->hasNodeStore(nodeId: CacheNodeId::from(id: 'node_a')));
+        $this->assertFalse(condition: $distributedCacheStore->hasNodeStore(nodeId: CacheNodeId::from(id: 'node_b')));
     }
 
+    #[Override]
     protected function setUp() : void
     {
-        $this->clock = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
     }
 }

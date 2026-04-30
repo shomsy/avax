@@ -17,9 +17,10 @@ final readonly class DeterministicRiskEngine
     public function __construct(private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments, private RiskSignalStoreInterface $signals, private Clock $clock) {}
 
     public function assessSuccessfulAuthentication(
-        User                              $user,
-        #[SensitiveParameter] string|null $ipAddress,
-        string|null                       $userAgent
+        User        $user,
+        #[SensitiveParameter]
+        string|null $ipAddress,
+        string|null $userAgent,
     ) : RiskDecision
     {
         $userId = $user->getId()->value;
@@ -32,7 +33,7 @@ final readonly class DeterministicRiskEngine
                                                context   : [
                                                                'ip_address' => $ipAddress,
                                                                'user_agent' => $userAgent,
-                                                           ]
+                                                           ],
                                            ));
             $this->knownEnvironments->remember(userId: $userId, ipAddress: $ipAddress, userAgent: $userAgent);
 
@@ -54,7 +55,7 @@ final readonly class DeterministicRiskEngine
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'client_id' => $clientId,
-                                                       ]
+                                                       ],
                                        ));
 
         return new RiskDecision(action: RiskAction::REVOKE_SESSIONS, reasons: ['refresh_reuse_detected']);

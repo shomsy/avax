@@ -12,11 +12,11 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 final readonly class ReadFromFastestAvailableTier
 {
     public function __construct(
-        private TieredCache $tieredCache
+        private TieredCache $tieredCache,
     ) {}
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return $this->tieredCache->read(key: $key, clock: $clock);
+        return $this->tieredCache->read(key: $cacheKey, clock: $clock);
     }
 }

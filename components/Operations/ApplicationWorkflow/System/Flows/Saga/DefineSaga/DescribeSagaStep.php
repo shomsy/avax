@@ -9,15 +9,15 @@ final readonly class DescribeSagaStep
     public function __construct(
         public string $name,
         public string $description,
-        public array  $inputSchema,
-        public array  $outputSchema,
-        public bool   $compensatable
+        public array $inputSchema,
+        public array $outputSchema,
+        public bool  $compensatable,
     ) {}
 
     public static function create(
         string $name,
         string $description,
-        bool   $compensatable = true
+        bool $compensatable = true,
     ) : self
     {
         return new self(
@@ -25,7 +25,7 @@ final readonly class DescribeSagaStep
             description  : $description,
             inputSchema  : [],
             outputSchema : [],
-            compensatable: $compensatable
+            compensatable: $compensatable,
         );
     }
 

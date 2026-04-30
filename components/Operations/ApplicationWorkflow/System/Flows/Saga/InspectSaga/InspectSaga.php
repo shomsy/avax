@@ -40,7 +40,7 @@ final class InspectSaga implements IteratorAggregate, Countable
             sagaId     : $sagaId,
             timeline   : $timeline,
             events     : $events,
-            generatedAt: new DateTimeImmutable()
+            generatedAt: new DateTimeImmutable(),
         );
     }
 
@@ -48,7 +48,7 @@ final class InspectSaga implements IteratorAggregate, Countable
     {
         return array_filter(
             $this->events,
-            static fn ($e) => $e->sagaId === $sagaId
+            static fn ($e) => $e->sagaId === $sagaId,
         );
     }
 
@@ -67,7 +67,7 @@ final class InspectSaga implements IteratorAggregate, Countable
     {
         return SagaTimeline::fromEvents(
             sagaId: $sagaId,
-            events: $this->getEvents(sagaId: $sagaId)
+            events: $this->getEvents(sagaId: $sagaId),
         );
     }
 
@@ -86,12 +86,12 @@ final class InspectSaga implements IteratorAggregate, Countable
 
 final readonly class SagaRuntimeEvent
 {
-    public string            $id;
-    public string            $sagaId;
-    public string            $sagaName;
-    public string            $type;
-    public string|null       $stepName;
-    public array             $payload;
+    public string      $id;
+    public string      $sagaId;
+    public string      $sagaName;
+    public string      $type;
+    public string|null $stepName;
+    public array       $payload;
     public DateTimeImmutable $occurredAt;
 
     private function __construct(
@@ -101,7 +101,7 @@ final readonly class SagaRuntimeEvent
         string            $type,
         string|null       $stepName,
         array             $payload,
-        DateTimeImmutable $occurredAt
+        DateTimeImmutable $occurredAt,
     )
     {
         $this->id         = $id;
@@ -119,11 +119,11 @@ final readonly class SagaRuntimeEvent
     }
 
     public static function create(
-        string      $sagaId,
-        string      $sagaName,
-        string      $type,
-        array|null  $payload = null,
-        string|null $stepName = null
+        string $sagaId,
+        string $sagaName,
+        string $type,
+        array  $payload = null,
+        string $stepName = null,
     ) : self
     {
         $payload ??= [];
@@ -135,7 +135,7 @@ final readonly class SagaRuntimeEvent
             type      : $type,
             stepName  : $stepName,
             payload   : $payload,
-            occurredAt: new DateTimeImmutable()
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -151,7 +151,7 @@ final readonly class SagaRuntimeEvent
         string $sagaId,
         string $sagaName,
         string $stepName,
-        array  $output = []
+        array $output = [],
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_completed', payload: $output, stepName: $stepName);
@@ -161,7 +161,7 @@ final readonly class SagaRuntimeEvent
         string $sagaId,
         string $sagaName,
         string $stepName,
-        string $error
+        string $error,
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_failed', payload: ['error' => $error], stepName: $stepName);
@@ -193,12 +193,12 @@ final readonly class SagaRuntimeEvent
 
 final readonly class SagaTimeline
 {
-    public string      $sagaId;
-    public array       $events;
-    public array       $steps;
+    public string     $sagaId;
+    public array      $events;
+    public array      $steps;
     public string|null $startedAt;
     public string|null $completedAt;
-    public float|null  $durationMs;
+    public float|null $durationMs;
     public string|null $finalStatus;
 
     private function __construct(
@@ -208,7 +208,7 @@ final readonly class SagaTimeline
         string|null $startedAt,
         string|null $completedAt,
         float|null  $durationMs,
-        string|null $finalStatus
+        string|null $finalStatus,
     )
     {
         $this->sagaId      = $sagaId;
@@ -264,7 +264,7 @@ final readonly class SagaTimeline
             startedAt  : $startedAt,
             completedAt: $completedAt,
             durationMs : $durationMs,
-            finalStatus: $finalStatus
+            finalStatus: $finalStatus,
         );
     }
 
@@ -283,16 +283,16 @@ final readonly class SagaTimeline
 
 final readonly class SagaReport
 {
-    public string            $sagaId;
-    public SagaTimeline      $timeline;
-    public array             $events;
+    public string       $sagaId;
+    public SagaTimeline $timeline;
+    public array        $events;
     public DateTimeImmutable $generatedAt;
 
     public function __construct(
         string            $sagaId,
         SagaTimeline      $timeline,
         array             $events,
-        DateTimeImmutable $generatedAt
+        DateTimeImmutable $generatedAt,
     )
     {
         $this->sagaId      = $sagaId;

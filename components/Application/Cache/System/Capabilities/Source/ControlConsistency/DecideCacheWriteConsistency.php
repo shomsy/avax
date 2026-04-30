@@ -9,13 +9,13 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class DecideCacheWriteConsistency
 {
     public function __construct(
-        private CacheConsistencyLevel  $level,
-        private ConsistencyWindow|null $window = null
+        private CacheConsistencyLevel  $cacheConsistencyLevel,
+        private ConsistencyWindow|null $consistencyWindow = null,
     ) {}
 
-    public function shouldWriteSynchronously(CacheKey $key) : bool
+    public function shouldWriteSynchronously() : bool
     {
-        return match ($this->level) {
+        return match ($this->cacheConsistencyLevel) {
             CacheConsistencyLevel::STRONG           => true,
             CacheConsistencyLevel::LOCAL            => true,
             CacheConsistencyLevel::EVENTUAL         => false,
@@ -23,9 +23,9 @@ final readonly class DecideCacheWriteConsistency
         };
     }
 
-    public function shouldWaitForPropagation(CacheKey $key) : bool
+    public function shouldWaitForPropagation() : bool
     {
-        return match ($this->level) {
+        return match ($this->cacheConsistencyLevel) {
             CacheConsistencyLevel::STRONG           => true,
             CacheConsistencyLevel::LOCAL            => false,
             CacheConsistencyLevel::EVENTUAL         => false,
@@ -35,6 +35,6 @@ final readonly class DecideCacheWriteConsistency
 
     public function propagationDelayMs() : int
     {
-        return $this->window?->propagationDelayMs ?? 100;
+        return $this->consistencyWindow?->propagationDelayMs ?? 100;
     }
 }

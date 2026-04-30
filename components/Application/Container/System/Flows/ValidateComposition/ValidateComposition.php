@@ -12,29 +12,24 @@ use ReflectionException;
  */
 final readonly class ValidateComposition
 {
-    private ServiceResolver $resolver;
-
-    public function __construct(
-        ServiceResolver $resolver
-    )
+    public function __construct(private ServiceResolver $serviceResolver)
     {
-        $this->resolver = $resolver;
     }
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return list<string>
      * @throws ReflectionException
      */
-    public function validate(array|null $serviceIds = null, array $context = []) : array
+    public function validate(?array $serviceIds = null, array $context = []) : array
     {
         $serviceIds ??= [];
         if ($context === []) {
-            return $this->resolver->validate(serviceIds: $serviceIds);
+            return $this->serviceResolver->validate(serviceIds: $serviceIds);
         }
 
-        return $this->resolver->validateInContext(serviceIds: $serviceIds, context: $context);
+        return $this->serviceResolver->validateInContext(serviceIds: $serviceIds, context: $context);
     }
 }

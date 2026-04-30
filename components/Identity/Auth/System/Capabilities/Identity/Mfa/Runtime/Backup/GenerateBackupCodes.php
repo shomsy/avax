@@ -15,9 +15,10 @@ use SensitiveParameter;
 final readonly class GenerateBackupCodes
 {
     public function __construct(
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private Clock                                $clock,
-        private int                                  $count = 10
+        #[SensitiveParameter]
+        private PasswordHasher $passwordHasher,
+        private Clock          $clock,
+        private int            $count = 10,
     ) {}
 
     /**
@@ -34,16 +35,16 @@ final readonly class GenerateBackupCodes
             $plainCodes[] = new BackupCode(value: $plain);
             $records[]    = new BackupCodeRecord(
                 backupCodeId: bin2hex(string: random_bytes(length: 16)),
-                codeHash    : $this->passwordHasher->hash(password: $plain)
+                codeHash    : $this->passwordHasher->hash(password: $plain),
             );
         }
 
         return new GeneratedBackupCodes(
             backupCodeSet: new BackupCodeSet(
                                codes      : $plainCodes,
-                               generatedAt: $generatedAt
+                               generatedAt: $generatedAt,
                            ),
-            records      : $records
+            records      : $records,
         );
     }
 }

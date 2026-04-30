@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
-use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 
 /**
  * Auth - Main entry point for Identity/Auth component.
@@ -33,6 +34,7 @@ final readonly class Auth implements AuthInterface
     public function user() : ?User
     {
         $entity = $this->identity->authentication()->user();
+
         return $entity ? User::fromEntity($entity) : null;
     }
 

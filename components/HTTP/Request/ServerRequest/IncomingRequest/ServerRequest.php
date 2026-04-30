@@ -20,30 +20,30 @@ use RuntimeException;
  */
 class ServerRequest implements RequestInterface, ServerRequestInterface
 {
-    private array           $serverParams;
-    private array           $cookieParams    = [];
-    private array           $queryParams     = [];
-    private array           $uploadedFiles   = [];
-    private ?array          $parsedBody      = null;
-    private array           $attributes      = [];
-    private string          $protocolVersion = '1.1';
-    private array           $headers         = [];
+    private array         $serverParams;
+    private array         $cookieParams    = [];
+    private array         $queryParams     = [];
+    private array         $uploadedFiles   = [];
+    private ?array        $parsedBody      = null;
+    private array         $attributes      = [];
+    private string        $protocolVersion = '1.1';
+    private array         $headers         = [];
     private StreamInterface $body;
-    private ?UriInterface   $uri             = null;
-    private ?string         $requestTarget   = null;
-    private string          $method          = 'GET';
+    private ?UriInterface $uri             = null;
+    private ?string       $requestTarget   = null;
+    private string        $method          = 'GET';
 
     public function __construct(
-        array                    $serverParams = [],
-        array                    $cookieParams = [],
-        array                    $queryParams = [],
-        array                    $uploadedFiles = [],
-        ?array                   $parsedBody = null,
-        string                   $method = 'GET',
-        UriInterface|string|null $uri = null,
-        string                   $protocolVersion = '1.1',
-        array                    $headers = [],
-        ?StreamInterface         $body = null
+        array               $serverParams = [],
+        array               $cookieParams = [],
+        array               $queryParams = [],
+        array               $uploadedFiles = [],
+        array               $parsedBody = null,
+        string              $method = 'GET',
+        UriInterface|string $uri = null,
+        string              $protocolVersion = '1.1',
+        array               $headers = [],
+        StreamInterface     $body = null,
     )
     {
         $this->serverParams    = $serverParams;
@@ -75,14 +75,14 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $parts = parse_url($uri);
 
-        return new class(
+        return new class (
             $parts['scheme'] ?? '',
             $parts['host'] ?? '',
             $parts['port'] ?? null,
             $parts['path'] ?? '',
             $parts['query'] ?? '',
             $parts['fragment'] ?? '',
-            $parts['user'] ?? ''
+                $parts['user'] ?? '',
         ) implements UriInterface {
             public function __construct(
                 private string $scheme,
@@ -91,50 +91,98 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 private string $path,
                 private string $query,
                 private string $fragment,
-                private string $user
+                private string $user,
             ) {}
 
-            public function getScheme() : string { return $this->scheme; }
+            public function getScheme() : string
+            {
+                return $this->scheme;
+            }
 
             public function getAuthority() : string
             {
                 $authority = $this->host;
-                if ($this->port !== null) $authority .= ':' . $this->port;
+                if ($this->port !== null) {
+                    $authority .= ':' . $this->port;
+                }
 
                 return $authority;
             }
 
-            public function getUserInfo() : string { return $this->user; }
+            public function getUserInfo() : string
+            {
+                return $this->user;
+            }
 
-            public function getHost() : string { return $this->host; }
+            public function getHost() : string
+            {
+                return $this->host;
+            }
 
-            public function getPort() : ?int { return $this->port; }
+            public function getPort() : ?int
+            {
+                return $this->port;
+            }
 
-            public function getPath() : string { return $this->path; }
+            public function getPath() : string
+            {
+                return $this->path;
+            }
 
-            public function getQuery() : string { return $this->query; }
+            public function getQuery() : string
+            {
+                return $this->query;
+            }
 
-            public function getFragment() : string { return $this->fragment; }
+            public function getFragment() : string
+            {
+                return $this->fragment;
+            }
 
-            public function withScheme($scheme) : self { return new self($scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $this->user); }
+            public function withScheme($scheme) : self
+            {
+                return new self($scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $this->user);
+            }
 
-            public function withUserInfo($user, $password = null) : self { return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $user); }
+            public function withUserInfo($user, $password = null) : self
+            {
+                return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $user);
+            }
 
-            public function withHost($host) : self { return new self($this->scheme, $host, $this->port, $this->path, $this->query, $this->fragment, $this->user); }
+            public function withHost($host) : self
+            {
+                return new self($this->scheme, $host, $this->port, $this->path, $this->query, $this->fragment, $this->user);
+            }
 
-            public function withPort($port) : self { return new self($this->scheme, $this->host, $port, $this->path, $this->query, $this->fragment, $this->user); }
+            public function withPort($port) : self
+            {
+                return new self($this->scheme, $this->host, $port, $this->path, $this->query, $this->fragment, $this->user);
+            }
 
-            public function withPath($path) : self { return new self($this->scheme, $this->host, $this->port, $path, $this->query, $this->fragment, $this->user); }
+            public function withPath($path) : self
+            {
+                return new self($this->scheme, $this->host, $this->port, $path, $this->query, $this->fragment, $this->user);
+            }
 
-            public function withQuery($query) : self { return new self($this->scheme, $this->host, $this->port, $this->path, $query, $this->fragment, $this->user); }
+            public function withQuery($query) : self
+            {
+                return new self($this->scheme, $this->host, $this->port, $this->path, $query, $this->fragment, $this->user);
+            }
 
-            public function withFragment($fragment) : self { return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $fragment, $this->user); }
+            public function withFragment($fragment) : self
+            {
+                return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $fragment, $this->user);
+            }
 
             public function __toString() : string
             {
                 $uri = $this->scheme . '://' . $this->getAuthority() . $this->path;
-                if ($this->query !== '') $uri .= '?' . $this->query;
-                if ($this->fragment !== '') $uri .= '#' . $this->fragment;
+                if ($this->query !== '') {
+                    $uri .= '?' . $this->query;
+                }
+                if ($this->fragment !== '') {
+                    $uri .= '#' . $this->fragment;
+                }
 
                 return $uri;
             }
@@ -154,7 +202,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             parsedBody   : $_POST,
             method       : $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers      : function_exists('getallheaders') ? getallheaders() : [],
-            body         : Utils::streamFor(file_get_contents('php://input'))
+            body         : Utils::streamFor(file_get_contents('php://input')),
         );
     }
 
@@ -171,55 +219,94 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private static function createUploadedFile(array $file) : UploadedFileInterface
     {
         if (! isset($file['tmp_name'])) {
-            return new class($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+            return new class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
                 public function __construct(
                     private string $tmpName,
                     private int    $size,
                     private int    $error,
                     private string $clientFilename,
-                    private string $clientMediaType
+                    private string $clientMediaType,
                 ) {}
 
-                public function getStream() : StreamInterface { throw new RuntimeException('Not implemented'); }
+                public function getStream() : StreamInterface
+                {
+                    throw new RuntimeException('Not implemented');
+                }
 
-                public function moveTo($targetPath) : void { throw new RuntimeException('Not implemented'); }
+                public function moveTo($targetPath) : void
+                {
+                    throw new RuntimeException('Not implemented');
+                }
 
-                public function getSize() : ?int { return $this->size > 0 ? $this->size : null; }
+                public function getSize() : ?int
+                {
+                    return $this->size > 0 ? $this->size : null;
+                }
 
-                public function getError() : int { return $this->error; }
+                public function getError() : int
+                {
+                    return $this->error;
+                }
 
-                public function getClientFilename() : ?string { return $this->clientFilename !== '' ? $this->clientFilename : null; }
+                public function getClientFilename() : ?string
+                {
+                    return $this->clientFilename !== '' ? $this->clientFilename : null;
+                }
 
-                public function getClientMediaType() : ?string { return $this->clientMediaType !== '' ? $this->clientMediaType : null; }
+                public function getClientMediaType() : ?string
+                {
+                    return $this->clientMediaType !== '' ? $this->clientMediaType : null;
+                }
             };
         }
 
-        return new class($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+        return new class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
             public function __construct(
                 private string $tmpName,
                 private int    $size,
                 private int    $error,
                 private string $clientFilename,
-                private string $clientMediaType
+                private string $clientMediaType,
             ) {}
 
-            public function getStream() : StreamInterface { throw new RuntimeException('Not implemented'); }
+            public function getStream() : StreamInterface
+            {
+                throw new RuntimeException('Not implemented');
+            }
 
-            public function moveTo($targetPath) : void { move_uploaded_file($this->tmpName, $targetPath); }
+            public function moveTo($targetPath) : void
+            {
+                move_uploaded_file($this->tmpName, $targetPath);
+            }
 
-            public function getSize() : ?int { return $this->size > 0 ? $this->size : null; }
+            public function getSize() : ?int
+            {
+                return $this->size > 0 ? $this->size : null;
+            }
 
-            public function getError() : int { return $this->error; }
+            public function getError() : int
+            {
+                return $this->error;
+            }
 
-            public function getClientFilename() : ?string { return $this->clientFilename !== '' ? $this->clientFilename : null; }
+            public function getClientFilename() : ?string
+            {
+                return $this->clientFilename !== '' ? $this->clientFilename : null;
+            }
 
-            public function getClientMediaType() : ?string { return $this->clientMediaType !== '' ? $this->clientMediaType : null; }
+            public function getClientMediaType() : ?string
+            {
+                return $this->clientMediaType !== '' ? $this->clientMediaType : null;
+            }
         };
     }
 
     // PSR-7 RequestInterface methods
 
-    public function getProtocolVersion() : string { return $this->protocolVersion; }
+    public function getProtocolVersion() : string
+    {
+        return $this->protocolVersion;
+    }
 
     public function withProtocolVersion($version) : self
     {
@@ -229,13 +316,25 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getHeaders() : array { return $this->headers; }
+    public function getHeaders() : array
+    {
+        return $this->headers;
+    }
 
-    public function hasHeader($name) : bool { return isset($this->headers[$name]) || isset($this->headers[strtolower($name)]); }
+    public function hasHeader($name) : bool
+    {
+        return isset($this->headers[$name]) || isset($this->headers[strtolower($name)]);
+    }
 
-    public function getHeaderLine($name) : string { return implode(', ', $this->getHeader($name)); }
+    public function getHeaderLine($name) : string
+    {
+        return implode(', ', $this->getHeader($name));
+    }
 
-    public function getHeader($name) : array { return $this->headers[$name] ?? $this->headers[strtolower($name)] ?? []; }
+    public function getHeader($name) : array
+    {
+        return $this->headers[$name] ?? $this->headers[strtolower($name)] ?? [];
+    }
 
     public function withHeader($name, $value) : self
     {
@@ -280,9 +379,15 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     }
 
     // PSR-7 ServerRequestInterface methods
-    public function getServerParams() : array { return $this->serverParams; }
+    public function getServerParams() : array
+    {
+        return $this->serverParams;
+    }
 
-    public function getCookieParams() : array { return $this->cookieParams; }
+    public function getCookieParams() : array
+    {
+        return $this->cookieParams;
+    }
 
     public function withCookieParams(array $cookies) : self
     {
@@ -292,7 +397,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getQueryParams() : array { return $this->queryParams; }
+    public function getQueryParams() : array
+    {
+        return $this->queryParams;
+    }
 
     public function withQueryParams(array $query) : self
     {
@@ -302,7 +410,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getUploadedFiles() : array { return $this->uploadedFiles; }
+    public function getUploadedFiles() : array
+    {
+        return $this->uploadedFiles;
+    }
 
     public function withUploadedFiles(array $uploadedFiles) : self
     {
@@ -312,7 +423,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getParsedBody() : ?array { return $this->parsedBody; }
+    public function getParsedBody() : ?array
+    {
+        return $this->parsedBody;
+    }
 
     public function withParsedBody($data) : self
     {
@@ -322,9 +436,15 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getAttributes() : array { return $this->attributes; }
+    public function getAttributes() : array
+    {
+        return $this->attributes;
+    }
 
-    public function getAttribute($name, $default = null) : mixed { return $this->attributes[$name] ?? $default; }
+    public function getAttribute($name, $default = null) : mixed
+    {
+        return $this->attributes[$name] ?? $default;
+    }
 
     public function withAttribute($name, $value) : self
     {
@@ -342,7 +462,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getRequestTarget() : string { return $this->requestTarget ?? $this->uri?->getPath() ?? '/'; }
+    public function getRequestTarget() : string
+    {
+        return $this->requestTarget ?? $this->uri?->getPath() ?? '/';
+    }
 
     public function withRequestTarget($requestTarget) : self
     {
@@ -352,7 +475,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getMethod() : string { return $this->method; }
+    public function getMethod() : string
+    {
+        return $this->method;
+    }
 
     public function withMethod($method) : self
     {
@@ -362,7 +488,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getUri() : UriInterface { return $this->uri ?? $this->createUriFromString(''); }
+    public function getUri() : UriInterface
+    {
+        return $this->uri ?? $this->createUriFromString('');
+    }
 
     public function withUri(UriInterface $uri, $preserveHost = false) : self
     {

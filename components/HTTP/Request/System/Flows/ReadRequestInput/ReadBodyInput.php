@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Flows\ReadRequestInput;
@@ -13,6 +14,7 @@ final class ReadBodyInput
         if (is_array($body)) {
             return $body[$key] ?? null;
         }
+
         return null;
     }
 }

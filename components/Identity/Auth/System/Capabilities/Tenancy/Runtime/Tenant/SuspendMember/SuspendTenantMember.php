@@ -40,7 +40,7 @@ final readonly class SuspendTenantMember
             userId  : $member->userId,
             role    : $member->role,
             state   : TenantMemberState::SUSPENDED,
-            joinedAt: $member->joinedAt
+            joinedAt: $member->joinedAt,
         );
         $this->tenantStore->saveMember(member: $suspended);
         $this->auditLog->record(event: new AuditEvent(
@@ -50,7 +50,7 @@ final readonly class SuspendTenantMember
                                                            'tenant_id'   => $tenant->tenantId,
                                                            'tenant_slug' => $tenant->slug,
                                                            'user_id'     => $member->userId,
-                                                       ]
+                                                       ],
                                        ));
 
         return $suspended;

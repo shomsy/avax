@@ -375,15 +375,15 @@ abstract class BaseGrammar implements GrammarInterface
                 |> (static fn ($x) => implode(separator: ', ', array: $x));
 
         $valueGroups = array_map(
-            callback: function (array $row) : string {
+            callback: static function (array $row) : string {
                 $placeholders = array_map(
-                    callback: fn (mixed $value) => $value instanceof Expression ? $value->getValue() : '?',
-                    array   : array_values(array: $row)
+                    callback: static fn (mixed $value) => $value instanceof Expression ? $value->getValue() : '?',
+                    array   : array_values(array: $row),
                 );
 
                 return '(' . implode(separator: ', ', array: $placeholders) . ')';
             },
-            array   : $rows
+            array   : $rows,
         );
 
         // noinspection SqlNoDataSourceInspection

@@ -14,19 +14,23 @@ use SensitiveParameter;
 final readonly class AuthenticationContext
 {
     public function __construct(
-        private bool                                         $authenticated,
-        private AuthenticationMode                           $mode,
-        private AuthenticatedUser|null                       $user = null,
-        private string|null                                  $reason = null,
-        #[SensitiveParameter] private string|null            $sessionId = null,
-        #[SensitiveParameter] private string|null            $accessTokenId = null,
-        #[SensitiveParameter] private DateTimeImmutable|null $accessTokenExpiresAt = null,
-        #[SensitiveParameter] private string|null            $refreshTokenId = null,
-        #[SensitiveParameter] private string|null            $refreshTokenFamilyId = null,
-        private DateTimeImmutable|null                       $mfaVerifiedAt = null,
-        private bool                                         $phishingResistant = false
-    )
-    {
+        private bool $authenticated,
+        private AuthenticationMode $mode,
+        private AuthenticatedUser|null $user = null,
+        private string|null $reason = null,
+        #[SensitiveParameter]
+        private string|null $sessionId = null,
+        #[SensitiveParameter]
+        private string|null $accessTokenId = null,
+        #[SensitiveParameter]
+        private DateTimeImmutable|null $accessTokenExpiresAt = null,
+        #[SensitiveParameter]
+        private string|null $refreshTokenId = null,
+        #[SensitiveParameter]
+        private string|null $refreshTokenFamilyId = null,
+        private DateTimeImmutable|null $mfaVerifiedAt = null,
+        private bool $phishingResistant = false,
+    ) {
         if ($this->authenticated && $this->user === null) {
             throw new InvalidArgumentException(message: 'Authenticated context requires a user.');
         }
@@ -36,27 +40,31 @@ final readonly class AuthenticationContext
         }
     }
 
-    public static function guest(string|null $reason = null) : self
+    public static function guest(string $reason = null): self
     {
         return new self(
             authenticated: false,
             mode         : AuthenticationMode::NONE,
-            reason       : $reason
+            reason       : $reason,
         );
     }
 
     public static function authenticated(
-        AuthenticatedUser                            $user,
-        AuthenticationMode                           $mode,
-        #[SensitiveParameter] string|null            $sessionId = null,
-        #[SensitiveParameter] string|null            $accessTokenId = null,
-        #[SensitiveParameter] DateTimeImmutable|null $accessTokenExpiresAt = null,
-        #[SensitiveParameter] string|null            $refreshTokenId = null,
-        #[SensitiveParameter] string|null            $refreshTokenFamilyId = null,
-        DateTimeImmutable|null                       $mfaVerifiedAt = null,
-        bool                                         $phishingResistant = false
-    ) : self
-    {
+        AuthenticatedUser $user,
+        AuthenticationMode $mode,
+        #[SensitiveParameter]
+        string $sessionId = null,
+        #[SensitiveParameter]
+        string $accessTokenId = null,
+        #[SensitiveParameter]
+        DateTimeImmutable $accessTokenExpiresAt = null,
+        #[SensitiveParameter]
+        string $refreshTokenId = null,
+        #[SensitiveParameter]
+        string $refreshTokenFamilyId = null,
+        DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+    ): self {
         return new self(
             authenticated       : true,
             mode                : $mode,
@@ -67,61 +75,61 @@ final readonly class AuthenticationContext
             refreshTokenId      : $refreshTokenId,
             refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
-            phishingResistant   : $phishingResistant
+            phishingResistant   : $phishingResistant,
         );
     }
 
-    public function isAuthenticated() : bool
+    public function isAuthenticated(): bool
     {
         return $this->authenticated;
     }
 
-    public function mode() : AuthenticationMode
+    public function mode(): AuthenticationMode
     {
         return $this->mode;
     }
 
-    public function user() : AuthenticatedUser|null
+    public function user(): AuthenticatedUser|null
     {
         return $this->user;
     }
 
-    public function reason() : string|null
+    public function reason(): string|null
     {
         return $this->reason;
     }
 
-    public function sessionId() : string|null
+    public function sessionId(): string|null
     {
         return $this->sessionId;
     }
 
-    public function accessTokenId() : string|null
+    public function accessTokenId(): string|null
     {
         return $this->accessTokenId;
     }
 
-    public function accessTokenExpiresAt() : DateTimeImmutable|null
+    public function accessTokenExpiresAt(): DateTimeImmutable|null
     {
         return $this->accessTokenExpiresAt;
     }
 
-    public function refreshTokenId() : string|null
+    public function refreshTokenId(): string|null
     {
         return $this->refreshTokenId;
     }
 
-    public function refreshTokenFamilyId() : string|null
+    public function refreshTokenFamilyId(): string|null
     {
         return $this->refreshTokenFamilyId;
     }
 
-    public function mfaVerifiedAt() : DateTimeImmutable|null
+    public function mfaVerifiedAt(): DateTimeImmutable|null
     {
         return $this->mfaVerifiedAt;
     }
 
-    public function isPhishingResistant() : bool
+    public function isPhishingResistant(): bool
     {
         return $this->phishingResistant;
     }

@@ -28,10 +28,10 @@ final readonly class ErrorLogger implements LoggerInterface
      * @param string|null    $traceId       Current trace ID for distributed tracing
      */
     public function __construct(
-        private Logging        $logger,
+        private Logging $logger,
         private SecretRedactor $redactor = new SecretRedactor(),
-        private ?string        $correlationId = null,
-        private ?string        $traceId = null,
+        private ?string $correlationId = null,
+        private ?string $traceId = null,
     ) {}
 
     public function emergency(Stringable|string $message, array $context = []) : void
@@ -125,9 +125,9 @@ final readonly class ErrorLogger implements LoggerInterface
      * @param array<string, mixed> $additionalContext
      */
     public function logException(
-        string    $level,
+        string $level,
         Throwable $exception,
-        array     $additionalContext = [],
+        array  $additionalContext = [],
     ) : void
     {
         $context = $this->buildExceptionContext($exception, $additionalContext);
@@ -188,10 +188,10 @@ final readonly class ErrorLogger implements LoggerInterface
             }
 
             $trace[] = [
-                'file'     => $frame['file'] ?? '[internal]',
-                'line'     => $frame['line'] ?? 0,
+                'file' => $frame['file'] ?? '[internal]',
+                'line' => $frame['line'] ?? 0,
                 'class'    => $frame['class'] ?? null,
-                'type'     => $frame['type'] ?? null,
+                'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
                 'args'     => $args,
             ];

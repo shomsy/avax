@@ -12,13 +12,13 @@ use Throwable;
  */
 class FilesystemException extends Exception
 {
-    public function __construct(string $message, string $path = '', int $code = 0, Throwable|null $previous = null)
+    public function __construct(string $message, string $path = '', int $code = 0, ?Throwable $throwable = null)
     {
         $fullMessage = $message;
-        if (! empty($path)) {
-            $fullMessage .= " (path: {$path})";
+        if ($path !== '' && $path !== '0') {
+            $fullMessage .= sprintf(' (path: %s)', $path);
         }
 
-        parent::__construct(message: $fullMessage, code: $code, previous: $previous);
+        parent::__construct(message: $fullMessage, code: $code, previous: $throwable);
     }
 }

@@ -26,7 +26,7 @@ final class KeyResolver
      * @param string                $currentVersion The version to use for new encryptions
      */
     public function __construct(
-        array  $keyVersions,
+        array $keyVersions,
         string $currentVersion,
     )
     {
@@ -38,7 +38,7 @@ final class KeyResolver
         $currentVersionString = (string) $currentVersion;
         if (! isset($this->keys[$currentVersionString])) {
             throw new InvalidArgumentException(
-                sprintf('Current key version "%s" not found in available versions', $currentVersionString)
+                sprintf('Current key version "%s" not found in available versions', $currentVersionString),
             );
         }
 
@@ -90,7 +90,7 @@ final class KeyResolver
     {
         if (! isset($this->keys[$version])) {
             throw new InvalidArgumentException(
-                sprintf('Cannot set current version to "%s": key not found', $version)
+                sprintf('Cannot set current version to "%s": key not found', $version),
             );
         }
 

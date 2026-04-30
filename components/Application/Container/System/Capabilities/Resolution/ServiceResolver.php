@@ -22,7 +22,7 @@ final class ServiceResolver
     private array $resolving = [];
 
     public function __construct(
-        private readonly BindingRegistry $bindings
+        private readonly BindingRegistry $bindingRegistry,
     ) {}
 
     public function call(callable $callback, array $parameters = []) : mixed
@@ -35,30 +35,30 @@ final class ServiceResolver
             $callback[0] = $this->resolve($callback[0]);
         }
 
-        $reflector    = $this->getCallReflector($callback);
-        $dependencies = $this->resolveDependencies($reflector->getParameters(), $parameters);
+        $reflectionFunctionAbstract = $this->getCallReflector($callback);
+        $dependencies               = $this->resolveDependencies($reflectionFunctionAbstract->getParameters(), $parameters);
 
         return call_user_func_array($callback, $dependencies);
     }
 
     public function resolve(string $abstract, array $parameters = []) : mixed
     {
-        $abstract = $this->bindings->resolveAlias($abstract);
+        $abstract = $this->bindingRegistry->resolveAlias($abstract);
 
         // 1. Check if already resolved (singleton/instance)
-        if ($instance = $this->bindings->getInstance($abstract)) {
+        if ($instance = $this->bindingRegistry->getInstance($abstract)) {
             return $instance;
         }
 
         // 2. Detect circular dependencies
         if (isset($this->resolving[$abstract])) {
-            throw new RuntimeException("Circular dependency detected for service: {$abstract}");
+            throw new RuntimeException('Circular dependency detected for service: ' . $abstract);
         }
 
         $this->resolving[$abstract] = true;
 
         try {
-            $binding  = $this->bindings->getBinding($abstract);
+            $binding = $this->bindingRegistry->getBinding($abstract);
             $concrete = $binding['concrete'] ?? $abstract;
 
             // 3. Resolve concrete
@@ -72,7 +72,7 @@ final class ServiceResolver
 
             // 4. Handle shared/scoped storage
             if ($binding && ($binding['shared'] || $binding['scoped'])) {
-                $this->bindings->instance($abstract, $object);
+                $this->bindingRegistry->instance($abstract, $object);
             }
 
             return $object;
@@ -84,24 +84,24 @@ final class ServiceResolver
     private function build(string $concrete, array $parameters) : object
     {
         if (! class_exists($concrete)) {
-            throw new RuntimeException("Target class [{$concrete}] does not exist.");
+            throw new RuntimeException(sprintf('Target class [%s] does not exist.', $concrete));
         }
 
-        $reflector = new ReflectionClass($concrete);
+        $reflectionClass = new ReflectionClass($concrete);
 
-        if (! $reflector->isInstantiable()) {
-            throw new RuntimeException("Target class [{$concrete}] is not instantiable.");
+        if (! $reflectionClass->isInstantiable()) {
+            throw new RuntimeException(sprintf('Target class [%s] is not instantiable.', $concrete));
         }
 
-        $constructor = $reflector->getConstructor();
+        $constructor = $reflectionClass->getConstructor();
 
         if (null === $constructor) {
-            return new $concrete;
+            return new $concrete();
         }
 
         $dependencies = $this->resolveDependencies($constructor->getParameters(), $parameters);
 
-        return $reflector->newInstanceArgs($dependencies);
+        return $reflectionClass->newInstanceArgs($dependencies);
     }
 
     private function resolveDependencies(array $parameters, array $overrides) : array
@@ -113,6 +113,7 @@ final class ServiceResolver
 
             if (array_key_exists($name, $overrides)) {
                 $dependencies[] = $overrides[$name];
+
                 continue;
             }
 
@@ -121,10 +122,11 @@ final class ServiceResolver
             if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 if ($parameter->isDefaultValueAvailable()) {
                     $dependencies[] = $parameter->getDefaultValue();
+
                     continue;
                 }
 
-                throw new RuntimeException("Cannot resolve parameter [\${$name}] of type " . ($type ? $type->getName() : 'unknown'));
+                throw new RuntimeException(sprintf('Cannot resolve parameter [$%s] of type ', $name) . ($type ? $type->getName() : 'unknown'));
             }
 
             $dependencies[] = $this->resolve($type->getName());

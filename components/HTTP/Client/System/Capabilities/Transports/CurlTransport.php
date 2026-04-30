@@ -51,7 +51,7 @@ final class CurlTransport implements HttpTransportInterface
 
             // Get timing info from cURL
             $connectTimeMs = (curl_getinfo($ch, CURLINFO_CONNECT_TIME) ?: 0.0) * 1000;
-            $totalTimeMs   = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0) * 1000;
+            $totalTimeMs = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0) * 1000;
             if ($totalTimeMs === 0.0) {
                 $totalTimeMs = ($endTime - $startTime) * 1000;
             }
@@ -106,7 +106,7 @@ final class CurlTransport implements HttpTransportInterface
     private function configureCurl(
         CurlHandle     $ch,
         OutboundRequest $request,
-        RequestOptions  $options,
+        RequestOptions $options,
     ) : void
     {
         // Basic options
@@ -198,9 +198,9 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed for other errors
      */
     private function handleCurlError(
-        CurlHandle     $ch,
-        int             $errno,
-        string          $error,
+        CurlHandle $ch,
+        int        $errno,
+        string     $error,
         OutboundRequest $request,
     ) : never
     {

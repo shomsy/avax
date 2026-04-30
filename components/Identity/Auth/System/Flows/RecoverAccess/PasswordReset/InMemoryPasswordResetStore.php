@@ -31,7 +31,7 @@ final class InMemoryPasswordResetStore implements PasswordResetStoreInterface, P
         return new PasswordResetChallenge(
             dispatched: true,
             token     : $token,
-            expiresAt : $expiresAt
+            expiresAt : $expiresAt,
         );
     }
 

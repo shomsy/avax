@@ -12,13 +12,13 @@ use Throwable;
  */
 final readonly class DropDatabase
 {
-    public function __construct(private QueryBuilder $builder) {}
+    public function __construct(private QueryBuilder $queryBuilder) {}
 
     /**
      * @throws Throwable
      */
     public function named(string $name) : void
     {
-        $this->builder->dropDatabase(name: $name);
+        $this->queryBuilder->dropDatabase(name: $name);
     }
 }

@@ -16,7 +16,10 @@ final class StoryFlowEntry
 {
     public StoryInternalContract $dependency;
 
-    public function __construct(StoryInternalContract $dependency) { $this->dependency = $dependency; }
+    public function __construct(StoryInternalContract $dependency)
+    {
+        $this->dependency = $dependency;
+    }
 }
 
 final class StoryFlowLocalService {}
@@ -27,14 +30,20 @@ final class StoryRuntimeInputConsumer
 {
     public string $token;
 
-    public function __construct(#[SensitiveParameter] #[RuntimeInput(name: 'token')] string $token) { $this->token = $token; }
+    public function __construct(#[SensitiveParameter] #[RuntimeInput(name: 'token')] string $token)
+    {
+        $this->token = $token;
+    }
 }
 
 final class StoryLocatorDrift
 {
     public ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container) { $this->container = $container; }
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 }
 
 $topLevelContainer = makeTestContainer();
@@ -44,15 +53,16 @@ $topLevelContainer->bind(abstract: StoryFlowLocalService::class, concrete: Story
 
 try {
     $topLevelContainer->get(id: StoryFlowLocalService::class);
+
     throw new RuntimeException(message: 'Flow-local services should not resolve from the top-level surface.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'is not part of the top-level container surface'),
-        message  : 'Top-level access failures should explain the surface violation.'
+        message  : 'Top-level access failures should explain the surface violation.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: mark the flow root as entry(), export the shared capability'),
-        message  : 'Top-level access failures should suggest an ownership-aware fix.'
+        message  : 'Top-level access failures should suggest an ownership-aware fix.',
     );
 }
 
@@ -61,15 +71,16 @@ $scopedContainer->scoped(abstract: RequestOnlyStoryService::class, concrete: Req
 
 try {
     $scopedContainer->get(id: RequestOnlyStoryService::class);
+
     throw new RuntimeException(message: 'ServerRequest-scoped services should require an active request scope.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'requires an active [request] scope'),
-        message  : 'Scope failures should name the missing required scope.'
+        message  : 'Scope failures should name the missing required scope.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: "openScope('request') before resolving it"),
-        message  : 'Scope failures should suggest the exact scope operation to open.'
+        message  : 'Scope failures should suggest the exact scope operation to open.',
     );
 }
 
@@ -84,19 +95,20 @@ $crossSliceContainer->bind(abstract: StoryFlowEntry::class, concrete: StoryFlowE
 
 try {
     $crossSliceContainer->get(id: StoryFlowEntry::class);
+
     throw new RuntimeException(message: 'Cross-slice internal dependencies should be blocked.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Illegal cross-slice dependency'),
-        message  : 'Cross-slice failures should name the blocked dependency edge.'
+        message  : 'Cross-slice failures should name the blocked dependency edge.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Consumer slice [checkout] cannot use dependency slice [payments]'),
-        message  : 'Cross-slice failures should expose the consumer and dependency slices.'
+        message  : 'Cross-slice failures should expose the consumer and dependency slices.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: export the dependency intentionally, import its slice'),
-        message  : 'Cross-slice failures should suggest an ownership-aware fix.'
+        message  : 'Cross-slice failures should suggest an ownership-aware fix.',
     );
 }
 
@@ -105,15 +117,16 @@ $runtimeInputContainer->bind(abstract: StoryRuntimeInputConsumer::class, concret
 
 try {
     $runtimeInputContainer->make(abstract: StoryRuntimeInputConsumer::class);
+
     throw new RuntimeException(message: 'Missing runtime input should fail.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Runtime input [$token] is missing'),
-        message  : 'Runtime-input failures should name the missing input.'
+        message  : 'Runtime-input failures should name the missing input.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
-        message  : 'Runtime-input failures should remain fix-oriented.'
+        message  : 'Runtime-input failures should remain fix-oriented.',
     );
 }
 
@@ -125,15 +138,16 @@ $locatorDriftContainer->bind(abstract: StoryLocatorDrift::class, concrete: Story
 
 try {
     $locatorDriftContainer->get(id: StoryLocatorDrift::class);
+
     throw new RuntimeException(message: 'Service locator drift should fail fast.');
 } catch (ContainerException $exception) {
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'Service locator drift blocked'),
-        message  : 'Service locator failures should name the anti-pattern explicitly.'
+        message  : 'Service locator failures should name the anti-pattern explicitly.',
     );
     assertTrue(
         condition: str_contains(haystack: $exception->getMessage(), needle: 'inject the concrete dependency boundary instead of the container'),
-        message  : 'Service locator failures should suggest an ownership-safe fix.'
+        message  : 'Service locator failures should suggest an ownership-safe fix.',
     );
 }
 

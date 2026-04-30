@@ -13,9 +13,9 @@ use Throwable;
 final readonly class CompensationResult
 {
     public function __construct(
-        public bool    $success,
-        public array   $compensatedSteps,
-        public array   $failedSteps,
+        public bool  $success,
+        public array $compensatedSteps,
+        public array $failedSteps,
         public ?string $failureReason = null,
     ) {}
 }
@@ -28,9 +28,9 @@ final class CompensationExecutor
     /**
      * Run compensation for all completed steps in reverse order.
      *
-     * @param array<SagaStep>    $steps          All saga steps
+     * @param array<SagaStep> $steps   All saga steps
      * @param array<int, string> $completedSteps Names of completed steps (in order)
-     * @param mixed              $context        The saga context
+     * @param mixed           $context The saga context
      *
      * @return CompensationResult The result of compensation execution
      */
@@ -70,6 +70,7 @@ final class CompensationExecutor
 
             if (! $step->hasCompensation()) {
                 $compensated[] = $stepName;
+
                 continue;
             }
 

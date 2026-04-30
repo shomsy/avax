@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Capabilities\Runtime;
@@ -13,7 +14,7 @@ final class RuntimeConfig
     private array $overrides = [];
 
     public function __construct(
-        private readonly ConfigurationRepository $baseRepository
+        private readonly ConfigurationRepository $configurationRepository,
     ) {}
 
     public function get(string $key, mixed $default = null): mixed
@@ -28,7 +29,7 @@ final class RuntimeConfig
             return $val;
         }
 
-        return $this->baseRepository->get($key, $default);
+        return $this->configurationRepository->get($key, $default);
     }
 
     public function set(string $key, mixed $value): void
@@ -45,11 +46,13 @@ final class RuntimeConfig
     {
         $array = $this->overrides;
         foreach (explode('.', $key) as $segment) {
-            if (!is_array($array) || !array_key_exists($segment, $array)) {
+            if (! is_array($array) || ! array_key_exists($segment, $array)) {
                 return null;
             }
+
             $array = $array[$segment];
         }
+
         return $array;
     }
 }

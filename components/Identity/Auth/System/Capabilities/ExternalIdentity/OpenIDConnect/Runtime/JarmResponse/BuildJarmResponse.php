@@ -36,7 +36,7 @@ final readonly class BuildJarmResponse
 
         return new JarmResponse(
             responseJwt: $this->oidcProvider->issueJwt(claims: $claims),
-            expiresAt  : $expiresAt
+            expiresAt  : $expiresAt,
         );
     }
 }

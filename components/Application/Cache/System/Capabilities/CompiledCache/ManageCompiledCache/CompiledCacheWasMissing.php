@@ -9,11 +9,11 @@ use InvalidArgumentException;
 final class CompiledCacheWasMissing extends InvalidArgumentException
 {
     public function __construct(
-        string $name
+        string $name,
     )
     {
         parent::__construct(
-            message: sprintf('Compiled cache "%s" was missing', $name)
+            message: sprintf('Compiled cache "%s" was missing', $name),
         );
     }
 }

@@ -45,7 +45,7 @@ foreach ($serviceIds as $serviceId) {
     $plan                      = $container->debugPlan(id: $serviceId);
     $runtimeInputs[$serviceId] = array_filter(
             array   : $plan['constructor'] ?? [],
-            callback: static fn (array $parameter) : bool => ($parameter['source'] ?? '') === 'runtime'
+            callback: static fn (array $parameter) : bool => ($parameter['source'] ?? '') === 'runtime',
         )
             |> array_values(...)
             |> (static fn ($x) => array_map(callback: static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
@@ -63,7 +63,7 @@ foreach ($serviceIds as $serviceId) {
 
     $runtimeInputs[$serviceId] = array_filter(
             array   : $runtimeInputs[$serviceId],
-            callback: static fn (string $name) : bool => $name !== ''
+            callback: static fn (string $name) : bool => $name !== '',
         )
             |> array_unique(...)
             |> array_values(...);
@@ -73,10 +73,10 @@ foreach ($serviceIds as $serviceId) {
     if (($description['conditions']['active'] ?? true) === false || ($conditions['profiles'] ?? []) !== [] || ($conditions['flags'] ?? []) !== [] || ($conditions['tenants'] ?? []) !== [] || ($conditions['regions'] ?? []) !== [] || ($conditions['modes'] ?? []) !== []) {
         $conditionals[$serviceId] = [
             'profiles' => $conditions['profiles'] ?? [],
-            'flags'    => $conditions['flags'] ?? [],
-            'tenants'  => $conditions['tenants'] ?? [],
-            'regions'  => $conditions['regions'] ?? [],
-            'modes'    => $conditions['modes'] ?? [],
+            'flags'   => $conditions['flags'] ?? [],
+            'tenants' => $conditions['tenants'] ?? [],
+            'regions' => $conditions['regions'] ?? [],
+            'modes'   => $conditions['modes'] ?? [],
             'fallback' => (bool) ($conditions['fallback'] ?? false),
         ];
     }
@@ -87,24 +87,24 @@ $payload = [
     'serviceIds'    => $serviceIds,
     'sliceExports'  => array_map(
         callback: static fn (array $slice) : array => $slice['exports'] ?? [],
-        array   : $graph['slices'] ?? []
+        array   : $graph['slices'] ?? [],
     ),
     'sliceImports'  => array_map(
         callback: static fn (array $slice) : array => $slice['imports'] ?? [],
-        array   : $graph['slices'] ?? []
+        array   : $graph['slices'] ?? [],
     ),
     'groups'        => array_map(
         callback: static fn (array $items) : array => array_map(
             callback: static fn (array $item) : string => (string) ($item['serviceId'] ?? ''),
-            array   : $items
+            array   : $items,
         ),
-        array   : $graph['groups'] ?? []
+        array   : $graph['groups'] ?? [],
     ),
     'runtimeInputs' => $runtimeInputs,
     'conditionals'  => $conditionals,
 ];
 
-if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0775, recursive: true) && ! is_dir(filename: $outputDir)) {
+if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $outputDir)) {
     fwrite(stream: STDERR, data: "Cannot create output directory [{$outputDir}].\n");
     exit(1);
 }
@@ -114,7 +114,7 @@ $stubPath = $outputDir . '/container-static-hints.stub.php';
 
 $serviceIdUnion = implode(separator: '|', array: array_map(
     callback: static fn (string $serviceId) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $serviceId) . "'",
-    array   : $serviceIds
+    array   : $serviceIds,
 ));
 $groupUnion     = $payload['groups']
         |> array_keys(...)

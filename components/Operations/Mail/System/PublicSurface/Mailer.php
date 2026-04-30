@@ -40,7 +40,7 @@ final class SendResult
     public function __construct(
         public readonly bool        $success,
         public readonly string|null $messageId = null,
-        public readonly string|null $error = null
+        public readonly string|null $error = null,
     ) {}
 
     public static function success(string $messageId) : self
@@ -56,13 +56,13 @@ final class SendResult
 
 final class RawMailBuilder
 {
-    private SendMail    $sender;
-    private Envelope    $envelope;
+    private SendMail $sender;
+    private Envelope $envelope;
     private string|null $from    = null;
     private string|null $to      = null;
     private string|null $subject = null;
     private string|null $body    = null;
-    private array       $headers = [];
+    private array    $headers = [];
 
     public function __construct(SendMail $sender, Envelope $envelope)
     {
@@ -70,14 +70,14 @@ final class RawMailBuilder
         $this->envelope = $envelope;
     }
 
-    public function from(string $address, string|null $name = null) : self
+    public function from(string $address, string $name = null) : self
     {
         $this->from = $name !== null ? "$name <$address>" : $address;
 
         return $this;
     }
 
-    public function to(string $address, string|null $name = null) : self
+    public function to(string $address, string $name = null) : self
     {
         $this->to = $name !== null ? "$name <$address>" : $address;
 
@@ -116,7 +116,7 @@ final class RawMailBuilder
             to     : $this->to,
             subject: $this->subject,
             body   : $this->body,
-            headers: $this->headers
+            headers: $this->headers,
         );
 
         return $this->sender->send($message, $this->envelope);

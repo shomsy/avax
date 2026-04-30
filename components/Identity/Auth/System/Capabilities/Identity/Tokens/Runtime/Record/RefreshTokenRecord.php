@@ -15,17 +15,18 @@ final readonly class RefreshTokenRecord
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] public string $tokenId,
-        public string                       $familyId,
-        public UserId                       $userId,
-        public DateTimeImmutable            $expiresAt,
-        public DateTimeImmutable|null       $mfaVerifiedAt = null,
-        public bool                         $phishingResistant = false,
-        public string|null                  $clientId = null,
-        public array                        $scopes = [],
-        public string|null                  $replacementId = null,
-        public OAuthSenderConstraint|null   $senderConstraint = null,
-        public bool                         $revoked = false
+        #[SensitiveParameter]
+        public string                     $tokenId,
+        public string                     $familyId,
+        public UserId                     $userId,
+        public DateTimeImmutable          $expiresAt,
+        public DateTimeImmutable|null     $mfaVerifiedAt = null,
+        public bool                       $phishingResistant = false,
+        public string|null                $clientId = null,
+        public array                      $scopes = [],
+        public string|null                $replacementId = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
+        public bool                       $revoked = false,
     ) {}
 
     public function isExpired() : bool
@@ -61,7 +62,7 @@ final readonly class RefreshTokenRecord
             scopes           : $this->scopes,
             replacementId    : $replacementId,
             senderConstraint : $this->senderConstraint,
-            revoked          : $this->revoked
+            revoked          : $this->revoked,
         );
     }
 }

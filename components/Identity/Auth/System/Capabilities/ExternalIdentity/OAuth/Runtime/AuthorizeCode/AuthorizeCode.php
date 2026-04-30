@@ -25,21 +25,24 @@ use SensitiveParameter;
 final readonly class AuthorizeCode
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private UserSourceInterface                                   $userSource,
-        private OAuthClientRegistryInterface                          $clientRegistry,
-        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private OidcProviderInterface|null                            $oidcProvider = null,
-        private ValidateRequestObject|null                            $requestObjectValidator = null
-    ) {}
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface $userSource,
+        private OAuthClientRegistryInterface $clientRegistry,
+        #[SensitiveParameter]
+        private AuthorizationCodeStoreInterface $codeStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private OidcProviderInterface|null $oidcProvider = null,
+        private ValidateRequestObject|null $requestObjectValidator = null,
+    ) {
+    }
 
     /**
      * @throws OAuthAuthorizationFailed
      * @throws DateMalformedStringException
      */
-    public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
+    public function execute(AuthorizeCodeData $data): IssuedAuthorizationCode
     {
         $context = $this->currentAuthentication->read();
         $actor   = $context->user();
@@ -47,15 +50,17 @@ final readonly class AuthorizeCode
         if ($data->requestUri !== null && trim(string: $data->requestUri) !== '') {
             if ($this->requestObjectValidator === null) {
                 $this->recordFailure(data: $data, reason: 'request_object_not_supported');
+
                 throw OAuthAuthorizationFailed::invalidRequestObject();
             }
 
             try {
                 $requestOverrides = $this->requestObjectValidator->execute(
-                    data: new ValidateRequestObjectData(requestUri: $data->requestUri)
+                    data: new ValidateRequestObjectData(requestUri: $data->requestUri),
                 );
             } catch (OAuthAuthorizationFailed) {
                 $this->recordFailure(data: $data, reason: 'request_object_invalid');
+
                 throw OAuthAuthorizationFailed::invalidRequestObject();
             }
 
@@ -69,12 +74,13 @@ final readonly class AuthorizeCode
                 codeChallenge      : $requestOverrides->codeChallenge,
                 codeChallengeMethod: $requestOverrides->codeChallengeMethod,
                 ipAddress          : $data->ipAddress,
-                userAgent          : $data->userAgent
+                userAgent          : $data->userAgent,
             );
         }
 
         if ($actor === null) {
             $this->recordFailure(data: $data, reason: 'unauthenticated');
+
             throw OAuthAuthorizationFailed::unauthenticated();
         }
 
@@ -82,6 +88,7 @@ final readonly class AuthorizeCode
 
         if ($user === null || ! $user->isActive()) {
             $this->recordFailure(data: $data, reason: 'user_not_active');
+
             throw OAuthAuthorizationFailed::unauthenticated();
         }
 
@@ -89,21 +96,25 @@ final readonly class AuthorizeCode
 
         if ($client === null) {
             $this->recordFailure(data: $data, reason: 'client_not_found');
+
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
         if (! $client->isActive()) {
             $this->recordFailure(data: $data, reason: 'client_inactive');
+
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE)) {
             $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
+
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
         if (! $client->allowsRedirectUri(redirectUri: $data->redirectUri)) {
             $this->recordFailure(data: $data, reason: 'redirect_uri_mismatch');
+
             throw OAuthAuthorizationFailed::invalidRedirectUri();
         }
 
@@ -111,17 +122,20 @@ final readonly class AuthorizeCode
 
         if (! $client->allowsScopes(scopes: $scopes)) {
             $this->recordFailure(data: $data, reason: 'scope_mismatch');
+
             throw OAuthAuthorizationFailed::invalidScopes();
         }
 
         if (in_array(needle: 'openid', haystack: $scopes, strict: true)) {
             if ($this->oidcProvider === null) {
                 $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
+
                 throw OAuthAuthorizationFailed::openIdProviderNotConfigured();
             }
 
             if ($data->nonce === null || trim(string: $data->nonce) === '') {
                 $this->recordFailure(data: $data, reason: 'oidc_nonce_required');
+
                 throw OAuthAuthorizationFailed::nonceRequired();
             }
         }
@@ -129,12 +143,14 @@ final readonly class AuthorizeCode
         if ($client->isPublic()) {
             if ($data->codeChallenge === null || $data->codeChallengeMethod !== PkceMethod::S256) {
                 $this->recordFailure(data: $data, reason: 'pkce_required');
+
                 throw OAuthAuthorizationFailed::invalidPkce();
             }
         }
 
         if ($client->phishingResistantRequired && ! $context->isPhishingResistant()) {
             $this->recordFailure(data: $data, reason: 'phishing_resistant_required');
+
             throw OAuthAuthorizationFailed::phishingResistantRequired();
         }
 
@@ -149,38 +165,38 @@ final readonly class AuthorizeCode
             codeChallenge      : $data->codeChallenge,
             codeChallengeMethod: $data->codeChallengeMethod,
             mfaVerifiedAt      : $context->mfaVerifiedAt(),
-            phishingResistant  : $context->isPhishingResistant()
+            phishingResistant  : $context->isPhishingResistant(),
         );
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.authorization_code.issued',
-                                           occurredAt: $now,
-                                           context   : [
+            name      : 'auth.oauth.authorization_code.issued',
+            occurredAt: $now,
+            context   : [
                                                            'client_id'  => $client->clientId,
                                                            'user_id'    => $user->getId()->value,
                                                            'code_id'    => $issued->codeId,
                                                            'scope'      => implode(separator: ' ', array: $scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
-                                       ));
+                                                       ],
+        ));
 
         return $issued;
     }
 
-    private function recordFailure(AuthorizeCodeData $data, string $reason) : void
+    private function recordFailure(AuthorizeCodeData $data, string $reason): void
     {
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.authorization_code.failed',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
+            name      : 'auth.oauth.authorization_code.failed',
+            occurredAt: $this->clock->now(),
+            context   : [
                                                            'client_id'    => $data->clientId,
                                                            'redirect_uri' => $data->redirectUri,
                                                            'reason'       => $reason,
                                                            'ip_address'   => $data->ipAddress,
                                                            'user_agent'   => $data->userAgent,
-                                                       ]
-                                       ));
+                                                       ],
+        ));
     }
 
     /**
@@ -188,7 +204,7 @@ final readonly class AuthorizeCode
      *
      * @return list<string>
      */
-    private function normalizeScopes(array $scopes) : array
+    private function normalizeScopes(array $scopes): array
     {
         $normalized = [];
 

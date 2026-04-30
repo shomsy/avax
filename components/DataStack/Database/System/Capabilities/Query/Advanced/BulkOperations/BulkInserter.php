@@ -13,8 +13,8 @@ final class BulkInserter
 
     public function __construct(
         private GrammarInterface $grammar,
-        private string           $table,
-        private array            $columns
+        private string $table,
+        private array  $columns,
     ) {}
 
     public function batchSize(int $size) : self
@@ -40,7 +40,7 @@ final class BulkInserter
     {
         $columns = implode(separator: ', ', array: array_map(
             callback: fn ($col) => $this->grammar->wrap(value: $col),
-            array   : $this->columns
+            array   : $this->columns,
         ));
 
         $valueGroups = [];

@@ -25,7 +25,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'state1',
-            state: new class($resetCalled) implements ResettableState {
+            state: new class ($resetCalled) implements ResettableState {
                 public function __construct(private bool &$resetCalled)
                 {
                 }
@@ -55,7 +55,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'state1',
-            state: new class($called1) implements ResettableState {
+            state: new class ($called1) implements ResettableState {
                 public function __construct(private bool &$called)
                 {
                 }
@@ -69,7 +69,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'state2',
-            state: new class($called2) implements ResettableState {
+            state: new class ($called2) implements ResettableState {
                 public function __construct(private bool &$called)
                 {
                 }
@@ -96,7 +96,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'failing',
-            state: new class implements ResettableState {
+            state: new class () implements ResettableState {
                 public function resetState(): void
                 {
                     throw new RuntimeException(message: 'Cannot reset state');
@@ -122,7 +122,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'failing',
-            state: new class implements ResettableState {
+            state: new class () implements ResettableState {
                 public function resetState(): void
                 {
                     throw new RuntimeException(message: 'Failed');
@@ -132,7 +132,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'success',
-            state: new class($afterCalled) implements ResettableState {
+            state: new class ($afterCalled) implements ResettableState {
                 public function __construct(private bool &$afterCalled)
                 {
                 }

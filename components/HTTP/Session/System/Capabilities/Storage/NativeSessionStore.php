@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
@@ -40,6 +41,7 @@ final class NativeSessionStore implements SessionStoreInterface
                     $params['httponly'],
                 );
             }
+
             return session_destroy();
         }
 

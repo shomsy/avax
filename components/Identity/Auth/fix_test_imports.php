@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 $dirs = [
     '/home/shomsy/projects/components/Foundation/Auth/tests',
     '/home/shomsy/projects/components/Foundation/Auth/System',

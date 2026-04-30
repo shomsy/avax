@@ -37,7 +37,7 @@ final readonly class CheckFederationConnectionHealth
                                                            'connection_id' => $updated->connectionId,
                                                            'tenant'        => $updated->tenantSlug,
                                                            'health'        => $health->value,
-                                                       ]
+                                                       ],
                                        ));
 
         return $health;

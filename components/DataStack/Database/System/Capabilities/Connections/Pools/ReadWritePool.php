@@ -7,9 +7,9 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 final class ReadWritePool
 {
     public function __construct(
-        private ConnectionPoolInterface $readPool,
-        private ConnectionPoolInterface $writePool,
-        private bool                    $enableReadWriteSplit = true,
+        private readonly ConnectionPoolInterface $readPool,
+        private readonly ConnectionPoolInterface $writePool,
+        private bool                             $enableReadWriteSplit = true,
     ) {}
 
     public function getRead() : PooledConnection
@@ -26,14 +26,14 @@ final class ReadWritePool
         return $this->writePool->get();
     }
 
-    public function releaseRead(PooledConnection $connection) : void
+    public function releaseRead(PooledConnection $pooledConnection) : void
     {
-        $this->readPool->release(connection: $connection);
+        $this->readPool->release(connection: $pooledConnection);
     }
 
-    public function releaseWrite(PooledConnection $connection) : void
+    public function releaseWrite(PooledConnection $pooledConnection) : void
     {
-        $this->writePool->release(connection: $connection);
+        $this->writePool->release(connection: $pooledConnection);
     }
 
     public function isReadWriteSplitEnabled() : bool

@@ -21,14 +21,14 @@ use LogicException;
 final readonly class AsyncReadFile
 {
     /**
-     * @param string                     $path    Absolute or relative file path to read
-     * @param array<string, mixed>       $options Read operation options (encoding, offset, length, etc.)
-     * @param AsyncOperationPromise|null $promise The promise associated with this operation (null until scheduled)
+     * @param string                     $path                  Absolute or relative file path to read
+     * @param array<string, mixed>       $options               Read operation options (encoding, offset, length, etc.)
+     * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string                 $path,
         public array                  $options = [],
-        public ?AsyncOperationPromise $promise = null,
+        public ?AsyncOperationPromise $asyncOperationPromise = null,
     ) {}
 
     /**
@@ -50,11 +50,11 @@ final readonly class AsyncReadFile
      */
     public static function withPromise(
         string                $path,
-        AsyncOperationPromise $promise,
+        AsyncOperationPromise $asyncOperationPromise,
         array                 $options = [],
     ) : self
     {
-        return new self($path, $options, $promise);
+        return new self($path, $options, $asyncOperationPromise);
     }
 
     /**
@@ -62,7 +62,7 @@ final readonly class AsyncReadFile
      */
     public function isScheduled() : bool
     {
-        return $this->promise !== null;
+        return $this->asyncOperationPromise !== null;
     }
 
     /**
@@ -70,15 +70,15 @@ final readonly class AsyncReadFile
      *
      * @throws LogicException If a promise is already attached
      */
-    public function attachPromise(AsyncOperationPromise $promise) : self
+    public function attachPromise(AsyncOperationPromise $asyncOperationPromise) : self
     {
-        if ($this->promise !== null) {
+        if ($this->asyncOperationPromise !== null) {
             throw new LogicException(
-                sprintf('Cannot attach promise to read operation for "%s": promise already set', $this->path)
+                sprintf('Cannot attach promise to read operation for "%s": promise already set', $this->path),
             );
         }
 
         // Cannot modify readonly class, so we return a new instance
-        return new self($this->path, $this->options, $promise);
+        return new self($this->path, $this->options, $asyncOperationPromise);
     }
 }

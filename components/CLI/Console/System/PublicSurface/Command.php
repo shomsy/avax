@@ -48,10 +48,10 @@ abstract class Command
     /**
      * Run the command with given input and output.
      */
-    public function run(ConsoleInput $input, ConsoleOutput $output) : int
+    public function run(ConsoleInput $consoleInput, ConsoleOutput $consoleOutput) : int
     {
-        $this->input  = $input;
-        $this->output = $output;
+        $this->input  = $consoleInput;
+        $this->output = $consoleOutput;
 
         return $this->handle();
     }

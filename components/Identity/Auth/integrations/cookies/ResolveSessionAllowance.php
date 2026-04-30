@@ -15,9 +15,10 @@ final class ResolveSessionAllowance
      * @param array<string, mixed> $cookies
      */
     public function execute(
-        array                             $cookies,
-        bool|null                         $allowSession = null,
-        #[SensitiveParameter] string|null $sessionCookieName = null
+        array  $cookies,
+        bool   $allowSession = null,
+        #[SensitiveParameter]
+        string $sessionCookieName = null,
     ) : bool
     {
         $allowSession ??= true;

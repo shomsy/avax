@@ -24,7 +24,7 @@ final class Neo4jGrammar extends BaseGrammar
         }
 
         $return = empty($state->columns) ? '*' : implode(separator: ', ', array: $state->columns);
-        $sql    .= " RETURN {$return}";
+        $sql .= " RETURN {$return}";
 
         if (! empty($state->orders)) {
             $sql .= ' ORDER BY ' . $this->compileCypherOrder(state: $state);

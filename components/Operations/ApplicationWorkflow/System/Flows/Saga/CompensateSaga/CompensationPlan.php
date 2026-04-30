@@ -8,9 +8,9 @@ final readonly class CompensationPlan
 {
     public function __construct(
         public string $sagaType,
-        public array  $steps,
-        public bool   $parallel,
-        public int    $timeoutMs
+        public array $steps,
+        public bool  $parallel,
+        public int   $timeoutMs,
     ) {}
 
     public static function create(string $sagaType, array $steps) : self
@@ -19,7 +19,7 @@ final readonly class CompensationPlan
             sagaType : $sagaType,
             steps    : $steps,
             parallel : false,
-            timeoutMs: 30000
+            timeoutMs: 30000,
         );
     }
 

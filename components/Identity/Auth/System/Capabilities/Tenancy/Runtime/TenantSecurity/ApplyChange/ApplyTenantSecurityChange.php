@@ -16,12 +16,14 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class ApplyTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws TenantSecurityFailed
      */
-    public function execute(string $changeId) : TenantSecurityConfiguration
+    public function execute(string $changeId): TenantSecurityConfiguration
     {
         $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 
@@ -47,18 +49,18 @@ final readonly class ApplyTenantSecurityChange
             approvedBy  : $changeRequest->approvedBy,
             approvedAt  : $changeRequest->approvedAt,
             appliedAt   : $this->clock->now(),
-            rolledBackAt: $changeRequest->rolledBackAt
+            rolledBackAt: $changeRequest->rolledBackAt,
         );
         $this->changeRequestStore->save(changeRequest: $applied);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.tenant_security.change.applied',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
+            name      : 'auth.tenant_security.change.applied',
+            occurredAt: $this->clock->now(),
+            context   : [
                                                            'change_id'       => $applied->changeId,
                                                            'tenant'          => $applied->tenantSlug,
                                                            'rollout_version' => $applied->after->rolloutVersion,
-                                                       ]
-                                       ));
+                                                       ],
+        ));
 
         return $applied->after;
     }

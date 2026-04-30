@@ -16,9 +16,9 @@ use DateInterval;
 final readonly class WarmCache
 {
     public function __construct(
-        private CacheStore $store,
+        private CacheStore $cacheStore,
         private Clock      $clock,
-        private CacheTtl   $ttlCalculator = new CacheTtl()
+        private CacheTtl   $cacheTtl = new CacheTtl(),
     ) {}
 
     public function warm(iterable $entries, int|DateInterval|null $ttl = null) : int
@@ -29,20 +29,20 @@ final readonly class WarmCache
             $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
             $value    = is_callable($loader) ? $loader() : $loader;
 
-            $expiresAt = $this->ttlCalculator->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
+            $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
                 ?? $this->clock->now()->add(
-                    duration: Duration::ofSeconds(seconds: 3600)
+                    duration: Duration::ofSeconds(seconds: 3600),
                 );
 
             $lifecycle = CachedValueLifecycle::create(
                 createdAt: $this->clock->now(),
                 expiresAt: $expiresAt,
-                clock    : $this->clock
+                clock    : $this->clock,
             );
 
-            $this->store->write(
+            $this->cacheStore->write(
                 key   : $cacheKey,
-                record: new StoredCacheRecord(value: $value, lifecycle: $lifecycle)
+                record: new StoredCacheRecord(value: $value, lifecycle: $lifecycle),
             );
 
             $count++;

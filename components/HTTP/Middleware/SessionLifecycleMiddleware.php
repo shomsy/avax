@@ -16,7 +16,7 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionInterface;
 final readonly class SessionLifecycleMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private SessionInterface|NullSession $session
+        private SessionInterface|NullSession $session,
     ) {}
 
     public function handle(RequestInterface $request, callable $next) : ResponseInterface

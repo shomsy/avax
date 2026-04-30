@@ -31,16 +31,16 @@ final class DecodeHttpResponse
      * @return ClientResponse The decoded response
      */
     public function decode(
-        int     $statusCode,
-        array   $headers,
-        string  $body,
-        string  $reasonPhrase = '',
-        string  $protocol = '1.1',
-        float   $transferTimeMs = 0.0,
-        float   $connectTimeMs = 0.0,
-        float   $totalTimeMs = 0.0,
-        int     $redirectCount = 0,
-        ?string $effectiveUrl = null,
+        int    $statusCode,
+        array  $headers,
+        string $body,
+        string $reasonPhrase = '',
+        string $protocol = '1.1',
+        float  $transferTimeMs = 0.0,
+        float  $connectTimeMs = 0.0,
+        float  $totalTimeMs = 0.0,
+        int    $redirectCount = 0,
+        string $effectiveUrl = null,
     ) : ClientResponse
     {
         // Normalize headers to array of arrays

@@ -20,7 +20,7 @@ final class Workflow
 {
     private SagaStoreInterface $store;
 
-    public function __construct(?SagaStoreInterface $store = null)
+    public function __construct(SagaStoreInterface $store = null)
     {
         $this->store = $store ?? new InMemorySagaStore();
     }
@@ -31,6 +31,7 @@ final class Workflow
     public function runSaga(SagaDefinition $definition): void
     {
         $completed = [];
+
         try {
             foreach ($definition->getSteps() as $step) {
                 ($step->action)();
@@ -42,6 +43,7 @@ final class Workflow
                     ($step->compensation)();
                 }
             }
+
             throw $e;
         }
     }
@@ -50,7 +52,7 @@ final class Workflow
      * Start a new saga with the given name and context.
      *
      * @param string $sagaName The name of the saga to start
-     * @param mixed  $context  The initial context/data for the saga
+     * @param mixed $context The initial context/data for the saga
      *
      * @return SagaResult The result of the saga execution
      */

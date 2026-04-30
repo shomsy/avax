@@ -9,7 +9,7 @@ final class CTEUnion
     public function __construct(
         public readonly string $left,
         public readonly string $right,
-        public readonly bool   $all = true,
+        public readonly bool $all = true,
     ) {}
 
     public function toSql() : string

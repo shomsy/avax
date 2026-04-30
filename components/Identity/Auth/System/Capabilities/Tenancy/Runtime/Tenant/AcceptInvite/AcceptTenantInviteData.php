@@ -9,7 +9,9 @@ use SensitiveParameter;
 final readonly class AcceptTenantInviteData
 {
     public function __construct(
-        #[SensitiveParameter] public string $inviteToken,
-        public int                          $userId
-    ) {}
+        #[SensitiveParameter]
+        public string $inviteToken,
+        public int $userId,
+    ) {
+    }
 }

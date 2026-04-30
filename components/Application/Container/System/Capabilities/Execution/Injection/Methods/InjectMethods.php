@@ -17,14 +17,10 @@ use Closure;
 final class InjectMethods
 {
     /** @var array<string, Closure(object, array): mixed> */
-    private array                $invokers = [];
-    private ResolveCallArguments $arguments;
+    private array $invokers = [];
 
-    public function __construct(
-        ResolveCallArguments $arguments
-    )
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
     {
-        $this->arguments = $arguments;
     }
 
     /**
@@ -34,21 +30,21 @@ final class InjectMethods
      */
     public function inject(
         object           $target,
-        ServiceBlueprint $blueprint,
+        ServiceBlueprint $serviceBlueprint,
         array            $overrides,
-        ServiceResolver  $resolver,
-        ResolveRequest   $request
+        ServiceResolver  $serviceResolver,
+        ResolveRequest   $resolveRequest,
     ) : void
     {
-        foreach ($blueprint->injectableMethods as $method) {
-            $arguments = $this->arguments->resolvePlan(
+        foreach ($serviceBlueprint->injectableMethods as $method) {
+            $arguments = $this->resolveCallArguments->resolvePlan(
                 plan     : $method['plan'],
                 overrides: $overrides,
-                resolver : $resolver,
-                request  : $request
+                resolver : $serviceResolver,
+                request  : $resolveRequest,
             );
 
-            ($this->invokerFor(class: $blueprint->class, method: $method['name']))($target, $arguments);
+            ($this->invokerFor(class: $serviceBlueprint->class, method: $method['name']))($target, $arguments);
         }
     }
 
@@ -61,16 +57,10 @@ final class InjectMethods
     {
         $key = $class . '::' . $method;
 
-        if (isset($this->invokers[$key])) {
-            return $this->invokers[$key];
-        }
-
-        return $this->invokers[$key] = Closure::bind(
-            closure : static function (object $target, array $arguments) use ($method) : mixed {
-                return $target->{$method}(...$arguments);
-            },
+        return $this->invokers[$key] ?? ($this->invokers[$key] = Closure::bind(
+            closure : static fn (object $target, array $arguments) : mixed => $target->{$method}(...$arguments),
             newThis : null,
-            newScope: $class
-        );
+            newScope: $class,
+        ));
     }
 }

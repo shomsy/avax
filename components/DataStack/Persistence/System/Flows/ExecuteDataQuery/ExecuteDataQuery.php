@@ -25,7 +25,7 @@ final class ExecuteDataQuery
     /**
      * @param callable(DataQueryPlan): array<array<string, mixed>>|null $executor
      */
-    public function __construct(callable|null $executor = null)
+    public function __construct(callable $executor = null)
     {
         $this->executor = $executor;
     }

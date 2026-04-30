@@ -15,8 +15,8 @@ final readonly class HandleRuntimeFailure
 {
     public function __construct(
         private ConvertPhpErrorToThrowable $convertPhpErrorToThrowable = new ConvertPhpErrorToThrowable(),
-        private ReportRuntimeFailure       $reportRuntimeFailure = new ReportRuntimeFailure(),
-        private RenderRuntimeFailure       $renderRuntimeFailure = new RenderRuntimeFailure(),
+        private ReportRuntimeFailure $reportRuntimeFailure = new ReportRuntimeFailure(),
+        private RenderRuntimeFailure $renderRuntimeFailure = new RenderRuntimeFailure(),
     ) {}
 
     /**

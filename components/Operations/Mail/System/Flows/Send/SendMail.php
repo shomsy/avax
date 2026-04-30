@@ -7,13 +7,12 @@ namespace Avax\Components\Operations\Mail\System\Flows\Send;
 use Avax\Components\Operations\Mail\System\Capabilities\Address\Envelope;
 use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 use Avax\Components\Operations\Mail\System\Capabilities\Transport\MailTransport;
-use Avax\Components\Operations\Mail\System\Capabilities\Transport\TransportResult;
 use Avax\Components\Operations\Mail\System\PublicSurface\SendResult;
 
 final class SendMail
 {
     private MailTransport $transport;
-    private array         $queue = [];
+    private array $queue = [];
 
     public function __construct(MailTransport $transport)
     {

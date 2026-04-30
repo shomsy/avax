@@ -11,8 +11,9 @@ use SensitiveParameter;
 final readonly class CleanupExpiredAuthorizationCodes
 {
     public function __construct(
-        #[SensitiveParameter] private PruneExpiredAuthorizationCodesInterface|null $codeStore,
-        private Clock                                                              $clock
+        #[SensitiveParameter]
+        private PruneExpiredAuthorizationCodesInterface|null $codeStore,
+        private Clock                                        $clock,
     ) {}
 
     public function execute() : int

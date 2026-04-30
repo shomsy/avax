@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
 
+use Override;
 use Random\RandomException;
-use Random\Randomizer;
 
 final readonly class RandomReplacement implements ChooseCachedValueForReplacement
 {
-    public function __construct(
-        private Randomizer|null $randomizer = null
-    ) {}
-
     /**
      * @throws RandomException
      */
+    #[Override]
     public function choose(array $entries) : string|null
     {
-        if (count($entries) === 0) {
+        if ($entries === []) {
             return null;
         }
 

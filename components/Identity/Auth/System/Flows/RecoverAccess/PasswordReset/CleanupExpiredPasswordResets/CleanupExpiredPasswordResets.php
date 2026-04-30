@@ -11,8 +11,9 @@ use SensitiveParameter;
 final readonly class CleanupExpiredPasswordResets
 {
     public function __construct(
-        #[SensitiveParameter] private PruneExpiredPasswordResetsInterface|null $passwordResetStore,
-        private Clock                                                          $clock
+        #[SensitiveParameter]
+        private PruneExpiredPasswordResetsInterface|null $passwordResetStore,
+        private Clock                                    $clock,
     ) {}
 
     public function execute() : int

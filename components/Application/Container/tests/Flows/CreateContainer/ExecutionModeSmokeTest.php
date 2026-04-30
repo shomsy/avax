@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -10,16 +10,14 @@ final class ExecutionModeDependency {}
 
 final class ExecutionModeService
 {
-    public ExecutionModeDependency $dependency;
-
-    public function __construct(ExecutionModeDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public ExecutionModeDependency $executionModeDependency) {}
 }
 
 $generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid(prefix: '', more_entropy: true);
 $generated         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $generatedCacheDir,
     cacheVersion : 'generated-mode-smoke',
-    executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED
+    executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
 ));
 $generated->compileContainer(serviceIds: [ExecutionModeService::class, ExecutionModeDependency::class]);
 $generated->get(id: ExecutionModeService::class);
@@ -31,29 +29,29 @@ $generatedDescription   = $generated->describeService(id: ExecutionModeService::
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_GENERATED,
     actual  : $generatedCompileReport?->executionMode,
-    message : 'Generated mode should be preserved in compile reports.'
+    message : 'Generated mode should be preserved in compile reports.',
 );
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_GENERATED,
     actual  : $generatedRuntimeReport->executionMode,
-    message : 'Generated mode should be preserved in runtime reports.'
+    message : 'Generated mode should be preserved in runtime reports.',
 );
 assertSame(
     expected: 'generated',
     actual  : $generatedDescription['compiledState']['decision'] ?? null,
-    message : 'Generated mode should resolve through the generated execution lane.'
+    message : 'Generated mode should resolve through the generated execution lane.',
 );
 assertSame(
     expected: 'generated execution path is attached and usable',
     actual  : $generatedDescription['compiledState']['reason'] ?? null,
-    message : 'Generated mode should remain explainable.'
+    message : 'Generated mode should remain explainable.',
 );
 
 $dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid(prefix: '', more_entropy: true);
 $dynamic         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $dynamicCacheDir,
     cacheVersion : 'dynamic-mode-smoke',
-    executionMode: CreateContainerConfig::EXECUTION_MODE_DYNAMIC
+    executionMode: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
 ));
 $dynamic->compileContainer(serviceIds: [ExecutionModeService::class, ExecutionModeDependency::class]);
 $dynamic->get(id: ExecutionModeService::class);
@@ -65,32 +63,32 @@ $dynamicDescription   = $dynamic->describeService(id: ExecutionModeService::clas
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
     actual  : $dynamicCompileReport?->executionMode,
-    message : 'Dynamic mode should be preserved in compile reports.'
+    message : 'Dynamic mode should be preserved in compile reports.',
 );
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
     actual  : $dynamicRuntimeReport->executionMode,
-    message : 'Dynamic mode should be preserved in runtime reports.'
+    message : 'Dynamic mode should be preserved in runtime reports.',
 );
 assertSame(
     expected: 'dynamic',
     actual  : $dynamicDescription['compiledState']['decision'] ?? null,
-    message : 'Dynamic mode should disable the attached compiled hot path deterministically.'
+    message : 'Dynamic mode should disable the attached compiled hot path deterministically.',
 );
 assertSame(
     expected: 'execution mode is dynamic',
     actual  : $dynamicDescription['compiledState']['reason'] ?? null,
-    message : 'Dynamic mode fallback should stay explainable.'
+    message : 'Dynamic mode fallback should stay explainable.',
 );
 assertSame(
     expected: false,
     actual  : $dynamicDescription['compiledState']['attached'] ?? true,
-    message : 'Dynamic mode should keep compiled hot-path attachment disabled.'
+    message : 'Dynamic mode should keep compiled hot-path attachment disabled.',
 );
 assertSame(
     expected: true,
     actual  : $dynamicDescription['compiledState']['artifactAvailable'] ?? false,
-    message : 'Dynamic mode should still preserve compiled artifacts as derived outputs.'
+    message : 'Dynamic mode should still preserve compiled artifacts as derived outputs.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

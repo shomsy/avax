@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Access;
@@ -10,6 +11,6 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Access;
 final readonly class Permission
 {
     public function __construct(
-        public string $name
+        public string $name,
     ) {}
 }

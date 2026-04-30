@@ -22,7 +22,7 @@ final readonly class TrimValues
     {
         return array_map(
             callback: static fn (mixed $value) : string => trim(string: (string) $value, characters: $characters),
-            array   : $this->items
+            array   : $this->items,
         );
     }
 

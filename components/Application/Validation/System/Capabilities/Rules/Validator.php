@@ -14,6 +14,7 @@ namespace Avax\Components\Application\Validation\System\Capabilities\Rules;
 final class Validator
 {
     private array $data  = [];
+
     private array $rules = [];
 
     /** @var array<string, list<string>> */
@@ -48,7 +49,7 @@ final class Validator
         $this->errors = [];
 
         foreach ($this->rules as $field => $ruleSet) {
-            $rules = is_array($ruleSet) ? $ruleSet : explode('|', $ruleSet);
+            $rules = is_array($ruleSet) ? $ruleSet : explode('|', (string) $ruleSet);
             $value = $this->getValue($field);
 
             foreach ($rules as $rule) {
@@ -78,13 +79,14 @@ final class Validator
                 if (! is_array($value) || ! array_key_exists($key, $value)) {
                     return null;
                 }
+
                 $value = $value[$key];
             }
 
             return $value;
         }
 
-        return array_key_exists($field, $this->data) ? $this->data[$field] : null;
+        return $this->data[$field] ?? null;
     }
 
     private function applyRule(string $field, mixed $value, string $rule) : void
@@ -95,17 +97,16 @@ final class Validator
         $params   = isset($parts[1]) ? explode(',', $parts[1]) : [];
 
         // Skip validation if field is nullable and value is null/empty
-        if ($ruleName !== 'required' && $ruleName !== 'nullable') {
-            if ($value === null || $value === '') {
-                // Check if nullable rule is present
-                $fieldRules = is_array($this->rules[$field]) ? $this->rules[$field] : explode('|', $this->rules[$field]);
-                if (in_array('nullable', $fieldRules, true)) {
-                    return;
-                }
-                // If no value and not explicitly nullable, skip non-required rules
-                if (! in_array('required', $fieldRules, true)) {
-                    return;
-                }
+        if ($ruleName !== 'required' && $ruleName !== 'nullable' && ($value === null || $value === '')) {
+            // Check if nullable rule is present
+            $fieldRules = is_array($this->rules[$field]) ? $this->rules[$field] : explode('|', (string) $this->rules[$field]);
+            if (in_array('nullable', $fieldRules, true)) {
+                return;
+            }
+
+            // If no value and not explicitly nullable, skip non-required rules
+            if (! in_array('required', $fieldRules, true)) {
+                return;
             }
         }
 
@@ -139,14 +140,12 @@ final class Validator
         if ($value === null || $value === '') {
             return false;
         }
+
         if (is_string($value) && trim($value) === '') {
             return false;
         }
-        if (is_array($value) && empty($value)) {
-            return false;
-        }
 
-        return true;
+        return $value !== [];
     }
 
     private function validateString(mixed $value) : bool
@@ -174,9 +173,11 @@ final class Validator
         if (is_string($value)) {
             return strlen($value) >= $min;
         }
+
         if (is_numeric($value)) {
             return $value >= $min;
         }
+
         if (is_array($value)) {
             return count($value) >= $min;
         }
@@ -189,9 +190,11 @@ final class Validator
         if (is_string($value)) {
             return strlen($value) <= $max;
         }
+
         if (is_numeric($value)) {
             return $value <= $max;
         }
+
         if (is_array($value)) {
             return count($value) <= $max;
         }
@@ -206,9 +209,11 @@ final class Validator
 
             return $len >= $min && $len <= $max;
         }
+
         if (is_numeric($value)) {
             return $value >= $min && $value <= $max;
         }
+
         if (is_array($value)) {
             $count = count($value);
 
@@ -270,28 +275,25 @@ final class Validator
     private function getErrorMessage(string $field, string $rule, array $params) : string
     {
         // Check custom message
-        $key = "{$field}.{$rule}";
-        if (isset($this->messages[$key])) {
-            return $this->messages[$key];
-        }
+        $key = sprintf('%s.%s', $field, $rule);
 
-        return match ($rule) {
-            'required'        => "The {$field} field is required.",
-            'string'          => "The {$field} field must be a string.",
-            'integer'         => "The {$field} field must be an integer.",
-            'numeric'         => "The {$field} field must be a number.",
-            'email'           => "The {$field} field must be a valid email address.",
-            'min'             => "The {$field} field must be at least {$params[0]}.",
-            'max'             => "The {$field} field must not exceed {$params[0]}.",
-            'between'         => "The {$field} field must be between {$params[0]} and {$params[1]}.",
-            'in'              => "The {$field} field must be one of: " . implode(', ', $params),
-            'array'           => "The {$field} field must be an array.",
-            'url'             => "The {$field} field must be a valid URL.",
-            'uuid'            => "The {$field} field must be a valid UUID.",
-            'date'            => "The {$field} field must be a valid date.",
-            'bool', 'boolean' => "The {$field} field must be true or false.",
-            'regex'           => "The {$field} field format is invalid.",
-            default           => "The {$field} field is invalid.",
+        return $this->messages[$key] ?? match ($rule) {
+            'required'        => sprintf('The %s field is required.', $field),
+            'string'          => sprintf('The %s field must be a string.', $field),
+            'integer'         => sprintf('The %s field must be an integer.', $field),
+            'numeric'         => sprintf('The %s field must be a number.', $field),
+            'email'           => sprintf('The %s field must be a valid email address.', $field),
+            'min'             => sprintf('The %s field must be at least %s.', $field, $params[0]),
+            'max'             => sprintf('The %s field must not exceed %s.', $field, $params[0]),
+            'between'         => sprintf('The %s field must be between %s and %s.', $field, $params[0], $params[1]),
+            'in'              => sprintf('The %s field must be one of: ', $field) . implode(', ', $params),
+            'array'           => sprintf('The %s field must be an array.', $field),
+            'url'             => sprintf('The %s field must be a valid URL.', $field),
+            'uuid'            => sprintf('The %s field must be a valid UUID.', $field),
+            'date'            => sprintf('The %s field must be a valid date.', $field),
+            'bool', 'boolean' => sprintf('The %s field must be true or false.', $field),
+            'regex'           => sprintf('The %s field format is invalid.', $field),
+            default           => sprintf('The %s field is invalid.', $field),
         };
     }
 }
@@ -308,12 +310,12 @@ final readonly class ValidationFailure
 
     public function fails() : bool
     {
-        return ! empty($this->errors);
+        return $this->errors !== [];
     }
 
     public function passes() : bool
     {
-        return empty($this->errors);
+        return $this->errors === [];
     }
 
     public function hasError(string $field) : bool
@@ -340,8 +342,8 @@ final readonly class ValidationFailure
 
     public function first() : ?string
     {
-        foreach ($this->errors as $fieldErrors) {
-            return $fieldErrors[0];
+        foreach ($this->errors as $error) {
+            return $error[0];
         }
 
         return null;

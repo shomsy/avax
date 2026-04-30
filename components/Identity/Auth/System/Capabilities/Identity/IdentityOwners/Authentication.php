@@ -19,9 +19,10 @@ use SensitiveParameter;
 final readonly class Authentication
 {
     public function __construct(
-        private Login                                       $login,
-        private Logout                                      $logout,
-        #[SensitiveParameter] private RefreshAuthentication $refreshAuthentication
+        private Login                 $login,
+        private Logout                $logout,
+        #[SensitiveParameter]
+        private RefreshAuthentication $refreshAuthentication,
     ) {}
 
     /**

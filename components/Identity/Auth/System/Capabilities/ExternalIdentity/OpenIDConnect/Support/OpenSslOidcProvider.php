@@ -15,27 +15,30 @@ use SensitiveParameter;
 
 final readonly class OpenSslOidcProvider implements OidcProviderInterface
 {
-    private OpenSSLAsymmetricKey      $privateKey;
-    private OpenSSLAsymmetricKey      $publicKey;
-    private int                       $idTokenLifetime;
+    private OpenSSLAsymmetricKey $privateKey;
+    private OpenSSLAsymmetricKey $publicKey;
+    private int                  $idTokenLifetime;
     private SubjectIdentifierStrategy $subjectIdentifierStrategy;
 
     public function __construct(
-        private string                            $issuer,
-        #[SensitiveParameter] string              $privateKeyPem,
-        private string                            $keyId,
-        private string                            $authorizationEndpoint,
-        #[SensitiveParameter] private string      $tokenEndpoint,
-        private string                            $userInfoEndpoint,
-        private string                            $jsonWebKeySetUri,
-        SubjectIdentifierStrategy|null            $subjectIdentifierStrategy = null,
-        #[SensitiveParameter] private string|null $pairwiseSalt = null,
-        int|null                                  $idTokenLifetime = null,
-        private string                            $algorithm = 'RS256'
+        private string            $issuer,
+        #[SensitiveParameter]
+        string                    $privateKeyPem,
+        private string            $keyId,
+        private string            $authorizationEndpoint,
+        #[SensitiveParameter]
+        private string            $tokenEndpoint,
+        private string            $userInfoEndpoint,
+        private string            $jsonWebKeySetUri,
+        SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
+        #[SensitiveParameter]
+        private string|null       $pairwiseSalt = null,
+        int                       $idTokenLifetime = null,
+        private string            $algorithm = 'RS256',
     )
     {
-        $subjectIdentifierStrategy       ??= SubjectIdentifierStrategy::PUBLIC;
-        $idTokenLifetime                 ??= 600;
+        $subjectIdentifierStrategy ??= SubjectIdentifierStrategy::PUBLIC;
+        $idTokenLifetime           ??= 600;
         $this->subjectIdentifierStrategy = $subjectIdentifierStrategy;
         $this->idTokenLifetime           = $idTokenLifetime;
         if (trim(string: $this->issuer) === '') {
@@ -76,13 +79,14 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
      * @throws DateMalformedStringException
      */
     public function issueIdToken(
-        User                              $user,
-        string                            $clientId,
-        array                             $scopes,
-        string|null                       $nonce = null,
-        DateTimeImmutable|null            $authenticatedAt = null,
-        #[SensitiveParameter] string|null $sessionId = null,
-        bool                              $phishingResistant = false
+        User              $user,
+        string            $clientId,
+        array             $scopes,
+        string            $nonce = null,
+        DateTimeImmutable $authenticatedAt = null,
+        #[SensitiveParameter]
+        string            $sessionId = null,
+        bool              $phishingResistant = false,
     ) : OidcIdToken
     {
         $issuedAt  = new DateTimeImmutable();
@@ -119,7 +123,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
         return new OidcIdToken(
             token    : $this->issueJwt(claims: $claims),
-            expiresAt: $expiresAt
+            expiresAt: $expiresAt,
         );
     }
 
@@ -130,7 +134,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             SubjectIdentifierStrategy::PAIRWISE => new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE)->generate(
                 localSubject    : (string) $user->getId()->value,
                 sectorIdentifier: $clientId,
-                pairwiseSalt    : (string) $this->pairwiseSalt
+                pairwiseSalt    : (string) $this->pairwiseSalt,
             ),
         };
     }
@@ -200,7 +204,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             backChannelLogoutSupported                    : true,
             backChannelLogoutSessionSupported             : true,
             requestObjectSigningAlgValuesSupported        : ['HS256', 'HS384', 'HS512', $this->algorithm],
-            authorizationResponseSigningAlgValuesSupported: [$this->algorithm]
+            authorizationResponseSigningAlgValuesSupported: [$this->algorithm],
         );
     }
 
@@ -219,7 +223,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
                                                    algorithm: $this->algorithm,
                                                    use      : 'sig',
                                                    modulus  : $this->base64UrlEncode(value: $details['rsa']['n']),
-                                                   exponent : $this->base64UrlEncode(value: $details['rsa']['e'])
+                                                   exponent : $this->base64UrlEncode(value: $details['rsa']['e']),
                                                ),
                                            ]);
     }
@@ -272,7 +276,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             data      : $headerSegment . '.' . $claimSegment,
             signature : $signature,
             public_key: $this->publicKey,
-            algorithm : OPENSSL_ALGO_SHA256
+            algorithm : OPENSSL_ALGO_SHA256,
         );
 
         if ($verified !== 1) {

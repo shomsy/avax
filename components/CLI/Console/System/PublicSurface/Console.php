@@ -18,19 +18,19 @@ class Console
     /** @var array<string, Command> Registered commands */
     private array $commands = [];
 
-    private string        $appName;
-    private string        $appVersion;
-    private ConsoleOutput $output;
+    private readonly string $appName;
+
+    private readonly string $appVersion;
+
 
     public function __construct(
-        ?string        $name = null,
-        ?string        $version = null,
-        ?ConsoleOutput $output = null
+        ?string                        $name = null,
+        ?string                        $version = null,
+        private readonly ConsoleOutput $consoleOutput = new ConsoleOutput(),
     )
     {
-        $this->appName    = $name ?? 'Avax Console';
+        $this->appName = $name ?? 'Avax Console';
         $this->appVersion = $version ?? '1.0.0';
-        $this->output     = $output ?? new ConsoleOutput();
     }
 
     /**
@@ -74,12 +74,12 @@ class Console
      */
     public function run(?array $argv = null) : int
     {
-        $argv = $argv ?? $_SERVER['argv'] ?? [];
+        $argv ??= $_SERVER['argv'] ?? [];
 
         // Remove script name
         array_shift($argv);
 
-        if (empty($argv)) {
+        if ($argv === []) {
             $this->list();
 
             return Command::SUCCESS;
@@ -96,7 +96,7 @@ class Console
         }
 
         if ($commandName === '--version' || $commandName === '-V') {
-            $this->output->line("{$this->appName} version {$this->appVersion}");
+            $this->consoleOutput->line(sprintf('%s version %s', $this->appName, $this->appVersion));
 
             return Command::SUCCESS;
         }
@@ -104,18 +104,18 @@ class Console
         // Resolve command
         $command = $this->resolve($commandName);
 
-        if ($command === null) {
-            $this->output->error("Command '{$commandName}' not found.");
-            $this->output->newLine();
+        if (! $command instanceof Command) {
+            $this->consoleOutput->error(sprintf("Command '%s' not found.", $commandName));
+            $this->consoleOutput->newLine();
             $this->list();
 
             return Command::FAILURE;
         }
 
         // Parse remaining arguments
-        $input = ConsoleInput::fromArgv($argv);
+        $consoleInput = ConsoleInput::fromArgv($argv);
 
-        return $command->run($input, $this->output);
+        return $command->run($consoleInput, $this->consoleOutput);
     }
 
     /**
@@ -123,20 +123,20 @@ class Console
      */
     public function list() : void
     {
-        $this->output->line("{$this->appName} version {$this->appVersion}");
-        $this->output->newLine();
-        $this->output->line('Usage:');
-        $this->output->line('  <command> [arguments] [options]');
-        $this->output->newLine();
+        $this->consoleOutput->line(sprintf('%s version %s', $this->appName, $this->appVersion));
+        $this->consoleOutput->newLine();
+        $this->consoleOutput->line('Usage:');
+        $this->consoleOutput->line('  <command> [arguments] [options]');
+        $this->consoleOutput->newLine();
 
-        if (empty($this->commands)) {
-            $this->output->line('No commands registered.');
+        if ($this->commands === []) {
+            $this->consoleOutput->line('No commands registered.');
 
             return;
         }
 
-        $this->output->bold('Available commands:');
-        $this->output->newLine();
+        $this->consoleOutput->bold('Available commands:');
+        $this->consoleOutput->newLine();
 
         // Calculate max command name length for alignment
         $maxNameLength = 0;
@@ -152,7 +152,7 @@ class Console
         foreach ($this->commands as $command) {
             $name = str_pad($command->getName(), $maxNameLength);
             $desc = $command->getDescription();
-            $this->output->line("  {$name}  {$desc}");
+            $this->consoleOutput->line(sprintf('  %s  %s', $name, $desc));
         }
     }
 
@@ -161,6 +161,6 @@ class Console
      */
     public function getOutput() : ConsoleOutput
     {
-        return $this->output;
+        return $this->consoleOutput;
     }
 }

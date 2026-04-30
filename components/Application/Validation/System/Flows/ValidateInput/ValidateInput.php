@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Validation\System\Flows\ValidateInput;
 
 final class ValidateInput
 {
-    public function validate(array $data, array $rules) : array
+    public function validate() : array
     {
         return [];
     }

@@ -15,10 +15,12 @@ use SensitiveParameter;
 final readonly class VerifyEmail
 {
     public function __construct(
-        #[SensitiveParameter] private EmailVerificationStoreInterface      $emailVerificationStore,
-        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                                          $auditLog,
-        private Clock                                                      $clock
+        #[SensitiveParameter]
+        private EmailVerificationStoreInterface      $emailVerificationStore,
+        #[SensitiveParameter]
+        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                    $auditLog,
+        private Clock                                $clock,
     ) {}
 
     public function execute(VerifyEmailData $data) : bool
@@ -33,7 +35,7 @@ final readonly class VerifyEmail
                                                                'reason'     => 'invalid_token',
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             return false;
@@ -47,7 +49,7 @@ final readonly class VerifyEmail
                                                            'user_id'    => $userId->value,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return true;

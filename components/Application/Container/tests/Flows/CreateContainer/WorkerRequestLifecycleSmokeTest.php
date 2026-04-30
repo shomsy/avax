@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -15,7 +15,7 @@ $version   = 'worker-lifecycle';
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
-    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION
+    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
 ));
 
 $container->singleton(abstract: WorkerSharedService::class, concrete: WorkerSharedService::class);
@@ -51,7 +51,7 @@ assertTrue(condition: ! $container->isWarmedUp(), message: 'Flush should drop co
 assertInstanceOf(
     expectedClass: WorkerSharedService::class,
     value        : $container->get(id: WorkerSharedService::class),
-    message      : 'Flush should still preserve authored registrations across jobs.'
+    message      : 'Flush should still preserve authored registrations across jobs.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

@@ -17,9 +17,9 @@ final readonly class SubjectIdentifier
      * Generates a subject identifier for a user.
      */
     public function generate(
-        string      $localSubject,
-        string|null $sectorIdentifier = null,
-        string|null $pairwiseSalt = null
+        string $localSubject,
+        string $sectorIdentifier = null,
+        string $pairwiseSalt = null,
     ) : string
     {
         return match ($this->strategy) {
@@ -27,7 +27,7 @@ final readonly class SubjectIdentifier
             SubjectIdentifierStrategy::PAIRWISE => $this->pairwiseIdentifier(
                 localSubject    : $localSubject,
                 sectorIdentifier: $sectorIdentifier,
-                pairwiseSalt    : $pairwiseSalt ?? $this->defaultSalt()
+                pairwiseSalt    : $pairwiseSalt ?? $this->defaultSalt(),
             ),
         };
     }
@@ -38,9 +38,9 @@ final readonly class SubjectIdentifier
     }
 
     private function pairwiseIdentifier(
-        string      $localSubject,
+        string $localSubject,
         string|null $sectorIdentifier,
-        string      $pairwiseSalt
+        string $pairwiseSalt,
     ) : string
     {
         $sector = $sectorIdentifier ?? $this->defaultSector();

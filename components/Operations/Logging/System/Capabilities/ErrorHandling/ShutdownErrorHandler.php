@@ -23,7 +23,7 @@ final class ShutdownErrorHandler
 
     public function __construct(
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
-        private readonly Logging              $logger,
+        private readonly Logging $logger,
     ) {}
 
     /**

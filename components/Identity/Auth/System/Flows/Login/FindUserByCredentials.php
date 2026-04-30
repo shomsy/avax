@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
@@ -13,7 +14,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSo
 final readonly class FindUserByCredentials
 {
     public function __construct(
-        private UserSource $source
+        private UserSource $source,
     ) {}
 
     public function execute(string $email) : ?User

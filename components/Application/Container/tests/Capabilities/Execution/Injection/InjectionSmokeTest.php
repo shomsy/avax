@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 
@@ -13,6 +13,7 @@ interface InjectionGreeterContract
 
 final class InjectionGreeter implements InjectionGreeterContract
 {
+    #[Override]
     public function message() : string
     {
         return 'injected';
@@ -25,12 +26,6 @@ final class InjectionTarget
     public InjectionGreeterContract $greeter;
 
     public bool $methodInjected = false;
-
-    #[Inject]
-    protected function wire(InjectionGreeterContract $greeter) : void
-    {
-        $this->methodInjected = $greeter->message() === 'injected';
-    }
 }
 
 $container = makeTestContainer();

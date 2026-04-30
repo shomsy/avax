@@ -12,11 +12,10 @@ final readonly class WriteCachedValueToAllTiers
 {
     public function __construct(
         private TieredCache $tieredCache,
-        private Clock       $clock
     ) {}
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->tieredCache->write(key: $key, record: $record);
+        $this->tieredCache->write(key: $cacheKey, record: $storedCacheRecord);
     }
 }

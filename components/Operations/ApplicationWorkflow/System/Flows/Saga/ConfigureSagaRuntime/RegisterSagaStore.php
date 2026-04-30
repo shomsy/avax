@@ -16,53 +16,77 @@ final readonly class RegisterSagaStore
             'database' => $this->createDatabaseStore(config: $config),
             'redis'    => $this->createRedisStore(config: $config),
             default    => throw new SagaRuntimeConfigurationFailure(
-                message: sprintf('Unknown saga store type: %s', $type)
+                message: sprintf('Unknown saga store type: %s', $type),
             ),
         };
     }
 
     private function createInMemoryStore(array $config) : object
     {
-        return new class {
+        return new class () {
             public array $data = [];
 
-            public function get(string $key) : array|null { return $this->data[$key] ?? null; }
+            public function get(string $key) : array|null
+            {
+                return $this->data[$key] ?? null;
+            }
 
-            public function set(string $key, array $value) : void { $this->data[$key] = $value; }
+            public function set(string $key, array $value) : void
+            {
+                $this->data[$key] = $value;
+            }
 
-            public function delete(string $key) : void { unset($this->data[$key]); }
+            public function delete(string $key) : void
+            {
+                unset($this->data[$key]);
+            }
 
-            public function all() : array { return $this->data; }
+            public function all() : array
+            {
+                return $this->data;
+            }
         };
     }
 
     private function createDatabaseStore(array $config) : object
     {
-        return new class($config) {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
-            public function get(string $key) : array|null { return null; }
+            public function get(string $key) : array|null
+            {
+                return null;
+            }
 
             public function set(string $key, array $value) : void {}
 
             public function delete(string $key) : void {}
 
-            public function all() : array { return []; }
+            public function all() : array
+            {
+                return [];
+            }
         };
     }
 
     private function createRedisStore(array $config) : object
     {
-        return new class($config) {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
-            public function get(string $key) : array|null { return null; }
+            public function get(string $key) : array|null
+            {
+                return null;
+            }
 
             public function set(string $key, array $value) : void {}
 
             public function delete(string $key) : void {}
 
-            public function all() : array { return []; }
+            public function all() : array
+            {
+                return [];
+            }
         };
     }
 }
@@ -71,7 +95,7 @@ final readonly class RegisterSagaStepRunner
 {
     public function register() : object
     {
-        return new class {
+        return new class () {
             public function run(array $stepDefinition, array $sagaData) : mixed
             {
                 throw new RuntimeException(message: 'Step runner not configured.');
@@ -93,14 +117,14 @@ final readonly class RegisterSagaMessageBus
             'memory' => $this->createInMemoryBus(config: $config),
             'async'  => $this->createAsyncBus(config: $config),
             default  => throw new SagaRuntimeConfigurationFailure(
-                message: sprintf('Unknown message bus type: %s', $type)
+                message: sprintf('Unknown message bus type: %s', $type),
             ),
         };
     }
 
     private function createInMemoryBus(array $config) : object
     {
-        return new class {
+        return new class () {
             public array $published = [];
 
             public function publish(string $topic, array $message) : void
@@ -114,7 +138,7 @@ final readonly class RegisterSagaMessageBus
 
     private function createAsyncBus(array $config) : object
     {
-        return new class($config) {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
             public function publish(string $topic, array $message) : void {}
@@ -128,7 +152,7 @@ final readonly class ValidateSagaRuntimeConfig
 {
     public function __construct(
         private SagaRuntimeConfig $config,
-        private array             $errors = []
+        private array $errors = [],
     )
     {
         $this->validate();
@@ -162,7 +186,7 @@ final readonly class ValidateSagaRuntimeConfig
 
 final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
+    public function __construct(string $message = '', int $code = 0, Throwable $previous = null)
     {
         parent::__construct(message: $message, code: $code, previous: $previous);
     }

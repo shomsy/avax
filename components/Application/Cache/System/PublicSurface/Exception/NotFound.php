@@ -13,7 +13,7 @@ final class NotFound extends RuntimeException
         parent::__construct(message: sprintf(
                                          'Cache "%s" not found in registry. Available: %s',
                                          $name,
-                                         implode(', ', $available)
+                                         implode(', ', $available),
                                      ));
     }
 }

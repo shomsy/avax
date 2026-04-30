@@ -17,14 +17,14 @@ use ReflectionFunction;
  */
 final readonly class ServiceCompiler
 {
-    private MethodEmitter          $emitter;
+    private MethodEmitter   $emitter;
     private CreateServiceBlueprint $blueprints;
-    private ServiceRegistry        $registrations;
+    private ServiceRegistry $registrations;
 
     public function __construct(
-        ServiceRegistry        $registrations,
+        ServiceRegistry $registrations,
         CreateServiceBlueprint $blueprints,
-        MethodEmitter          $emitter = new MethodEmitter
+        MethodEmitter   $emitter = new MethodEmitter(),
     )
     {
         $this->registrations = $registrations;
@@ -66,7 +66,7 @@ final readonly class ServiceCompiler
                 class                : (string) $description['class'],
                 plan                 : $description['plan'],
                 registrationArguments: $description['registrationArguments'],
-                needsFinish          : $description['needsFinish']
+                needsFinish          : $description['needsFinish'],
             )
             : $this->emitter->emitDynamicMethod(methodName: $description['method']);
 
@@ -105,9 +105,9 @@ final readonly class ServiceCompiler
                 || $this->registrations->hasExtenders(abstract: $serviceId);
 
             return [
-                'serviceId'             => $serviceId,
-                'method'                => $methodName,
-                'signature'             => sha1(string: serialize(value: [
+                'serviceId' => $serviceId,
+                'method'    => $methodName,
+                'signature' => sha1(string: serialize(value: [
                                                                              'serviceId' => $serviceId,
                                                                              'candidate' => $candidate,
                                                                              'lifetime'  => $registration?->lifetime,
@@ -125,9 +125,9 @@ final readonly class ServiceCompiler
         }
 
         return [
-            'serviceId'             => $serviceId,
-            'method'                => $methodName,
-            'signature'             => sha1(string: serialize(value: [
+            'serviceId' => $serviceId,
+            'method'    => $methodName,
+            'signature' => sha1(string: serialize(value: [
                                                                          'serviceId' => $serviceId,
                                                                          'candidate' => $this->dynamicSignature(candidate: $candidate),
                                                                          'lifetime'  => $registration?->lifetime,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
@@ -11,7 +11,9 @@ use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Resetta
 final class PooledLifetimeSequence
 {
     public static int $created  = 0;
+
     public static int $reset    = 0;
+
     public static int $disposed = 0;
 }
 
@@ -46,7 +48,7 @@ final class UnsafePooledService
 }
 
 $container = makeTestContainer(config: CreateContainerConfig::create(
-    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI,
 ));
 
 $container->bind(abstract: ReusablePooledService::class, concrete: ReusablePooledService::class)
@@ -61,7 +63,7 @@ $issueText = implode(separator: "\n", array: $issues);
 
 assertTrue(
     condition: str_contains(haystack: $issueText, needle: 'does not implement ResettableInterface'),
-    message  : 'Validation should flag unsafe pooled candidates that cannot reset before reuse.'
+    message  : 'Validation should flag unsafe pooled candidates that cannot reset before reuse.',
 );
 
 $container->openScope();

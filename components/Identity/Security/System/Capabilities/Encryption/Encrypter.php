@@ -54,7 +54,7 @@ final class Encrypter implements EncrypterInterface
             $iv,
             $tag,
             '',
-            self::TAG_LENGTH
+            self::TAG_LENGTH,
         );
 
         if ($cipherText === false) {
@@ -75,7 +75,7 @@ final class Encrypter implements EncrypterInterface
      * Validates the authentication tag to detect tampering.
      *
      * @param EncryptedPayload $payload The encrypted payload to decrypt
-     * @param EncryptionKey    $key     The encryption key to use
+     * @param EncryptionKey $key The encryption key to use
      *
      * @return string The decrypted plaintext
      * @throws DecryptionFailed if decryption fails or payload has been tampered with
@@ -89,12 +89,12 @@ final class Encrypter implements EncrypterInterface
             $key->raw(),
             OPENSSL_RAW_DATA,
             $payload->iv(),
-            $payload->tag()
+            $payload->tag(),
         );
 
         if ($plaintext === false) {
             throw new DecryptionFailed(
-                'Decryption failed: payload may have been tampered with or wrong key used'
+                'Decryption failed: payload may have been tampered with or wrong key used',
             );
         }
 

@@ -17,49 +17,49 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
-final class CompileCache
+final readonly class CompileCache
 {
     public function __construct(
-        private CompiledCacheDirectory $directory,
-        private CompiledCacheManifest  $manifest,
-        private Clock                  $clock = new SystemClock()
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private CompiledCacheManifest  $compiledCacheManifest,
+        private Clock                  $clock = new SystemClock(),
     ) {}
 
     public function compile(
         string               $name,
         callable             $build,
-        CompiledCacheSources $sources
+        CompiledCacheSources $compiledCacheSources,
     ) : CompiledCacheArtifact
     {
-        $nameObj = new CompiledCacheName(name: $name);
+        $compiledCacheName = new CompiledCacheName(name: $name);
 
         $payload = $build();
 
-        $payloadBuilder = new BuildCompiledPhpPayload();
-        $phpPayload     = $payloadBuilder->build(payload: $payload);
+        $buildCompiledPhpPayload = new BuildCompiledPhpPayload();
+        $phpPayload              = $buildCompiledPhpPayload->build(payload: $payload);
 
-        $writer   = new AtomicCompiledCacheWrite(directory: $this->directory, clock: $this->clock);
-        $artifact = $writer->write(name: $nameObj, payload: $phpPayload);
+        $atomicCompiledCacheWrite = new AtomicCompiledCacheWrite(directory: $this->compiledCacheDirectory, clock: $this->clock);
+        $compiledCacheArtifact    = $atomicCompiledCacheWrite->write(name: $compiledCacheName, payload: $phpPayload);
 
-        $fingerprint = $sources->fingerprint();
+        $fingerprint = $compiledCacheSources->fingerprint();
 
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $artifactPath = $pathResolver->resolveArtifactPath(name: $nameObj);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
         $now          = $this->clock->now();
 
-        $entry = CompiledCacheManifestEntry::create(
-            name             : $nameObj->toString(),
-            path             : $artifactPath->toString(),
+        $compiledCacheManifestEntry = CompiledCacheManifestEntry::create(
+            name             : $compiledCacheName->toString(),
+            path             : $compiledCachePath->toString(),
             createdAt        : $now->seconds,
-            sourceFingerprint: $fingerprint
+            sourceFingerprint: $fingerprint,
         );
 
-        $this->manifest->set(entry: $entry);
+        $this->compiledCacheManifest->set(entry: $compiledCacheManifestEntry);
 
-        $manifestPath   = $pathResolver->resolveManifestPath();
-        $manifestWriter = new WriteCompiledCacheManifest(clock: $this->clock);
-        $manifestWriter->write(manifest: $this->manifest, manifestPath: $manifestPath);
+        $manifestPath               = $resolveCompiledCachePath->resolveManifestPath();
+        $writeCompiledCacheManifest = new WriteCompiledCacheManifest(clock: $this->clock);
+        $writeCompiledCacheManifest->write(manifest: $this->compiledCacheManifest, manifestPath: $manifestPath);
 
-        return $artifact;
+        return $compiledCacheArtifact;
     }
 }

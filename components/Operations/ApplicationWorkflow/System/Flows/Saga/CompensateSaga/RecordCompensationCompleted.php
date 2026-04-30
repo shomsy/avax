@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Compe
 final readonly class RecordCompensationCompleted
 {
     public function __construct(
-        private string $store
+        private string $store,
     ) {}
 
     public function describeResponsibility() : string
@@ -17,15 +17,15 @@ final readonly class RecordCompensationCompleted
 
     public function record(
         string $sagaId,
-        array  $completedSteps,
-        array  $results
+        array $completedSteps,
+        array $results,
     ) : CompensationCompletedRecord
     {
         return new CompensationCompletedRecord(
             sagaId        : $sagaId,
             completedSteps: $completedSteps,
             results       : $results,
-            recordedAt    : microtime(true)
+            recordedAt    : microtime(true),
         );
     }
 
@@ -39,9 +39,9 @@ final readonly class CompensationCompletedRecord
 {
     public function __construct(
         public string $sagaId,
-        public array  $completedSteps,
-        public array  $results,
-        public float  $recordedAt
+        public array $completedSteps,
+        public array $results,
+        public float $recordedAt,
     ) {}
 
     public function toMetadata() : array

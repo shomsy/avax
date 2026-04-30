@@ -15,8 +15,10 @@ use SensitiveParameter;
 final readonly class Verification
 {
     public function __construct(
-        #[SensitiveParameter] private BeginEmailVerification $beginEmailVerification,
-        #[SensitiveParameter] private VerifyEmail            $verifyEmail
+        #[SensitiveParameter]
+        private BeginEmailVerification $beginEmailVerification,
+        #[SensitiveParameter]
+        private VerifyEmail            $verifyEmail,
     ) {}
 
     /**

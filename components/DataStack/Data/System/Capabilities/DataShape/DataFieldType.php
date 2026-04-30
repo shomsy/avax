@@ -17,12 +17,12 @@ final readonly class DataFieldType
      */
     public function __construct(
         private array $names,
-        public bool   $allowsNull = true,
+        public bool $allowsNull = true,
     ) {}
 
     public static function fromReflectionType(ReflectionType|null $type) : self
     {
-        if ($type === null) {
+        if (! $type instanceof ReflectionType) {
             return self::mixed();
         }
 
@@ -36,9 +36,9 @@ final readonly class DataFieldType
         if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
             $names = [];
 
-            foreach ($type->getTypes() as $nestedType) {
-                if ($nestedType instanceof ReflectionNamedType) {
-                    $name = $nestedType->getName();
+            foreach ($type->getTypes() as $reflectionType) {
+                if ($reflectionType instanceof ReflectionNamedType) {
+                    $name = $reflectionType->getName();
 
                     if ($name !== 'null') {
                         $names[] = $name;

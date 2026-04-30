@@ -15,30 +15,30 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CacheHealthStatus
 {
     public function __construct(
-        public bool        $connected,
-        public int         $latency,
-        public float       $memoryUsage,
-        public float       $hitRate,
-        public Timestamp   $lastCheck,
+        public bool      $connected,
+        public int       $latency,
+        public float     $memoryUsage,
+        public float     $hitRate,
+        public Timestamp $timestamp,
         public string|null $error = null,
-        public int         $memoryLimit = 0,
-        public int         $keyCount = 0,
-        public int         $connectionCount = 0,
-        public string      $version = ''
+        public int       $memoryLimit = 0,
+        public int       $keyCount = 0,
+        public int       $connectionCount = 0,
+        public string    $version = '',
     ) {}
 
     /**
      * Create a healthy status.
      */
     public static function healthy(
-        int            $latency = 0,
-        float          $memoryUsage = 0.0,
-        float          $hitRate = 1.0,
-        Timestamp|null $lastCheck = null,
-        int            $memoryLimit = 0,
-        int            $keyCount = 0,
-        int            $connectionCount = 0,
-        string         $version = ''
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 1.0,
+        ?Timestamp $timestamp = null,
+        int        $memoryLimit = 0,
+        int        $keyCount = 0,
+        int        $connectionCount = 0,
+        string     $version = '',
     ) : self
     {
         return new self(
@@ -46,12 +46,12 @@ final readonly class CacheHealthStatus
             latency        : $latency,
             memoryUsage    : $memoryUsage,
             hitRate        : $hitRate,
-            lastCheck      : $lastCheck ?? Timestamp::now(),
+            lastCheck      : $timestamp ?? Timestamp::now(),
             error          : null,
             memoryLimit    : $memoryLimit,
             keyCount       : $keyCount,
             connectionCount: $connectionCount,
-            version        : $version
+            version        : $version,
         );
     }
 
@@ -59,11 +59,11 @@ final readonly class CacheHealthStatus
      * Create an unhealthy status with an error.
      */
     public static function unhealthy(
-        string         $error,
-        int            $latency = 0,
-        float          $memoryUsage = 0.0,
-        float          $hitRate = 0.0,
-        Timestamp|null $lastCheck = null
+        string     $error,
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 0.0,
+        ?Timestamp $timestamp = null,
     ) : self
     {
         return new self(
@@ -71,8 +71,8 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $lastCheck ?? Timestamp::now(),
-            error      : $error
+            lastCheck  : $timestamp ?? Timestamp::now(),
+            error      : $error,
         );
     }
 
@@ -80,11 +80,11 @@ final readonly class CacheHealthStatus
      * Create a degraded status (connected but with issues).
      */
     public static function degraded(
-        string         $error,
-        int            $latency = 0,
-        float          $memoryUsage = 0.0,
-        float          $hitRate = 0.5,
-        Timestamp|null $lastCheck = null
+        string     $error,
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 0.5,
+        ?Timestamp $timestamp = null,
     ) : self
     {
         return new self(
@@ -92,8 +92,8 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $lastCheck ?? Timestamp::now(),
-            error      : $error
+            lastCheck  : $timestamp ?? Timestamp::now(),
+            error      : $error,
         );
     }
 
@@ -105,7 +105,7 @@ final readonly class CacheHealthStatus
     public function isDegraded(
         int   $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
-        float $minHitRate = 0.5
+        float $minHitRate = 0.5,
     ) : bool
     {
         if (! $this->connected) {
@@ -186,7 +186,7 @@ final readonly class CacheHealthStatus
             'latency'            => $this->latency,
             'memoryUsage'        => $this->memoryUsage,
             'hitRate'            => $this->hitRate,
-            'lastCheck'          => $this->lastCheck->seconds,
+            'lastCheck' => $this->timestamp->seconds,
             'error'              => $this->error,
             'memoryLimit'        => $this->memoryLimit,
             'keyCount'           => $this->keyCount,
@@ -203,7 +203,7 @@ final readonly class CacheHealthStatus
     public function getHealthLevel(
         int   $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
-        float $minHitRate = 0.5
+        float $minHitRate = 0.5,
     ) : string
     {
         if (! $this->connected) {
@@ -225,7 +225,7 @@ final readonly class CacheHealthStatus
     public function isHealthy(
         int   $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
-        float $minHitRate = 0.5
+        float $minHitRate = 0.5,
     ) : bool
     {
         if (! $this->connected) {
@@ -240,10 +240,6 @@ final readonly class CacheHealthStatus
             return false;
         }
 
-        if ($this->hitRate < $minHitRate) {
-            return false;
-        }
-
-        return true;
+        return $this->hitRate >= $minHitRate;
     }
 }

@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Data\System\Flows\ReadDataValue;
 
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayReader;
 
-final class ReadDataValue
+final readonly class ReadDataValue
 {
     public function __construct(
-        private readonly ArrayReader $reader,
+        private ArrayReader $arrayReader,
     ) {}
 
     public function read(array $data, string $key, mixed $default = null) : mixed
     {
-        return $this->reader->get($data, $key, $default);
+        return $this->arrayReader->get($data, $key, $default);
     }
 }

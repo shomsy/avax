@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Flows\DispatchRoute;
@@ -13,6 +14,7 @@ final class InvokeRouteAction
         if (is_callable($action)) {
             return $action($request);
         }
-        throw new RouteDispatchFailed("Action is not callable");
+
+        throw new RouteDispatchFailed('Action is not callable');
     }
 }

@@ -23,13 +23,13 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issue(
-        User                       $user,
-        DateTimeImmutable|null     $mfaVerifiedAt = null,
-        bool                       $phishingResistant = false,
-        string|null                $clientId = null,
-        array                      $scopes = [],
-        string|null                $refreshTokenFamilyId = null,
-        OAuthSenderConstraint|null $senderConstraint = null
+        User                  $user,
+        DateTimeImmutable     $mfaVerifiedAt = null,
+        bool                  $phishingResistant = false,
+        string                $clientId = null,
+        array                 $scopes = [],
+        string                $refreshTokenFamilyId = null,
+        OAuthSenderConstraint $senderConstraint = null,
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -38,29 +38,29 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issueWorkloadToken(
-        string                     $subject,
-        string                     $clientId,
-        array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null,
-        string|null                $audience = null
+        string                $subject,
+        string                $clientId,
+        array                 $scopes = [],
+        OAuthSenderConstraint $senderConstraint = null,
+        string                $audience = null,
     ) : IssuedToken;
 
     public function resolveWorkloadToken(
-        string      $token,
-        string|null $expectedAudience = null,
-        string|null $expectedIssuer = null
+        string $token,
+        string $expectedAudience = null,
+        string $expectedIssuer = null,
     ) : ResolvedWorkloadToken|null;
 
     /**
      * @param list<string> $scopes
      */
     public function issueRefreshToken(
-        User                       $user,
-        DateTimeImmutable|null     $mfaVerifiedAt = null,
-        bool                       $phishingResistant = false,
-        string|null                $clientId = null,
-        array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        User                  $user,
+        DateTimeImmutable     $mfaVerifiedAt = null,
+        bool                  $phishingResistant = false,
+        string                $clientId = null,
+        array                 $scopes = [],
+        OAuthSenderConstraint $senderConstraint = null,
     ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;

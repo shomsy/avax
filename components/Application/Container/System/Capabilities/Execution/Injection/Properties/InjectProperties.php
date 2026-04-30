@@ -20,31 +20,28 @@ final class InjectProperties
     private array $writers = [];
 
     /**
-     * @param object               $target
-     * @param ServiceBlueprint     $blueprint
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver      $resolver
-     * @param ResolveRequest       $request
      *
      * @throws Throwable
      */
     public function inject(
         object           $target,
-        ServiceBlueprint $blueprint,
+        ServiceBlueprint $serviceBlueprint,
         array            $overrides,
-        ServiceResolver  $resolver,
-        ResolveRequest   $request
+        ServiceResolver  $serviceResolver,
+        ResolveRequest   $resolveRequest,
     ) : void
     {
-        foreach ($blueprint->injectableProperties as $property) {
+        foreach ($serviceBlueprint->injectableProperties as $property) {
             $name = $property['name'];
 
             if ($property['readonly']) {
-                throw new ContainerException(message: "Cannot inject readonly property [{$name}] on [{$blueprint->class}].");
+                throw new ContainerException(message: sprintf('Cannot inject readonly property [%s] on [%s].', $name, $serviceBlueprint->class));
             }
 
             if (array_key_exists(key: $name, array: $overrides)) {
-                ($this->writerFor(class: $blueprint->class, property: $name))($target, $overrides[$name]);
+                ($this->writerFor(class: $serviceBlueprint->class, property: $name))($target, $overrides[$name]);
+
                 continue;
             }
 
@@ -53,9 +50,9 @@ final class InjectProperties
                 continue;
             }
 
-            ($this->writerFor(class: $blueprint->class, property: $name))(
+            ($this->writerFor(class: $serviceBlueprint->class, property: $name))(
                 $target,
-                $resolver->resolveRequest(request: $request->child(serviceId: $serviceId))
+                $serviceResolver->resolveRequest(request: $resolveRequest->child(serviceId: $serviceId))
             );
         }
     }
@@ -67,16 +64,12 @@ final class InjectProperties
     {
         $key = $class . '::$' . $property;
 
-        if (isset($this->writers[$key])) {
-            return $this->writers[$key];
-        }
-
-        return $this->writers[$key] = Closure::bind(
+        return $this->writers[$key] ?? ($this->writers[$key] = Closure::bind(
             closure : static function (object $target, mixed $value) use ($property) : void {
                 $target->{$property} = $value;
             },
             newThis : null,
-            newScope: $class
-        );
+            newScope: $class,
+        ));
     }
 }

@@ -9,7 +9,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryStat
 final class RecursiveCTE
 {
     public function __construct(
-        public readonly string     $name,
+        public readonly string $name,
         public readonly QueryState $initial,
         public readonly QueryState $recursive,
     ) {}

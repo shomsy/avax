@@ -25,8 +25,8 @@ final class UnitOfWork
 
     public function __construct(
         private readonly AttributeMetadataReader $metadata,
-        private readonly EntityPersister         $persister,
-        private readonly IdentityMap             $identityMap
+        private readonly EntityPersister $persister,
+        private readonly IdentityMap     $identityMap,
     ) {}
 
     public function persist(object $entity) : void
@@ -61,7 +61,7 @@ final class UnitOfWork
     /**
      * @throws Throwable
      */
-    public function flush(string|null $connectionName = null) : void
+    public function flush(string $connectionName = null) : void
     {
         foreach ($this->new as $objectId => $entity) {
             $this->persister->insert(entity: $entity, connectionName: $connectionName);

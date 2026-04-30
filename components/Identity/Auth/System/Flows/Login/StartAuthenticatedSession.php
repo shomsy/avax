@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
@@ -13,7 +14,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions
 final readonly class StartAuthenticatedSession
 {
     public function __construct(
-        private Sessions $sessions
+        private Sessions $sessions,
     ) {}
 
     public function execute(IssuedAuthentication $issued) : void

@@ -7,11 +7,11 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata;
 final readonly class FieldMetadata
 {
     public function __construct(
-        public string      $property,
-        public string      $column,
+        public string $property,
+        public string $column,
         public string|null $type = null,
-        public bool        $id = false,
-        public bool        $generated = false,
-        public bool        $nullable = false
+        public bool   $id = false,
+        public bool   $generated = false,
+        public bool   $nullable = false,
     ) {}
 }

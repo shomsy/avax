@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\CLI\UI\System\Capabilities\Terminal;
@@ -7,7 +8,7 @@ final readonly class Table
 {
     public function __construct(
         private array $headers,
-        private array $rows
+        private array $rows,
     ) {}
 
     public function render(): void
@@ -16,11 +17,11 @@ final readonly class Table
         $this->renderSeparator($widths);
         $this->renderRow($this->headers, $widths);
         $this->renderSeparator($widths);
-        
+
         foreach ($this->rows as $row) {
             $this->renderRow($row, $widths);
         }
-        
+
         $this->renderSeparator($widths);
     }
 
@@ -32,25 +33,28 @@ final readonly class Table
                 $widths[$i] = max($widths[$i], strlen((string)$cell));
             }
         }
+
         return $widths;
     }
 
     private function renderRow(array $row, array $widths): void
     {
-        echo "|";
+        echo '|';
         foreach ($row as $i => $cell) {
-            printf(" %s ", str_pad((string)$cell, $widths[$i]));
-            echo "|";
+            printf(' %s ', str_pad((string) $cell, $widths[$i]));
+            echo '|';
         }
+
         echo "\n";
     }
 
     private function renderSeparator(array $widths): void
     {
-        echo "+";
+        echo '+';
         foreach ($widths as $width) {
-            echo str_repeat('-', $width + 2) . "+";
+            echo str_repeat('-', $width + 2) . '+';
         }
+
         echo "\n";
     }
 }

@@ -11,11 +11,11 @@ final readonly class EndpointPostureEngine
 {
     /**
      * @param list<EndpointPostureSignalData> $signals
-     * Evaluates posture signals and determines action.
+     *                                                 Evaluates posture signals and determines action.
      */
     public function evaluate(
         array                 $signals,
-        EndpointPosturePolicy $policy
+        EndpointPosturePolicy $policy,
     ) : EndpointPostureDecision
     {
         $riskScore = $this->calculateRiskScore(signals: $signals);
@@ -30,7 +30,7 @@ final readonly class EndpointPostureEngine
 
     /**
      * @param list<EndpointPostureSignalData> $signals
-     * Calculates aggregate risk score from signals.
+     *                                                 Calculates aggregate risk score from signals.
      */
     private function calculateRiskScore(array $signals) : float
     {
@@ -68,13 +68,13 @@ final readonly class EndpointPosturePolicy
     public float $denyThreshold;
 
     public function __construct(
-        float|null   $denyThreshold = null,
-        float|null   $stepUpThreshold = null,
-        public float $quarantineThreshold = 0.3
+        float        $denyThreshold = null,
+        float        $stepUpThreshold = null,
+        public float $quarantineThreshold = 0.3,
     )
     {
-        $denyThreshold         ??= 0.8;
-        $stepUpThreshold       ??= 0.5;
+        $denyThreshold   ??= 0.8;
+        $stepUpThreshold ??= 0.5;
         $this->denyThreshold   = $denyThreshold;
         $this->stepUpThreshold = $stepUpThreshold;
     }

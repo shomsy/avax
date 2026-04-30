@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\CLI\Console\System\Capabilities\Generators;
 
 use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
+use Override;
 
 /**
  * Generates controller class stubs.
@@ -15,10 +16,11 @@ class ControllerGenerator extends CodeGenerator
      * Generate a controller class file.
      *
      * @param string $name Controller name (e.g. "UserController" or "User")
-     * @param array  $data Additional data (e.g. ['methods' => ['index', 'show']])
+     * @param array $data Additional data (e.g. ['methods' => ['index', 'show']])
      *
      * @return string The generated file path
      */
+    #[Override]
     public function generate(string $name, array $data = []) : string
     {
         // Normalize name - ensure it ends with "Controller"
@@ -47,7 +49,7 @@ class ControllerGenerator extends CodeGenerator
     {
         $methodsCode = '';
 
-        if (empty($methods)) {
+        if ($methods === []) {
             $methods = ['index'];
         }
 

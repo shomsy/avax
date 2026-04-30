@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Data\System\Flows\WriteDataValue;
 
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayWriter;
 
-final class WriteDataValue
+final readonly class WriteDataValue
 {
     public function __construct(
-        private readonly ArrayWriter $writer,
+        private ArrayWriter $arrayWriter,
     ) {}
 
     public function write(array &$data, string $key, mixed $value) : void
     {
-        $this->writer->set($data, $key, $value);
+        $this->arrayWriter->set($data, $key, $value);
     }
 }

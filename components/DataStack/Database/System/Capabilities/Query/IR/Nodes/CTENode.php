@@ -12,7 +12,7 @@ final class CTENode
         public readonly string  $name,
         public readonly array   $columns,
         public readonly string  $query,
-        public readonly CTEType $type = CTEType::SIMPLE
+        public readonly CTEType $type = CTEType::SIMPLE,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string
@@ -20,8 +20,8 @@ final class CTENode
         $columns = empty($this->columns)
             ? ''
             : '(' . implode(separator: ', ', array: array_map(
-                callback: fn ($col) => $grammar->wrap(value: $col),
-                array   : $this->columns
+                callback: static fn ($col) => $grammar->wrap(value: $col),
+                array   : $this->columns,
             )) . ')';
 
         return "{$this->name}{$columns} AS ({$this->query})";

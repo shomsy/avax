@@ -43,7 +43,7 @@ final class SQLServerGrammar extends BaseGrammar
 
         $conflictColumns = implode(separator: ', ', array: array_map(
             callback: fn ($col) => $this->wrap(value: $col),
-            array   : $uniqueBy
+            array   : $uniqueBy,
         ));
 
         $updates = [];
@@ -81,7 +81,7 @@ final class SQLServerGrammar extends BaseGrammar
         if (str_contains(haystack: $value, needle: '.')) {
             return implode(separator: '.', array: array_map(
                 callback: fn ($segment) => $this->wrapSegment(segment: $segment),
-                array   : explode(separator: '.', string: $value)
+                array   : explode(separator: '.', string: $value),
             ));
         }
 
@@ -163,15 +163,15 @@ final class SQLServerGrammar extends BaseGrammar
         return "UNPIVOT ({$column} IN ({$unpivcols}))";
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
-        $sql         = $function . '(';
+        $sql = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
-                array   : explode(separator: ',', string: $partitionBy)
+                array   : explode(separator: ',', string: $partitionBy),
             ));
             $sql              .= 'PARTITION BY ' . $partitionColumns;
         }

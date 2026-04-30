@@ -15,9 +15,10 @@ use SensitiveParameter;
 final readonly class RequireAdminElevation
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface                $elevationStore,
-        private Clock                                       $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication        $currentAuthentication,
+        private AdminElevationStoreInterface $elevationStore,
+        private Clock                        $clock,
     ) {}
 
     /**
@@ -45,6 +46,7 @@ final readonly class RequireAdminElevation
 
         if ($record === null || $record->userId !== $user->id || $record->isExpiredAt(moment: $this->clock->now())) {
             $this->elevationStore->revoke(bindingId: $bindingId);
+
             throw AdminElevationFailed::notElevated();
         }
     }

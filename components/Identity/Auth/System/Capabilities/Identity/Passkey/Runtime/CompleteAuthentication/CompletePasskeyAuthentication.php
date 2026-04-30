@@ -23,16 +23,18 @@ use SensitiveParameter;
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface                               $runtime,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private UserSourceInterface                                   $userSource,
-        private IdentityInterface                                     $identity,
-        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
+        private PasskeyRuntimeInterface         $runtime,
+        private PasskeyChallengeStoreInterface  $challengeStore,
+        #[SensitiveParameter]
+        private PasskeyCredentialStoreInterface $credentialStore,
+        private UserSourceInterface             $userSource,
+        private IdentityInterface               $identity,
+        private ProjectAuthenticatedUser        $projectAuthenticatedUser,
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        private string                          $rpId,
     ) {}
 
     /**
@@ -52,19 +54,20 @@ final readonly class CompletePasskeyAuthentication
 
         if ($challenge->isExpiredAt(moment: $this->clock->now())) {
             $this->challengeStore->forget(challengeId: $data->challengeId);
+
             throw PasskeyOperationFailed::expired();
         }
 
         $knownCredentials = $challenge->userId !== null
             ? $this->credentialStore->forUser(userId: $challenge->userId)
             : [];
-        $verified         = $this->runtime->completeAuthentication(
+        $verified = $this->runtime->completeAuthentication(
             rpId            : $this->rpId,
             challenge       : $challenge->challenge,
             response        : $data->response,
-            knownCredentials: $knownCredentials
+            knownCredentials: $knownCredentials,
         );
-        $credential       = $this->credentialStore->find(credentialId: $verified->credentialId);
+        $credential = $this->credentialStore->find(credentialId: $verified->credentialId);
 
         if ($credential === null || $credential->isRevoked()) {
             throw PasskeyOperationFailed::notFound();
@@ -79,7 +82,7 @@ final readonly class CompletePasskeyAuthentication
         $issued  = $this->identity->issue(
             user             : $user,
             mfaVerifiedAt    : $this->clock->now(),
-            phishingResistant: true
+            phishingResistant: true,
         );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser(user: $user),
@@ -89,13 +92,13 @@ final readonly class CompletePasskeyAuthentication
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
             mfaVerifiedAt       : $this->clock->now(),
-            phishingResistant   : true
+            phishingResistant   : true,
         );
 
         $this->currentAuthentication->store(context: $context);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent
+            userAgent: $data->userAgent,
         );
         $this->credentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
         $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
@@ -107,13 +110,13 @@ final readonly class CompletePasskeyAuthentication
                                                            'credential_id' => $credential->credentialId,
                                                            'ip_address'    => $data->ipAddress,
                                                            'user_agent'    => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return AuthenticationResult::success(
             context     : $context,
             accessToken : $issued->accessToken?->token,
-            refreshToken: $issued->refreshToken?->token
+            refreshToken: $issued->refreshToken?->token,
         );
     }
 }

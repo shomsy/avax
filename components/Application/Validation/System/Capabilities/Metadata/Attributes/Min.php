@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes;
@@ -10,11 +11,11 @@ final readonly class Min
 {
     public function __construct(
         public int|float $minimum,
-        public ?string $message = null
+        public ?string $message = null,
     ) {}
 
     public function getMessage(string $property): string
     {
-        return $this->message ?? "Field {$property} must be at least {$this->minimum}.";
+        return $this->message ?? sprintf('Field %s must be at least %s.', $property, $this->minimum);
     }
 }

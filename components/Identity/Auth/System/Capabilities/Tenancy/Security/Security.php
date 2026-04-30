@@ -18,13 +18,20 @@ use SensitiveParameter;
 final readonly class Security
 {
     public function __construct(
-        #[SensitiveParameter] private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
-        #[SensitiveParameter] private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
-        #[SensitiveParameter] private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
-        #[SensitiveParameter] private BeginTenantSecurityChange        $beginTenantSecurityChange,
-        #[SensitiveParameter] private ApproveTenantSecurityChange      $approveTenantSecurityChange,
-        #[SensitiveParameter] private ApplyTenantSecurityChange        $applyTenantSecurityChange,
-        #[SensitiveParameter] private RollbackTenantSecurityChange     $rollbackTenantSecurityChange
+        #[SensitiveParameter]
+        private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
+        #[SensitiveParameter]
+        private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
+        #[SensitiveParameter]
+        private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
+        #[SensitiveParameter]
+        private BeginTenantSecurityChange        $beginTenantSecurityChange,
+        #[SensitiveParameter]
+        private ApproveTenantSecurityChange      $approveTenantSecurityChange,
+        #[SensitiveParameter]
+        private ApplyTenantSecurityChange        $applyTenantSecurityChange,
+        #[SensitiveParameter]
+        private RollbackTenantSecurityChange     $rollbackTenantSecurityChange,
     ) {}
 
     public function readConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null

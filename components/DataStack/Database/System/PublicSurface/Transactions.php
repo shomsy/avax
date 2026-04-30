@@ -12,25 +12,25 @@ use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transact
 final readonly class Transactions
 {
     public function __construct(
-        private TransactionsCapability $transactions
+        private TransactionsCapability $transactions,
     ) {}
 
-    public function begin(?string $connectionName = null) : void
+    public function begin(string $connectionName = null) : void
     {
         $this->transactions->begin($connectionName);
     }
 
-    public function commit(?string $connectionName = null) : void
+    public function commit(string $connectionName = null) : void
     {
         $this->transactions->commit($connectionName);
     }
 
-    public function rollback(?string $connectionName = null) : void
+    public function rollback(string $connectionName = null) : void
     {
         $this->transactions->rollback($connectionName);
     }
 
-    public function run(callable $callback, ?string $connectionName = null) : mixed
+    public function run(callable $callback, string $connectionName = null) : mixed
     {
         return $this->transactions->run($callback, $connectionName);
     }

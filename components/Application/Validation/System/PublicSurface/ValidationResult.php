@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Validation\System\PublicSurface;
 
-final class ValidationResult
+final readonly class ValidationResult
 {
     public function __construct(
-        public readonly array $errors = [],
+        public array $errors = [],
     ) {}
 
     public function fails() : bool

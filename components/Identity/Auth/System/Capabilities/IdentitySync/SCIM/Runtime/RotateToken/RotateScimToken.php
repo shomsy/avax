@@ -20,11 +20,12 @@ use SensitiveParameter;
 final readonly class RotateScimToken
 {
     public function __construct(
-        private ScimDirectoryStoreInterface          $directoryStore,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private AuditLogInterface                    $auditLog,
-        private Clock                                $clock,
-        private AttemptThrottle|null                 $attemptThrottle = null
+        private ScimDirectoryStoreInterface $directoryStore,
+        #[SensitiveParameter]
+        private PasswordHasher              $passwordHasher,
+        private AuditLogInterface           $auditLog,
+        private Clock                       $clock,
+        private AttemptThrottle|null        $attemptThrottle = null,
     ) {}
 
     /**
@@ -53,7 +54,7 @@ final readonly class RotateScimToken
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
             groupRoleMap: $directory->groupRoleMap,
             createdAt   : $directory->createdAt,
-            rotatedAt   : $this->clock->now()
+            rotatedAt   : $this->clock->now(),
         );
 
         $this->directoryStore->save(directory: $rotated);
@@ -63,7 +64,7 @@ final readonly class RotateScimToken
                                            context   : [
                                                            'directory_id' => $directory->directoryId,
                                                            'tenant'       => $directory->tenantSlug,
-                                                       ]
+                                                       ],
                                        ));
 
         return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);

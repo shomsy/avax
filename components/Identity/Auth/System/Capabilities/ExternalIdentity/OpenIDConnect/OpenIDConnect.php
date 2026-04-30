@@ -28,11 +28,11 @@ final readonly class OpenIDConnect
 {
     public function __construct(
         private ReadOidcProviderMetadata|null $readProviderMetadata,
-        private ReadOidcJsonWebKeySet|null    $readJsonWebKeySet,
-        private ReadOidcUserInfo|null         $readUserInfo,
+        private ReadOidcJsonWebKeySet|null $readJsonWebKeySet,
+        private ReadOidcUserInfo|null      $readUserInfo,
         private PushAuthorizationRequest|null $pushAuthorizationRequest,
-        private Logout|null                   $logout,
-        private BuildJarmResponse|null        $buildJarmResponse
+        private Logout|null                $logout,
+        private BuildJarmResponse|null     $buildJarmResponse,
     ) {}
 
     public function isConfigured() : bool

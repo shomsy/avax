@@ -15,7 +15,7 @@ use Throwable;
  */
 final readonly class Moment
 {
-    private DateTimeImmutable $dateTime;
+    private DateTimeImmutable $dateTimeImmutable;
 
     public function __construct(string|DateTimeImmutable $time = 'now', string|DateTimeZone|null $timezone = null)
     {
@@ -24,12 +24,12 @@ final readonly class Moment
         }
 
         if ($time instanceof DateTimeImmutable) {
-            $this->dateTime = $timezone ? $time->setTimezone($timezone) : $time;
+            $this->dateTimeImmutable = $timezone ? $time->setTimezone($timezone) : $time;
         } else {
             try {
-                $this->dateTime = new DateTimeImmutable($time, $timezone);
+                $this->dateTimeImmutable = new DateTimeImmutable($time, $timezone);
             } catch (Throwable $e) {
-                throw new InvalidArgumentException("Invalid date time string: {$time}", 0, $e);
+                throw new InvalidArgumentException('Invalid date time string: ' . $time, 0, $e);
             }
         }
     }
@@ -41,34 +41,48 @@ final readonly class Moment
 
     public function addDays(int $days) : self
     {
-        return new self($this->dateTime->modify("+{$days} days"));
+        return new self($this->dateTimeImmutable->modify(sprintf('+%d days', $days)));
     }
 
     public function subDays(int $days) : self
     {
-        return new self($this->dateTime->modify("-{$days} days"));
+        return new self($this->dateTimeImmutable->modify(sprintf('-%d days', $days)));
     }
 
     public function toIso8601() : string
     {
-        return $this->dateTime->format(DateTimeImmutable::ATOM);
+        return $this->dateTimeImmutable->format(DateTimeImmutable::ATOM);
     }
 
     public function format(string $format) : string
     {
-        return $this->dateTime->format($format);
+        return $this->dateTimeImmutable->format($format);
     }
 
-    public function diffForHumans(self|null $other = null) : string
+    public function diffForHumans(?self $other = null) : string
     {
         $other ??= self::now();
-        $diff  = $this->dateTime->diff($other->dateTime);
+        $diff = $this->dateTimeImmutable->diff($other->dateTimeImmutable);
 
-        if ($diff->y > 0) return $diff->y . ' years ago';
-        if ($diff->m > 0) return $diff->m . ' months ago';
-        if ($diff->d > 0) return $diff->d . ' days ago';
-        if ($diff->h > 0) return $diff->h . ' hours ago';
-        if ($diff->i > 0) return $diff->i . ' minutes ago';
+        if ($diff->y > 0) {
+            return $diff->y . ' years ago';
+        }
+
+        if ($diff->m > 0) {
+            return $diff->m . ' months ago';
+        }
+
+        if ($diff->d > 0) {
+            return $diff->d . ' days ago';
+        }
+
+        if ($diff->h > 0) {
+            return $diff->h . ' hours ago';
+        }
+
+        if ($diff->i > 0) {
+            return $diff->i . ' minutes ago';
+        }
 
         return 'just now';
     }
@@ -80,6 +94,6 @@ final readonly class Moment
 
     public function native() : DateTimeImmutable
     {
-        return $this->dateTime;
+        return $this->dateTimeImmutable;
     }
 }

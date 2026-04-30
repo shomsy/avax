@@ -38,12 +38,12 @@ final class MethodEmitter
      * @param array<string, mixed> $registrationArguments
      */
     public function emitDirectMethod(
-        string           $methodName,
-        string           $serviceId,
-        string           $class,
+        string $methodName,
+        string $serviceId,
+        string $class,
         ResolvePlan|null $plan,
-        array            $registrationArguments,
-        bool             $needsFinish
+        array  $registrationArguments,
+        bool   $needsFinish,
     ) : string
     {
         $className                     = '\\' . ltrim(string: $class, characters: '\\');
@@ -69,10 +69,10 @@ final class MethodEmitter
 
             foreach ($arguments as $index => $argument) {
                 $suffix = $index === array_key_last(array: $arguments) ? '' : ',';
-                $body   .= '            ' . $argument . $suffix . PHP_EOL;
+                $body .= '            ' . $argument . $suffix . PHP_EOL;
             }
 
-            $body .= "        );" . PHP_EOL;
+            $body .= '        );' . PHP_EOL;
         }
 
         if ($needsFinish) {

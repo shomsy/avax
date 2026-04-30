@@ -12,10 +12,16 @@ final readonly class OperationResult
     public function __construct(
         public bool        $success,
         public mixed       $data = null,
-        public string|null $error = null
+        public string|null $error = null,
     ) {}
 
-    public static function success(mixed $data = null) : self { return new self(true, $data); }
+    public static function success(mixed $data = null) : self
+    {
+        return new self(true, $data);
+    }
 
-    public static function failure(string $error) : self { return new self(false, null, $error); }
+    public static function failure(string $error) : self
+    {
+        return new self(false, null, $error);
+    }
 }

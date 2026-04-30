@@ -16,21 +16,21 @@ final readonly class MigrateRollbackCommand
         try {
             $rolledBack = $this->rollbackMigrations->run(path: $path, steps: $steps);
 
-            if (empty($rolledBack)) {
+            if ($rolledBack === []) {
                 echo "\033[36mNothing to rollback.\033[0m\n";
 
                 return 0;
             }
 
             foreach ($rolledBack as $name) {
-                echo "  ✓ {$name}\n";
+                echo sprintf('  ✓ %s%s', $name, PHP_EOL);
             }
 
             echo "\033[32mRolled back " . count(value: $rolledBack) . " migration(s).\033[0m\n";
 
             return 0;
         } catch (Throwable $throwable) {
-            echo "\033[31mRollback failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mRollback failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }

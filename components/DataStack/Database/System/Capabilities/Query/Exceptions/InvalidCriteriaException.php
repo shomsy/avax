@@ -25,7 +25,7 @@ final class InvalidCriteriaException extends DatabaseException
      */
     public function __construct(
         string $method,
-        string $reason
+        string $reason,
     )
     {
         $this->method = $method;

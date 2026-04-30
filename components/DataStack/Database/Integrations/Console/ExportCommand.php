@@ -11,15 +11,15 @@ final readonly class ExportCommand
 {
     public function __construct(private DatabaseExporter $databaseExporter) {}
 
-    public function handle(string $path, string|null $table = null) : int
+    public function handle(string $path, ?string $table = null) : int
     {
         try {
             $file = $this->databaseExporter->exportToSql(path: $path, table: $table);
-            echo "\033[32mExported database to:\033[0m {$file}\n";
+            echo sprintf('[32mExported database to:[0m %s%s', $file, PHP_EOL);
 
             return 0;
         } catch (Throwable $throwable) {
-            echo "\033[31mExport failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mExport failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }

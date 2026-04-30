@@ -17,7 +17,7 @@ final class MatchHttpRoute
 {
     private RouteMatcher $routeMatcher;
 
-    public function __construct(RouteMatcher|null $routeMatcher = null)
+    public function __construct(RouteMatcher $routeMatcher = null)
     {
         $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger());
     }

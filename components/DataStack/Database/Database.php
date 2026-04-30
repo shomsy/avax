@@ -20,12 +20,12 @@ final readonly class Database
 {
     public function __construct(
         private Connections             $connections,
-        private QueryCapability         $query,
-        private EntityManagerCapability $entityManager,
-        private SchemaCapability        $schema,
-        private MigrationsCapability    $migrations,
-        private TransactionsCapability  $transactions,
-        private TelemetryCapability     $telemetry
+        private QueryCapability         $queryCapability,
+        private EntityManagerCapability $entityManagerCapability,
+        private SchemaCapability        $schemaCapability,
+        private MigrationsCapability    $migrationsCapability,
+        private TransactionsCapability  $transactionsCapability,
+        private TelemetryCapability     $telemetryCapability,
     ) {}
 
     public static function configuration() : DatabaseBuilder
@@ -40,40 +40,40 @@ final readonly class Database
 
     public function query() : Query
     {
-        return new Query(query: $this->query);
+        return new Query(query: $this->queryCapability);
     }
 
     public function entityManager() : EntityManager
     {
-        return new EntityManager(entityManager: $this->entityManager);
+        return new EntityManager(entityManager: $this->entityManagerCapability);
     }
 
     public function schema() : Schema
     {
-        return new Schema(schema: $this->schema);
+        return new Schema(schema: $this->schemaCapability);
     }
 
     public function migrations() : Migrations
     {
-        return new Migrations(migrations: $this->migrations);
+        return new Migrations(migrations: $this->migrationsCapability);
     }
 
     public function transactions() : Transactions
     {
-        return new Transactions(transactions: $this->transactions);
+        return new Transactions(transactions: $this->transactionsCapability);
     }
 
     public function telemetry() : Telemetry
     {
-        return new Telemetry(telemetry: $this->telemetry);
+        return new Telemetry(telemetry: $this->telemetryCapability);
     }
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
     {
-        return $this->query->from(table: $table, connectionName: $connectionName);
+        return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }
 }

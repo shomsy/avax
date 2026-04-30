@@ -9,7 +9,8 @@ use SensitiveParameter;
 final readonly class ResolvedPasskeyCredential
 {
     public function __construct(
-        #[SensitiveParameter] public string $credentialId,
-        public string                       $label
+        #[SensitiveParameter]
+        public string $credentialId,
+        public string $label,
     ) {}
 }

@@ -18,19 +18,17 @@ final class DiagnosticsSchemaDependency
 
 final class DiagnosticsSchemaConsumer
 {
-    public DiagnosticsSchemaDependency $dependency;
-
-    public function __construct(DiagnosticsSchemaDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public DiagnosticsSchemaDependency $diagnosticsSchemaDependency) {}
 }
 
 /**
  * @param array<string, mixed> $payload
- * @param list<string>         $requiredKeys
+ * @param list<string> $requiredKeys
  */
 function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
 {
-    foreach ($requiredKeys as $key) {
-        assertTrue(condition: array_key_exists(key: $key, array: $payload), message: "{$label} should expose required key [{$key}].");
+    foreach ($requiredKeys as $requiredKey) {
+        assertTrue(condition: array_key_exists(key: $requiredKey, array: $payload), message: sprintf('%s should expose required key [%s].', $label, $requiredKey));
     }
 }
 
@@ -39,7 +37,7 @@ $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir       : $cacheDir,
     cacheVersion   : 'diagnostics-schema',
     compileMode    : CreateContainerConfig::COMPILE_MODE_CI,
-    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI,
 ));
 
 $container->singleton(abstract: DiagnosticsSchemaDependency::class, concrete: DiagnosticsSchemaDependency::class);
@@ -77,7 +75,7 @@ assertSchemaKeys(
                       'statistics',
                       'metadata',
                   ],
-    label       : 'Compile report'
+    label       : 'Compile report',
 );
 assertSchemaKeys(
     payload     : $runtimePayload,
@@ -100,21 +98,21 @@ assertSchemaKeys(
                       'hotPath',
                       'compiled',
                   ],
-    label       : 'Runtime report'
+    label       : 'Runtime report',
 );
 
-$compileJson = json_decode(json: $compileReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
-$runtimeJson = json_decode(json: $runtimeReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+$compileJson = json_decode(json: (string) $compileReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+$runtimeJson = json_decode(json: (string) $runtimeReport->toJson(), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 
 assertSame(
     expected: CompileReport::SCHEMA_VERSION,
     actual  : $compileJson['schemaVersion'] ?? null,
-    message : 'Compile report JSON should preserve its schema version.'
+    message : 'Compile report JSON should preserve its schema version.',
 );
 assertSame(
     expected: RuntimeReport::SCHEMA_VERSION,
     actual  : $runtimeJson['schemaVersion'] ?? null,
-    message : 'Runtime report JSON should preserve its schema version.'
+    message : 'Runtime report JSON should preserve its schema version.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

@@ -15,9 +15,9 @@ class Question
     public static function ask(string $question, ?string $default = null) : string
     {
         if ($default !== null) {
-            echo "{$question} [{$default}]: ";
+            echo sprintf('%s [%s]: ', $question, $default);
         } else {
-            echo "{$question}: ";
+            echo $question . ': ';
         }
 
         $input = self::readLine();
@@ -51,9 +51,9 @@ class Question
     public static function askSecret(string $question, ?string $default = null) : string
     {
         if ($default !== null) {
-            echo "{$question} [hidden]: ";
+            echo $question . ' [hidden]: ';
         } else {
-            echo "{$question}: ";
+            echo $question . ': ';
         }
 
         // Hide input for sensitive data

@@ -18,7 +18,7 @@ final readonly class OnConnection
     /**
      * @throws Throwable
      */
-    public function for(string|null $connectionName = null) : Transaction
+    public function for(string $connectionName = null) : Transaction
     {
         return Transaction::on(connection: $this->connections->connection(name: $connectionName));
     }

@@ -61,7 +61,7 @@ class EventFake
     {
         Assert::assertTrue(
             $this->hasDispatched($event),
-            "The expected [{$event}] event was not dispatched."
+            "The expected [{$event}] event was not dispatched.",
         );
     }
 
@@ -80,7 +80,7 @@ class EventFake
     {
         Assert::assertFalse(
             $this->hasDispatched($event),
-            "The unexpected [{$event}] event was dispatched."
+            "The unexpected [{$event}] event was dispatched.",
         );
     }
 
@@ -94,7 +94,7 @@ class EventFake
         Assert::assertSame(
             $times,
             $count,
-            "The [{$event}] event was dispatched {$count} times instead of {$times} times."
+            "The [{$event}] event was dispatched {$count} times instead of {$times} times.",
         );
     }
 
@@ -113,7 +113,7 @@ class EventFake
     {
         Assert::assertTrue(
             $this->hasDispatchedWith($event, $expectedData),
-            "The [{$event}] event was not dispatched with the expected data."
+            "The [{$event}] event was not dispatched with the expected data.",
         );
     }
 

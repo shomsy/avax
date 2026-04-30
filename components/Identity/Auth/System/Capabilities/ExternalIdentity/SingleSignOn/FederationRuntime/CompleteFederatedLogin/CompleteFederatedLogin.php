@@ -33,19 +33,21 @@ use SensitiveParameter;
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface          $connectionStore,
-        private FederationRuntimeInterface                  $runtime,
-        private FederatedIdentityLinkStoreInterface         $linkStore,
-        private UserSourceInterface                         $userSource,
-        private IdentityInterface                           $identity,
-        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        #[SensitiveParameter] private PasswordHasher        $passwordHasher,
-        private IdGeneratorInterface                        $idGenerator,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private DeterministicRiskEngine|null                $riskEngine = null,
-        private LifecycleOrchestrator|null                  $lifecycle = null
+        private FederationConnectionStoreInterface  $connectionStore,
+        private FederationRuntimeInterface          $runtime,
+        private FederatedIdentityLinkStoreInterface $linkStore,
+        private UserSourceInterface                 $userSource,
+        private IdentityInterface                   $identity,
+        private ProjectAuthenticatedUser            $projectAuthenticatedUser,
+        #[SensitiveParameter]
+        private CurrentAuthentication               $currentAuthentication,
+        #[SensitiveParameter]
+        private PasswordHasher                      $passwordHasher,
+        private IdGeneratorInterface                $idGenerator,
+        private AuditLogInterface                   $auditLog,
+        private Clock                               $clock,
+        private DeterministicRiskEngine|null        $riskEngine = null,
+        private LifecycleOrchestrator|null          $lifecycle = null,
     ) {}
 
     /**
@@ -98,14 +100,14 @@ final readonly class CompleteFederatedLogin
         $this->linkStore->save(link: new FederatedIdentityLink(
                                          connectionId: $connection->connectionId,
                                          subject     : $federated->subject,
-                                         userId      : $user->getId()->value
+                                         userId      : $user->getId()->value,
                                      ));
 
         $decision = $this->riskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $data->ipAddress, userAgent: $data->userAgent);
         $issued   = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent
+            userAgent: $data->userAgent,
         );
 
         $context = AuthenticationContext::authenticated(
@@ -115,7 +117,7 @@ final readonly class CompleteFederatedLogin
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $issued->mfaVerifiedAt
+            mfaVerifiedAt       : $issued->mfaVerifiedAt,
         );
         $this->currentAuthentication->store(context: $context);
 
@@ -129,13 +131,13 @@ final readonly class CompleteFederatedLogin
                                                            'risk_action'   => $decision?->action->value,
                                                            'ip_address'    => $data->ipAddress,
                                                            'user_agent'    => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return AuthenticationResult::success(
             context     : $context,
             accessToken : $issued->accessToken?->token,
-            refreshToken: $issued->refreshToken?->token
+            refreshToken: $issued->refreshToken?->token,
         );
     }
 
@@ -155,7 +157,7 @@ final readonly class CompleteFederatedLogin
             id          : new UserId(value: $this->idGenerator->generate()),
             email       : new UserEmail(value: $email),
             username    : $username,
-            passwordHash: $this->passwordHasher->hash(password: $password)
+            passwordHash: $this->passwordHasher->hash(password: $password),
         ));
     }
 
@@ -165,7 +167,7 @@ final readonly class CompleteFederatedLogin
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
             ? $normalizedDisplayName
             : explode(separator: '@', string: $email)[0];
-        $candidate             = trim(string: $base, characters: '-');
+        $candidate = trim(string: $base, characters: '-');
 
         if ($candidate === '') {
             $candidate = 'federated-user';
@@ -184,7 +186,7 @@ final readonly class CompleteFederatedLogin
 
     /**
      * @param array<string, list<string>> $groupRoleMap
-     * @param list<string>                $groups
+     * @param list<string> $groups
      *
      * @return list<UserRole>
      */

@@ -16,7 +16,7 @@ final readonly class IntegerRule
     public function __construct(
         private int|null $min = null,
         private int|null $max = null,
-        private string   $message = 'Field "{property}" must be a valid integer.',
+        private string $message = 'Field "{property}" must be a valid integer.',
     ) {}
 
     public function validate(mixed $value, string $property) : void
@@ -27,19 +27,19 @@ final readonly class IntegerRule
 
         if (! is_int($value)) {
             throw new InvalidArgumentException(
-                str_replace('{property}', $property, $this->message)
+                str_replace('{property}', $property, $this->message),
             );
         }
 
         if ($this->min !== null && $value < $this->min) {
             throw new InvalidArgumentException(
-                "Field \"{$property}\" must be at least {$this->min}."
+                sprintf('Field "%s" must be at least %d.', $property, $this->min),
             );
         }
 
         if ($this->max !== null && $value > $this->max) {
             throw new InvalidArgumentException(
-                "Field \"{$property}\" must be at most {$this->max}."
+                sprintf('Field "%s" must be at most %d.', $property, $this->max),
             );
         }
     }

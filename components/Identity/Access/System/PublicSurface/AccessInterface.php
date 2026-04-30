@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\PublicSurface;
@@ -13,10 +14,10 @@ interface AccessInterface
     public function denies(string $permission, mixed $resource = null) : bool;
 
     public function authorize(string $permission, mixed $resource = null) : void;
-    
+
     public function beginElevation() : void;
-    
+
     public function endElevation() : void;
-    
+
     public function isElevated() : bool;
 }

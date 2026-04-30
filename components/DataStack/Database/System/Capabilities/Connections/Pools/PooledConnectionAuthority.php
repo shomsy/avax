@@ -6,6 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Override;
 use PDO;
 
 /**
@@ -48,22 +49,19 @@ use PDO;
 final class PooledConnectionAuthority implements ConnectionPoolInterface, DatabaseConnection
 {
     /** @var DatabaseConnection|null The actual tool we've grabbed from the library (null if we haven't needed it yet). */
-    private DatabaseConnection|null          $borrowed = null;
-    private readonly ConnectionPoolInterface $pool;
+    private DatabaseConnection|null $databaseConnection = null;
 
     /**
-     * @param ConnectionPoolInterface $pool The "Library" we borrow from.
+     * @param ConnectionPoolInterface $connectionPool The "Library" we borrow from.
      */
-    public function __construct(
-        ConnectionPoolInterface $pool
-    )
+    public function __construct(private readonly ConnectionPoolInterface $connectionPool)
     {
-        $this->pool = $pool;
     }
 
     /**
      * Get the active PDO tool. If we haven't borrowed one yet, we grab it now.
      */
+    #[Override]
     public function getConnection() : PDO
     {
         return $this->resolveBorrowed()->getConnection();
@@ -78,11 +76,11 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      */
     private function resolveBorrowed() : DatabaseConnection
     {
-        if ($this->borrowed === null) {
-            $this->borrowed = $this->pool->acquire();
+        if ($this->databaseConnection === null) {
+            $this->databaseConnection = $this->connectionPool->acquire();
         }
 
-        return $this->borrowed;
+        return $this->databaseConnection;
     }
 
     /**
@@ -90,9 +88,10 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      *
      * @return DatabaseConnection A fresh tool from the shared resource.
      */
+    #[Override]
     public function acquire() : DatabaseConnection
     {
-        return $this->pool->acquire();
+        return $this->connectionPool->acquire();
     }
 
     /**
@@ -100,6 +99,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      *
      * @return bool True if we can still "talk" to the database.
      */
+    #[Override]
     public function ping() : bool
     {
         return $this->resolveBorrowed()->ping();
@@ -108,17 +108,19 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
     /**
      * Get the technical nickname of this connection.
      */
+    #[Override]
     public function getName() : string
     {
-        return $this->pool->getName();
+        return $this->connectionPool->getName();
     }
 
     /**
      * Hand a connection back to the shared library.
      */
-    public function release(DatabaseConnection $connection) : void
+    #[Override]
+    public function release(DatabaseConnection $databaseConnection) : void
     {
-        $this->pool->release(connection: $connection);
+        $this->connectionPool->release(connection: $databaseConnection);
     }
 
     /**
@@ -131,6 +133,6 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      */
     public function __destruct()
     {
-        $this->borrowed = null;
+        $this->databaseConnection = null;
     }
 }

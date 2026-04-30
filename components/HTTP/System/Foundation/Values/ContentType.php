@@ -92,7 +92,7 @@ enum ContentType: string
      *
      * @param string|null $charset Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(?string $charset = null) : string
+    public function mimeTypeWithCharset(string $charset = null) : string
     {
         $charset ??= self::DEFAULT_CHARSET;
 
@@ -115,7 +115,7 @@ enum ContentType: string
             self::TEXT_CALENDAR => "{$this->value}; charset={$charset}",
 
             // Content types that do NOT support charset
-            default             => $this->value,
+            default => $this->value,
         };
     }
 
@@ -151,7 +151,7 @@ enum ContentType: string
             self::TEXT_CALENDAR,
             self::EVENT_STREAM => self::DEFAULT_CHARSET,
 
-            default            => null,
+            default => null,
         };
     }
 

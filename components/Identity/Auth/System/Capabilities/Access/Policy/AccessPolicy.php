@@ -17,44 +17,41 @@ final readonly class AccessPolicy
     public bool $freshMfa;
 
     public function __construct(
-        public UserRole|null       $requiredRole = null,
+        public UserRole|null $requiredRole = null,
         public UserPermission|null $requiredPermission = null,
-        public int|null            $resourceOwnerUserId = null,
-        bool|null                  $freshMfa = null,
-        bool|null                  $adminElevation = null,
-        bool|null                  $phishingResistantRequired = null,
-        public int|null            $freshMfaMaxAgeSeconds = null,
-        public IdentityPolicy|null $identityPolicy = null
-    )
-    {
-        $freshMfa                        ??= false;
-        $adminElevation                  ??= false;
-        $phishingResistantRequired       ??= false;
+        public int|null $resourceOwnerUserId = null,
+        bool $freshMfa = null,
+        bool $adminElevation = null,
+        bool $phishingResistantRequired = null,
+        public int|null $freshMfaMaxAgeSeconds = null,
+        public IdentityPolicy|null $identityPolicy = null,
+    ) {
+        $freshMfa                  ??= false;
+        $adminElevation            ??= false;
+        $phishingResistantRequired ??= false;
         $this->freshMfa                  = $freshMfa;
         $this->adminElevation            = $adminElevation;
         $this->phishingResistantRequired = $phishingResistantRequired;
     }
 
     public static function admin(
-        UserPermission|null $requiredPermission = null,
-        int|null            $resourceOwnerUserId = null
-    ) : self
-    {
+        UserPermission $requiredPermission = null,
+        int $resourceOwnerUserId = null,
+    ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::admin(),
             requiredRole       : UserRole::ADMIN,
             requiredPermission : $requiredPermission,
-            resourceOwnerUserId: $resourceOwnerUserId
+            resourceOwnerUserId: $resourceOwnerUserId,
         );
     }
 
     public static function forIdentityPolicy(
-        IdentityPolicy      $identityPolicy,
-        UserRole|null       $requiredRole = null,
-        UserPermission|null $requiredPermission = null,
-        int|null            $resourceOwnerUserId = null
-    ) : self
-    {
+        IdentityPolicy $identityPolicy,
+        UserRole $requiredRole = null,
+        UserPermission $requiredPermission = null,
+        int $resourceOwnerUserId = null,
+    ): self {
         return new self(
             requiredRole             : $requiredRole,
             requiredPermission       : $requiredPermission,
@@ -63,20 +60,19 @@ final readonly class AccessPolicy
             adminElevation           : $identityPolicy->adminElevationRequired,
             phishingResistantRequired: $identityPolicy->phishingResistantRequired,
             freshMfaMaxAgeSeconds    : $identityPolicy->freshMfaMaxAgeSeconds,
-            identityPolicy           : $identityPolicy
+            identityPolicy           : $identityPolicy,
         );
     }
 
     public static function tenantAdmin(
-        UserPermission|null $requiredPermission = null,
-        int|null            $resourceOwnerUserId = null
-    ) : self
-    {
+        UserPermission $requiredPermission = null,
+        int $resourceOwnerUserId = null,
+    ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::tenantAdmin(),
             requiredRole       : UserRole::ADMIN,
             requiredPermission : $requiredPermission,
-            resourceOwnerUserId: $resourceOwnerUserId
+            resourceOwnerUserId: $resourceOwnerUserId,
         );
     }
 }

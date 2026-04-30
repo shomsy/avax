@@ -10,9 +10,9 @@ final class BatchInsert
 {
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $table,
-        private readonly array            $columns,
-        private readonly int              $batchSize = 100,
+        private readonly string $table,
+        private readonly array  $columns,
+        private readonly int    $batchSize = 100,
     ) {}
 
     /**
@@ -35,7 +35,7 @@ final class BatchInsert
             }
 
             $statements[] = [
-                'sql'      => 'INSERT INTO ' . $this->grammar->wrap(value: $this->table)
+                'sql' => 'INSERT INTO ' . $this->grammar->wrap(value: $this->table)
                     . ' (' . $this->wrappedColumns() . ') VALUES ' . implode(separator: ', ', array: $groups),
                 'bindings' => $bindings,
             ];
@@ -48,7 +48,7 @@ final class BatchInsert
     {
         return implode(
             separator: ', ',
-            array    : array_map(callback: fn ($column) => $this->grammar->wrap(value: $column), array: $this->columns)
+            array    : array_map(callback: fn ($column) => $this->grammar->wrap(value: $column), array: $this->columns),
         );
     }
 }

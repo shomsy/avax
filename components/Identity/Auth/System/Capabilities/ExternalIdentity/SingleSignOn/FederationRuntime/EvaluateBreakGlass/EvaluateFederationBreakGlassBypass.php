@@ -39,7 +39,7 @@ final readonly class EvaluateFederationBreakGlassBypass
                                                            'tenant'              => $connection->tenantSlug,
                                                            'health'              => $connection->health->value,
                                                            'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
-                                                       ]
+                                                       ],
                                        ));
 
         return $allowed;

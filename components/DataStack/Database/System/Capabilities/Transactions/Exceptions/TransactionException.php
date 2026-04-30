@@ -35,16 +35,16 @@ final class TransactionException extends DatabaseException
      * @param Throwable|null $previous     The underlying technical driver or unit-of-work exception.
      */
     public function __construct(
-        string         $message,
-        int            $nestingLevel,
-        Throwable|null $previous = null
+        string    $message,
+        int       $nestingLevel,
+        Throwable $previous = null,
     )
     {
         $this->nestingLevel = $nestingLevel;
         parent::__construct(
             message : "Transaction failed (Level {$nestingLevel}): {$message}",
             code    : 0,
-            previous: $previous
+            previous: $previous,
         );
     }
 

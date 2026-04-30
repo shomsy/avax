@@ -22,7 +22,7 @@ final readonly class RecordSagaCompleted
                                                        id           : 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
                                                        instanceId   : $instanceId,
                                                        type         : 'saga.completed',
-                                                       correlationId: $correlationId
+                                                       correlationId: $correlationId,
                                                    ));
     }
 }

@@ -36,12 +36,12 @@ final readonly class MigrateStatusCommand
                 "Total: %d | Ran: %d | Pending: %d\n",
                 $status['summary']['total'],
                 $status['summary']['ran'],
-                $status['summary']['pending']
+                $status['summary']['pending'],
             );
 
             return 0;
         } catch (Throwable $throwable) {
-            echo "\033[31mStatus failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mStatus failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }

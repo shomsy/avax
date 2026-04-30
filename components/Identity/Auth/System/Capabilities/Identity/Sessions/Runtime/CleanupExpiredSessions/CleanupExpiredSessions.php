@@ -11,8 +11,9 @@ use SensitiveParameter;
 final readonly class CleanupExpiredSessions
 {
     public function __construct(
-        #[SensitiveParameter] private PruneExpiredSessionsInterface|null $sessionRegistry,
-        private Clock                                                    $clock
+        #[SensitiveParameter]
+        private PruneExpiredSessionsInterface|null $sessionRegistry,
+        private Clock                              $clock,
     ) {}
 
     public function execute() : int

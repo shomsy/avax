@@ -10,11 +10,12 @@ namespace Avax\Components\CLI\Console\System\Capabilities\UI;
 class ProgressBar
 {
     private int $current = 0;
-    private int $barWidth;
+
+    private readonly int $barWidth;
 
     public function __construct(
         private readonly int $total,
-        int                  $barWidth = 50
+        int $barWidth = 50,
     )
     {
         $this->barWidth = max(10, $barWidth);
@@ -41,7 +42,8 @@ class ProgressBar
         $bar        = str_repeat('=', $filledBars) . str_repeat(' ', $emptyBars);
         $percentStr = sprintf('%3d%%', (int) ($percent * 100));
 
-        echo "\r[{$bar}] {$percentStr} ({$this->current}/{$this->total})";
+        echo sprintf('
+[%s] %s (%d/%d)', $bar, $percentStr, $this->current, $this->total);
 
         if ($this->current >= $this->total) {
             echo PHP_EOL;

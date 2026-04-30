@@ -16,11 +16,11 @@ final readonly class ScimBulkOperationResult
         public string      $method,
         public string      $path,
         public int         $status,
-        array|null         $response = null,
-        public string|null $bulkId = null
+        array              $response = null,
+        public string|null $bulkId = null,
     )
     {
-        $response       ??= [];
+        $response ??= [];
         $this->response = $response;
     }
 }

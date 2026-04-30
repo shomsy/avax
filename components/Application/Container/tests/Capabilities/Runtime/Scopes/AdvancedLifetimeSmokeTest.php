@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -40,7 +40,7 @@ final class LazySingletonService
 
 final class RequestScopedDisposableService implements DisposableInterface
 {
-    public function dispose() : void
+    public function dispose(): void
     {
         AdvancedLifetimeSequence::$requestDisposals++;
     }
@@ -48,36 +48,41 @@ final class RequestScopedDisposableService implements DisposableInterface
 
 final class SharedDisposableService implements DisposableInterface
 {
-    public function dispose() : void
+    public function dispose(): void
     {
         AdvancedLifetimeSequence::$sharedDisposals++;
     }
 }
 
-final class PlainTransientDependency {}
+final class PlainTransientDependency
+{
+}
 
 final class SharedCapturesTransientService
 {
-    public PlainTransientDependency $dependency;
-
-    public function __construct(PlainTransientDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public PlainTransientDependency $plainTransientDependency)
+    {
+    }
 }
 
 final class SharedCapturesRequestScopedService
 {
-    public RequestScopedDisposableService $dependency;
-
-    public function __construct(RequestScopedDisposableService $dependency) { $this->dependency = $dependency; }
+    public function __construct(public RequestScopedDisposableService $requestScopedDisposableService)
+    {
+    }
 }
 
-final class InvalidDisposableService {}
+final class InvalidDisposableService
+{
+}
 
 final class InvalidTransientDisposableService implements DisposableInterface
 {
-    public function dispose() : void {}
 }
 
-final class JobScopedService {}
+final class JobScopedService
+{
+}
 
 $cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid(prefix: '', more_entropy: true);
 $config    = CreateContainerConfig::create(cacheDir: $cacheDir);
@@ -102,19 +107,19 @@ $issues = implode(separator: "\n", array: $container->validate(serviceIds: [
 
 assertTrue(
     condition: str_contains(haystack: $issues, needle: 'captures transient dependency [' . PlainTransientDependency::class . ']'),
-    message  : 'Validation should detect captured transient dependencies.'
+    message  : 'Validation should detect captured transient dependencies.',
 );
 assertTrue(
     condition: str_contains(haystack: $issues, needle: 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
-    message  : 'Validation should detect shared services that capture scoped dependencies.'
+    message  : 'Validation should detect shared services that capture scoped dependencies.',
 );
 assertTrue(
     condition: str_contains(haystack: $issues, needle: 'does not expose dispose() or implement DisposableInterface'),
-    message  : 'Validation should reject invalid disposable registrations.'
+    message  : 'Validation should reject invalid disposable registrations.',
 );
 assertTrue(
     condition: str_contains(haystack: $issues, needle: 'uses transient lifetime, so the container cannot own its disposal boundary'),
-    message  : 'Validation should reject disposable transient services because the container cannot own their disposal boundary.'
+    message  : 'Validation should reject disposable transient services because the container cannot own their disposal boundary.',
 );
 
 $container->warmCompiled(serviceIds: [WarmSingletonService::class, LazySingletonService::class]);
@@ -126,19 +131,20 @@ $container->get(id: LazySingletonService::class);
 assertSame(expected: 1, actual: AdvancedLifetimeSequence::$lazySingletons, message: 'Lazy shared services should build on first resolve.');
 
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
-    message      : 'ServerRequest-scoped services should require an active request scope.'
+    message      : 'ServerRequest-scoped services should require an active request scope.',
 );
 
 $container->openScope(kind: ScopeKind::REQUEST, scopeId: 'request-1');
@@ -150,19 +156,20 @@ $container->closeScope(kind: ScopeKind::REQUEST);
 assertSame(expected: 1, actual: AdvancedLifetimeSequence::$requestDisposals, message: 'Closing a request scope should dispose request-owned disposable services.');
 
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: JobScopedService::class),
-    message      : 'Job-scoped services should require an active job scope.'
+    message      : 'Job-scoped services should require an active job scope.',
 );
 
 $container->openScope(kind: ScopeKind::JOB, scopeId: 'job-1');

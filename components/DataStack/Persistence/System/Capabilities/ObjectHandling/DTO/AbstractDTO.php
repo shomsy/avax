@@ -10,7 +10,7 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\ObjectHandli
  */
 abstract readonly class AbstractDTO
 {
-    public function toArray() : array
+    public function toArray(): array
     {
         return get_object_vars($this);
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
@@ -15,6 +15,7 @@ interface CreateGreeterContract
 
 final class CreateGreeter implements CreateGreeterContract
 {
+    #[Override]
     public function message() : string
     {
         return 'hi';
@@ -23,9 +24,7 @@ final class CreateGreeter implements CreateGreeterContract
 
 final class NeedsCreateGreeter
 {
-    public CreateGreeterContract $greeter;
-
-    public function __construct(CreateGreeterContract $greeter) { $this->greeter = $greeter; }
+    public function __construct(public CreateGreeterContract $createGreeterContract) {}
 }
 
 $container = makeTestContainer();
@@ -45,9 +44,10 @@ assertThrows(
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ServiceNotFoundException::class,
+ */
+    expectedClass: ServiceNotFoundException::class,
     callback     : static fn () => $container->get(id: 'Missing\\Service'),
-    message      : 'Missing services must use the not-found contract.'
+    message      : 'Missing services must use the not-found contract.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

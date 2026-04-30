@@ -12,10 +12,10 @@ final class CompiledCacheManifest
     private array $entries = [];
 
     public function __construct(
-        private CompiledCacheManifestEntry|null $entry = null
+        CompiledCacheManifestEntry|null $entry = null,
     )
     {
-        if ($entry !== null) {
+        if ($entry instanceof CompiledCacheManifestEntry) {
             $this->entries[$entry->name->toString()] = $entry;
         }
     }
@@ -42,9 +42,9 @@ final class CompiledCacheManifest
         return $manifest;
     }
 
-    public function set(CompiledCacheManifestEntry $entry) : void
+    public function set(CompiledCacheManifestEntry $compiledCacheManifestEntry) : void
     {
-        $this->entries[$entry->name->toString()] = $entry;
+        $this->entries[$compiledCacheManifestEntry->name->toString()] = $compiledCacheManifestEntry;
     }
 
     public static function empty() : self
@@ -62,15 +62,15 @@ final class CompiledCacheManifest
         unset($this->entries[$name]);
     }
 
-    public function isFresh(string $name, CompiledCacheSources $sources) : bool
+    public function isFresh(string $name, CompiledCacheSources $compiledCacheSources) : bool
     {
         $entry = $this->get(name: $name);
 
-        if ($entry === null) {
+        if (! $entry instanceof CompiledCacheManifestEntry) {
             return false;
         }
 
-        return $entry->sourceFingerprint === $sources->fingerprint();
+        return $entry->sourceFingerprint === $compiledCacheSources->fingerprint();
     }
 
     public function get(string $name) : CompiledCacheManifestEntry|null
@@ -91,8 +91,8 @@ final class CompiledCacheManifest
     public function save(string $path) : void
     {
         $entries = array_map(
-            fn (CompiledCacheManifestEntry $entry) => $entry->toArray(),
-            $this->entries
+            static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry) : array => $compiledCacheManifestEntry->toArray(),
+            $this->entries,
         );
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn " . var_export($entries, true) . ";\n";

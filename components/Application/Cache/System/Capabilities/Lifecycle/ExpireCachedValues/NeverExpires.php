@@ -7,20 +7,23 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Expire
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
+use Override;
 
 final readonly class NeverExpires implements CacheExpiration
 {
+    #[Override]
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
-        Clock                 $clock
+        Clock $clock,
     ) : Timestamp|null
     {
         return null;
     }
 
+    #[Override]
     public function isExpired(
         Timestamp|null $expiresAt,
-        Clock          $clock
+        Clock $clock,
     ) : bool
     {
         return false;

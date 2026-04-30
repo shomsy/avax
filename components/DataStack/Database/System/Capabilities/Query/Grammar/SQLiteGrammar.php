@@ -50,7 +50,7 @@ final class SQLiteGrammar extends BaseGrammar
 
         $conflictColumns = array_map(
             callback: fn ($col) => $this->wrap(value: $col),
-            array   : $uniqueBy
+            array   : $uniqueBy,
         );
         $conflictClause  = implode(separator: ', ', array: $conflictColumns);
 
@@ -151,7 +151,7 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {
@@ -163,7 +163,7 @@ final class SQLiteGrammar extends BaseGrammar
         if ($partitionBy !== '') {
             $partitionColumns = array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
-                array   : explode(separator: ',', string: $partitionBy)
+                array   : explode(separator: ',', string: $partitionBy),
             );
             $sql              .= 'PARTITION BY ' . implode(separator: ', ', array: $partitionColumns);
         }

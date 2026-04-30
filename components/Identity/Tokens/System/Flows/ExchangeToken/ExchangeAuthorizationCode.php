@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Flows\ExchangeToken;
@@ -14,7 +15,7 @@ final readonly class ExchangeAuthorizationCode
         return (object)[
             'access_token' => '...',
             'refresh_token' => '...',
-            'expires_in' => 3600
+            'expires_in'   => 3600,
         ];
     }
 }

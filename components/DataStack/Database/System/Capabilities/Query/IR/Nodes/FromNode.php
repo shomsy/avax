@@ -9,7 +9,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class FromNode
 {
     public function __construct(
-        public readonly string      $table,
+        public readonly string $table,
         public readonly string|null $alias = null,
     ) {}
 

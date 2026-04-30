@@ -19,11 +19,12 @@ use SensitiveParameter;
 final readonly class RegisterScimDirectory
 {
     public function __construct(
-        private ScimDirectoryStoreInterface          $directoryStore,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private GroupRoleMappingValidator            $groupRoleMappingValidator,
-        private AuditLogInterface                    $auditLog,
-        private Clock                                $clock
+        private ScimDirectoryStoreInterface $directoryStore,
+        #[SensitiveParameter]
+        private PasswordHasher              $passwordHasher,
+        private GroupRoleMappingValidator   $groupRoleMappingValidator,
+        private AuditLogInterface           $auditLog,
+        private Clock                       $clock,
     ) {}
 
     /**
@@ -43,7 +44,7 @@ final readonly class RegisterScimDirectory
             name        : trim(string: $data->name),
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
             groupRoleMap: $data->groupRoleMap,
-            createdAt   : $this->clock->now()
+            createdAt   : $this->clock->now(),
         );
 
         $this->directoryStore->save(directory: $directory);
@@ -54,7 +55,7 @@ final readonly class RegisterScimDirectory
                                                            'directory_id' => $directory->directoryId,
                                                            'tenant'       => $directory->tenantSlug,
                                                            'name'         => $directory->name,
-                                                       ]
+                                                       ],
                                        ));
 
         return new RegisteredScimDirectory(directory: $directory, plainTextToken: $plainTextToken);

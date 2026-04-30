@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Dispatcher\System\PublicSurface;
@@ -15,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class ControllerDispatcher
 {
     public function __construct(
-        private DispatchRouteAction $dispatchFlow
+        private DispatchRouteAction $dispatchFlow,
     ) {}
 
     public function dispatch(callable|array|string $action, ServerRequestInterface $request) : ResponseInterface

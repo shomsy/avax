@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -18,6 +18,7 @@ final class DecoratedService implements DecoratedContract
 {
     public bool $decorated = false;
 
+    #[Override]
     public function label() : string
     {
         return 'decorated';
@@ -26,7 +27,7 @@ final class DecoratedService implements DecoratedContract
 
 final class OwnedDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: DecoratedService::class, value: $instance, message: 'Decorators should receive the resolved concrete instance.');
         $instance->decorated = true;
@@ -37,7 +38,7 @@ final class OwnedDecorator implements DecoratorInterface
 
 final class InvisibleDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         return $instance;
     }
@@ -45,16 +46,8 @@ final class InvisibleDecorator implements DecoratorInterface
 
 final class RuntimeInputConsumer
 {
-    public string            $name;
-    public DecoratedContract $service;
-
-    public function __construct(
-        DecoratedContract                    $service,
-        #[RuntimeInput(name: 'name')] string $name
-    )
+    public function __construct(public DecoratedContract $decoratedContract, #[RuntimeInput(name: 'name')] public string $name)
     {
-        $this->service = $service;
-        $this->name    = $name;
     }
 }
 
@@ -123,17 +116,17 @@ assertTrue(condition: $consumer->service instanceof DecoratedService && $consume
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
     actual  : array_map(callback: static fn (object $service) : string => $service::class, array: $grouped),
-    message : 'Grouped multi-bindings should resolve in deterministic order.'
+    message : 'Grouped multi-bindings should resolve in deterministic order.',
 );
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
     actual  : array_column(array: $graph['groups']['checkout.steps'], column_key: 'serviceId'),
-    message : 'Graph diagnostics should expose grouped binding order.'
+    message : 'Graph diagnostics should expose grouped binding order.',
 );
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
     actual  : array_column(array: $groupReport['items'], column_key: 'serviceId'),
-    message : 'Group diagnostics should expose grouped binding order.'
+    message : 'Group diagnostics should expose grouped binding order.',
 );
 assertSame(expected: OwnedDecorator::class, actual: $description['decorationDetails'][0]['descriptor'] ?? null, message: 'Decorator diagnostics should expose the registered decorator descriptor.');
 assertSame(expected: 'billing', actual: $description['decorationDetails'][0]['owner'] ?? null, message: 'Decorator diagnostics should expose the decorator owner slice.');
@@ -141,20 +134,21 @@ assertSame(expected: DecoratedContract::class, actual: $selectionReport['service
 assertSame(expected: OwnedDecorator::class, actual: $selectionReport['decorators'][0]['descriptor'] ?? null, message: 'Selection diagnostics should expose decorator wiring.');
 assertTrue(
     condition: ($description['decorationDetails'][0]['access']['allowed'] ?? false) === true,
-    message  : 'Decorator diagnostics should explain that visible decorators are allowed from the owning slice.'
+    message  : 'Decorator diagnostics should explain that visible decorators are allowed from the owning slice.',
 );
 
 try {
     $container->make(abstract: RuntimeInputConsumer::class);
+
     throw new RuntimeException(message: 'Missing runtime input should fail.');
-} catch (ContainerException $exception) {
+} catch (ContainerException $containerException) {
     assertTrue(
-        condition: str_contains(haystack: $exception->getMessage(), needle: 'Runtime input [$name] is missing'),
-        message  : 'Runtime input failures should name the missing input.'
+        condition: str_contains(haystack: $containerException->getMessage(), needle: 'Runtime input [$name] is missing'),
+        message  : 'Runtime input failures should name the missing input.',
     );
     assertTrue(
-        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
-        message  : 'Runtime input failures should be fix-oriented.'
+        condition: str_contains(haystack: $containerException->getMessage(), needle: 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
+        message  : 'Runtime input failures should be fix-oriented.',
     );
 }
 
@@ -172,7 +166,7 @@ $groupIssues = implode(separator: "\n", array: $container->validate(serviceIds: 
 
 assertTrue(
     condition: str_contains(haystack: $groupIssues, needle: 'Group [checkout.steps] uses duplicate order [10]'),
-    message  : 'Validation should reject conflicting grouped binding order.'
+    message  : 'Validation should reject conflicting grouped binding order.',
 );
 
 $invisibleDecoratorContainer = makeTestContainer();
@@ -189,7 +183,7 @@ $decoratorIssues = implode(separator: "\n", array: $invisibleDecoratorContainer-
 
 assertTrue(
     condition: str_contains(haystack: $decoratorIssues, needle: 'decorator is not visible from the service slice'),
-    message  : 'Validation should reject decorators that violate slice visibility.'
+    message  : 'Validation should reject decorators that violate slice visibility.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

@@ -16,31 +16,17 @@ use Throwable;
  */
 final readonly class MigrationRunner
 {
-    private QueryBuilder        $builder;
-    private MigrationRepository $repository;
-    private Transactions        $transactions;
-    private string|null         $connectionName;
-
-    public function __construct(
-        MigrationRepository $repository,
-        QueryBuilder        $builder,
-        Transactions        $transactions,
-        string|null         $connectionName = null
-    )
+    public function __construct(private MigrationRepository $migrationRepository, private QueryBuilder $queryBuilder, private Transactions $transactions, private string|null $connectionName = null)
     {
-        $this->repository     = $repository;
-        $this->builder        = $builder;
-        $this->transactions   = $transactions;
-        $this->connectionName = $connectionName;
     }
 
     public function up(array $migrations, string $path, bool $dryRun = false) : void
     {
         try {
-            $builder  = $dryRun ? $this->builder->pretend() : $this->builder;
-            $ran      = $this->repository->getRan();
+            $builder = $dryRun ? $this->queryBuilder->pretend() : $this->queryBuilder;
+            $ran     = $this->migrationRepository->getRan();
             $ranNames = array_column(array: $ran, column_key: 'migration');
-            $batch    = $this->repository->getNextBatchNumber();
+            $batch   = $this->migrationRepository->getNextBatchNumber();
 
             foreach ($migrations as $name => $migration) {
                 if (in_array(needle: $name, haystack: $ranNames, strict: true)) {
@@ -54,11 +40,11 @@ final readonly class MigrationRunner
                     name     : $name,
                     builder  : $builder,
                     batch    : $batch,
-                    checksum : $checksum
+                    checksum : $checksum,
                 );
             }
-        } catch (Throwable $e) {
-            throw new MigrationException(migrationClass: 'Runner', message: $e->getMessage(), previous: $e);
+        } catch (Throwable $throwable) {
+            throw new MigrationException(migrationClass: 'Runner', message: $throwable->getMessage(), previous: $throwable);
         }
     }
 
@@ -66,31 +52,31 @@ final readonly class MigrationRunner
         mixed        $migration,
         string       $method,
         string       $name,
-        QueryBuilder $builder,
-        int|null     $batch = null,
-        string|null  $checksum = null
+        QueryBuilder $queryBuilder,
+        ?int         $batch = null,
+        ?string      $checksum = null,
     ) : void
     {
         try {
             // Inject QueryBuilder into migration if it supports it
             if (method_exists(object_or_class: $migration, method: 'setQueryBuilder')) {
-                $migration->setQueryBuilder($builder);
+                $migration->setQueryBuilder($queryBuilder);
             }
 
-            $this->transactions->run(callback      : function () use ($migration, $method, $name, $batch, $checksum) {
+            $this->transactions->run(callback      : function () use ($migration, $method, $name, $batch, $checksum) : void {
                 $migration->{$method}();
 
                 if ($method === 'up') {
-                    $this->repository->log(name: $name, batch: (int) $batch, checksum: $checksum);
+                    $this->migrationRepository->log(name: $name, batch: (int) $batch, checksum: $checksum);
                 } else {
-                    $this->repository->remove(name: $name);
+                    $this->migrationRepository->remove(name: $name);
                 }
             },                       connectionName: $this->connectionName);
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             throw new MigrationException(
                 migrationClass: $name,
-                message       : "Failed during [{$method}]: " . $e->getMessage(),
-                previous      : $e
+                message       : sprintf('Failed during [%s]: ', $method) . $throwable->getMessage(),
+                previous      : $throwable,
             );
         }
     }
@@ -99,11 +85,11 @@ final readonly class MigrationRunner
     {
         try {
             $migrationsByName = [];
-            foreach ($migrations as $m) {
-                $migrationsByName[$m::class] = $m;
+            foreach ($migrations as $migration) {
+                $migrationsByName[$migration::class] = $migration;
             }
 
-            $records = $this->repository->getLastBatch(steps: $steps);
+            $records = $this->migrationRepository->getLastBatch(steps: $steps);
 
             foreach ($records as $record) {
                 $name = $record['migration'];
@@ -113,12 +99,12 @@ final readonly class MigrationRunner
                         migration: $migrationsByName[$name],
                         method   : 'down',
                         name     : $name,
-                        builder  : $this->builder
+                        builder  : $this->queryBuilder,
                     );
                 }
             }
-        } catch (Throwable $e) {
-            throw new MigrationException(migrationClass: 'Runner', message: $e->getMessage(), previous: $e);
+        } catch (Throwable $throwable) {
+            throw new MigrationException(migrationClass: 'Runner', message: $throwable->getMessage(), previous: $throwable);
         }
     }
 }

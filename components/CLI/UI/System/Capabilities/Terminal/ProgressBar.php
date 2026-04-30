@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\CLI\UI\System\Capabilities\Terminal;
@@ -19,12 +20,12 @@ final class ProgressBar
     {
         $percent = ($this->current / $this->total);
         $bar = (int) ($percent * $this->width);
-        
+
         $progress = str_repeat('=', $bar);
         $remaining = str_repeat(' ', $this->width - $bar);
-        
+
         printf("\r[%s%s] %d%%", $progress, $remaining, (int)($percent * 100));
-        
+
         if ($this->current >= $this->total) {
             echo "\n";
         }

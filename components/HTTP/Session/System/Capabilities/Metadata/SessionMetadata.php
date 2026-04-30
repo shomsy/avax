@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Metadata;
@@ -6,7 +7,7 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Metadata;
 final readonly class SessionMetadata
 {
     public function __construct(
-        private array $server
+        private array $server,
     ) {}
 
     public function verify(string $expectedIp, string $expectedUserAgent) : bool

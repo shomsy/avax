@@ -16,7 +16,7 @@ final readonly class ResolveCallArguments
     private ResolveDependencies $dependencies;
 
     public function __construct(
-        ResolveDependencies $dependencies
+        ResolveDependencies $dependencies,
     )
     {
         $this->dependencies = $dependencies;
@@ -28,41 +28,41 @@ final readonly class ResolveCallArguments
      * @return array<int, mixed>
      */
     public function resolve(
-        array               $parameters,
-        array               $overrides,
-        ServiceResolver     $resolver,
-        ResolveRequest|null $request = null
+        array           $parameters,
+        array           $overrides,
+        ServiceResolver $resolver,
+        ResolveRequest  $request = null,
     ) : array
     {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
             resolver : $resolver,
-            request  : $request
+            request  : $request,
         );
     }
 
     /**
-     * @param ResolvePlan          $plan
+     * @param ResolvePlan         $plan
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver      $resolver
-     * @param ResolveRequest|null  $request
+     * @param ServiceResolver     $resolver
+     * @param ResolveRequest|null $request
      *
      * @return array<int, mixed>
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan         $plan,
-        array               $overrides,
-        ServiceResolver     $resolver,
-        ResolveRequest|null $request = null
+        ResolvePlan     $plan,
+        array           $overrides,
+        ServiceResolver $resolver,
+        ResolveRequest  $request = null,
     ) : array
     {
         return $this->dependencies->resolvePlan(
             plan     : $plan,
             overrides: $overrides,
             resolver : $resolver,
-            request  : $request
+            request  : $request,
         );
     }
 

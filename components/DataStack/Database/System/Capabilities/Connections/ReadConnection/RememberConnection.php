@@ -23,11 +23,11 @@ final class RememberConnection
     /**
      * @param array<string, DatabaseConnection> $connections
      */
-    public function remember(array &$connections, string $name, DatabaseConnection $connection) : DatabaseConnection
+    public function remember(array &$connections, string $name, DatabaseConnection $databaseConnection) : DatabaseConnection
     {
-        $connections[$name] = $connection;
+        $connections[$name] = $databaseConnection;
 
-        return $connection;
+        return $databaseConnection;
     }
 
     /**
@@ -41,10 +41,10 @@ final class RememberConnection
     /**
      * @param array<string, ConnectionPool> $pools
      */
-    public function rememberPool(array &$pools, string $name, ConnectionPool $pool) : ConnectionPool
+    public function rememberPool(array &$pools, string $name, ConnectionPool $connectionPool) : ConnectionPool
     {
-        $pools[$name] = $pool;
+        $pools[$name] = $connectionPool;
 
-        return $pool;
+        return $connectionPool;
     }
 }

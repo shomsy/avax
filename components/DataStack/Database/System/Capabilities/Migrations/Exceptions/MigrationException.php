@@ -14,9 +14,6 @@ use Throwable;
  */
 final class MigrationException extends DatabaseException
 {
-    private readonly string|null $sql;
-    private readonly string      $migrationClass;
-
     /**
      * Constructor capturing the migration class and technical SQL.
      *
@@ -25,18 +22,16 @@ final class MigrationException extends DatabaseException
      * @param string         $migrationClass Technical class name of the migration
      * @param string         $message        Detailed failure description
      * @param string|null    $sql            The specific SQL statement that failed
-     * @param Throwable|null $previous       Underlying system trigger
+     * @param Throwable|null $throwable      Underlying system trigger
      */
     public function __construct(
-        string         $migrationClass,
-        string         $message,
-        string|null    $sql = null,
-        Throwable|null $previous = null
+        private readonly string      $migrationClass,
+        string                       $message,
+        private readonly string|null $sql = null,
+        ?Throwable                   $throwable = null,
     )
     {
-        $this->migrationClass = $migrationClass;
-        $this->sql            = $sql;
-        parent::__construct(message: "Migration [{$migrationClass}] failed: {$message}", code: 0, previous: $previous);
+        parent::__construct(message: sprintf('Migration [%s] failed: %s', $this->migrationClass, $message), code: 0, previous: $throwable);
     }
 
     /**

@@ -27,21 +27,21 @@ trait HasJoins
      * @param string|null    $second   The right-hand field name belonging to the target table.
      *
      * @return HasJoins|QueryBuilder A
-     *                                                                                                                          fresh,
-     *                                                                                                                          cloned
-     *                                                                                                                          builder
-     *                                                                                                                          instance
-     *                                                                                                                          with
-     *                                                                                                                          the
-     *                                                                                                                          inner
-     *                                                                                                                          join
-     *                                                                                                                          applied.
+     *                               fresh,
+     *                               cloned
+     *                               builder
+     *                               instance
+     *                               with
+     *                               the
+     *                               inner
+     *                               join
+     *                               applied.
      */
     public function join(
-        string         $table,
+        string $table,
         string|Closure $first,
-        string|null    $operator = null,
-        string|null    $second = null
+        string $operator = null,
+        string $second = null,
     ) : self
     {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'inner');
@@ -61,22 +61,22 @@ trait HasJoins
      * @param string         $type     The join strategy type (inner/left/right/cross).
      *
      * @return HasJoins|QueryBuilder A
-     *                                                                                                                          fresh,
-     *                                                                                                                          cloned
-     *                                                                                                                          builder
-     *                                                                                                                          instance
-     *                                                                                                                          containing
-     *                                                                                                                          the
-     *                                                                                                                          new
-     *                                                                                                                          join
-     *                                                                                                                          metadata.
+     *                               fresh,
+     *                               cloned
+     *                               builder
+     *                               instance
+     *                               containing
+     *                               the
+     *                               new
+     *                               join
+     *                               metadata.
      */
     protected function addJoin(
-        string         $table,
+        string $table,
         string|Closure $first,
-        string|null    $operator = null,
-        string|null    $second = null,
-        string         $type = 'inner'
+        string $operator = null,
+        string $second = null,
+        string $type = 'inner',
     ) : self
     {
         $clone = clone $this;
@@ -88,7 +88,7 @@ trait HasJoins
             $clone->state = $clone->state->addJoin(join: new JoinNode(
                                                              table : $table,
                                                              type  : $type,
-                                                             clause: $joinClause
+                                                             clause: $joinClause,
                                                          ));
         } else {
             $clone->state = $clone->state->addJoin(join: new JoinNode(
@@ -96,7 +96,7 @@ trait HasJoins
                                                              type    : $type,
                                                              first   : $first,
                                                              operator: $operator,
-                                                             second  : $second
+                                                             second  : $second,
                                                          ));
         }
 
@@ -114,21 +114,21 @@ trait HasJoins
      * @param string|null    $second   The right-hand field name.
      *
      * @return HasJoins|QueryBuilder A
-     *                                                                                                                          fresh,
-     *                                                                                                                          cloned
-     *                                                                                                                          builder
-     *                                                                                                                          instance
-     *                                                                                                                          with
-     *                                                                                                                          the
-     *                                                                                                                          left
-     *                                                                                                                          join
-     *                                                                                                                          applied.
+     *                               fresh,
+     *                               cloned
+     *                               builder
+     *                               instance
+     *                               with
+     *                               the
+     *                               left
+     *                               join
+     *                               applied.
      */
     public function leftJoin(
-        string         $table,
+        string $table,
         string|Closure $first,
-        string|null    $operator = null,
-        string|null    $second = null
+        string $operator = null,
+        string $second = null,
     ) : self
     {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'left');
@@ -145,21 +145,21 @@ trait HasJoins
      * @param string|null    $second   The right-hand field name.
      *
      * @return HasJoins|QueryBuilder A
-     *                                                                                                                          fresh,
-     *                                                                                                                          cloned
-     *                                                                                                                          builder
-     *                                                                                                                          instance
-     *                                                                                                                          with
-     *                                                                                                                          the
-     *                                                                                                                          right
-     *                                                                                                                          join
-     *                                                                                                                          applied.
+     *                               fresh,
+     *                               cloned
+     *                               builder
+     *                               instance
+     *                               with
+     *                               the
+     *                               right
+     *                               join
+     *                               applied.
      */
     public function rightJoin(
-        string         $table,
+        string $table,
         string|Closure $first,
-        string|null    $operator = null,
-        string|null    $second = null
+        string $operator = null,
+        string $second = null,
     ) : self
     {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'right');
@@ -173,15 +173,15 @@ trait HasJoins
      * @param string $table The technical name of the target database table to cross-link.
      *
      * @return HasJoins|QueryBuilder A
-     *                                                                                                                          fresh,
-     *                                                                                                                          cloned
-     *                                                                                                                          builder
-     *                                                                                                                          instance
-     *                                                                                                                          with
-     *                                                                                                                          the
-     *                                                                                                                          cross
-     *                                                                                                                          join
-     *                                                                                                                          applied.
+     *                               fresh,
+     *                               cloned
+     *                               builder
+     *                               instance
+     *                               with
+     *                               the
+     *                               cross
+     *                               join
+     *                               applied.
      */
     public function crossJoin(string $table) : self
     {

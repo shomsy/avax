@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Exceptions\ConnectionException;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Override;
 use PDO;
 
 /**
@@ -17,22 +18,15 @@ use PDO;
 final class BorrowedConnection implements DatabaseConnection
 {
     /** @var bool A flag to make sure we don't try to return the connection twice. */
-    private bool                             $released = false;
-    private readonly ConnectionPoolInterface $pool;
-    private readonly DatabaseConnection      $connection;
+    private bool $released = false;
 
     /**
-     * @param DatabaseConnection      $connection The actual, physical connection to the database.
-     * @param ConnectionPoolInterface $pool       The "Library Manager" that knows how to put this connection back on
-     *                                            the shelf.
+     * @param DatabaseConnection      $databaseConnection The actual, physical connection to the database.
+     * @param ConnectionPoolInterface $connectionPool     The "Library Manager" that knows how to put this connection back on
+     *                                                    the shelf.
      */
-    public function __construct(
-        DatabaseConnection      $connection,
-        ConnectionPoolInterface $pool
-    )
+    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool)
     {
-        $this->connection = $connection;
-        $this->pool       = $pool;
     }
 
     /**
@@ -42,9 +36,10 @@ final class BorrowedConnection implements DatabaseConnection
      *
      * @throws ConnectionException If the connection was lost or closed unexpectedly.
      */
+    #[Override]
     public function getConnection() : PDO
     {
-        return $this->connection->getConnection();
+        return $this->databaseConnection->getConnection();
     }
 
     /**
@@ -52,17 +47,19 @@ final class BorrowedConnection implements DatabaseConnection
      *
      * @return bool True if it responds, false if the line is dead.
      */
+    #[Override]
     public function ping() : bool
     {
-        return $this->connection->ping();
+        return $this->databaseConnection->ping();
     }
 
     /**
      * Get the technical nickname of this connection (e.g., 'primary', 'read-only').
      */
+    #[Override]
     public function getName() : string
     {
-        return $this->connection->getName();
+        return $this->databaseConnection->getName();
     }
 
     /**
@@ -79,7 +76,7 @@ final class BorrowedConnection implements DatabaseConnection
     public function release() : void
     {
         if (! $this->released) {
-            $this->pool->release(connection: $this);
+            $this->connectionPool->release(connection: $this);
             $this->released = true;
         }
     }
@@ -93,6 +90,6 @@ final class BorrowedConnection implements DatabaseConnection
      */
     public function getOriginalConnection() : DatabaseConnection
     {
-        return $this->connection;
+        return $this->databaseConnection;
     }
 }

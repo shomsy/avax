@@ -56,10 +56,10 @@ final class BloomFilter
      * Private constructor. Use factory methods to create instances.
      */
     private function __construct(
-        int   $bitCount,
-        int   $hashCount,
+        int $bitCount,
+        int $hashCount,
         float $falsePositiveRate,
-        int   $expectedItems,
+        int $expectedItems,
     )
     {
         $this->bitCount          = $bitCount;
@@ -73,7 +73,7 @@ final class BloomFilter
      * Creates a Bloom filter with optimal bit array size and hash count
      * based on the expected number of items and desired false positive rate.
      *
-     * @param int   $expectedItems     Expected number of items to store
+     * @param int $expectedItems Expected number of items to store
      * @param float $falsePositiveRate Desired false positive rate (0.0 to 1.0, exclusive)
      */
     public static function create(int $expectedItems, float $falsePositiveRate = 0.01) : self
@@ -98,7 +98,7 @@ final class BloomFilter
     /**
      * Creates a Bloom filter with explicit size and hash count.
      *
-     * @param int $bitCount  Number of bits in the array
+     * @param int $bitCount Number of bits in the array
      * @param int $hashCount Number of hash functions
      */
     public static function withSize(int $bitCount, int $hashCount) : self

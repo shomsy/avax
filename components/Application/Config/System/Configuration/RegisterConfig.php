@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Configuration;
 
-use Avax\Components\Application\Config\System\Capabilities\ConfigLoader\PHPArrayFileLoader;
 use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
 use Avax\Components\Application\Config\System\PublicSurface\Config;
 use Avax\Components\DataStack\Data\System\PublicSurface\Data;
@@ -14,10 +13,10 @@ use Avax\Components\DataStack\Data\System\PublicSurface\Data;
  */
 final class RegisterConfig
 {
-    public function build(Data $dataFacade) : Config
+    public function build() : Config
     {
         return new Config(
-            repository: new ConfigurationRepository()
+            repository: new ConfigurationRepository(),
         );
     }
 }

@@ -60,9 +60,9 @@ final class TransactionManager
      * @throws Throwable
      */
     public function transactionWithRetry(
-        Closure             $callback,
-        IsolationLevel|null $isolationLevel = null,
-        RetryPolicy|null    $retryPolicy = null,
+        Closure        $callback,
+        IsolationLevel $isolationLevel = null,
+        RetryPolicy    $retryPolicy = null,
     ) : mixed
     {
         $policy        = $retryPolicy ?? RetryPolicy::forDeadlocks();
@@ -99,7 +99,7 @@ final class TransactionManager
      * @return T
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, IsolationLevel|null $isolationLevel = null) : mixed
+    public function transaction(Closure $callback, IsolationLevel $isolationLevel = null) : mixed
     {
         $this->begin($isolationLevel);
 
@@ -126,7 +126,7 @@ final class TransactionManager
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(IsolationLevel|null $isolationLevel = null) : void
+    public function begin(IsolationLevel $isolationLevel = null) : void
     {
         if ($this->depth === 0) {
             $this->connection->beginTransaction();

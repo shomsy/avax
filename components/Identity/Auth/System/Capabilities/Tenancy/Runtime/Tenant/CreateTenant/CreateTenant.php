@@ -47,7 +47,7 @@ final readonly class CreateTenant
             slug       : $slug,
             name       : trim(string: $data->name),
             ownerUserId: $data->ownerUserId,
-            createdAt  : $this->clock->now()
+            createdAt  : $this->clock->now(),
         );
         $this->tenantStore->saveTenant(tenant: $tenant);
         $this->tenantStore->saveMember(member: new TenantMember(
@@ -55,7 +55,7 @@ final readonly class CreateTenant
                                                    userId  : $data->ownerUserId,
                                                    role    : TenantMemberRole::OWNER,
                                                    state   : TenantMemberState::ACTIVE,
-                                                   joinedAt: $tenant->createdAt
+                                                   joinedAt: $tenant->createdAt,
                                                ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.tenant.created',
@@ -64,7 +64,7 @@ final readonly class CreateTenant
                                                            'tenant_id'     => $tenant->tenantId,
                                                            'tenant_slug'   => $tenant->slug,
                                                            'owner_user_id' => $tenant->ownerUserId,
-                                                       ]
+                                                       ],
                                        ));
 
         return $tenant;

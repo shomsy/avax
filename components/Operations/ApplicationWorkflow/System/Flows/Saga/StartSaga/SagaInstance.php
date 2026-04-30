@@ -23,36 +23,36 @@ enum SagaInstanceStatus: string
 
 final readonly class SagaInstance
 {
-    public string                 $id;
-    public string                 $definitionName;
-    public string                 $type;
-    public SagaInstanceStatus     $status;
-    public int                    $currentStepIndex;
-    public string|null            $currentStepName;
-    public array                  $data;
-    public array                  $completedSteps;
-    public array                  $stepResults;
+    public string             $id;
+    public string             $definitionName;
+    public string             $type;
+    public SagaInstanceStatus $status;
+    public int                $currentStepIndex;
+    public string|null        $currentStepName;
+    public array              $data;
+    public array              $completedSteps;
+    public array              $stepResults;
     public DateTimeImmutable|null $startedAt;
     public DateTimeImmutable|null $completedAt;
     public DateTimeImmutable|null $timeoutAt;
-    public string|null            $correlationId;
-    public string|null            $tenantId;
+    public string|null        $correlationId;
+    public string|null        $tenantId;
 
     private function __construct(
-        string                 $id,
-        string                 $definitionName,
-        string                 $type,
-        SagaInstanceStatus     $status,
-        int                    $currentStepIndex,
-        string|null            $currentStepName,
-        array                  $data,
-        array                  $completedSteps,
-        array                  $stepResults,
+        string             $id,
+        string             $definitionName,
+        string             $type,
+        SagaInstanceStatus $status,
+        int                $currentStepIndex,
+        string|null        $currentStepName,
+        array              $data,
+        array              $completedSteps,
+        array              $stepResults,
         DateTimeImmutable|null $startedAt,
         DateTimeImmutable|null $completedAt,
         DateTimeImmutable|null $timeoutAt,
-        string|null            $correlationId,
-        string|null            $tenantId
+        string|null        $correlationId,
+        string|null        $tenantId,
     )
     {
         $this->id               = $id;
@@ -79,8 +79,8 @@ final readonly class SagaInstance
         string $id,
         string $definitionName,
         string $type,
-        array  $initialData,
-        array  $options = []
+        array $initialData,
+        array $options = [],
     ) : self
     {
         if (empty(trim($id))) {
@@ -106,7 +106,7 @@ final readonly class SagaInstance
             completedAt     : null,
             timeoutAt       : $timeoutAt,
             correlationId   : $options['correlation_id'] ?? self::generateCorrelationId(),
-            tenantId        : $options['tenant_id'] ?? null
+            tenantId        : $options['tenant_id'] ?? null,
         );
     }
 
@@ -137,7 +137,7 @@ final readonly class SagaInstance
             completedAt     : isset($row['completed_at']) ? new DateTimeImmutable(datetime: $row['completed_at']) : null,
             timeoutAt       : isset($row['timeout_at']) ? new DateTimeImmutable(datetime: $row['timeout_at']) : null,
             correlationId   : $row['correlation_id'] ?? null,
-            tenantId        : $row['tenant_id'] ?? null
+            tenantId        : $row['tenant_id'] ?? null,
         );
     }
 
@@ -157,7 +157,7 @@ final readonly class SagaInstance
             completedAt     : $this->completedAt,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 
@@ -183,7 +183,7 @@ final readonly class SagaInstance
             completedAt     : $this->completedAt,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 
@@ -203,7 +203,7 @@ final readonly class SagaInstance
             completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 
@@ -226,7 +226,7 @@ final readonly class SagaInstance
             completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 
@@ -246,7 +246,7 @@ final readonly class SagaInstance
             completedAt     : new DateTimeImmutable(),
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 
@@ -266,7 +266,7 @@ final readonly class SagaInstance
             completedAt     : null,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
-            tenantId        : $this->tenantId
+            tenantId        : $this->tenantId,
         );
     }
 

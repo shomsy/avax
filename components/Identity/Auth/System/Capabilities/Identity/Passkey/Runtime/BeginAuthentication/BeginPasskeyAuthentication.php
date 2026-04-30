@@ -21,13 +21,14 @@ use SensitiveParameter;
 final readonly class BeginPasskeyAuthentication
 {
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        private PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId
+        private UserSourceInterface             $userSource,
+        private PasskeyRuntimeInterface         $runtime,
+        #[SensitiveParameter]
+        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface  $challengeStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        private string                          $rpId,
     ) {}
 
     /**
@@ -48,7 +49,7 @@ final readonly class BeginPasskeyAuthentication
                 $userId   = $user->getId()->value;
                 $allowIds = array_map(
                     callback: static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
-                    array   : $this->credentialStore->forUser(userId: $userId)
+                    array   : $this->credentialStore->forUser(userId: $userId),
                 );
             }
         }
@@ -58,19 +59,19 @@ final readonly class BeginPasskeyAuthentication
                                                  challenge  : $challenge,
                                                  purpose    : PasskeyChallengePurpose::AUTHENTICATION,
                                                  expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
-                                                 userId     : $userId
+                                                 userId     : $userId,
                                              ));
 
         $options = $this->runtime->beginAuthentication(
             rpId              : $this->rpId,
             challenge         : $challenge,
-            allowCredentialIds: $allowIds
+            allowCredentialIds: $allowIds,
         );
 
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.passkey.authentication.started',
                                            occurredAt: $this->clock->now(),
-                                           context   : ['challenge_id' => $challengeId, 'user_id' => $userId]
+                                           context   : ['challenge_id' => $challengeId, 'user_id' => $userId],
                                        ));
 
         return new PasskeyAuthenticationChallenge(challengeId: $challengeId, options: $options);

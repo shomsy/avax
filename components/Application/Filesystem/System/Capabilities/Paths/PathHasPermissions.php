@@ -12,7 +12,7 @@ class PathHasPermissions
             return false;
         }
 
-        $actualPermissions = fileperms(filename: $path) & 0777;
+        $actualPermissions = fileperms(filename: $path) & 0o777;
 
         return $actualPermissions === $permissions;
     }

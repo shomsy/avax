@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Capabilities\Writers;
@@ -14,19 +15,19 @@ final class RotatingFileWriter
     public function __construct(
         private readonly string $baseLogPath,
         private readonly string $timezone = 'UTC',
-        private readonly int $maxLogFiles = 30
+        private readonly int $maxLogFiles = 30,
     ) {}
 
     public function write(string $message, string $level = 'info', array $context = []): void
     {
-        $date = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
+        $date     = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
         $directory = dirname($this->baseLogPath);
         $filename = basename($this->baseLogPath);
 
         $filePath = "{$directory}/{$date}-{$filename}.log";
 
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        if (! is_dir($directory)) {
+            mkdir($directory, 0o755, true);
         }
 
         $timestamp = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d H:i:s');
@@ -47,7 +48,7 @@ final class RotatingFileWriter
             return;
         }
 
-        usort($files, fn($a, $b) => filemtime($a) - filemtime($b));
+        usort($files, static fn ($a, $b) => filemtime($a) - filemtime($b));
 
         while (count($files) > $this->maxLogFiles) {
             unlink((string) array_shift($files));

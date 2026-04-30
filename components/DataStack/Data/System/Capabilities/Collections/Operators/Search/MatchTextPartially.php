@@ -11,18 +11,20 @@ final readonly class MatchTextPartially
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(string $query, string|null $key = null, bool $caseSensitive = false) : array
+    public function __invoke(string $query, ?string $key = null, bool $caseSensitive = false) : array
     {
         return array_values(array_filter(
                                 $this->items,
-                                function ($item) use ($query, $key, $caseSensitive) {
+                                static function ($item) use ($query, $key, $caseSensitive) : bool {
                                     $target = $key !== null ? ($item[$key] ?? '') : $item;
-                                    if (! is_string($target)) return false;
+                                    if (! is_string($target)) {
+                                        return false;
+                                    }
 
                                     return $caseSensitive
                                         ? str_contains($target, $query)
                                         : str_contains(strtolower($target), strtolower($query));
-                                }
+                                },
                             ));
     }
 }

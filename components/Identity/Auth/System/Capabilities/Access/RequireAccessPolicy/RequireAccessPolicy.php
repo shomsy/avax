@@ -27,13 +27,15 @@ use SensitiveParameter;
 final readonly class RequireAccessPolicy
 {
     public function __construct(
-        #[SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
-        private RequireRole                                                  $requireRole,
-        private RequirePermission                                            $requirePermission,
-        private RequireResourceOwner                                         $requireResourceOwner,
-        #[SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        private RequireFreshMfa                                              $requireFreshMfa,
-        private RequireAdminElevation                                        $requireAdminElevation
+        #[SensitiveParameter]
+        private RequireAuthentication                  $requireAuthentication,
+        private RequireRole                            $requireRole,
+        private RequirePermission                      $requirePermission,
+        private RequireResourceOwner                   $requireResourceOwner,
+        #[SensitiveParameter]
+        private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
+        private RequireFreshMfa                        $requireFreshMfa,
+        private RequireAdminElevation                  $requireAdminElevation,
     ) {}
 
     /**

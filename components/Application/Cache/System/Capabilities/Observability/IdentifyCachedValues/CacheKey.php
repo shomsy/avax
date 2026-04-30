@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues;
 
+use Override;
 use Stringable;
 
 final readonly class CacheKey implements Stringable
 {
-    private const MIN_LENGTH    = 1;
-    private const MAX_LENGTH    = 256;
-    private const VALID_PATTERN = '/^[a-zA-Z0-9_\-\.:]+$/';
+    private const int MIN_LENGTH = 1;
+
+    private const int MAX_LENGTH = 256;
+
+    private const string VALID_PATTERN = '/^[a-zA-Z0-9_\-\.:]+$/';
 
     private string $normalized;
 
     public function __construct(
         public string            $original,
         public string|null       $namespace = null,
-        public CacheVersion|null $version = null
+        public CacheVersion|null $cacheVersion = null,
     )
     {
         $this->normalized = $this->normalize(key: $original);
@@ -41,26 +44,26 @@ final readonly class CacheKey implements Stringable
 
         if ($length < self::MIN_LENGTH) {
             throw new InvalidCacheKey(
-                message: sprintf('System key must be at least %d character(s)', self::MIN_LENGTH)
+                message: sprintf('System key must be at least %d character(s)', self::MIN_LENGTH),
             );
         }
 
         if ($length > self::MAX_LENGTH) {
             throw new InvalidCacheKey(
-                message: sprintf('System key must not exceed %d characters', self::MAX_LENGTH)
+                message: sprintf('System key must not exceed %d characters', self::MAX_LENGTH),
             );
         }
 
-        if (! preg_match(self::VALID_PATTERN, $key)) {
+        if (in_array(preg_match(self::VALID_PATTERN, $key), [0, false], true)) {
             throw new InvalidCacheKey(
-                message: 'System key contains invalid characters. Only alphanumeric, underscore, dash, dot, and colon are allowed'
+                message: 'System key contains invalid characters. Only alphanumeric, underscore, dash, dot, and colon are allowed',
             );
         }
     }
 
-    public static function create(string $key, string|null $namespace = null, CacheVersion|null $version = null) : self
+    public static function create(string $key, ?string $namespace = null, ?CacheVersion $cacheVersion = null) : self
     {
-        return new self(original: $key, namespace: $namespace, version: $version);
+        return new self(original: $key, namespace: $namespace, version: $cacheVersion);
     }
 
     public static function fromParts(string ...$parts) : self
@@ -75,16 +78,16 @@ final readonly class CacheKey implements Stringable
         return new self(
             original : $this->original,
             namespace: $namespace,
-            version  : $this->version
+            version  : $this->cacheVersion,
         );
     }
 
-    public function withVersion(CacheVersion $version) : self
+    public function withVersion(CacheVersion $cacheVersion) : self
     {
         return new self(
             original : $this->original,
             namespace: $this->namespace,
-            version  : $version
+            version  : $cacheVersion,
         );
     }
 
@@ -102,7 +105,7 @@ final readonly class CacheKey implements Stringable
         $escaped = str_replace(
             ['\\*', '\\?'],
             ['.*', '.'],
-            $escaped
+            $escaped,
         );
 
         return '/^' . $escaped . '$/';
@@ -118,8 +121,8 @@ final readonly class CacheKey implements Stringable
 
         $parts[] = $this->normalized;
 
-        if ($this->version !== null) {
-            $parts[] = 'v' . $this->version->toString();
+        if ($this->cacheVersion !== null) {
+            $parts[] = 'v' . $this->cacheVersion->toString();
         }
 
         return implode(separator: ':', array: $parts);
@@ -130,6 +133,7 @@ final readonly class CacheKey implements Stringable
         return $this->normalized;
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->fullKey();

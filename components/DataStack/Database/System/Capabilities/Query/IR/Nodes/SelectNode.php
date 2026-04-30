@@ -10,7 +10,7 @@ final class SelectNode
 {
     public function __construct(
         public readonly array $columns = ['*'],
-        public readonly bool  $distinct = false,
+        public readonly bool $distinct = false,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string
@@ -19,7 +19,7 @@ final class SelectNode
             ? ['*']
             : $this->columns;
 
-        $wrapped = array_map(callback: fn ($column) => $grammar->wrap(value: $column), array: $columns);
+        $wrapped = array_map(callback: static fn ($column) => $grammar->wrap(value: $column), array: $columns);
 
         return ($this->distinct ? 'SELECT DISTINCT ' : 'SELECT ') . implode(separator: ', ', array: $wrapped);
     }

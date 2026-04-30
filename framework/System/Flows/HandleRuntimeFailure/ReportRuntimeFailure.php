@@ -18,8 +18,8 @@ final readonly class ReportRuntimeFailure
 {
     public function __construct(
         private ?Logging $logger = null,
-        private ?string  $correlationId = null,
-        private ?string  $traceId = null,
+        private ?string $correlationId = null,
+        private ?string $traceId = null,
     ) {}
 
     /**
@@ -87,10 +87,10 @@ final readonly class ReportRuntimeFailure
 
         foreach ($throwable->getTrace() as $frame) {
             $trace[] = [
-                'file'     => $frame['file'] ?? '[internal]',
-                'line'     => $frame['line'] ?? 0,
+                'file' => $frame['file'] ?? '[internal]',
+                'line' => $frame['line'] ?? 0,
                 'class'    => $frame['class'] ?? null,
-                'type'     => $frame['type'] ?? null,
+                'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
             ];
         }

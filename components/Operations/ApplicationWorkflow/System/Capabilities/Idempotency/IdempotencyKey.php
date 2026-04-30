@@ -55,4 +55,3 @@ final readonly class IdempotencyKey
         return sprintf('%s:%s:%s', $this->sagaId, $this->stepName, $this->attempt);
     }
 }
-

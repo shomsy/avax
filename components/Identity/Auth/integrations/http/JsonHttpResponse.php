@@ -16,15 +16,16 @@ final readonly class JsonHttpResponse
 
     /**
      * @param array<string, mixed>|list<mixed> $body
-     * @param array<string, string>            $headers
+     * @param array<string, string> $headers
      */
     public function __construct(
-        public int                         $statusCode,
-        array|null                         $body = null,
-        #[SensitiveParameter] public array $headers = ['Content-Type' => 'application/json']
+        public int   $statusCode,
+        array        $body = null,
+        #[SensitiveParameter]
+        public array $headers = ['Content-Type' => 'application/json'],
     )
     {
-        $body       ??= [];
+        $body ??= [];
         $this->body = $body;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Validation\System\Capabilities\Execution;
@@ -15,67 +16,67 @@ final readonly class ValidateDto
 {
     public function execute(object $dto): ValidationResult
     {
-        $result = new ValidationResult();
-        $reflection = new ReflectionClass($dto);
+        $validationResult = new ValidationResult();
+        $reflectionClass  = new ReflectionClass($dto);
 
-        foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            $this->validateProperty($property, $dto, $result);
+        foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
+            $this->validateProperty($reflectionProperty, $dto, $validationResult);
         }
 
-        return $result;
+        return $validationResult;
     }
 
-    private function validateProperty(ReflectionProperty $property, object $dto, ValidationResult $result): void
+    private function validateProperty(ReflectionProperty $reflectionProperty, object $dto, ValidationResult $validationResult) : void
     {
-        $propertyName = $property->getName();
-        $value = $property->isInitialized($dto) ? $property->getValue($dto) : null;
+        $propertyName = $reflectionProperty->getName();
+        $value        = $reflectionProperty->isInitialized($dto) ? $reflectionProperty->getValue($dto) : null;
 
-        foreach ($property->getAttributes() as $attribute) {
+        foreach ($reflectionProperty->getAttributes() as $attribute) {
             $instance = $attribute->newInstance();
 
             match (true) {
-                $instance instanceof Required => $this->handleRequired($value, $propertyName, $instance->message, $result),
-                $instance instanceof Email => $this->handleEmail((string)($value ?? ''), $propertyName, $instance->message, $result),
-                $instance instanceof MinLength => $this->handleMinLength($value, $propertyName, $instance, $result),
-                $instance instanceof Min => $this->handleMin($value, $propertyName, $instance, $result),
-                $instance instanceof PasswordComplexity => $this->handlePasswordComplexity((string)($value ?? ''), $propertyName, $instance->message, $result),
-                default => null
+                $instance instanceof Required           => $this->handleRequired($value, $propertyName, $instance->message, $validationResult),
+                $instance instanceof Email              => $this->handleEmail((string) ($value ?? ''), $propertyName, $instance->message, $validationResult),
+                $instance instanceof MinLength          => $this->handleMinLength($value, $propertyName, $instance, $validationResult),
+                $instance instanceof Min                => $this->handleMin($value, $propertyName, $instance, $validationResult),
+                $instance instanceof PasswordComplexity => $this->handlePasswordComplexity((string) ($value ?? ''), $propertyName, $instance->message, $validationResult),
+                default                                 => null
             };
         }
     }
 
-    private function handleRequired(mixed $value, string $property, string $message, ValidationResult $result): void
+    private function handleRequired(mixed $value, string $property, string $message, ValidationResult $validationResult) : void
     {
         if ($value === null || $value === '') {
-            $result->addError($property, $message);
+            $validationResult->addError($property, $message);
         }
     }
 
-    private function handleEmail(string $value, string $property, string $message, ValidationResult $result): void
+    private function handleEmail(string $value, string $property, string $message, ValidationResult $validationResult) : void
     {
-        if ($value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $result->addError($property, $message);
+        if ($value !== '' && ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $validationResult->addError($property, $message);
         }
     }
 
-    private function handleMinLength(mixed $value, string $property, MinLength $attr, ValidationResult $result): void
+    private function handleMinLength(mixed $value, string $property, MinLength $minLength, ValidationResult $validationResult) : void
     {
-        if (is_string($value) && mb_strlen($value) < $attr->length) {
-            $result->addError($property, $attr->getMessage($property));
+        if (is_string($value) && mb_strlen($value) < $minLength->length) {
+            $validationResult->addError($property, $minLength->getMessage($property));
         }
     }
 
-    private function handleMin(mixed $value, string $property, Min $attr, ValidationResult $result): void
+    private function handleMin(mixed $value, string $property, Min $min, ValidationResult $validationResult) : void
     {
-        if ((is_int($value) || is_float($value)) && $value < $attr->minimum) {
-            $result->addError($property, $attr->getMessage($property));
+        if ((is_int($value) || is_float($value)) && $value < $min->minimum) {
+            $validationResult->addError($property, $min->getMessage($property));
         }
     }
 
-    private function handlePasswordComplexity(string $value, string $property, string $message, ValidationResult $result): void
+    private function handlePasswordComplexity(string $value, string $property, string $message, ValidationResult $validationResult) : void
     {
-        if ($value !== '' && (!preg_match('/[A-Z]/', $value) || !preg_match('/[a-z]/', $value) || !preg_match('/\d/', $value))) {
-            $result->addError($property, $message);
+        if ($value !== '' && (in_array(preg_match('/[A-Z]/', $value), [0, false], true) || in_array(preg_match('/[a-z]/', $value), [0, false], true) || in_array(preg_match('/\d/', $value), [0, false], true))) {
+            $validationResult->addError($property, $message);
         }
     }
 }

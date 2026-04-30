@@ -17,10 +17,11 @@ use SensitiveParameter;
 final readonly class ExchangeClientCredentials
 {
     public function __construct(
-        private OAuthClientRegistryInterface               $clientRegistry,
-        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface                          $auditLog,
-        private Clock                                      $clock
+        private OAuthClientRegistryInterface $clientRegistry,
+        #[SensitiveParameter]
+        private JwtIdentityInterface         $jwtIdentity,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
     ) {}
 
     /**
@@ -32,11 +33,13 @@ final readonly class ExchangeClientCredentials
 
         if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
             $this->recordFailure(data: $data, reason: 'client_authentication_failed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::CLIENT_CREDENTIALS) || ! $client->workloadIdentity) {
             $this->recordFailure(data: $data, reason: 'client_credentials_not_allowed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
@@ -45,16 +48,19 @@ final readonly class ExchangeClientCredentials
 
         if (! $client->allowsScopes(scopes: $scopes)) {
             $this->recordFailure(data: $data, reason: 'scope_mismatch');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if (! $client->allowsAudience(audience: $audience)) {
             $this->recordFailure(data: $data, reason: 'audience_mismatch');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if (! $client->allowsAudienceScopes(audience: $audience, scopes: $scopes)) {
             $this->recordFailure(data: $data, reason: 'scope_boundary_mismatch');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -64,6 +70,7 @@ final readonly class ExchangeClientCredentials
                 || $data->senderConstraint->type !== $client->requiredSenderConstraint
             ) {
                 $this->recordFailure(data: $data, reason: 'sender_constraint_missing_or_wrong_type');
+
                 throw OAuthTokenExchangeFailed::invalidSenderConstraint();
             }
         }
@@ -74,7 +81,7 @@ final readonly class ExchangeClientCredentials
             clientId        : $client->clientId,
             scopes          : $scopes,
             senderConstraint: $data->senderConstraint,
-            audience        : $audience
+            audience        : $audience,
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -86,7 +93,7 @@ final readonly class ExchangeClientCredentials
                                                            'audience'   => $audience,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return new OAuthTokenGrant(
@@ -101,7 +108,7 @@ final readonly class ExchangeClientCredentials
             senderConstraint    : $data->senderConstraint,
             subject             : $subject,
             audience            : $audience,
-            workloadIdentity    : true
+            workloadIdentity    : true,
         );
     }
 
@@ -116,7 +123,7 @@ final readonly class ExchangeClientCredentials
                                                            'audience'   => $this->normalizeAudience(audience: $data->audience),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
     }
 

@@ -14,8 +14,8 @@ use Avax\Components\Application\Config\System\Capabilities\Repository\Configurat
 final readonly class LoadConfiguration
 {
     public function __construct(
-        private ConfigLoaderInterface   $loader,
-        private ConfigurationRepository $repository
+        private ConfigLoaderInterface   $configLoader,
+        private ConfigurationRepository $configurationRepository,
     ) {}
 
     /**
@@ -34,8 +34,8 @@ final readonly class LoadConfiguration
 
         foreach ($paths as $namespace => $filePath) {
             if (file_exists($filePath)) {
-                $data = $this->loader->loadConfigFile($filePath);
-                $this->repository->set($namespace, $data);
+                $data = $this->configLoader->loadConfigFile($filePath);
+                $this->configurationRepository->set($namespace, $data);
             }
         }
     }

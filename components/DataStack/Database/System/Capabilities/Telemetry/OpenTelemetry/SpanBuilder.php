@@ -7,13 +7,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\OpenT
 final class SpanBuilder
 {
     public function build(
-        string      $query,
-        array|null  $bindings = null,
-        string|null $connection = null,
-        int|null    $rows = null,
-        string|null $error = null,
-        float|null  $startTime = null,
-        float|null  $endTime = null,
+        string $query,
+        array  $bindings = null,
+        string $connection = null,
+        int    $rows = null,
+        string $error = null,
+        float  $startTime = null,
+        float  $endTime = null,
     ) : QuerySpan
     {
         $bindings  ??= [];

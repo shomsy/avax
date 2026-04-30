@@ -157,28 +157,28 @@ final readonly class CapTradeoffPolicy
          * Maximum acceptable staleness in seconds.
          * For AP systems: how stale data can be before it's considered unacceptable.
          */
-        public float       $maxStalenessSeconds = 30.0,
+        public float $maxStalenessSeconds = 30.0,
 
         /**
          * Timeout for achieving consensus (in milliseconds).
          * For CP systems: how long to wait before giving up on consistency.
          */
-        public int         $consensusTimeoutMs = 5000,
+        public int   $consensusTimeoutMs = 5000,
 
         /**
          * Whether to allow reads from potentially stale replicas.
          */
-        public bool        $allowStaleReads = false,
+        public bool  $allowStaleReads = false,
 
         /**
          * Number of replicas required for a successful write.
          */
-        public int         $writeQuorum = 2,
+        public int   $writeQuorum = 2,
 
         /**
          * Number of replicas required for a successful read.
          */
-        public int         $readQuorum = 2,
+        public int   $readQuorum = 2,
     ) {}
 
     /**
@@ -205,7 +205,7 @@ final readonly class CapTradeoffPolicy
      */
     public static function highAvailability(
         float $maxStalenessSeconds = 60.0,
-        bool  $allowStaleReads = true,
+        bool $allowStaleReads = true,
     ) : self
     {
         return new self(
@@ -223,8 +223,8 @@ final readonly class CapTradeoffPolicy
      */
     public static function balanced(
         float $maxStalenessSeconds = 10.0,
-        int   $writeQuorum = 2,
-        int   $readQuorum = 2,
+        int $writeQuorum = 2,
+        int $readQuorum = 2,
     ) : self
     {
         return new self(
@@ -255,7 +255,7 @@ final readonly class CapTradeoffPolicy
             . "Max Staleness: %.1fs\n"
             . "Quorums - Write: %d, Read: %d\n"
             . "Stale Reads: %s\n"
-            . "Consensus Timeout: %dms",
+            . 'Consensus Timeout: %dms',
             $this->tradeoff->value,
             $this->tradeoff->consistencyLevel(),
             $this->tradeoff->availabilityLevel(),

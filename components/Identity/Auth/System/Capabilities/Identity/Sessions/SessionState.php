@@ -7,6 +7,6 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions;
 final readonly class SessionState
 {
     public function __construct(
-        public string $value
+        public string $value,
     ) {}
 }

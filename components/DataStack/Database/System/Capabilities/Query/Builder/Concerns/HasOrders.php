@@ -22,14 +22,14 @@ trait HasOrders
      * @param string $column The technical field name to target for descending sort.
      *
      * @return HasOrders|QueryBuilder A
-     *                                                                                                                           fresh,
-     *                                                                                                                           cloned
-     *                                                                                                                           builder
-     *                                                                                                                           instance
-     *                                                                                                                           with
-     *                                                                                                                           the
-     *                                                                                                                           descending
-     *                                                                                                                           order.
+     *                                fresh,
+     *                                cloned
+     *                                builder
+     *                                instance
+     *                                with
+     *                                the
+     *                                descending
+     *                                order.
      */
     public function orderByDesc(string $column) : self
     {
@@ -41,25 +41,25 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#orderby
      *
-     * @param string $column    The technical field name to target for sorting.
+     * @param string $column The technical field name to target for sorting.
      * @param string $direction The sorting orientation ('ASC' or 'DESC').
      *
      * @return HasOrders|QueryBuilder A
-     *                                                                                                                           fresh,
-     *                                                                                                                           cloned
-     *                                                                                                                           builder
-     *                                                                                                                           instance
-     *                                                                                                                           with
-     *                                                                                                                           the
-     *                                                                                                                           applied
-     *                                                                                                                           order.
+     *                                fresh,
+     *                                cloned
+     *                                builder
+     *                                instance
+     *                                with
+     *                                the
+     *                                applied
+     *                                order.
      */
     public function orderBy(string $column, string $direction = 'ASC') : self
     {
         $clone        = clone $this;
         $clone->state = $clone->state->addOrder(order: new OrderNode(
                                                            column   : $column,
-                                                           direction: strtoupper(string: $direction)
+                                                           direction: strtoupper(string: $direction),
                                                        ));
 
         return $clone;
@@ -71,21 +71,21 @@ trait HasOrders
      * @see /docs/Foundation/Database/DSL/Ordering.md#inrandomorder
      *
      * @return HasOrders|QueryBuilder A
-     *                                                                                                                           fresh,
-     *                                                                                                                           cloned
-     *                                                                                                                           builder
-     *                                                                                                                           instance
-     *                                                                                                                           with
-     *                                                                                                                           random
-     *                                                                                                                           ordering
-     *                                                                                                                           active.
+     *                                fresh,
+     *                                cloned
+     *                                builder
+     *                                instance
+     *                                with
+     *                                random
+     *                                ordering
+     *                                active.
      */
     public function inRandomOrder() : self
     {
         $clone        = clone $this;
         $clone->state = $clone->state->addOrder(order: new OrderNode(
                                                            sql : $this->grammar->compileRandomOrder(),
-                                                           type: 'Raw'
+                                                           type: 'Raw',
                                                        ));
 
         return $clone;
@@ -99,14 +99,14 @@ trait HasOrders
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
      * @return HasOrders|QueryBuilder A
-     *                                                                                                                           fresh,
-     *                                                                                                                           cloned
-     *                                                                                                                           builder
-     *                                                                                                                           instance
-     *                                                                                                                           sorted
-     *                                                                                                                           by
-     *                                                                                                                           newest
-     *                                                                                                                           first.
+     *                                fresh,
+     *                                cloned
+     *                                builder
+     *                                instance
+     *                                sorted
+     *                                by
+     *                                newest
+     *                                first.
      */
     public function latest(string $column = 'created_at') : self
     {
@@ -121,14 +121,14 @@ trait HasOrders
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
      * @return HasOrders|QueryBuilder A
-     *                                                                                                                           fresh,
-     *                                                                                                                           cloned
-     *                                                                                                                           builder
-     *                                                                                                                           instance
-     *                                                                                                                           sorted
-     *                                                                                                                           by
-     *                                                                                                                           oldest
-     *                                                                                                                           first.
+     *                                fresh,
+     *                                cloned
+     *                                builder
+     *                                instance
+     *                                sorted
+     *                                by
+     *                                oldest
+     *                                first.
      */
     public function oldest(string $column = 'created_at') : self
     {

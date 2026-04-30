@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Files;
 
+use GuzzleHttp\Psr7\Utils;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use RuntimeException;
 
 final class UploadedFile implements UploadedFileInterface
 {
@@ -14,12 +16,12 @@ final class UploadedFile implements UploadedFileInterface
         private int $error,
         private ?string $clientFilename = null,
         private ?string $clientMediaType = null,
-        private bool $moved = false
+        private bool $moved = false,
     ) {}
 
-    public function getStream(): \Psr\Http\Message\StreamInterface
+    public function getStream(): StreamInterface
     {
-        return \GuzzleHttp\Psr7\Utils::streamFor(fopen($this->file, 'r'));
+        return Utils::streamFor(fopen($this->file, 'r'));
     }
 
     public function moveTo($targetPath): void
@@ -29,8 +31,23 @@ final class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function getSize(): ?int { return $this->size; }
-    public function getError(): int { return $this->error; }
-    public function getClientFilename(): ?string { return $this->clientFilename; }
-    public function getClientMediaType(): ?string { return $this->clientMediaType; }
+    public function getSize() : ?int
+    {
+        return $this->size;
+    }
+
+    public function getError() : int
+    {
+        return $this->error;
+    }
+
+    public function getClientFilename() : ?string
+    {
+        return $this->clientFilename;
+    }
+
+    public function getClientMediaType() : ?string
+    {
+        return $this->clientMediaType;
+    }
 }

@@ -9,9 +9,12 @@ use SensitiveParameter;
 final readonly class BeginEmailChangeData
 {
     public function __construct(
-        #[SensitiveParameter] public string      $newEmail,
-        #[SensitiveParameter] public string      $currentPassword,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
+        #[SensitiveParameter]
+        public string      $newEmail,
+        #[SensitiveParameter]
+        public string      $currentPassword,
+        #[SensitiveParameter]
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

@@ -54,55 +54,66 @@ final readonly class CreateContainerConfig
     public const string DIAGNOSTICS_MODE_DETAILED = 'detailed';
 
     public const string DIAGNOSTICS_MODE_CI = 'ci';
-    public string $asyncTarget;
     public string $sliceBoundaryMode;
-    public array  $policyProfiles;
+
+    public array $policyProfiles;
+
     public string $policyFailMode;
+
     public string $policyProfile;
+
     public string $pruneMode;
+
     public string $executionMode;
+
     public string $diagnosticsMode;
+
     public string $compileMode;
-    public bool   $strict;
-    public array  $settings;
-    public bool   $debug;
+
+    public bool $strict;
+
+    public array $settings;
+
+    public bool $debug;
+
     public string $cacheVersion;
+
     public string $cacheDir;
 
     /**
      * @param array<string, mixed> $settings
      */
     public function __construct(
-        string|null $cacheDir = null,
-        string|null $cacheVersion = null,
-        bool|null   $debug = null,
-        array|null  $settings = null,
-        bool|null   $strict = null,
-        string|null $compileMode = null,
-        string|null $diagnosticsMode = null,
-        string|null $executionMode = null,
-        string|null $pruneMode = null,
-        string|null $policyProfile = null,
-        string|null $policyFailMode = null,
+        ?string       $cacheDir = null,
+        ?string       $cacheVersion = null,
+        ?bool         $debug = null,
+        ?array        $settings = null,
+        ?bool         $strict = null,
+        ?string       $compileMode = null,
+        ?string       $diagnosticsMode = null,
+        ?string       $executionMode = null,
+        ?string       $pruneMode = null,
+        ?string       $policyProfile = null,
+        ?string       $policyFailMode = null,
         /** @var array<string, string> */
-        array|null  $policyProfiles = null,
-        string|null $sliceBoundaryMode = null,
-        string      $asyncTarget = self::ASYNC_TARGET_FPM
+        ?array        $policyProfiles = null,
+        ?string       $sliceBoundaryMode = null,
+        public string $asyncTarget = self::ASYNC_TARGET_FPM,
     )
     {
-        $cacheDir                ??= '';
-        $cacheVersion            ??= 'container-v1';
-        $debug                   ??= false;
-        $settings                ??= [];
-        $strict                  ??= false;
-        $compileMode             ??= self::COMPILE_MODE_PRODUCTION;
-        $diagnosticsMode         ??= self::DIAGNOSTICS_MODE_MINIMAL;
-        $executionMode           ??= self::EXECUTION_MODE_COMPILED;
-        $pruneMode               ??= self::PRUNE_MODE_NONE;
-        $policyProfile           ??= self::POLICY_PROFILE_BALANCED;
-        $policyFailMode          ??= self::POLICY_FAIL_MODE_CLOSED;
-        $policyProfiles          ??= [];
-        $sliceBoundaryMode       ??= self::SLICE_BOUNDARY_MODE_STRICT;
+        $cacheDir          ??= '';
+        $cacheVersion      ??= 'container-v1';
+        $debug             ??= false;
+        $settings          ??= [];
+        $strict            ??= false;
+        $compileMode       ??= self::COMPILE_MODE_PRODUCTION;
+        $diagnosticsMode   ??= self::DIAGNOSTICS_MODE_MINIMAL;
+        $executionMode     ??= self::EXECUTION_MODE_COMPILED;
+        $pruneMode         ??= self::PRUNE_MODE_NONE;
+        $policyProfile     ??= self::POLICY_PROFILE_BALANCED;
+        $policyFailMode    ??= self::POLICY_FAIL_MODE_CLOSED;
+        $policyProfiles    ??= [];
+        $sliceBoundaryMode ??= self::SLICE_BOUNDARY_MODE_STRICT;
         $this->cacheDir          = $cacheDir;
         $this->cacheVersion      = $cacheVersion;
         $this->debug             = $debug;
@@ -116,27 +127,26 @@ final readonly class CreateContainerConfig
         $this->policyFailMode    = $policyFailMode;
         $this->policyProfiles    = $policyProfiles;
         $this->sliceBoundaryMode = $sliceBoundaryMode;
-        $this->asyncTarget       = $asyncTarget;
     }
 
     /**
      * @param array<string, mixed> $settings
      */
     public static function create(
-        string|null $cacheDir = null,
-        string|null $cacheVersion = null,
-        bool|null   $debug = null,
-        array|null  $settings = null,
-        bool|null   $strict = null,
-        string|null $compileMode = null,
-        string|null $diagnosticsMode = null,
-        string|null $executionMode = null,
-        string|null $pruneMode = null,
-        string|null $policyProfile = null,
-        string|null $policyFailMode = null,
-        array|null  $policyProfiles = null,
-        string|null $sliceBoundaryMode = null,
-        string      $asyncTarget = self::ASYNC_TARGET_FPM
+        ?string $cacheDir = null,
+        ?string $cacheVersion = null,
+        ?bool   $debug = null,
+        ?array  $settings = null,
+        ?bool   $strict = null,
+        ?string $compileMode = null,
+        ?string $diagnosticsMode = null,
+        ?string $executionMode = null,
+        ?string $pruneMode = null,
+        ?string $policyProfile = null,
+        ?string $policyFailMode = null,
+        ?array  $policyProfiles = null,
+        ?string $sliceBoundaryMode = null,
+        string  $asyncTarget = self::ASYNC_TARGET_FPM,
     ) : self
     {
         $cacheDir          ??= '';
@@ -167,7 +177,7 @@ final readonly class CreateContainerConfig
             policyFailMode   : self::normalizePolicyFailMode(mode: $policyFailMode),
             policyProfiles   : self::normalizePolicyProfiles(profiles: $policyProfiles),
             sliceBoundaryMode: self::normalizeSliceBoundaryMode(mode: $sliceBoundaryMode),
-            asyncTarget      : self::normalizeAsyncTarget(target: $asyncTarget)
+            asyncTarget      : self::normalizeAsyncTarget(target: $asyncTarget),
         );
     }
 
@@ -231,8 +241,6 @@ final readonly class CreateContainerConfig
     }
 
     /**
-     * @param mixed $profiles
-     *
      * @return array<string, string>
      */
     private static function normalizePolicyProfiles(mixed $profiles) : array
@@ -244,10 +252,12 @@ final readonly class CreateContainerConfig
         $normalized = [];
 
         foreach ($profiles as $environment => $profile) {
-            if (! is_string(value: $environment) || ! is_string(value: $profile)) {
+            if (! is_string(value: $environment)) {
                 continue;
             }
-
+            if (! is_string(value: $profile)) {
+                continue;
+            }
             $environment = trim(string: $environment);
             if ($environment === '') {
                 continue;
@@ -326,7 +336,7 @@ final readonly class CreateContainerConfig
                                    : $this->sliceBoundaryMode,
             asyncTarget      : isset($overrides['asyncTarget'])
                                    ? self::normalizeAsyncTarget(target: (string) $overrides['asyncTarget'])
-                                   : $this->asyncTarget
+                                   : $this->asyncTarget,
         );
     }
 
@@ -471,7 +481,7 @@ final readonly class CreateContainerConfig
         return $this->debug || in_array(
                 needle  : $this->compileMode,
                 haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
-                strict  : true
+                strict  : true,
             );
     }
 
@@ -485,7 +495,7 @@ final readonly class CreateContainerConfig
         return $this->strict || in_array(
                 needle  : $this->compileMode,
                 haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
-                strict  : true
+                strict  : true,
             );
     }
 
@@ -494,7 +504,7 @@ final readonly class CreateContainerConfig
         return $this->strict || in_array(
                 needle  : $this->compileMode,
                 haystack: [self::COMPILE_MODE_CI, self::COMPILE_MODE_PRODUCTION, self::COMPILE_MODE_WARMUP],
-                strict  : true
+                strict  : true,
             );
     }
 

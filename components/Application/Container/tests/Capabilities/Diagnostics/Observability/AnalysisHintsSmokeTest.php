@@ -11,7 +11,7 @@ $outputDir = sys_get_temp_dir() . '/container-analysis-hints-' . uniqid(prefix: 
 $result = shell_exec(
     command: 'php ' . escapeshellarg(arg: $tool)
              . ' ' . escapeshellarg(arg: $fixture)
-             . ' ' . escapeshellarg(arg: $outputDir)
+             . ' ' . escapeshellarg(arg: $outputDir),
 );
 
 $jsonPath = $outputDir . '/container-static-hints.json';
@@ -29,7 +29,7 @@ assertTrue(condition: in_array(needle: 'HintIdentityService', haystack: $payload
 assertSame(expected: ['capability.identity'], actual: $payload['sliceImports']['flow.hints'] ?? [], message: 'Hint payloads should include slice imports.');
 assertTrue(
     condition: in_array(needle: HintIdentityService::class, haystack: $payload['sliceExports']['capability.identity'] ?? [], strict: true),
-    message  : 'Hint payloads should include stable exported service ids for the owning slice.'
+    message  : 'Hint payloads should include stable exported service ids for the owning slice.',
 );
 assertSame(expected: [HintPipelineStepA::class, HintPipelineStepB::class], actual: $payload['groups']['hint.pipeline'] ?? [], message: 'Hint payloads should include grouped bindings.');
 assertSame(expected: ['token'], actual: $payload['runtimeInputs'][HintRuntimeInputConsumer::class] ?? [], message: 'Hint payloads should include runtime input requirements.');

@@ -12,19 +12,19 @@ final readonly class ValidateCompiledCachePayload
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(
-                reason: sprintf('Compiled cache "%s" returned a closure which is not allowed', $name)
+                reason: sprintf('Compiled cache "%s" returned a closure which is not allowed', $name),
             );
         }
 
         if (is_resource($payload)) {
             throw new CompiledCachePayloadWasInvalid(
-                reason: sprintf('Compiled cache "%s" returned a resource which is not allowed', $name)
+                reason: sprintf('Compiled cache "%s" returned a resource which is not allowed', $name),
             );
         }
 
-        if (is_object($payload) && ! $this->isExportableObject(object: $payload)) {
+        if (is_object($payload) && ! $this->isExportableObject()) {
             throw new CompiledCachePayloadWasInvalid(
-                reason: sprintf('Compiled cache "%s" returned an unsupported object type: %s', $name, get_class($payload))
+                reason: sprintf('Compiled cache "%s" returned an unsupported object type: %s', $name, $payload::class),
             );
         }
 
@@ -33,11 +33,11 @@ final readonly class ValidateCompiledCachePayload
         }
 
         throw new CompiledCachePayloadWasInvalid(
-            reason: sprintf('Compiled cache "%s" returned unsupported type: %s', $name, gettype($payload))
+            reason: sprintf('Compiled cache "%s" returned unsupported type: %s', $name, gettype($payload)),
         );
     }
 
-    private function isExportableObject(mixed $object) : bool
+    private function isExportableObject() : bool
     {
         return false;
     }

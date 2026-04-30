@@ -19,16 +19,21 @@ use SensitiveParameter;
 final readonly class ConfirmEmailChange
 {
     public function __construct(
-        private ProvisionableUserSourceInterface                           $userSource,
-        #[SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
-        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                                          $auditLog,
-        private Clock                                                      $clock,
-        #[SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
-        private IdentityInterface                                          $identity,
-        #[SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
+        private ProvisionableUserSourceInterface     $userSource,
+        #[SensitiveParameter]
+        private EmailChangeStoreInterface            $emailChangeStore,
+        #[SensitiveParameter]
+        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                    $auditLog,
+        private Clock                                $clock,
+        #[SensitiveParameter]
+        private CurrentAuthentication                $currentAuthentication,
+        private IdentityInterface                    $identity,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null        $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null      $mfaChallengeStore = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null      $refreshTokenStore = null,
     ) {}
 
     /**
@@ -47,7 +52,7 @@ final readonly class ConfirmEmailChange
                                                                'reason'     => 'invalid_token',
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             throw EmailChangeFailed::invalidToken();
@@ -80,7 +85,7 @@ final readonly class ConfirmEmailChange
                                                            'new_email'  => $record->newEmail,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return true;

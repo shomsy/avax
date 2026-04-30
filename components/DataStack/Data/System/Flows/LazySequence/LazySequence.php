@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Data\System\Flows\LazySequence;
 use Avax\Components\DataStack\Data\Collections\Sequence\Sequence;
 use Closure;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -15,14 +16,14 @@ use Traversable;
 final readonly class LazySequence implements IteratorAggregate
 {
     /**
-     * @param Closure(): iterable<mixed>         $factory
+     * @param Closure(): iterable<mixed>        $factory
      * @param array<int, callable(mixed): mixed> $maps
-     * @param array<int, callable(mixed): bool>  $filters
+     * @param array<int, callable(mixed): bool> $filters
      */
     private function __construct(
-        private Closure  $factory,
-        private array    $maps = [],
-        private array    $filters = [],
+        private Closure $factory,
+        private array   $maps = [],
+        private array   $filters = [],
         private int|null $limit = null,
     ) {}
 
@@ -73,6 +74,7 @@ final readonly class LazySequence implements IteratorAggregate
         return iterator_to_array($this->getIterator(), false);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         $count = 0;
@@ -83,6 +85,7 @@ final readonly class LazySequence implements IteratorAggregate
             foreach ($this->filters as $filter) {
                 if (! $filter($item)) {
                     $keep = false;
+
                     break;
                 }
             }

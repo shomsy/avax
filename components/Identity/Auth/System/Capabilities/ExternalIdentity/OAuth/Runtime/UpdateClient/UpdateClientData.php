@@ -28,43 +28,45 @@ final readonly class UpdateClientData
     public array $allowedScopes;
 
     /**
-     * @param list<string>                $redirectUris
-     * @param list<string>                $allowedScopes
-     * @param list<string>                $allowedAudiences
-     * @param list<OAuthGrantType>        $allowedGrantTypes
+     * @param list<string>         $redirectUris
+     * @param list<string>         $allowedScopes
+     * @param list<string>         $allowedAudiences
+     * @param list<OAuthGrantType> $allowedGrantTypes
      * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
-        public string                                                  $clientId,
-        public string                                                  $name,
-        public OAuthClientType                                         $type,
-        public array                                                   $redirectUris,
-        public string|null                                             $tenantSlug = null,
-        array|null                                                     $allowedScopes = null,
-        array|null                                                     $allowedAudiences = null,
-        array|null                                                     $allowedGrantTypes = null,
-        array|null                                                     $audienceScopeBoundaries = null,
-        #[SensitiveParameter] public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        public OAuthSenderConstraintType|null                          $requiredSenderConstraint = null,
-        bool|null                                                      $workloadIdentity = null,
-        bool|null                                                      $phishingResistantRequired = null,
-        bool|null                                                      $requestObjectSignatureRequired = null,
-        bool|null                                                      $frontChannelLogoutSupported = null,
-        bool|null                                                      $backChannelLogoutSupported = null,
-        bool|null                                                      $approvalRequired = null,
-        #[SensitiveParameter] public string|null                       $requestObjectVerificationKeyPem = null
+        public string                            $clientId,
+        public string                            $name,
+        public OAuthClientType                   $type,
+        public array                             $redirectUris,
+        public string|null                       $tenantSlug = null,
+        array                                    $allowedScopes = null,
+        array                                    $allowedAudiences = null,
+        array                                    $allowedGrantTypes = null,
+        array                                    $audienceScopeBoundaries = null,
+        #[SensitiveParameter]
+        public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
+        public OAuthSenderConstraintType|null    $requiredSenderConstraint = null,
+        bool                                     $workloadIdentity = null,
+        bool                                     $phishingResistantRequired = null,
+        bool                                     $requestObjectSignatureRequired = null,
+        bool                                     $frontChannelLogoutSupported = null,
+        bool                                     $backChannelLogoutSupported = null,
+        bool                                     $approvalRequired = null,
+        #[SensitiveParameter]
+        public string|null                       $requestObjectVerificationKeyPem = null,
     )
     {
-        $allowedScopes                        ??= [];
-        $allowedAudiences                     ??= [];
-        $allowedGrantTypes                    ??= [];
-        $audienceScopeBoundaries              ??= [];
-        $workloadIdentity                     ??= false;
-        $phishingResistantRequired            ??= false;
-        $requestObjectSignatureRequired       ??= false;
-        $frontChannelLogoutSupported          ??= false;
-        $backChannelLogoutSupported           ??= false;
-        $approvalRequired                     ??= false;
+        $allowedScopes                  ??= [];
+        $allowedAudiences               ??= [];
+        $allowedGrantTypes              ??= [];
+        $audienceScopeBoundaries        ??= [];
+        $workloadIdentity               ??= false;
+        $phishingResistantRequired      ??= false;
+        $requestObjectSignatureRequired ??= false;
+        $frontChannelLogoutSupported    ??= false;
+        $backChannelLogoutSupported     ??= false;
+        $approvalRequired               ??= false;
         $this->allowedScopes                  = $allowedScopes;
         $this->allowedAudiences               = $allowedAudiences;
         $this->allowedGrantTypes              = $allowedGrantTypes;

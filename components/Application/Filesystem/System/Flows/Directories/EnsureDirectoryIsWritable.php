@@ -21,7 +21,7 @@ final class EnsureDirectoryIsWritable
             return true;
         }
 
-        if (! $this->disk->setPermissions(path: $path, permissions: 0755)) {
+        if (! $this->disk->setPermissions(path: $path, permissions: 0o755)) {
             return false;
         }
 

@@ -16,7 +16,7 @@ final readonly class TotpVerification
         return new self(
             accepted: true,
             reason  : 'accepted',
-            timeStep: $timeStep
+            timeStep: $timeStep,
         );
     }
 
@@ -24,7 +24,7 @@ final readonly class TotpVerification
     {
         return new self(
             accepted: false,
-            reason  : $reason
+            reason  : $reason,
         );
     }
 }

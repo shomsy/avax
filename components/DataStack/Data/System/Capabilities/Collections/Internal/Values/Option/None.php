@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Values\Option;
 
+use Override;
 use RuntimeException;
 
 /**
@@ -23,11 +24,13 @@ final class None extends Option
         return self::$instance ??= new self();
     }
 
+    #[Override]
     public function isSome() : bool
     {
         return false;
     }
 
+    #[Override]
     public function unwrap() : mixed
     {
         throw new RuntimeException('Cannot unwrap none value.');

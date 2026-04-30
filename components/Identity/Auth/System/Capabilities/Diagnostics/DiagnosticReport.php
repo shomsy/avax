@@ -10,6 +10,6 @@ final readonly class DiagnosticReport
      * @param array<string, mixed> $details
      */
     public function __construct(
-        public array $details = []
+        public array $details = [],
     ) {}
 }

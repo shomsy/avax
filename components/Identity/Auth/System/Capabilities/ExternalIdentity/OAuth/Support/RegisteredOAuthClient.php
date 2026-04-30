@@ -12,7 +12,8 @@ use SensitiveParameter;
 final readonly class RegisteredOAuthClient
 {
     public function __construct(
-        public OAuthClient                       $client,
-        #[SensitiveParameter] public string|null $plainTextSecret = null
+        public OAuthClient $client,
+        #[SensitiveParameter]
+        public string|null $plainTextSecret = null,
     ) {}
 }

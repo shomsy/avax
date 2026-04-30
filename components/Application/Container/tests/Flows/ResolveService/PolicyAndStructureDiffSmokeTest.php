@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\ContainerInterface;
@@ -19,25 +19,15 @@ final class PolicyDependencyE {}
 
 final class PolicyDependencyF {}
 
-final class OverInjectedPolicyService
+final readonly class OverInjectedPolicyService
 {
-    public function __construct(
-        PolicyDependencyA $a,
-        PolicyDependencyB $b,
-        PolicyDependencyC $c,
-        PolicyDependencyD $d,
-        PolicyDependencyE $e,
-        PolicyDependencyF $f
-    ) {}
 }
 
 final class OtherFlowLocal {}
 
 final class FlowToFlowEntry
 {
-    public OtherFlowLocal $local;
-
-    public function __construct(OtherFlowLocal $local) { $this->local = $local; }
+    public function __construct(public OtherFlowLocal $otherFlowLocal) {}
 }
 
 final class GenericHelperService {}
@@ -48,7 +38,10 @@ final class LocatorDriftService
 {
     public ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container) { $this->container = $container; }
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 }
 
 $cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
@@ -113,11 +106,11 @@ assertTrue(condition: in_array(needle: 'POL-005', haystack: $genericCodes, stric
 assertTrue(condition: in_array(needle: 'POL-008', haystack: $locatorCodes, strict: true), message: 'Policy diagnostics should flag service locator drift.');
 assertTrue(
     condition: ($serviceGraph['structureDiff']['ownership']['changed'] ?? false) === true,
-    message  : 'Structure diff diagnostics should detect ownership changes after compilation.'
+    message  : 'Structure diff diagnostics should detect ownership changes after compilation.',
 );
 assertTrue(
     condition: str_contains(haystack: $issues, needle: 'POL-004'),
-    message  : 'Validation should surface policy errors for direct flow-to-flow dependencies.'
+    message  : 'Validation should surface policy errors for direct flow-to-flow dependencies.',
 );
 
 rmdir(directory: $cacheDir);

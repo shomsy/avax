@@ -12,7 +12,7 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaSt
 final readonly class ResumeSaga
 {
     public function __construct(
-        private StoreSagaState $storeSagaState
+        private StoreSagaState $storeSagaState,
     ) {}
 
     public function findRecoverable() : array
@@ -22,26 +22,26 @@ final readonly class ResumeSaga
 
     public function resume(
         SagaInstance   $failedInstance,
-        SagaDefinition $definition
+        SagaDefinition $definition,
     ) : SagaInstance
     {
         if ($failedInstance->status !== SagaInstanceStatus::FAILED) {
             throw new SagaRecoveryFailure(
-                message: sprintf('Saga %s is not failed, cannot resume.', $failedInstance->id)
+                message: sprintf('Saga %s is not failed, cannot resume.', $failedInstance->id),
             );
         }
 
         $failedStep = $failedInstance->currentStepName;
         if ($failedStep === null) {
             throw new SagaRecoveryFailure(
-                message: sprintf('Cannot determine failed step for saga %s.', $failedInstance->id)
+                message: sprintf('Cannot determine failed step for saga %s.', $failedInstance->id),
             );
         }
 
         $stepDef = $definition->getStep(name: $failedStep);
         if ($stepDef === null) {
             throw new SagaRecoveryFailure(
-                message: sprintf('Step %s not found in definition.', $failedStep)
+                message: sprintf('Step %s not found in definition.', $failedStep),
             );
         }
 
@@ -58,18 +58,18 @@ final readonly class ResumeSaga
 
 final readonly class SagaRecoveryPlan
 {
-    public string      $sagaId;
+    public string $sagaId;
     public string|null $failedStep;
-    public int         $attemptNumber;
-    public array       $recoverySteps;
-    public bool        $isRecoverable;
+    public int    $attemptNumber;
+    public array  $recoverySteps;
+    public bool   $isRecoverable;
 
     private function __construct(
-        string      $sagaId,
+        string $sagaId,
         string|null $failedStep,
-        int         $attemptNumber,
-        array       $recoverySteps,
-        bool        $isRecoverable
+        int    $attemptNumber,
+        array  $recoverySteps,
+        bool   $isRecoverable,
     )
     {
         $this->sagaId        = $sagaId;
@@ -80,9 +80,9 @@ final readonly class SagaRecoveryPlan
     }
 
     public static function create(
-        string      $sagaId,
+        string $sagaId,
         string|null $failedStep,
-        int         $attemptNumber
+        int    $attemptNumber,
     ) : self
     {
         return new self(
@@ -90,7 +90,7 @@ final readonly class SagaRecoveryPlan
             failedStep   : $failedStep,
             attemptNumber: $attemptNumber,
             recoverySteps: [],
-            isRecoverable: $failedStep !== null && $attemptNumber < 3
+            isRecoverable: $failedStep !== null && $attemptNumber < 3,
         );
     }
 

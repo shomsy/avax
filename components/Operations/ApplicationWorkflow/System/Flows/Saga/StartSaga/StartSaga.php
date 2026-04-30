@@ -16,14 +16,14 @@ use Random\RandomException;
 final readonly class StartSaga
 {
     public function __construct(
-        private StoreSagaState         $storeSagaState,
+        private StoreSagaState $storeSagaState,
         private ProtectSagaIdempotency $protectSagaIdempotency,
-        private InspectSaga            $inspectSaga
+        private InspectSaga    $inspectSaga,
     ) {}
 
     public function startWithIdempotency(
         SagaDefinition   $definition,
-        SagaStartCommand $command
+        SagaStartCommand $command,
     ) : SagaInstance
     {
         if ($command->idempotencyKey !== null) {
@@ -38,7 +38,7 @@ final readonly class StartSaga
         if ($command->idempotencyKey !== null) {
             $this->protectSagaIdempotency->record(
                 key   : $command->idempotencyKey,
-                result: SagaCommandResult::success(sagaId: $instance->id, output: $instance->toArray())
+                result: SagaCommandResult::success(sagaId: $instance->id, output: $instance->toArray()),
             );
         }
 
@@ -46,14 +46,14 @@ final readonly class StartSaga
     }
 
     public function start(
-        SagaDefinition   $definition,
+        SagaDefinition $definition,
         SagaStartCommand $command,
-        callable         $correlationIdGenerator = null
+        callable       $correlationIdGenerator = null,
     ) : SagaInstance
     {
         if (! $definition->isValid()) {
             throw new SagaStartFailure(
-                message: sprintf('Saga definition %s is invalid: %s', $definition->name, implode(', ', $definition->getValidationErrors()))
+                message: sprintf('Saga definition %s is invalid: %s', $definition->name, implode(', ', $definition->getValidationErrors())),
             );
         }
 
@@ -62,7 +62,7 @@ final readonly class StartSaga
             throw new SagaStartFailure(message: 'Saga has no steps to execute.');
         }
 
-        $id            = $command->sagaId ?? ($correlationIdGenerator ?? 'default')();
+        $id = $command->sagaId ?? ($correlationIdGenerator ?? 'default')();
         $correlationId = $command->correlationId ?? $this->createCorrelationId();
 
         $instance = SagaInstance::create(
@@ -74,7 +74,7 @@ final readonly class StartSaga
                                 'correlation_id'  => $correlationId,
                                 'tenant_id'       => $command->tenantId,
                                 'timeout_seconds' => $definition->timeoutSeconds,
-                            ]
+                            ],
         );
 
         $instance = $instance->start(firstStepName: $firstStep->name);
@@ -82,7 +82,7 @@ final readonly class StartSaga
         $this->storeSagaState->save(instance: $instance);
 
         $this->inspectSaga->record(
-            event: SagaRuntimeEvent::started(sagaId: $id, sagaName: $definition->name)
+            event: SagaRuntimeEvent::started(sagaId: $id, sagaName: $definition->name),
         );
 
         return $instance;
@@ -100,8 +100,8 @@ final readonly class StartSaga
 final readonly class SagaStartCommand
 {
     public string|null $sagaId;
-    public string      $definitionName;
-    public array       $initialData;
+    public string $definitionName;
+    public array  $initialData;
     public string|null $correlationId;
     public string|null $tenantId;
     public string|null $idempotencyKey;
@@ -112,7 +112,7 @@ final readonly class SagaStartCommand
         array       $initialData,
         string|null $correlationId,
         string|null $tenantId,
-        string|null $idempotencyKey
+        string|null $idempotencyKey,
     )
     {
         $this->sagaId         = $sagaId;
@@ -124,9 +124,9 @@ final readonly class SagaStartCommand
     }
 
     public static function create(
-        string     $definitionName,
-        array|null $initialData = null,
-        array      $options = []
+        string $definitionName,
+        array  $initialData = null,
+        array  $options = [],
     ) : self
     {
         $initialData ??= [];
@@ -140,7 +140,7 @@ final readonly class SagaStartCommand
             initialData   : $initialData,
             correlationId : $options['correlation_id'] ?? null,
             tenantId      : $options['tenant_id'] ?? null,
-            idempotencyKey: $options['idempotency_key'] ?? null
+            idempotencyKey: $options['idempotency_key'] ?? null,
         );
     }
 
@@ -152,18 +152,18 @@ final readonly class SagaStartCommand
             initialData   : $this->initialData,
             correlationId : $this->correlationId,
             tenantId      : $this->tenantId,
-            idempotencyKey: $this->idempotencyKey
+            idempotencyKey: $this->idempotencyKey,
         );
     }
 }
 
 final readonly class SagaCorrelationId
 {
-    public string      $value;
+    public string $value;
     public string|null $prefix;
     public string|null $suffix;
 
-    private function __construct(string $value, string|null $prefix = null, string|null $suffix = null)
+    private function __construct(string $value, string $prefix = null, string $suffix = null)
     {
         $this->value  = $value;
         $this->prefix = $prefix;
@@ -182,7 +182,7 @@ final readonly class SagaCorrelationId
             '%s%s%s',
             $prefix ?? '',
             date('YmdHis'),
-            bin2hex(random_bytes(6))
+            bin2hex(random_bytes(6)),
         );
         if ($suffix !== null) {
             $value .= "_{$suffix}";

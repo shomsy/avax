@@ -25,17 +25,19 @@ final readonly class HttpAuthenticationInput
      * @param array<string, mixed> $server
      */
     public function __construct(
-        #[SensitiveParameter] array|null         $headers = null,
-        array|null                               $cookies = null,
-        array|null                               $server = null,
-        bool|null                                $allowSession = null,
-        #[SensitiveParameter] public string|null $sessionCookieName = null
+        #[SensitiveParameter]
+        array              $headers = null,
+        array              $cookies = null,
+        array              $server = null,
+        bool               $allowSession = null,
+        #[SensitiveParameter]
+        public string|null $sessionCookieName = null,
     )
     {
-        $headers            ??= [];
-        $cookies            ??= [];
-        $server             ??= [];
-        $allowSession       ??= true;
+        $headers      ??= [];
+        $cookies      ??= [];
+        $server       ??= [];
+        $allowSession ??= true;
         $this->headers      = $headers;
         $this->cookies      = $cookies;
         $this->server       = $server;

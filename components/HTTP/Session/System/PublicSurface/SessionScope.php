@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\PublicSurface;
@@ -12,8 +13,8 @@ use Avax\Components\HTTP\Session\System\Capabilities\Storage\SessionStoreInterfa
 final class SessionScope
 {
     private bool $started = false;
-    private string $id = '';
-    private array $data = [];
+    private string $id   = '';
+    private array  $data = [];
 
     public function __construct(
         private readonly SessionStoreInterface $store,
@@ -26,12 +27,12 @@ final class SessionScope
         }
 
         if (session_status() === PHP_SESSION_NONE) {
-            if (!session_start()) {
+            if (! session_start()) {
                 return false;
             }
         }
 
-        $this->id = session_id() ?: '';
+        $this->id   = session_id() ?: '';
         $this->data = $this->store->read($this->id);
         $this->started = true;
 
@@ -91,7 +92,7 @@ final class SessionScope
 
     public function regenerate(bool $destroy = false): bool
     {
-        if (!$this->started) {
+        if (! $this->started) {
             return false;
         }
 

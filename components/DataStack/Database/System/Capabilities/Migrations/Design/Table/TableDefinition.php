@@ -11,8 +11,6 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\Desi
  */
 final readonly class TableDefinition
 {
-    public string $name;
-
     /**
      * Constructor promoting the immutable table name via PHP 8.3 features.
      *
@@ -20,10 +18,7 @@ final readonly class TableDefinition
      *
      * @param string $name Technical table identifier
      */
-    public function __construct(
-        string $name
-    )
+    public function __construct(public string $name)
     {
-        $this->name = $name;
     }
 }

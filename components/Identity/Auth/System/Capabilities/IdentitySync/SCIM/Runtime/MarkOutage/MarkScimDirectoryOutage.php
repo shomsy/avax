@@ -32,7 +32,7 @@ final readonly class MarkScimDirectoryOutage
                                                            'directory_id' => $marked->directoryId,
                                                            'tenant'       => $marked->tenantSlug,
                                                            'reason'       => $marked->outageReason,
-                                                       ]
+                                                       ],
                                        ));
 
         return $marked;

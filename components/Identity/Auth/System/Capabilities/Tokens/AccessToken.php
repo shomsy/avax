@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Tokens;
+
+use DateTimeImmutable;
 
 /**
  * AccessToken - Value object for an access token.
@@ -11,6 +14,7 @@ final readonly class AccessToken
 {
     public function __construct(
         public string $value,
-        public \DateTimeImmutable $expiresAt
-    ) {}
+        public DateTimeImmutable $expiresAt,
+    ) {
+    }
 }

@@ -32,6 +32,7 @@ final class ToPlural
         if (preg_match('/[sxz]$|sh$|ch$/i', $value)) {
             return $value . 'es';
         }
+
         if (preg_match('/([^aeiou])y$/i', $value)) {
             return substr($value, 0, -1) . 'ies';
         }

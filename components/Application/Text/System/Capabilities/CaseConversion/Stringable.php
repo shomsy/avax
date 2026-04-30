@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Text\System\Capabilities\CaseConversion;
 
+use Override;
+
 /**
  * Fluent string wrapper providing method chaining for string operations.
  */
-final class Stringable
+final readonly class Stringable implements \Stringable
 {
-    private string $value;
-
-    public function __construct(string $value = '')
+    public function __construct(private string $value = '')
     {
-        $this->value = $value;
     }
 
     public static function of(string $value) : self
@@ -21,6 +20,7 @@ final class Stringable
         return new self($value);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->value;
@@ -152,7 +152,7 @@ final class Stringable
         return new self(
             $length !== null
                 ? mb_substr($this->value, $start, $length, 'UTF-8')
-                : mb_substr($this->value, $start, null, 'UTF-8')
+                : mb_substr($this->value, $start, null, 'UTF-8'),
         );
     }
 

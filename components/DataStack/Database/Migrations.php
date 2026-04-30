@@ -28,7 +28,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function runner(string|null $connectionName = null) : MigrationRunner
+    public function runner(string $connectionName = null) : MigrationRunner
     {
         return $this->migrations->runner(connectionName: $connectionName);
     }
@@ -37,7 +37,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function rollbacker(string|null $connectionName = null) : RollbackMigrations
+    public function rollbacker(string $connectionName = null) : RollbackMigrations
     {
         return $this->migrations->rollbacker(connectionName: $connectionName);
     }
@@ -46,7 +46,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function status(string|null $connectionName = null) : ReadMigrationStatus
+    public function status(string $connectionName = null) : ReadMigrationStatus
     {
         return $this->migrations->status(connectionName: $connectionName);
     }
@@ -60,7 +60,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function exporter(string|null $connectionName = null) : DatabaseExporter
+    public function exporter(string $connectionName = null) : DatabaseExporter
     {
         return $this->migrations->exporter(connectionName: $connectionName);
     }
@@ -68,7 +68,7 @@ final readonly class Migrations
     /**
      * @throws Throwable
      */
-    public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
+    public function seed(Seeder|string $seeder, string $connectionName = null) : void
     {
         $this->migrations->seed(seeder: $seeder, connectionName: $connectionName);
     }

@@ -111,11 +111,11 @@ final class Saga
     /**
      * Add a step to the saga definition.
      *
-     * @param string       $name         The step name
-     * @param Closure      $action       The action to execute
+     * @param string  $name   The step name
+     * @param Closure $action The action to execute
      * @param Closure|null $compensation The compensation to run on failure
      */
-    public function step(string $name, Closure $action, ?Closure $compensation = null) : self
+    public function step(string $name, Closure $action, Closure $compensation = null) : self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -352,11 +352,11 @@ final class Saga
 final readonly class SagaResult
 {
     public function __construct(
-        public bool    $success,
-        public string  $sagaId,
-        public array   $data,
-        public array   $completedSteps,
-        public array   $stepResults,
+        public bool   $success,
+        public string $sagaId,
+        public array  $data,
+        public array  $completedSteps,
+        public array  $stepResults,
         public ?string $failureReason = null,
     ) {}
 

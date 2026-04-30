@@ -8,39 +8,35 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
 
 final readonly class ServiceBlueprint
 {
-    public string           $fingerprint;
-    public bool             $shared;
-    public array            $injectableMethods;
-    public array            $injectableProperties;
-    public ResolvePlan|null $constructor;
-    public bool             $instantiable;
-    public string           $class;
+    public bool $shared;
+
+    public array $injectableMethods;
+
+    public array $injectableProperties;
+    public bool  $instantiable;
 
     /**
      * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
-     * @param list<array{name: string, plan: ResolvePlan}>                      $injectableMethods
+     * @param list<array{name: string, plan: ResolvePlan}> $injectableMethods
      */
     public function __construct(
-        string           $class,
-        bool|null        $instantiable = null,
-        ResolvePlan|null $constructor = null,
-        array|null       $injectableProperties = null,
-        array|null       $injectableMethods = null,
-        bool|null        $shared = null,
-        string           $fingerprint = ''
+        public string           $class,
+        ?bool                   $instantiable = null,
+        public ResolvePlan|null $resolvePlan = null,
+        ?array                  $injectableProperties = null,
+        ?array                  $injectableMethods = null,
+        ?bool                   $shared = null,
+        public string           $fingerprint = '',
     )
     {
-        $instantiable               ??= false;
-        $injectableProperties       ??= [];
-        $injectableMethods          ??= [];
-        $shared                     ??= false;
-        $this->class                = $class;
+        $instantiable         ??= false;
+        $injectableProperties ??= [];
+        $injectableMethods    ??= [];
+        $shared               ??= false;
         $this->instantiable         = $instantiable;
-        $this->constructor          = $constructor;
         $this->injectableProperties = $injectableProperties;
         $this->injectableMethods    = $injectableMethods;
         $this->shared               = $shared;
-        $this->fingerprint          = $fingerprint;
     }
 
     public static function __set_state(array $state) : self
@@ -52,7 +48,7 @@ final readonly class ServiceBlueprint
             injectableProperties: $state['injectableProperties'] ?? [],
             injectableMethods   : $state['injectableMethods'] ?? [],
             shared              : $state['shared'] ?? false,
-            fingerprint         : $state['fingerprint'] ?? ''
+            fingerprint         : $state['fingerprint'] ?? '',
         );
     }
 }

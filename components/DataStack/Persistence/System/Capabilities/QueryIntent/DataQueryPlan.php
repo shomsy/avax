@@ -13,15 +13,15 @@ final readonly class DataQueryPlan
 {
     /**
      * @param array<string, mixed> $bindings
-     * @param array<string>        $indexesUsed
-     * @param array<string>        $suggestions
+     * @param array<string> $indexesUsed
+     * @param array<string> $suggestions
      */
     public function __construct(
         public string|null $sql = null,
-        public array       $bindings = [],
-        public float|null  $estimatedCost = null,
-        public array       $indexesUsed = [],
-        private array      $suggestions = [],
+        public array      $bindings = [],
+        public float|null $estimatedCost = null,
+        public array      $indexesUsed = [],
+        private array     $suggestions = [],
     ) {}
 
     /**

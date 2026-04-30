@@ -12,13 +12,13 @@ use Throwable;
  */
 final readonly class TruncateTable
 {
-    public function __construct(private QueryBuilder $builder) {}
+    public function __construct(private QueryBuilder $queryBuilder) {}
 
     /**
      * @throws Throwable
      */
     public function named(string $table) : void
     {
-        $this->builder->truncate(table: $table);
+        $this->queryBuilder->truncate(table: $table);
     }
 }

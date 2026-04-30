@@ -15,10 +15,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetim
 final class CreateServiceBlueprintSmokeTest
 {
     #[Inject]
-    public stdClass          $property;
+    public stdClass $property;
     public DateTimeImmutable $createdAt;
 
-    public function __construct(DateTimeImmutable $createdAt) { $this->createdAt = $createdAt; }
+    public function __construct(DateTimeImmutable $createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
 
     #[Inject]
     protected function wire(DateTimeImmutable $clock) : void {}
@@ -28,13 +31,13 @@ $cacheDir = sys_get_temp_dir() . '/container-blueprint-' . uniqid();
 $version  = 'blueprint-smoke';
 $factory  = new CreateServiceBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
-    dependencies: new ResolveDependencies()
+    dependencies: new ResolveDependencies(),
 );
 $first    = $factory->createFor(class: BlueprintTarget::class);
 $second   = $factory->createFor(class: BlueprintTarget::class);
 $reloaded = new CreateServiceBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
-    dependencies: new ResolveDependencies()
+    dependencies: new ResolveDependencies(),
 )->createFor(class: BlueprintTarget::class);
 
 assertTrue(condition: $first->shared, message: 'Singleton attribute should mark a blueprint as shared.');

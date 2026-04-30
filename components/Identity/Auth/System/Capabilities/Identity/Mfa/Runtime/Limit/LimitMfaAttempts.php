@@ -16,12 +16,12 @@ final readonly class LimitMfaAttempts
 
     public function __construct(
         private AttemptLimitStorageInterface $storage,
-        private Clock                        $clock,
-        int|null                             $maxAttempts = null,
-        private int                          $decaySeconds = 300
+        private Clock $clock,
+        int           $maxAttempts = null,
+        private int   $decaySeconds = 300,
     )
     {
-        $maxAttempts       ??= 5;
+        $maxAttempts ??= 5;
         $this->maxAttempts = $maxAttempts;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');

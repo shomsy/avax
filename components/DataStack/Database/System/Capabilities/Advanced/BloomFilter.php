@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Advanced;
@@ -16,6 +17,7 @@ final class BloomFilter
     public function contains(string $key): bool
     {
         $hash = crc32($key) % 1000;
+
         return isset($this->bitset[$hash]);
     }
 }

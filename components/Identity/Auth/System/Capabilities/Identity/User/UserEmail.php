@@ -14,7 +14,7 @@ use Stringable;
 final readonly class UserEmail implements Stringable
 {
     public function __construct(
-        public string $value
+        public string $value,
     )
     {
         if (! (new ValidateEmail())->execute(email: $this->value)) {

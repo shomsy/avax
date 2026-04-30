@@ -13,13 +13,13 @@ final readonly class SagaState
      * @param list<string> $completedStepNames
      */
     public function __construct(
-        public string      $instanceId,
-        public string      $definitionName,
-        public string      $correlationId,
+        public string $instanceId,
+        public string $definitionName,
+        public string $correlationId,
         public string|null $currentStepName,
-        public string      $status = 'started',
-        public array       $completedStepNames = [],
-        public int         $version = 0
+        public string $status = 'started',
+        public array  $completedStepNames = [],
+        public int    $version = 0,
     ) {}
 
     public function recordCompletedStep(string $stepName, string|null $nextStepName) : self
@@ -31,7 +31,7 @@ final readonly class SagaState
             currentStepName   : $nextStepName,
             status            : $nextStepName === null ? 'completed' : 'running',
             completedStepNames: [...$this->completedStepNames, $stepName],
-            version           : $this->version + 1
+            version           : $this->version + 1,
         );
     }
 
@@ -44,7 +44,7 @@ final readonly class SagaState
             currentStepName   : $this->currentStepName,
             status            : 'failed',
             completedStepNames: $this->completedStepNames,
-            version           : $this->version + 1
+            version           : $this->version + 1,
         );
     }
 }

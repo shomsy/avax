@@ -5,21 +5,23 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
+use Override;
+use Stringable;
 
 /**
  * Value object representing a cache node in a distributed cache cluster.
  */
-final readonly class CacheNode
+final readonly class CacheNode implements Stringable
 {
-    public const DEFAULT_VIRTUAL_NODES = 150;
+    public const int DEFAULT_VIRTUAL_NODES = 150;
 
     public function __construct(
         public string $id,
         public string $host,
         public int $port,
         public int             $weight = 100,
-        public CacheNodeStatus $status = CacheNodeStatus::HEALTHY,
-        public int|null        $virtualNodeCount = null
+        public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
+        public int|null        $virtualNodeCount = null,
     ) {}
 
     /**
@@ -30,8 +32,8 @@ final readonly class CacheNode
         string          $host,
         int             $port,
         int             $weight = 100,
-        CacheNodeStatus $status = CacheNodeStatus::HEALTHY,
-        int|null        $virtualNodeCount = null
+        CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
+        ?int            $virtualNodeCount = null,
     ) : self
     {
         return new self(
@@ -39,8 +41,8 @@ final readonly class CacheNode
             host            : $host,
             port            : $port,
             weight          : $weight,
-            status          : $status,
-            virtualNodeCount: $virtualNodeCount
+            status          : $cacheNodeStatus,
+            virtualNodeCount: $virtualNodeCount,
         );
     }
 
@@ -64,7 +66,7 @@ final readonly class CacheNode
      */
     public function isAvailable() : bool
     {
-        return $this->status->isAvailable();
+        return $this->cacheNodeStatus->isAvailable();
     }
 
     /**
@@ -78,15 +80,15 @@ final readonly class CacheNode
     /**
      * Create a copy of this node with a different status.
      */
-    public function withStatus(CacheNodeStatus $status) : self
+    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
     {
         return new self(
             id              : $this->id,
             host            : $this->host,
             port            : $this->port,
             weight          : $this->weight,
-            status          : $status,
-            virtualNodeCount: $this->virtualNodeCount
+            status          : $cacheNodeStatus,
+            virtualNodeCount: $this->virtualNodeCount,
         );
     }
 
@@ -100,8 +102,8 @@ final readonly class CacheNode
             host            : $this->host,
             port            : $this->port,
             weight          : $weight,
-            status          : $this->status,
-            virtualNodeCount: $this->virtualNodeCount
+            status          : $this->cacheNodeStatus,
+            virtualNodeCount: $this->virtualNodeCount,
         );
     }
 
@@ -124,7 +126,7 @@ final readonly class CacheNode
             'host'             => $this->host,
             'port'             => $this->port,
             'weight'           => $this->weight,
-            'status'           => $this->status->value,
+            'status' => $this->cacheNodeStatus->value,
             'virtualNodeCount' => $this->virtualNodeCount(),
         ];
     }
@@ -153,10 +155,11 @@ final readonly class CacheNode
             port            : $data['port'],
             weight          : $data['weight'] ?? 100,
             status          : $status,
-            virtualNodeCount: $data['virtualNodeCount'] ?? null
+            virtualNodeCount: $data['virtualNodeCount'] ?? null,
         );
     }
 
+    #[Override]
     public function __toString() : string
     {
         return sprintf(
@@ -165,7 +168,7 @@ final readonly class CacheNode
             $this->host,
             $this->port,
             $this->weight,
-            $this->status->value
+            $this->cacheNodeStatus->value,
         );
     }
 }

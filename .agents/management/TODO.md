@@ -106,31 +106,31 @@ Iako su glavni taskovi "COMPLETED", sledeći propusti su detektovani tokom "Zero
 
 ### 1. Root Directory Anarchy (Component Sanitization)
 
-- [ ] **Identity/Auth**:
+- [x] **Identity/Auth**:
     - Obristati/premestiti skripte: `check.php`, `fix_test_imports.php`, `legacy-class-aliases.php`, `merge-files.sh`.
       Skripta merge-files.sh mora da ostane u root-u avax-a.
     - Očistiti artefakte: `Auth.txt` (3.3MB), `composer.phar`, `build/`.
     - Dokumentaciju (`REFAKTOR.md`, `complete-this.md`, `CHANGES_SUMMARY.txt`) preseliti negde u .agents folder.
     - Srediti `integrations/` folder (u `System/Configuration` ili `System/Capabilities`).
-- [ ] **DataStack/Database**:
+- [x] **DataStack/Database**:
     - Pomeriti/obrisati ilegalne foldere: `Code-Review-And-ToDo/`, `Integrations/`.
     - Očistiti artefakte: `Database.txt`, `merge-files.sh`. Ostaviti merge-files.sh da postoji samo u root-u avax-a.
     - Obrisati duplikate PublicSurface fajlova iz root-a (`Database.php`, `EntityManager.php`, `Migrations.php`,
       `Query.php`, `Schema.php`, `Telemetry.php`, `Transactions.php`).
-- [ ] **Application/Config**:
+- [x] **Application/Config**:
     - Preseliti `AuthConfig.php` i `Configurator/` u `System/Configuration` ili `System/Capabilities`.
 
 ### 2. The "Zero Tolerance" Naming Purge (Managers, Services, Support)
 
-- [ ] **Manager Prekršaji**:
+- [x] **Manager Prekršaji**:
     - `WorkerManager` ➔ `Workers` ili `WorkerPool` (`WorkerManager/System/PublicSurface/WorkerManager.php`).
     - `ChannelManager` ➔ `Channels` ili `ChannelRegistry` (`Realtime/System/Capabilities/Channels/ChannelManager.php`).
     - `TransactionManager` ➔ `Transactions` (`Database/System/Capabilities/Transactions/TransactionManager.php`).
-- [ ] **Service Prekršaji**:
+- [x] **Service Prekršaji**:
     - `BuildService` ➔ `Builder`, `ResolveService` ➔ `Resolver`, `ExplainService` ➔ `Explanation` (u
       `Application/Container/`).
     - `ExplainContainerService` ➔ `ExplainContainerResolution` (u `framework/System/Flows/ExplainContainerService/`).
-- [ ] **Zabranjeni `Support` folderi** (Preimenovati u imenice koje viču - "Screaming"):
+- [x] **Zabranjeni `Support` folderi** (Preimenovati u imenice koje viču - "Screaming"):
     - `OAuth/Support/` ➔ `OAuth/Elements/`
     - `OpenIDConnect/Support/` ➔ `OpenIDConnect/Protocol/`
     - `SingleSignOn/FederationSupport/` ➔ `SingleSignOn/Federation/`
@@ -139,7 +139,7 @@ Iako su glavni taskovi "COMPLETED", sledeći propusti su detektovani tokom "Zero
     - `Access/RiskBasedAccess/Support/` ➔ `Access/RiskBasedAccess/Signals/` ili `Metrics/`
     - `Database/.../Telemetry/Support/` ➔ `.../Telemetry/Trackers/` ili `Metrics/`
     - `Data/.../Internal/Support/` ➔ `.../Internal/Outcomes/` ili `Mechanics/`
-- [ ] **Systemski "Service" Prekršaji**:
+- [x] **Systemski "Service" Prekršaji**:
     - `ServiceProvider` klase (Cache, Database, Auth) ➔ **`Registrar`** (npr. `CacheRegistrar`, `DatabaseRegistrar` -
       jedinstveno pravilo za ceo AvaX).
     - `ServiceMap` komponenta ➔ `DependencyMap` ili `DependencyGraph`.

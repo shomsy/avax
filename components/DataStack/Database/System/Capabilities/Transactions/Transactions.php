@@ -13,7 +13,7 @@ use Throwable;
  * Manages database transactions with isolation level support,
  * begin/commit/rollback, and nested transaction support via savepoints.
  */
-final class TransactionManager
+final class Transactions
 {
     /**
      * @var DatabaseConnection

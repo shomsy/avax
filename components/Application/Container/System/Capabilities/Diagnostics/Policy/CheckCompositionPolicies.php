@@ -6,15 +6,15 @@ namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\ContainerSettings;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistryContract;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationCategory;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationMetadata;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationVisibility;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\LifetimePlan;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
@@ -37,8 +37,8 @@ final readonly class CheckCompositionPolicies
     public function check(
         array            $graph,
         array            $dependents,
-        ServiceRegistry  $registrations,
-        CreateServiceBlueprint $blueprints,
+        DependencyRegistry        $registrations,
+        CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
     ) : array
     {
@@ -113,8 +113,8 @@ final readonly class CheckCompositionPolicies
                     PsrContainerInterface::class,
                     ContainerInterface::class,
                     Container::class,
-                    ServiceResolver::class,
-                    ServiceRegistryInterface::class,
+                    ResolveDependency::class,
+                    DependencyRegistryContract::class,
                 ],           strict: true)) {
                     $findings[$serviceId][] = $this->finding(
                         policy  : $policy,

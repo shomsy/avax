@@ -10,8 +10,8 @@ use Avax\HTTP\Router\RouterInterface;
 use Avax\Tests\TestCase;
 use components\Container\Core\AppFactory;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
-use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
-use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareBaseRegisterDependency;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterBaseRegisterDependency;
 use components\HTTP\Request\Request;
 use LogicException;
 use Override;
@@ -73,7 +73,7 @@ final class RegisterBindingsTest extends TestCase
     protected function setUp() : void
     {
         $this->app = AppFactory::http(
-            providers: [MiddlewareServiceProvider::class, RouterServiceProvider::class],
+            providers: [MiddlewareBaseRegisterDependency::class, RouterBaseRegisterDependency::class],
             routes   : $this->createRoutesFile(),
             cacheDir : sys_get_temp_dir(),
             debug    : true

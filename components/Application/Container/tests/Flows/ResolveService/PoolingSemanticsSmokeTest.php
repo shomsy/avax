@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDeferredDependency;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 
 interface PoolingContract
@@ -66,7 +66,7 @@ final readonly class DeferredPoolingService implements DeferredPoolingContract
     }
 }
 
-final readonly class DeferredPoolingProvider implements DeferredProviderInterface
+final readonly class DeferredPoolingProvider implements RegisterDeferredDependency
 {
     public function __construct(private ContainerInterface $container) {}
 

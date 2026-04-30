@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Configuration;
 
-use Avax\Components\Application\Container\System\Capabilities\Providers\ServiceProvider;
+use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
@@ -26,7 +26,7 @@ use ReflectionException;
 /**
  * Optional Avax Container adapter for assembling the auth kernel.
  */
-final class AuthRegistrar extends ServiceProvider
+final class RegisterAuthDependencies extends BaseRegisterDependency
 {
     #[Override]
     public function register() : void
@@ -69,7 +69,7 @@ final class AuthRegistrar extends ServiceProvider
 
                 if ($sessionIdentity === null && $jwtIdentity === null) {
                     throw ConfigurationException::missingIdentityBackend(
-                        buildPath: 'AuthRegistrar::registerIdentity()',
+                        buildPath: 'RegisterAuthDependencies::registerIdentity()',
                         hint     : 'Provide a SessionIdentityInterface or JwtIdentityInterface binding.',
                     );
                 }

@@ -12,9 +12,9 @@ use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfigur
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
-use Avax\Components\Application\Container\Providers\ServiceProvider;
+use Avax\Components\Application\Container\Providers\BaseRegisterDependency;
 
-final class CacheServiceProvider extends ServiceProvider
+final class RegisterCacheDependencies extends BaseRegisterDependency
 {
     private array $namedCaches = [];
 

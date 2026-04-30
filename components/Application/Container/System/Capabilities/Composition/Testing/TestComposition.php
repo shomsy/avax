@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Testing;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\Flows\CreateContainer\CreateContainer;
 
@@ -41,7 +41,7 @@ final readonly class TestComposition
         mixed  $concrete = null,
         bool|null $entry = null,
         array  $imports = [],
-    ) : ServiceRegistration
+    ) : DependencyRegistration
     {
         $entry ??= false;
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
@@ -64,7 +64,7 @@ final readonly class TestComposition
         string $abstract,
         mixed $concrete = null,
         bool  $exported = true,
-    ) : ServiceRegistration
+    ) : DependencyRegistration
     {
         $registration = $this->container->singleton(abstract: $abstract, concrete: $concrete)
             ->asCapability(ownerSlice: $slice)
@@ -83,7 +83,7 @@ final readonly class TestComposition
         string $abstract,
         mixed $concrete = null,
         bool  $exported = false,
-    ) : ServiceRegistration
+    ) : DependencyRegistration
     {
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asCapability(ownerSlice: $slice)
@@ -97,7 +97,7 @@ final readonly class TestComposition
         return $registration;
     }
 
-    public function bindConfiguration(string $slice, string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function bindConfiguration(string $slice, string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asConfiguration(ownerSlice: $slice)
@@ -105,7 +105,7 @@ final readonly class TestComposition
             ->provenance(provenance: 'TestComposition');
     }
 
-    public function bindFoundation(string $slice, string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function bindFoundation(string $slice, string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asFoundation(ownerSlice: $slice)
@@ -113,7 +113,7 @@ final readonly class TestComposition
             ->provenance(provenance: 'TestComposition');
     }
 
-    public function override(string $abstract, mixed $concrete, string $source = 'test-double') : ServiceRegistration
+    public function override(string $abstract, mixed $concrete, string $source = 'test-double') : DependencyRegistration
     {
         return $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->overrideSource(source: $source)

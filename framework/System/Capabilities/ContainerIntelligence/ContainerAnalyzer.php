@@ -18,7 +18,7 @@ final readonly class ContainerAnalyzer
     /**
      * Explain why a service exists, how it's built, and whether it's worker-safe.
      */
-    public function why(string $id) : ContainerServiceExplanation
+    public function why(string $id) : ContainerDependencyExplanation
     {
         $whyData     = $this->container->why($id);
         $serviceDesc = $this->container->describeService($id);
@@ -31,7 +31,7 @@ final readonly class ContainerAnalyzer
 
         $workerSafe = $this->assessWorkerSafety($scope, $isShared, $dependencies);
 
-        return new ContainerServiceExplanation(
+        return new ContainerDependencyExplanation(
             serviceId   : $id,
             scope       : $scope,
             isShared    : $isShared,

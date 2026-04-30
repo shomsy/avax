@@ -6,7 +6,7 @@ require_once dirname(path: __DIR__, 4) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependency;
 
 interface CallArgumentGreeterContract
 {
@@ -33,7 +33,7 @@ final class CallArgumentTarget
 $container = makeTestContainer();
 $container->bind(abstract: CallArgumentGreeterContract::class, concrete: CallArgumentGreeter::class);
 
-$resolver   = $container->get(id: ServiceResolver::class);
+$resolver = $container->get(id: ResolveDependency::class);
 $arguments  = new ResolveCallArguments(dependencies: new ResolveDependencies());
 $reflection = new ReflectionMethod(objectOrMethod: CallArgumentTarget::class, method: 'handle');
 $resolved   = $arguments->resolve(

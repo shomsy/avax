@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistryContract;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
+use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\DependencyNotFoundException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 /**
  * Stable public surface for the container component.
  */
-interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInterface
+interface ContainerInterface extends PsrContainerInterface, DependencyRegistryContract
 {
     /**
      * Builds one object with optional constructor overrides.
@@ -29,7 +29,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * @param array<string, mixed> $parameters
      *
      * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @throws DependencyNotFoundException
      */
     public function make(string $abstract, array $parameters = []) : object;
 
@@ -46,7 +46,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * @param array<string, mixed> $parameters
      *
      * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @throws DependencyNotFoundException
      */
     public function call(callable|string $callable, array $parameters = []) : mixed;
 
@@ -54,7 +54,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * Applies property and method injection to one existing object.
      *
      * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @throws DependencyNotFoundException
      */
     public function injectInto(object $target) : object;
 
@@ -83,7 +83,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     public function reset() : void;
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      *
      * @throws InvalidArgumentException
      * @throws ContainerException
@@ -263,7 +263,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * Resolves every service carrying one tag.
      *
      * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @throws DependencyNotFoundException
      */
     public function tagged(string $tag) : array;
 
@@ -271,7 +271,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * Resolves every service in one ordered group.
      *
      * @throws ContainerException
-     * @throws ServiceNotFoundException
+     * @throws DependencyNotFoundException
      */
     public function grouped(string $group) : array;
 

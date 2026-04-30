@@ -19,7 +19,7 @@ interface RepositoryGeneratorInterface
     public function create(string $tableName, string $entity) : void;
 }
 
-interface ServiceGeneratorInterface
+interface CapabilityGeneratorInterface
 {
     public function create(string $name) : void;
 }

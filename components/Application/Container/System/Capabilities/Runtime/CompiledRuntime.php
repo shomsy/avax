@@ -8,10 +8,10 @@ use Avax\Components\Application\Container\System\Capabilities\Composition\Compil
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use JsonException;
 use ReflectionException;
 
@@ -100,7 +100,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function isCompiled(ServiceRegistry $registrations, string $serviceId) : bool
+    public function isCompiled(DependencyRegistry $registrations, string $serviceId) : bool
     {
         $this->refresh(registrations: $registrations, serviceId: $serviceId);
 
@@ -111,7 +111,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function refresh(ServiceRegistry $registrations, string|null $serviceId = null) : void
+    public function refresh(DependencyRegistry $registrations, string|null $serviceId = null) : void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             $this->inliner->detach();
@@ -178,7 +178,7 @@ final class CompiledRuntime
     /**
      * @return array<string, mixed>
      */
-    public function state(ServiceRegistry $registrations, string $serviceId) : array
+    public function state(DependencyRegistry $registrations, string $serviceId) : array
     {
         $this->refresh(registrations: $registrations, serviceId: $serviceId);
         $report   = $this->compiler?->report(serviceIds: [$serviceId]);
@@ -208,7 +208,7 @@ final class CompiledRuntime
     /**
      * @return array{useCompiled: bool, decision: string, reason: string}
      */
-    public function decision(ServiceRegistry $registrations, ResolveRequest $request) : array
+    public function decision(DependencyRegistry $registrations, ResolveRequest $request) : array
     {
         $this->refresh(registrations: $registrations, serviceId: $request->serviceId);
         $report = $this->compiler?->report(serviceIds: [$request->serviceId]);
@@ -280,7 +280,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function shouldUse(ServiceRegistry $registrations, ResolveRequest $request) : bool
+    public function shouldUse(DependencyRegistry $registrations, ResolveRequest $request) : bool
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             return false;
@@ -303,7 +303,7 @@ final class CompiledRuntime
             ) === null;
     }
 
-    public function resolve(ServiceResolver $resolver, ResolveRequest $request) : mixed
+    public function resolve(ResolveDependency $resolver, ResolveRequest $request) : mixed
     {
         $this->metrics?->increment(name: 'container_compiled_container_resolve_total');
 

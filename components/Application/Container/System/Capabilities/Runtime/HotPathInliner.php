@@ -6,8 +6,8 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use Closure;
 
 /**
@@ -17,7 +17,7 @@ final class HotPathInliner
 {
     private CompiledContainer|null $compiledContainer = null;
 
-    /** @var array<string, Closure(ServiceResolver, ResolveRequest, array) : mixed> */
+    /** @var array<string, Closure(ResolveDependency, ResolveRequest, array) : mixed> */
     private array $calls = [];
 
     /**
@@ -85,7 +85,7 @@ final class HotPathInliner
      *
      * @throws ContainerException
      */
-    public function resolve(string $serviceId, ServiceResolver $serviceResolver, ResolveRequest $resolveRequest) : mixed
+    public function resolve(string $serviceId, ResolveDependency $serviceResolver, ResolveRequest $resolveRequest) : mixed
     {
         if ($this->compiledContainer === null) {
             throw new ContainerException(message: 'HotPathInliner has no compiled runtime attached.');

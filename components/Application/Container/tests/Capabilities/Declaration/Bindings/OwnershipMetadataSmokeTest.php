@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DependencyRegistry;
 
-$registry = new ServiceRegistry();
+$registry = new DependencyRegistry();
 
 $registry->bind(abstract: 'payments.gateway', concrete: DateTimeImmutable::class)
     ->asCapability(ownerSlice: 'capability.payments')

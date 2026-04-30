@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\Policy;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
 use ReflectionException;
 
@@ -17,8 +17,8 @@ final readonly class GovernComposition
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
-     * @param ServiceRegistry        $registrations
-     * @param CreateServiceBlueprint $blueprints
+     * @param DependencyRegistry        $registrations
+     * @param CreateDependencyBlueprint $blueprints
      * @param ResolutionPolicy       $policy
      * @param string                 $environment
      *
@@ -36,8 +36,8 @@ final readonly class GovernComposition
     public function report(
         array            $graph,
         array            $dependents,
-        ServiceRegistry  $registrations,
-        CreateServiceBlueprint $blueprints,
+        DependencyRegistry        $registrations,
+        CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
         string           $environment = '',
     ) : array

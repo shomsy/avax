@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Methods;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\ServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\DependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use Closure;
 
 /**
@@ -30,9 +30,9 @@ final class InjectMethods
      */
     public function inject(
         object           $target,
-        ServiceBlueprint $serviceBlueprint,
+        DependencyBlueprint $serviceBlueprint,
         array            $overrides,
-        ServiceResolver  $serviceResolver,
+        ResolveDependency   $serviceResolver,
         ResolveRequest   $resolveRequest,
     ) : void
     {

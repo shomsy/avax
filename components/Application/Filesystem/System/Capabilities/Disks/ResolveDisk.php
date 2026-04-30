@@ -17,12 +17,12 @@ final readonly class ResolveDisk
     {
         $name       ??= $this->filesystemConfig->default;
         $diskConfig = $this->filesystemConfig->disk(name: $name)
-            ?? throw new UnsupportedDiskDriver(driver: $name);
+            ?? throw new InvalidDiskDriver(driver: $name);
         $driver     = $diskConfig['driver'] ?? $name;
 
         return match ($driver) {
             'local' => new LocalDisk(),
-            default => throw new UnsupportedDiskDriver(driver: $driver),
+            default => throw new InvalidDiskDriver(driver: $driver),
         };
     }
 }

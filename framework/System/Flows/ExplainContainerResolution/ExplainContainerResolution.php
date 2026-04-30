@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Flows\ExplainContainerService;
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerAnalyzer;
-use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerServiceExplanation;
+use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerDependencyExplanation;
 
 final readonly class ExplainContainerService
 {
@@ -14,7 +14,7 @@ final readonly class ExplainContainerService
         private ContainerInterface $container,
     ) {}
 
-    public static function printExplanation(ContainerServiceExplanation $explanation) : void
+    public static function printExplanation(ContainerDependencyExplanation $explanation) : void
     {
         echo "\033[33mService: {$explanation->serviceId}\033[0m\n";
         echo sprintf("  Scope: %s\n", $explanation->scope);
@@ -33,7 +33,7 @@ final readonly class ExplainContainerService
         echo "\n";
     }
 
-    public function explain(string $id) : ContainerServiceExplanation
+    public function explain(string $id) : ContainerDependencyExplanation
     {
         $analyzer = new ContainerAnalyzer($this->container);
 

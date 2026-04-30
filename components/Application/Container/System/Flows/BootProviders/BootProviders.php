@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Flows\BootProviders;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ProviderBootPlan;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use InvalidArgumentException;
 use Throwable;
@@ -29,7 +29,7 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      *
      * @throws InvalidArgumentException
      * @throws ContainerException
@@ -48,8 +48,8 @@ final readonly class BootProviders
 
         foreach ($ordered as $provider) {
             if (! in_array(needle: $provider::class, haystack: $eagerProviders, strict: true)) {
-                if (! $resolver instanceof ServiceResolver) {
-                    throw new InvalidArgumentException(message: 'Deferred providers require an available ServiceResolver.');
+                if (! $resolver instanceof ResolveDependency) {
+                    throw new InvalidArgumentException(message: 'Deferred providers require an available ResolveDependency.');
                 }
 
                 $resolver->registerDeferredProvider(
@@ -75,9 +75,9 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      *
-     * @return array<class-string<ServiceProviderInterface>, ServiceProviderInterface>
+     * @return array<class-string<RegisterDependency>, RegisterDependency>
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
@@ -108,13 +108,13 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      *
-     * @return ServiceProviderInterface
+     * @return RegisterDependency
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
-    private function instanceFor(string|ServiceProviderInterface $provider) : ServiceProviderInterface
+    private function instanceFor(string|RegisterDependency $provider) : RegisterDependency
     {
         if (is_string(value: $provider)) {
             if (! class_exists(class: $provider)) {
@@ -126,17 +126,17 @@ final readonly class BootProviders
             $instance = $provider;
         }
 
-        if (! $instance instanceof ServiceProviderInterface) {
-            throw new InvalidArgumentException(message: 'Provider must implement ServiceProviderInterface.');
+        if (! $instance instanceof RegisterDependency) {
+            throw new InvalidArgumentException(message: 'Provider must implement RegisterDependency.');
         }
 
         return $instance;
     }
 
     /**
-     * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances
+     * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
      *
-     * @return list<class-string<ServiceProviderInterface>>
+     * @return list<class-string<RegisterDependency>>
      */
     private function eagerProviderClasses(ProviderBootPlan $plan, array $instances) : array
     {
@@ -161,15 +161,15 @@ final readonly class BootProviders
         return $classes;
     }
 
-    private function isDeferredProvider(ServiceProviderInterface $provider) : bool
+    private function isDeferredProvider(RegisterDependency $provider) : bool
     {
-        return $provider instanceof DeferredProviderInterface
+        return $provider instanceof RegisterDeferredDependency
             && $provider->deferred();
     }
 
     /**
-     * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
-     * @param array<class-string<ServiceProviderInterface>, true> $eager
+     * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
+     * @param array<class-string<RegisterDependency>, true>                                   $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager) : void
     {
@@ -204,15 +204,15 @@ final readonly class BootProviders
     /**
      * Returns the resolver system service when available.
      */
-    private function resolver() : ServiceResolver|null
+    private function resolver() : ResolveDependency|null
     {
         try {
-            $resolver = $this->container->get(id: ServiceResolver::class);
+            $resolver = $this->container->get(id: ResolveDependency::class);
         } catch (Throwable) {
             return null;
         }
 
-        return $resolver instanceof ServiceResolver ? $resolver : null;
+        return $resolver instanceof ResolveDependency ? $resolver : null;
     }
 
     /**
@@ -220,9 +220,9 @@ final readonly class BootProviders
      *
      * @return list<string>
      */
-    private function providedServices(ServiceProviderInterface $provider) : array
+    private function providedServices(RegisterDependency $provider) : array
     {
-        if (! $provider instanceof DeferredProviderInterface) {
+        if (! $provider instanceof RegisterDeferredDependency) {
             return [];
         }
 

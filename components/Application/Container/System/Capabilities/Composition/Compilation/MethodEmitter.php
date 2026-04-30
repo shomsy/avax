@@ -25,7 +25,7 @@ final class MethodEmitter
     public function emitDynamicMethod(string $methodName) : string
     {
         return <<<PHP
-            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ServiceResolver \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
+            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
             {
                 return \$resolver->resolveDynamicRequest(\$request);
             }
@@ -54,7 +54,7 @@ final class MethodEmitter
                 |> $this(...);
 
         $body = <<<PHP
-            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ServiceResolver \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
+            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
             {
                 \$arguments = \\array_replace(
                     \\unserialize(\\base64_decode({$compiledRegistrationArguments}), ['allowed_classes' => false]),

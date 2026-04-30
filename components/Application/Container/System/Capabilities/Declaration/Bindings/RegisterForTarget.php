@@ -13,10 +13,10 @@ final class RegisterForTarget
 {
     private string          $needs = '';
     private readonly string $consumer;
-    private readonly ServiceRegistry $registry;
+    private readonly DependencyRegistry $registry;
 
     public function __construct(
-        ServiceRegistry $registry,
+        DependencyRegistry $registry,
         string $consumer,
     )
     {

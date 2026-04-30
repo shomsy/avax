@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Configuration;
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
@@ -26,7 +26,7 @@ use Random\RandomException;
 /**
  * Optional Avax Container adapter for assembling the Database system.
  */
-final readonly class DatabaseRegistrar implements ServiceProviderInterface
+final readonly class RegisterDatabaseDependencies implements RegisterDependency
 {
     public function __construct(private ContainerInterface $container) {}
 

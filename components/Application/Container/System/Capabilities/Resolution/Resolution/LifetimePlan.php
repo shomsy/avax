@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\OperationLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\PooledLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\RequestLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\ScopedLifetime;
-use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\SingletonLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\TenantLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\TransientLifetime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
@@ -58,7 +58,7 @@ final readonly class LifetimePlan
         $this->poolResetBeforeReuse = $poolResetBeforeReuse;
     }
 
-    public static function fromRegistration(string $serviceId, ServiceRegistration|null $registration) : self
+    public static function fromRegistration(string $serviceId, DependencyRegistration|null $registration) : self
     {
         $name      = $registration?->lifetime ?? TransientLifetime::NAME;
         $storage   = self::storageFor(name: $name);
@@ -82,7 +82,7 @@ final readonly class LifetimePlan
     private static function storageFor(string $name) : string
     {
         return match ($name) {
-            SharedLifetime::NAME => SharedLifetime::NAME,
+            SingletonLifetime::NAME => SingletonLifetime::NAME,
             ScopedLifetime::NAME,
             OperationLifetime::NAME,
             RequestLifetime::NAME,
@@ -182,7 +182,7 @@ final readonly class LifetimePlan
 
     public function isShared() : bool
     {
-        return $this->storage === SharedLifetime::NAME;
+        return $this->storage === SingletonLifetime::NAME;
     }
 
     public function isTransient() : bool

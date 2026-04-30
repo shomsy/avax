@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\Configurator\FileLoader;
+namespace Avax\Components\Application\Config\System\Capabilities\Configuration\FileLoader;
 
 use Override;
 use RuntimeException;
 
 /**
- * Implementation of ConfigLoaderInterface for loading configuration files.
+ * Implementation of ConfigLoader for loading configuration files.
  *
  * This class supports loading configurations from PHP and JSON files.
  * It throws exceptions for unsupported file formats and non-existent files.
  */
-class ConfigFileLoader implements ConfigLoaderInterface
+class FileLoader implements ConfigLoader
 {
     /**
      * Load and parse the configuration from the specified file path.

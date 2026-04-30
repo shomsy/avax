@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Assembly;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileContainer;
-use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\ServiceCompiler;
+use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\DependencyCompiler;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\BlueprintCache;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\DeferredProviderRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Execution\BuildService;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
@@ -18,12 +18,12 @@ use Avax\Components\Application\Container\System\Capabilities\Execution\Injectio
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Properties\InjectProperties;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\CompiledRuntime;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\HotPathInliner;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Components\Application\Container\System\Capabilities\Runtime\ServicePool;
 
 /**
  * Builds the runtime and compilation collaborators for one container instance.
@@ -32,16 +32,16 @@ final class AssembleRuntime
 {
     public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability) : RuntimeAssembly
     {
-        $registrations = new ServiceRegistry();
+        $registrations = new DependencyRegistry();
         $scopeStore    = new ScopeStore();
-        $servicePool   = new ServicePool();
+        $servicePool   = new DependencyPool();
         $scopes        = new ManageScopes(
             store  : $scopeStore,
             pool   : $servicePool,
             metrics: $observability->metrics,
         );
         $dependencies  = new ResolveDependencies();
-        $blueprints    = new CreateServiceBlueprint(
+        $blueprints    = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
                               cacheDir    : $config->cacheDir,
                               cacheVersion: $config->cacheVersion,
@@ -77,12 +77,12 @@ final class AssembleRuntime
             failClosedOnCorruption: $config->failsClosedOnCompiledCorruption(),
             validateBeforeCompile : $config->validatesBeforeCompile(),
             metrics               : $observability->metrics,
-            services              : new ServiceCompiler(
+            services              : new DependencyCompiler(
                                         registrations: $registrations,
                                         blueprints   : $blueprints,
                                     ),
         );
-        $resolver      = new ServiceResolver(
+        $resolver      = new ResolveDependency(
             registrations    : $registrations,
             scopes           : $scopes,
             builder          : new BuildService(

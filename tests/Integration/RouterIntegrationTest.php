@@ -5,18 +5,18 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration;
 use Avax\Container\Core\AppFactory;
-use Avax\Container\Providers\Auth\AuthenticationServiceProvider;
-use Avax\Container\Providers\Auth\SecurityServiceProvider;
-use Avax\Container\Providers\Core\ConfigurationServiceProvider;
-use Avax\Container\Providers\Core\FilesystemServiceProvider;
-use Avax\Container\Providers\Core\LoggingServiceProvider;
-use Avax\Container\Providers\Database\DatabaseServiceProvider;
-use Avax\Container\Providers\HTTP\HttpClientServiceProvider;
-use Avax\Container\Providers\HTTP\HTTPServiceProvider;
-use Avax\Container\Providers\HTTP\MiddlewareServiceProvider;
-use Avax\Container\Providers\HTTP\RouterServiceProvider;
-use Avax\Container\Providers\HTTP\SessionServiceProvider;
-use Avax\Container\Providers\HTTP\ViewServiceProvider;
+use Avax\Container\Providers\Auth\AuthenticationBaseRegisterDependency;
+use Avax\Container\Providers\Auth\SecurityBaseRegisterDependency;
+use Avax\Container\Providers\Core\ConfigurationBaseRegisterDependency;
+use Avax\Container\Providers\Core\FilesystemBaseRegisterDependency;
+use Avax\Container\Providers\Core\LoggingBaseRegisterDependency;
+use Avax\Container\Providers\Database\RegisterDatabaseDependencies;
+use Avax\Container\Providers\HTTP\HTTPBaseRegisterDependency;
+use Avax\Container\Providers\HTTP\HttpClientBaseRegisterDependency;
+use Avax\Container\Providers\HTTP\MiddlewareBaseRegisterDependency;
+use Avax\Container\Providers\HTTP\RouterBaseRegisterDependency;
+use Avax\Container\Providers\HTTP\SessionBaseRegisterDependency;
+use Avax\Container\Providers\HTTP\ViewBaseRegisterDependency;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\URI\UriBuilder;
@@ -216,18 +216,18 @@ class RouterIntegrationTest extends TestCase
     protected function setUp() : void
     {
         $providers = [
-            ConfigurationServiceProvider::class,
-            FilesystemServiceProvider::class,
-            LoggingServiceProvider::class,
-            AuthenticationServiceProvider::class,
-            SecurityServiceProvider::class,
-            DatabaseServiceProvider::class,
-            HTTPServiceProvider::class,
-            MiddlewareServiceProvider::class,
-            RouterServiceProvider::class,
-            SessionServiceProvider::class,
-            ViewServiceProvider::class,
-            HttpClientServiceProvider::class,
+            ConfigurationBaseRegisterDependency::class,
+            FilesystemBaseRegisterDependency::class,
+            LoggingBaseRegisterDependency::class,
+            AuthenticationBaseRegisterDependency::class,
+            SecurityBaseRegisterDependency::class,
+            RegisterDatabaseDependencies::class,
+            HTTPBaseRegisterDependency::class,
+            MiddlewareBaseRegisterDependency::class,
+            RouterBaseRegisterDependency::class,
+            SessionBaseRegisterDependency::class,
+            ViewBaseRegisterDependency::class,
+            HttpClientBaseRegisterDependency::class,
         ];
 
         $routes   = dirname(path: __DIR__, levels: 2) . '/Presentation/HTTP/routes/web.routes.php';

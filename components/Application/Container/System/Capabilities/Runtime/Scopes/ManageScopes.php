@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes;
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Application\Container\System\Capabilities\Runtime\ServicePool;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Override;
 
 /**
@@ -13,7 +13,7 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private ServicePool $servicePool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $servicePool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
     {
     }
 

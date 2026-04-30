@@ -6,18 +6,18 @@ namespace Avax\Components\Application\Container\System\Foundation;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\RegisterForTarget;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\SliceContext;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\CapabilitySliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\ConfigurationSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\FlowSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\FoundationSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\RootCompositionView;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
@@ -27,7 +27,7 @@ use Avax\Components\Application\Container\System\Flows\CloseScope\CloseScope;
 use Avax\Components\Application\Container\System\Flows\ExplainService\ExplainService;
 use Avax\Components\Application\Container\System\Flows\ExportGraph\ExportGraph;
 use Avax\Components\Application\Container\System\Flows\OpenScope\OpenScope;
-use Avax\Components\Application\Container\System\Flows\RegisterServices\RegisterServices;
+use Avax\Components\Application\Container\System\Flows\RegisterDependencies\RegisterDependencies;
 use Avax\Components\Application\Container\System\Flows\ResolveService\ResolveService;
 use Avax\Components\Application\Container\System\Flows\ValidateComposition\ValidateComposition;
 use Closure;
@@ -39,7 +39,7 @@ use Throwable;
  */
 final readonly class Container implements ContainerInterface
 {
-    public function __construct(private ServiceResolver $resolver) {}
+    public function __construct(private ResolveDependency $resolver) {}
 
     /**
      * @throws Throwable
@@ -111,13 +111,13 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->instance(abstract: $abstract, instance: $instance);
     }
 
-    private function registerServices() : RegisterServices
+    private function registerServices() : RegisterDependencies
     {
-        return new RegisterServices(resolver: $this->resolver);
+        return new RegisterDependencies(resolver: $this->resolver);
     }
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      */
     public function bootProviders(array $providers) : void
     {
@@ -440,17 +440,17 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->alias(alias: $alias, abstract: $abstract);
     }
 
-    public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->registerServices()->bind(abstract: $abstract, concrete: $concrete);
     }
 
-    public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function singleton(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->registerServices()->singleton(abstract: $abstract, concrete: $concrete);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function scoped(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->registerServices()->scoped(abstract: $abstract, concrete: $concrete);
     }
@@ -496,7 +496,7 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->lazy(abstract: $abstract);
     }
 
-    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function defer(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->registerServices()->defer(abstract: $abstract, concrete: $concrete);
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Declaration\Providers;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 
@@ -13,13 +13,13 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
  */
 final class DeferredProviderRegistry
 {
-    /** @var array<class-string<ServiceProviderInterface>, ServiceProviderInterface> */
+    /** @var array<class-string<RegisterDependency>, RegisterDependency> */
     private array $providers = [];
 
-    /** @var array<string, class-string<ServiceProviderInterface>> */
+    /** @var array<string, class-string<RegisterDependency>> */
     private array $serviceOwners = [];
 
-    /** @var array<class-string<ServiceProviderInterface>, true> */
+    /** @var array<class-string<RegisterDependency>, true> */
     private array $bootedProviders = [];
 
     public function isDeferred(string $serviceId) : bool
@@ -46,7 +46,7 @@ final class DeferredProviderRegistry
     /**
      * @param list<string> $serviceIds
      */
-    public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
+    public function bootFor(array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
@@ -67,12 +67,12 @@ final class DeferredProviderRegistry
     }
 
     /**
-     * @param class-string<ServiceProviderInterface> $providerClass
+     * @param class-string<RegisterDependency> $providerClass
      */
     private function bootProvider(string $providerClass, ResolutionMetrics|null $metrics = null) : void
     {
         $provider = $this->providers[$providerClass] ?? null;
-        if (! $provider instanceof ServiceProviderInterface) {
+        if (! $provider instanceof RegisterDependency) {
             throw new ContainerException(message: "Deferred provider [{$providerClass}] is not registered.");
         }
 
@@ -90,7 +90,7 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
+    public function register(RegisterDependency $provider, array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
     {
         $providerClass = $provider::class;
         $ids           = array_map(

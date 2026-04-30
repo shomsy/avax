@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Flows\ValidateComposition;
 
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use ReflectionException;
 
 /**
@@ -12,7 +12,7 @@ use ReflectionException;
  */
 final readonly class ValidateComposition
 {
-    public function __construct(private ServiceResolver $serviceResolver)
+    public function __construct(private ResolveDependency $serviceResolver)
     {
     }
 

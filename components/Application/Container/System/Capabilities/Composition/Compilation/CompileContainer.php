@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Compilation;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\ServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\DependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\LifetimePlan;
@@ -27,7 +27,7 @@ final class CompileContainer
 
     private const int SCHEMA_VERSION = 8;
 
-    private ServiceCompiler $services;
+    private DependencyCompiler                 $services;
 
     private ArtifactMetadata|null    $lastMetadata = null;
     private readonly ResolutionMetrics|null $metrics;
@@ -45,12 +45,12 @@ final class CompileContainer
     private readonly string          $configHash;
     private readonly string          $cacheVersion;
     private readonly string          $cacheDir;
-    private readonly CreateServiceBlueprint $blueprints;
-    private readonly ServiceRegistry $registrations;
+    private readonly CreateDependencyBlueprint $blueprints;
+    private readonly DependencyRegistry        $registrations;
 
     public function __construct(
-        ServiceRegistry        $registrations,
-        CreateServiceBlueprint $blueprints,
+        DependencyRegistry        $registrations,
+        CreateDependencyBlueprint $blueprints,
         string                 $cacheDir = null,
         string                 $cacheVersion = null,
         #[SensitiveParameter]
@@ -67,7 +67,7 @@ final class CompileContainer
         bool                   $failClosedOnCorruption = null,
         bool                   $validateBeforeCompile = null,
         ResolutionMetrics      $metrics = null,
-        ServiceCompiler        $services = null,
+        DependencyCompiler        $services = null,
     )
     {
         $cacheDir                     ??= '';
@@ -101,7 +101,7 @@ final class CompileContainer
         $this->failClosedOnCorruption = $failClosedOnCorruption;
         $this->validateBeforeCompile  = $validateBeforeCompile;
         $this->metrics                = $metrics;
-        $this->services               = $services ?? new ServiceCompiler(
+        $this->services = $services ?? new DependencyCompiler(
             registrations: $this->registrations,
             blueprints   : $this->blueprints,
         );
@@ -569,7 +569,7 @@ final class CompileContainer
     /**
      * @return list<string>
      */
-    private function dependenciesFor(ServiceBlueprint $blueprint) : array
+    private function dependenciesFor(DependencyBlueprint $blueprint) : array
     {
         $dependencies = [];
 

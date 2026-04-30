@@ -7,42 +7,33 @@ namespace Avax\Components\WorkerManager\System\PublicSurface;
 use Avax\Components\WorkerManager\System\Capabilities\Lifecycle\GracefulShutdown;
 use Avax\Components\WorkerManager\System\Capabilities\Workers\WorkerProcess;
 
-final class WorkerManager
+final readonly class Workers
 {
-    private static WorkerPool $pool;
+    public function __construct(private WorkerPool $pool) {}
 
-    public static function start(int $processes = 1, array $options = []) : void
+    public function start(int $processes = 1, array $options = []) : void
     {
-        self::pool()->start($processes, $options);
+        $this->pool->start($processes, $options);
     }
 
-    private static function pool() : WorkerPool
+    public function stop() : void
     {
-        if (! isset(self::$pool)) {
-            self::$pool = new WorkerPool();
-        }
-
-        return self::$pool;
+        $this->pool->stop();
     }
 
-    public static function stop() : void
+    public function restart(bool $graceful = true) : void
     {
-        self::pool()->stop();
+        $this->pool->restart($graceful);
     }
 
-    public static function restart(bool $graceful = true) : void
+    public function status() : WorkerStatus
     {
-        self::pool()->restart($graceful);
+        return $this->pool->status();
     }
 
-    public static function status() : WorkerStatus
+    public function drain() : void
     {
-        return self::pool()->status();
-    }
-
-    public static function drain() : void
-    {
-        self::pool()->drain();
+        $this->pool->drain();
     }
 }
 

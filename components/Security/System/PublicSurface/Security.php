@@ -11,8 +11,10 @@ use Avax\Components\Security\System\Capabilities\SignedUrls\SignedUrlGenerator;
 use Avax\Components\Security\System\Capabilities\SignedUrls\SignedUrlVerifier;
 use DateInterval;
 
-final readonly class Security
+final class Security
 {
+    private static bool $initialized = false;
+
     public static function generateCsrfToken() : string
     {
         return CsrfToken::generate();
@@ -36,6 +38,21 @@ final readonly class Security
     public static function verifySignedUrl(string $url) : bool
     {
         return SignedUrlVerifier::verify($url);
+    }
+
+    public static function hash(string $password) : string
+    {
+        return password_hash($password, PASSWORD_BCRYPT);
+    }
+
+    public static function verify(string $password, string $hash) : bool
+    {
+        return password_verify($password, $hash);
+    }
+
+    public static function generateToken(int $length = 32) : string
+    {
+        return bin2hex(random_bytes($length / 2));
     }
 }
 

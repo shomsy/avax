@@ -9,9 +9,8 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 final class ResetApplicationState
 {
     public function __construct(
-        private readonly StateResetRegistry $registry,
-    ) {
-    }
+        private StateResetRegistry|null $registry = null,
+    ) {}
 
     public function reset() : StateResetReport
     {

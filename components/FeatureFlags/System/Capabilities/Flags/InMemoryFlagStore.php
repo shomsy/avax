@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\FeatureFlags\System\Capabilities\Flags;
 
+use Avax\Components\FeatureFlags\System\PublicSurface\FlagStoreInterface;
+
 final class InMemoryFlagStore implements FlagStoreInterface
 {
     public function __construct(

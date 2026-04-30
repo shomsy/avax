@@ -22,9 +22,7 @@ final readonly class ConsoleKernel implements ConsoleKernelInterface
     public function run(string $commandName, array $arguments = []) : RuntimeResult
     {
         return $this->runConsoleCommand->run(
-            runtime    : $this->runtime,
-            commandName: $commandName,
-            arguments  : $arguments,
+            arguments: [$commandName] + $arguments,
         );
     }
 }

@@ -13,24 +13,24 @@ final readonly class SessionCookieSettings
 {
     public string $path;
     public string $sameSite;
-    public bool   $httpOnly;
-    public bool   $secure;
+    public bool $httpOnly;
+    public bool $secure;
 
     /**
      * @param 'Lax'|'Strict'|'None' $sameSite
      */
     public function __construct(
-        bool|null     $secure = null,
-        bool|null     $httpOnly = null,
-        string|null   $sameSite = null,
-        string|null   $path = null,
-        public string $domain = ''
+        bool          $secure = null,
+        bool          $httpOnly = null,
+        string        $sameSite = null,
+        string        $path = null,
+        public string $domain = '',
     )
     {
-        $secure         ??= true;
-        $httpOnly       ??= true;
-        $sameSite       ??= 'Lax';
-        $path           ??= '/';
+        $secure   ??= true;
+        $httpOnly ??= true;
+        $sameSite ??= 'Lax';
+        $path     ??= '/';
         $this->secure   = $secure;
         $this->httpOnly = $httpOnly;
         $this->sameSite = $sameSite;

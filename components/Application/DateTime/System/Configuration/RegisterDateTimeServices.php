@@ -15,7 +15,7 @@ final class RegisterDateTimeServices
     public function build() : Clock
     {
         return new Clock(
-            timezone: new Timezone('UTC')
+            timezone: new Timezone('UTC'),
         );
     }
 }

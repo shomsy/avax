@@ -12,9 +12,9 @@ use Throwable;
 final readonly class MigrateCommand
 {
     public function __construct(
-        private MigrationRepository $repository,
-        private MigrationRunner     $runner,
-        private MigrationLoader     $loader
+        private MigrationRepository $migrationRepository,
+        private MigrationRunner     $migrationRunner,
+        private MigrationLoader     $migrationLoader,
     ) {}
 
     public function handle(string $path, bool $dryRun = false) : int
@@ -24,9 +24,9 @@ final readonly class MigrateCommand
                 echo "\033[36mDRY RUN MODE:\033[0m No changes will be executed.\n";
             }
 
-            $this->repository->ensureTableExists();
-            $ran     = $this->repository->getRan();
-            $pending = $this->loader->getPending(path: $path, ran: $ran);
+            $this->migrationRepository->ensureTableExists();
+            $ran     = $this->migrationRepository->getRan();
+            $pending = $this->migrationLoader->getPending(path: $path, ran: $ran);
 
             if (empty($pending)) {
                 echo "\033[36mNothing to migrate.\033[0m\n";
@@ -34,17 +34,17 @@ final readonly class MigrateCommand
                 return 0;
             }
 
-            $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
+            $this->migrationRunner->up(migrations: $pending, path: $path, dryRun: $dryRun);
 
             foreach (array_keys(array: $pending) as $name) {
-                echo "  ✓ {$name}\n";
+                echo sprintf('  ✓ %s%s', $name, PHP_EOL);
             }
 
             echo "\033[32mMigrated " . count(value: $pending) . " migration(s).\033[0m\n";
 
             return 0;
         } catch (Throwable $throwable) {
-            echo "\033[31mMigration failed:\033[0m {$throwable->getMessage()}\n";
+            echo sprintf('[31mMigration failed:[0m %s%s', $throwable->getMessage(), PHP_EOL);
 
             return 1;
         }

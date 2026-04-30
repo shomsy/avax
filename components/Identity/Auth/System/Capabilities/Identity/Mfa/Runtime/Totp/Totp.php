@@ -18,13 +18,13 @@ final readonly class Totp implements TotpInterface
     private int $digits;
 
     public function __construct(
-        int|null    $digits = null,
-        int|null    $periodSeconds = null,
-        private int $allowedSkewSteps = 1
+        int         $digits = null,
+        int         $periodSeconds = null,
+        private int $allowedSkewSteps = 1,
     )
     {
-        $digits              ??= 6;
-        $periodSeconds       ??= 30;
+        $digits        ??= 6;
+        $periodSeconds ??= 30;
         $this->digits        = $digits;
         $this->periodSeconds = $periodSeconds;
         if ($this->digits < 6) {
@@ -92,10 +92,12 @@ final readonly class Totp implements TotpInterface
     }
 
     public function verify(
-        #[SensitiveParameter] string $secret,
-        #[SensitiveParameter] string $code,
-        DateTimeImmutable            $moment,
-        int|null                     $lastAcceptedTimeStep = null
+        #[SensitiveParameter]
+        string            $secret,
+        #[SensitiveParameter]
+        string            $code,
+        DateTimeImmutable $moment,
+        int               $lastAcceptedTimeStep = null,
     ) : TotpVerification
     {
         if (preg_match(pattern: '/^\d{6,8}$/', subject: $code) !== 1) {

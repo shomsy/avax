@@ -10,10 +10,10 @@ use Throwable;
 final class CachePayloadWasTampered extends RuntimeException
 {
     public function __construct(
-        string         $message,
-        Throwable|null $previous = null
+        string     $message,
+        ?Throwable $throwable = null,
     )
     {
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 }

@@ -18,24 +18,24 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\ServicePoo
  */
 final readonly class RuntimeAssembly
 {
-    public ServiceResolver  $resolver;
+    public ServiceResolver $resolver;
     public CompileContainer $compiler;
     public ResolutionPolicy $policy;
-    public FunctionCaller   $caller;
-    public ManageScopes     $scopes;
-    public ServicePool      $servicePool;
-    public ScopeStore       $scopeStore;
-    public ServiceRegistry  $registrations;
+    public FunctionCaller  $caller;
+    public ManageScopes    $scopes;
+    public ServicePool     $servicePool;
+    public ScopeStore      $scopeStore;
+    public ServiceRegistry $registrations;
 
     public function __construct(
-        ServiceRegistry  $registrations,
-        ScopeStore       $scopeStore,
-        ServicePool      $servicePool,
-        ManageScopes     $scopes,
-        FunctionCaller   $caller,
+        ServiceRegistry $registrations,
+        ScopeStore      $scopeStore,
+        ServicePool     $servicePool,
+        ManageScopes    $scopes,
+        FunctionCaller  $caller,
         ResolutionPolicy $policy,
         CompileContainer $compiler,
-        ServiceResolver  $resolver
+        ServiceResolver $resolver,
     )
     {
         $this->registrations = $registrations;

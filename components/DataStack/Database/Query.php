@@ -13,29 +13,29 @@ use Throwable;
 final readonly class Query
 {
     public function __construct(
-        private QueryCapability $query,
-        private string|null     $connectionName = null
+        private QueryCapability $queryCapability,
+        private string|null     $connectionName = null,
     ) {}
 
-    public function on(string|null $connectionName = null) : self
+    public function on(?string $connectionName = null) : self
     {
-        return new self(query: $this->query, connectionName: $connectionName);
+        return new self(query: $this->queryCapability, connectionName: $connectionName);
     }
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(string|null $connectionName = null) : QueryBuilder
+    public function builder(?string $connectionName = null) : QueryBuilder
     {
-        return $this->query->builder(connectionName: $connectionName ?? $this->connectionName);
+        return $this->queryCapability->builder(connectionName: $connectionName ?? $this->connectionName);
     }
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
     {
         return $this->from(table: $table, connectionName: $connectionName);
     }
@@ -44,17 +44,17 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, string|null $connectionName = null) : QueryBuilder
+    public function from(string $table, ?string $connectionName = null) : QueryBuilder
     {
-        return $this->query->from(table: $table, connectionName: $connectionName ?? $this->connectionName);
+        return $this->queryCapability->from(table: $table, connectionName: $connectionName ?? $this->connectionName);
     }
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, string|null $connectionName = null) : Expression
+    public function raw(string $value, ?string $connectionName = null) : Expression
     {
-        return $this->query->raw(value: $value, connectionName: $connectionName ?? $this->connectionName);
+        return $this->queryCapability->raw(value: $value, connectionName: $connectionName ?? $this->connectionName);
     }
 }

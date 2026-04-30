@@ -12,10 +12,10 @@ final class BulkUpsert
 {
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $table,
-        private readonly array            $columns,
-        private readonly OnConflict       $conflict,
-        private readonly int              $batchSize = 100,
+        private readonly string     $table,
+        private readonly array      $columns,
+        private readonly OnConflict $conflict,
+        private readonly int        $batchSize = 100,
     ) {}
 
     /**

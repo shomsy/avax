@@ -10,6 +10,6 @@ class UnsupportedDiskDriver extends RuntimeException
 {
     public function __construct(string $driver)
     {
-        parent::__construct(message: "Unsupported disk driver: {$driver}");
+        parent::__construct(message: 'Unsupported disk driver: ' . $driver);
     }
 }

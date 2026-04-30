@@ -6,60 +6,64 @@ namespace Avax\Components\Application\Cache\System\Foundation\Serialization;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Override;
 
 final readonly class PhpCacheSerializer implements CacheSerializer
 {
-    public const FORMAT = 'php-serialized';
+    public const string FORMAT = 'php-serialized';
 
     public function __construct(private Clock $clock = new SystemClock()) {}
 
+    #[Override]
     public function serialize(mixed $value) : SerializedCachePayload
     {
         $serialized = serialize(value: $value);
 
         if ($serialized === false) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: 'Failed to serialize value using PHP serialization'
+                message: 'Failed to serialize value using PHP serialization',
             );
         }
 
         return SerializedCachePayload::create(
             data  : $serialized,
             format: self::FORMAT,
-            clock : $this->clock
+            clock : $this->clock,
         );
     }
 
-    public function unserialize(SerializedCachePayload $payload) : mixed
+    #[Override]
+    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
     {
-        if (! $this->canUnserialize(payload: $payload)) {
+        if (! $this->canUnserialize(payload: $serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Cannot unserialize payload with format "%s"', $payload->format)
+                message: sprintf('Cannot unserialize payload with format "%s"', $serializedCachePayload->format),
             );
         }
 
-        if (! $payload->verify()) {
+        if (! $serializedCachePayload->verify()) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: 'Payload checksum verification failed'
+                message: 'Payload checksum verification failed',
             );
         }
 
-        $result = unserialize($payload->data, ['allowed_classes' => true]);
+        $result = unserialize($serializedCachePayload->data, ['allowed_classes' => true]);
 
-        if ($result === false && $payload->data !== 'b:0;') {
+        if ($result === false && $serializedCachePayload->data !== 'b:0;') {
             throw new CachePayloadCouldNotBeSerialized(
-                message: 'Failed to unserialize payload data'
+                message: 'Failed to unserialize payload data',
             );
         }
 
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $payload) : bool
+    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
     {
-        return $payload->format === self::FORMAT;
+        return $serializedCachePayload->format === self::FORMAT;
     }
 
+    #[Override]
     public function supportedType() : string
     {
         return self::FORMAT;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 interface CallGreeterContract
 {
@@ -11,17 +11,16 @@ interface CallGreeterContract
 
 final class CallGreeter implements CallGreeterContract
 {
+    #[Override]
     public function message() : string
     {
         return 'hello';
     }
 }
 
-final class CallAction
+final readonly class CallAction
 {
-    private CallGreeterContract $greeter;
-
-    public function __construct(CallGreeterContract $greeter) { $this->greeter = $greeter; }
+    public function __construct(private CallGreeterContract $callGreeterContract) {}
 
     public static function staticHello() : string
     {
@@ -30,12 +29,12 @@ final class CallAction
 
     public function __invoke() : string
     {
-        return $this->greeter->message();
+        return $this->callGreeterContract->message();
     }
 
-    public function greet(CallGreeterContract $greeter) : string
+    public function greet(CallGreeterContract $callGreeterContract) : string
     {
-        return $greeter->message();
+        return $callGreeterContract->message();
     }
 }
 

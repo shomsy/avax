@@ -23,12 +23,14 @@ use SensitiveParameter;
 final readonly class RegenerateBackupCodes
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                             $requireFreshMfa,
-        private MfaStoreInterface                           $mfaStore,
-        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa       $requireFreshMfa,
+        private MfaStoreInterface     $mfaStore,
+        #[SensitiveParameter]
+        private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface     $auditLog,
+        private Clock                 $clock,
     ) {}
 
     /**
@@ -60,14 +62,14 @@ final readonly class RegenerateBackupCodes
                                                 secret              : $method->secret,
                                                 enabledAt           : $method->enabledAt,
                                                 backupCodes         : $generated->records,
-                                                lastAcceptedTimeStep: $method->lastAcceptedTimeStep
+                                                lastAcceptedTimeStep: $method->lastAcceptedTimeStep,
                                             ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.backup_codes.regenerated',
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'user_id' => $user->id,
-                                                       ]
+                                                       ],
                                        ));
 
         return $generated->backupCodeSet;

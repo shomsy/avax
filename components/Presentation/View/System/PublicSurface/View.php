@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\PublicSurface;
@@ -10,7 +11,7 @@ final readonly class View implements ViewInterface
 {
     public function __construct(
         private TemplateEngineInterface $engine,
-        private RenderView $renderFlow
+        private RenderView $renderFlow,
     ) {}
 
     public function render(string $view, array $data = []): string

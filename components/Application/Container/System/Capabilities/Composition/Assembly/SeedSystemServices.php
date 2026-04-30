@@ -29,11 +29,11 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemServices
 {
     public function seed(
-        RuntimeAssembly       $runtime,
+        RuntimeAssembly     $runtime,
         ObservabilityAssembly $observability,
-        Container             $container,
+        Container           $container,
         CreateContainerConfig $config,
-        ResolutionTelemetry   $telemetry
+        ResolutionTelemetry $telemetry,
     ) : void
     {
         $settings      = new ContainerSettings(items: $config->settings);

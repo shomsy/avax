@@ -9,6 +9,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
+use Override;
 use Stringable;
 
 final readonly class SerializedCachePayload implements Stringable
@@ -16,20 +17,20 @@ final readonly class SerializedCachePayload implements Stringable
     public function __construct(
         public string      $data,
         public string      $format,
-        public Timestamp   $createdAt,
-        public string|null $checksum = null
+        public Timestamp   $timestamp,
+        public string|null $checksum = null,
     ) {}
 
-    public static function create(string $data, string $format, Clock|null $clock = null) : self
+    public static function create(string $data, string $format, ?Clock $clock = null) : self
     {
-        $clock    ??= new SystemClock();
+        $clock ??= new SystemClock();
         $checksum = hash_hmac(algo: 'sha256', data: $data, key: self::class);
 
         return new self(
             data     : $data,
             format   : $format,
             createdAt: $clock->now(),
-            checksum : $checksum
+            checksum : $checksum,
         );
     }
 
@@ -42,14 +43,15 @@ final readonly class SerializedCachePayload implements Stringable
         return hash_equals($this->checksum, hash_hmac(algo: 'sha256', data: $this->data, key: self::class));
     }
 
-    public function isOlderThan(DateInterval $interval) : bool
+    public function isOlderThan(DateInterval $dateInterval) : bool
     {
         $now    = Timestamp::now();
-        $maxAge = $this->createdAt->add(duration: Duration::fromDateInterval(interval: $interval));
+        $maxAge = $this->timestamp->add(duration: Duration::fromDateInterval(interval: $dateInterval));
 
         return $now->isAfter(other: $maxAge);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->data;

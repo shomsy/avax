@@ -11,7 +11,7 @@ final class TimezoneNotFound extends DateTimeFailure
     )
     {
         parent::__construct(
-            message: "Timezone '{$timezone}' not found or is invalid.",
+            message: sprintf("Timezone '%s' not found or is invalid.", $timezone),
         );
     }
 }

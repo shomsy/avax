@@ -10,7 +10,7 @@ final readonly class DataTransferResult
 {
     private function __construct(
         private object|null              $object,
-        private DataTransferFailure|null $failure,
+        private DataTransferFailure|null $dataTransferFailure,
     ) {}
 
     public static function success(object $object) : self
@@ -18,9 +18,9 @@ final readonly class DataTransferResult
         return new self(object: $object, failure: null);
     }
 
-    public static function failure(DataTransferFailure $failure) : self
+    public static function failure(DataTransferFailure $dataTransferFailure) : self
     {
-        return new self(object: null, failure: $failure);
+        return new self(object: null, failure: $dataTransferFailure);
     }
 
     public function isSuccess() : bool
@@ -30,7 +30,7 @@ final readonly class DataTransferResult
 
     public function isFailure() : bool
     {
-        return $this->failure !== null;
+        return $this->dataTransferFailure !== null;
     }
 
     public function object() : object
@@ -40,6 +40,6 @@ final readonly class DataTransferResult
 
     public function failureReason() : DataTransferFailure
     {
-        return $this->failure ?? throw new DataTransferException(message: 'Data transfer completed successfully.');
+        return $this->dataTransferFailure ?? throw new DataTransferException(message: 'Data transfer completed successfully.');
     }
 }

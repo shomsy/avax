@@ -7,9 +7,9 @@ namespace Avax\Components\Operations\Mail\System\Capabilities\Address;
 final class Envelope
 {
     public function __construct(
-        public readonly string      $from,
+        public readonly string $from,
         public readonly string|null $returnPath = null,
-        public readonly array       $senderOptions = []
+        public readonly array  $senderOptions = [],
     ) {}
 
     public function withFrom(string $from) : self
@@ -17,7 +17,7 @@ final class Envelope
         return new self(
             from         : $from,
             returnPath   : $this->returnPath,
-            senderOptions: $this->senderOptions
+            senderOptions: $this->senderOptions,
         );
     }
 
@@ -26,7 +26,7 @@ final class Envelope
         return new self(
             from         : $this->from,
             returnPath   : $returnPath,
-            senderOptions: $this->senderOptions
+            senderOptions: $this->senderOptions,
         );
     }
 }

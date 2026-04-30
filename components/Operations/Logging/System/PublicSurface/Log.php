@@ -15,7 +15,7 @@ use Avax\Components\Operations\Logging\System\Capabilities\Writing\RotatingFileW
 final readonly class Log
 {
     public function __construct(
-        private RotatingFileWriter $writer
+        private RotatingFileWriter $writer,
     ) {}
 
     public function info(string $message, array $context = []) : void

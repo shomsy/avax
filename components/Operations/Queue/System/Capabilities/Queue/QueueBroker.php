@@ -44,7 +44,7 @@ final class SyncQueue implements QueueBroker
 
         $this->queues[$queue] = array_filter(
             $this->queues[$queue],
-            fn ($job) => ($job['id'] ?? '') !== $jobId
+            static fn ($job) => ($job['id'] ?? '') !== $jobId,
         );
     }
 
@@ -89,7 +89,7 @@ final class ArrayQueue implements QueueBroker
 
         $this->queues[$key] = array_filter(
             $this->queues[$key],
-            fn ($job) => ($job['id'] ?? '') !== $jobId
+            static fn ($job) => ($job['id'] ?? '') !== $jobId,
         );
     }
 

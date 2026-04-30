@@ -19,12 +19,12 @@ final class TimestampTest extends TestCase
 
     public function test_calculates_difference() : void
     {
-        $a = Timestamp::fromUnixTime(timestamp: 100);
+        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
         $b = Timestamp::fromUnixTime(timestamp: 50);
 
-        $diff = $a->difference(other: $b);
+        $duration = $timestamp->difference(other: $b);
 
-        $this->assertSame(expected: 50, actual: $diff->toSeconds());
+        $this->assertSame(expected: 50, actual: $duration->toSeconds());
     }
 
     public function test_adds_duration() : void
@@ -49,13 +49,13 @@ final class TimestampTest extends TestCase
 
     public function test_compares_timestamps() : void
     {
-        $a = Timestamp::fromUnixTime(timestamp: 100);
+        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
         $b = Timestamp::fromUnixTime(timestamp: 50);
         $c = Timestamp::fromUnixTime(timestamp: 100);
 
-        $this->assertTrue(condition: $a->isAfter(other: $b));
-        $this->assertTrue(condition: $b->isBefore(other: $a));
-        $this->assertFalse(condition: $a->isAfter(other: $c));
-        $this->assertFalse(condition: $a->isBefore(other: $c));
+        $this->assertTrue(condition: $timestamp->isAfter(other: $b));
+        $this->assertTrue(condition: $b->isBefore(other: $timestamp));
+        $this->assertFalse(condition: $timestamp->isAfter(other: $c));
+        $this->assertFalse(condition: $timestamp->isBefore(other: $c));
     }
 }

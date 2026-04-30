@@ -16,10 +16,11 @@ use SensitiveParameter;
 final readonly class EndAdminElevation
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface                $elevationStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication        $currentAuthentication,
+        private AdminElevationStoreInterface $elevationStore,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
     ) {}
 
     /**
@@ -42,7 +43,7 @@ final readonly class EndAdminElevation
                                            context   : [
                                                            'user_id'    => $user->id,
                                                            'binding_id' => $bindingId,
-                                                       ]
+                                                       ],
                                        ));
     }
 

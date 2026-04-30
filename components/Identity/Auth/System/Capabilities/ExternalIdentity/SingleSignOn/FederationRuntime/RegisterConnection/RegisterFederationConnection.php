@@ -50,7 +50,7 @@ final readonly class RegisterFederationConnection
             metadataUrl            : $data->metadataUrl,
             domainVerificationToken: bin2hex(string: random_bytes(length: 16)),
             health                 : FederationConnectionHealth::UNKNOWN,
-            breakGlassAllowed      : $data->breakGlassAllowed
+            breakGlassAllowed      : $data->breakGlassAllowed,
         );
 
         $this->connectionStore->save(connection: $connection);
@@ -63,7 +63,7 @@ final readonly class RegisterFederationConnection
                                                            'domain'              => $connection->domain,
                                                            'provider'            => $connection->provider->value,
                                                            'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
-                                                       ]
+                                                       ],
                                        ));
 
         return $connection;

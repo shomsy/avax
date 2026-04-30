@@ -31,24 +31,24 @@ final class ConnectionPool implements ConnectionPoolInterface
     private PoolState $state;
 
     /** @var ExecutionScope|null The "Luggage Tag" (Trace ID) for this pool's actions. */
-    private ExecutionScope|null    $scope = null;
+    private ExecutionScope|null $scope = null;
     private readonly EventBus|null $eventBus;
-    private readonly array         $config;
+    private readonly array      $config;
 
     /**
      * @param array<string, mixed> $config   The instructions for the garage (e.g., "Max 10 cars").
      * @param EventBus|null        $eventBus The "Notification System" for reporting when a car is taken or returned.
      */
     public function __construct(
-        array         $config,
-        EventBus|null $eventBus = null
+        array    $config,
+        EventBus $eventBus = null,
     )
     {
         $this->config   = $config;
         $this->eventBus = $eventBus;
-        $this->pool     = new SplQueue;
+        $this->pool = new SplQueue();
         $this->state    = new PoolState(
-            maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10)
+            maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10),
         );
     }
 
@@ -73,7 +73,7 @@ final class ConnectionPool implements ConnectionPoolInterface
                 $this->eventBus?->dispatch(event: new ConnectionAcquired(
                                                       connectionName: $this->getName(),
                                                       isRecycled    : true,
-                                                      correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
+                                                      correlationId : $this->scope?->correlationId ?? 'ctx_unknown',
                                                   ));
 
                 return new BorrowedConnection(connection: $connection, pool: $this);
@@ -88,19 +88,20 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         if (! $this->state->tryReserveSlot()) {
             $limit = $this->config['pool']['max_connections'] ?? 10;
+
             throw new PoolLimitReachedException(name: $name, limit: (int) $limit);
         }
 
         $connection = new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
-            scope                  : $this->scope
+            scope                  : $this->scope,
         )->using(config: $this->config);
 
         $this->eventBus?->dispatch(event: new ConnectionAcquired(
                                               connectionName: $this->getName(),
                                               isRecycled    : false,
-                                              correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
+                                              correlationId : $this->scope?->correlationId ?? 'ctx_unknown',
                                           ));
 
         return new BorrowedConnection(connection: $connection, pool: $this);
@@ -117,7 +118,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         $currentTime = microtime(as_float: true);
         $prunedCount = 0;
 
-        $validConnections = new SplQueue;
+        $validConnections = new SplQueue();
 
         while ( ! $this->pool->isEmpty() ) {
             $item     = $this->pool->dequeue();
@@ -145,7 +146,7 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Ask a connection "Are you alive?" (Ping).
      */
-    public function validateConnection(DatabaseConnection|null $connection = null) : bool
+    public function validateConnection(DatabaseConnection $connection = null) : bool
     {
         if ($connection === null) {
             return false;
@@ -206,7 +207,7 @@ final class ConnectionPool implements ConnectionPoolInterface
             value: [
                        'connection'  => $connection,
                        'released_at' => microtime(as_float: true),
-                   ]
+                   ],
         );
     }
 
@@ -251,7 +252,7 @@ final class ConnectionPool implements ConnectionPoolInterface
                       'maxConnections'     => (int) ($this->config['pool']['max_connections'] ?? 10),
                       'totalAcquisitions'  => $this->state->totalAcquisitions,
                       'maxIdleTime'        => $maxIdleTime,
-                  ]
+                  ],
         );
     }
 }

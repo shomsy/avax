@@ -27,21 +27,21 @@ interface RepositoryInterface
      *
      * @return array<T>
      */
-    public function findAll(int|null $limit = null, int $offset = 0) : array;
+    public function findAll(int $limit = null, int $offset = 0) : array;
 
     /**
      * Find entities matching the given criteria.
      *
-     * @param array<string, mixed>       $criteria
+     * @param array<string, mixed> $criteria
      * @param array<string, string>|null $orderBy Column => direction (ASC/DESC)
      *
      * @return array<T>
      */
     public function findBy(
-        array      $criteria,
-        array|null $orderBy = null,
-        int|null   $limit = null,
-        int|null   $offset = null,
+        array $criteria,
+        array $orderBy = null,
+        int   $limit = null,
+        int   $offset = null,
     ) : array;
 
     /**

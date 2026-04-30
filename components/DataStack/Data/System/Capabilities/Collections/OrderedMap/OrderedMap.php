@@ -10,6 +10,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\DataList\Data
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -72,11 +73,13 @@ final readonly class OrderedMap implements IteratorAggregate, Countable
         return $entries;
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->items);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->items);

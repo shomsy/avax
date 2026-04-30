@@ -14,7 +14,7 @@ final readonly class DetectSagaCompletion
 {
     public function isComplete(
         SagaInstance $instance,
-        array        $definition
+        array $definition,
     ) : bool
     {
         if ($instance->currentStepName === null) {
@@ -29,7 +29,7 @@ final readonly class DetectSagaCompletion
 
     public function getNextStep(
         SagaInstance $instance,
-        array        $definition
+        array $definition,
     ) : string|null
     {
         $nextIndex = $instance->currentStepIndex + 1;
@@ -44,7 +44,7 @@ final readonly class DetectSagaCompletion
 
     public function remainingSteps(
         SagaInstance $instance,
-        array        $definition
+        array $definition,
     ) : int
     {
         $total = count($definition['stepOrder'] ?? []);
@@ -65,8 +65,8 @@ final readonly class RecordSagaCompleted
         $this->inspect->record(
             SagaRuntimeEvent::completed(
                 sagaId  : $completed->id,
-                sagaName: $completed->definitionName
-            )
+                sagaName: $completed->definitionName,
+            ),
         );
     }
 }
@@ -93,7 +93,7 @@ final readonly class PublishSagaCompleted
 
 final class SagaCompletionFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga completion failed.', Throwable|null $previous = null)
+    public function __construct(string $message = 'Saga completion failed.', Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

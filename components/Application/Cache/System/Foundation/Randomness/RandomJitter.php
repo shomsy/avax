@@ -8,10 +8,10 @@ use Random\RandomException;
 
 final readonly class RandomJitter
 {
-    public const DEFAULT_JITTER_PERCENTAGE = 0.1;
+    public const float DEFAULT_JITTER_PERCENTAGE = 0.1;
 
     public function __construct(
-        private float $jitterPercentage = self::DEFAULT_JITTER_PERCENTAGE
+        private float $jitterPercentage = self::DEFAULT_JITTER_PERCENTAGE,
     ) {}
 
     /**

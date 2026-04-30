@@ -1,18 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema;
 
 final class SchemaBuilder
 {
-    public function create(string $table, callable $callback): void
+    public function create(string $table) : void
     {
         // Simple implementation for ToDo
-        echo "Creating table: $table\n";
+        echo sprintf('Creating table: %s%s', $table, PHP_EOL);
     }
 
     public function drop(string $table): void
     {
-        echo "Dropping table: $table\n";
+        echo sprintf('Dropping table: %s%s', $table, PHP_EOL);
     }
 }

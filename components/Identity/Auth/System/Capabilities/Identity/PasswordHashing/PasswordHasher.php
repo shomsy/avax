@@ -23,11 +23,11 @@ final readonly class PasswordHasher
      * @param array<string, int|string|bool>|null $options
      */
     public function __construct(
-        string|null $algo = null,
-        array|null  $options = null
+        string $algo = null,
+        array  $options = null,
     )
     {
-        $this->algo    = $algo
+        $this->algo = $algo
             ?? $this->inferAlgorithmFromOptions(options: $options)
             ?? $this->defaultAlgorithm();
         $this->options = $options ?? $this->defaultOptions(algo: $this->algo);

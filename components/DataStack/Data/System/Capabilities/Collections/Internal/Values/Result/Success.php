@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Values\Result;
 
 use Avax\Components\DataStack\Data\Exceptions\InvalidValueException;
+use Override;
 
 /**
  * Successful result.
@@ -12,19 +13,22 @@ use Avax\Components\DataStack\Data\Exceptions\InvalidValueException;
 final class Success extends Result
 {
     public function __construct(
-        private mixed $value,
+        private readonly mixed $value,
     ) {}
 
+    #[Override]
     public function isOk() : bool
     {
         return true;
     }
 
+    #[Override]
     public function unwrap() : mixed
     {
         return $this->value;
     }
 
+    #[Override]
     public function unwrapError() : mixed
     {
         throw InvalidValueException::because(message: 'Cannot unwrap an error from an Ok result.');

@@ -9,15 +9,15 @@ use Random\RandomException;
 
 final readonly class CacheEncryptionKey
 {
-    private const MIN_KEY_LENGTH = 32;
+    private const int MIN_KEY_LENGTH = 32;
 
     public function __construct(
-        public string $key
+        public string $key,
     )
     {
         if (strlen($key) < self::MIN_KEY_LENGTH) {
             throw new InvalidArgumentException(
-                message: sprintf('Encryption key must be at least %d bytes', self::MIN_KEY_LENGTH)
+                message: sprintf('Encryption key must be at least %d bytes', self::MIN_KEY_LENGTH),
             );
         }
     }
@@ -28,7 +28,7 @@ final readonly class CacheEncryptionKey
 
         if ($key === null || $key === '') {
             throw new InvalidArgumentException(
-                message: sprintf('Configuration key "%s" is not set', $configKey)
+                message: sprintf('Configuration key "%s" is not set', $configKey),
             );
         }
 

@@ -6,26 +6,20 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Dis
 
 final class DetectUnhealthyCacheNode
 {
-    /** @var array<CacheNodeId, array<int, bool>> */
-    private array $failureHistory = [];
-    /** @var array<CacheNodeId, int> */
-    private array $successCount = [];
-
     public function __construct(
-        private int $failureThreshold = 3,
-        private int $recoveryThreshold = 5,
-        private int $checkIntervalSeconds = 30,
-        array       $failureHistory = [],
-        array       $successCount = []
+        private readonly int $failureThreshold = 3,
+        private readonly int $recoveryThreshold = 5,
+        /** @var array<CacheNodeId, array<int, bool>> */
+        private array        $failureHistory = [],
+        /** @var array<CacheNodeId, int> */
+        private array        $successCount = []
     )
     {
-        $this->failureHistory = $failureHistory;
-        $this->successCount   = $successCount;
     }
 
-    public function recordFailure(CacheNodeId $nodeId) : CacheNodeStatus
+    public function recordFailure(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->failureHistory[$nodeIdStr])) {
             $this->failureHistory[$nodeIdStr] = [];
@@ -41,9 +35,9 @@ final class DetectUnhealthyCacheNode
         return CacheNodeStatus::HEALTHY;
     }
 
-    public function recordSuccess(CacheNodeId $nodeId) : CacheNodeStatus
+    public function recordSuccess(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->successCount[$nodeIdStr])) {
             $this->successCount[$nodeIdStr] = 0;
@@ -54,7 +48,7 @@ final class DetectUnhealthyCacheNode
         if (isset($this->failureHistory[$nodeIdStr])) {
             array_shift($this->failureHistory[$nodeIdStr]);
 
-            if (count($this->failureHistory[$nodeIdStr]) === 0) {
+            if ($this->failureHistory[$nodeIdStr] === []) {
                 unset($this->failureHistory[$nodeIdStr]);
             }
         }
@@ -66,9 +60,9 @@ final class DetectUnhealthyCacheNode
         return CacheNodeStatus::UNHEALTHY;
     }
 
-    public function getStatus(CacheNodeId $nodeId) : CacheNodeStatus
+    public function getStatus(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (isset($this->failureHistory[$nodeIdStr]) && count($this->failureHistory[$nodeIdStr]) >= $this->failureThreshold) {
             return CacheNodeStatus::UNHEALTHY;

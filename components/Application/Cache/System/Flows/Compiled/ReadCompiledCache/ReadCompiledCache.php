@@ -17,62 +17,62 @@ use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\Compile
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
-final class ReadCompiledCache
+final readonly class ReadCompiledCache
 {
     public function __construct(
-        private CompiledCacheDirectory $directory,
-        private CompiledCacheManifest  $manifest,
-        private Clock                  $clock = new SystemClock()
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private CompiledCacheManifest  $compiledCacheManifest,
+        private Clock                  $clock = new SystemClock(),
     ) {}
 
     public function read(
         string               $name,
         callable             $build,
-        CompiledCacheSources $sources
+        CompiledCacheSources $compiledCacheSources,
     ) : mixed
     {
-        $nameObj = new CompiledCacheName(name: $name);
+        $compiledCacheName = new CompiledCacheName(name: $name);
 
-        $freshnessChecker = new CheckCompiledCacheIsFresh(directory: $this->directory, manifest: $this->manifest);
-        $freshness        = $freshnessChecker->check(name: $nameObj, sources: $sources);
+        $checkCompiledCacheIsFresh = new CheckCompiledCacheIsFresh(directory: $this->compiledCacheDirectory, manifest: $this->compiledCacheManifest);
+        $compiledCacheFreshness    = $checkCompiledCacheIsFresh->check(name: $compiledCacheName, sources: $compiledCacheSources);
 
-        if ($freshness === CompiledCacheFreshness::MISSING || $freshness === CompiledCacheFreshness::STALE) {
-            return $this->rebuild(name: $nameObj, build: $build, sources: $sources);
+        if ($compiledCacheFreshness === CompiledCacheFreshness::MISSING || $compiledCacheFreshness === CompiledCacheFreshness::STALE) {
+            return $this->rebuild(name: $compiledCacheName, build: $build, sources: $compiledCacheSources);
         }
 
-        return $this->requireCompiledArtifact(name: $nameObj);
+        return $this->requireCompiledArtifact(name: $compiledCacheName);
     }
 
     private function rebuild(
-        CompiledCacheName    $name,
+        CompiledCacheName    $compiledCacheName,
         callable             $build,
-        CompiledCacheSources $sources
+        CompiledCacheSources $compiledCacheSources,
     ) : mixed
     {
-        $compileFlow = new CompileCache(
-            directory: $this->directory,
-            manifest : $this->manifest,
-            clock    : $this->clock
+        $compileCache = new CompileCache(
+            directory: $this->compiledCacheDirectory,
+            manifest : $this->compiledCacheManifest,
+            clock    : $this->clock,
         );
 
-        $compileFlow->compile(name: $name->toString(), build: $build, sources: $sources);
+        $compileCache->compile(name: $compiledCacheName->toString(), build: $build, sources: $compiledCacheSources);
 
-        return $this->requireCompiledArtifact(name: $name);
+        return $this->requireCompiledArtifact(name: $compiledCacheName);
     }
 
-    private function requireCompiledArtifact(CompiledCacheName $name) : mixed
+    private function requireCompiledArtifact(CompiledCacheName $compiledCacheName) : mixed
     {
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $path         = $pathResolver->resolveArtifactPath(name: $name);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
-        if (! file_exists($path->toString())) {
-            throw new CompiledCacheCouldNotBeRead(name: $name->toString());
+        if (! file_exists($compiledCachePath->toString())) {
+            throw new CompiledCacheCouldNotBeRead(name: $compiledCacheName->toString());
         }
 
-        $payload = require $path->toString();
+        $payload = require $compiledCachePath->toString();
 
         $validator = new ValidateCompiledCachePayload();
-        $validator->validate(name: $name->toString(), payload: $payload);
+        $validator->validate(name: $compiledCacheName->toString(), payload: $payload);
 
         return $payload;
     }

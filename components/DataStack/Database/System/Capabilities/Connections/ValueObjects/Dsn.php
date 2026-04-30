@@ -11,22 +11,20 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Val
  */
 final readonly class Dsn
 {
-    private string $dsn;
-
     /**
      * Private constructor — use `Dsn::for()` to create one.
      *
      * @param string $dsn The final, "Computer-Ready" address string.
      */
-    private function __construct(string $dsn) { $this->dsn = $dsn; }
+    private function __construct(private string $dsn) {}
 
     /**
      * Build a technical address from simple settings.
      *
-     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
-     * @param string $host     The computer's address (e.g., '127.0.0.1').
+     * @param string $driver  The type of database (e.g., 'mysql', 'sqlite').
+     * @param string $host    The computer's address (e.g., '127.0.0.1').
      * @param string $database The name of the specific database (e.g., 'users_db').
-     * @param string $charset  The "Language" (Encoding) to use (e.g., 'utf8').
+     * @param string $charset The "Language" (Encoding) to use (e.g., 'utf8').
      *
      * @return self An immutable object holding the perfectly formatted address.
      */

@@ -14,11 +14,11 @@ final readonly class SessionLifetime
     public int $idleTimeoutSeconds;
 
     public function __construct(
-        int|null   $idleTimeoutSeconds = null,
-        public int $absoluteTimeoutSeconds = 43200
+        int        $idleTimeoutSeconds = null,
+        public int $absoluteTimeoutSeconds = 43200,
     )
     {
-        $idleTimeoutSeconds       ??= 900;
+        $idleTimeoutSeconds ??= 900;
         $this->idleTimeoutSeconds = $idleTimeoutSeconds;
         if ($this->idleTimeoutSeconds < 1) {
             throw new InvalidArgumentException(message: 'Idle timeout must be at least 1 second.');

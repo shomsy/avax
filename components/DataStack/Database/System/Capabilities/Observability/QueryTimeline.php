@@ -12,13 +12,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Observability;
 final readonly class QueryEntry
 {
     public function __construct(
-        public string      $sql,
-        public array       $bindings = [],
-        public float       $timestamp = 0.0,
-        public float       $durationMs = 0.0,
-        public string      $type = 'unknown',
-        public string      $connection = '',
-        public int         $affectedRows = 0,
+        public string $sql,
+        public array  $bindings = [],
+        public float  $timestamp = 0.0,
+        public float  $durationMs = 0.0,
+        public string $type = 'unknown',
+        public string $connection = '',
+        public int    $affectedRows = 0,
         public string|null $error = null,
     ) {}
 
@@ -26,13 +26,13 @@ final readonly class QueryEntry
      * Creates a QueryEntry with the current timestamp.
      */
     public static function create(
-        string      $sql,
-        array       $bindings = [],
-        float       $durationMs = 0.0,
-        string      $type = 'unknown',
-        string      $connection = '',
-        int         $affectedRows = 0,
-        string|null $error = null,
+        string $sql,
+        array  $bindings = [],
+        float  $durationMs = 0.0,
+        string $type = 'unknown',
+        string $connection = '',
+        int    $affectedRows = 0,
+        string $error = null,
     ) : self
     {
         return new self(
@@ -136,13 +136,13 @@ final class QueryTimeline
      * Records a query execution entry.
      */
     public function record(
-        string      $sql,
-        array       $bindings = [],
-        float       $durationMs = 0.0,
-        string      $type = 'unknown',
-        string      $connection = '',
-        int         $affectedRows = 0,
-        string|null $error = null,
+        string $sql,
+        array  $bindings = [],
+        float  $durationMs = 0.0,
+        string $type = 'unknown',
+        string $connection = '',
+        int    $affectedRows = 0,
+        string $error = null,
     ) : QueryEntry
     {
         $entry = new QueryEntry(

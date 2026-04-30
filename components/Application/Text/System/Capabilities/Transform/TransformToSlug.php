@@ -12,7 +12,7 @@ final class TransformToSlug
     {
         $s = $text->toAscii()->lower()->toString();
         $s = preg_replace('/[^a-z0-9]+/', '-', $s);
-        $s = trim($s, '-');
+        $s = trim((string) $s, '-');
 
         return new Text($s);
     }

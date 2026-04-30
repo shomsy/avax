@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
@@ -13,10 +14,10 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 final readonly class Login
 {
     public function __construct(
-        private FindUserByCredentials      $findUser,
-        private VerifyPassword             $verifyPassword,
-        private StartAuthenticatedSession  $startSession,
-        private Identity                   $identity
+        private FindUserByCredentials     $findUser,
+        private VerifyPassword            $verifyPassword,
+        private StartAuthenticatedSession $startSession,
+        private Identity                  $identity,
     ) {}
 
     /**
@@ -26,7 +27,7 @@ final readonly class Login
     {
         $user = $this->findUser->execute($credentials->email);
 
-        if (!$user || !$this->verifyPassword->execute($user, $credentials->password)) {
+        if (! $user || ! $this->verifyPassword->execute($user, $credentials->password)) {
             throw new AuthenticationFailed('Invalid credentials');
         }
 

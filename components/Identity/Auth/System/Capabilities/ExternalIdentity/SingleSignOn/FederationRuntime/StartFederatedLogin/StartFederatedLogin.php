@@ -43,7 +43,7 @@ final readonly class StartFederatedLogin
                                            context   : [
                                                            'connection_id' => $connection->connectionId,
                                                            'tenant'        => $connection->tenantSlug,
-                                                       ]
+                                                       ],
                                        ));
 
         return $started;

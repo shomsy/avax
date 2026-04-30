@@ -10,7 +10,7 @@ use Random\RandomException;
 final readonly class JitterCacheTtl
 {
     public function __construct(
-        private int $jitterPercent = 10
+        private int $jitterPercent = 10,
     ) {}
 
     public function addJitterToTtl(int $ttlSeconds) : int

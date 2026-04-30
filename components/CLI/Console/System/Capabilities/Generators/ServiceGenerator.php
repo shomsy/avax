@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\CLI\Console\System\Capabilities\Generators;
 
 use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
+use Override;
 
 /**
  * Generates service class stubs.
@@ -15,10 +16,11 @@ class ServiceGenerator extends CodeGenerator
      * Generate a service class file.
      *
      * @param string $name Service name (e.g. "UserService" or "User")
-     * @param array  $data Additional data (e.g. ['methods' => ['create', 'update']])
+     * @param array $data Additional data (e.g. ['methods' => ['create', 'update']])
      *
      * @return string The generated file path
      */
+    #[Override]
     public function generate(string $name, array $data = []) : string
     {
         $className = Str::studly($name);
@@ -47,7 +49,7 @@ class ServiceGenerator extends CodeGenerator
     {
         $methodsCode = '';
 
-        if (empty($methods)) {
+        if ($methods === []) {
             $methods = ['create', 'update', 'delete', 'find'];
         }
 

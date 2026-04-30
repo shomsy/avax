@@ -23,27 +23,27 @@ final readonly class IdentityPolicy
     public function __construct(
         public IdentityActor $actor,
         public AssuranceTier $assuranceTier,
-        public array         $allowedFactors,
-        public array         $requiredFactors,
-        public int           $idleTimeoutSeconds,
-        public int           $absoluteTimeoutSeconds,
-        public int|null      $freshMfaMaxAgeSeconds,
-        public RecoveryPath  $recoveryPath,
-        bool|null            $phishingResistantRequired = null,
-        bool|null            $adminElevationRequired = null,
-        bool|null            $senderConstrainedTokensRequired = null,
-        bool|null            $denyByDefault = null,
-        bool|null            $resourceChecksRequired = null,
-        bool|null            $separationOfDutiesRequired = null,
-        public bool          $privilegedApprovalRequired = false
+        public array        $allowedFactors,
+        public array        $requiredFactors,
+        public int          $idleTimeoutSeconds,
+        public int          $absoluteTimeoutSeconds,
+        public int|null     $freshMfaMaxAgeSeconds,
+        public RecoveryPath $recoveryPath,
+        bool                $phishingResistantRequired = null,
+        bool                $adminElevationRequired = null,
+        bool                $senderConstrainedTokensRequired = null,
+        bool                $denyByDefault = null,
+        bool                $resourceChecksRequired = null,
+        bool                $separationOfDutiesRequired = null,
+        public bool         $privilegedApprovalRequired = false,
     )
     {
-        $phishingResistantRequired             ??= false;
-        $adminElevationRequired                ??= false;
-        $senderConstrainedTokensRequired       ??= false;
-        $denyByDefault                         ??= true;
-        $resourceChecksRequired                ??= true;
-        $separationOfDutiesRequired            ??= false;
+        $phishingResistantRequired       ??= false;
+        $adminElevationRequired          ??= false;
+        $senderConstrainedTokensRequired ??= false;
+        $denyByDefault                   ??= true;
+        $resourceChecksRequired          ??= true;
+        $separationOfDutiesRequired      ??= false;
         $this->phishingResistantRequired       = $phishingResistantRequired;
         $this->adminElevationRequired          = $adminElevationRequired;
         $this->senderConstrainedTokensRequired = $senderConstrainedTokensRequired;

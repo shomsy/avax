@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\PublicSurface;
@@ -10,6 +11,7 @@ use Avax\Components\DataStack\Data\System\Flows\Aggregate\AverageValues;
 use Avax\Components\DataStack\Data\System\Flows\Aggregate\SumValues;
 use Avax\Components\DataStack\Data\System\Flows\Read\ReadNestedValue;
 use Avax\Components\DataStack\Data\System\Flows\Write\WriteNestedValue;
+use Override;
 
 /**
  * Data PublicSurface.
@@ -17,12 +19,12 @@ use Avax\Components\DataStack\Data\System\Flows\Write\WriteNestedValue;
 final readonly class Data implements DataInterface
 {
     public function __construct(
-        private ArrayReader      $arrayReader,
-        private ArrayWriter      $arrayWriter,
-        private ReadNestedValue  $readNestedValue,
+        private ArrayReader     $arrayReader,
+        private ArrayWriter     $arrayWriter,
+        private ReadNestedValue $readNestedValue,
         private WriteNestedValue $writeNestedValue,
-        private SumValues        $sumValues,
-        private AverageValues    $averageValues,
+        private SumValues       $sumValues,
+        private AverageValues   $averageValues,
     ) {}
 
     public function get(array $data, string $key, mixed $default = null) : mixed
@@ -45,16 +47,19 @@ final readonly class Data implements DataInterface
         return $this->averageValues->execute($items, $key);
     }
 
+    #[Override]
     public function array() : ArrayReader
     {
         return $this->arrayReader;
     }
 
+    #[Override]
     public function write() : ArrayWriter
     {
         return $this->arrayWriter;
     }
 
+    #[Override]
     public function collect(array $items = []) : Collection
     {
         return Collection::from(items: $items);

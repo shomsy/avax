@@ -59,7 +59,7 @@ final readonly class CheckMigrationPath
     {
         $matches  = [];
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: FilesystemIterator::SKIP_DOTS)
+            iterator: new RecursiveDirectoryIterator(directory: $repositoryRoot, flags: FilesystemIterator::SKIP_DOTS),
         );
 
         /** @var SplFileInfo $file */

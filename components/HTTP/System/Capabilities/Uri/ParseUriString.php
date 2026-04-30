@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Uri;
@@ -15,14 +16,14 @@ final readonly class ParseUriString
         }
 
         return new Uri(
-            scheme: $parts['scheme'] ?? '',
-            host: $parts['host'] ?? '',
-            path: $parts['path'] ?? '/',
-            port: $parts['port'] ?? null,
-            query: $parts['query'] ?? '',
+            scheme  : $parts['scheme'] ?? '',
+            host    : $parts['host'] ?? '',
+            path    : $parts['path'] ?? '/',
+            port    : $parts['port'] ?? null,
+            query   : $parts['query'] ?? '',
             fragment: $parts['fragment'] ?? '',
-            user: $parts['user'] ?? '',
-            password: $parts['pass'] ?? null
+            user    : $parts['user'] ?? '',
+            password: $parts['pass'] ?? null,
         );
     }
 }

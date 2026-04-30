@@ -11,19 +11,15 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Override;
 use Random\RandomException;
 use RuntimeException;
 
 final class FailingCacheStore implements CacheStore
 {
-    private Clock $clock;
     private float $failureRate = 1.0;
-    private bool  $shouldFail  = false;
 
-    public function __construct(Clock|null $clock = null)
-    {
-        $this->clock = $clock ?? new SystemClock();
-    }
+    private bool $shouldFail = false;
 
     public function setFailureRate(float $rate) : void
     {
@@ -35,11 +31,12 @@ final class FailingCacheStore implements CacheStore
         $this->shouldFail = true;
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    #[Override]
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->maybeFail();
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
     /**
@@ -52,22 +49,26 @@ final class FailingCacheStore implements CacheStore
         }
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    #[Override]
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $this->maybeFail();
     }
 
-    public function forget(CacheKey $key) : void
+    #[Override]
+    public function forget(CacheKey $cacheKey) : void
     {
         $this->maybeFail();
     }
 
+    #[Override]
     public function clear() : void
     {
         $this->maybeFail();
     }
 
-    public function exists(CacheKey $key) : bool
+    #[Override]
+    public function exists(CacheKey $cacheKey) : bool
     {
         $this->maybeFail();
 

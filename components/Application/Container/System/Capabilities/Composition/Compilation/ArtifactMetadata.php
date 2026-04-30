@@ -13,29 +13,29 @@ use SensitiveParameter;
 final readonly class ArtifactMetadata
 {
     public string $checksum;
-    public array  $statistics;
-    public array  $invalidationReasons;
-    public array  $validationIssues;
-    public array  $invalidatedServices;
-    public array  $changedServices;
-    public array  $pruning;
-    public array  $slices;
-    public array  $ownership;
-    public array  $decorations;
-    public array  $deferred;
-    public array  $lifetimes;
-    public array  $tags;
-    public array  $aliases;
-    public array  $dependencies;
-    public array  $sources;
-    public array  $services;
-    public array  $entries;
+    public array $statistics;
+    public array $invalidationReasons;
+    public array $validationIssues;
+    public array $invalidatedServices;
+    public array $changedServices;
+    public array $pruning;
+    public array $slices;
+    public array $ownership;
+    public array $decorations;
+    public array $deferred;
+    public array $lifetimes;
+    public array $tags;
+    public array $aliases;
+    public array $dependencies;
+    public array $sources;
+    public array $services;
+    public array $entries;
     public string $benchmarkBuildMarker;
-    public bool   $warmed;
-    public array  $artifactPaths;
+    public bool $warmed;
+    public array $artifactPaths;
     public string $dependencyGraphRevision;
     public string $fingerprint;
-    public bool   $strict;
+    public bool $strict;
     public string $diagnosticsMode;
     public string $pruneMode;
     public string $executionMode;
@@ -45,70 +45,70 @@ final readonly class ArtifactMetadata
     public string $configHash;
     public string $cacheVersion;
     public string $compiledAt;
-    public int    $schemaVersion;
+    public int $schemaVersion;
     public string $format;
 
     /**
-     * @param array<string, string>                                       $entries
-     * @param array<string, array{method: string, signature: string}>     $schemaVersion
-     *                                                                   $services
-     * @param array<string, string>                                       $sources
-     * @param array<string, list<string>>                                 $dependencies
-     * @param array<string, string>                                       $aliases
-     * @param array<string, list<string>>                                 $tags
+     * @param array<string, string> $entries
+     * @param array<string, array{method: string, signature: string}> $schemaVersion
+     *                                                                               $services
+     * @param array<string, string> $sources
+     * @param array<string, list<string>> $dependencies
+     * @param array<string, string> $aliases
+     * @param array<string, list<string>> $tags
      * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize:
      *                                  int, poolResetBeforeReuse: bool}> $lifetimes
-     * @param array<string, bool>                                         $deferred
-     * @param array<string, int>                                          $decorations
-     * @param array<string, array<string, mixed>>                         $pruneMode
-     *                                                                   $ownership
-     * @param array<string, array<string, mixed>>                         $diagnosticsMode
-     *                                                                   $slices
-     * @param array<string, mixed>                                        $pruning
-     * @param list<string>                                                $changedServices
-     * @param list<string>                                                $invalidatedServices
-     * @param list<string>                                                $validationIssues
-     * @param list<string>                                                $invalidationReasons
-     * @param array<string, int>                                          $statistics
+     * @param array<string, bool> $deferred
+     * @param array<string, int> $decorations
+     * @param array<string, array<string, mixed>> $pruneMode
+     *                                                       $ownership
+     * @param array<string, array<string, mixed>> $diagnosticsMode
+     *                                                             $slices
+     * @param array<string, mixed> $pruning
+     * @param list<string> $changedServices
+     * @param list<string> $invalidatedServices
+     * @param list<string> $validationIssues
+     * @param list<string> $invalidationReasons
+     * @param array<string, int> $statistics
      */
     public function __construct(
-        string                       $format,
-        int                          $schemaVersion,
-        string                       $compiledAt,
-        string                       $cacheVersion,
-        #[SensitiveParameter] string $configHash,
-        string                       $settingsFingerprint,
-        string                       $environment,
-        string                       $compileMode,
-        string                       $executionMode,
-        string                       $pruneMode,
-        string                       $diagnosticsMode,
-        bool                         $strict,
-        string                       $fingerprint,
-        string                       $dependencyGraphRevision,
-        array                        $artifactPaths,
-        bool                         $warmed,
-        string                       $benchmarkBuildMarker,
-        array                        $entries,
-        array                        $services,
-        array                        $sources,
-        array                        $dependencies,
-        array                        $aliases,
-        array                        $tags,
-        array                        $lifetimes,
-        array                        $deferred,
-        array                        $decorations,
-        array                        $ownership,
-        array                        $slices,
-        array                        $pruning,
-        array                        $changedServices,
-        array                        $invalidatedServices,
-        array                        $validationIssues,
-        array                        $invalidationReasons,
-        array                        $statistics,
-        string                       $checksum
-    )
-    {
+        string $format,
+        int $schemaVersion,
+        string $compiledAt,
+        string $cacheVersion,
+        #[SensitiveParameter]
+        string $configHash,
+        string $settingsFingerprint,
+        string $environment,
+        string $compileMode,
+        string $executionMode,
+        string $pruneMode,
+        string $diagnosticsMode,
+        bool $strict,
+        string $fingerprint,
+        string $dependencyGraphRevision,
+        array $artifactPaths,
+        bool $warmed,
+        string $benchmarkBuildMarker,
+        array $entries,
+        array $services,
+        array $sources,
+        array $dependencies,
+        array $aliases,
+        array $tags,
+        array $lifetimes,
+        array $deferred,
+        array $decorations,
+        array $ownership,
+        array $slices,
+        array $pruning,
+        array $changedServices,
+        array $invalidatedServices,
+        array $validationIssues,
+        array $invalidationReasons,
+        array $statistics,
+        string $checksum,
+    ) {
         $this->format                  = $format;
         $this->schemaVersion           = $schemaVersion;
         $this->compiledAt              = $compiledAt;
@@ -149,7 +149,7 @@ final readonly class ArtifactMetadata
     /**
      * @param list<string> $serviceIds
      */
-    public function includes(array $serviceIds) : bool
+    public function includes(array $serviceIds): bool
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             if (! $this->hasEntry(serviceId: $serviceId)) {
@@ -160,7 +160,7 @@ final readonly class ArtifactMetadata
         return true;
     }
 
-    public function hasEntry(string $serviceId) : bool
+    public function hasEntry(string $serviceId): bool
     {
         return isset($this->entries[$serviceId]);
     }
@@ -168,7 +168,7 @@ final readonly class ArtifactMetadata
     /**
      * @return list<string>
      */
-    public function entryIds() : array
+    public function entryIds(): array
     {
         return array_keys(array: $this->entries);
     }
@@ -176,7 +176,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, LifetimePlan>
      */
-    public function lifetimePlans() : array
+    public function lifetimePlans(): array
     {
         $plans = [];
 
@@ -192,7 +192,7 @@ final readonly class ArtifactMetadata
     /**
      * @param array<string, mixed> $state
      */
-    public static function fromArray(array $state) : self
+    public static function fromArray(array $state): self
     {
         return new self(
             format                 : (string) ($state['format'] ?? ''),
@@ -229,7 +229,7 @@ final readonly class ArtifactMetadata
             validationIssues       : self::stringList(state: $state['validationIssues'] ?? []),
             invalidationReasons    : self::stringList(state: $state['invalidationReasons'] ?? []),
             statistics             : self::intMap(state: $state['statistics'] ?? []),
-            checksum               : (string) ($state['checksum'] ?? '')
+            checksum               : (string) ($state['checksum'] ?? ''),
         );
     }
 
@@ -238,7 +238,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, string>
      */
-    private static function stringMap(mixed $state) : array
+    private static function stringMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -264,7 +264,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array{method: string, signature: string}>
      */
-    private static function services(mixed $state) : array
+    private static function services(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -293,7 +293,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, list<string>>
      */
-    private static function tags(mixed $state) : array
+    private static function tags(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -307,9 +307,9 @@ final readonly class ArtifactMetadata
             }
 
             $values = array_map(
-                    callback: static fn (mixed $value) : string => (string) $value,
-                    array   : $serviceIds
-                )
+                callback: static fn (mixed $value): string => (string) $value,
+                array   : $serviceIds,
+            )
                     |> array_unique(...)
                     |> array_values(...);
             sort(array: $values);
@@ -326,7 +326,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>
      */
-    private static function lifetimes(mixed $state) : array
+    private static function lifetimes(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -341,7 +341,7 @@ final readonly class ArtifactMetadata
 
             $plans[$serviceId] = LifetimePlan::fromArray(
                 serviceId: $serviceId,
-                state    : is_array(value: $plan) ? $plan : []
+                state    : is_array(value: $plan) ? $plan : [],
             )->toArray();
         }
 
@@ -353,7 +353,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'format'                  => $this->format,
@@ -399,7 +399,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, bool>
      */
-    private static function boolMap(mixed $state) : array
+    private static function boolMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -425,7 +425,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, int>
      */
-    private static function intMap(mixed $state) : array
+    private static function intMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -451,7 +451,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array<string, mixed>>
      */
-    private static function mapOfMaps(mixed $state) : array
+    private static function mapOfMaps(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -478,7 +478,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, mixed>
      */
-    private static function map(mixed $state) : array
+    private static function map(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -504,16 +504,16 @@ final readonly class ArtifactMetadata
      *
      * @return list<string>
      */
-    private static function stringList(mixed $state) : array
+    private static function stringList(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
         }
 
         $items = array_values(array: array_map(
-                                         callback: static fn (mixed $value) : string => (string) $value,
-                                         array   : $state
-                                     ));
+            callback: static fn (mixed $value): string => (string) $value,
+            array   : $state,
+        ));
 
         sort(array: $items);
 

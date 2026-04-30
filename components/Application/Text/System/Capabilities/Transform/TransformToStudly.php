@@ -11,9 +11,10 @@ final class TransformToStudly
     public function __invoke(Text $text) : Text
     {
         $s     = preg_replace('/[^a-zA-Z0-9]+/', ' ', $text->toAscii()->toString());
-        $s     = preg_replace('/\s+/', ' ', trim($s));
-        $parts = explode(' ', $s);
-        $parts = array_map(fn (string $p) => $p === '' ? '' : ucfirst(mb_strtolower($p, 'UTF-8')), $parts);
+        $s = preg_replace('/\s+/', ' ', trim((string) $s));
+
+        $parts = explode(' ', (string) $s);
+        $parts = array_map(static fn (string $p) : string => $p === '' ? '' : ucfirst(mb_strtolower($p, 'UTF-8')), $parts);
 
         return new Text(implode('', $parts));
     }

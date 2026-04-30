@@ -7,10 +7,10 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 use InvalidArgumentException;
 use Random\RandomException;
 
-final class CompiledCachePath
+final readonly class CompiledCachePath
 {
     public function __construct(
-        public readonly string $path
+        public string $path,
     )
     {
         $this->validate();

@@ -11,17 +11,17 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
  */
 final readonly class NormalizeAuditEvent
 {
-    private bool             $maskSensitiveContext;
+    private bool $maskSensitiveContext;
     private MaskAuditContext $maskAuditContext;
 
     public function __construct(
-        MaskAuditContext|null                      $maskAuditContext = null,
-        bool|null                                  $maskSensitiveContext = null,
-        private AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
+        MaskAuditContext                           $maskAuditContext = null,
+        bool                                       $maskSensitiveContext = null,
+        private AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null,
     )
     {
-        $maskAuditContext           ??= new MaskAuditContext();
-        $maskSensitiveContext       ??= true;
+        $maskAuditContext     ??= new MaskAuditContext();
+        $maskSensitiveContext ??= true;
         $this->maskAuditContext     = $maskAuditContext;
         $this->maskSensitiveContext = $maskSensitiveContext;
     }
@@ -33,7 +33,7 @@ final readonly class NormalizeAuditEvent
     {
         $maskSensitiveContext = $this->maskSensitiveContext
             && ! ($this->legalHoldPolicy?->preserveSensitiveContext(event: $event) ?? false);
-        $context              = $maskSensitiveContext
+        $context = $maskSensitiveContext
             ? $this->maskAuditContext->execute(context: $event->context)
             : $event->context;
 

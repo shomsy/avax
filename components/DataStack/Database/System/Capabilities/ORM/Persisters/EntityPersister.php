@@ -16,15 +16,15 @@ use Throwable;
 final readonly class EntityPersister
 {
     public function __construct(
-        private Query                   $query,
+        private Query    $query,
         private AttributeMetadataReader $metadata,
-        private Hydrator                $hydrator
+        private Hydrator $hydrator,
     ) {}
 
     /**
      * @throws Throwable
      */
-    public function insert(object $entity, string|null $connectionName = null) : void
+    public function insert(object $entity, string $connectionName = null) : void
     {
         $metadata   = $this->metadata->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
@@ -80,7 +80,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function update(object $entity, string|null $connectionName = null) : void
+    public function update(object $entity, string $connectionName = null) : void
     {
         $metadata   = $this->metadata->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
@@ -105,7 +105,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function delete(object $entity, string|null $connectionName = null) : void
+    public function delete(object $entity, string $connectionName = null) : void
     {
         $metadata   = $this->metadata->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
@@ -128,7 +128,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, string|null $connectionName = null) : object
+    public function refresh(object $entity, string $connectionName = null) : object
     {
         $metadata   = $this->metadata->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
@@ -151,7 +151,7 @@ final readonly class EntityPersister
             $this->setPropertyValue(
                 entity  : $entity,
                 property: $field->property,
-                value   : $this->propertyValue(entity: $fresh, property: $field->property)
+                value   : $this->propertyValue(entity: $fresh, property: $field->property),
             );
         }
 
@@ -163,7 +163,7 @@ final readonly class EntityPersister
      *
      * @throws Throwable
      */
-    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
+    public function find(string $entityClass, mixed $id, string $connectionName = null) : object|null
     {
         $metadata   = $this->metadata->for(entityClass: $entityClass);
         $identifier = $metadata->identifierField();
@@ -191,7 +191,7 @@ final readonly class EntityPersister
      * @return list<object>
      * @throws Throwable
      */
-    public function findAll(string $entityClass, array|null $criteria = null, string|null $connectionName = null) : array
+    public function findAll(string $entityClass, array $criteria = null, string $connectionName = null) : array
     {
         $criteria ??= [];
 
@@ -199,20 +199,20 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param class-string         $entityClass
+     * @param class-string $entityClass
      * @param array<string, mixed> $criteria
      *
      * @return list<object>
      * @throws Throwable
      */
     public function findBy(
-        string      $entityClass,
-        array       $criteria,
-        string|null $orderBy = null,
-        string|null $direction = null,
-        int|null    $limit = null,
-        int|null    $offset = null,
-        string|null $connectionName = null
+        string $entityClass,
+        array  $criteria,
+        string $orderBy = null,
+        string $direction = null,
+        int    $limit = null,
+        int    $offset = null,
+        string $connectionName = null,
     ) : array
     {
         $metadata = $this->metadata->for(entityClass: $entityClass);
@@ -240,9 +240,9 @@ final readonly class EntityPersister
             callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: $entityClass,
                 row        : $row,
-                metadata   : $metadata
+                metadata   : $metadata,
             ),
-            array   : $query->get()
+            array   : $query->get(),
         );
     }
 }

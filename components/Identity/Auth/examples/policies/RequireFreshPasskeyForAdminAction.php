@@ -22,7 +22,8 @@ use SensitiveParameter;
 final readonly class RequireFreshPasskeyForAdminAction
 {
     public function __construct(
-        #[SensitiveParameter] private RequireAccessPolicy $requireAccessPolicy
+        #[SensitiveParameter]
+        private RequireAccessPolicy $requireAccessPolicy,
     ) {}
 
     /**
@@ -37,7 +38,7 @@ final readonly class RequireFreshPasskeyForAdminAction
     {
         $this->requireAccessPolicy->execute(policy: AccessPolicy::forIdentityPolicy(
             identityPolicy    : IdentityPolicyCatalog::admin(),
-            requiredPermission: new UserPermission(value: 'admin.high_impact.write')
+            requiredPermission: new UserPermission(value: 'admin.high_impact.write'),
         ));
     }
 }

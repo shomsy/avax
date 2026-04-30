@@ -21,8 +21,9 @@ final class LocalStorage
     {
         $directory = dirname($path);
         if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+            mkdir($directory, 0o755, true);
         }
+
         file_put_contents($path, $content);
     }
 
@@ -38,7 +39,7 @@ final class LocalStorage
         return file_exists($path);
     }
 
-    public function createDirectory(string $path, int $permissions = 0755) : void
+    public function createDirectory(string $path, int $permissions = 0o755) : void
     {
         if (! is_dir($path)) {
             mkdir($path, $permissions, true);

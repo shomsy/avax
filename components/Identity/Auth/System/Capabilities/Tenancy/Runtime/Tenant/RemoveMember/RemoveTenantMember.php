@@ -41,7 +41,7 @@ final readonly class RemoveTenantMember
                                                            'tenant_id'   => $tenant->tenantId,
                                                            'tenant_slug' => $tenant->slug,
                                                            'user_id'     => $data->userId,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

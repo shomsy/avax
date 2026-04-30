@@ -22,8 +22,8 @@ abstract class Seeder
     public function call(string $class) : void
     {
         basename(path: $class);
-        echo "\033[36mSeeding:\033[0m {$class}\n";
-        (new $class)->withBuilder(builder: $this->builder())->run();
+        echo sprintf('[36mSeeding:[0m %s%s', $class, PHP_EOL);
+        (new $class())->withBuilder(builder: $this->builder())->run();
     }
 
     /**
@@ -31,16 +31,16 @@ abstract class Seeder
      */
     abstract public function run() : void;
 
-    public function withBuilder(QueryBuilder $builder) : static
+    public function withBuilder(QueryBuilder $queryBuilder) : static
     {
-        $this->builder = $builder;
+        $this->builder = $queryBuilder;
 
         return $this;
     }
 
     protected function builder() : QueryBuilder
     {
-        if ($this->builder === null) {
+        if (! $this->builder instanceof QueryBuilder) {
             throw new RuntimeException(message: 'Seeder requires an injected QueryBuilder before it can run.');
         }
 

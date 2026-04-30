@@ -22,7 +22,7 @@ final class Session implements SessionInterface
         private readonly ?SessionMetadata $metadata = null,
         private readonly ?SessionAudit    $audit = null,
         private readonly ?SessionEventBus $events = null,
-        private readonly ?LoggerInterface $logger = null
+        private readonly ?LoggerInterface $logger = null,
     )
     {
         $this->transaction = new SessionTransaction($this->scope);
@@ -77,7 +77,7 @@ final class Session implements SessionInterface
             idleExpiresAt    : $now->modify('+30 minutes'),
             absoluteExpiresAt: $now->modify('+24 hours'),
             ipCreated        : $this->metadata?->getIp(),
-            userAgentCreated : $this->metadata?->getUserAgent()
+            userAgentCreated : $this->metadata?->getUserAgent(),
         );
         $this->saveRecord();
     }
@@ -88,11 +88,11 @@ final class Session implements SessionInterface
             return;
         }
 
-        $now = new DateTimeImmutable();
+        $now          = new DateTimeImmutable();
         $this->record = new SessionRecord(
             ...((array) $this->record),
             lastSeenAt   : $now,
-            idleExpiresAt: $now->modify('+30 minutes')
+            idleExpiresAt: $now->modify('+30 minutes'),
         );
         $this->saveRecord();
     }

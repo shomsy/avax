@@ -23,7 +23,7 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
     {
         return array_values(array: array_filter(
                                        array   : $this->changeRequests,
-                                       callback: static fn (TenantSecurityChangeRequest $changeRequest) : bool => $changeRequest->tenantSlug === trim(string: $tenantSlug)
+                                       callback: static fn (TenantSecurityChangeRequest $changeRequest) : bool => $changeRequest->tenantSlug === trim(string: $tenantSlug),
                                    ));
     }
 }

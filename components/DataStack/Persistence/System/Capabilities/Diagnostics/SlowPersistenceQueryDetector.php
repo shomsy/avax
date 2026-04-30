@@ -18,12 +18,12 @@ final readonly class SlowPersistenceReport
     public function __construct(
         public string $operation,
         public string $type,
-        public float  $durationMs,
-        public float  $thresholdMs,
+        public float $durationMs,
+        public float $thresholdMs,
         public string $fingerprint = '',
-        public array  $context = [],
-        public float  $timestamp = 0.0,
-        public int    $occurrences = 1,
+        public array $context = [],
+        public float $timestamp = 0.0,
+        public int   $occurrences = 1,
     ) {}
 
     /**
@@ -32,9 +32,9 @@ final readonly class SlowPersistenceReport
     public static function create(
         string $operation,
         string $type,
-        float  $durationMs,
-        float  $thresholdMs,
-        array  $context = [],
+        float $durationMs,
+        float $thresholdMs,
+        array $context = [],
     ) : self
     {
         return new self(
@@ -136,7 +136,7 @@ final readonly class SlowPersistenceReport
 final readonly class SlowPersistenceStatistics
 {
     public function __construct(
-        public int   $totalSlowOperations = 0,
+        public int $totalSlowOperations = 0,
         public float $totalDurationMs = 0.0,
         public float $averageDurationMs = 0.0,
         public float $maxDurationMs = 0.0,
@@ -175,8 +175,8 @@ final readonly class SlowPersistenceStatistics
                 $minDuration = $report->durationMs;
             }
 
-            $byType[$report->type]               = ($byType[$report->type] ?? 0) + 1;
-            $byOperation[$report->operation]     = ($byOperation[$report->operation] ?? 0) + 1;
+            $byType[$report->type]           = ($byType[$report->type] ?? 0) + 1;
+            $byOperation[$report->operation] = ($byOperation[$report->operation] ?? 0) + 1;
             $byFingerprint[$report->fingerprint] = ($byFingerprint[$report->fingerprint] ?? 0) + 1;
         }
 
@@ -207,7 +207,7 @@ final readonly class SlowPersistenceStatistics
             . "  Min: %.2fms\n"
             . "  Total Duration: %.2fms\n"
             . "  By Type: %s\n"
-            . "  By Operation: %s",
+            . '  By Operation: %s',
             $this->totalSlowOperations,
             $this->averageDurationMs,
             $this->maxDurationMs,
@@ -275,7 +275,7 @@ final class SlowPersistenceQueryDetector
 
     public function __construct(
         float $thresholdMs = 100.0,
-        int   $maxEntries = 0,
+        int $maxEntries = 0,
     )
     {
         $this->thresholdMs = $thresholdMs;
@@ -320,12 +320,12 @@ final class SlowPersistenceQueryDetector
     public function record(
         string $operation,
         string $type,
-        float  $durationMs,
-        array  $context = [],
+        float $durationMs,
+        array $context = [],
     ) : bool
     {
         $this->totalOperations++;
-        $this->totalTimeMs       += $durationMs;
+        $this->totalTimeMs += $durationMs;
         $this->typeTotals[$type] = ($this->typeTotals[$type] ?? 0.0) + $durationMs;
 
         if ($durationMs < $this->thresholdMs) {
@@ -418,7 +418,9 @@ final class SlowPersistenceQueryDetector
     public function topSlow(int $limit = 10) : array
     {
         $sorted = $this->slowOperations;
-        usort($sorted, static fn (SlowPersistenceReport $a, SlowPersistenceReport $b) : int => $b->durationMs <=> $a->durationMs
+        usort(
+            $sorted,
+            static fn (SlowPersistenceReport $a, SlowPersistenceReport $b) : int => $b->durationMs <=> $a->durationMs,
         );
 
         return array_slice($sorted, 0, $limit);
@@ -507,7 +509,7 @@ final class SlowPersistenceQueryDetector
             . "  Total Operations: %d\n"
             . "  Slow Operations: %d (%.1f%%)\n"
             . "  Average Duration: %.2fms\n"
-            . "  Total Time: %.2fms",
+            . '  Total Time: %.2fms',
             $this->thresholdMs,
             $this->totalOperations,
             count($this->slowOperations),

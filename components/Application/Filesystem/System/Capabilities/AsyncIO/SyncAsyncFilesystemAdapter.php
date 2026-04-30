@@ -6,6 +6,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\AsyncIO;
 
 use Fiber;
 use InvalidArgumentException;
+use Override;
 use RuntimeException;
 use Throwable;
 
@@ -46,6 +47,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      * NOTE: This is synchronous under the hood. The Fiber executes
      * blocking file_get_contents() immediately.
      */
+    #[Override]
     public function asyncRead(string $path, array $options = []) : AsyncOperationPromise
     {
         if ($path === '') {
@@ -53,17 +55,15 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
                 rejection: new InvalidArgumentException('File path cannot be empty'),
             );
         }
+        $offset = $options['offset'] ?? 0;
+        $length = $options['length'] ?? null;
 
-        $encoding = $options['encoding'] ?? 'UTF-8';
-        $offset   = $options['offset'] ?? 0;
-        $length   = $options['length'] ?? null;
-
-        $fiber = new Fiber(function () use ($path, $offset, $length) : string {
+        $fiber = new Fiber(static function () use ($path, $offset, $length) : string {
             $contents = file_get_contents($path);
 
             if ($contents === false) {
                 throw new RuntimeException(
-                    sprintf('Failed to read file: %s', $path)
+                    sprintf('Failed to read file: %s', $path),
                 );
             }
 
@@ -79,8 +79,8 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             $result = $fiber->getReturn();
 
             return new SyncOperationPromise(result: $result);
-        } catch (Throwable $e) {
-            return new SyncOperationPromise(rejection: $e);
+        } catch (Throwable $throwable) {
+            return new SyncOperationPromise(rejection: $throwable);
         }
     }
 
@@ -90,6 +90,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      * NOTE: This is synchronous under the hood. The Fiber executes
      * blocking file_put_contents() immediately.
      */
+    #[Override]
     public function asyncWrite(string $path, string $contents, array $options = []) : AsyncOperationPromise
     {
         if ($path === '') {
@@ -98,34 +99,30 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             );
         }
 
-        $flags       = $options['flags'] ?? 0;
+        $flags = $options['flags'] ?? 0;
         $permissions = $options['permissions'] ?? null;
 
-        $fiber = new Fiber(function () use ($path, $contents, $flags, $permissions) : bool {
+        $fiber = new Fiber(static function () use ($path, $contents, $flags, $permissions) : bool {
             $dir = dirname($path);
 
-            if (! is_dir($dir)) {
-                if (! mkdir($dir, 0755, true) && ! is_dir($dir)) {
-                    throw new RuntimeException(
-                        sprintf('Failed to create directory: %s', $dir)
-                    );
-                }
+            if (! is_dir($dir) && (! mkdir($dir, 0o755, true) && ! is_dir($dir))) {
+                throw new RuntimeException(
+                    sprintf('Failed to create directory: %s', $dir),
+                );
             }
 
             $result = file_put_contents($path, $contents, $flags);
 
             if ($result === false) {
                 throw new RuntimeException(
-                    sprintf('Failed to write file: %s', $path)
+                    sprintf('Failed to write file: %s', $path),
                 );
             }
 
-            if ($permissions !== null) {
-                if (! chmod($path, $permissions)) {
-                    throw new RuntimeException(
-                        sprintf('Failed to set permissions on: %s', $path)
-                    );
-                }
+            if ($permissions !== null && ! chmod($path, $permissions)) {
+                throw new RuntimeException(
+                    sprintf('Failed to set permissions on: %s', $path),
+                );
             }
 
             return true;
@@ -136,8 +133,8 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             $result = $fiber->getReturn();
 
             return new SyncOperationPromise(result: $result);
-        } catch (Throwable $e) {
-            return new SyncOperationPromise(rejection: $e);
+        } catch (Throwable $throwable) {
+            return new SyncOperationPromise(rejection: $throwable);
         }
     }
 
@@ -146,6 +143,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      *
      * NOTE: This is synchronous under the hood.
      */
+    #[Override]
     public function asyncExists(string $path) : AsyncOperationPromise
     {
         if ($path === '') {
@@ -154,15 +152,15 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             );
         }
 
-        $fiber = new Fiber(fn () : bool => file_exists($path));
+        $fiber = new Fiber(static fn () : bool => file_exists($path));
 
         try {
             $fiber->start();
             $result = $fiber->getReturn();
 
             return new SyncOperationPromise(result: $result);
-        } catch (Throwable $e) {
-            return new SyncOperationPromise(rejection: $e);
+        } catch (Throwable $throwable) {
+            return new SyncOperationPromise(rejection: $throwable);
         }
     }
 
@@ -173,6 +171,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      *
      * @param array<string, mixed> $options If 'recursive' is true, directories are deleted recursively
      */
+    #[Override]
     public function asyncDelete(string $path, array $options = []) : AsyncOperationPromise
     {
         if ($path === '') {
@@ -187,7 +186,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             if (is_file($path) || is_link($path)) {
                 if (! unlink($path)) {
                     throw new RuntimeException(
-                        sprintf('Failed to delete file: %s', $path)
+                        sprintf('Failed to delete file: %s', $path),
                     );
                 }
 
@@ -198,7 +197,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
                 if ($recursive) {
                     if (! $this->deleteDirectoryRecursive($path)) {
                         throw new RuntimeException(
-                            sprintf('Failed to delete directory recursively: %s', $path)
+                            sprintf('Failed to delete directory recursively: %s', $path),
                         );
                     }
 
@@ -208,7 +207,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
                 // Non-recursive: only delete if empty
                 if (! rmdir($path)) {
                     throw new RuntimeException(
-                        sprintf('Failed to delete empty directory (use recursive=true for non-empty): %s', $path)
+                        sprintf('Failed to delete empty directory (use recursive=true for non-empty): %s', $path),
                     );
                 }
 
@@ -224,8 +223,8 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             $result = $fiber->getReturn();
 
             return new SyncOperationPromise(result: $result);
-        } catch (Throwable $e) {
-            return new SyncOperationPromise(rejection: $e);
+        } catch (Throwable $throwable) {
+            return new SyncOperationPromise(rejection: $throwable);
         }
     }
 
@@ -260,6 +259,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      *
      * @param array<string, mixed> $options Supported: 'recursive' (bool), 'includeHidden' (bool), 'filter' (callable)
      */
+    #[Override]
     public function asyncListDirectory(string $path, array $options = []) : AsyncOperationPromise
     {
         if ($path === '') {
@@ -268,9 +268,9 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             );
         }
 
-        $recursive     = $options['recursive'] ?? false;
+        $recursive = $options['recursive'] ?? false;
         $includeHidden = $options['includeHidden'] ?? false;
-        $filter        = $options['filter'] ?? null;
+        $filter    = $options['filter'] ?? null;
 
         if ($filter !== null && ! is_callable($filter)) {
             return new SyncOperationPromise(
@@ -281,7 +281,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
         $fiber = new Fiber(function () use ($path, $recursive, $includeHidden, $filter) : array {
             if (! is_dir($path)) {
                 throw new RuntimeException(
-                    sprintf('Path is not a directory: %s', $path)
+                    sprintf('Path is not a directory: %s', $path),
                 );
             }
 
@@ -290,7 +290,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
                 : $this->listDirectorySingle($path, $includeHidden);
 
             if ($filter !== null) {
-                $items = array_values(array_filter($items, $filter));
+                return array_values(array_filter($items, $filter));
             }
 
             return $items;
@@ -301,8 +301,8 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             $result = $fiber->getReturn();
 
             return new SyncOperationPromise(result: $result);
-        } catch (Throwable $e) {
-            return new SyncOperationPromise(rejection: $e);
+        } catch (Throwable $throwable) {
+            return new SyncOperationPromise(rejection: $throwable);
         }
     }
 
@@ -317,7 +317,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
         $entries = array_diff(scandir($path), ['.', '..']);
 
         foreach ($entries as $entry) {
-            if (! $includeHidden && str_starts_with($entry, '.')) {
+            if (! $includeHidden && str_starts_with((string) $entry, '.')) {
                 continue;
             }
 
@@ -347,10 +347,12 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
         }
 
         while ( ($entry = readdir($handle)) !== false ) {
-            if ($entry === '.' || $entry === '..') {
+            if ($entry === '.') {
                 continue;
             }
-
+            if ($entry === '..') {
+                continue;
+            }
             if (! $includeHidden && str_starts_with($entry, '.')) {
                 continue;
             }
@@ -378,24 +380,27 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
  */
 final class SyncOperationPromise implements AsyncOperationPromise
 {
-    private bool        $isResolved;
-    private bool        $isRejected;
-    private mixed      $result = null;
-    private ?Throwable $error  = null;
+    private bool $isResolved;
+
+    private bool $isRejected;
+
+    private mixed $result = null;
+
+    private ?Throwable $throwable = null;
 
     /**
-     * @param mixed           $result    The resolved value (if resolved)
-     * @param Throwable|null $rejection The rejection exception (if rejected)
+     * @param mixed          $result    The resolved value (if resolved)
+     * @param Throwable|null $throwable The rejection exception (if rejected)
      */
     public function __construct(
         mixed      $result = null,
-        ?Throwable $rejection = null,
+        ?Throwable $throwable = null,
     )
     {
-        if ($rejection !== null) {
+        if ($throwable instanceof Throwable) {
             $this->isResolved = false;
             $this->isRejected = true;
-            $this->error      = $rejection;
+            $this->throwable = $throwable;
         } else {
             $this->isResolved = true;
             $this->isRejected = false;
@@ -403,6 +408,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
         }
     }
 
+    #[Override]
     public function then(callable $onResolved) : AsyncOperationPromise
     {
         if ($this->isResolved) {
@@ -419,11 +425,12 @@ final class SyncOperationPromise implements AsyncOperationPromise
         return $this;
     }
 
+    #[Override]
     public function catch(callable $onRejected) : AsyncOperationPromise
     {
-        if ($this->isRejected && $this->error !== null) {
+        if ($this->isRejected && $this->throwable !== null) {
             try {
-                $newResult = $onRejected($this->error);
+                $newResult = $onRejected($this->throwable);
 
                 return new self(result: $newResult);
             } catch (Throwable $e) {
@@ -435,20 +442,23 @@ final class SyncOperationPromise implements AsyncOperationPromise
         return $this;
     }
 
+    #[Override]
     public function isResolved() : bool
     {
         return $this->isResolved;
     }
 
+    #[Override]
     public function isRejected() : bool
     {
         return $this->isRejected;
     }
 
+    #[Override]
     public function getResult() : mixed
     {
-        if ($this->isRejected && $this->error !== null) {
-            throw $this->error;
+        if ($this->isRejected && $this->throwable !== null) {
+            throw $this->throwable;
         }
 
         return $this->result;

@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
+use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
-use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 
 /**
  * AuthInterface - Enterprise-grade authentication and account management contract.
@@ -25,8 +26,8 @@ interface AuthInterface
     public function guest() : bool;
 
     public function register(RegistrationData $data) : RegistrationResult;
-    
+
     public function changePassword(ChangePasswordData $data) : void;
-    
+
     public function logoutAllSessions() : void;
 }

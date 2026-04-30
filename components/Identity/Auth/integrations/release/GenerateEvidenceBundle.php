@@ -34,7 +34,8 @@ final readonly class GenerateEvidenceBundle
                     'path'   => $relativePath,
                     'exists' => false,
                 ];
-                $missing[]        = $type;
+                $missing[] = $type;
+
                 continue;
             }
 
@@ -44,18 +45,18 @@ final readonly class GenerateEvidenceBundle
             $artifacts[$type] = [
                 'path'        => $relativePath,
                 'exists'      => true,
-                'size'        => $size === false ? 0 : $size,
+                'size' => $size === false ? 0 : $size,
                 'modified_at' => $modifiedAt === false ? '' : gmdate(format: DATE_ATOM, timestamp: $modifiedAt),
             ];
         }
 
         return [
-            'generated_at'      => gmdate(format: DATE_ATOM),
-            'version'           => '1.0.0',
-            'package'           => $this->detectPackageName(repositoryRoot: $resolvedRoot),
-            'repository_root'   => $resolvedRoot,
-            'artifacts'         => $artifacts,
-            'canonical_docs'    => [
+            'generated_at'    => gmdate(format: DATE_ATOM),
+            'version'         => '1.0.0',
+            'package'         => $this->detectPackageName(repositoryRoot: $resolvedRoot),
+            'repository_root' => $resolvedRoot,
+            'artifacts'       => $artifacts,
+            'canonical_docs'  => [
                 'status'              => 'docs/STATUS.md',
                 'product_boundary'    => 'docs/product-boundary.md',
                 'capability_matrix'   => 'docs/capability-matrix.md',

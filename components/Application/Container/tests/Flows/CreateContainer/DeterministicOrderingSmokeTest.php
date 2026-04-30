@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
@@ -13,86 +13,56 @@ use Avax\Components\Application\Container\DI\ContainerInterface;
 
 final class OrderingProviderAlpha implements ServiceProviderInterface
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app) { $this->app = $app; }
-
     public function dependsOn() : array
     {
         return [];
     }
-
-    public function register() : void {}
-
-    public function boot() : void {}
 }
 
 final class OrderingProviderBeta implements ServiceProviderInterface
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app) { $this->app = $app; }
-
     public function dependsOn() : array
     {
         return [OrderingProviderAlpha::class];
     }
-
-    public function register() : void {}
-
-    public function boot() : void {}
 }
 
 final class OrderingProviderGamma implements ServiceProviderInterface
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app) { $this->app = $app; }
-
     public function dependsOn() : array
     {
         return [OrderingProviderAlpha::class];
     }
-
-    public function register() : void {}
-
-    public function boot() : void {}
 }
 
 final class OrderingTaggedA {}
 
-final class OrderingTaggedB {}
+final class OrderingTaggedB {
+}
 
 final class OrderingTaggedC {}
 
 final class OrderingDecoratedService
 {
-    public string $value = 'base';
-
-    public function __construct(string $value = 'base') { $this->value = $value; }
+    public function __construct(public string $value = 'base') {}
 }
 
 final class OrderingFirstDecorator
 {
-    public OrderingDecoratedService $inner;
-
-    public function __construct(OrderingDecoratedService $inner) { $this->inner = $inner; }
+    public function __construct(public OrderingDecoratedService $orderingDecoratedService) {}
 }
 
 final class OrderingSecondDecorator
 {
-    public OrderingFirstDecorator $inner;
-
-    public function __construct(OrderingFirstDecorator $inner) { $this->inner = $inner; }
+    public function __construct(public OrderingFirstDecorator $orderingFirstDecorator) {}
 }
 
-final class OrderingArtifactDependency {}
+final class OrderingArtifactDependency {
+}
 
 final class OrderingArtifactService
 {
-    public OrderingArtifactDependency $dependency;
-
-    public function __construct(OrderingArtifactDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public OrderingArtifactDependency $orderingArtifactDependency) {}
 }
 
 /**
@@ -118,10 +88,10 @@ $providerPlan = ProviderBootPlan::build(instances: [
 assertSame(
     expected: [OrderingProviderAlpha::class, OrderingProviderBeta::class, OrderingProviderGamma::class],
     actual  : $providerPlan->order,
-    message : 'Provider boot order must stay deterministic and dependency-aware.'
+    message : 'Provider boot order must stay deterministic and dependency-aware.',
 );
 
-$registry = new ServiceRegistry;
+$registry = new ServiceRegistry();
 $registry->bind(abstract: OrderingTaggedC::class, concrete: OrderingTaggedC::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedA::class, concrete: OrderingTaggedA::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedB::class, concrete: OrderingTaggedB::class)->tag(tags: 'ordered');
@@ -132,12 +102,12 @@ $registry->decorate(abstract: OrderingDecoratedService::class, decorator: Orderi
 assertSame(
     expected: [OrderingTaggedA::class, OrderingTaggedB::class, OrderingTaggedC::class],
     actual  : $registry->getTaggedIds(tag: 'ordered'),
-    message : 'Tag ordering must stay deterministic regardless of registration order.'
+    message : 'Tag ordering must stay deterministic regardless of registration order.',
 );
 assertSame(
     expected: [OrderingFirstDecorator::class, OrderingSecondDecorator::class],
     actual  : $registry->decorationChain(abstract: OrderingDecoratedService::class),
-    message : 'Decoration ordering must stay deterministic and preserve explicit registration order.'
+    message : 'Decoration ordering must stay deterministic and preserve explicit registration order.',
 );
 
 $leftCache  = sys_get_temp_dir() . '/container-ordering-left-' . uniqid();
@@ -164,7 +134,7 @@ $right->compileContainer(serviceIds: [OrderingArtifactDependency::class, Orderin
 assertSame(
     expected: normalizedArtifactMetadata(container: $left),
     actual  : normalizedArtifactMetadata(container: $right),
-    message : 'Compiled artifact metadata ordering must stay deterministic across equivalent registration orderings.'
+    message : 'Compiled artifact metadata ordering must stay deterministic across equivalent registration orderings.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

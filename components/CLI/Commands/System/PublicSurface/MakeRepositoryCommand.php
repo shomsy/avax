@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\CLI\Commands\System\PublicSurface;
@@ -10,8 +11,8 @@ use Throwable;
 final readonly class MakeRepositoryCommand
 {
     public function __construct(
-        private RepositoryGeneratorInterface $generator,
-        private LoggerInterface $logger
+        private RepositoryGeneratorInterface $repositoryGenerator,
+        private LoggerInterface              $logger,
     ) {}
 
     public function execute(array $arguments): void
@@ -21,14 +22,15 @@ final readonly class MakeRepositoryCommand
 
         if (empty($name) || empty($entity)) {
             $this->logger->error('Repository name and entity are required.');
+
             return;
         }
 
         try {
-            $this->generator->create($name, $entity);
-            $this->logger->info("Repository '$name' created successfully.");
-        } catch (Throwable $e) {
-            $this->logger->error('Error creating repository: ' . $e->getMessage());
+            $this->repositoryGenerator->create($name, $entity);
+            $this->logger->info(sprintf("Repository '%s' created successfully.", $name));
+        } catch (Throwable $throwable) {
+            $this->logger->error('Error creating repository: ' . $throwable->getMessage());
         }
     }
 }

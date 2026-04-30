@@ -14,7 +14,7 @@ final readonly class ConfigureSagaRuntime
     public function __construct(
         private RegisterSagaStore      $registerSagaStore = new RegisterSagaStore(),
         private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner(),
-        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus()
+        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
     ) {}
 
     public function configure(SagaRuntimeConfig $config) : SagaRuntime
@@ -22,8 +22,9 @@ final readonly class ConfigureSagaRuntime
         $validation = new ValidateSagaRuntimeConfig(config: $config);
         if (! $validation->isValid()) {
             $errors = implode(', ', $validation->getErrors());
+
             throw new SagaRuntimeConfigurationFailure(
-                message: sprintf('Invalid saga runtime configuration: %s', $errors)
+                message: sprintf('Invalid saga runtime configuration: %s', $errors),
             );
         }
 
@@ -36,7 +37,7 @@ final readonly class ConfigureSagaRuntime
             stepRunner : $stepRunner,
             messageBus : $messageBus,
             idempotency: new ProtectSagaIdempotency(),
-            inspect    : InspectSaga::inMemory()
+            inspect    : InspectSaga::inMemory(),
         );
     }
 }
@@ -44,11 +45,11 @@ final readonly class ConfigureSagaRuntime
 final readonly class SagaRuntime
 {
     public function __construct(
-        public StoreSagaState         $store,
-        public object                 $stepRunner,
-        public object                 $messageBus,
+        public StoreSagaState $store,
+        public object         $stepRunner,
+        public object         $messageBus,
         public ProtectSagaIdempotency $idempotency,
-        public InspectSaga            $inspect
+        public InspectSaga    $inspect,
     ) {}
 
     public static function inMemory() : self
@@ -58,17 +59,17 @@ final readonly class SagaRuntime
             stepRunner : new stdClass(),
             messageBus : new stdClass(),
             idempotency: ProtectSagaIdempotency::inMemory(),
-            inspect    : InspectSaga::inMemory()
+            inspect    : InspectSaga::inMemory(),
         );
     }
 }
 
 final readonly class SagaRuntimeConfig
 {
-    public string   $storeType;
-    public array    $storeConfig;
-    public string   $messageBusType;
-    public array    $messageBusConfig;
+    public string $storeType;
+    public array  $storeConfig;
+    public string $messageBusType;
+    public array  $messageBusConfig;
     public int|null $timeoutSeconds;
     public int|null $maxRetries;
 
@@ -78,7 +79,7 @@ final readonly class SagaRuntimeConfig
         string   $messageBusType,
         array    $messageBusConfig,
         int|null $timeoutSeconds,
-        int|null $maxRetries
+        int|null $maxRetries,
     )
     {
         $this->storeType        = $storeType;
@@ -97,7 +98,7 @@ final readonly class SagaRuntimeConfig
             messageBusType  : 'memory',
             messageBusConfig: [],
             timeoutSeconds  : 3600,
-            maxRetries      : 3
+            maxRetries      : 3,
         );
     }
 
@@ -109,7 +110,7 @@ final readonly class SagaRuntimeConfig
             messageBusType  : $config['message_bus_type'] ?? 'memory',
             messageBusConfig: $config['message_bus_config'] ?? [],
             timeoutSeconds  : $config['timeout_seconds'] ?? 3600,
-            maxRetries      : $config['max_retries'] ?? 3
+            maxRetries      : $config['max_retries'] ?? 3,
         );
     }
 }

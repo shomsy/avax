@@ -18,11 +18,11 @@ final readonly class SecurityNotification
     public function __construct(
         public string      $name,
         public string      $severity,
-        array|null         $context = null,
-        public string|null $correlationId = null
+        array              $context = null,
+        public string|null $correlationId = null,
     )
     {
-        $context       ??= [];
+        $context ??= [];
         $this->context = $context;
     }
 }

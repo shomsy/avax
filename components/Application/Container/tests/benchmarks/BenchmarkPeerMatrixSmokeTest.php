@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 $artifactDir = sys_get_temp_dir() . '/container-benchmark-peer-' . uniqid();
-if (! mkdir(directory: $artifactDir, permissions: 0775, recursive: true) && ! is_dir(filename: $artifactDir)) {
-    throw new RuntimeException(message: "Cannot create benchmark peer artifact directory [{$artifactDir}].");
+if (! mkdir(directory: $artifactDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $artifactDir)) {
+    throw new RuntimeException(message: sprintf('Cannot create benchmark peer artifact directory [%s].', $artifactDir));
 }
 
 $current = $artifactDir . '/current.json';
@@ -14,12 +14,12 @@ $peer    = $artifactDir . '/peer.json';
 $output  = $artifactDir . '/peer-matrix.json';
 
 $baselineArtifact = [
-    'meta'    => [
-        'php'           => '8.3.0',
-        'sapi'          => 'cli',
-        'timestamp'     => gmdate(format: 'c'),
-        'dockerImage'   => 'php:8.3-cli',
-        'phpSettings'   => [
+    'meta' => [
+        'php'         => '8.3.0',
+        'sapi'        => 'cli',
+        'timestamp'   => gmdate(format: 'c'),
+        'dockerImage' => 'php:8.3-cli',
+        'phpSettings' => [
             'memory_limit'       => '-1',
             'opcache.enable_cli' => '0',
             'zend.assertions'    => '1',

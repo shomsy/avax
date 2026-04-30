@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
@@ -14,6 +14,7 @@ interface ConditionalGateway
 
 final class ActiveConditionalGateway implements ConditionalGateway
 {
+    #[Override]
     public function name() : string
     {
         return 'active';
@@ -22,6 +23,7 @@ final class ActiveConditionalGateway implements ConditionalGateway
 
 final class OverrideConditionalGateway implements ConditionalGateway
 {
+    #[Override]
     public function name() : string
     {
         return 'override';
@@ -58,7 +60,7 @@ assertSame(expected: 'active', actual: $active->get(id: ConditionalGateway::clas
 assertTrue(condition: $activeDescription['conditions']['active'], message: 'Service descriptions should expose when composition conditions are active.');
 assertTrue(
     condition: ($activeGraph['conditions'][ConditionalGateway::class]['active'] ?? false) === true,
-    message  : 'Graph diagnostics should expose active condition state per service.'
+    message  : 'Graph diagnostics should expose active condition state per service.',
 );
 
 $inactiveConfig = CreateContainerConfig::create(settings: [
@@ -87,28 +89,29 @@ assertTrue(
     condition: in_array(
                    needle  : 'region [us] is not in [eu]',
                    haystack: $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
-                   strict  : true
+                   strict  : true,
                ),
-    message  : 'Service descriptions should explain why a conditional registration is inactive.'
+    message  : 'Service descriptions should explain why a conditional registration is inactive.',
 );
 
 $inactiveIssues = implode(separator: "\n", array: $inactive->validate(serviceIds: [ConditionalGateway::class]));
 assertTrue(
     condition: str_contains(haystack: $inactiveIssues, needle: 'region [us] is not in [eu]'),
-    message  : 'Validation should report the exact inactive composition reason.'
+    message  : 'Validation should report the exact inactive composition reason.',
 );
 
 try {
     $inactive->get(id: ConditionalGateway::class);
+
     throw new RuntimeException(message: 'Inactive conditional registrations should fail when resolved.');
-} catch (ContainerException $exception) {
+} catch (ContainerException $containerException) {
     assertTrue(
-        condition: str_contains(haystack: $exception->getMessage(), needle: 'region [us] is not in [eu]'),
-        message  : 'Runtime failures should explain the inactive composition condition.'
+        condition: str_contains(haystack: $containerException->getMessage(), needle: 'region [us] is not in [eu]'),
+        message  : 'Runtime failures should explain the inactive composition condition.',
     );
     assertTrue(
-        condition: str_contains(haystack: $exception->getMessage(), needle: 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
-        message  : 'Runtime failures should suggest how to activate a matching composition.'
+        condition: str_contains(haystack: $containerException->getMessage(), needle: 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
+        message  : 'Runtime failures should suggest how to activate a matching composition.',
     );
 }
 
@@ -134,7 +137,7 @@ $overrideIssues = implode(separator: "\n", array: $override->validate(serviceIds
 assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');
 assertTrue(
     condition: str_contains(haystack: $overrideIssues, needle: 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
-    message  : 'Validation should reject overlapping overrides that change ownership posture silently.'
+    message  : 'Validation should reject overlapping overrides that change ownership posture silently.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

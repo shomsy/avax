@@ -11,9 +11,11 @@ use Avax\Components\DataStack\Data\System\Foundation\Exceptions\DataException;
  */
 final readonly class Threshold
 {
-    public const MIN     = 0;
-    public const MAX     = 100;
-    public const DEFAULT = 70;
+    public const int MIN = 0;
+
+    public const int MAX     = 100;
+
+    public const int DEFAULT = 70;
 
     public function __construct(public int $value)
     {
@@ -22,7 +24,13 @@ final readonly class Threshold
         }
     }
 
-    public static function default() : self { return new self(self::DEFAULT); }
+    public static function default() : self
+    {
+        return new self(self::DEFAULT);
+    }
 
-    public function isDefault() : bool { return $this->value === self::DEFAULT; }
+    public function isDefault() : bool
+    {
+        return $this->value === self::DEFAULT;
+    }
 }

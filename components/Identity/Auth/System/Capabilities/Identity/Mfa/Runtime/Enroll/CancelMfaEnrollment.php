@@ -19,10 +19,11 @@ use SensitiveParameter;
 final readonly class CancelMfaEnrollment
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface     $mfaStore,
+        private AuditLogInterface     $auditLog,
+        private Clock                 $clock,
     ) {}
 
     /**
@@ -42,7 +43,7 @@ final readonly class CancelMfaEnrollment
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'user_id' => $user->id,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

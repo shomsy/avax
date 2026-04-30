@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\SessionIdentity;
@@ -11,16 +12,16 @@ use Exception;
 final class SessionIdentity
 {
     public function __construct(
-        private readonly Session         $session,
+        private readonly Session $session,
         private readonly SessionLifetime $lifetime,
-        private readonly string          $sessionKey = 'auth_user_id',
-        private readonly string          $mfaVerifiedAtKey = 'auth_mfa_verified_at',
-        private readonly string          $phishingResistantKey = 'auth_phishing_resistant',
-        private readonly string          $issuedAtKey = 'auth_session_issued_at',
-        private readonly string          $lastSeenAtKey = 'auth_session_last_seen_at'
+        private readonly string  $sessionKey = 'auth_user_id',
+        private readonly string  $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private readonly string  $phishingResistantKey = 'auth_phishing_resistant',
+        private readonly string  $issuedAtKey = 'auth_session_issued_at',
+        private readonly string  $lastSeenAtKey = 'auth_session_last_seen_at',
     ) {}
 
-    public function issue(int $userId, ?DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false) : string
+    public function issue(int $userId, DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false) : string
     {
         $this->session->regenerate();
         $now = (new DateTimeImmutable())->format(DATE_ATOM);
@@ -82,7 +83,10 @@ final class SessionIdentity
     private function readDate(string $key) : ?DateTimeImmutable
     {
         $stored = $this->session->get($key);
-        if (! $stored) return null;
+        if (! $stored) {
+            return null;
+        }
+
         try {
             return new DateTimeImmutable($stored);
         } catch (Exception) {

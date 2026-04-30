@@ -13,7 +13,7 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 final readonly class QueryFingerprint
 {
     public function __construct(
-        public string      $originalQuery,
+        public string $originalQuery,
         public string|null $pattern = null,
         public string|null $hash = null,
     ) {}

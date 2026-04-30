@@ -8,7 +8,7 @@ final readonly class ChooseReplicaForRead
 {
     public function __construct(
         private ReplicaCount      $replicaCount,
-        private ReplicationPolicy $policy = ReplicationPolicy::SYNCHRONOUS
+        private ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
     ) {}
 
     public function choosePrimary() : PrimaryReplica
@@ -43,6 +43,6 @@ final readonly class ChooseReplicaForRead
 
     public function requiresQuorum() : bool
     {
-        return $this->policy === ReplicationPolicy::QUORUM;
+        return $this->replicationPolicy === ReplicationPolicy::QUORUM;
     }
 }

@@ -1,18 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
-final class PrimaryReplicaCache
+final readonly class PrimaryReplicaCache
 {
     public function __construct(
-        private readonly mixed $primary,
-        private readonly array $replicas
+        private mixed $primary,
+        private array $replicas,
     ) {}
 
     public function get(string $key): mixed
     {
         $replica = $this->replicas[array_rand($this->replicas)];
+
         return $replica->get($key);
     }
 

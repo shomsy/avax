@@ -12,14 +12,15 @@ use SensitiveParameter;
 final readonly class ReadRiskSignals
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private DeterministicRiskEngine                     $riskEngine
+        #[SensitiveParameter]
+        private CurrentAuthentication   $currentAuthentication,
+        private DeterministicRiskEngine $riskEngine,
     ) {}
 
     /**
      * @return list<RiskSignal>
      */
-    public function execute(int|null $userId = null) : array
+    public function execute(int $userId = null) : array
     {
         $resolvedUserId = $userId ?? $this->currentAuthentication->read()->user()?->id;
 

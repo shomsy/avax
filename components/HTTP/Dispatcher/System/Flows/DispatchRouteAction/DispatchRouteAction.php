@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Dispatcher\System\Flows\DispatchRouteAction;
@@ -19,7 +20,7 @@ final readonly class DispatchRouteAction
 {
     public function __construct(
         private ControllerResolver $controllerResolver,
-        private ArgumentResolver $argumentResolver
+        private ArgumentResolver $argumentResolver,
     ) {}
 
     public function execute(callable|array|string $action, ServerRequestInterface $request) : ResponseInterface
@@ -35,6 +36,7 @@ final readonly class DispatchRouteAction
     private function dispatchCallable(callable $callable, ServerRequestInterface $request) : ResponseInterface
     {
         $result = $callable($request);
+
         return $this->ensureResponse($result, 'Callable');
     }
 
@@ -48,7 +50,7 @@ final readonly class DispatchRouteAction
 
         $instance = $this->controllerResolver->resolve($controllerClass);
 
-        if (!method_exists($instance, $method)) {
+        if (! method_exists($instance, $method)) {
             throw new RuntimeException("Method '{$method}' not found in '{$controllerClass}'.");
         }
 
@@ -64,7 +66,7 @@ final readonly class DispatchRouteAction
     {
         $instance = $this->controllerResolver->resolve($controllerClass);
 
-        if (!is_callable($instance)) {
+        if (! is_callable($instance)) {
             throw new RuntimeException("Controller class '{$controllerClass}' must be invokable.");
         }
 
@@ -83,7 +85,7 @@ final readonly class DispatchRouteAction
             return Response::text($result);
         }
 
-        if (!$result instanceof ResponseInterface) {
+        if (! $result instanceof ResponseInterface) {
             throw new RuntimeException("{$source} must return a ResponseInterface.");
         }
 

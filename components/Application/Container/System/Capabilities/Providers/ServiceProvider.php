@@ -12,7 +12,7 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
 abstract class ServiceProvider
 {
     public function __construct(
-        protected readonly ContainerInterface $container
+        protected readonly ContainerInterface $container,
     ) {}
 
     /**

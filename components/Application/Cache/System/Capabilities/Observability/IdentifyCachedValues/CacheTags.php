@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues;
 
 use ArrayIterator;
+use Override;
 use Stringable;
 use Traversable;
 
@@ -14,16 +15,16 @@ final readonly class CacheTags implements Stringable
     private array $tags;
 
     public function __construct(
-        CacheTag ...$tags
+        CacheTag ...$cacheTag,
     )
     {
-        $tagStrings = array_map(fn (CacheTag $tag) => $tag->toString(), $tags);
-        $this->tags = array_combine($tagStrings, $tags);
+        $tagStrings = array_map(static fn (CacheTag $cacheTag) : string => $cacheTag->toString(), $cacheTag);
+        $this->tags = array_combine($tagStrings, $cacheTag);
     }
 
     public static function create(string ...$tagNames) : self
     {
-        $tags = array_map(static fn (string $name) => CacheTag::create(name: $name), $tagNames);
+        $tags = array_map(static fn (string $name) : CacheTag => CacheTag::create(name: $name), $tagNames);
 
         return new self(...$tags);
     }
@@ -33,18 +34,18 @@ final readonly class CacheTags implements Stringable
         return new self();
     }
 
-    public function add(CacheTag $tag) : self
+    public function add(CacheTag $cacheTag) : self
     {
         $newTags                   = $this->tags;
-        $newTags[$tag->toString()] = $tag;
+        $newTags[$cacheTag->toString()] = $cacheTag;
 
         return new self(...$newTags);
     }
 
-    public function remove(CacheTag $tag) : self
+    public function remove(CacheTag $cacheTag) : self
     {
         $newTags = $this->tags;
-        unset($newTags[$tag->toString()]);
+        unset($newTags[$cacheTag->toString()]);
 
         return new self(...$newTags);
     }
@@ -60,9 +61,9 @@ final readonly class CacheTags implements Stringable
         return false;
     }
 
-    public function has(CacheTag $tag) : bool
+    public function has(CacheTag $cacheTag) : bool
     {
-        return isset($this->tags[$tag->toString()]);
+        return isset($this->tags[$cacheTag->toString()]);
     }
 
     public function hasAll(self $other) : bool
@@ -91,6 +92,7 @@ final readonly class CacheTags implements Stringable
         return new ArrayIterator(array: $this->tags);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return implode(', ', $this->toArray());

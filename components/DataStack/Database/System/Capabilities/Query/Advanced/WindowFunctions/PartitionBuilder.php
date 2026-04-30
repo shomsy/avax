@@ -28,7 +28,7 @@ final class PartitionBuilder
 
         return 'PARTITION BY ' . implode(
                 separator: ', ',
-                array    : array_map(callback: fn ($column) => $this->grammar->wrap(value: $column), array: $this->columns)
+                array    : array_map(callback: fn ($column) => $this->grammar->wrap(value: $column), array: $this->columns),
             );
     }
 }

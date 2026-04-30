@@ -22,7 +22,7 @@ final readonly class UppercaseValues
     {
         return array_map(
             callback: static fn (mixed $value) : string => strtoupper(string: (string) $value),
-            array   : $this->items
+            array   : $this->items,
         );
     }
 

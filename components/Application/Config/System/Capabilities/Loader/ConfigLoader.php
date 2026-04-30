@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Capabilities\Loader;
@@ -31,14 +32,14 @@ final class ConfigLoader
 
     private function loadFile(string $file): array
     {
-        if (!file_exists($file)) {
-            throw new RuntimeException("Config file not found: {$file}");
+        if (! file_exists($file)) {
+            throw new RuntimeException('Config file not found: ' . $file);
         }
 
         $data = require $file;
 
-        if (!is_array($data)) {
-            throw new RuntimeException("Config file must return an array: {$file}");
+        if (! is_array($data)) {
+            throw new RuntimeException('Config file must return an array: ' . $file);
         }
 
         return $data;

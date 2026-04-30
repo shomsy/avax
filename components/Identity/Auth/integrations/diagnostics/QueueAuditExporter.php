@@ -15,11 +15,11 @@ final readonly class QueueAuditExporter implements AuditExporterInterface
 
     public function __construct(
         private PublishAuditMessageInterface $publisher,
-        string|null                          $topic = null,
-        private NormalizeAuditEvent          $normalizeAuditEvent = new NormalizeAuditEvent()
+        string                      $topic = null,
+        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent(),
     )
     {
-        $topic       ??= 'auth.audit';
+        $topic ??= 'auth.audit';
         $this->topic = $topic;
     }
 

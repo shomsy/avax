@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\Registry;
@@ -26,7 +27,7 @@ final class ListenerRegistry
             return $this->sorted[$event];
         }
 
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             return [];
         }
 

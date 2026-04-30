@@ -7,58 +7,61 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
-final class AtomicCompiledCacheWrite
+final readonly class AtomicCompiledCacheWrite
 {
     public function __construct(
-        private CompiledCacheDirectory $directory,
-        private Clock                  $clock = new SystemClock()
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private Clock                  $clock = new SystemClock(),
     ) {}
 
     public function write(
-        CompiledCacheName $name,
-        string            $payload
+        CompiledCacheName $compiledCacheName,
+        string            $payload,
     ) : CompiledCacheArtifact
     {
-        $pathResolver = new ResolveCompiledCachePath(directory: $this->directory);
-        $finalPath    = $pathResolver->resolveArtifactPath(name: $name);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
-        $temporaryPath = $finalPath->toTemporaryPath();
+        $temporaryPath = $compiledCachePath->toTemporaryPath();
 
-        $this->ensureDirectoryExists(directory: $finalPath->directory());
+        $this->ensureDirectoryExists(directory: $compiledCachePath->directory());
 
         $written = file_put_contents($temporaryPath, $payload, LOCK_EX);
 
         if ($written === false) {
             @unlink($temporaryPath);
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
         $syntaxValid = $this->validatePhpSyntax(path: $temporaryPath);
 
         if (! $syntaxValid) {
             @unlink($temporaryPath);
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
-        if (! rename($temporaryPath, $finalPath->toString())) {
+        if (! rename($temporaryPath, $compiledCachePath->toString())) {
             @unlink($temporaryPath);
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
         $now = $this->clock->now();
 
         return CompiledCacheArtifact::create(
-            name             : $name->toString(),
-            path             : $finalPath->toString(),
+            name             : $compiledCacheName->toString(),
+            path             : $compiledCachePath->toString(),
             createdAt        : $now->seconds,
-            sourceFingerprint: ''
+            sourceFingerprint: '',
         );
     }
 
     private function ensureDirectoryExists(string $directory) : void
     {
         if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+            mkdir($directory, 0o755, true);
         }
     }
 

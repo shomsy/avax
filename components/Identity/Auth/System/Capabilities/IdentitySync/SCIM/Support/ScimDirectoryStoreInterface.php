@@ -18,7 +18,8 @@ interface ScimDirectoryStoreInterface
     public function all() : array;
 
     public function verifyToken(
-        string                       $directoryId,
-        #[SensitiveParameter] string $plainTextToken
+        string $directoryId,
+        #[SensitiveParameter]
+        string $plainTextToken,
     ) : bool;
 }

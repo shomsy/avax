@@ -17,11 +17,13 @@ final readonly class MapAuthenticationRequest
     private ReadBearerToken $readBearerToken;
 
     public function __construct(
-        #[SensitiveParameter] ReadBearerToken|null            $readBearerToken = null,
-        #[SensitiveParameter] private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
+        #[SensitiveParameter]
+        ReadBearerToken                 $readBearerToken = null,
+        #[SensitiveParameter]
+        private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance(),
     )
     {
-        $readBearerToken       ??= new ReadBearerToken();
+        $readBearerToken ??= new ReadBearerToken();
         $this->readBearerToken = $readBearerToken;
     }
 
@@ -32,11 +34,11 @@ final readonly class MapAuthenticationRequest
             allowSession: $this->resolveSessionAllowance->execute(
                               cookies          : $input->cookies,
                               allowSession     : $input->allowSession,
-                              sessionCookieName: $input->sessionCookieName
+                              sessionCookieName: $input->sessionCookieName,
                           ),
             ipAddress   : $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
             userAgent   : $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
-                              ?? $this->readHeaderValue(headers: $input->headers)
+                              ?? $this->readHeaderValue(headers: $input->headers),
         );
     }
 

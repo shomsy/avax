@@ -18,12 +18,12 @@ final readonly class LoginRateLimit
 
     public function __construct(
         private LoginRateLimitStorageInterface $storage,
-        private Clock                          $clock,
-        int|null                               $maxAttempts = null,
-        private int                            $decaySeconds = 60
+        private Clock $clock,
+        int           $maxAttempts = null,
+        private int   $decaySeconds = 60,
     )
     {
-        $maxAttempts       ??= 5;
+        $maxAttempts ??= 5;
         $this->maxAttempts = $maxAttempts;
         if ($this->maxAttempts < 1) {
             throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
@@ -51,7 +51,7 @@ final readonly class LoginRateLimit
 
                 throw new RateLimitException(
                     message   : "Too many login attempts. Please try again in {$retryAfter} seconds.",
-                    retryAfter: $retryAfter
+                    retryAfter: $retryAfter,
                 );
             }
 

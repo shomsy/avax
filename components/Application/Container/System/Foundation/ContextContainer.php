@@ -35,17 +35,17 @@ use Throwable;
  */
 readonly class ContextContainer implements ContainerInterface
 {
-    private array           $context;
+    private array     $context;
     private ServiceResolver $resolver;
-    private Container       $base;
+    private Container $base;
 
     /**
      * @param array<string, mixed> $context
      */
     public function __construct(
-        Container       $base,
+        Container $base,
         ServiceResolver $resolver,
-        array           $context
+        array     $context,
     )
     {
         $this->base     = $base;
@@ -62,7 +62,7 @@ readonly class ContextContainer implements ContainerInterface
     {
         return fn (array $parameters = []) : object => $this->make(
             abstract  : $abstract,
-            parameters: $parameters
+            parameters: $parameters,
         );
     }
 
@@ -82,7 +82,7 @@ readonly class ContextContainer implements ContainerInterface
         return $this->resolver->callInContext(
             callable  : $callable,
             parameters: $parameters,
-            context   : $this->context
+            context   : $this->context,
         );
     }
 
@@ -124,7 +124,7 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         throw new InvalidArgumentException(
-            message: "Strict slice view [{$slice}] cannot {$action}. Use the root composition view for global runtime mutations."
+            message: "Strict slice view [{$slice}] cannot {$action}. Use the root composition view for global runtime mutations.",
         );
     }
 
@@ -240,7 +240,7 @@ readonly class ContextContainer implements ContainerInterface
     {
         return $this->explainService()->debugVisibilityViolations(
             serviceIds: $serviceIds,
-            context   : $this->context
+            context   : $this->context,
         );
     }
 
@@ -288,7 +288,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(string|null $kind = null) : void
+    public function closeScope(string $kind = null) : void
     {
         $this->base->closeScope(kind: $kind);
     }
@@ -315,7 +315,7 @@ readonly class ContextContainer implements ContainerInterface
 
         $visibleIds = array_values(array: array_map(
                                               callback: static fn (array $row) : string => $row['serviceId'],
-                                              array   : $this->resolver->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? []
+                                              array   : $this->resolver->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? [],
                                           ));
 
         if ($serviceIds === []) {
@@ -324,13 +324,13 @@ readonly class ContextContainer implements ContainerInterface
 
         $resolvedIds = array_map(
             callback: fn (string $serviceId) : string => $this->resolver->registrations()->resolveAlias(abstract: $serviceId),
-            array   : $serviceIds
+            array   : $serviceIds,
         );
         $filtered    = array_values(array: array_intersect($visibleIds, $resolvedIds));
 
         if (count(value: $filtered) !== count(value: array_unique(array: $resolvedIds))) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] can only compile services visible from its boundary."
+                message: "Strict slice view [{$slice}] can only compile services visible from its boundary.",
             );
         }
 
@@ -432,7 +432,7 @@ readonly class ContextContainer implements ContainerInterface
             format : $format,
             kind   : $kind,
             id     : $id,
-            context: $this->context
+            context: $this->context,
         );
     }
 
@@ -487,7 +487,7 @@ readonly class ContextContainer implements ContainerInterface
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->bind(abstract: $abstract, concrete: $concrete)
+            registration: $this->base->bind(abstract: $abstract, concrete: $concrete),
         );
     }
 
@@ -532,21 +532,21 @@ readonly class ContextContainer implements ContainerInterface
     public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->defer(abstract: $abstract, concrete: $concrete)
+            registration: $this->base->defer(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->singleton(abstract: $abstract, concrete: $concrete)
+            registration: $this->base->singleton(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function scoped(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->scoped(abstract: $abstract, concrete: $concrete)
+            registration: $this->base->scoped(abstract: $abstract, concrete: $concrete),
         );
     }
 
@@ -581,17 +581,17 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         $registration = $this->resolver->registrations()->get(
-            abstract: $this->resolver->registrations()->resolveAlias(abstract: $abstract)
+            abstract: $this->resolver->registrations()->resolveAlias(abstract: $abstract),
         );
         if (! $registration instanceof ServiceRegistration) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] cannot {$action} unknown service [{$abstract}]."
+                message: "Strict slice view [{$slice}] cannot {$action} unknown service [{$abstract}].",
             );
         }
 
         if ($registration->metadata->ownerSlice !== $slice) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] cannot {$action} service [{$abstract}] owned by [{$registration->metadata->ownerSlice}]."
+                message: "Strict slice view [{$slice}] cannot {$action} service [{$abstract}] owned by [{$registration->metadata->ownerSlice}].",
             );
         }
     }
@@ -632,7 +632,7 @@ readonly class ContextContainer implements ContainerInterface
         return new self(
             base    : $this->base,
             resolver: $this->resolver,
-            context : array_replace($this->context, $context)
+            context : array_replace($this->context, $context),
         );
     }
 

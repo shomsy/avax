@@ -13,24 +13,24 @@ use RuntimeException;
 final readonly class VersionedValue
 {
     public function __construct(
-        public mixed       $value,
+        public mixed  $value,
         public VectorClock $clock,
-        public string      $nodeId,
-        public float       $timestamp,
+        public string $nodeId,
+        public float  $timestamp,
     ) {}
 
     /**
      * Creates a new versioned value.
      */
     public static function create(
-        mixed            $value,
-        string           $nodeId,
-        VectorClock|null $clock = null,
-        float|null       $timestamp = null,
+        mixed       $value,
+        string      $nodeId,
+        VectorClock $clock = null,
+        float       $timestamp = null,
     ) : self
     {
-        $clock     = $clock ?? VectorClock::initial($nodeId);
-        $timestamp = $timestamp ?? microtime(true);
+        $clock     ??= VectorClock::initial($nodeId);
+        $timestamp ??= microtime(true);
 
         return new self(
             value    : $value,
@@ -62,8 +62,8 @@ final readonly class Conflict
     public function __construct(
         public VersionedValue $valueA,
         public VersionedValue $valueB,
-        public string         $key,
-        public float          $detectedAt,
+        public string $key,
+        public float  $detectedAt,
     ) {}
 
     /**
@@ -72,7 +72,7 @@ final readonly class Conflict
     public static function fromValues(
         VersionedValue $a,
         VersionedValue $b,
-        string         $key,
+        string $key,
     ) : self
     {
         return new self(
@@ -90,10 +90,10 @@ final readonly class Conflict
 final readonly class ConflictResolutionResult
 {
     public function __construct(
-        public mixed  $resolvedValue,
+        public mixed $resolvedValue,
         public string $strategy,
-        public bool   $wasConflict,
-        public array  $details = [],
+        public bool  $wasConflict,
+        public array $details = [],
     ) {}
 
     /**
@@ -157,9 +157,9 @@ final class EventualConsistency implements ConsistencyPolicy
     private int $maxConflictHistory;
 
     public function __construct(
-        ConflictResolution|null $resolutionStrategy = null,
-        Closure|null            $customResolver = null,
-        int                     $maxConflictHistory = 100,
+        ConflictResolution $resolutionStrategy = null,
+        Closure            $customResolver = null,
+        int                $maxConflictHistory = 100,
     )
     {
         $this->resolutionStrategy = $resolutionStrategy ?? ConflictResolution::lastWriteWins();

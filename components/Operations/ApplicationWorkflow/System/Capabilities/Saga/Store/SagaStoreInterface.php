@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\Store;

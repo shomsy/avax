@@ -14,12 +14,12 @@ use function is_string;
 final class DataQueryBuilder
 {
     private string|null $entityType = null;
-    private array       $conditions = [];
-    private array       $orderBy    = [];
-    private int|null    $limit      = null;
-    private int|null    $offset     = null;
-    private array       $joins      = [];
-    private array       $select     = ['*'];
+    private array    $conditions = [];
+    private array    $orderBy    = [];
+    private int|null $limit      = null;
+    private int|null $offset     = null;
+    private array    $joins      = [];
+    private array    $select     = ['*'];
 
     /**
      * Sets the entity type to query.

@@ -17,7 +17,7 @@ final readonly class GenerateReleaseSbom
      *     components:list<array<string, mixed>>
      * }
      */
-    public function execute(string $composerJsonPath, string|null $composerLockPath = null) : array
+    public function execute(string $composerJsonPath, string $composerLockPath = null) : array
     {
         $composerJson = $this->readJsonFile(path: $composerJsonPath);
         $lockPath     = $composerLockPath ?? dirname(path: $composerJsonPath) . '/composer.lock';
@@ -36,8 +36,8 @@ final readonly class GenerateReleaseSbom
             array   : $components,
             callback: static fn (array $left, array $right) : int => strcmp(
                 string1: $left['name'],
-                string2: $right['name']
-            )
+                string2: $right['name'],
+            ),
         );
 
         return [
@@ -50,7 +50,7 @@ final readonly class GenerateReleaseSbom
                     'version' => is_string(value: $composerJson['version'] ?? null) ? $composerJson['version'] : 'dev-main',
                 ],
             ],
-            'components'  => $components,
+            'components' => $components,
         ];
     }
 

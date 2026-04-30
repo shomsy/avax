@@ -16,12 +16,12 @@ use Throwable;
  */
 final readonly class BuildService
 {
-    private ResolveDependencies    $dependencies;
+    private ResolveDependencies $dependencies;
     private CreateServiceBlueprint $blueprints;
 
     public function __construct(
         CreateServiceBlueprint $blueprints,
-        ResolveDependencies    $dependencies
+        ResolveDependencies $dependencies,
     )
     {
         $this->blueprints   = $blueprints;
@@ -34,10 +34,10 @@ final readonly class BuildService
      * @throws ContainerException
      */
     public function build(
-        string              $class,
-        ServiceResolver     $resolver,
-        array|null          $overrides = null,
-        ResolveRequest|null $request = null
+        string          $class,
+        ServiceResolver $resolver,
+        array           $overrides = null,
+        ResolveRequest  $request = null,
     ) : object
     {
         $overrides ??= [];
@@ -50,7 +50,7 @@ final readonly class BuildService
                 throw new ContainerException(
                     message: "Class [{$class}] is not instantiable for service [{$serviceId}]. "
                              . "Dependency path [{$path}]. "
-                             . 'Likely fix: bind an instantiable concrete class or replace the abstract target.'
+                             . 'Likely fix: bind an instantiable concrete class or replace the abstract target.',
                 );
             }
 
@@ -59,7 +59,7 @@ final readonly class BuildService
                     plan     : $blueprint->constructor,
                     overrides: $overrides,
                     resolver : $resolver,
-                    request  : $request
+                    request  : $request,
                 )
                 : [];
 
@@ -74,7 +74,7 @@ final readonly class BuildService
                           . "Dependency path [{$path}]. "
                           . "Failure: {$exception->getMessage()}. "
                           . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.',
-                previous: $exception
+                previous: $exception,
             );
         }
     }

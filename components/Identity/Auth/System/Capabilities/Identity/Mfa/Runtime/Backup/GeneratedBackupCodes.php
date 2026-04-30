@@ -17,7 +17,8 @@ final readonly class GeneratedBackupCodes
      * @param list<BackupCodeRecord> $records
      */
     public function __construct(
-        #[SensitiveParameter] public BackupCodeSet $backupCodeSet,
-        public array                               $records
+        #[SensitiveParameter]
+        public BackupCodeSet $backupCodeSet,
+        public array         $records,
     ) {}
 }

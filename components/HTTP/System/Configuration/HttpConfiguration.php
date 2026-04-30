@@ -24,13 +24,13 @@ final readonly class HttpConfiguration
      */
     public function __construct(
         private string $baseUrl = 'http://localhost',
-        private bool   $trustProxyHeaders = false,
-        private array  $trustedProxies = [],
-        private int    $maxRequestBodyBytes = 1048576,
+        private bool  $trustProxyHeaders = false,
+        private array $trustedProxies = [],
+        private int   $maxRequestBodyBytes = 1048576,
         private string $defaultLocale = 'en',
-        private array  $router = [],
-        private array  $middleware = [],
-        private array  $response = []
+        private array $router = [],
+        private array $middleware = [],
+        private array $response = [],
     ) {}
 
     public function baseUrl() : string
@@ -108,7 +108,7 @@ final readonly class HttpConfiguration
             defaultLocale      : $overrides['default_locale'] ?? $this->defaultLocale,
             router             : $overrides['router'] ?? $this->router,
             middleware         : $overrides['middleware'] ?? $this->middleware,
-            response           : $overrides['response'] ?? $this->response
+            response           : $overrides['response'] ?? $this->response,
         );
     }
 
@@ -127,7 +127,7 @@ final readonly class HttpConfiguration
             defaultLocale      : $config['default_locale'] ?? 'en',
             router             : $config['router'] ?? [],
             middleware         : $config['middleware'] ?? [],
-            response           : $config['response'] ?? []
+            response           : $config['response'] ?? [],
         );
     }
 }

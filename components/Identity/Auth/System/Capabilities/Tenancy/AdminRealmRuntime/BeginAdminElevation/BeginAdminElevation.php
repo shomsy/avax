@@ -22,12 +22,13 @@ use SensitiveParameter;
 final readonly class BeginAdminElevation
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                             $requireFreshMfa,
-        private AdminElevationStoreInterface                $elevationStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        private bool                                        $phishingResistantRequired = false
+        #[SensitiveParameter]
+        private CurrentAuthentication        $currentAuthentication,
+        private RequireFreshMfa              $requireFreshMfa,
+        private AdminElevationStoreInterface $elevationStore,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
+        private bool                         $phishingResistantRequired = false,
     ) {}
 
     /**
@@ -64,7 +65,7 @@ final readonly class BeginAdminElevation
         $this->elevationStore->start(record: new AdminElevationRecord(
                                                  userId   : $user->id,
                                                  bindingId: $bindingId,
-                                                 expiresAt: $expiresAt
+                                                 expiresAt: $expiresAt,
                                              ));
 
         $this->auditLog->record(event: new AuditEvent(
@@ -73,12 +74,12 @@ final readonly class BeginAdminElevation
                                            context   : [
                                                            'user_id'    => $user->id,
                                                            'binding_id' => $bindingId,
-                                                       ]
+                                                       ],
                                        ));
 
         return new AdminElevation(
             bindingId: $bindingId,
-            expiresAt: $expiresAt
+            expiresAt: $expiresAt,
         );
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations;
@@ -6,27 +7,29 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations;
 final readonly class MigrationEngine
 {
     public function __construct(
-        private MigrationRepository $repository,
-        private string $migrationsPath
+        private MigrationRepository $migrationRepository,
+        private string              $migrationsPath,
     ) {}
 
     public function migrate(): void
     {
-        $this->repository->ensureTableExists();
-        $ran = $this->repository->getRan();
+        $this->migrationRepository->ensureTableExists();
+        $ran   = $this->migrationRepository->getRan();
         $files = glob($this->migrationsPath . '/*.php');
-        $batch = $this->repository->getLastBatchNumber() + 1;
+        $batch = $this->migrationRepository->getLastBatchNumber() + 1;
 
         foreach ($files as $file) {
             $name = basename($file, '.php');
-            if (in_array($name, $ran)) continue;
+            if (in_array($name, $ran)) {
+                continue;
+            }
 
-            echo "Migrating: $name\n";
+            echo sprintf('Migrating: %s%s', $name, PHP_EOL);
             $migration = require $file;
             $migration->up();
-            
-            $this->repository->log($name, $batch);
-            echo "Migrated: $name\n";
+
+            $this->migrationRepository->log($name, $batch);
+            echo sprintf('Migrated: %s%s', $name, PHP_EOL);
         }
     }
 }

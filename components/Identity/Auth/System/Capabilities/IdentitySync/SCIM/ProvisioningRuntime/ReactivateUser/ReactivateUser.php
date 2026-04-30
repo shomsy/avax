@@ -28,7 +28,7 @@ final readonly class ReactivateUser
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.provisioning.user.reactivated',
                                            occurredAt: $this->clock->now(),
-                                           context   : ['subject_user_id' => $userId]
+                                           context   : ['subject_user_id' => $userId],
                                        ));
     }
 }

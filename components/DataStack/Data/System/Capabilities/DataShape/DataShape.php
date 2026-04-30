@@ -7,7 +7,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataShape;
 final readonly class DataShape
 {
     /**
-     * @param class-string             $class
+     * @param class-string $class
      * @param array<string, DataField> $fields
      */
     public function __construct(
@@ -30,7 +30,7 @@ final readonly class DataShape
     {
         return array_filter(
             array   : $this->fields,
-            callback: static fn (DataField $field) : bool => $field->isConstructorField,
+            callback: static fn (DataField $dataField) : bool => $dataField->isConstructorField,
         );
     }
 
@@ -41,7 +41,7 @@ final readonly class DataShape
     {
         return array_filter(
             array   : $this->fields,
-            callback: static fn (DataField $field) : bool => $field->isPublicProperty,
+            callback: static fn (DataField $dataField) : bool => $dataField->isPublicProperty,
         );
     }
 
@@ -57,7 +57,7 @@ final readonly class DataShape
     {
         return array_values(
             array: array_map(
-                       callback: static fn (DataField $field) : string => $field->inputName,
+                       callback: static fn (DataField $dataField) : string => $dataField->inputName,
                        array   : $this->fields,
                    ),
         );

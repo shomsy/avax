@@ -9,8 +9,8 @@ final readonly class CacheLock
     private string $owner;
 
     public function __construct(
-        private CacheLockStore $store,
-        string                 $owner = ''
+        private CacheLockStore $cacheLockStore,
+        string                 $owner = '',
     )
     {
         $this->owner = $owner === '' ? uniqid(more_entropy: true) : $owner;
@@ -18,17 +18,17 @@ final readonly class CacheLock
 
     public function acquire(string $key, int $ttlSeconds = 30) : bool
     {
-        return $this->store->acquire(key: $key, owner: $this->owner, ttlSeconds: $ttlSeconds);
+        return $this->cacheLockStore->acquire(key: $key, owner: $this->owner, ttlSeconds: $ttlSeconds);
     }
 
     public function release(string $key) : void
     {
-        $this->store->release(key: $key, owner: $this->owner);
+        $this->cacheLockStore->release(key: $key, owner: $this->owner);
     }
 
     public function isAcquired(string $key) : bool
     {
-        return $this->store->isAcquired(key: $key);
+        return $this->cacheLockStore->isAcquired(key: $key);
     }
 
 }

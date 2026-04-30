@@ -19,7 +19,7 @@ class FacadeProvider
     public function register(string $accessor, string $facadeClass) : self
     {
         if (! is_subclass_of($facadeClass, BaseFacade::class)) {
-            throw new InvalidArgumentException("{$facadeClass} must extend " . BaseFacade::class);
+            throw new InvalidArgumentException($facadeClass . ' must extend ' . BaseFacade::class);
         }
 
         $this->facades[$accessor] = $facadeClass;

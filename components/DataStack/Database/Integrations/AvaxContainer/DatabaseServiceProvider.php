@@ -29,7 +29,7 @@ use Random\RandomException;
  */
 final readonly class DatabaseServiceProvider implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    public function __construct(private ContainerInterface $container) {}
 
     public function dependsOn() : array
     {
@@ -38,64 +38,36 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
 
     public function register() : void
     {
-        $this->app->singleton(abstract: Database::class, concrete: function () {
-            return $this->buildDatabase();
-        });
+        $this->container->singleton(abstract: Database::class, concrete: fn () : Database => $this->buildDatabase());
 
-        $this->app->singleton(abstract: Connections::class, concrete: function () {
-            return $this->app->get(id: Database::class)->connections();
-        });
+        $this->container->singleton(abstract: Connections::class, concrete: fn () => $this->container->get(id: Database::class)->connections());
 
-        $this->app->singleton(abstract: Query::class, concrete: function () {
-            return $this->app->get(id: Database::class)->query();
-        });
+        $this->container->singleton(abstract: Query::class, concrete: fn () => $this->container->get(id: Database::class)->query());
 
-        $this->app->singleton(abstract: Migrations::class, concrete: function () {
-            return $this->app->get(id: Database::class)->migrations();
-        });
+        $this->container->singleton(abstract: Migrations::class, concrete: fn () => $this->container->get(id: Database::class)->migrations());
 
-        $this->app->singleton(abstract: EntityManager::class, concrete: function () {
-            return $this->app->get(id: Database::class)->entityManager();
-        });
+        $this->container->singleton(abstract: EntityManager::class, concrete: fn () => $this->container->get(id: Database::class)->entityManager());
 
-        $this->app->singleton(abstract: Schema::class, concrete: function () {
-            return $this->app->get(id: Database::class)->schema();
-        });
+        $this->container->singleton(abstract: Schema::class, concrete: fn () => $this->container->get(id: Database::class)->schema());
 
-        $this->app->singleton(abstract: Transactions::class, concrete: function () {
-            return $this->app->get(id: Database::class)->transactions();
-        });
+        $this->container->singleton(abstract: Transactions::class, concrete: fn () => $this->container->get(id: Database::class)->transactions());
 
-        $this->app->singleton(abstract: Telemetry::class, concrete: function () {
-            return $this->app->get(id: Database::class)->telemetry();
-        });
+        $this->container->singleton(abstract: Telemetry::class, concrete: fn () => $this->container->get(id: Database::class)->telemetry());
 
-        $this->app->bind(abstract: QueryBuilder::class, concrete: function () {
-            return $this->app->get(id: Query::class)->builder();
-        });
+        $this->container->bind(abstract: QueryBuilder::class, concrete: fn () => $this->container->get(id: Query::class)->builder());
 
-        $this->app->singleton(abstract: MigrationLoader::class);
-        $this->app->singleton(abstract: MigrationGenerator::class);
+        $this->container->singleton(abstract: MigrationLoader::class);
+        $this->container->singleton(abstract: MigrationGenerator::class);
 
-        $this->app->singleton(abstract: MigrationRepository::class, concrete: function () {
-            return $this->app->get(id: Migrations::class)->repository();
-        });
+        $this->container->singleton(abstract: MigrationRepository::class, concrete: fn () => $this->container->get(id: Migrations::class)->repository());
 
-        $this->app->singleton(abstract: MigrationRunner::class, concrete: function () {
-            return $this->app->get(id: Migrations::class)->runner();
-        });
+        $this->container->singleton(abstract: MigrationRunner::class, concrete: fn () => $this->container->get(id: Migrations::class)->runner());
 
-        $this->app->singleton(abstract: RollbackMigrations::class, concrete: function () {
-            return $this->app->get(id: Migrations::class)->rollbacker();
-        });
+        $this->container->singleton(abstract: RollbackMigrations::class, concrete: fn () => $this->container->get(id: Migrations::class)->rollbacker());
 
-        $this->app->singleton(abstract: ReadMigrationStatus::class, concrete: function () {
-            return $this->app->get(id: Migrations::class)->status();
-        });
+        $this->container->singleton(abstract: ReadMigrationStatus::class, concrete: fn () => $this->container->get(id: Migrations::class)->status());
 
-        $this->app->singleton(abstract: DatabaseExporter::class, concrete: function () {
-            return $this->app->get(id: Migrations::class)->exporter();
-        });
+        $this->container->singleton(abstract: DatabaseExporter::class, concrete: fn () => $this->container->get(id: Migrations::class)->exporter());
     }
 
     /**
@@ -113,11 +85,11 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
      */
     private function resolveDatabaseConfig() : array
     {
-        if (! $this->app->has(id: 'config')) {
+        if (! $this->container->has(id: 'config')) {
             return [];
         }
 
-        $config = $this->app->get(id: 'config');
+        $config = $this->container->get(id: 'config');
 
         if (is_object(value: $config) && method_exists(object_or_class: $config, method: 'get')) {
             $resolved = $config->get('database', []);
@@ -131,6 +103,4 @@ final readonly class DatabaseServiceProvider implements ServiceProviderInterface
 
         return [];
     }
-
-    public function boot() : void {}
 }

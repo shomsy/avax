@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Events;
@@ -11,7 +12,7 @@ final class SessionEventBus
 
     public function once(string $event, callable $callback) : void
     {
-        $wrapper = function (...$args) use ($callback, $event, &$wrapper) {
+        $wrapper = function (...$args) use ($callback, $event, &$wrapper) : void {
             $callback(...$args);
             $this->removeListener($event, $wrapper);
         };
@@ -26,7 +27,7 @@ final class SessionEventBus
 
         $this->listeners[$event] = array_filter(
             $this->listeners[$event],
-            static fn ($cb) => $cb !== $callback
+            static fn ($cb) => $cb !== $callback,
         );
     }
 

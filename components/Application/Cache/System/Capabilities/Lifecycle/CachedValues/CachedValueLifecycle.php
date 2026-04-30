@@ -14,21 +14,21 @@ final readonly class CachedValueLifecycle
         public Timestamp $lastAccessedAt,
         public Timestamp $expiresAt,
         public Timestamp $refreshedAt,
-        public int       $hitCount = 0,
-        public int       $refreshCount = 0
+        public int $hitCount = 0,
+        public int $refreshCount = 0,
     ) {}
 
     public static function create(
         Timestamp $createdAt,
         Timestamp $expiresAt,
-        Clock     $clock
+        Clock $clock,
     ) : self
     {
         return new self(
             createdAt     : $createdAt,
             lastAccessedAt: $clock->now(),
             expiresAt     : $expiresAt,
-            refreshedAt   : $createdAt
+            refreshedAt   : $createdAt,
         );
     }
 
@@ -40,7 +40,7 @@ final readonly class CachedValueLifecycle
             expiresAt     : $this->expiresAt,
             refreshedAt   : $this->refreshedAt,
             hitCount      : $this->hitCount + 1,
-            refreshCount  : $this->refreshCount
+            refreshCount  : $this->refreshCount,
         );
     }
 
@@ -52,7 +52,7 @@ final readonly class CachedValueLifecycle
             expiresAt     : $newExpiresAt,
             refreshedAt   : $refreshedAt,
             hitCount      : $this->hitCount,
-            refreshCount  : $this->refreshCount + 1
+            refreshCount  : $this->refreshCount + 1,
         );
     }
 
@@ -69,9 +69,9 @@ final readonly class CachedValueLifecycle
             return 0;
         }
 
-        $diff = $this->expiresAt->difference(other: $now);
+        $duration = $this->expiresAt->difference(other: $now);
 
-        return $diff->toSeconds();
+        return $duration->toSeconds();
     }
 
     public function age(Clock $clock) : int

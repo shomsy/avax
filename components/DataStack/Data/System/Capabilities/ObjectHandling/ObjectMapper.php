@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling;
@@ -16,6 +17,7 @@ final class ObjectMapper
                 $object->$key = $value;
             }
         }
+
         return $object;
     }
 

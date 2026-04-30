@@ -100,14 +100,14 @@ final readonly class SecretRedactor
         ];
 
     /**
-     * @param string       $redactionMask           The replacement string for redacted values
-     * @param bool         $redactEmails            Whether to redact email addresses
+     * @param string $redactionMask The replacement string for redacted values
+     * @param bool   $redactEmails  Whether to redact email addresses
      * @param list<string> $additionalSensitiveKeys Additional sensitive keys to redact
      */
     public function __construct(
         private string $redactionMask = self::REDACTED,
-        private bool   $redactEmails = false,
-        private array  $additionalSensitiveKeys = [],
+        private bool  $redactEmails = false,
+        private array $additionalSensitiveKeys = [],
     ) {}
 
     /**
@@ -200,9 +200,7 @@ final readonly class SecretRedactor
         foreach (self::STRING_PATTERNS as $patternName => $pattern) {
             $value = (string) preg_replace_callback(
                 $pattern,
-                function (array $matches) use ($patternName) : string {
-                    return $this->createRedactedPlaceholder($patternName);
-                },
+                fn (array $matches) : string => $this->createRedactedPlaceholder($patternName),
                 $value,
             );
         }

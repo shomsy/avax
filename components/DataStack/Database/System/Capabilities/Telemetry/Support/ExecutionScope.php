@@ -13,16 +13,16 @@ use Random\RandomException;
  */
 final readonly class ExecutionScope
 {
-    public array  $metadata;
+    public array $metadata;
     public string $correlationId;
 
     /**
      * @param string $correlationId The unique "Trace ID" for this specific run.
-     * @param array  $metadata      Any extra notes you want to carry with the query for logging.
+     * @param array $metadata Any extra notes you want to carry with the query for logging.
      */
     public function __construct(
         string $correlationId,
-        array  $metadata = []
+        array $metadata = [],
     )
     {
         $this->correlationId = $correlationId;

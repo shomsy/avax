@@ -15,23 +15,23 @@ use Traversable;
 
 final readonly class SagaState implements ArrayAccess, Countable, IteratorAggregate
 {
-    private array       $events;
-    private array       $data;
+    private array $events;
+    private array $data;
     private string|null $currentStep;
-    private int         $currentStepIndex;
-    private array       $stepResults;
+    private int   $currentStepIndex;
+    private array $stepResults;
 
     public function __construct(
-        array|null  $events = null,
-        array|null  $data = null,
-        string|null $currentStep = null,
-        int|null    $currentStepIndex = null,
-        array       $stepResults = []
+        array  $events = null,
+        array  $data = null,
+        string $currentStep = null,
+        int    $currentStepIndex = null,
+        array  $stepResults = [],
     )
     {
-        $events                 ??= [];
-        $data                   ??= [];
-        $currentStepIndex       ??= 0;
+        $events           ??= [];
+        $data             ??= [];
+        $currentStepIndex ??= 0;
         $this->events           = $events;
         $this->data             = $data;
         $this->currentStep      = $currentStep;
@@ -43,7 +43,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
     {
         return new self(
             events: [],
-            data  : $initialData
+            data  : $initialData,
         );
     }
 
@@ -54,7 +54,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
             data            : $instance->data,
             currentStep     : $instance->currentStepName,
             currentStepIndex: $instance->currentStepIndex,
-            stepResults     : $instance->stepResults
+            stepResults     : $instance->stepResults,
         );
     }
 
@@ -73,7 +73,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
             data            : $data,
             currentStep     : $this->currentStep,
             currentStepIndex: $this->currentStepIndex,
-            stepResults     : $this->stepResults
+            stepResults     : $this->stepResults,
         );
     }
 
@@ -142,12 +142,12 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
 
 final readonly class SagaEvent
 {
-    public string            $id;
-    public string            $type;
-    public string            $sagaId;
-    public string            $sagaName;
-    public string|null       $stepName;
-    public array             $payload;
+    public string      $id;
+    public string      $type;
+    public string      $sagaId;
+    public string      $sagaName;
+    public string|null $stepName;
+    public array       $payload;
     public DateTimeImmutable $occurredAt;
 
     private function __construct(
@@ -155,12 +155,12 @@ final readonly class SagaEvent
         string            $type,
         string            $sagaId,
         string            $sagaName,
-        string|null       $stepName = null,
-        array|null        $payload = null,
-        DateTimeImmutable $occurredAt
+        string            $stepName = null,
+        array             $payload = null,
+        DateTimeImmutable $occurredAt,
     )
     {
-        $payload          ??= [];
+        $payload ??= [];
         $this->id         = $id;
         $this->type       = $type;
         $this->sagaId     = $sagaId;
@@ -173,18 +173,18 @@ final readonly class SagaEvent
     public static function started(
         string $sagaId,
         string $sagaName,
-        array  $initialData = []
+        array $initialData = [],
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_started', payload: $initialData);
     }
 
     public static function create(
-        string      $sagaId,
-        string      $sagaName,
-        string      $type,
-        array|null  $payload = null,
-        string|null $stepName = null
+        string $sagaId,
+        string $sagaName,
+        string $type,
+        array  $payload = null,
+        string $stepName = null,
     ) : self
     {
         $payload ??= [];
@@ -196,7 +196,7 @@ final readonly class SagaEvent
             sagaName  : $sagaName,
             stepName  : $stepName,
             payload   : $payload,
-            occurredAt: new DateTimeImmutable()
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -212,7 +212,7 @@ final readonly class SagaEvent
         string $sagaId,
         string $sagaName,
         string $stepName,
-        array  $output = []
+        array $output = [],
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_completed', payload: $output, stepName: $stepName);
@@ -222,7 +222,7 @@ final readonly class SagaEvent
         string $sagaId,
         string $sagaName,
         string $stepName,
-        string $error
+        string $error,
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'step_failed', payload: ['error' => $error], stepName: $stepName);
@@ -231,7 +231,7 @@ final readonly class SagaEvent
     public static function completed(
         string $sagaId,
         string $sagaName,
-        array  $finalData = []
+        array $finalData = [],
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_completed', payload: $finalData);
@@ -239,7 +239,7 @@ final readonly class SagaEvent
 
     public static function compensated(
         string $sagaId,
-        string $sagaName
+        string $sagaName,
     ) : self
     {
         return self::create(sagaId: $sagaId, sagaName: $sagaName, type: 'saga_compensated');

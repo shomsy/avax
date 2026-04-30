@@ -28,7 +28,7 @@ final class UnitOfWork implements UnitOfWorkInterface
     private array $snapshots = [];
 
     public function __construct(
-        private readonly IdentityMap              $identityMap,
+        private readonly IdentityMap $identityMap,
         private readonly EntityPersisterInterface $persister,
     ) {}
 
@@ -66,7 +66,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         return $currentData !== $this->snapshots[$objectId];
     }
 
-    public function flush(string|null $connectionName = null) : void
+    public function flush(string $connectionName = null) : void
     {
         // Process inserts
         foreach ($this->new as $objectId => $entity) {

@@ -7,8 +7,8 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithS
 final readonly class SourceValueWasLoaded
 {
     public function __construct(
-        public CacheSourceKey $key,
-        public mixed          $value
+        public CacheSourceKey $cacheSourceKey,
+        public mixed          $value,
     ) {}
 
     public function hasValue() : bool

@@ -6,13 +6,8 @@ namespace Avax\Components\Application\DateTime\System\Capabilities\Duration;
 
 final readonly class Duration
 {
-    private int $totalSeconds;
-
-    private function __construct(
-        int $seconds,
-    )
+    private function __construct(private int $totalSeconds)
     {
-        $this->totalSeconds = $seconds;
     }
 
     public static function seconds(int $value) : self
@@ -50,9 +45,9 @@ final readonly class Duration
         return new self($value * 31536000);
     }
 
-    public static function fromUnit(int $value, DurationUnit $unit) : self
+    public static function fromUnit(int $value, DurationUnit $durationUnit) : self
     {
-        return new self($value * $unit->inSeconds());
+        return new self($value * $durationUnit->inSeconds());
     }
 
     public function inSeconds() : int
@@ -80,14 +75,14 @@ final readonly class Duration
         return $this->totalSeconds / 604800;
     }
 
-    public function add(Duration $other) : self
+    public function add(Duration $duration) : self
     {
-        return new self($this->totalSeconds + $other->totalSeconds);
+        return new self($this->totalSeconds + $duration->totalSeconds);
     }
 
-    public function subtract(Duration $other) : self
+    public function subtract(Duration $duration) : self
     {
-        return new self(max(0, $this->totalSeconds - $other->totalSeconds));
+        return new self(max(0, $this->totalSeconds - $duration->totalSeconds));
     }
 
     public function isZero() : bool

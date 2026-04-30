@@ -6,7 +6,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\Con
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
 final class ManageScopesSmokeTest {}
 
@@ -24,9 +24,10 @@ assertThrows(
  * @throws Throwable
  */ /**
  * @throws Throwable
- */ expectedClass: ContainerException::class,
+ */
+    expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: ScopedService::class),
-    message      : 'Scoped services must fail closed without an active scope.'
+    message      : 'Scoped services must fail closed without an active scope.',
 );
 
 $fromWithinScope = $container->scopes()->withinScope(
@@ -37,7 +38,7 @@ $fromWithinScope = $container->scopes()->withinScope(
         assertSame(expected: $first, actual: $second, message: 'Scoped services should be reused inside one scope.');
 
         return $first;
-    }
+    },
 );
 
 $container->openScope();

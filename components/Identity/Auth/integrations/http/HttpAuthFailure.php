@@ -12,9 +12,10 @@ use SensitiveParameter;
 final readonly class HttpAuthFailure
 {
     public function __construct(
-        public int                          $statusCode,
-        #[SensitiveParameter] public string $errorCode,
-        public string                       $message,
-        public int|null                     $retryAfterSeconds = null
+        public int      $statusCode,
+        #[SensitiveParameter]
+        public string   $errorCode,
+        public string   $message,
+        public int|null $retryAfterSeconds = null,
     ) {}
 }

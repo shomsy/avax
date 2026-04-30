@@ -14,8 +14,8 @@ class PermissionDenied extends Exception
 {
     public function __construct(
         private readonly UserPermission $requirement,
-        string                          $message = 'Access denied.',
-        int                             $code = 403
+        string $message = 'Access denied.',
+        int    $code = 403,
     )
     {
         parent::__construct(message: $message, code: $code);

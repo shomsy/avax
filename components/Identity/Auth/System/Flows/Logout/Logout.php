@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Logout;
@@ -13,7 +14,7 @@ final readonly class Logout
 {
     public function __construct(
         private ClearAuthenticatedIdentity $clearIdentity,
-        private Identity                   $identity
+        private Identity $identity,
     ) {}
 
     public function execute() : void

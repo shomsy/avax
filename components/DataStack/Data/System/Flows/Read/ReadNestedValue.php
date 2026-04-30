@@ -20,6 +20,7 @@ final class ReadNestedValue
             if (! is_array($data) || ! array_key_exists($segment, $data)) {
                 return $default;
             }
+
             $data = $data[$segment];
         }
 

@@ -16,114 +16,114 @@ final readonly class RenderRuntimeFailure
 {
     private const DEVELOPMENT_TEMPLATE
         = <<<'HTML'
-                      <!DOCTYPE html>
-                      <html lang="en">
-                      <head>
-                          <meta charset="UTF-8">
-                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <title>Runtime Error - AvaX Framework</title>
-                          <style>
-                              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; background: #f5f5f5; color: #333; }
-                              .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
-                              .header { background: #dc3545; color: white; padding: 20px 30px; }
-                              .header h1 { margin: 0; font-size: 24px; }
-                              .header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
-                              .content { padding: 30px; }
-                              .error-box { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 15px; margin-bottom: 20px; }
-                              .error-box h3 { margin: 0 0 10px; color: #721c24; }
-                              .error-box p { margin: 5px 0; font-family: monospace; font-size: 13px; }
-                              .trace { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; }
-                              .trace h3 { margin: 0 0 15px; }
-                              .trace ol { margin: 0; padding-left: 20px; }
-                              .trace li { margin-bottom: 8px; font-family: monospace; font-size: 12px; line-height: 1.5; }
-                              .trace li strong { color: #495057; }
-                              .context { margin-top: 20px; }
-                              .context h3 { margin: 0 0 10px; }
-                              .context pre { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; overflow-x: auto; font-size: 12px; }
-                              .meta { margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 12px; color: #6c757d; }
-                          </style>
-                      </head>
-                      <body>
-                          <div class="container">
-                              <div class="header">
-                                  <h1>Runtime Error</h1>
-                                  <p>AvaX Framework - Development Mode</p>
-                              </div>
-                              <div class="content">
-                                  <div class="error-box">
-                                      <h3>Error Details</h3>
-                                      <p><strong>Exception:</strong> %s</p>
-                                      <p><strong>Message:</strong> %s</p>
-                                      <p><strong>File:</strong> %s</p>
-                                      <p><strong>Line:</strong> %d</p>
-                                  </div>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Runtime Error - AvaX Framework</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; background: #f5f5f5; color: #333; }
+                    .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+                    .header { background: #dc3545; color: white; padding: 20px 30px; }
+                    .header h1 { margin: 0; font-size: 24px; }
+                    .header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
+                    .content { padding: 30px; }
+                    .error-box { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 15px; margin-bottom: 20px; }
+                    .error-box h3 { margin: 0 0 10px; color: #721c24; }
+                    .error-box p { margin: 5px 0; font-family: monospace; font-size: 13px; }
+                    .trace { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; }
+                    .trace h3 { margin: 0 0 15px; }
+                    .trace ol { margin: 0; padding-left: 20px; }
+                    .trace li { margin-bottom: 8px; font-family: monospace; font-size: 12px; line-height: 1.5; }
+                    .trace li strong { color: #495057; }
+                    .context { margin-top: 20px; }
+                    .context h3 { margin: 0 0 10px; }
+                    .context pre { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; overflow-x: auto; font-size: 12px; }
+                    .meta { margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 12px; color: #6c757d; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Runtime Error</h1>
+                        <p>AvaX Framework - Development Mode</p>
+                    </div>
+                    <div class="content">
+                        <div class="error-box">
+                            <h3>Error Details</h3>
+                            <p><strong>Exception:</strong> %s</p>
+                            <p><strong>Message:</strong> %s</p>
+                            <p><strong>File:</strong> %s</p>
+                            <p><strong>Line:</strong> %d</p>
+                        </div>
                       
-                                  <div class="trace">
-                                      <h3>Stack Trace</h3>
-                                      <ol>%s</ol>
-                                  </div>
+                        <div class="trace">
+                            <h3>Stack Trace</h3>
+                            <ol>%s</ol>
+                        </div>
                       
-                                  <div class="context">
-                                      <h3>Request Context</h3>
-                                      <pre>%s</pre>
-                                  </div>
+                        <div class="context">
+                            <h3>Request Context</h3>
+                            <pre>%s</pre>
+                        </div>
                       
-                                  <div class="meta">
-                                      <p>Correlation ID: %s | Trace ID: %s | Timestamp: %s</p>
-                                  </div>
-                              </div>
-                          </div>
-                      </body>
-                      </html>
-                      HTML;
+                        <div class="meta">
+                            <p>Correlation ID: %s | Trace ID: %s | Timestamp: %s</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            HTML;
 
     private const PRODUCTION_TEMPLATE
         = <<<'HTML'
-                      <!DOCTYPE html>
-                      <html lang="en">
-                      <head>
-                          <meta charset="UTF-8">
-                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <title>Error</title>
-                          <style>
-                              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f5f5f5; color: #333; }
-                              .container { text-align: center; padding: 40px; }
-                              .container h1 { font-size: 48px; margin: 0 0 10px; color: #dc3545; }
-                              .container h2 { font-size: 24px; margin: 0 0 20px; color: #495057; font-weight: normal; }
-                              .container p { color: #6c757d; margin: 0; }
-                              .container a { display: inline-block; margin-top: 20px; color: #007bff; text-decoration: none; }
-                              .container a:hover { text-decoration: underline; }
-                          </style>
-                      </head>
-                      <body>
-                          <div class="container">
-                              <h1>500</h1>
-                              <h2>Internal Server Error</h2>
-                              <p>Something went wrong. Please try again later.</p>
-                              <p style="margin-top: 10px; font-size: 12px;">Error ID: %s</p>
-                          </div>
-                      </body>
-                      </html>
-                      HTML;
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Error</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f5f5f5; color: #333; }
+                    .container { text-align: center; padding: 40px; }
+                    .container h1 { font-size: 48px; margin: 0 0 10px; color: #dc3545; }
+                    .container h2 { font-size: 24px; margin: 0 0 20px; color: #495057; font-weight: normal; }
+                    .container p { color: #6c757d; margin: 0; }
+                    .container a { display: inline-block; margin-top: 20px; color: #007bff; text-decoration: none; }
+                    .container a:hover { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>500</h1>
+                    <h2>Internal Server Error</h2>
+                    <p>Something went wrong. Please try again later.</p>
+                    <p style="margin-top: 10px; font-size: 12px;">Error ID: %s</p>
+                </div>
+            </body>
+            </html>
+            HTML;
 
     private const CLI_PRODUCTION_TEMPLATE = "[ERROR] Internal Server Error. Error ID: %s\n";
 
     private const CLI_DEVELOPMENT_TEMPLATE
         = <<<TXT
-                      ========================================
-                        RUNTIME ERROR
-                      ========================================
-                      Exception: %s
-                      Message: %s
-                      File: %s:%d
+            ========================================
+              RUNTIME ERROR
+            ========================================
+            Exception: %s
+            Message: %s
+            File: %s:%d
                       
-                      Stack Trace:
-                      %s
-                      ========================================
-                      TXT;
+            Stack Trace:
+            %s
+            ========================================
+            TXT;
 
     public function __construct(
-        private string  $environment = 'production',
+        private string $environment = 'production',
         private ?string $correlationId = null,
         private ?string $traceId = null,
     ) {}
@@ -154,10 +154,10 @@ final readonly class RenderRuntimeFailure
             $index       = 1;
 
             foreach ($throwable->getTrace() as $frame) {
-                $file     = $frame['file'] ?? '[internal]';
-                $line     = $frame['line'] ?? 0;
+                $file = $frame['file'] ?? '[internal]';
+                $line = $frame['line'] ?? 0;
                 $class    = $frame['class'] ?? '';
-                $type     = $frame['type'] ?? '';
+                $type = $frame['type'] ?? '';
                 $function = $frame['function'];
 
                 $traceOutput .= sprintf(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -16,9 +16,7 @@ final class CompatibilityDependency
 
 final class CompatibilityTarget
 {
-    public CompatibilityDependency $dependency;
-
-    public function __construct(CompatibilityDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public CompatibilityDependency $compatibilityDependency) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
@@ -52,15 +50,15 @@ assertTrue(condition: ! $report->compatible, message: 'Incompatible compiled art
 assertSame(expected: 'incompatible', actual: $report->freshnessState, message: 'Incompatible compiled artifacts must expose an incompatible freshness state.');
 assertTrue(
     condition: in_array(needle: 'config hash mismatch', haystack: $report->compatibilityIssues, strict: true),
-    message  : 'Compile reports should expose config compatibility mismatches.'
+    message  : 'Compile reports should expose config compatibility mismatches.',
 );
 assertTrue(
     condition: in_array(needle: 'compile mode mismatch', haystack: $report->compatibilityIssues, strict: true),
-    message  : 'Compile reports should expose compile mode compatibility mismatches.'
+    message  : 'Compile reports should expose compile mode compatibility mismatches.',
 );
 assertTrue(
     condition: in_array(needle: 'diagnostics mode mismatch', haystack: $report->compatibilityIssues, strict: true),
-    message  : 'Compile reports should expose diagnostics mode compatibility mismatches.'
+    message  : 'Compile reports should expose diagnostics mode compatibility mismatches.',
 );
 assertTrue(condition: ! $reloaded->isCompiled(id: CompatibilityTarget::class), message: 'Incompatible artifacts must not report compiled service availability.');
 assertSame(expected: 'compatibility', actual: $resolved->dependency->id(), message: 'Runtime should fall back to dynamic resolution for incompatible artifacts.');

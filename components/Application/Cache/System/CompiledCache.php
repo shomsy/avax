@@ -12,31 +12,32 @@ use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfigur
 
 final class CompiledCache
 {
-    private static CompiledCacheContract|null $instance         = null;
-    private static string|null                $defaultDirectory = null;
+    private static CompiledCacheContract|null $compiledCacheContract = null;
 
-    public static function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
+    private static string|null $defaultDirectory = null;
+
+    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
     {
-        return self::instance()->read(name: $name, build: $build, sources: $sources);
+        return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
     private static function instance() : CompiledCacheContract
     {
-        if (self::$instance === null) {
+        if (self::$compiledCacheContract === null) {
             $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
 
             $config  = CompiledCacheConfiguration::inDirectory($directory);
-            $builder = new BuildCompiledCache();
+            $buildCompiledCache = new BuildCompiledCache();
 
-            self::$instance = $builder->fromConfiguration(configuration: $config);
+            self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);
         }
 
-        return self::$instance;
+        return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
     {
-        return self::instance()->compile(name: $name, build: $build, sources: $sources);
+        return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
     public static function clear(string $name) : void
@@ -49,20 +50,20 @@ final class CompiledCache
         self::instance()->clearAll();
     }
 
-    public static function use(CompiledCacheContract $cache) : void
+    public static function use(CompiledCacheContract $compiledCacheContract) : void
     {
-        self::$instance = $cache;
+        self::$compiledCacheContract = $compiledCacheContract;
     }
 
     public static function configure(string $directory) : void
     {
         self::$defaultDirectory = $directory;
-        self::$instance         = null;
+        self::$compiledCacheContract = null;
     }
 
     public static function reset() : void
     {
-        self::$instance         = null;
+        self::$compiledCacheContract = null;
         self::$defaultDirectory = null;
     }
 }

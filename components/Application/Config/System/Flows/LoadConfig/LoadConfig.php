@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Flows\LoadConfig;
@@ -9,15 +10,15 @@ use Avax\Components\Application\Config\System\Capabilities\Repository\Configurat
 final readonly class LoadConfig
 {
     public function __construct(
-        private ConfigLoader $loader,
-        private ConfigurationRepository $repository
+        private ConfigLoader            $configLoader,
+        private ConfigurationRepository $configurationRepository,
     ) {}
 
     public function fromDirectory(string $directory): void
     {
-        $configs = $this->loader->load($directory);
+        $configs = $this->configLoader->load($directory);
         foreach ($configs as $namespace => $data) {
-            $this->repository->set($namespace, $data);
+            $this->configurationRepository->set($namespace, $data);
         }
     }
 }

@@ -127,7 +127,7 @@ final class CassandraGrammar extends BaseGrammar
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
         $values  = implode(separator: ', ', array: array_map(
             callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
-            array   : $state->values
+            array   : $state->values,
         ));
 
         return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";

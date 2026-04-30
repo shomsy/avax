@@ -62,7 +62,7 @@ final class MailNotificationContent
         public string $subject = '',
         public string $line = '',
         /** @var list<string> */
-        public array  $lines = [],
+        public array $lines = [],
         public string $actionText = '',
         public string $actionUrl = '',
         public string $greeting = '',

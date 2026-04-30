@@ -23,10 +23,10 @@ abstract class CodeGenerator
 
     public function __construct(
         ?string $baseDirectory = null,
-        ?string $defaultNamespace = null
+        ?string $defaultNamespace = null,
     )
     {
-        $this->baseDirectory    = $baseDirectory ?? $this->detectBaseDirectory();
+        $this->baseDirectory = $baseDirectory ?? $this->detectBaseDirectory();
         $this->defaultNamespace = $defaultNamespace ?? 'App';
     }
 
@@ -42,9 +42,9 @@ abstract class CodeGenerator
             getcwd(),
         ];
 
-        foreach ($candidates as $dir) {
-            if (is_dir($dir)) {
-                return $dir;
+        foreach ($candidates as $candidate) {
+            if (is_dir($candidate)) {
+                return $candidate;
             }
         }
 
@@ -55,7 +55,7 @@ abstract class CodeGenerator
      * Generate a class file.
      *
      * @param string $name Class name (StudlyCase)
-     * @param array  $data Additional data for the template
+     * @param array $data Additional data for the template
      */
     abstract public function generate(string $name, array $data = []) : string;
 
@@ -84,13 +84,13 @@ abstract class CodeGenerator
         $dir = dirname($path);
 
         if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
+            mkdir($dir, 0o755, true);
         }
 
         $result = file_put_contents($path, $content);
 
         if ($result === false) {
-            throw new RuntimeException("Failed to write file: {$path}");
+            throw new RuntimeException('Failed to write file: ' . $path);
         }
     }
 
@@ -107,7 +107,7 @@ abstract class CodeGenerator
     /**
      * Get the file path for a generated class.
      *
-     * @param string $name   Class name
+     * @param string $name Class name
      * @param string $subDir Subdirectory within the base (e.g. "Controllers")
      */
     protected function getFilePath(string $name, string $subDir) : string
@@ -115,7 +115,7 @@ abstract class CodeGenerator
         $dir = rtrim($this->baseDirectory, '/') . '/' . ltrim($subDir, '/');
 
         if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
+            mkdir($dir, 0o755, true);
         }
 
         return rtrim($dir, '/') . '/' . $name . '.php';

@@ -15,16 +15,16 @@ use Throwable;
  */
 final class MigrationRepository
 {
-    private string                $table = 'migrations';
-    private readonly QueryBuilder $builder;
-    private readonly Schema       $schema;
+    private string $table = 'migrations';
+
+
+    private readonly Schema $schema;
 
     public function __construct(
-        QueryBuilder $builder,
-        Schema       $schema
+        private readonly QueryBuilder $queryBuilder,
+        Schema                        $schema,
     )
     {
-        $this->builder = $builder;
         $this->schema  = $schema;
     }
 
@@ -33,7 +33,7 @@ final class MigrationRepository
      */
     public function getRan() : array
     {
-        return $this->builder->from(table: $this->table)
+        return $this->queryBuilder->from(table: $this->table)
             ->select('migration', 'checksum')
             ->get();
     }
@@ -43,10 +43,10 @@ final class MigrationRepository
      */
     public function getLastBatch(int $steps = 1) : array
     {
-        $maxBatch = (int) $this->builder->from(table: $this->table)->max(column: 'batch');
+        $maxBatch = (int) $this->queryBuilder->from(table: $this->table)->max(column: 'batch');
         $minBatch = max(0, $maxBatch - $steps + 1);
 
-        return $this->builder->from(table: $this->table)
+        return $this->queryBuilder->from(table: $this->table)
             ->where(column: 'batch', operator: '>=', value: $minBatch)
             ->orderBy(column: 'batch', direction: 'DESC')
             ->orderBy(column: 'migration', direction: 'DESC')
@@ -58,7 +58,7 @@ final class MigrationRepository
      */
     public function getNextBatchNumber() : int
     {
-        return (int) $this->builder->from(table: $this->table)->max(column: 'batch') + 1;
+        return (int) $this->queryBuilder->from(table: $this->table)->max(column: 'batch') + 1;
     }
 
     /**
@@ -66,7 +66,7 @@ final class MigrationRepository
      */
     public function log(string $name, int $batch, string $checksum) : void
     {
-        $this->builder->from(table: $this->table)->insert(values: [
+        $this->queryBuilder->from(table: $this->table)->insert(values: [
                                                                       'migration' => $name,
                                                                       'batch'     => $batch,
                                                                       'checksum'  => $checksum,
@@ -78,7 +78,7 @@ final class MigrationRepository
      */
     public function remove(string $name) : void
     {
-        $this->builder->from(table: $this->table)->where(column: 'migration', value: $name)->delete();
+        $this->queryBuilder->from(table: $this->table)->where(column: 'migration', value: $name)->delete();
     }
 
     /**
@@ -87,8 +87,8 @@ final class MigrationRepository
     public function ensureTableExists() : void
     {
         try {
-            $this->builder->from(table: $this->table)->limit(limit: 1)->get();
-        } catch (Throwable $e) {
+            $this->queryBuilder->from(table: $this->table)->limit(limit: 1)->get();
+        } catch (Throwable) {
             $this->createRepository();
         }
     }
@@ -98,7 +98,7 @@ final class MigrationRepository
      */
     public function createRepository() : void
     {
-        $this->schema->create(table: $this->table, callback: static function ($table) {
+        $this->schema->create(table: $this->table, callback: static function ($table) : void {
             $table->id();
             $table->string(name: 'migration');
             $table->integer(name: 'batch');

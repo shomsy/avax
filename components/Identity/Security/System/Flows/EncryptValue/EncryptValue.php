@@ -16,7 +16,7 @@ final readonly class EncryptValue
 {
     public function __construct(
         private EncrypterInterface $encrypter,
-        private KeyResolver        $keyResolver,
+        private KeyResolver $keyResolver,
     ) {}
 
     /**
@@ -27,7 +27,7 @@ final readonly class EncryptValue
      *
      * @return EncryptedPayload The encrypted payload
      */
-    public function execute(mixed $value, ?EncryptionKey $key = null) : EncryptedPayload
+    public function execute(mixed $value, EncryptionKey $key = null) : EncryptedPayload
     {
         $encryptionKey = $key ?? $this->keyResolver->getCurrentKey();
 

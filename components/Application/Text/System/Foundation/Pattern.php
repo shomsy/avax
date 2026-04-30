@@ -29,11 +29,12 @@ final readonly class Pattern
     public function matchAll(string $subject) : array
     {
         preg_match_all($this->getFinalPattern(), $subject, $matches);
+
         return $matches;
     }
 
     private function getFinalPattern() : string
     {
-        return "~{$this->raw}~{$this->flags}";
+        return sprintf('~%s~%s', $this->raw, $this->flags);
     }
 }

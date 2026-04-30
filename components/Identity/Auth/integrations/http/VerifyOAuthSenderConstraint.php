@@ -20,17 +20,17 @@ final readonly class VerifyOAuthSenderConstraint
     public function __construct(private VerifyDpopProof $verifyDpopProof, private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint, private AuditLogInterface $auditLog = new NullAuditLog()) {}
 
     /**
-     * @param HttpOAuthProofInput            $input
-     * @param OAuthSenderConstraint|null     $expectedSenderConstraint
+     * @param HttpOAuthProofInput        $input
+     * @param OAuthSenderConstraint|null $expectedSenderConstraint
      * @param OAuthSenderConstraintType|null $requiredSenderConstraint
      *
      * @return OAuthSenderConstraint|null
      * @throws DateMalformedStringException
      */
     public function execute(
-        HttpOAuthProofInput            $input,
-        OAuthSenderConstraint|null     $expectedSenderConstraint = null,
-        OAuthSenderConstraintType|null $requiredSenderConstraint = null
+        HttpOAuthProofInput       $input,
+        OAuthSenderConstraint     $expectedSenderConstraint = null,
+        OAuthSenderConstraintType $requiredSenderConstraint = null,
     ) : OAuthSenderConstraint|null
     {
         $requiredType = $expectedSenderConstraint !== null ? $expectedSenderConstraint->type : $requiredSenderConstraint;
@@ -47,7 +47,7 @@ final readonly class VerifyOAuthSenderConstraint
                                                                                                      headers                : $input->headers,
                                                                                                      server                 : $input->server,
                                                                                                      accessToken            : $input->accessToken,
-                                                                                                     expectedTokenThumbprint: $expectedSenderConstraint?->thumbprint
+                                                                                                     expectedTokenThumbprint: $expectedSenderConstraint?->thumbprint,
                                                                                                  )),
         };
 
@@ -62,7 +62,7 @@ final readonly class VerifyOAuthSenderConstraint
                                                                'actual_thumbprint'   => $binding->thumbprint,
                                                                'method'              => strtoupper(string: $input->method),
                                                                'uri'                 => $input->uri,
-                                                           ]
+                                                           ],
                                            ));
 
             throw SenderConstraintVerificationFailed::mismatch();

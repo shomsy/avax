@@ -13,12 +13,12 @@ final readonly class SortValues
         private array $items = [],
     ) {}
 
-    public function __invoke(callable|null $callback = null) : array
+    public function __invoke(?callable $callback = null) : array
     {
         return $this->sort(callback: $callback);
     }
 
-    public function sort(callable|null $callback = null) : array
+    public function sort(?callable $callback = null) : array
     {
         $items = $this->items;
 

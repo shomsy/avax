@@ -9,21 +9,21 @@ final readonly class DescribeSagaCompensation
     public function __construct(
         public string $stepName,
         public string $description,
-        public array  $rollbackSchema,
-        public bool   $idempotent
+        public array $rollbackSchema,
+        public bool  $idempotent,
     ) {}
 
     public static function create(
         string $stepName,
         string $description,
-        bool   $idempotent = true
+        bool $idempotent = true,
     ) : self
     {
         return new self(
             stepName      : $stepName,
             description   : $description,
             rollbackSchema: [],
-            idempotent    : $idempotent
+            idempotent    : $idempotent,
         );
     }
 

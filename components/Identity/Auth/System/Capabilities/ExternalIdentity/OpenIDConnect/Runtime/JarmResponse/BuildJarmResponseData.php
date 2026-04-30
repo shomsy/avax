@@ -9,8 +9,9 @@ use SensitiveParameter;
 final readonly class BuildJarmResponseData
 {
     public function __construct(
-        public string                       $clientId,
-        #[SensitiveParameter] public string $code,
-        public string|null                  $state = null
+        public string      $clientId,
+        #[SensitiveParameter]
+        public string      $code,
+        public string|null $state = null,
     ) {}
 }

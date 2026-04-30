@@ -17,7 +17,7 @@ final class ProviderRegistry
     private bool $booted = false;
 
     public function __construct(
-        private readonly ContainerInterface $container
+        private readonly ContainerInterface $container,
     ) {}
 
     public function register(string $providerClass) : void

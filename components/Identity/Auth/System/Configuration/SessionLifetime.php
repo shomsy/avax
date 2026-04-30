@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Configuration;
@@ -9,7 +10,7 @@ final readonly class SessionLifetime
 {
     public function __construct(
         public int $idleTimeoutSeconds = 900,
-        public int $absoluteTimeoutSeconds = 43200
+        public int $absoluteTimeoutSeconds = 43200,
     )
     {
         if ($this->idleTimeoutSeconds < 1) {

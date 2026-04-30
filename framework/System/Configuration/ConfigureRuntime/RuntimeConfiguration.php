@@ -45,13 +45,13 @@ final class RuntimeConfiguration
     public function createRuntime(): RuntimeInterface
     {
         return match ($this->adapter) {
-            'php-fpm' => new PhpFpmRuntime(),
-            'cli' => new CliRuntime(),
+            'php-fpm'   => new PhpFpmRuntime(),
+            'cli'       => new CliRuntime(),
             'roadrunner' => new RoadRunnerRuntime(),
             'frankenphp' => new FrankenPhpRuntime(),
-            'swoole' => new SwooleRuntime(),
+            'swoole'    => new SwooleRuntime(),
             'workerman' => new WorkermanRuntime(),
-            default => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
+            default     => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
         };
     }
 }

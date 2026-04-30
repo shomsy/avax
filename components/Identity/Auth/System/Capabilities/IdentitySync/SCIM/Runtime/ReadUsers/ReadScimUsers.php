@@ -32,7 +32,7 @@ final readonly class ReadScimUsers
                 username  : $user->getUsername(),
                 roles     : array_map(callback: static fn ($role) => $role->value, array: $user->getRoles()),
                 groups    : $identity->groups,
-                state     : $identity->state
+                state     : $identity->state,
             );
         }
 

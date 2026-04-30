@@ -34,7 +34,7 @@ final class RunConsoleCommand
 
     private function resolveConsoleCommand(string $commandName): callable
     {
-        return fn() => print "Command: {$commandName}\n";
+        return static fn () => print "Command: {$commandName}\n";
     }
 
     private function executeConsoleCommand(callable $command, array $input): string

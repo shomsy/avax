@@ -10,8 +10,8 @@ final class BatchUpdate
 {
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $table,
-        private readonly string           $keyColumn,
+        private readonly string $table,
+        private readonly string $keyColumn,
     ) {}
 
     /**
@@ -44,7 +44,7 @@ final class BatchUpdate
 
             $bindings[]   = $row[$this->keyColumn];
             $statements[] = [
-                'sql'      => 'UPDATE ' . $this->grammar->wrap(value: $this->table)
+                'sql' => 'UPDATE ' . $this->grammar->wrap(value: $this->table)
                     . ' SET ' . implode(separator: ', ', array: $sets)
                     . ' WHERE ' . $this->grammar->wrap(value: $this->keyColumn) . ' = ?',
                 'bindings' => $bindings,

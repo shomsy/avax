@@ -27,9 +27,9 @@ interface ExecutorInterface
      * @throws Throwable If persistence connection failure occurs.
      */
     public function query(
-        string              $sql,
-        array               $bindings = [],
-        ExecutionScope|null $scope = null
+        string         $sql,
+        array          $bindings = [],
+        ExecutionScope $scope = null,
     ) : array;
 
     /**
@@ -42,9 +42,9 @@ interface ExecutorInterface
      * @throws Throwable If technical modification fails.
      */
     public function execute(
-        string              $sql,
-        array               $bindings = [],
-        ExecutionScope|null $scope = null
+        string         $sql,
+        array          $bindings = [],
+        ExecutionScope $scope = null,
     ) : ExecutionResult;
 
     /**

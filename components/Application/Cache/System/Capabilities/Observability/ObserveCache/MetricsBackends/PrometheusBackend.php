@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends;
 
+use Override;
+
 final class PrometheusBackend implements MetricsBackend
 {
     /** @var array<string, float> */
@@ -18,6 +20,7 @@ final class PrometheusBackend implements MetricsBackend
     /** @var array<string, array<int>> */
     private array $timings = [];
 
+    #[Override]
     public function increment(string $metric, int $value = 1) : void
     {
         if (! isset($this->counters[$metric])) {
@@ -27,11 +30,13 @@ final class PrometheusBackend implements MetricsBackend
         $this->counters[$metric] += $value;
     }
 
+    #[Override]
     public function gauge(string $metric, float $value) : void
     {
         $this->gauges[$metric] = $value;
     }
 
+    #[Override]
     public function histogram(string $metric, float $value) : void
     {
         if (! isset($this->histograms[$metric])) {
@@ -41,6 +46,7 @@ final class PrometheusBackend implements MetricsBackend
         $this->histograms[$metric][] = $value;
     }
 
+    #[Override]
     public function timing(string $metric, int $milliseconds) : void
     {
         if (! isset($this->timings[$metric])) {
@@ -50,6 +56,7 @@ final class PrometheusBackend implements MetricsBackend
         $this->timings[$metric][] = $milliseconds;
     }
 
+    #[Override]
     public function flush() : void {}
 
     public function getCounters() : array
@@ -77,13 +84,13 @@ final class PrometheusBackend implements MetricsBackend
         $output = [];
 
         foreach ($this->counters as $metric => $value) {
-            $output[] = "# TYPE {$metric} counter";
-            $output[] = "{$metric} {$value}";
+            $output[] = sprintf('# TYPE %s counter', $metric);
+            $output[] = sprintf('%s %s', $metric, $value);
         }
 
         foreach ($this->gauges as $metric => $value) {
-            $output[] = "# TYPE {$metric} gauge";
-            $output[] = "{$metric} {$value}";
+            $output[] = sprintf('# TYPE %s gauge', $metric);
+            $output[] = sprintf('%s %s', $metric, $value);
         }
 
         return implode("\n", $output) . "\n";

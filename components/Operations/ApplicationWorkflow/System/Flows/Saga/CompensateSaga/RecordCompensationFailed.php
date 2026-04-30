@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Compe
 final readonly class RecordCompensationFailed
 {
     public function __construct(
-        private string $sagaType
+        private string $sagaType,
     ) {}
 
     public function describeResponsibility() : string
@@ -19,7 +19,7 @@ final readonly class RecordCompensationFailed
         string $sagaId,
         string $stepName,
         string $error,
-        array  $context = []
+        array $context = [],
     ) : RecordCompensationFailedResult
     {
         return new RecordCompensationFailedResult(
@@ -27,7 +27,7 @@ final readonly class RecordCompensationFailed
             stepName  : $stepName,
             error     : $error,
             context   : $context,
-            recordedAt: microtime(true)
+            recordedAt: microtime(true),
         );
     }
 
@@ -43,7 +43,7 @@ final readonly class RecordCompensationFailedResult
         public string $sagaId,
         public string $stepName,
         public string $error,
-        public array  $context,
-        public float  $recordedAt
+        public array $context,
+        public float $recordedAt,
     ) {}
 }

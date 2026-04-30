@@ -32,7 +32,7 @@ trait Macroable
     public static function mixin(object|string $mixin) : void
     {
         $methods = new ReflectionClass(objectOrClass: $mixin)->getMethods(
-            filter: ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+            filter: ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED,
         );
 
         foreach ($methods as $method) {
@@ -46,7 +46,7 @@ trait Macroable
      *
      * -- intent: provide a way to inject domain-specific helpers into the fluent API.
      *
-     * @param string          $name  Method technical name
+     * @param string $name Method technical name
      * @param callable|object $macro Implementation closure or invokable object
      */
     public static function macro(string $name, callable|object $macro) : void
@@ -75,7 +75,7 @@ trait Macroable
         if ($macro instanceof Closure) {
             return call_user_func_array(
                 callback: $macro->bindTo(newThis: $this, newscope: static::class),
-                args    : $parameters
+                args    : $parameters,
             );
         }
 

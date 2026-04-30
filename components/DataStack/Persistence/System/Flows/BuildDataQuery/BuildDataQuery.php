@@ -37,22 +37,22 @@ final class BuildDataQuery
     /**
      * Builds a DataQuery from the given parameters.
      *
-     * @param class-string|string|null                              $entityType
-     * @param array<string, mixed>                                  $conditions
-     * @param array<string, string>                                 $orderBy
-     * @param array<string>                                         $select
+     * @param class-string|string|null $entityType
+     * @param array<string, mixed>     $conditions
+     * @param array<string, string>    $orderBy
+     * @param array<string>            $select
      * @param array<array{type: string, table: string, on: string}> $joins
      *
      * @throws InvalidArgumentException
      */
     public function build(
-        string|null $entityType = null,
-        array       $conditions = [],
-        array       $orderBy = [],
-        int|null    $limit = null,
-        int|null    $offset = null,
-        array       $joins = [],
-        array       $select = ['*'],
+        string $entityType = null,
+        array  $conditions = [],
+        array  $orderBy = [],
+        int    $limit = null,
+        int    $offset = null,
+        array  $joins = [],
+        array  $select = ['*'],
     ) : DataQuery
     {
         $resolvedEntityType = $this->resolveEntityType($entityType);
@@ -94,7 +94,7 @@ final class BuildDataQuery
         }
 
         throw new InvalidArgumentException(
-            sprintf('Unknown entity type: "%s"', $entityType)
+            sprintf('Unknown entity type: "%s"', $entityType),
         );
     }
 
@@ -123,7 +123,7 @@ final class BuildDataQuery
             }
 
             throw new InvalidArgumentException(
-                sprintf('Invalid condition format for key "%s"', $key)
+                sprintf('Invalid condition format for key "%s"', $key),
             );
         }
 
@@ -147,7 +147,7 @@ final class BuildDataQuery
             $direction = strtoupper($direction);
             if (! in_array($direction, $validDirections, true)) {
                 throw new InvalidArgumentException(
-                    sprintf('Invalid order direction "%s" for field "%s". Must be ASC or DESC.', $direction, $field)
+                    sprintf('Invalid order direction "%s" for field "%s". Must be ASC or DESC.', $direction, $field),
                 );
             }
 

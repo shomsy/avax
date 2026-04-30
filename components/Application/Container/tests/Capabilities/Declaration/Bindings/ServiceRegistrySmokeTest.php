@@ -27,7 +27,7 @@ assertThrows(
         $registry->alias(alias: 'logger.alias', abstract: 'logger');
         $registry->alias(alias: 'logger', abstract: 'logger.alias');
     },
-    message      : 'Alias cycles should fail fast at registration time.'
+    message      : 'Alias cycles should fail fast at registration time.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

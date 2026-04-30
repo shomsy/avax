@@ -25,7 +25,7 @@ final readonly class ConvertCollectionToXml
     public function toXml(string $rootElement = 'root') : string
     {
         try {
-            $xml = new SimpleXMLElement(data: "<{$rootElement}/>");
+            $xml = new SimpleXMLElement(data: sprintf('<%s/>', $rootElement));
             $this->arrayToXml(data: $this->items, xml: $xml);
 
             return $xml->asXML() ?: '';
@@ -33,7 +33,7 @@ final readonly class ConvertCollectionToXml
             throw new LogicException(
                 message : 'Failed to convert collection to XML: ' . $exception->getMessage(),
                 code    : $exception->getCode(),
-                previous: $exception
+                previous: $exception,
             );
         }
     }

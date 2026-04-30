@@ -15,9 +15,9 @@ final class ReadBearerToken
      * @param array<string, mixed> $headers
      * @param array<string, mixed> $server
      */
-    public function execute(#[SensitiveParameter] array|null $headers = null, array $server = []) : string|null
+    public function execute(#[SensitiveParameter] array $headers = null, array $server = []) : string|null
     {
-        $headers    ??= [];
+        $headers ??= [];
         $candidates = [
             $this->readValue(values: $headers, key: 'Authorization'),
             $this->readValue(values: $server, key: 'HTTP_AUTHORIZATION'),

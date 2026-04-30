@@ -42,7 +42,7 @@ final readonly class VerifyFederationDomain
                                                            'connection_id' => $verified->connectionId,
                                                            'tenant'        => $verified->tenantSlug,
                                                            'domain'        => $verified->domain,
-                                                       ]
+                                                       ],
                                        ));
 
         return $verified;

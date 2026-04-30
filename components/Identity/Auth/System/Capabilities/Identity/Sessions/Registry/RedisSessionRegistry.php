@@ -36,11 +36,11 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
                            'last_seen_at'        => $record->lastSeenAt->format(format: DateTimeInterface::ATOM),
                            'idle_expires_at'     => $record->idleExpiresAt->format(format: DateTimeInterface::ATOM),
                            'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
-                           'ip_created'          => $record->ipCreated ?? '',
-                           'user_agent_created'  => $record->userAgentCreated ?? '',
+                           'ip_created'         => $record->ipCreated ?? '',
+                           'user_agent_created' => $record->userAgentCreated ?? '',
                            'revoked_at'          => $record->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
-                           'revoke_reason'       => $record->revokeReason ?? '',
-                       ]
+                           'revoke_reason'      => $record->revokeReason ?? '',
+                       ],
         );
 
         $this->redis->expire(key: $key, timeout: $this->ttlSeconds);
@@ -81,7 +81,7 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
 
         usort(
             array   : $records,
-            callback: static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt
+            callback: static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt,
         );
 
         return $records;
@@ -164,7 +164,7 @@ class RedisSessionRegistry implements SessionRegistryInterface, PruneExpiredSess
 
             $this->redis->del(key: $key);
 
-            $userId    = $data['user_id'] ?? null;
+            $userId = $data['user_id'] ?? null;
             $sessionId = $data['session_id'] ?? null;
 
             if (is_string(value: $userId) && $userId !== '' && is_string(value: $sessionId) && $sessionId !== '') {

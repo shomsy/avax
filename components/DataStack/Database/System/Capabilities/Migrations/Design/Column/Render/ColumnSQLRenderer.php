@@ -19,75 +19,75 @@ final class ColumnSQLRenderer
      *
      * -- intent: coordinate the rendering of name, type, and all active modifiers.
      *
-     * @param ColumnDefinition $column  The design metadata
+     * @param ColumnDefinition $columnDefinition The design metadata
      * @param GrammarInterface $grammar The dialect technician for wrapping
      */
-    public function render(ColumnDefinition $column, GrammarInterface $grammar) : string
+    public function render(ColumnDefinition $columnDefinition, GrammarInterface $grammar) : string
     {
-        $sql = $grammar->wrap(value: $column->name) . ' ' . $column->type;
+        $sql = $grammar->wrap(value: $columnDefinition->name) . ' ' . $columnDefinition->type;
 
         // UNSIGNED modifier (must come before NULL/NOT NULL)
-        if (isset($column->attributes['unsigned']) && $column->attributes['unsigned']) {
+        if (isset($columnDefinition->attributes['unsigned']) && $columnDefinition->attributes['unsigned']) {
             $sql .= ' UNSIGNED';
         }
 
         // Character set and collation (MySQL specific)
-        if (isset($column->attributes['charset'])) {
-            $sql .= ' CHARACTER SET ' . $column->attributes['charset'];
+        if (isset($columnDefinition->attributes['charset'])) {
+            $sql .= ' CHARACTER SET ' . $columnDefinition->attributes['charset'];
         }
 
-        if (isset($column->attributes['collation'])) {
-            $sql .= ' COLLATE ' . $column->attributes['collation'];
+        if (isset($columnDefinition->attributes['collation'])) {
+            $sql .= ' COLLATE ' . $columnDefinition->attributes['collation'];
         }
 
         // Generated/Computed columns
-        if (isset($column->attributes['virtual_as'])) {
-            $sql .= ' AS (' . $column->attributes['virtual_as'] . ') VIRTUAL';
+        if (isset($columnDefinition->attributes['virtual_as'])) {
+            $sql .= ' AS (' . $columnDefinition->attributes['virtual_as'] . ') VIRTUAL';
         }
 
-        if (isset($column->attributes['stored_as'])) {
-            $sql .= ' AS (' . $column->attributes['stored_as'] . ') STORED';
+        if (isset($columnDefinition->attributes['stored_as'])) {
+            $sql .= ' AS (' . $columnDefinition->attributes['stored_as'] . ') STORED';
         }
 
         // NULL/NOT NULL constraint
-        if (isset($column->attributes['nullable'])) {
-            $sql .= $column->attributes['nullable'] ? ' NULL' : ' NOT NULL';
+        if (isset($columnDefinition->attributes['nullable'])) {
+            $sql .= $columnDefinition->attributes['nullable'] ? ' NULL' : ' NOT NULL';
         } else {
             // Default to NOT NULL if not specified
             $sql .= ' NOT NULL';
         }
 
         // DEFAULT value
-        if (array_key_exists(key: 'default', array: $column->attributes)) {
-            $sql .= ' DEFAULT ' . $this->formatDefault(value: $column->attributes['default']);
+        if (array_key_exists(key: 'default', array: $columnDefinition->attributes)) {
+            $sql .= ' DEFAULT ' . $this->formatDefault(value: $columnDefinition->attributes['default']);
         }
 
         // CURRENT_TIMESTAMP defaults
-        if (isset($column->attributes['use_current']) && $column->attributes['use_current']) {
+        if (isset($columnDefinition->attributes['use_current']) && $columnDefinition->attributes['use_current']) {
             $sql .= ' DEFAULT CURRENT_TIMESTAMP';
         }
 
         // ON UPDATE CURRENT_TIMESTAMP
-        if (isset($column->attributes['on_update_current']) && $column->attributes['on_update_current']) {
+        if (isset($columnDefinition->attributes['on_update_current']) && $columnDefinition->attributes['on_update_current']) {
             $sql .= ' ON UPDATE CURRENT_TIMESTAMP';
         }
 
         // AUTO_INCREMENT (implies PRIMARY KEY)
-        if (isset($column->attributes['auto_increment'])) {
+        if (isset($columnDefinition->attributes['auto_increment'])) {
             $sql .= ' AUTO_INCREMENT PRIMARY KEY';
         } // PRIMARY KEY (standalone)
-        elseif (isset($column->attributes['primary']) && $column->attributes['primary']) {
+        elseif (isset($columnDefinition->attributes['primary']) && $columnDefinition->attributes['primary']) {
             $sql .= ' PRIMARY KEY';
         }
 
         // UNIQUE constraint
-        if (isset($column->attributes['unique']) && $column->attributes['unique']) {
+        if (isset($columnDefinition->attributes['unique']) && $columnDefinition->attributes['unique']) {
             $sql .= ' UNIQUE';
         }
 
         // COMMENT
-        if (isset($column->attributes['comment'])) {
-            $sql .= " COMMENT '" . str_replace(search: "'", replace: "''", subject: $column->attributes['comment']) . "'";
+        if (isset($columnDefinition->attributes['comment'])) {
+            $sql .= " COMMENT '" . str_replace(search: "'", replace: "''", subject: $columnDefinition->attributes['comment']) . "'";
         }
 
         return $sql;
@@ -103,7 +103,7 @@ final class ColumnSQLRenderer
     private function formatDefault(mixed $value) : string
     {
         if (is_string(value: $value)) {
-            return "'{$value}'";
+            return sprintf("'%s'", $value);
         }
 
         if (is_bool(value: $value)) {

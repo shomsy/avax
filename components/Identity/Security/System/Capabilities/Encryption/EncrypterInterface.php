@@ -23,7 +23,7 @@ interface EncrypterInterface
      * Decrypt an EncryptedPayload back to the original value.
      *
      * @param EncryptedPayload $payload The encrypted payload to decrypt
-     * @param EncryptionKey    $key     The encryption key to use
+     * @param EncryptionKey $key The encryption key to use
      *
      * @return string The decrypted value
      */

@@ -13,7 +13,7 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(string|null $tenantId = null, int $limit = 100) : array
+    public function find(string $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas    = $this->store->all();
@@ -53,7 +53,7 @@ final readonly class RebuildSagaState
 {
     public function rebuild(
         string $sagaId,
-        array  $events
+        array $events,
     ) : array
     {
         $data             = [];
@@ -69,6 +69,7 @@ final readonly class RebuildSagaState
                 case 'saga_started':
                     $data             = $event['payload'] ?? [];
                     $currentStepIndex = 0;
+
                     break;
 
                 case 'step_completed':
@@ -77,6 +78,7 @@ final readonly class RebuildSagaState
                     $stepResults[$stepName] = $event['payload'] ?? [];
                     $currentStepName        = $stepName;
                     $currentStepIndex++;
+
                     break;
 
                 case 'step_failed':
@@ -102,7 +104,7 @@ final readonly class ContinueSagaAfterFailure
 {
     public function continue(
         SagaInstance $instance,
-        array        $definition
+        array $definition,
     ) : array
     {
         if ($instance->status !== SagaInstanceStatus::FAILED) {
@@ -140,7 +142,7 @@ final readonly class MarkSagaAsUnrecoverable
 
     public function mark(
         SagaInstance $instance,
-        string       $reason
+        string $reason,
     ) : void
     {
         $this->inspect->record(
@@ -148,8 +150,8 @@ final readonly class MarkSagaAsUnrecoverable
                 sagaId  : $instance->id,
                 sagaName: $instance->definitionName,
                 type    : 'saga_unrecoverable',
-                payload : ['reason' => $reason]
-            )
+                payload : ['reason' => $reason],
+            ),
         );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\PublicSurface;
@@ -17,16 +18,16 @@ final class Request implements RequestInterface
     private RequestData $data;
 
     public function __construct(
-        string         $method,
-        RequestUri     $uri,
+        string        $method,
+        RequestUri    $uri,
         RequestHeaders $headers,
-        RequestBody    $body,
-        UploadedFiles  $files,
-        array          $serverParams = [],
-        array          $cookieParams = [],
-        array          $queryParams = [],
-        array          $attributes = [],
-        string         $protocolVersion = '1.1'
+        RequestBody   $body,
+        UploadedFiles $files,
+        array         $serverParams = [],
+        array         $cookieParams = [],
+        array         $queryParams = [],
+        array         $attributes = [],
+        string        $protocolVersion = '1.1',
     )
     {
         $this->data = new RequestData(
@@ -39,11 +40,14 @@ final class Request implements RequestInterface
             cookieParams   : $cookieParams,
             queryParams    : $queryParams,
             attributes     : $attributes,
-            protocolVersion: $protocolVersion
+            protocolVersion: $protocolVersion,
         );
     }
 
-    public function getProtocolVersion() : string { return $this->data->protocolVersion; }
+    public function getProtocolVersion() : string
+    {
+        return $this->data->protocolVersion;
+    }
 
     public function withProtocolVersion($version) : self
     {
@@ -53,13 +57,25 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getHeaders() : array { return $this->data->headers->all(); }
+    public function getHeaders() : array
+    {
+        return $this->data->headers->all();
+    }
 
-    public function hasHeader($name) : bool { return $this->data->headers->has($name); }
+    public function hasHeader($name) : bool
+    {
+        return $this->data->headers->has($name);
+    }
 
-    public function getHeader($name) : array { return $this->data->headers->get($name)?->all() ?? []; }
+    public function getHeader($name) : array
+    {
+        return $this->data->headers->get($name)?->all() ?? [];
+    }
 
-    public function getHeaderLine($name) : string { return $this->data->headers->get($name)?->line() ?? ''; }
+    public function getHeaderLine($name) : string
+    {
+        return $this->data->headers->get($name)?->line() ?? '';
+    }
 
     public function withHeader($name, $value) : self
     {
@@ -68,16 +84,41 @@ final class Request implements RequestInterface
 
         return $clone;
     }
-    public function withAddedHeader($name, $value): self { return $this->withHeader($name, $value); }
-    public function withoutHeader($name): self { return $this; }
 
-    public function getBody() : StreamInterface { return Utils::streamFor($this->data->body->raw()->toString()); }
-    public function withBody(StreamInterface $body): self { return $this; }
+    public function withAddedHeader($name, $value) : self
+    {
+        return $this->withHeader($name, $value);
+    }
 
-    public function getRequestTarget() : string { return $this->data->uri->getPath(); }
-    public function withRequestTarget($target): self { return $this; }
+    public function withoutHeader($name) : self
+    {
+        return $this;
+    }
 
-    public function getMethod() : string { return $this->data->method; }
+    public function getBody() : StreamInterface
+    {
+        return Utils::streamFor($this->data->body->raw()->toString());
+    }
+
+    public function withBody(StreamInterface $body) : self
+    {
+        return $this;
+    }
+
+    public function getRequestTarget() : string
+    {
+        return $this->data->uri->getPath();
+    }
+
+    public function withRequestTarget($target) : self
+    {
+        return $this;
+    }
+
+    public function getMethod() : string
+    {
+        return $this->data->method;
+    }
 
     public function withMethod($method) : self
     {
@@ -87,7 +128,10 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getUri() : UriInterface { return $this->data->uri; }
+    public function getUri() : UriInterface
+    {
+        return $this->data->uri;
+    }
 
     public function withUri(UriInterface $uri, $preserveHost = false) : self
     {
@@ -97,9 +141,15 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getServerParams() : array { return $this->data->serverParams; }
+    public function getServerParams() : array
+    {
+        return $this->data->serverParams;
+    }
 
-    public function getCookieParams() : array { return $this->data->cookieParams; }
+    public function getCookieParams() : array
+    {
+        return $this->data->cookieParams;
+    }
 
     public function withCookieParams(array $cookies) : self
     {
@@ -109,7 +159,10 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getQueryParams() : array { return $this->data->queryParams; }
+    public function getQueryParams() : array
+    {
+        return $this->data->queryParams;
+    }
 
     public function withQueryParams(array $query) : self
     {
@@ -119,15 +172,35 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getUploadedFiles() : array { return $this->data->files->all(); }
-    public function withUploadedFiles(array $uploadedFiles): self { return $this; }
+    public function getUploadedFiles() : array
+    {
+        return $this->data->files->all();
+    }
 
-    public function getParsedBody() : array|object|null { return $this->data->body->parsed()->data(); }
-    public function withParsedBody($data): self { return $this; }
+    public function withUploadedFiles(array $uploadedFiles) : self
+    {
+        return $this;
+    }
 
-    public function getAttributes() : array { return $this->data->attributes; }
+    public function getParsedBody() : array|object|null
+    {
+        return $this->data->body->parsed()->data();
+    }
 
-    public function getAttribute($name, $default = null) { return $this->data->attributes[$name] ?? $default; }
+    public function withParsedBody($data) : self
+    {
+        return $this;
+    }
+
+    public function getAttributes() : array
+    {
+        return $this->data->attributes;
+    }
+
+    public function getAttribute($name, $default = null)
+    {
+        return $this->data->attributes[$name] ?? $default;
+    }
 
     public function withAttribute($name, $value) : self
     {

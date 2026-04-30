@@ -23,7 +23,7 @@ final readonly class Logout
                                                             sessionId            : $data->sessionId,
                                                             idTokenHint          : $data->idTokenHint,
                                                             postLogoutRedirectUri: $data->postLogoutRedirectUri,
-                                                            state                : $data->state
+                                                            state                : $data->state,
                                                         ));
     }
 }

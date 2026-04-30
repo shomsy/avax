@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues;
 
 use InvalidArgumentException;
+use Override;
 use Stringable;
 
 final readonly class CacheVersion implements Stringable
@@ -12,7 +13,7 @@ final readonly class CacheVersion implements Stringable
     public function __construct(
         public int $major,
         public int $minor,
-        public int $patch = 0
+        public int $patch = 0,
     )
     {
         if ($major < 0 || $minor < 0 || $patch < 0) {
@@ -75,6 +76,7 @@ final readonly class CacheVersion implements Stringable
         return new self(major: $this->major, minor: $this->minor, patch: $this->patch + 1);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->toString();

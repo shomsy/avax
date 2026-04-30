@@ -19,7 +19,7 @@ final readonly class DecryptValue
 {
     public function __construct(
         private EncrypterInterface $encrypter,
-        private KeyResolver        $keyResolver,
+        private KeyResolver $keyResolver,
     ) {}
 
     /**
@@ -40,7 +40,7 @@ final readonly class DecryptValue
 
         if ($key === null) {
             throw new DecryptionFailed(
-                sprintf('No encryption key found for version "%s"', $payload->keyVersion())
+                sprintf('No encryption key found for version "%s"', $payload->keyVersion()),
             );
         }
 

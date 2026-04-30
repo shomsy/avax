@@ -14,7 +14,8 @@ use SensitiveParameter;
 final readonly class RequireResourceOwner
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
     ) {}
 
     /**

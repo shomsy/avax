@@ -53,7 +53,7 @@ final readonly class ValidateRequestObject
             state              : $this->readStringValue(value: $claims['state'] ?? null),
             nonce              : $this->readStringValue(value: $claims['nonce'] ?? null),
             codeChallenge      : $this->readStringValue(value: $claims['code_challenge'] ?? null),
-            codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null)
+            codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null),
         );
     }
 

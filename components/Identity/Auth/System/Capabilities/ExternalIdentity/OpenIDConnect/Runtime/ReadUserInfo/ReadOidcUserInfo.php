@@ -13,8 +13,9 @@ use SensitiveParameter;
 final readonly class ReadOidcUserInfo
 {
     public function __construct(
-        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private OidcProviderInterface|null                 $oidcProvider = null
+        #[SensitiveParameter]
+        private JwtIdentityInterface       $jwtIdentity,
+        private OidcProviderInterface|null $oidcProvider = null,
     ) {}
 
     public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo

@@ -25,7 +25,7 @@ final readonly class RunConformanceHarness
      *     }>
      * }
      */
-    public function execute(string $repositoryRoot, array|null $checks = null) : array
+    public function execute(string $repositoryRoot, array $checks = null) : array
     {
         $resolvedChecks = $checks ?? $this->defaultChecks(repositoryRoot: $repositoryRoot);
         $results        = [
@@ -38,13 +38,13 @@ final readonly class RunConformanceHarness
                 'failed' => 0,
                 'total'  => count(value: $resolvedChecks),
             ],
-            'checks'    => [],
+            'checks' => [],
         ];
 
         foreach ($resolvedChecks as $check) {
             $execution = $this->runCommand(
                 command         : $check['command'],
-                workingDirectory: $repositoryRoot
+                workingDirectory: $repositoryRoot,
             );
 
             $status = $execution['exit_code'] === 0 ? 'PASSED' : 'FAILED';
@@ -58,6 +58,7 @@ final readonly class RunConformanceHarness
 
             if ($status === 'PASSED') {
                 $results['summary']['passed']++;
+
                 continue;
             }
 
@@ -182,6 +183,7 @@ final readonly class RunConformanceHarness
                 }
 
                 usleep(microseconds: 10_000);
+
                 continue;
             }
 
@@ -202,6 +204,7 @@ final readonly class RunConformanceHarness
 
                 if ($stream === $pipes[1]) {
                     $stdout .= $chunk;
+
                     continue;
                 }
 

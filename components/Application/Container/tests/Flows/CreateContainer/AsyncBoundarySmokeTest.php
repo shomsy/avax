@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Container;
@@ -10,26 +10,26 @@ use Avax\Components\Application\Container\DI\Container;
 assertInstanceOf(
     expectedClass: Container::class,
     value        : makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_FPM)),
-    message      : 'FPM async target should stay supported.'
+    message      : 'FPM async target should stay supported.',
 );
 assertInstanceOf(
     expectedClass: Container::class,
     value        : makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_WORKER)),
-    message      : 'Worker async target should stay supported.'
+    message      : 'Worker async target should stay supported.',
 );
 assertThrows(
     expectedClass: InvalidArgumentException::class,
-    callback     : static function () : void {
+    callback     : static function (): void {
         makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_COROUTINE));
     },
-    message      : 'Coroutine async targets should fail with an explicit boundary error.'
+    message      : 'Coroutine async targets should fail with an explicit boundary error.',
 );
 assertThrows(
     expectedClass: InvalidArgumentException::class,
-    callback     : static function () : void {
+    callback     : static function (): void {
         makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_FIBER));
     },
-    message      : 'Fiber async targets should fail with an explicit boundary error.'
+    message      : 'Fiber async targets should fail with an explicit boundary error.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

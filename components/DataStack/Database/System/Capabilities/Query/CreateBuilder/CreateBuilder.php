@@ -23,28 +23,28 @@ final readonly class CreateBuilder
         private Connections         $connections,
         private GrammarInterface    $grammar,
         private EventBus|null       $eventBus = null,
-        private ExecutionScope|null $scope = null
+        private ExecutionScope|null $scope = null,
     ) {}
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function for(string|null $connectionName = null) : QueryBuilder
+    public function for(string $connectionName = null) : QueryBuilder
     {
         $connection   = $this->connections->connection(name: $connectionName);
         $orchestrator = new QueryOrchestrator(
             executor: new PDOExecutor(
                           connection    : $connection,
                           eventBus      : $this->eventBus,
-                          connectionName: $connection->getName()
+                          connectionName: $connection->getName(),
                       ),
-            scope   : $this->scope
+            scope   : $this->scope,
         );
 
         return new QueryBuilder(
             grammar     : $this->grammar,
-            orchestrator: $orchestrator
+            orchestrator: $orchestrator,
         );
     }
 }

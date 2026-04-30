@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM;
@@ -9,7 +10,7 @@ abstract class Relation
         protected string $parent,
         protected string $related,
         protected string $foreignKey,
-        protected string $localKey
+        protected string $localKey,
     ) {}
 
     abstract public function getResults(): mixed;

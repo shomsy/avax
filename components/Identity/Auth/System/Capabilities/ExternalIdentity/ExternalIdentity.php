@@ -17,9 +17,10 @@ use SensitiveParameter;
 final readonly class ExternalIdentity
 {
     public function __construct(
-        #[SensitiveParameter] private OAuth $oauth,
-        private OpenIDConnect               $oidc,
-        private SingleSignOn                $sso
+        #[SensitiveParameter]
+        private OAuth         $oauth,
+        private OpenIDConnect $oidc,
+        private SingleSignOn  $sso,
     ) {}
 
     public function oauth() : OAuth

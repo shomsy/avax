@@ -35,7 +35,7 @@ class BladeTemplateEngine extends Blade
 
         $url    = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
-        $host   = $url['host'] ?? 'localhost';
+        $host = $url['host'] ?? 'localhost';
 
         return sprintf('%s://%s', $scheme, $host);
     }
@@ -49,13 +49,13 @@ class BladeTemplateEngine extends Blade
             $this->getBaseUrl(),
             $expression,
             $this->getBaseUrl(),
-            $expression
+            $expression,
         ));
 
         // Datetime directive
         $this->compiler()->directive(name: 'datetime', handler: static fn ($expression) : string => sprintf(
             "<?php echo with(%s)->format('Y-m-d H:i:s'); ?>",
-            $expression
+            $expression,
         ));
 
         // CSRF directive
@@ -64,19 +64,19 @@ class BladeTemplateEngine extends Blade
         // Route directive
         $this->compiler()->directive(name: 'route', handler: static fn ($expression) : string => sprintf(
             '<?php echo route(%s); ?>',
-            $expression
+            $expression,
         ));
 
         // Checked directive
         $this->compiler()->directive(name: 'checked', handler: static fn ($expression) : string => sprintf(
             "<?php echo %s ? 'checked' : ''; ?>",
-            $expression
+            $expression,
         ));
 
         // Selected directive
         $this->compiler()->directive(name: 'selected', handler: static fn ($expression) : string => sprintf(
             "<?php echo %s ? 'selected' : ''; ?>",
-            $expression
+            $expression,
         ));
 
         // Dump directive
@@ -84,20 +84,20 @@ class BladeTemplateEngine extends Blade
             name   : 'dump',
             handler: static fn ($expression) : string => sprintf(
                 '<?php var_dump(%s); ?>',
-                $expression
-            )
+                $expression,
+            ),
         );
 
         // Die and dump directive
         $this->compiler()->directive(name: 'dd', handler: static fn ($expression) : string => sprintf(
             '<?php die(var_dump(%s)); ?>',
-            $expression
+            $expression,
         ));
 
         // Markdown directive
         $this->compiler()->directive(name: 'markdown', handler: static fn ($expression) : string => sprintf(
             '<?php echo (new Parsedown())->text(%s); ?>',
-            $expression
+            $expression,
         ));
 
         // AuthFacadeService directives
@@ -112,7 +112,7 @@ class BladeTemplateEngine extends Blade
         // Environment directive
         $this->compiler()->directive(name: 'ifenv', handler: static fn ($expression) : string => sprintf(
             "<?php if (config('cashback.env') === %s): ?>",
-            $expression
+            $expression,
         ));
 
         $this->compiler()->directive(name: 'endifenv', handler: static fn () : string => '<?php endif; ?>');
@@ -121,13 +121,13 @@ class BladeTemplateEngine extends Blade
         $this->compiler()->directive(name: 'includeWhen', handler: static fn ($expression) : string => sprintf(
             "<?php if (%s) { include '%s'; } ?>",
             $expression[0],
-            $expression[1]
+            $expression[1],
         ));
 
         // HTTP method directive
         $this->compiler()->directive(name: 'method', handler: static fn ($expression) : string => sprintf(
             "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
-            $expression
+            $expression,
         ));
     }
 

@@ -21,15 +21,15 @@ final readonly class DataField
     public function __construct(
         public string                   $name,
         public string                   $inputName,
-        public DataFieldType            $type,
+        public DataFieldType            $dataFieldType,
         public array                    $attributes,
         public bool                     $isConstructorField,
         public bool                     $isPromotedProperty,
         public bool                     $isPublicProperty,
         public bool                     $hasDefaultValue,
         public mixed                    $defaultValue,
-        public ReflectionProperty|null  $property = null,
-        public ReflectionParameter|null $parameter = null,
+        public ReflectionProperty|null  $reflectionProperty = null,
+        public ReflectionParameter|null $reflectionParameter = null,
     ) {}
 
     public function isRequired() : bool
@@ -42,7 +42,7 @@ final readonly class DataField
             return false;
         }
 
-        return ! $this->hasDefaultValue && ! $this->type->allowsNull;
+        return ! $this->hasDefaultValue && ! $this->dataFieldType->allowsNull;
     }
 
     public function hasAttribute(string $attributeClass) : bool
@@ -69,8 +69,8 @@ final readonly class DataField
             return $attribute->class;
         }
 
-        if ($this->property !== null) {
-            $doc = $this->property->getDocComment();
+        if ($this->reflectionProperty !== null) {
+            $doc = $this->reflectionProperty->getDocComment();
 
             if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[]/', subject: $doc, matches: $matches) === 1) {
                 $class = ltrim(string: $matches[1], characters: '\\');
@@ -79,7 +79,7 @@ final readonly class DataField
                     return $class;
                 }
 
-                $namespace = $this->property->getDeclaringClass()->getNamespaceName();
+                $namespace = $this->reflectionProperty->getDeclaringClass()->getNamespaceName();
 
                 return $namespace === '' ? $class : $namespace . '\\' . $class;
             }

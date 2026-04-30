@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Compilation;
 
-final class CompiledCache
+final readonly class CompiledCache
 {
     public function __construct(private string $path) {}
 
@@ -16,6 +17,7 @@ final class CompiledCache
     public function get(string $key): mixed
     {
         $file = $this->path . '/' . md5($key) . '.php';
+
         return file_exists($file) ? require $file : null;
     }
 }

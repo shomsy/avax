@@ -15,19 +15,20 @@ final readonly class ActiveSession
     public bool $current;
 
     public function __construct(
-        #[SensitiveParameter] public string      $sessionId,
-        public DateTimeImmutable                 $createdAt,
-        public DateTimeImmutable                 $lastSeenAt,
-        public DateTimeImmutable                 $idleExpiresAt,
-        public DateTimeImmutable                 $absoluteExpiresAt,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null,
-        bool|null                                $current = null,
-        public DateTimeImmutable|null            $revokedAt = null,
-        public string|null                       $revokeReason = null
-    )
-    {
-        $current       ??= false;
+        #[SensitiveParameter]
+        public string $sessionId,
+        public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $lastSeenAt,
+        public DateTimeImmutable $idleExpiresAt,
+        public DateTimeImmutable $absoluteExpiresAt,
+        #[SensitiveParameter]
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
+        bool $current = null,
+        public DateTimeImmutable|null $revokedAt = null,
+        public string|null $revokeReason = null,
+    ) {
+        $current ??= false;
         $this->current = $current;
     }
 }

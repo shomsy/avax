@@ -6,6 +6,7 @@ namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
 use Avax\Components\CLI\Console\System\Capabilities\Generators\EntityGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Override;
 use RuntimeException;
 
 /**
@@ -14,15 +15,20 @@ use RuntimeException;
 class MakeEntityCommand extends Command
 {
     protected string $name        = 'make:entity';
+
     protected string $description = 'Create a new entity class';
+
     protected string $signature   = 'make:entity {name} [--table=] [--fields=]';
-    protected array  $arguments   = ['name'];
-    protected array  $options     = ['table', 'fields'];
+
+    protected array $arguments = ['name'];
+
+    protected array $options = ['table', 'fields'];
 
     public function __construct(
-        private readonly EntityGenerator $generator
+        private readonly EntityGenerator $entityGenerator,
     ) {}
 
+    #[Override]
     protected function handle() : int
     {
         $name = $this->argument(0);
@@ -30,7 +36,7 @@ class MakeEntityCommand extends Command
         if (empty($name)) {
             $name = $this->ask('Enter entity name');
 
-            if (empty($name)) {
+            if ($name === '' || $name === '0') {
                 $this->error('Entity name is required.');
 
                 return self::INVALID;
@@ -52,17 +58,17 @@ class MakeEntityCommand extends Command
                 $data['table'] = $table;
             }
 
-            if (! empty($fields)) {
+            if ($fields !== []) {
                 $data['fields'] = $fields;
             }
 
-            $path = $this->generator->generate($name, $data);
+            $path = $this->entityGenerator->generate($name, $data);
 
-            $this->info("Entity created successfully: {$path}");
+            $this->info('Entity created successfully: ' . $path);
 
             return self::SUCCESS;
-        } catch (RuntimeException $e) {
-            $this->error('Failed to create entity: ' . $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->error('Failed to create entity: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

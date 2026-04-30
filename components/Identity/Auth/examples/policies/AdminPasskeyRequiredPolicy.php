@@ -12,7 +12,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Access\Policy\IdentityPoli
  */
 final readonly class AdminPasskeyRequiredPolicy
 {
-    public function execute() : AccessPolicy
+    public function execute(): AccessPolicy
     {
         return AccessPolicy::forIdentityPolicy(identityPolicy: IdentityPolicyCatalog::admin());
     }

@@ -15,11 +15,11 @@ enum CompensationStatus: string
 final readonly class CompensationStepResult
 {
     public function __construct(
-        public string             $stepName,
+        public string      $stepName,
         public CompensationStatus $status,
-        public string|null        $error,
-        public float              $startedAt,
-        public float|null         $finishedAt
+        public string|null $error,
+        public float       $startedAt,
+        public float|null  $finishedAt,
     ) {}
 
     public static function success(string $stepName, float $startedAt) : self
@@ -29,7 +29,7 @@ final readonly class CompensationStepResult
             status    : CompensationStatus::SUCCESS,
             error     : null,
             startedAt : $startedAt,
-            finishedAt: microtime(true)
+            finishedAt: microtime(true),
         );
     }
 
@@ -40,7 +40,7 @@ final readonly class CompensationStepResult
             status    : CompensationStatus::FAILED,
             error     : $error,
             startedAt : $startedAt,
-            finishedAt: microtime(true)
+            finishedAt: microtime(true),
         );
     }
 

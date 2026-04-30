@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\PublicSurface;
@@ -10,7 +11,7 @@ use Stringable;
 final readonly class Logging implements LoggerInterface
 {
     public function __construct(
-        private RotatingFileWriter $writer
+        private RotatingFileWriter $writer,
     ) {}
 
     public function emergency(string|Stringable $message, array $context = []): void

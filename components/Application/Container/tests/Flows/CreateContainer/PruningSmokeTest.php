@@ -12,7 +12,10 @@ final class PrunedFlowEntry
 {
     public PrunedDependency $dependency;
 
-    public function __construct(PrunedDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(PrunedDependency $dependency)
+    {
+        $this->dependency = $dependency;
+    }
 }
 
 final class DeadPrunableService {}
@@ -21,7 +24,7 @@ $cacheDir  = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid(prefix: '
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'pruning-smoke',
-    pruneMode   : CreateContainerConfig::PRUNE_MODE_STRICT
+    pruneMode   : CreateContainerConfig::PRUNE_MODE_STRICT,
 ));
 
 $container->bind(abstract: DeadPrunableService::class, concrete: DeadPrunableService::class)
@@ -42,25 +45,25 @@ assertTrue(condition: $report !== null, message: 'Strict pruning should still pr
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_STRICT,
     actual  : $report->pruneMode,
-    message : 'Compile reports should expose strict pruning mode.'
+    message : 'Compile reports should expose strict pruning mode.',
 );
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_STRICT,
     actual  : $report->metadata?->pruneMode,
-    message : 'Compile metadata should expose strict pruning mode.'
+    message : 'Compile metadata should expose strict pruning mode.',
 );
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_STRICT,
     actual  : $report->pruning['mode'] ?? null,
-    message : 'Pruning diagnostics should expose the active pruning mode.'
+    message : 'Pruning diagnostics should expose the active pruning mode.',
 );
 assertTrue(
     condition: in_array(needle: DeadPrunableService::class, haystack: $report->pruning['prunedServices'] ?? [], strict: true),
-    message  : 'Strict pruning should report services removed from the generated artifact.'
+    message  : 'Strict pruning should report services removed from the generated artifact.',
 );
 assertTrue(
     condition: ! in_array(needle: DeadPrunableService::class, haystack: $report->entries, strict: true),
-    message  : 'Pruned services should stay out of compiled entries.'
+    message  : 'Pruned services should stay out of compiled entries.',
 );
 assertSame(expected: false, actual: $container->has(id: DeadPrunableService::class), message: 'Pruned private flow services should still stay outside the top-level surface.');
 assertSame(expected: true, actual: $deadSlice->has(id: DeadPrunableService::class), message: 'Pruning must not mutate canonical authored slice visibility.');

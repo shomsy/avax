@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Access;
@@ -9,5 +10,5 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Access;
  */
 interface AccessPolicy
 {
-    public function allows(object $user, string $permission, mixed $resource = null) : bool;
+    public function allows(object $user, string $permission, mixed $resource = null): bool;
 }

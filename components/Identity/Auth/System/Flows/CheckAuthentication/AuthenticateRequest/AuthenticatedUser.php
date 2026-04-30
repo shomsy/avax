@@ -25,38 +25,37 @@ final readonly class AuthenticatedUser
      * @param list<string> $permissions
      */
     public function __construct(
-        public int                          $id,
-        #[SensitiveParameter] public string $email,
-        public string                       $username,
-        array|null                          $roles = null,
-        array|null                          $permissions = null,
-        bool|null                           $emailVerified = null,
-        public bool                         $mfaEnabled = false
-    )
-    {
-        $roles               ??= [];
-        $permissions         ??= [];
-        $emailVerified       ??= false;
+        public int $id,
+        #[SensitiveParameter]
+        public string $email,
+        public string $username,
+        array $roles = null,
+        array $permissions = null,
+        bool $emailVerified = null,
+        public bool $mfaEnabled = false,
+    ) {
+        $roles         ??= [];
+        $permissions   ??= [];
+        $emailVerified ??= false;
         $this->roles         = $roles;
         $this->permissions   = $permissions;
         $this->emailVerified = $emailVerified;
     }
 
     public static function fromUser(
-        User      $user,
-        bool|null $emailVerified = null,
-        bool      $mfaEnabled = false
-    ) : self
-    {
+        User $user,
+        bool $emailVerified = null,
+        bool $mfaEnabled = false,
+    ): self {
         $emailVerified ??= false;
-        $roles         = array_map(
-            callback: static fn (UserRole $role) : string => $role->value,
-            array   : $user->getRoles()
+        $roles = array_map(
+            callback: static fn (UserRole $role): string => $role->value,
+            array   : $user->getRoles(),
         );
 
         $permissions = array_map(
-            callback: static fn (UserPermission $permission) : string => $permission->value,
-            array   : $user->getPermissions()
+            callback: static fn (UserPermission $permission): string => $permission->value,
+            array   : $user->getPermissions(),
         );
 
         return new self(
@@ -66,21 +65,21 @@ final readonly class AuthenticatedUser
             roles        : $roles,
             permissions  : $permissions,
             emailVerified: $emailVerified,
-            mfaEnabled   : $mfaEnabled
+            mfaEnabled   : $mfaEnabled,
         );
     }
 
-    public function hasRole(UserRole $role) : bool
+    public function hasRole(UserRole $role): bool
     {
         return in_array(needle: $role->value, haystack: $this->roles, strict: true);
     }
 
-    public function canAccessRole(UserRole $requiredRole) : bool
+    public function canAccessRole(UserRole $requiredRole): bool
     {
-        return array_any(array: $this->roles, callback: fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
+        return array_any(array: $this->roles, callback: static fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
     }
 
-    public function hasPermission(UserPermission $permission) : bool
+    public function hasPermission(UserPermission $permission): bool
     {
         return in_array(needle: $permission->value, haystack: $this->permissions, strict: true);
     }

@@ -11,7 +11,7 @@ final readonly class CompiledCacheSource
     public function __construct(
         public string      $path,
         public int         $mtime,
-        public string|null $checksum = null
+        public string|null $checksum = null,
     )
     {
         $this->validate();
@@ -43,7 +43,7 @@ final readonly class CompiledCacheSource
         return new self(
             path    : $path,
             mtime   : $stat !== false ? $stat['mtime'] : filemtime($path),
-            checksum: null
+            checksum: null,
         );
     }
 

@@ -9,61 +9,61 @@ use Throwable;
 
 final readonly class Schema
 {
-    public function __construct(private SchemaCapability $schema) {}
+    public function __construct(private SchemaCapability $schemaCapability) {}
 
     /**
      * @throws Throwable
      */
-    public function create(string $table, callable $callback, string|null $connectionName = null) : void
+    public function create(string $table, callable $callback, ?string $connectionName = null) : void
     {
-        $this->schema->create(table: $table, callback: $callback, connectionName: $connectionName);
+        $this->schemaCapability->create(table: $table, callback: $callback, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function table(string $table, callable $callback, string|null $connectionName = null) : void
+    public function table(string $table, callable $callback, ?string $connectionName = null) : void
     {
-        $this->schema->table(table: $table, callback: $callback, connectionName: $connectionName);
+        $this->schemaCapability->table(table: $table, callback: $callback, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function drop(string $table, string|null $connectionName = null) : void
+    public function drop(string $table, ?string $connectionName = null) : void
     {
-        $this->schema->drop(table: $table, connectionName: $connectionName);
+        $this->schemaCapability->drop(table: $table, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function dropIfExists(string $table, string|null $connectionName = null) : void
+    public function dropIfExists(string $table, ?string $connectionName = null) : void
     {
-        $this->schema->dropIfExists(table: $table, connectionName: $connectionName);
+        $this->schemaCapability->dropIfExists(table: $table, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function truncate(string $table, string|null $connectionName = null) : void
+    public function truncate(string $table, ?string $connectionName = null) : void
     {
-        $this->schema->truncate(table: $table, connectionName: $connectionName);
+        $this->schemaCapability->truncate(table: $table, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function createDatabase(string $name, string|null $connectionName = null) : void
+    public function createDatabase(string $name, ?string $connectionName = null) : void
     {
-        $this->schema->createDatabase(name: $name, connectionName: $connectionName);
+        $this->schemaCapability->createDatabase(name: $name, connectionName: $connectionName);
     }
 
     /**
      * @throws Throwable
      */
-    public function dropDatabase(string $name, string|null $connectionName = null) : void
+    public function dropDatabase(string $name, ?string $connectionName = null) : void
     {
-        $this->schema->dropDatabase(name: $name, connectionName: $connectionName);
+        $this->schemaCapability->dropDatabase(name: $name, connectionName: $connectionName);
     }
 }

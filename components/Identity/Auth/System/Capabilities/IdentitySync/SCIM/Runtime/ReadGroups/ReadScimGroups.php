@@ -23,7 +23,7 @@ final readonly class ReadScimGroups
                     externalId: $user->externalId,
                     userId    : $user->userId,
                     username  : $user->username,
-                    email     : $user->email
+                    email     : $user->email,
                 );
             }
         }
@@ -35,13 +35,13 @@ final readonly class ReadScimGroups
             $members = $group['members'];
             usort(
                 array   : $members,
-                callback: static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp(string1: $left->externalId, string2: $right->externalId)
+                callback: static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp(string1: $left->externalId, string2: $right->externalId),
             );
             $projections[] = new ScimGroupProjection(
                 directoryId: $directoryId,
                 groupId    : $groupId,
                 displayName: $groupId,
-                members    : $members
+                members    : $members,
             );
         }
 

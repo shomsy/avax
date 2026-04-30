@@ -17,6 +17,7 @@ final class TransformToAscii
                 $v = $converted;
             }
         }
+
         $v = preg_replace('/[^\x20-\x7E]/', '', $v);
 
         return new Text(is_string($v) ? $v : $text->toString());

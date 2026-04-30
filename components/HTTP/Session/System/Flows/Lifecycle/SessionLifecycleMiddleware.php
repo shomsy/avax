@@ -1,17 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Flows\Lifecycle;
 
 use Avax\Components\HTTP\Session\System\PublicSurface\Session;
 use Avax\Components\Request\System\PublicSurface\ServerRequest;
-use Avax\Components\Response\System\PublicSurface\Response;
 use Closure;
 
 final readonly class SessionLifecycleMiddleware
 {
     public function __construct(
-        private Session $session
+        private Session $session,
     ) {}
 
     public function handle(ServerRequest $request, Closure $next) : mixed

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
+use Override;
+
 /**
  * CockroachDB connection pool.
  *
@@ -14,15 +16,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
  */
 class CockroachDBPool extends BaseConnectionPool
 {
-    private int $maxRetries = 3;
-
     public function __construct(
         protected array $config = [],
-        int             $minConnections = 5,
-        int             $maxConnections = 20,
-        int             $connectionTimeoutMs = 10000,
-        int             $idleTimeoutMs = 300000,
-        int             $maxRetries = 3,
+        int                  $minConnections = 5,
+        int                  $maxConnections = 20,
+        int                  $connectionTimeoutMs = 10000,
+        int                  $idleTimeoutMs = 300000,
+        private readonly int $maxRetries = 3,
     )
     {
         parent::__construct(
@@ -31,19 +31,19 @@ class CockroachDBPool extends BaseConnectionPool
             connectionTimeoutMs: $connectionTimeoutMs,
             idleTimeoutMs      : $idleTimeoutMs,
         );
-
-        $this->maxRetries = $maxRetries;
     }
 
+    #[Override]
     protected function createConnection() : PooledConnection
     {
         // @todo Replace with real CockroachDB connection (PostgreSQL-compatible wire protocol)
         return new ArrayPooledConnection(config: $this->config);
     }
 
-    protected function validateConnection(PooledConnection $connection) : bool
+    #[Override]
+    protected function validateConnection(PooledConnection $pooledConnection) : bool
     {
-        return $connection->isValid();
+        return $pooledConnection->isValid();
     }
 
     /**
@@ -53,7 +53,7 @@ class CockroachDBPool extends BaseConnectionPool
     {
         return new RetryablePool(
             pool      : $this,
-            maxRetries: $maxRetries ?? $this->maxRetries
+            maxRetries: $maxRetries ?? $this->maxRetries,
         );
     }
 

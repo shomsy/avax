@@ -10,15 +10,17 @@ use SensitiveParameter;
 final readonly class TenantInvite
 {
     public function __construct(
-        public string                       $inviteId,
-        public string                       $tenantId,
-        #[SensitiveParameter] public string $email,
-        public TenantMemberRole             $role,
-        #[SensitiveParameter] public string $tokenHash,
-        public string                       $invitedBy,
-        public DateTimeImmutable            $createdAt,
-        public DateTimeImmutable|null       $acceptedAt = null,
-        public int|null                     $acceptedByUserId = null
+        public string                 $inviteId,
+        public string                 $tenantId,
+        #[SensitiveParameter]
+        public string                 $email,
+        public TenantMemberRole       $role,
+        #[SensitiveParameter]
+        public string                 $tokenHash,
+        public string                 $invitedBy,
+        public DateTimeImmutable      $createdAt,
+        public DateTimeImmutable|null $acceptedAt = null,
+        public int|null               $acceptedByUserId = null,
     ) {}
 
     public function isAccepted() : bool

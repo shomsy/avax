@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\MetricsBackends;
 
+use Override;
+
 final class StatsDBackend implements MetricsBackend
 {
     /** @var array<string, int> */
@@ -21,23 +23,26 @@ final class StatsDBackend implements MetricsBackend
     /** @var array<string> */
     private array $messages = [];
 
+    #[Override]
     public function increment(string $metric, int $value = 1) : void
     {
-        $key                     = "{$metric}:{$value}|c";
+        $key = sprintf('%s:%d|c', $metric, $value);
         $this->messages[]        = $key;
         $this->counters[$metric] = ($this->counters[$metric] ?? 0) + $value;
     }
 
+    #[Override]
     public function gauge(string $metric, float $value) : void
     {
-        $key                   = "{$metric}:{$value}|g";
+        $key = sprintf('%s:%s|g', $metric, $value);
         $this->messages[]      = $key;
         $this->gauges[$metric] = $value;
     }
 
+    #[Override]
     public function histogram(string $metric, float $value) : void
     {
-        $key              = "{$metric}:{$value}|h";
+        $key = sprintf('%s:%s|h', $metric, $value);
         $this->messages[] = $key;
 
         if (! isset($this->histograms[$metric])) {
@@ -47,9 +52,10 @@ final class StatsDBackend implements MetricsBackend
         $this->histograms[$metric][] = $value;
     }
 
+    #[Override]
     public function timing(string $metric, int $milliseconds) : void
     {
-        $key              = "{$metric}:{$milliseconds}|ms";
+        $key = sprintf('%s:%d|ms', $metric, $milliseconds);
         $this->messages[] = $key;
 
         if (! isset($this->timings[$metric])) {
@@ -59,6 +65,7 @@ final class StatsDBackend implements MetricsBackend
         $this->timings[$metric][] = $milliseconds;
     }
 
+    #[Override]
     public function flush() : void
     {
         $this->messages = [];

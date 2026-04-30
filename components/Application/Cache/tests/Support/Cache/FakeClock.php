@@ -8,35 +8,37 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Override;
 
 final class FakeClock implements Clock
 {
-    private Timestamp $currentTime;
+    private Timestamp $timestamp;
 
-    public function __construct(Timestamp|null $timestamp = null)
+    public function __construct(?Timestamp $timestamp = null)
     {
-        $this->currentTime = $timestamp ?? Timestamp::now();
+        $this->timestamp = $timestamp ?? Timestamp::now();
     }
 
+    #[Override]
     public function now() : Timestamp
     {
-        return $this->currentTime;
+        return $this->timestamp;
     }
 
     public function setTime(Timestamp $timestamp) : void
     {
-        $this->currentTime = $timestamp;
+        $this->timestamp = $timestamp;
     }
 
     public function advance(int $seconds) : void
     {
-        $this->currentTime = $this->currentTime->add(
-            duration: Duration::ofSeconds(seconds: $seconds)
+        $this->timestamp = $this->timestamp->add(
+            duration: Duration::ofSeconds(seconds: $seconds),
         );
     }
 
     public function freeze() : FrozenClock
     {
-        return new FrozenClock(timestamp: $this->currentTime);
+        return new FrozenClock(timestamp: $this->timestamp);
     }
 }

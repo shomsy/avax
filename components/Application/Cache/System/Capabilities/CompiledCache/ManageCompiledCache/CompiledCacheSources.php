@@ -9,9 +9,9 @@ final class CompiledCacheSources
     /** @var array<string, CompiledCacheSource> */
     private array $sources = [];
 
-    public function __construct(CompiledCacheSource ...$sources)
+    public function __construct(CompiledCacheSource ...$compiledCacheSource)
     {
-        foreach ($sources as $source) {
+        foreach ($compiledCacheSource as $source) {
             $this->sources[$source->path] = $source;
         }
     }
@@ -24,17 +24,17 @@ final class CompiledCacheSources
     public static function fromPaths(string ...$paths) : self
     {
         $sources = array_map(
-            static fn (string $path) => CompiledCacheSource::fromPath(path: $path),
-            $paths
+            static fn (string $path) : CompiledCacheSource => CompiledCacheSource::fromPath(path: $path),
+            $paths,
         );
 
         return new self(...$sources);
     }
 
-    public function add(CompiledCacheSource $source) : self
+    public function add(CompiledCacheSource $compiledCacheSource) : self
     {
         $new                         = clone $this;
-        $new->sources[$source->path] = $source;
+        $new->sources[$compiledCacheSource->path] = $compiledCacheSource;
 
         return $new;
     }

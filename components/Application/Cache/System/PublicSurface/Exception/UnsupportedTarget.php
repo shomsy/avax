@@ -12,7 +12,7 @@ final class UnsupportedTarget extends RuntimeException
     {
         parent::__construct(message: sprintf(
                                          'Cache read target "%s" is not supported. Use RuntimeCacheTarget or CompiledCacheTarget.',
-                                         $targetClass
+                                         $targetClass,
                                      ));
     }
 }

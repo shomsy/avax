@@ -6,24 +6,29 @@ namespace Avax\Components\Application\Cache\System\Foundation\Time;
 
 use DateInterval;
 use InvalidArgumentException;
+use Override;
 use Stringable;
 
 final readonly class Duration implements Stringable
 {
-    public const MICROSECONDS_PER_SECOND     = 1_000_000;
-    public const MILLISECONDS_PER_SECOND     = 1000;
-    public const NANOSECONDS_PER_SECOND      = 1_000_000_000;
-    public const NANOSECONDS_PER_MILLISECOND = 1_000_000;
-    public const NANOSECONDS_PER_MICROSECOND = 1000;
+    public const int MICROSECONDS_PER_SECOND = 1_000_000;
+
+    public const int MILLISECONDS_PER_SECOND = 1000;
+
+    public const int NANOSECONDS_PER_SECOND = 1_000_000_000;
+
+    public const int NANOSECONDS_PER_MILLISECOND = 1_000_000;
+
+    public const int NANOSECONDS_PER_MICROSECOND = 1000;
 
     public function __construct(
         public int $seconds,
-        public int $nanoseconds = 0
+        public int $nanoseconds = 0,
     )
     {
         if ($nanoseconds < 0 || $nanoseconds >= self::NANOSECONDS_PER_SECOND) {
             throw new InvalidArgumentException(
-                message: 'Nanoseconds must be between 0 and 999,999,999'
+                message: 'Nanoseconds must be between 0 and 999,999,999',
             );
         }
     }
@@ -49,11 +54,11 @@ final readonly class Duration implements Stringable
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
 
-    public static function fromDateInterval(DateInterval $interval) : self
+    public static function fromDateInterval(DateInterval $dateInterval) : self
     {
-        $days    = $interval->days ?? 0;
-        $seconds = $interval->s + ($interval->i * 60) + ($interval->h * 3600) + ($days * 86400);
-        $nanos   = (int) round($interval->f * self::NANOSECONDS_PER_SECOND);
+        $days    = $dateInterval->days ?? 0;
+        $seconds = $dateInterval->s + ($dateInterval->i * 60) + ($dateInterval->h * 3600) + ($days * 86400);
+        $nanos   = (int) round($dateInterval->f * self::NANOSECONDS_PER_SECOND);
 
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
@@ -77,14 +82,14 @@ final readonly class Duration implements Stringable
 
     public function toDateInterval() : DateInterval
     {
-        $interval    = new DateInterval(duration: 'P0DT0H0M0S');
-        $interval->s = $this->seconds % 60;
-        $interval->i = (int) floor($this->seconds / 60) % 60;
-        $interval->h = (int) floor($this->seconds / 3600) % 24;
-        $interval->d = (int) floor($this->seconds / 86400);
-        $interval->f = $this->nanoseconds / self::NANOSECONDS_PER_SECOND;
+        $dateInterval    = new DateInterval(duration: 'P0DT0H0M0S');
+        $dateInterval->s = $this->seconds % 60;
+        $dateInterval->i = (int) floor($this->seconds / 60) % 60;
+        $dateInterval->h = (int) floor($this->seconds / 3600) % 24;
+        $dateInterval->d = (int) floor($this->seconds / 86400);
+        $dateInterval->f = $this->nanoseconds / self::NANOSECONDS_PER_SECOND;
 
-        return $interval;
+        return $dateInterval;
     }
 
     public function isZero() : bool
@@ -131,11 +136,12 @@ final readonly class Duration implements Stringable
     {
         $totalNanos   = $this->nanoseconds * $factor;
         $totalSeconds = ($this->seconds * $factor) + (int) floor($totalNanos / self::NANOSECONDS_PER_SECOND);
-        $totalNanos   = $totalNanos % self::NANOSECONDS_PER_SECOND;
+        $totalNanos %= self::NANOSECONDS_PER_SECOND;
 
         return new self(seconds: $totalSeconds, nanoseconds: $totalNanos);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return sprintf('%d.%09d seconds', $this->seconds, $this->nanoseconds);

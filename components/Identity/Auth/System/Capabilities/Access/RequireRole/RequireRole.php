@@ -17,7 +17,8 @@ use SensitiveParameter;
 final readonly class RequireRole
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
     ) {}
 
     /**

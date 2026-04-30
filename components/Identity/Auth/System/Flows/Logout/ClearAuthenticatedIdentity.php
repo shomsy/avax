@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Logout;
@@ -12,7 +13,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions
 final readonly class ClearAuthenticatedIdentity
 {
     public function __construct(
-        private Sessions $sessions
+        private Sessions $sessions,
     ) {}
 
     public function execute() : void

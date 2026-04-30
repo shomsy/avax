@@ -21,16 +21,19 @@ final readonly class HttpOAuthProofInput
      * @param array<string, mixed> $server
      */
     public function __construct(
-        public string                            $method,
-        public string                            $uri,
-        #[SensitiveParameter] array|null         $headers = null,
-        array|null                               $server = null,
-        #[SensitiveParameter] public string|null $accessToken = null,
-        #[SensitiveParameter] public string|null $expectedTokenThumbprint = null
+        public string      $method,
+        public string      $uri,
+        #[SensitiveParameter]
+        array              $headers = null,
+        array              $server = null,
+        #[SensitiveParameter]
+        public string|null $accessToken = null,
+        #[SensitiveParameter]
+        public string|null $expectedTokenThumbprint = null,
     )
     {
-        $headers       ??= [];
-        $server        ??= [];
+        $headers ??= [];
+        $server  ??= [];
         $this->headers = $headers;
         $this->server  = $server;
     }

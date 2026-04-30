@@ -138,8 +138,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
     private function registrationState(ServiceRegistration $registration) : array
     {
         return [
-            'abstract'             => $registration->abstract,
-            'concrete'             => is_object(value: $registration->concrete)
+            'abstract' => $registration->abstract,
+            'concrete' => is_object(value: $registration->concrete)
                 ? $registration->concrete::class
                 : $registration->concrete,
             'lifetime'             => $registration->lifetime,
@@ -174,7 +174,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             abstract: $abstract,
             concrete: $concrete,
             lifetime: TransientLifetime::NAME,
-            deferred: true
+            deferred: true,
         );
     }
 
@@ -231,7 +231,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->addExtender(
             abstract  : $abstract,
             extender  : Closure::fromCallable(callback: $closure),
-            descriptor: 'extender'
+            descriptor: 'extender',
         );
     }
 
@@ -257,7 +257,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $this->addExtender(
                 abstract  : $abstract,
                 extender  : Closure::fromCallable(callback: $decorator),
-                descriptor: $this->describeDecorator(decorator: $decorator)
+                descriptor: $this->describeDecorator(decorator: $decorator),
             );
 
             return;
@@ -283,7 +283,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
                 throw new LogicException(message: 'Decorator must be callable, implement DecoratorInterface, or resolve to one of them.');
             },
-            descriptor: $this->describeDecorator(decorator: $decorator)
+            descriptor: $this->describeDecorator(decorator: $decorator),
         );
     }
 
@@ -382,7 +382,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         usort(
             array   : $items,
             callback: static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
-                <=> [$right['order'], $right['serviceId']]
+                <=> [$right['order'], $right['serviceId']],
         );
 
         return array_column(array: $items, column_key: 'serviceId');
@@ -583,7 +583,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $manifests[$slice]['services'][]                      = $abstract;
             $manifests[$slice]['imports']                         = array_merge(
                     $manifests[$slice]['imports'],
-                    $metadata->imports
+                    $metadata->imports,
                 )
                     |> array_unique(...)
                     |> array_values(...);
@@ -638,6 +638,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
             if ($access['allowed']) {
                 $visible[] = $row;
+
                 continue;
             }
 
@@ -646,11 +647,11 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         usort(
             array   : $visible,
-            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId'],
         );
         usort(
             array   : $hidden,
-            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId'],
         );
 
         return [
@@ -720,14 +721,14 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => match ($dependency->visibility) {
+            'allowed' => false,
+            'reason'  => match ($dependency->visibility) {
                 RegistrationVisibility::PRIVATE  => 'private services stay inside their owning slice',
                 RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
                 RegistrationVisibility::SHARED   => $dependency->exported
                     ? "active slice [{$normalized}] does not import [{$dependency->ownerSlice}]"
                     : 'shared service is not exported by its owning slice',
-                default                          => 'service is not visible from the active slice view',
+                default => 'service is not visible from the active slice view',
             },
             'viewer'     => $viewer,
             'dependency' => $dependency->toArray(),
@@ -761,7 +762,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             usort(
                 array   : $services,
                 callback: static fn (array $left, array $right) : int => [$left['ownerSlice'], $left['serviceId']]
-                    <=> [$right['ownerSlice'], $right['serviceId']]
+                    <=> [$right['ownerSlice'], $right['serviceId']],
             );
 
             $duplicates[] = [
@@ -772,7 +773,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         usort(
             array   : $duplicates,
-            callback: static fn (array $left, array $right) : int => $left['concept'] <=> $right['concept']
+            callback: static fn (array $left, array $right) : int => $left['concept'] <=> $right['concept'],
         );
 
         return $duplicates;
@@ -863,8 +864,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => match ($dependency->visibility) {
+            'allowed' => false,
+            'reason'  => match ($dependency->visibility) {
                 RegistrationVisibility::PRIVATE  => 'private dependencies cannot cross slice boundaries',
                 RegistrationVisibility::INTERNAL => 'internal dependencies cannot be used outside their owning slice',
                 default                          => 'dependency is not accessible from the consumer slice',
@@ -939,8 +940,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
+            'allowed' => false,
+            'reason'  => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
                 ? 'flow-local services must be marked entry() before they become top-level surface'
                 : match ($dependency->visibility) {
                     RegistrationVisibility::PRIVATE  => 'private services are not part of the top-level container surface',
@@ -1065,7 +1066,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             usort(
                 array   : $items,
                 callback: static fn (array $left, array $right) : int => [$left['order'], $left['serviceId']]
-                    <=> [$right['order'], $right['serviceId']]
+                    <=> [$right['order'], $right['serviceId']],
             );
             $index[$group] = $items;
         }

@@ -14,21 +14,20 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 final readonly class InvalidateCachedValue
 {
     public function __construct(
-        private CacheStore        $store,
-        private Clock             $clock,
-        private CacheMetrics|null $metrics = null
+        private CacheStore        $cacheStore,
+        private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
-    public function invalidateByKey(CacheKey $key) : void
+    public function invalidateByKey(CacheKey $cacheKey) : void
     {
-        $this->invalidate(key: $key, reason: InvalidationReason::EXPLICIT);
+        $this->invalidate(key: $cacheKey, reason: InvalidationReason::EXPLICIT);
     }
 
-    public function invalidate(CacheKey $key, InvalidationReason $reason = InvalidationReason::EXPLICIT) : void
+    public function invalidate(CacheKey $cacheKey) : void
     {
-        $this->store->forget(key: $key);
+        $this->cacheStore->forget(key: $cacheKey);
 
-        $this->metrics?->recordInvalidation();
+        $this->cacheMetrics?->recordInvalidation();
     }
 
     public function invalidateByKeys(iterable $keys) : int
@@ -37,26 +36,24 @@ final readonly class InvalidateCachedValue
 
         foreach ($keys as $key) {
             $key = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
-            $this->store->forget(key: $key);
+            $this->cacheStore->forget(key: $key);
             $count++;
         }
 
-        $this->metrics?->recordInvalidation();
+        $this->cacheMetrics?->recordInvalidation();
 
         return $count;
     }
 
-    public function invalidateByTag(CacheTag $tag) : int
+    public function invalidateByTag() : int
     {
-        $this->metrics?->recordInvalidation();
-
+        $this->cacheMetrics?->recordInvalidation();
         return 0;
     }
 
-    public function invalidateByNamespace(string $namespace) : int
+    public function invalidateByNamespace() : int
     {
-        $this->metrics?->recordInvalidation();
-
+        $this->cacheMetrics?->recordInvalidation();
         return 0;
     }
 }

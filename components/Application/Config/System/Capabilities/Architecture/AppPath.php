@@ -23,18 +23,18 @@ enum AppPath: string
     case ROUTE_CACHE_PATH = 'storage/cache/routes.cache.php';
     case STUBS_PATH       = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
 
-    public function get() : string
+    public function get(): string
     {
         return self::getRoot() . $this->value;
     }
 
-    public static function getRoot() : string
+    public static function getRoot(): string
     {
         $currentDir   = __DIR__;
         $composerFile = 'composer.json';
         $rootDir      = '/';
 
-        while ( ! file_exists($currentDir . DIRECTORY_SEPARATOR . $composerFile) ) {
+        while (! file_exists($currentDir . DIRECTORY_SEPARATOR . $composerFile)) {
             $currentDir = dirname($currentDir);
             if ($currentDir === $rootDir) {
                 // Fallback for some environments where composer.json might be 2-3 levels up

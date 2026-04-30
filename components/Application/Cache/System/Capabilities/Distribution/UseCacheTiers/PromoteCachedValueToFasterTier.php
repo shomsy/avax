@@ -12,32 +12,33 @@ final readonly class PromoteCachedValueToFasterTier
 {
     public function __construct(
         private TieredCache $tieredCache,
-        private Clock       $clock
+        private Clock $clock,
     ) {}
 
-    public function promote(CacheKey $key, StoredCacheRecord|null $record = null) : bool
+    public function promote(CacheKey $cacheKey, ?StoredCacheRecord $storedCacheRecord = null) : bool
     {
-        if ($record === null) {
-            foreach ($this->tieredCache->tiers as $tier => $store) {
+        if (! $storedCacheRecord instanceof StoredCacheRecord) {
+            foreach ($this->tieredCache->tiers as $store) {
                 if ($store === null) {
                     continue;
                 }
 
-                $result = $store->read(key: $key, clock: $this->clock);
+                $result = $store->read(key: $cacheKey, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
-                    $record = $result->record;
+                    $storedCacheRecord = $result->record;
+
                     break;
                 }
             }
 
-            if ($record === null) {
+            if ($storedCacheRecord === null) {
                 return false;
             }
         }
 
-        $this->tieredCache->forget(key: $key);
-        $this->tieredCache->write(key: $key, record: $record);
+        $this->tieredCache->forget(key: $cacheKey);
+        $this->tieredCache->write(key: $cacheKey, record: $storedCacheRecord);
 
         return true;
     }

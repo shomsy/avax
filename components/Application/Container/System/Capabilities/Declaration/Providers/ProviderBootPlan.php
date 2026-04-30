@@ -16,12 +16,12 @@ final readonly class ProviderBootPlan
     public array $order;
 
     /**
-     * @param list<class-string<ServiceProviderInterface>>                                                $order
+     * @param list<class-string<ServiceProviderInterface>> $order
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
      */
     private function __construct(
         array $order,
-        array $dependencies
+        array $dependencies,
     )
     {
         $this->order        = $order;
@@ -53,28 +53,28 @@ final readonly class ProviderBootPlan
                 dependencies: $dependencies,
                 ordered     : $ordered,
                 state       : $state,
-                stack       : []
+                stack       : [],
             );
         }
 
         return new self(
             order       : $ordered,
-            dependencies: $dependencies
+            dependencies: $dependencies,
         );
     }
 
     /**
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
-     * @param list<class-string<ServiceProviderInterface>>                                                $ordered
-     * @param array<class-string<ServiceProviderInterface>, string>                                       $state
-     * @param list<class-string<ServiceProviderInterface>>                                                $stack
+     * @param list<class-string<ServiceProviderInterface>>          $ordered
+     * @param array<class-string<ServiceProviderInterface>, string> $state
+     * @param list<class-string<ServiceProviderInterface>>          $stack
      */
     private static function visit(
         string $class,
-        array  $dependencies,
-        array  &$ordered,
-        array  &$state,
-        array  $stack
+        array $dependencies,
+        array &$ordered,
+        array &$state,
+        array $stack,
     ) : void
     {
         $currentState = $state[$class] ?? 'new';
@@ -84,8 +84,9 @@ final readonly class ProviderBootPlan
 
         if ($currentState === 'visiting') {
             $stack[] = $class;
+
             throw new LogicException(
-                message: 'Provider dependency cycle detected: ' . implode(separator: ' -> ', array: $stack)
+                message: 'Provider dependency cycle detected: ' . implode(separator: ' -> ', array: $stack),
             );
         }
 
@@ -102,7 +103,7 @@ final readonly class ProviderBootPlan
                 dependencies: $dependencies,
                 ordered     : $ordered,
                 state       : $state,
-                stack       : $stack
+                stack       : $stack,
             );
         }
 

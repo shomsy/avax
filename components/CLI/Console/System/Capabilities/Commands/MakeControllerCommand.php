@@ -6,6 +6,7 @@ namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
 use Avax\Components\CLI\Console\System\Capabilities\Generators\ControllerGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Override;
 use RuntimeException;
 
 /**
@@ -14,15 +15,20 @@ use RuntimeException;
 class MakeControllerCommand extends Command
 {
     protected string $name        = 'make:controller';
+
     protected string $description = 'Create a new controller class';
+
     protected string $signature   = 'make:controller {name} [--methods=]';
-    protected array  $arguments   = ['name'];
-    protected array  $options     = ['methods'];
+
+    protected array $arguments = ['name'];
+
+    protected array $options = ['methods'];
 
     public function __construct(
-        private readonly ControllerGenerator $generator
+        private readonly ControllerGenerator $controllerGenerator,
     ) {}
 
+    #[Override]
     protected function handle() : int
     {
         $name = $this->argument(0);
@@ -30,7 +36,7 @@ class MakeControllerCommand extends Command
         if (empty($name)) {
             $name = $this->ask('Enter controller name');
 
-            if (empty($name)) {
+            if ($name === '' || $name === '0') {
                 $this->error('Controller name is required.');
 
                 return self::INVALID;
@@ -45,13 +51,13 @@ class MakeControllerCommand extends Command
         }
 
         try {
-            $path = $this->generator->generate($name, ['methods' => $methods]);
+            $path = $this->controllerGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info("Controller created successfully: {$path}");
+            $this->info('Controller created successfully: ' . $path);
 
             return self::SUCCESS;
-        } catch (RuntimeException $e) {
-            $this->error('Failed to create controller: ' . $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->error('Failed to create controller: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

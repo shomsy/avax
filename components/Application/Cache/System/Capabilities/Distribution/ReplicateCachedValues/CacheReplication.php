@@ -21,21 +21,15 @@ use Throwable;
  */
 final class CacheReplication
 {
-    private readonly CacheStore $primary;
-
-    /** @var list<CacheStore> */
-    private readonly array $replicas;
-
     private bool $promoted = false;
 
     public function __construct(
-        CacheStore                            $primary,
-        array                                 $replicas,
-        private readonly PrimaryReplicaPolicy $policy
+        private readonly CacheStore           $cacheStore,
+        /** @var list<CacheStore> */
+        private readonly array                $replicas,
+        private readonly PrimaryReplicaPolicy $primaryReplicaPolicy
     )
     {
-        $this->primary  = $primary;
-        $this->replicas = $replicas;
     }
 
     /**
@@ -47,28 +41,28 @@ final class CacheReplication
      */
     public function sync(string $key) : SyncResult
     {
-        $primaryValue = $this->primary->exists(new CacheKey($key));
+        $primaryValue = $this->cacheStore->exists(new CacheKey($key));
 
         if (! $primaryValue) {
             return new SyncResult(
                 key               : $key,
                 foundOnPrimary    : false,
-                replicaSyncResults: []
+                replicaSyncResults: [],
             );
         }
 
         // Read from primary
-        $clock      = new SystemClock();
-        $readResult = $this->primary->read(
+        $systemClock = new SystemClock();
+        $readResult  = $this->cacheStore->read(
             new CacheKey($key),
-            $clock
+            $systemClock,
         );
 
         if ($readResult instanceof CacheStoreRecordWasMissing) {
             return new SyncResult(
                 key               : $key,
                 foundOnPrimary    : false,
-                replicaSyncResults: []
+                replicaSyncResults: [],
             );
         }
 
@@ -76,21 +70,21 @@ final class CacheReplication
 
         foreach ($this->replicas as $index => $replica) {
             $replicaExists = $replica->exists(
-                new CacheKey($key)
+                new CacheKey($key),
             );
 
             $replicaSyncResults[] = new ReplicaSyncResult(
                 replicaIndex: $index,
                 key         : $key,
                 wasInSync   : $replicaExists,
-                syncSuccess : true
+                syncSuccess : true,
             );
         }
 
         return new SyncResult(
             key               : $key,
             foundOnPrimary    : true,
-            replicaSyncResults: $replicaSyncResults
+            replicaSyncResults: $replicaSyncResults,
         );
     }
 
@@ -102,12 +96,12 @@ final class CacheReplication
      */
     public function read(string $key) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $clock    = new SystemClock();
+        $systemClock = new SystemClock();
         $cacheKey = new CacheKey($key);
 
         // If we should read from replica on miss from primary
-        if ($this->policy->readFromReplicaOnMiss) {
-            $primaryResult = $this->primary->read($cacheKey, $clock);
+        if ($this->primaryReplicaPolicy->readFromReplicaOnMiss) {
+            $primaryResult = $this->cacheStore->read($cacheKey, $systemClock);
 
             if ($primaryResult instanceof CacheStoreRecordWasFound) {
                 return $primaryResult;
@@ -115,7 +109,7 @@ final class CacheReplication
 
             // Try replicas
             foreach ($this->replicas as $replica) {
-                $replicaResult = $replica->read($cacheKey, $clock);
+                $replicaResult = $replica->read($cacheKey, $systemClock);
 
                 if ($replicaResult instanceof CacheStoreRecordWasFound) {
                     return $replicaResult;
@@ -126,7 +120,7 @@ final class CacheReplication
         }
 
         // Default: read from primary
-        return $this->primary->read($cacheKey, $clock);
+        return $this->cacheStore->read($cacheKey, $systemClock);
     }
 
     /**
@@ -143,11 +137,11 @@ final class CacheReplication
     {
         if (! isset($this->replicas[$replicaIndex])) {
             throw new InvalidArgumentException(
-                sprintf('Replica index %d does not exist. Available replicas: %d', $replicaIndex, count($this->replicas))
+                sprintf('Replica index %d does not exist. Available replicas: %d', $replicaIndex, count($this->replicas)),
             );
         }
 
-        $oldPrimary = $this->primary;
+        $oldPrimary = $this->cacheStore;
         $newPrimary = $this->replicas[$replicaIndex];
 
         $this->promoted = true;
@@ -156,22 +150,22 @@ final class CacheReplication
             oldPrimary          : $oldPrimary,
             newPrimary          : $newPrimary,
             promotedReplicaIndex: $replicaIndex,
-            success             : true
+            success             : true,
         );
     }
 
     /**
      * Write a value to the primary store.
      */
-    public function write(string $key, mixed $value, int|null $ttl = null) : void
+    public function write(string $key, mixed $value, ?int $ttl = null) : void
     {
-        $record = StoredCacheRecord::create($value, $ttl);
-        $this->primary->write(
+        $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
+        $this->cacheStore->write(
             new CacheKey($key),
-            $record
+            $storedCacheRecord,
         );
 
-        if ($this->policy->replicationPolicy === ReplicationPolicy::SYNCHRONOUS) {
+        if ($this->primaryReplicaPolicy->replicationPolicy === ReplicationPolicy::SYNCHRONOUS) {
             $this->replicate($key, $value, $ttl);
         }
     }
@@ -182,15 +176,15 @@ final class CacheReplication
      * @param list<CacheStore> $replicas
      */
     public static function create(
-        CacheStore                $primary,
-        array                     $replicas,
-        PrimaryReplicaPolicy|null $policy = null
+        CacheStore            $cacheStore,
+        array                 $replicas,
+        ?PrimaryReplicaPolicy $primaryReplicaPolicy = null,
     ) : self
     {
         return new self(
-            primary : $primary,
+            primary : $cacheStore,
             replicas: $replicas,
-            policy  : $policy ?? PrimaryReplicaPolicy::default()
+            policy  : $primaryReplicaPolicy ?? PrimaryReplicaPolicy::default(),
         );
     }
 
@@ -205,7 +199,7 @@ final class CacheReplication
      *
      * @return ReplicationResult Result of the replication operation
      */
-    public function replicate(string $key, mixed $value, int|null $ttl = null) : ReplicationResult
+    public function replicate(string $key, mixed $value, ?int $ttl = null) : ReplicationResult
     {
         // Always write to primary first
         $primarySuccess = $this->writeToPrimary($key, $value, $ttl);
@@ -215,7 +209,7 @@ final class CacheReplication
                 key           : $key,
                 primarySuccess: false,
                 replicaResults: [],
-                policy        : $this->policy
+                policy        : $this->primaryReplicaPolicy,
             );
         }
 
@@ -230,7 +224,7 @@ final class CacheReplication
             key           : $key,
             primarySuccess: true,
             replicaResults: $replicaResults,
-            policy        : $this->policy
+            policy        : $this->primaryReplicaPolicy,
         );
     }
 
@@ -241,9 +235,9 @@ final class CacheReplication
     {
         try {
             $record = StoredCacheRecord::create($value, $ttl);
-            $this->primary->write(
+            $this->cacheStore->write(
                 new CacheKey($key),
-                $record
+                $record,
             );
 
             return true;
@@ -255,27 +249,27 @@ final class CacheReplication
     /**
      * Write to a replica store.
      */
-    private function writeToReplica(CacheStore $replica, string $key, mixed $value, int|null $ttl, int $index) : ReplicaWriteResult
+    private function writeToReplica(CacheStore $cacheStore, string $key, mixed $value, int|null $ttl, int $index) : ReplicaWriteResult
     {
         try {
             $record = StoredCacheRecord::create($value, $ttl);
-            $replica->write(
+            $cacheStore->write(
                 new CacheKey($key),
-                $record
+                $record,
             );
 
             return new ReplicaWriteResult(
                 replicaIndex: $index,
                 key         : $key,
                 success     : true,
-                error       : null
+                error       : null,
             );
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             return new ReplicaWriteResult(
                 replicaIndex: $index,
                 key         : $key,
                 success     : false,
-                error       : $e->getMessage()
+                error       : $throwable->getMessage(),
             );
         }
     }
@@ -285,7 +279,7 @@ final class CacheReplication
      */
     public function getPrimary() : CacheStore
     {
-        return $this->primary;
+        return $this->cacheStore;
     }
 
     /**
@@ -311,7 +305,7 @@ final class CacheReplication
      */
     public function getPolicy() : PrimaryReplicaPolicy
     {
-        return $this->policy;
+        return $this->primaryReplicaPolicy;
     }
 
     /**
@@ -333,7 +327,7 @@ final readonly class ReplicationResult
         public string               $key,
         public bool                 $primarySuccess,
         public array                $replicaResults,
-        public PrimaryReplicaPolicy $policy
+        public PrimaryReplicaPolicy $primaryReplicaPolicy,
     ) {}
 
     /**
@@ -345,8 +339,8 @@ final readonly class ReplicationResult
             return false;
         }
 
-        foreach ($this->replicaResults as $result) {
-            if (! $result->success) {
+        foreach ($this->replicaResults as $replicaResult) {
+            if (! $replicaResult->success) {
                 return false;
             }
         }
@@ -365,8 +359,8 @@ final readonly class ReplicationResult
 
         $successCount = 1; // Primary counts as 1
 
-        foreach ($this->replicaResults as $result) {
-            if ($result->success) {
+        foreach ($this->replicaResults as $replicaResult) {
+            if ($replicaResult->success) {
                 $successCount++;
             }
         }
@@ -384,8 +378,8 @@ final readonly class ReplicationResult
     {
         $count = 0;
 
-        foreach ($this->replicaResults as $result) {
-            if ($result->success) {
+        foreach ($this->replicaResults as $replicaResult) {
+            if ($replicaResult->success) {
                 $count++;
             }
         }
@@ -403,7 +397,7 @@ final readonly class ReplicaWriteResult
         public int         $replicaIndex,
         public string      $key,
         public bool        $success,
-        public string|null $error
+        public string|null $error,
     ) {}
 }
 
@@ -415,8 +409,8 @@ final readonly class SyncResult
     /** @param list<ReplicaSyncResult> $replicaSyncResults */
     public function __construct(
         public string $key,
-        public bool   $foundOnPrimary,
-        public array  $replicaSyncResults
+        public bool  $foundOnPrimary,
+        public array $replicaSyncResults,
     ) {}
 
     /**
@@ -424,8 +418,8 @@ final readonly class SyncResult
      */
     public function allReplicasInSync() : bool
     {
-        foreach ($this->replicaSyncResults as $result) {
-            if (! $result->wasInSync) {
+        foreach ($this->replicaSyncResults as $replicaSyncResult) {
+            if (! $replicaSyncResult->wasInSync) {
                 return false;
             }
         }
@@ -440,10 +434,10 @@ final readonly class SyncResult
 final readonly class ReplicaSyncResult
 {
     public function __construct(
-        public int    $replicaIndex,
+        public int  $replicaIndex,
         public string $key,
-        public bool   $wasInSync,
-        public bool   $syncSuccess
+        public bool $wasInSync,
+        public bool $syncSuccess,
     ) {}
 }
 
@@ -455,7 +449,7 @@ final readonly class PromotionResult
     public function __construct(
         public CacheStore $oldPrimary,
         public CacheStore $newPrimary,
-        public int        $promotedReplicaIndex,
-        public bool       $success
+        public int  $promotedReplicaIndex,
+        public bool $success,
     ) {}
 }

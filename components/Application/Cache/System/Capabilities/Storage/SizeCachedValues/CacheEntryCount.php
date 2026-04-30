@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\SizeCach
 readonly class CacheEntryCount
 {
     public function __construct(
-        public int $count
+        public int $count,
     ) {}
 
     public static function zero() : self

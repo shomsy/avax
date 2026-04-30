@@ -16,11 +16,11 @@ final readonly class ReadDataFieldAttributes
     /**
      * @return object[]
      */
-    public function read(ReflectionProperty|null $property = null, ReflectionParameter|null $parameter = null) : array
+    public function read(?ReflectionProperty $reflectionProperty = null, ?ReflectionParameter $reflectionParameter = null) : array
     {
         $instances = [];
 
-        foreach ([...($parameter?->getAttributes() ?? []), ...($property?->getAttributes() ?? [])] as $attribute) {
+        foreach ([...($reflectionParameter?->getAttributes() ?? []), ...($reflectionProperty?->getAttributes() ?? [])] as $attribute) {
             if ($attribute instanceof ReflectionAttribute) {
                 $instances[] = $attribute->newInstance();
             }

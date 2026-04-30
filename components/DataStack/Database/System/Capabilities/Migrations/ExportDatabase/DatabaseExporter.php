@@ -21,51 +21,54 @@ final readonly class DatabaseExporter
      *
      * -- intent: generate a SQL dump of the database.
      *
-     * @param string      $path  Path to save the export
+     * @param string $path Path to save the export
      * @param string|null $table Optional specific table to export
      *
      * @return string Path to the exported file
      *
      * @throws Throwable If export fails
      */
-    public function exportToSql(string $path, string|null $table = null) : string
+    public function exportToSql(string $path, ?string $table = null) : string
     {
-        $filename = ($table ?: 'full_db') . '_export_' . date(format: 'Y_m_d_His') . '.sql';
+        $filename = ($table !== null && $table !== '' && $table !== '0' ? $table : 'full_db') . '_export_' . date(format: 'Y_m_d_His') . '.sql';
         $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
 
         if (! is_dir(filename: $path)) {
-            mkdir(directory: $path, permissions: 0755, recursive: true);
+            mkdir(directory: $path, permissions: 0o755, recursive: true);
         }
 
         $output = "-- Avax Database Export\n";
         $output .= '-- Generated: ' . date(format: 'Y-m-d H:i:s') . "\n";
-        $output .= $table ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
+        $output   .= $table !== null && $table !== '' && $table !== '0' ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
 
         $tables = $table === null ? $this->readTableNames() : [$table];
 
-        foreach ($tables as $tableName) {
-            $quotedTableName = $this->quoteIdentifier(name: $tableName);
+        foreach ($tables as $table) {
+            $quotedTableName = $this->quoteIdentifier(name: $table);
 
             // 1. Export Schema
-            $createTable = $this->readCreateTable(table: $tableName);
+            $createTable = $this->readCreateTable(table: $table);
             // noinspection SqlNoDataSourceInspection
             $output .= "DROP TABLE IF EXISTS {$quotedTableName};\n";
-            $output .= "{$createTable};\n\n";
+            $output      .= $createTable . ';
+
+';
 
             // 2. Export Data (Simple implementation)
-            $rows = $this->readRows(table: $tableName);
-            if (! empty($rows)) {
-                $output .= "-- Data for {$quotedTableName}\n";
+            $rows = $this->readRows(table: $table);
+            if ($rows !== []) {
+                $output .= sprintf('-- Data for %s%s', $quotedTableName, PHP_EOL);
                 foreach ($rows as $row) {
-                    $cols    = implode(
+                    $cols = implode(
                         separator: ', ',
-                        array    : array_map(callback: fn (string $column) => $this->quoteIdentifier(name: $column), array: array_keys(array: $row))
+                        array    : array_map(callback: fn (string $column) : string => $this->quoteIdentifier(name: $column), array: array_keys(array: $row)),
                     );
                     $vals    = array_map(callback: fn ($v) => is_null(value: $v) ? 'NULL' : $this->pdo->quote(string: (string) $v), array: array_values(array: $row));
                     $valsStr = implode(separator: ', ', array: $vals);
                     // noinspection SqlNoDataSourceInspection
                     $output .= "INSERT INTO {$quotedTableName} ({$cols}) VALUES ({$valsStr});\n";
                 }
+
                 $output .= "\n";
             }
         }
@@ -84,13 +87,13 @@ final readonly class DatabaseExporter
 
         return match ($driver) {
             'sqlite' => $this->readFirstColumn(
-                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
             ),
             'pgsql'  => $this->readFirstColumn(
-                sql: "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
+                sql: "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename",
             ),
             'sqlsrv' => $this->readFirstColumn(
-                sql: "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
+                sql: "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME",
             ),
             default  => $this->readFirstColumn(sql: 'SHOW TABLES'),
         };
@@ -106,8 +109,8 @@ final readonly class DatabaseExporter
         $rows      = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
 
         return array_values(array: array_filter(
-                                       array   : array_map(callback: static fn (array $row) => isset($row[0]) ? (string) $row[0] : '', array: $rows),
-                                       callback: static fn (string $value) => $value !== ''
+                                       array   : array_map(callback: static fn (array $row) : string => isset($row[0]) ? (string) $row[0] : '', array: $rows),
+                                       callback: static fn (string $value) : bool => $value !== '',
                                    ));
     }
 
@@ -136,7 +139,7 @@ final readonly class DatabaseExporter
     private function readSqliteCreateTable(string $table) : string
     {
         $statement = $this->pdo->prepare(
-            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1"
+            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1",
         );
         $statement->execute(params: ['name' => $table]);
 
@@ -150,7 +153,7 @@ final readonly class DatabaseExporter
         $quotedTableName = $this->quoteIdentifier(name: $table);
 
         // noinspection SqlNoDataSourceInspection
-        $statement = $this->pdo->query(query: "SHOW CREATE TABLE {$quotedTableName}");
+        $statement = $this->pdo->query(query: 'SHOW CREATE TABLE ' . $quotedTableName);
         $row       = $statement === false ? false : $statement->fetch(mode: PDO::FETCH_ASSOC);
 
         if (! is_array(value: $row)) {

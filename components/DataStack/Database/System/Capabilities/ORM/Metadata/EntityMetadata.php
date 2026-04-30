@@ -9,7 +9,7 @@ use ReflectionProperty;
 final readonly class EntityMetadata
 {
     /**
-     * @param array<string, FieldMetadata>    $fields
+     * @param array<string, FieldMetadata> $fields
      * @param array<string, RelationMetadata> $relations
      */
     public function __construct(
@@ -17,7 +17,7 @@ final readonly class EntityMetadata
         public string      $table,
         public array       $fields,
         public array       $relations,
-        public string|null $repositoryClass = null
+        public string|null $repositoryClass = null,
     ) {}
 
     public function identifierField() : FieldMetadata|null

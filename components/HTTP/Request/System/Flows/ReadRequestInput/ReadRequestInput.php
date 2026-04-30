@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Flows\ReadRequestInput;
@@ -11,7 +12,7 @@ final class ReadRequestInput
         private ReadRouteInput $routeReader,
         private ReadQueryInput $queryReader,
         private ReadBodyInput $bodyReader,
-        private ReadFileInput $fileReader
+        private ReadFileInput $fileReader,
     ) {}
 
     public function read(RequestInterface $request, string $key, mixed $default = null): mixed

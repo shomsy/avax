@@ -15,23 +15,23 @@ use Throwable;
  */
 final readonly class Transactions
 {
-    private OnConnection   $onConnection;
+    private OnConnection $onConnection;
     private RunTransaction $runTransaction;
 
     public function __construct(
         private Connections $connections,
-        OnConnection|null   $onConnection = null,
-        RunTransaction|null $runTransaction = null
+        OnConnection   $onConnection = null,
+        RunTransaction $runTransaction = null,
     )
     {
-        $this->onConnection   = $onConnection ?? new OnConnection(connections: $this->connections);
+        $this->onConnection = $onConnection ?? new OnConnection(connections: $this->connections);
         $this->runTransaction = $runTransaction ?? new RunTransaction(onConnection: $this->onConnection);
     }
 
     /**
      * @throws Throwable
      */
-    public function on(string|null $connectionName = null) : Transaction
+    public function on(string $connectionName = null) : Transaction
     {
         return $this->onConnection->for(connectionName: $connectionName);
     }
@@ -39,7 +39,7 @@ final readonly class Transactions
     /**
      * @throws Throwable
      */
-    public function run(callable $callback, string|null $connectionName = null) : mixed
+    public function run(callable $callback, string $connectionName = null) : mixed
     {
         return $this->runTransaction->run(callback: $callback, connectionName: $connectionName);
     }

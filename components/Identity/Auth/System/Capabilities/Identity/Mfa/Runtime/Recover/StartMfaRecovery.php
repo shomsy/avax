@@ -29,11 +29,11 @@ final readonly class StartMfaRecovery
         private MfaStoreInterface    $mfaStore,
         private AuditLogInterface    $auditLog,
         private Clock                $clock,
-        int|null                     $expiresAfterSeconds = null,
-        private AttemptThrottle|null $attemptThrottle = null
+        int                          $expiresAfterSeconds = null,
+        private AttemptThrottle|null $attemptThrottle = null,
     )
     {
-        $expiresAfterSeconds       ??= 900;
+        $expiresAfterSeconds ??= 900;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
     }
 
@@ -56,7 +56,7 @@ final readonly class StartMfaRecovery
                                                                'ip_address'  => $data->ipAddress,
                                                                'user_agent'  => $data->userAgent,
                                                                'retry_after' => $exception->retryAfter(),
-                                                           ]
+                                                           ],
                                            ));
 
             return MfaRecoveryChallenge::hidden();
@@ -74,7 +74,7 @@ final readonly class StartMfaRecovery
                                                                'dispatched' => false,
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             return MfaRecoveryChallenge::hidden();
@@ -106,7 +106,7 @@ final readonly class StartMfaRecovery
         $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
                                                   tokenHash: $tokenHash,
                                                   userId   : new UserId(value: $userId),
-                                                  expiresAt: $expiresAt
+                                                  expiresAt: $expiresAt,
                                               ));
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.mfa.recovery.started',
@@ -116,13 +116,13 @@ final readonly class StartMfaRecovery
                                                            'dispatched' => true,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return new MfaRecoveryChallenge(
             dispatched: true,
             token     : $plainToken,
-            expiresAt : $expiresAt
+            expiresAt : $expiresAt,
         );
     }
 

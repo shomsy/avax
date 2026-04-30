@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
@@ -18,12 +19,12 @@ use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
 final readonly class Database
 {
     public function __construct(
-        private Connections             $connections,
-        private QueryCapability         $query,
-        private SchemaCapability        $schema,
-        private MigrationsCapability    $migrations,
-        private TransactionsCapability  $transactions,
-        private TelemetryCapability     $telemetry
+        private Connections            $connections,
+        private QueryCapability        $query,
+        private SchemaCapability       $schema,
+        private MigrationsCapability   $migrations,
+        private TransactionsCapability $transactions,
+        private TelemetryCapability    $telemetry,
     ) {}
 
     public static function configuration() : DatabaseBuilder
@@ -61,7 +62,7 @@ final readonly class Database
         return new Telemetry($this->telemetry);
     }
 
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->query->from($table, $connectionName);
     }

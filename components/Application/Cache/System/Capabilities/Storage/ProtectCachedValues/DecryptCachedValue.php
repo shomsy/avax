@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\ProtectC
 final readonly class DecryptCachedValue
 {
     public function __construct(
-        private EncryptedCache $encryptedCache
+        private EncryptedCache $encryptedCache,
     ) {}
 
     public function decrypt(string $encrypted) : mixed

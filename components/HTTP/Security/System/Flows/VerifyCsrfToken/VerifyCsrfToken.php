@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Security\System\Flows\VerifyCsrfToken;
@@ -13,7 +14,7 @@ final readonly class VerifyCsrfToken
     private const array SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
 
     public function __construct(
-        private CsrfTokens $csrfTokens
+        private CsrfTokens $csrfTokens,
     ) {}
 
     public function handle(ServerRequest $request, Closure $next) : mixed
@@ -24,7 +25,7 @@ final readonly class VerifyCsrfToken
 
         $token = $this->extractToken($request);
 
-        if (!$this->csrfTokens->validateToken($token)) {
+        if (! $this->csrfTokens->validateToken($token)) {
             return $this->createErrorResponse();
         }
 
@@ -36,7 +37,9 @@ final readonly class VerifyCsrfToken
         $token = $request->headers()->get('X-CSRF-TOKEN')
             ?? $request->headers()->get('X-XSRF-TOKEN');
 
-        if ($token) return $token;
+        if ($token) {
+            return $token;
+        }
 
         $body = $request->body()->parsed();
 
@@ -49,7 +52,7 @@ final readonly class VerifyCsrfToken
         $response->withStatus(403);
         $response->body()->write(json_encode([
                                                  'error'   => 'CSRF_TOKEN_MISMATCH',
-                                                 'message' => 'The CSRF token is invalid or expired.'
+                                                 'message' => 'The CSRF token is invalid or expired.',
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');

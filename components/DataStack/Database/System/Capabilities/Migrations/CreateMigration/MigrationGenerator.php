@@ -24,7 +24,7 @@ final class MigrationGenerator
      *
      * @return string Created file path
      */
-    public function generate(string $name, string $path, string|null $table = null, bool $create = false) : string
+    public function generate(string $name, string $path, string $table = null, bool $create = false) : string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);
@@ -35,7 +35,7 @@ final class MigrationGenerator
         $content = $this->populateStub(stub: $stub, className: $className, table: $table);
 
         if (! is_dir(filename: $path)) {
-            mkdir(directory: $path, permissions: 0755, recursive: true);
+            mkdir(directory: $path, permissions: 0o755, recursive: true);
         }
 
         file_put_contents(filename: $filepath, data: $content);
@@ -45,7 +45,7 @@ final class MigrationGenerator
 
     private function getTimestamp() : string
     {
-        return (new DateTime)->format(format: 'Y_m_d_His');
+        return (new DateTime())->format(format: 'Y_m_d_His');
     }
 
     private function getClassName(string $name) : string
@@ -82,7 +82,7 @@ final class MigrationGenerator
         return str_replace(
             search : array_keys(array: $replacements),
             replace: array_values(array: $replacements),
-            subject: $stub
+            subject: $stub,
         );
     }
 }

@@ -39,19 +39,26 @@ use SensitiveParameter;
 final readonly class OAuth
 {
     public function __construct(
-        private RegisterClient|null                                  $registerClient,
-        private ApproveClientRegistration|null                       $approveClientRegistration,
-        private UpdateClient|null                                    $updateClient,
-        private DisableClient|null                                   $disableClient,
-        #[SensitiveParameter] private RotateClientSecret|null        $rotateClientSecret,
-        private ReadClients|null                                     $readClients,
-        private ReadWorkloadIdentities|null                          $readWorkloadIdentities,
-        #[SensitiveParameter] private AuthorizeCode|null             $authorizeCode,
-        #[SensitiveParameter] private ExchangeAuthorizationCode|null $exchangeAuthorizationCode,
-        #[SensitiveParameter] private ExchangeClientCredentials|null $exchangeClientCredentials,
-        #[SensitiveParameter] private ExchangeRefreshToken|null      $exchangeRefreshToken,
-        #[SensitiveParameter] private RevokeToken|null               $revokeToken,
-        #[SensitiveParameter] private IntrospectToken|null           $introspectToken
+        private RegisterClient|null            $registerClient,
+        private ApproveClientRegistration|null $approveClientRegistration,
+        private UpdateClient|null              $updateClient,
+        private DisableClient|null             $disableClient,
+        #[SensitiveParameter]
+        private RotateClientSecret|null        $rotateClientSecret,
+        private ReadClients|null               $readClients,
+        private ReadWorkloadIdentities|null    $readWorkloadIdentities,
+        #[SensitiveParameter]
+        private AuthorizeCode|null             $authorizeCode,
+        #[SensitiveParameter]
+        private ExchangeAuthorizationCode|null $exchangeAuthorizationCode,
+        #[SensitiveParameter]
+        private ExchangeClientCredentials|null $exchangeClientCredentials,
+        #[SensitiveParameter]
+        private ExchangeRefreshToken|null      $exchangeRefreshToken,
+        #[SensitiveParameter]
+        private RevokeToken|null               $revokeToken,
+        #[SensitiveParameter]
+        private IntrospectToken|null           $introspectToken,
     ) {}
 
     public function isConfigured() : bool

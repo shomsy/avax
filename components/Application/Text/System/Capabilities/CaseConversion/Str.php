@@ -24,9 +24,10 @@ final class Str
         } else {
             $value = strtolower($value);
         }
+
         $value = preg_replace('/[^a-z0-9]+/', $separator, $value);
 
-        return trim($value, $separator);
+        return trim((string) $value, $separator);
     }
 
     /**
@@ -102,22 +103,20 @@ final class Str
             return substr($value, 0, -3) . 'y';
         }
 
-        if (preg_match('/(ves)$/i', $value)) {
-            if (str_ends_with(strtolower($value), 'ves')) {
-                $base = substr($value, 0, -3);
-                if (str_ends_with(strtolower($base), 'li')) {
-                    return $base . 'fe';
-                }
-
-                return $base . 'f';
+        if (preg_match('/(ves)$/i', $value) && str_ends_with(strtolower($value), 'ves')) {
+            $base = substr($value, 0, -3);
+            if (str_ends_with(strtolower($base), 'li')) {
+                return $base . 'fe';
             }
+
+            return $base . 'f';
         }
 
         if (preg_match('/([sxz])es$/i', $value)) {
             return substr($value, 0, -2);
         }
 
-        if (preg_match('/([a-z])s$/i', $value) && ! preg_match('/(?:us|ss)$/i', $value)) {
+        if (preg_match('/([a-z])s$/i', $value) && in_array(preg_match('/(?:us|ss)$/i', $value), [0, false], true)) {
             return substr($value, 0, -1);
         }
 
@@ -142,7 +141,7 @@ final class Str
             $words = [$value];
         }
 
-        return implode('', array_map(fn (string $w) : string => ucfirst(strtolower($w)), $words));
+        return implode('', array_map(static fn (string $w) : string => ucfirst(strtolower($w)), $words));
     }
 
     /**
@@ -159,10 +158,10 @@ final class Str
     public static function snake(string $value, string $delimiter = '_') : string
     {
         $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/[\s\-]+/', $delimiter, $value);
+        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', (string) $value);
+        $value = preg_replace('/[\s\-]+/', $delimiter, (string) $value);
 
-        return strtolower($value);
+        return strtolower((string) $value);
     }
 
     /**
@@ -171,10 +170,10 @@ final class Str
     public static function headline(string $value) : string
     {
         $value = preg_replace('/([a-z0-9])([A-Z])/', '$1 $2', $value);
-        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1 $2', $value);
-        $value = preg_replace('/[\s\-_]+/', ' ', $value);
+        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1 $2', (string) $value);
+        $value = preg_replace('/[\s\-_]+/', ' ', (string) $value);
 
-        return ucwords(strtolower(trim($value)));
+        return ucwords(strtolower(trim((string) $value)));
     }
 
     /**
@@ -186,13 +185,11 @@ final class Str
 
         foreach ($needles as $needle) {
             if ($caseSensitive) {
-                if (str_contains($haystack, $needle)) {
+                if (str_contains($haystack, (string) $needle)) {
                     return true;
                 }
-            } else {
-                if (stripos($haystack, $needle) !== false) {
-                    return true;
-                }
+            } elseif (stripos($haystack, (string) $needle) !== false) {
+                return true;
             }
         }
 
@@ -207,7 +204,7 @@ final class Str
         $needles = is_array($needles) ? $needles : [$needles];
 
         foreach ($needles as $needle) {
-            if (str_starts_with($haystack, $needle)) {
+            if (str_starts_with($haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -223,7 +220,7 @@ final class Str
         $needles = is_array($needles) ? $needles : [$needles];
 
         foreach ($needles as $needle) {
-            if (str_ends_with($haystack, $needle)) {
+            if (str_ends_with($haystack, (string) $needle)) {
                 return true;
             }
         }

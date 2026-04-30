@@ -8,8 +8,8 @@ interface FederationRuntimeInterface
 {
     public function startLogin(
         FederationConnection $connection,
-        string               $redirectUri,
-        string|null          $state = null
+        string $redirectUri,
+        string $state = null,
     ) : StartedFederatedLogin;
 
     /**
@@ -17,6 +17,6 @@ interface FederationRuntimeInterface
      */
     public function completeLogin(
         FederationConnection $connection,
-        array                $payload
+        array $payload,
     ) : FederatedIdentity;
 }

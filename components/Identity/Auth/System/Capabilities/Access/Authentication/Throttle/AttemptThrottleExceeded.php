@@ -12,13 +12,12 @@ use RuntimeException;
 final class AttemptThrottleExceeded extends RuntimeException
 {
     public function __construct(
-        private readonly int $retryAfter
-    )
-    {
+        private readonly int $retryAfter,
+    ) {
         parent::__construct(message: 'Too many attempts.', code: 429);
     }
 
-    public function retryAfter() : int
+    public function retryAfter(): int
     {
         return $this->retryAfter;
     }

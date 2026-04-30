@@ -22,8 +22,8 @@ final class CacheNodeHealth
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
-        private readonly int   $failureThreshold = 3,
-        private readonly int   $recoveryThreshold = 5
+        private readonly int $failureThreshold = 3,
+        private readonly int $recoveryThreshold = 5,
     ) {}
 
     /**
@@ -31,20 +31,20 @@ final class CacheNodeHealth
      *
      * Returns the current health status and updates the last check time.
      */
-    public function check(CacheNode $node) : NodeHealthRecord
+    public function check(CacheNode $cacheNode) : NodeHealthRecord
     {
-        $nodeId = $node->id;
+        $nodeId = $cacheNode->id;
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
                 nodeId              : $nodeId,
-                status              : $node->status,
+                status              : $cacheNode->status,
                 lastCheck           : $now,
                 consecutiveFailures : 0,
                 consecutiveSuccesses: 0,
                 lastFailure         : null,
-                lastSuccess         : $now
+                lastSuccess         : $now,
             );
 
             return $this->records[$nodeId];
@@ -59,9 +59,9 @@ final class CacheNodeHealth
     /**
      * Mark a node as healthy after a successful health check.
      */
-    public function markHealthy(CacheNode $node) : NodeHealthRecord
+    public function markHealthy(CacheNode $cacheNode) : NodeHealthRecord
     {
-        $nodeId = $node->id;
+        $nodeId = $cacheNode->id;
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
@@ -72,7 +72,7 @@ final class CacheNodeHealth
                 consecutiveFailures : 0,
                 consecutiveSuccesses: 1,
                 lastFailure         : null,
-                lastSuccess         : $now
+                lastSuccess         : $now,
             );
 
             return $this->records[$nodeId];
@@ -94,7 +94,7 @@ final class CacheNodeHealth
             consecutiveFailures : 0,
             consecutiveSuccesses: $newSuccesses,
             lastFailure         : $record->lastFailure,
-            lastSuccess         : $now
+            lastSuccess         : $now,
         );
 
         return $this->records[$nodeId];
@@ -103,9 +103,9 @@ final class CacheNodeHealth
     /**
      * Mark a node as unhealthy after a failed health check.
      */
-    public function markUnhealthy(CacheNode $node) : NodeHealthRecord
+    public function markUnhealthy(CacheNode $cacheNode) : NodeHealthRecord
     {
-        $nodeId = $node->id;
+        $nodeId = $cacheNode->id;
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
@@ -116,7 +116,7 @@ final class CacheNodeHealth
                 consecutiveFailures : 1,
                 consecutiveSuccesses: 0,
                 lastFailure         : $now,
-                lastSuccess         : null
+                lastSuccess         : null,
             );
 
             return $this->records[$nodeId];
@@ -138,7 +138,7 @@ final class CacheNodeHealth
             consecutiveFailures : $newFailures,
             consecutiveSuccesses: 0,
             lastFailure         : $now,
-            lastSuccess         : $record->lastSuccess
+            lastSuccess         : $record->lastSuccess,
         );
 
         return $this->records[$nodeId];
@@ -230,27 +230,27 @@ final readonly class NodeHealthRecord
 {
     public function __construct(
         public string          $nodeId,
-        public CacheNodeStatus $status,
+        public CacheNodeStatus $cacheNodeStatus,
         public Timestamp       $lastCheck,
         public int             $consecutiveFailures,
         public int             $consecutiveSuccesses,
         public Timestamp|null  $lastFailure,
-        public Timestamp|null  $lastSuccess
+        public Timestamp|null  $lastSuccess,
     ) {}
 
     /**
      * Create a new record with an updated last check time.
      */
-    public function withLastCheck(Timestamp $lastCheck) : self
+    public function withLastCheck(Timestamp $timestamp) : self
     {
         return new self(
             nodeId              : $this->nodeId,
-            status              : $this->status,
-            lastCheck           : $lastCheck,
+            status              : $this->cacheNodeStatus,
+            lastCheck           : $timestamp,
             consecutiveFailures : $this->consecutiveFailures,
             consecutiveSuccesses: $this->consecutiveSuccesses,
             lastFailure         : $this->lastFailure,
-            lastSuccess         : $this->lastSuccess
+            lastSuccess         : $this->lastSuccess,
         );
     }
 
@@ -260,9 +260,9 @@ final readonly class NodeHealthRecord
     public function wasCheckedWithin(int $seconds) : bool
     {
         $now  = Timestamp::now();
-        $diff = $now->difference($this->lastCheck);
+        $duration = $now->difference($this->lastCheck);
 
-        return $diff->seconds <= $seconds;
+        return $duration->seconds <= $seconds;
     }
 
     /**
@@ -282,7 +282,7 @@ final readonly class NodeHealthRecord
     {
         return [
             'nodeId'               => $this->nodeId,
-            'status'               => $this->status->value,
+            'status' => $this->cacheNodeStatus->value,
             'lastCheck'            => $this->lastCheck->seconds,
             'consecutiveFailures'  => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,

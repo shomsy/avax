@@ -9,24 +9,27 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use Avax\Tests\TestCase;
+use Override;
 use Psr\SimpleCache\InvalidArgumentException;
 
 final class RememberNullRegressionTest extends TestCase
 {
-    private FrozenClock        $clock;
-    private InMemoryCacheStore $store;
-    private AvaxCache          $cache;
+    private FrozenClock $frozenClock;
+
+    private InMemoryCacheStore $inMemoryCacheStore;
+
+    private AvaxCache $avaxCache;
 
     /**
      * @throws InvalidArgumentException
      */
     public function test_it_does_not_reload_when_cached_value_is_null() : void
     {
-        $this->cache->set(key: 'nullable', value: null);
+        $this->avaxCache->set(key: 'nullable', value: null);
 
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'nullable', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result = $this->avaxCache->remember(key: 'nullable', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';
@@ -40,7 +43,7 @@ final class RememberNullRegressionTest extends TestCase
     {
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'missing', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result = $this->avaxCache->remember(key: 'missing', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';
@@ -55,11 +58,11 @@ final class RememberNullRegressionTest extends TestCase
      */
     public function test_it_reloads_when_value_is_not_null() : void
     {
-        $this->cache->set(key: 'exists', value: 'not_null');
+        $this->avaxCache->set(key: 'exists', value: 'not_null');
 
         $loadCount = 0;
 
-        $result = $this->cache->remember(key: 'exists', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result = $this->avaxCache->remember(key: 'exists', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';
@@ -69,16 +72,17 @@ final class RememberNullRegressionTest extends TestCase
         $this->assertSame(expected: 0, actual: $loadCount);
     }
 
+    #[Override]
     protected function setUp() : void
     {
         parent::setUp();
-        $this->clock = new FrozenClock(timestamp: Timestamp::now());
-        $this->store = new InMemoryCacheStore(
-            clock: $this->clock
+        $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $this->inMemoryCacheStore = new InMemoryCacheStore(
+            clock: $this->frozenClock,
         );
-        $this->cache = new AvaxCache(
-            store: $this->store,
-            clock: $this->clock
+        $this->avaxCache          = new AvaxCache(
+            store: $this->inMemoryCacheStore,
+            clock: $this->frozenClock,
         );
     }
 }

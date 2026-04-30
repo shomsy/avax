@@ -15,21 +15,13 @@ final readonly class FindMaxValue
         private array $items = [],
     ) {}
 
-    /**
-     * @param string|callable $key
-     *
-     * @return mixed
-     */
+
     public function __invoke(string|callable $key) : mixed
     {
         return $this->max(key: $key);
     }
 
-    /**
-     * @param string|callable $key
-     *
-     * @return mixed
-     */
+
     public function max(string|callable $key) : mixed
     {
         if ($this->items === []) {
@@ -38,7 +30,7 @@ final readonly class FindMaxValue
 
         $values = array_map(
             callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
-            array   : $this->items
+            array   : $this->items,
         );
 
         return max(value: $values);

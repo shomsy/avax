@@ -20,7 +20,7 @@ final class CockroachDBGrammar extends PostgreSQLGrammar
 
         $conflictColumns = array_map(
             callback: fn ($col) => $this->wrap(value: $col),
-            array   : $uniqueBy
+            array   : $uniqueBy,
         );
         $conflictClause  = implode(separator: ', ', array: $conflictColumns);
 

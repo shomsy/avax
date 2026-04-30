@@ -9,6 +9,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\DataList\Data
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iteration\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
+use Override;
 use Traversable;
 
 /**
@@ -47,8 +48,8 @@ final readonly class MultiMap implements IteratorAggregate, Countable
 
     public function put(int|string $key, mixed $value) : self
     {
-        $items         = $this->items;
-        $items[$key]   ??= [];
+        $items       = $this->items;
+        $items[$key] ??= [];
         $items[$key][] = $value;
 
         return new self(items: $items);
@@ -75,11 +76,13 @@ final readonly class MultiMap implements IteratorAggregate, Countable
         return new self(items: $items);
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->items);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->items);

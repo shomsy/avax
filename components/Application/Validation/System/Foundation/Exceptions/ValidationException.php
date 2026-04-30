@@ -16,11 +16,11 @@ class ValidationException extends RuntimeException
     public function __construct(
         string                 $message,
         int                    $code = 422,
-        Throwable|null         $previous = null,
-        private readonly array $metadata = []
+        ?Throwable             $throwable = null,
+        private readonly array $metadata = [],
     )
     {
-        parent::__construct(message: $message, code: $code, previous: $previous);
+        parent::__construct(message: $message, code: $code, previous: $throwable);
     }
 
     /**

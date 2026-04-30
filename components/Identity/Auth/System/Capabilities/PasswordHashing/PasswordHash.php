@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\PasswordHashing;
@@ -10,6 +11,6 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\PasswordHashing;
 final readonly class PasswordHash
 {
     public function __construct(
-        public string $value
+        public string $value,
     ) {}
 }

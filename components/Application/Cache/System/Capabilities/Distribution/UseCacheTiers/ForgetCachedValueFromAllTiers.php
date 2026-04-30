@@ -9,7 +9,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class ForgetCachedValueFromAllTiers
 {
     public function __construct(
-        private TieredCache $tieredCache
+        private TieredCache $tieredCache,
     ) {}
 
     public function forgetMany(iterable $keys) : int
@@ -25,8 +25,8 @@ final readonly class ForgetCachedValueFromAllTiers
         return $count;
     }
 
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
-        $this->tieredCache->forget(key: $key);
+        $this->tieredCache->forget(key: $cacheKey);
     }
 }

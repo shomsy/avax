@@ -52,7 +52,7 @@ assertTrue(condition: $access['allowed'], message: 'Imported shared exports shou
 assertSame(
     expected: 'dependency is explicitly exported and the consumer slice imports it',
     actual  : $access['reason'],
-    message : 'Cross-slice access should explain why it is allowed.'
+    message : 'Cross-slice access should explain why it is allowed.',
 );
 
 $internalAccess = $registry->accessTo(consumerId: 'flow.login.handler', dependencyId: 'payments.internal.audit');
@@ -60,7 +60,7 @@ assertTrue(condition: ! $internalAccess['allowed'], message: 'Internal services 
 assertSame(
     expected: 'internal dependencies cannot be used outside their owning slice',
     actual  : $internalAccess['reason'],
-    message : 'Cross-slice access failures should explain the blocked visibility.'
+    message : 'Cross-slice access failures should explain the blocked visibility.',
 );
 
 $topLevelExport = $registry->topLevelAccessTo(serviceId: 'payments.gateway');
@@ -77,7 +77,7 @@ $ownershipMap = $registry->ownershipMap();
 assertSame(
     expected: 'ownership-smoke',
     actual  : $ownershipMap['payments.gateway']['provenance'] ?? null,
-    message : 'Ownership maps should preserve provenance for diagnostics and compile metadata.'
+    message : 'Ownership maps should preserve provenance for diagnostics and compile metadata.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

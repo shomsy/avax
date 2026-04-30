@@ -30,7 +30,7 @@ final readonly class RotateClientSecret
                                                            'client_id'     => $registered->client->clientId,
                                                            'tenant_slug'   => $registered->client->tenantSlug,
                                                            'public_client' => $registered->client->isPublic() ? 1 : 0,
-                                                       ]
+                                                       ],
                                        ));
 
         return $registered;

@@ -8,7 +8,7 @@ final readonly class SecondaryReplica
 {
     public function __construct(
         public int $index,
-        public int $priority = 1
+        public int $priority = 1,
     ) {}
 
     public static function fromIndex(int $index) : self

@@ -52,7 +52,7 @@ final readonly class DeleteScimUser
                                                            'tenant'       => $directory->tenantSlug,
                                                            'external_id'  => $data->externalId,
                                                            'user_id'      => $identity->userId->value,
-                                                       ]
+                                                       ],
                                        ));
     }
 
@@ -60,8 +60,9 @@ final readonly class DeleteScimUser
      * @throws ScimFailed
      */
     private function authenticateDirectory(
-        string                       $directoryId,
-        #[SensitiveParameter] string $directoryToken
+        string $directoryId,
+        #[SensitiveParameter]
+        string $directoryToken,
     ) : ScimDirectory
     {
         $directory = $this->directoryStore->find(directoryId: $directoryId);

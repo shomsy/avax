@@ -13,10 +13,10 @@ final readonly class OneToOne
      * @param list<string> $cascade
      */
     public function __construct(
-        public string      $targetEntity,
+        public string $targetEntity,
         public string|null $mappedBy = null,
         public string|null $inversedBy = null,
-        public array       $cascade = [],
-        public bool        $lazy = true
+        public array  $cascade = [],
+        public bool   $lazy = true,
     ) {}
 }

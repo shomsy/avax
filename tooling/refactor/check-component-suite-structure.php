@@ -38,7 +38,7 @@ final class CheckComponentSuiteStructure
     {
         $this->checkComponentsRootContainsOnlySuites();
         $this->checkEachSuiteHasSystemRoot();
-        
+
         return [
             'status' => empty($this->errors) ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
@@ -48,9 +48,10 @@ final class CheckComponentSuiteStructure
     private function checkComponentsRootContainsOnlySuites() : void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
-        
+
         if (! is_dir($componentsPath)) {
             $this->errors[] = 'components/ directory not found';
+
             return;
         }
 
@@ -66,9 +67,7 @@ final class CheckComponentSuiteStructure
             }
 
             // Allow known bridges and helper folders
-            if (in_array($item, $this->allowedSuites, true) ||
-                in_array($item, $this->allowedBridges, true) ||
-                in_array($item, $this->helperFolders, true)) {
+            if (in_array($item, $this->allowedSuites, true) || in_array($item, $this->allowedBridges, true) || in_array($item, $this->helperFolders, true)) {
                 continue;
             }
 
@@ -85,19 +84,19 @@ final class CheckComponentSuiteStructure
     private function checkEachSuiteHasSystemRoot() : void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
-        
+
         // Only check actual component directories, not all folders
         $componentDirs = [
-            'Application' => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
-            'HTTP' => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
-            'CLI' => ['Console'],
-            'DataStack' => ['Data', 'Database', 'Persistence'],
-            'Identity' => ['Auth', 'Access', 'Security', 'Tokens'],
-            'Operations' => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
+            'Application'  => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
+            'HTTP'         => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
+            'CLI'          => ['Console'],
+            'DataStack'    => ['Data', 'Database', 'Persistence'],
+            'Identity'     => ['Auth', 'Access', 'Security', 'Tokens'],
+            'Operations'   => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
             'Presentation' => ['View'],
             'DeveloperTools' => ['Diagnostics', 'DumpDebugger'],
         ];
-        
+
         foreach ($componentDirs as $suite => $components) {
             $suitePath = $componentsPath . '/' . $suite;
             if (! is_dir($suitePath)) {
@@ -122,13 +121,13 @@ final class CheckComponentSuiteStructure
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckComponentSuiteStructure();
     $result = $checker->check();
-    
+
     echo $result['status'] . "\n";
-    
+
     if (! empty($result['errors'])) {
         echo implode("\n", $result['errors']) . "\n";
         exit(1);
     }
-    
+
     exit(0);
 }

@@ -11,6 +11,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iter
 use Countable;
 use IteratorAggregate;
 use JsonException;
+use Override;
 use Traversable;
 
 /**
@@ -92,11 +93,13 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
         return new DataList(items: $this->items);
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->items);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->items);

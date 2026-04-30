@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Uri;
@@ -15,16 +16,43 @@ final readonly class Uri implements Stringable
         private string $query = '',
         private string $fragment = '',
         private string $user = '',
-        private ?string $password = null
+        private ?string $password = null,
     ) {}
 
-    public function getScheme(): string { return $this->scheme; }
-    public function getHost(): string { return $this->host; }
-    public function getPath(): string { return $this->path; }
-    public function getPort(): ?int { return $this->port; }
-    public function getQuery(): string { return $this->query; }
-    public function getFragment(): string { return $this->fragment; }
-    public function getUserInfo(): string { return $this->user . ($this->password !== null ? ':' . $this->password : ''); }
+    public function getScheme() : string
+    {
+        return $this->scheme;
+    }
+
+    public function getHost() : string
+    {
+        return $this->host;
+    }
+
+    public function getPath() : string
+    {
+        return $this->path;
+    }
+
+    public function getPort() : ?int
+    {
+        return $this->port;
+    }
+
+    public function getQuery() : string
+    {
+        return $this->query;
+    }
+
+    public function getFragment() : string
+    {
+        return $this->fragment;
+    }
+
+    public function getUserInfo() : string
+    {
+        return $this->user . ($this->password !== null ? ':' . $this->password : '');
+    }
 
     public function getAuthority(): string
     {
@@ -34,7 +62,7 @@ final readonly class Uri implements Stringable
             $authority = $userInfo . '@' . $authority;
         }
 
-        if ($this->port !== null && !$this->isDefaultPort()) {
+        if ($this->port !== null && ! $this->isDefaultPort()) {
             $authority .= ':' . $this->port;
         }
 

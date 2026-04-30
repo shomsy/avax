@@ -14,13 +14,13 @@ interface OidcProviderInterface
      * @param list<string> $scopes
      */
     public function issueIdToken(
-        User                   $user,
-        string                 $clientId,
-        array                  $scopes,
-        string|null            $nonce = null,
-        DateTimeImmutable|null $authenticatedAt = null,
-        string|null            $sessionId = null,
-        bool                   $phishingResistant = false
+        User              $user,
+        string            $clientId,
+        array             $scopes,
+        string            $nonce = null,
+        DateTimeImmutable $authenticatedAt = null,
+        string            $sessionId = null,
+        bool              $phishingResistant = false,
     ) : OidcIdToken;
 
     /**

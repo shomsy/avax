@@ -93,22 +93,22 @@ final class ScopeStore
      * @throws ContainerException
      */
     public function setFor(
-        string      $abstract,
-        mixed       $instance,
-        string|null $kind = null,
-        bool        $disposable = false
+        string  $abstract,
+        mixed   $instance,
+        ?string $kind = null,
+        bool    $disposable = false,
     ) : void
     {
-        $kind  ??= ScopeKind::ANY;
+        $kind         ??= ScopeKind::ANY;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
             $hint     = $required === ScopeKind::ANY
                 ? 'open a scope before resolving this service'
-                : "open a [{$required}] scope before resolving this service";
+                : sprintf('open a [%s] scope before resolving this service', $required);
 
             throw new ContainerException(
-                message: "Cannot store scoped instance [{$abstract}] without an active matching scope; {$hint}."
+                message: sprintf('Cannot store scoped instance [%s] without an active matching scope; %s.', $abstract, $hint),
             );
         }
 
@@ -120,9 +120,9 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(string|null $kind = null, string $scopeId = '') : void
+    public function open(?string $kind = null, string $scopeId = '') : void
     {
-        $kind           ??= ScopeKind::OPERATION;
+        $kind ??= ScopeKind::OPERATION;
         $this->scopes[] = [
             'kind'       => ScopeKind::normalize(kind: $kind),
             'id'         => trim(string: $scopeId),
@@ -144,7 +144,7 @@ final class ScopeStore
      * }
      * @throws ContainerException
      */
-    public function close(string|null $kind = null) : array
+    public function close(?string $kind = null) : array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -153,7 +153,7 @@ final class ScopeStore
         $frame = $this->scopes[array_key_last(array: $this->scopes)];
         if ($kind !== null && ScopeKind::normalize(kind: $kind) !== $frame['kind']) {
             throw new ContainerException(
-                message: "Cannot close scope kind [{$kind}] while active scope kind [{$frame['kind']}] is on top of the stack."
+                message: sprintf('Cannot close scope kind [%s] while active scope kind [%s] is on top of the stack.', $kind, $frame['kind']),
             );
         }
 
@@ -182,21 +182,21 @@ final class ScopeStore
      * @throws ContainerException
      */
     public function setPooledFor(
-        string    $abstract,
-        mixed     $instance,
-        string    $kind,
-        int       $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool      $disposable = false
+        string $abstract,
+        mixed  $instance,
+        string $kind,
+        int    $maxSize,
+        ?bool  $resetBeforeReuse = null,
+        bool   $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;
-        $index            = $this->frameIndex(kind: $kind);
+        $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
 
             throw new ContainerException(
-                message: "Cannot checkout pooled instance [{$abstract}] without an active [{$required}] scope."
+                message: sprintf('Cannot checkout pooled instance [%s] without an active [%s] scope.', $abstract, $required),
             );
         }
 
@@ -243,24 +243,24 @@ final class ScopeStore
                     'pooledServices' => $pooledServices,
                 ];
             },
-            array   : $this->scopes
+            array   : $this->scopes,
         );
 
         return [
-            'scoped'      => array_map(
+            'scoped' => array_map(
                 callback: static fn (array $frame) : array => $frame['items'],
-                array   : $this->scopes
+                array   : $this->scopes,
             ),
-            'pooled'      => array_reduce(
+            'pooled' => array_reduce(
                 array   : $this->scopes,
                 callback: static function (array $carry, array $frame) : array {
-                    foreach ($frame['pooled'] as $serviceId => $options) {
+                    foreach (array_keys($frame['pooled']) as $serviceId) {
                         $carry[$serviceId][] = $frame['kind'] . ($frame['id'] !== '' ? ':' . $frame['id'] : '');
                     }
 
                     return $carry;
                 },
-                initial : []
+                initial : [],
             ),
             'pooledStats' => [],
             'frames'      => $frames,

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Client\System\Capabilities\Http;
@@ -10,6 +11,6 @@ final readonly class ClientRequest
         public string $url,
         public array $headers = [],
         public ?string $body = null,
-        public array $options = []
+        public array $options = [],
     ) {}
 }

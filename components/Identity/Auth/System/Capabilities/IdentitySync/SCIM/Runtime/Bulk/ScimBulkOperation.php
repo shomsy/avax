@@ -15,11 +15,11 @@ final readonly class ScimBulkOperation
     public function __construct(
         public string      $method,
         public string      $path,
-        array|null         $body = null,
-        public string|null $bulkId = null
+        array              $body = null,
+        public string|null $bulkId = null,
     )
     {
-        $body       ??= [];
+        $body ??= [];
         $this->body = $body;
     }
 }

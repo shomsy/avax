@@ -8,9 +8,9 @@ use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
 use Avax\Components\Application\Text\System\Capabilities\Transform\ToPlural;
 use Avax\Components\Application\Text\System\Capabilities\Transform\ToSingular;
 use Avax\Components\Application\Text\System\Capabilities\Validate\IsValidEmail;
-use Avax\Components\Application\Text\System\Foundation\MatchResult;
-use Avax\Components\Application\Text\System\Foundation\Pattern;
 use Closure;
+use Override;
+use Stringable;
 
 /**
  * Text Public Surface.
@@ -18,7 +18,7 @@ use Closure;
  * Provides a fluent DSL for string manipulation, delegating complex
  * linguistic and validation logic to internal System Capabilities.
  */
-final readonly class Text
+final readonly class Text implements Stringable
 {
     private function __construct(public string $value) {}
 
@@ -32,6 +32,7 @@ final readonly class Text
         return new self($value ?? $default);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->value;
@@ -202,6 +203,7 @@ final readonly class Text
                 $v = $converted;
             }
         }
+
         $v = preg_replace('/[^\x20-\x7E]/', '', $v);
 
         return new self(is_string($v) ? $v : $this->value);

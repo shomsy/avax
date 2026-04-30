@@ -9,28 +9,28 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 final readonly class CheckCacheCapacity
 {
     public function __construct(
-        private CacheCapacity           $capacity,
-        private EstimateCachedValueSize $estimator = new EstimateCachedValueSize()
+        private CacheCapacity           $cacheCapacity,
+        private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize(),
     ) {}
 
-    public function canStore(CacheStore $store, mixed $value) : bool
+    public function canStore(CacheStore $cacheStore, mixed $value) : bool
     {
-        if ($this->capacity->isValueTooLarge(valueSizeBytes: $this->estimator->estimate(value: $value))) {
+        if ($this->cacheCapacity->isValueTooLarge(valueSizeBytes: $this->estimateCachedValueSize->estimate(value: $value))) {
             return false;
         }
 
-        return $this->capacity->canStore(
-            currentCount    : $this->getCurrentEntryCount(store: $store),
-            currentSizeBytes: $this->getCurrentSizeBytes(store: $store)
+        return $this->cacheCapacity->canStore(
+            currentCount    : $this->getCurrentEntryCount(store: $cacheStore),
+            currentSizeBytes: $this->getCurrentSizeBytes(store: $cacheStore),
         );
     }
 
-    public function getCurrentEntryCount(CacheStore $store) : int
+    public function getCurrentEntryCount() : int
     {
         return 0;
     }
 
-    public function getCurrentSizeBytes(CacheStore $store) : int
+    public function getCurrentSizeBytes() : int
     {
         return 0;
     }

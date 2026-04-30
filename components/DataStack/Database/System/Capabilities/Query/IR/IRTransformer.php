@@ -15,7 +15,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\WhereN
 final class IRTransformer
 {
     public function __construct(
-        private GrammarInterface $grammar
+        private GrammarInterface $grammar,
     ) {}
 
     public function toSql(QueryNode $query) : string
@@ -26,11 +26,11 @@ final class IRTransformer
         if (! empty($ctes)) {
             $hasRecursive = array_any(
                 array   : $ctes,
-                callback: static fn (CTENode $cte) => $cte->type === CTEType::RECURSIVE
+                callback: static fn (CTENode $cte) => $cte->type === CTEType::RECURSIVE,
             );
             $cteSql       = array_map(
                 callback: fn (CTENode $cte) => $cte->getSql(grammar: $this->grammar),
-                array   : $ctes
+                array   : $ctes,
             );
             $components[] = 'WITH ' . ($hasRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $cteSql);
         }
@@ -52,7 +52,7 @@ final class IRTransformer
         } else {
             $selectColumns = array_map(
                 callback: fn ($col) => $this->grammar->wrap(value: $col),
-                array   : $columns
+                array   : $columns,
             );
             $select        = $distinct . implode(separator: ', ', array: $selectColumns);
         }
@@ -65,18 +65,18 @@ final class IRTransformer
 
         $joins = $query->getJoins();
         if (! empty($joins)) {
-            $joinSql      = array_map(
+            $joinSql = array_map(
                 callback: fn (JoinNode $join) => $join->getSql(grammar: $this->grammar),
-                array   : $joins
+                array   : $joins,
             );
             $components[] = implode(separator: ' ', array: $joinSql);
         }
 
         $wheres = $query->getWheres();
         if (! empty($wheres)) {
-            $whereSql     = array_map(
+            $whereSql = array_map(
                 callback: fn (WhereNode $where) => $where->getSql(grammar: $this->grammar),
-                array   : $wheres
+                array   : $wheres,
             );
             $whereSql[0]  = preg_replace(pattern: '/^(AND|OR)\s+/i', replacement: '', subject: $whereSql[0]);
             $components[] = 'WHERE ' . implode(separator: ' ', array: $whereSql);
@@ -86,16 +86,16 @@ final class IRTransformer
         if (! empty($groups)) {
             $groupColumns = array_map(
                 callback: fn ($col) => $this->grammar->wrap(value: $col),
-                array   : $groups
+                array   : $groups,
             );
             $components[] = 'GROUP BY ' . implode(separator: ', ', array: $groupColumns);
         }
 
         $orders = $query->getOrders();
         if (! empty($orders)) {
-            $orderSql     = array_map(
+            $orderSql = array_map(
                 callback: fn (OrderByNode $order) => $order->getSql(grammar: $this->grammar),
-                array   : $orders
+                array   : $orders,
             );
             $components[] = 'ORDER BY ' . implode(separator: ', ', array: $orderSql);
         }

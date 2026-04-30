@@ -14,8 +14,8 @@ use Psr\SimpleCache\InvalidArgumentException;
 final readonly class CacheFacade
 {
     public function __construct(
-        private CacheRegistry              $registry,
-        private CompiledCacheContract|null $compiledCache = null,
+        private CacheRegistry              $cacheRegistry,
+        private CompiledCacheContract|null $compiledCacheContract = null,
     ) {}
 
     public function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
@@ -28,12 +28,12 @@ final readonly class CacheFacade
      */
     public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        return $this->registry->default()->set(key: $key, value: $value, ttl: $ttl);
+        return $this->cacheRegistry->default()->set(key: $key, value: $value, ttl: $ttl);
     }
 
     public function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
-        return $this->registry->default()->remember(key: $key, ttl: $ttl, loader: $loader);
+        return $this->cacheRegistry->default()->remember(key: $key, ttl: $ttl, loader: $loader);
     }
 
     /**
@@ -41,12 +41,12 @@ final readonly class CacheFacade
      */
     public function forget(string $key) : bool
     {
-        return $this->registry->default()->delete(key: $key);
+        return $this->cacheRegistry->default()->delete(key: $key);
     }
 
     public function clear() : bool
     {
-        return $this->registry->default()->clear();
+        return $this->cacheRegistry->default()->clear();
     }
 
     /**
@@ -54,16 +54,16 @@ final readonly class CacheFacade
      */
     public function has(string $key) : bool
     {
-        return $this->registry->default()->has(key: $key);
+        return $this->cacheRegistry->default()->has(key: $key);
     }
 
-    public function store(string|null $name = null) : CacheContract
+    public function store(?string $name = null) : CacheContract
     {
         if ($name === null) {
-            return $this->registry->default();
+            return $this->cacheRegistry->default();
         }
 
-        return $this->registry->get(name: $name);
+        return $this->cacheRegistry->get(name: $name);
     }
 
     /**
@@ -71,7 +71,7 @@ final readonly class CacheFacade
      */
     public function get(string $key, mixed $default = null) : mixed
     {
-        return $this->registry->default()->get(key: $key, default: $default);
+        return $this->cacheRegistry->default()->get(key: $key, default: $default);
     }
 
     /**
@@ -80,11 +80,11 @@ final readonly class CacheFacade
     public function read(CacheReadTarget|string $target, mixed $default = null) : mixed
     {
         if (is_string($target)) {
-            return $this->registry->default()->get(key: $target, default: $default);
+            return $this->cacheRegistry->default()->get(key: $target, default: $default);
         }
 
-        $reader = new ReadFromCache(runtimeCaches: $this->registry, compiledCache: $this->compiledCache);
+        $readFromCache = new ReadFromCache(runtimeCaches: $this->cacheRegistry, compiledCache: $this->compiledCacheContract);
 
-        return $reader->read(target: $target, default: $default);
+        return $readFromCache->read(target: $target, default: $default);
     }
 }

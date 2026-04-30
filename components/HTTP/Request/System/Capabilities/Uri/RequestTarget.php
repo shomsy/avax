@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Uri;
@@ -6,7 +7,7 @@ namespace Avax\Components\HTTP\Request\System\Capabilities\Uri;
 final class RequestTarget
 {
     public function __construct(
-        private string $target
+        private string $target,
     ) {}
 
     public function toString(): string

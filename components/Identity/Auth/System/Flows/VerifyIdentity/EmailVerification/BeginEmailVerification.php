@@ -17,11 +17,12 @@ use SensitiveParameter;
 final readonly class BeginEmailVerification
 {
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private EmailVerificationStoreInterface $emailVerificationStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private int                                                   $expiresAfterSeconds = 86400
+        private UserSourceInterface             $userSource,
+        #[SensitiveParameter]
+        private EmailVerificationStoreInterface $emailVerificationStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        private int                             $expiresAfterSeconds = 86400,
     ) {}
 
     /**
@@ -37,7 +38,7 @@ final readonly class BeginEmailVerification
 
         $challenge = $this->emailVerificationStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -47,7 +48,7 @@ final readonly class BeginEmailVerification
                                                            'user_id'    => $user->getId()->value,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return $challenge;

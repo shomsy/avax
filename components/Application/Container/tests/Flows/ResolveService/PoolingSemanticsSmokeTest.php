@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
@@ -26,14 +26,13 @@ final class PoolingSequence
 final class PoolingService implements PoolingContract
 {
     public bool $decorated = false;
-    private int $id        = 0;
 
-    public function __construct(int $id = 0)
+    public function __construct(private int $id = 0)
     {
-        $this->id = $id;
         $this->id = ++PoolingSequence::$ids;
     }
 
+    #[Override]
     public function id() : int
     {
         return $this->id;
@@ -42,7 +41,7 @@ final class PoolingService implements PoolingContract
 
 final class PoolingDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: PoolingService::class, value: $instance, message: 'Pooling decorators should receive the resolved singleton instance.');
         $instance->decorated = true;
@@ -51,7 +50,7 @@ final class PoolingDecorator implements DecoratorInterface
     }
 }
 
-final class DeferredPoolingService implements DeferredPoolingContract
+final readonly class DeferredPoolingService implements DeferredPoolingContract
 {
     private int $id;
 
@@ -60,17 +59,16 @@ final class DeferredPoolingService implements DeferredPoolingContract
         $this->id = ++PoolingSequence::$ids;
     }
 
+    #[Override]
     public function id() : int
     {
         return $this->id;
     }
 }
 
-final class DeferredPoolingProvider implements DeferredProviderInterface
+final readonly class DeferredPoolingProvider implements DeferredProviderInterface
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app) { $this->app = $app; }
+    public function __construct(private ContainerInterface $container) {}
 
     public function dependsOn() : array
     {
@@ -89,10 +87,8 @@ final class DeferredPoolingProvider implements DeferredProviderInterface
 
     public function register() : void
     {
-        $this->app->singleton(abstract: DeferredPoolingContract::class, concrete: DeferredPoolingService::class);
+        $this->container->singleton(abstract: DeferredPoolingContract::class, concrete: DeferredPoolingService::class);
     }
-
-    public function boot() : void {}
 }
 
 $container = makeTestContainer();

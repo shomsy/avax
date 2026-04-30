@@ -17,11 +17,13 @@ use SensitiveParameter;
 final readonly class RevokePasskey
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                       $requireFreshMfa,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                 $requireFreshMfa,
+        #[SensitiveParameter]
+        private PasskeyCredentialStoreInterface $credentialStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
     ) {}
 
     /**
@@ -47,7 +49,7 @@ final readonly class RevokePasskey
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.passkey.revoked',
                                            occurredAt: $this->clock->now(),
-                                           context   : ['user_id' => $user->id, 'credential_id' => $credentialId]
+                                           context   : ['user_id' => $user->id, 'credential_id' => $credentialId],
                                        ));
     }
 }

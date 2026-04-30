@@ -18,8 +18,8 @@ class QueryException extends DatabaseException
     /**
      * @var array Redacted bindings safe for diagnostics
      */
-    private readonly array  $redactedBindings;
-    private readonly array  $rawBindings;
+    private readonly array $redactedBindings;
+    private readonly array $rawBindings;
     private readonly string $sql;
 
     /**
@@ -27,15 +27,16 @@ class QueryException extends DatabaseException
      *
      * -- intent: capture the full state of the failure for debugging and logging.
      *
-     * @param string         $message  Technical failure description
-     * @param string         $sql      The dialect-specific SQL string that failed
+     * @param string $message Technical failure description
+     * @param string $sql     The dialect-specific SQL string that failed
      * @param Throwable|null $previous The underlying driver exception
      */
     public function __construct(
-        string                      $message,
-        string                      $sql,
-        #[SensitiveParameter] array $rawBindings = [],
-        Throwable|null              $previous = null
+        string    $message,
+        string    $sql,
+        #[SensitiveParameter]
+        array     $rawBindings = [],
+        Throwable $previous = null,
     )
     {
         $this->sql              = $sql;

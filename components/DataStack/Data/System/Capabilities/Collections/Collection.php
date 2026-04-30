@@ -117,7 +117,7 @@ final readonly class Collection implements CollectionInterface
         $this->guard->assertMutable();
 
         return new self(
-            items: new Write\ForgetValue(items: $this->items)->forget(key: $key)
+            items: new Write\ForgetValue(items: $this->items)->forget(key: $key),
         );
     }
 
@@ -126,7 +126,7 @@ final readonly class Collection implements CollectionInterface
         $this->guard->assertMutable();
 
         return new self(
-            items: new Write\AppendValue(items: $this->items)->append(value: $value)
+            items: new Write\AppendValue(items: $this->items)->append(value: $value),
         );
     }
 
@@ -145,14 +145,14 @@ final readonly class Collection implements CollectionInterface
     public function map(callable $callback) : static
     {
         return new self(
-            items: new Transform\MapValues(items: $this->items)->map(callback: $callback)
+            items: new Transform\MapValues(items: $this->items)->map(callback: $callback),
         );
     }
 
     public function filter(callable $callback) : static
     {
         return new self(
-            items: new Transform\FilterValues(items: $this->items)->filter(callback: $callback)
+            items: new Transform\FilterValues(items: $this->items)->filter(callback: $callback),
         );
     }
 
@@ -184,7 +184,7 @@ final readonly class Collection implements CollectionInterface
     public function chunk(int $size) : static
     {
         return new self(
-            items: new Transform\ChunkValues(items: $this->items)->chunk(size: $size)
+            items: new Transform\ChunkValues(items: $this->items)->chunk(size: $size),
         );
     }
 
@@ -226,7 +226,7 @@ final readonly class Collection implements CollectionInterface
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: static fn (mixed $item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
+            callback: static fn (mixed $item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true),
         );
 
         return new self(items: $filtered);
@@ -238,7 +238,7 @@ final readonly class Collection implements CollectionInterface
 
         $filtered = array_filter(
             array   : $this->items,
-            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) >= $min && ($item[$key] ?? null) <= $max
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) >= $min && ($item[$key] ?? null) <= $max,
         );
 
         return new self(items: $filtered);
@@ -253,7 +253,7 @@ final readonly class Collection implements CollectionInterface
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) === $value
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) === $value,
         );
 
         return new self(items: $filtered);
@@ -263,44 +263,44 @@ final readonly class Collection implements CollectionInterface
     {
         $filtered = array_filter(
             array   : $this->items,
-            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) !== null
+            callback: static fn (mixed $item) : bool => ($item[$key] ?? null) !== null,
         );
 
         return new self(items: $filtered);
     }
 
-    public function sort(callable|null $callback = null) : static
+    public function sort(callable $callback = null) : static
     {
         return new self(
-            items: new Order\SortValues(items: $this->items)->sort(callback: $callback)
+            items: new Order\SortValues(items: $this->items)->sort(callback: $callback),
         );
     }
 
     public function sortBy(string|callable $key, bool $descending = false) : static
     {
         return new self(
-            items: new Order\SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending)
+            items: new Order\SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending),
         );
     }
 
     public function reverse() : static
     {
         return new self(
-            items: new Order\ReverseValues(items: $this->items)->reverse()
+            items: new Order\ReverseValues(items: $this->items)->reverse(),
         );
     }
 
     public function shuffle() : static
     {
         return new self(
-            items: new Order\ShuffleValues(items: $this->items)->shuffle()
+            items: new Order\ShuffleValues(items: $this->items)->shuffle(),
         );
     }
 
     public function unique() : static
     {
         return new self(
-            items: new Transform\UniqueValues(items: $this->items)->unique()
+            items: new Transform\UniqueValues(items: $this->items)->unique(),
         );
     }
 
@@ -324,7 +324,7 @@ final readonly class Collection implements CollectionInterface
         $filtered = array_filter(
             array   : $this->items,
             callback: static fn (mixed $_, mixed $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
-            mode    : ARRAY_FILTER_USE_BOTH
+            mode    : ARRAY_FILTER_USE_BOTH,
         );
 
         return new self(items: $filtered);
@@ -335,7 +335,7 @@ final readonly class Collection implements CollectionInterface
         $filtered = array_filter(
             array   : $this->items,
             callback: static fn (mixed $_, mixed $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
-            mode    : ARRAY_FILTER_USE_BOTH
+            mode    : ARRAY_FILTER_USE_BOTH,
         );
 
         return new self(items: $filtered);
@@ -365,7 +365,7 @@ final readonly class Collection implements CollectionInterface
     public function flip() : static
     {
         return new self(
-            items: new Transform\FlipValues(items: $this->items)->flip()
+            items: new Transform\FlipValues(items: $this->items)->flip(),
         );
     }
 

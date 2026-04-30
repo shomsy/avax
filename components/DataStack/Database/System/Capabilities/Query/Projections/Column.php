@@ -11,6 +11,6 @@ final class Column
 {
     public function __construct(
         public readonly string|null $name = null,
-        public readonly string|null $type = null
+        public readonly string|null $type = null,
     ) {}
 }

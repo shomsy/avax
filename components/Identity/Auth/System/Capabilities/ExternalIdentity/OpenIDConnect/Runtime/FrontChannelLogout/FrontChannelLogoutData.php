@@ -9,9 +9,11 @@ use SensitiveParameter;
 final readonly class FrontChannelLogoutData
 {
     public function __construct(
-        #[SensitiveParameter] public string|null $sessionId = null,
-        #[SensitiveParameter] public string|null $idTokenHint = null,
-        public string|null                       $postLogoutRedirectUri = null,
-        public string|null                       $state = null
+        #[SensitiveParameter]
+        public string|null $sessionId = null,
+        #[SensitiveParameter]
+        public string|null $idTokenHint = null,
+        public string|null $postLogoutRedirectUri = null,
+        public string|null $state = null,
     ) {}
 }

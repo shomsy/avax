@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Tokens;
+
+use DateTimeImmutable;
 
 /**
  * TokenStore - Handles persistence and revocation of tokens.
@@ -9,7 +12,12 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Tokens;
  */
 final readonly class TokenStore
 {
-    public function save(string $tokenId, \DateTimeImmutable $expiresAt) : void {}
+    public function save(string $tokenId, DateTimeImmutable $expiresAt) : void {}
+
     public function revoke(string $tokenId) : void {}
-    public function isRevoked(string $tokenId) : bool { return false; }
+
+    public function isRevoked(string $tokenId) : bool
+    {
+        return false;
+    }
 }

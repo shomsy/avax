@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Compe
 final readonly class PublishSagaCompensated
 {
     public function __construct(
-        private string $eventBus
+        private string $eventBus,
     ) {}
 
     public function describeResponsibility() : string
@@ -17,13 +17,13 @@ final readonly class PublishSagaCompensated
 
     public function publish(
         string $sagaId,
-        array  $compensatedSteps
+        array $compensatedSteps,
     ) : SagaCompensatedEvent
     {
         return new SagaCompensatedEvent(
             sagaId          : $sagaId,
             compensatedSteps: $compensatedSteps,
-            timestamp       : microtime(true)
+            timestamp       : microtime(true),
         );
     }
 
@@ -37,8 +37,8 @@ final readonly class SagaCompensatedEvent
 {
     public function __construct(
         public string $sagaId,
-        public array  $compensatedSteps,
-        public float  $timestamp
+        public array $compensatedSteps,
+        public float $timestamp,
     ) {}
 
     public function toMetadata() : array

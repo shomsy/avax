@@ -14,7 +14,7 @@ use InvalidArgumentException;
 final readonly class MinLengthRule
 {
     public function __construct(
-        private int    $minLength,
+        private int $minLength,
         private string $message = 'Field "{property}" must be at least {min} characters.',
     ) {}
 
@@ -26,7 +26,7 @@ final readonly class MinLengthRule
 
         if (! is_string($value) && ! is_array($value)) {
             throw new InvalidArgumentException(
-                "Field \"{$property}\" must be a string or array."
+                sprintf('Field "%s" must be a string or array.', $property),
             );
         }
 
@@ -34,6 +34,7 @@ final readonly class MinLengthRule
 
         if ($length < $this->minLength) {
             $message = str_replace(['{property}', '{min}'], [$property, $this->minLength], $this->message);
+
             throw new InvalidArgumentException($message);
         }
     }

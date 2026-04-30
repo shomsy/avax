@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\Capabilities\ResponseData;
@@ -8,11 +9,11 @@ use Psr\Http\Message\StreamInterface;
 final readonly class ResponseData
 {
     public function __construct(
-        public int             $statusCode,
-        public array           $headers,
+        public int    $statusCode,
+        public array  $headers,
         public StreamInterface $body,
-        public string          $reasonPhrase,
-        public string          $protocolVersion
+        public string $reasonPhrase,
+        public string $protocolVersion,
     ) {}
 
     public function withProtocolVersion(string $version) : self
@@ -22,7 +23,7 @@ final readonly class ResponseData
             headers        : $this->headers,
             body           : $this->body,
             reasonPhrase   : $this->reasonPhrase,
-            protocolVersion: $version
+            protocolVersion: $version,
         );
     }
 
@@ -36,7 +37,7 @@ final readonly class ResponseData
             headers        : $headers,
             body           : $this->body,
             reasonPhrase   : $this->reasonPhrase,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -50,7 +51,7 @@ final readonly class ResponseData
             headers        : $headers,
             body           : $this->body,
             reasonPhrase   : $this->reasonPhrase,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -61,7 +62,7 @@ final readonly class ResponseData
             headers        : $this->headers,
             body           : $body,
             reasonPhrase   : $this->reasonPhrase,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -72,7 +73,7 @@ final readonly class ResponseData
             headers        : $this->headers,
             body           : $this->body,
             reasonPhrase   : $reasonPhrase,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 }

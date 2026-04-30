@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -13,6 +13,7 @@ interface FreshnessDependencyContract
 
 final class FreshnessDependencyV1 implements FreshnessDependencyContract
 {
+    #[Override]
     public function version() : string
     {
         return 'v1';
@@ -21,6 +22,7 @@ final class FreshnessDependencyV1 implements FreshnessDependencyContract
 
 final class FreshnessDependencyV2 implements FreshnessDependencyContract
 {
+    #[Override]
     public function version() : string
     {
         return 'v2';
@@ -29,9 +31,7 @@ final class FreshnessDependencyV2 implements FreshnessDependencyContract
 
 final class FreshnessConsumer
 {
-    public FreshnessDependencyContract $dependency;
-
-    public function __construct(FreshnessDependencyContract $dependency) { $this->dependency = $dependency; }
+    public function __construct(public FreshnessDependencyContract $freshnessDependencyContract) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-freshness-' . uniqid();
@@ -39,7 +39,7 @@ $version  = 'compiled-freshness-smoke';
 $config   = CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
-    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION
+    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
 );
 
 $compiled = makeTestContainer(config: $config);
@@ -59,14 +59,14 @@ assertTrue(condition: $report->compatible, message: 'Stale artifacts should stil
 assertSame(expected: 'stale', actual: $report->freshnessState, message: 'Stale service signatures must be reported explicitly.');
 assertTrue(
     condition: in_array(needle: 'compiled artifact signatures are stale', haystack: $report->warnings, strict: true),
-    message  : 'Compile reports should warn when compiled service signatures are stale.'
+    message  : 'Compile reports should warn when compiled service signatures are stale.',
 );
 assertTrue(condition: ! $reloaded->isCompiled(id: FreshnessConsumer::class), message: 'Stale compiled artifacts must not report compiled availability.');
 assertSame(expected: 'dynamic', actual: $debug['compiledState']['decision'], message: 'Debug diagnostics should expose dynamic fallback for stale artifacts.');
 assertSame(
     expected: 'compiled artifact is stale',
     actual  : $debug['explain']['fallback']['reason'],
-    message : 'Explain diagnostics should expose stale-artifact fallback reasons.'
+    message : 'Explain diagnostics should expose stale-artifact fallback reasons.',
 );
 assertSame(expected: 'v2', actual: $resolved->dependency->version(), message: 'Runtime should resolve the fresh dynamic graph after signature drift.');
 

@@ -21,18 +21,14 @@ final class SessionProvider implements ComponentProviderInterface
     public function register(ComponentRegistry $registry): void
     {
         $registry->singleton(SessionStoreInterface::class, NativeSessionStore::class);
-        $registry->singleton(SessionScope::class, function ($container) {
-            return new SessionScope($container->get(SessionStoreInterface::class));
-        });
-        $registry->singleton(SessionInterface::class, function ($container) {
-            return new Session(
-                scope   : $container->get(SessionScope::class),
-                metadata: $container->has(SessionMetadata::class) ? $container->get(SessionMetadata::class) : null,
-                audit   : $container->has(SessionAudit::class) ? $container->get(SessionAudit::class) : null,
-                events  : $container->has(SessionEventBus::class) ? $container->get(SessionEventBus::class) : null,
-                logger  : $container->has(LoggerInterface::class) ? $container->get(LoggerInterface::class) : null,
-            );
-        });
+        $registry->singleton(SessionScope::class, static fn ($container) => new SessionScope($container->get(SessionStoreInterface::class)));
+        $registry->singleton(SessionInterface::class, static fn ($container) => new Session(
+            scope   : $container->get(SessionScope::class),
+            metadata: $container->has(SessionMetadata::class) ? $container->get(SessionMetadata::class) : null,
+            audit   : $container->has(SessionAudit::class) ? $container->get(SessionAudit::class) : null,
+            events  : $container->has(SessionEventBus::class) ? $container->get(SessionEventBus::class) : null,
+            logger  : $container->has(LoggerInterface::class) ? $container->get(LoggerInterface::class) : null,
+        ));
         $registry->alias(Session::class, SessionInterface::class);
     }
 }

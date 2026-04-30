@@ -22,7 +22,7 @@ final readonly class ConvertCollectionToArray
     {
         return array_map(
             callback: fn (mixed $item) : mixed => $this->normalizeItem(item: $item),
-            array   : $this->items
+            array   : $this->items,
         );
     }
 

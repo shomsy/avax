@@ -14,7 +14,7 @@ class Table
      */
     public static function render(array $headers, array $rows) : void
     {
-        if (empty($headers)) {
+        if ($headers === []) {
             return;
         }
 
@@ -36,7 +36,7 @@ class Table
      */
     private static function calculateWidths(array $headers, array $rows) : array
     {
-        $widths = array_map(fn (string $h) : int => mb_strlen($h), $headers);
+        $widths = array_map(static fn (string $h) : int => mb_strlen($h), $headers);
 
         foreach ($rows as $row) {
             foreach ($row as $i => $cell) {
@@ -73,7 +73,7 @@ class Table
         foreach ($row as $i => $cell) {
             $cellStr = (string) $cell;
             $width   = $widths[$i] ?? 0;
-            $line    .= ' ' . str_pad($cellStr, $width) . ' |';
+            $line .= ' ' . str_pad($cellStr, $width) . ' |';
         }
 
         echo $line . PHP_EOL;

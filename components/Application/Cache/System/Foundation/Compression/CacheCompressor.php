@@ -8,7 +8,7 @@ interface CacheCompressor
 {
     public function compress(string $data) : CompressedCachePayload;
 
-    public function decompress(CompressedCachePayload $payload) : string;
+    public function decompress(CompressedCachePayload $compressedCachePayload) : string;
 
     public function algorithm() : string;
 }

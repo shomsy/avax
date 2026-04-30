@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
+use Override;
 use Traversable;
 
 /**
@@ -33,16 +34,17 @@ final readonly class DataTransferViolations implements Countable, IteratorAggreg
         return new self($violations);
     }
 
-    public function add(DataTransferViolation $violation) : self
+    public function add(DataTransferViolation $dataTransferViolation) : self
     {
-        return new self([...$this->violations, $violation]);
+        return new self([...$this->violations, $dataTransferViolation]);
     }
 
     public function isEmpty() : bool
     {
-        return empty($this->violations);
+        return $this->violations === [];
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->violations);
@@ -51,16 +53,18 @@ final readonly class DataTransferViolations implements Countable, IteratorAggreg
     /**
      * @return Traversable<int, DataTransferViolation>
      */
+    #[Override]
     public function getIterator() : Traversable
     {
         yield from $this->violations;
     }
 
+    #[Override]
     public function jsonSerialize() : array
     {
         return array_map(
-            static fn (DataTransferViolation $v) => $v->jsonSerialize(),
-            $this->violations
+            static fn (DataTransferViolation $dataTransferViolation) : array => $dataTransferViolation->jsonSerialize(),
+            $this->violations,
         );
     }
 }

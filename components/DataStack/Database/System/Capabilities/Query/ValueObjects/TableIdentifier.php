@@ -12,15 +12,15 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObje
 final readonly class TableIdentifier
 {
     public string|null $alias;
-    public string      $name;
+    public string $name;
 
     /**
-     * @param string      $name  The technical identifier (physical name) of the database table.
+     * @param string $name The technical identifier (physical name) of the database table.
      * @param string|null $alias The optional domain-specific label (alias) assigned to the table source.
      */
     public function __construct(
-        string      $name,
-        string|null $alias = null
+        string $name,
+        string $alias = null,
     )
     {
         $this->name  = $name;

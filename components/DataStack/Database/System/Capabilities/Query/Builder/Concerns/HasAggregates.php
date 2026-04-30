@@ -31,7 +31,7 @@ trait HasAggregates
      * Internal technician for executing a generic SQL aggregate function.
      *
      * @param string $function The name of the SQL aggregate function (e.g., 'COUNT', 'SUM').
-     * @param array  $columns  The technical field identifiers to target for the calculation.
+     * @param array $columns The technical field identifiers to target for the calculation.
      *
      * @return mixed The resulting scalar data point retrieved from the aggregate projection.
      *

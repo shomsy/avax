@@ -33,7 +33,7 @@ final readonly class RegisterClient
             frontChannelLogoutSupported    : $data->frontChannelLogoutSupported,
             backChannelLogoutSupported     : $data->backChannelLogoutSupported,
             approvalRequired               : $data->approvalRequired,
-            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem
+            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem,
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -50,7 +50,7 @@ final readonly class RegisterClient
                                                            'request_object_signature_required' => $registered->client->requestObjectSignatureRequired ? 1 : 0,
                                                            'approval_status'                   => $registered->client->approvalStatus->value,
                                                            'approval_required'                 => $registered->client->isPendingApproval() ? 1 : 0,
-                                                       ]
+                                                       ],
                                        ));
 
         return $registered;

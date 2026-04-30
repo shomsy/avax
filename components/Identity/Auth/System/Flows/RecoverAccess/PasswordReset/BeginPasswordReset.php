@@ -21,15 +21,16 @@ final readonly class BeginPasswordReset
     private int $expiresAfterSeconds;
 
     public function __construct(
-        private UserSourceInterface                               $userSource,
-        #[SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
-        private AuditLogInterface                                 $auditLog,
-        private Clock                                             $clock,
-        int|null                                                  $expiresAfterSeconds = null,
-        private AttemptThrottle|null                              $attemptThrottle = null
+        private UserSourceInterface         $userSource,
+        #[SensitiveParameter]
+        private PasswordResetStoreInterface $passwordResetStore,
+        private AuditLogInterface           $auditLog,
+        private Clock                       $clock,
+        int                                 $expiresAfterSeconds = null,
+        private AttemptThrottle|null        $attemptThrottle = null,
     )
     {
-        $expiresAfterSeconds       ??= 3600;
+        $expiresAfterSeconds ??= 3600;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
     }
 
@@ -51,7 +52,7 @@ final readonly class BeginPasswordReset
                                                                'ip_address'  => $data->ipAddress,
                                                                'user_agent'  => $data->userAgent,
                                                                'retry_after' => $exception->retryAfter(),
-                                                           ]
+                                                           ],
                                            ));
 
             return PasswordResetChallenge::hidden();
@@ -69,7 +70,7 @@ final readonly class BeginPasswordReset
                                                                'dispatched' => false,
                                                                'ip_address' => $data->ipAddress,
                                                                'user_agent' => $data->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             return PasswordResetChallenge::hidden();
@@ -77,7 +78,7 @@ final readonly class BeginPasswordReset
 
         $challenge = $this->passwordResetStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -88,7 +89,7 @@ final readonly class BeginPasswordReset
                                                            'dispatched' => true,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return $challenge;

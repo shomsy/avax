@@ -16,9 +16,9 @@ interface TotpInterface
     public function provisioningUri(string $issuer, string $accountLabel, string $secret) : string;
 
     public function verify(
-        string            $secret,
-        string            $code,
+        string $secret,
+        string $code,
         DateTimeImmutable $moment,
-        int|null          $lastAcceptedTimeStep = null
+        int    $lastAcceptedTimeStep = null,
     ) : TotpVerification;
 }

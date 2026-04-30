@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\RequestData;
@@ -11,16 +12,16 @@ use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 final readonly class RequestData
 {
     public function __construct(
-        public string         $method,
-        public RequestUri     $uri,
+        public string        $method,
+        public RequestUri    $uri,
         public RequestHeaders $headers,
-        public RequestBody    $body,
-        public UploadedFiles  $files,
-        public array          $serverParams,
-        public array          $cookieParams,
-        public array          $queryParams,
-        public array          $attributes,
-        public string         $protocolVersion
+        public RequestBody   $body,
+        public UploadedFiles $files,
+        public array         $serverParams,
+        public array         $cookieParams,
+        public array         $queryParams,
+        public array         $attributes,
+        public string        $protocolVersion,
     ) {}
 
     public function withMethod(string $method) : self
@@ -35,7 +36,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $this->queryParams,
             attributes     : $this->attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -51,7 +52,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $this->queryParams,
             attributes     : $this->attributes,
-            protocolVersion: $version
+            protocolVersion: $version,
         );
     }
 
@@ -67,7 +68,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $this->queryParams,
             attributes     : $this->attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -83,7 +84,7 @@ final readonly class RequestData
             cookieParams   : $cookies,
             queryParams    : $this->queryParams,
             attributes     : $this->attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -99,7 +100,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $query,
             attributes     : $this->attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -118,7 +119,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $this->queryParams,
             attributes     : $attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 
@@ -137,7 +138,7 @@ final readonly class RequestData
             cookieParams   : $this->cookieParams,
             queryParams    : $this->queryParams,
             attributes     : $attributes,
-            protocolVersion: $this->protocolVersion
+            protocolVersion: $this->protocolVersion,
         );
     }
 }

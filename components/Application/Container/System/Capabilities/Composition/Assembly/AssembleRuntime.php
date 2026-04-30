@@ -32,23 +32,23 @@ final class AssembleRuntime
 {
     public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability) : RuntimeAssembly
     {
-        $registrations = new ServiceRegistry;
-        $scopeStore    = new ScopeStore;
-        $servicePool   = new ServicePool;
+        $registrations = new ServiceRegistry();
+        $scopeStore    = new ScopeStore();
+        $servicePool   = new ServicePool();
         $scopes        = new ManageScopes(
             store  : $scopeStore,
             pool   : $servicePool,
-            metrics: $observability->metrics
+            metrics: $observability->metrics,
         );
-        $dependencies  = new ResolveDependencies;
+        $dependencies  = new ResolveDependencies();
         $blueprints    = new CreateServiceBlueprint(
             cache       : new BlueprintCache(
                               cacheDir    : $config->cacheDir,
                               cacheVersion: $config->cacheVersion,
                               debug       : $config->debug,
-                              metrics     : $observability->metrics
+                              metrics     : $observability->metrics,
                           ),
-            dependencies: $dependencies
+            dependencies: $dependencies,
         );
         $callArguments = new ResolveCallArguments(dependencies: $dependencies);
         $caller        = new FunctionCaller(arguments: $callArguments);
@@ -57,7 +57,7 @@ final class AssembleRuntime
             debug   : $config->debug,
             profile : $config->effectivePolicyProfile(),
             failMode: $config->policyFailMode,
-            profiles: $config->policyProfiles
+            profiles: $config->policyProfiles,
         );
         $compiler      = new CompileContainer(
             registrations         : $registrations,
@@ -79,18 +79,18 @@ final class AssembleRuntime
             metrics               : $observability->metrics,
             services              : new ServiceCompiler(
                                         registrations: $registrations,
-                                        blueprints   : $blueprints
-                                    )
+                                        blueprints   : $blueprints,
+                                    ),
         );
         $resolver      = new ServiceResolver(
             registrations    : $registrations,
             scopes           : $scopes,
             builder          : new BuildService(
                                    blueprints  : $blueprints,
-                                   dependencies: $dependencies
+                                   dependencies: $dependencies,
                                ),
             blueprints       : $blueprints,
-            injectProperties : new InjectProperties,
+            injectProperties : new InjectProperties(),
             injectMethods    : new InjectMethods(arguments: $callArguments),
             caller           : $caller,
             metrics          : $observability->metrics,
@@ -98,15 +98,15 @@ final class AssembleRuntime
             policy           : $policy,
             compiledRuntime  : new CompiledRuntime(
                                    compiler     : $compiler,
-                                   inliner      : new HotPathInliner,
+                                   inliner      : new HotPathInliner(),
                                    metrics      : $observability->metrics,
-                                   executionMode: $config->executionMode
+                                   executionMode: $config->executionMode,
                                ),
-            deferredProviders: new DeferredProviderRegistry,
+            deferredProviders: new DeferredProviderRegistry(),
             diagnosticsMode  : $config->diagnosticsMode,
             environment      : $config->environment(),
             sliceBoundaryMode: $config->sliceBoundaryMode,
-            asyncTarget      : $config->asyncTarget
+            asyncTarget      : $config->asyncTarget,
         );
 
         return new RuntimeAssembly(
@@ -117,7 +117,7 @@ final class AssembleRuntime
             caller       : $caller,
             policy       : $policy,
             compiler     : $compiler,
-            resolver     : $resolver
+            resolver     : $resolver,
         );
     }
 }

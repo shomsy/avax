@@ -48,9 +48,9 @@ trait HasConditions
      */
     public function where(
         string|Closure $column,
-        mixed          $operator = null,
-        mixed          $value = null,
-        string         $boolean = 'AND'
+        mixed  $operator = null,
+        mixed  $value = null,
+        string $boolean = 'AND',
     ) : self
     {
         if ($column instanceof Closure) {
@@ -67,7 +67,7 @@ trait HasConditions
                                                            column  : $column,
                                                            operator: (string) $operator,
                                                            value   : $value,
-                                                           boolean : $boolean
+                                                           boolean : $boolean,
                                                        ));
 
         if (! in_array(needle: $operator, haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
@@ -85,18 +85,18 @@ trait HasConditions
      * allowing for complex logical grouping and order-of-operation control.
      *
      * @param Closure $callback A configuration closure receiving a fresh builder instance.
-     * @param string  $boolean  The logical joiner for the entire nested group.
+     * @param string $boolean The logical joiner for the entire nested group.
      *
      * @return HasConditions|QueryBuilder A
-     *                                                                                                                               fresh,
-     *                                                                                                                               cloned
-     *                                                                                                                               builder
-     *                                                                                                                               instance
-     *                                                                                                                               containing
-     *                                                                                                                               the
-     *                                                                                                                               nested
-     *                                                                                                                               logical
-     *                                                                                                                               node.
+     *                                    fresh,
+     *                                    cloned
+     *                                    builder
+     *                                    instance
+     *                                    containing
+     *                                    the
+     *                                    nested
+     *                                    logical
+     *                                    node.
      *
      * @throws ReflectionException
      */
@@ -109,7 +109,7 @@ trait HasConditions
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
                                                            query  : $query,
-                                                           boolean: $boolean
+                                                           boolean: $boolean,
                                                        ));
 
         $clone->state = $clone->state->mergeBindings(values: $query->state->getBindings());
@@ -125,18 +125,18 @@ trait HasConditions
      * shorthand for whereIn() with the 'OR' boolean joiner.
      *
      * @param string $column The technical field name to check.
-     * @param array  $values The collection of allowed data tokens.
+     * @param array $values The collection of allowed data tokens.
      *
      * @return HasConditions|QueryBuilder A
-     *                                                                                                                               fresh,
-     *                                                                                                                               cloned
-     *                                                                                                                               builder
-     *                                                                                                                               instance
-     *                                                                                                                               with
-     *                                                                                                                               the
-     *                                                                                                                               OR
-     *                                                                                                                               membership
-     *                                                                                                                               filter.
+     *                                    fresh,
+     *                                    cloned
+     *                                    builder
+     *                                    instance
+     *                                    with
+     *                                    the
+     *                                    OR
+     *                                    membership
+     *                                    filter.
      */
     public function orWhereIn(string $column, array $values) : self
     {
@@ -150,24 +150,24 @@ trait HasConditions
      * Provide an expressive DSL for SQL "IN" and "NOT IN" logic,
      * handling bulk parameter binding automatically.
      *
-     * @param string      $column  The technical field name to check for membership.
-     * @param array       $values  The collection of allowed data tokens.
+     * @param string $column The technical field name to check for membership.
+     * @param array  $values The collection of allowed data tokens.
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
+     * @param bool   $not    Flag indicating whether to use negative (NOT IN) logic.
      *
      * @return HasConditions|QueryBuilder A
-     *                                                                                                                               fresh,
-     *                                                                                                                               cloned
-     *                                                                                                                               builder
-     *                                                                                                                               instance
-     *                                                                                                                               with
-     *                                                                                                                               the
-     *                                                                                                                               membership
-     *                                                                                                                               filter.
+     *                                    fresh,
+     *                                    cloned
+     *                                    builder
+     *                                    instance
+     *                                    with
+     *                                    the
+     *                                    membership
+     *                                    filter.
      */
-    public function whereIn(string $column, array $values, string|null $boolean = null, bool $not = false) : self
+    public function whereIn(string $column, array $values, string $boolean = null, bool $not = false) : self
     {
-        $boolean  ??= 'AND';
+        $boolean      ??= 'AND';
         $operator = $not ? 'NOT IN' : 'IN';
 
         $clone        = clone $this;
@@ -175,7 +175,7 @@ trait HasConditions
                                                            column  : $column,
                                                            operator: $operator,
                                                            value   : $values,
-                                                           boolean : $boolean
+                                                           boolean : $boolean,
                                                        ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);
@@ -190,22 +190,22 @@ trait HasConditions
      * Provide an expressive DSL for SQL "BETWEEN" and "NOT BETWEEN" logic,
      * ensuring exactly two values are provided for the range.
      *
-     * @param string      $column  The technical field name to check.
-     * @param array       $values  A pair of values defining the inclusive range.
+     * @param string $column The technical field name to check.
+     * @param array  $values A pair of values defining the inclusive range.
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
+     * @param bool   $not    Flag indicating whether to use negative (NOT BETWEEN) logic.
      *
      * @return HasConditions|QueryBuilder A
-     *                                                                                                                               fresh,
-     *                                                                                                                               cloned
-     *                                                                                                                               builder
-     *                                                                                                                               instance
-     *                                                                                                                               with
-     *                                                                                                                               the
-     *                                                                                                                               range
-     *                                                                                                                               filter.
+     *                                    fresh,
+     *                                    cloned
+     *                                    builder
+     *                                    instance
+     *                                    with
+     *                                    the
+     *                                    range
+     *                                    filter.
      */
-    public function whereBetween(string $column, array $values, string|null $boolean = null, bool $not = false) : self
+    public function whereBetween(string $column, array $values, string $boolean = null, bool $not = false) : self
     {
         $boolean ??= 'AND';
         if (count(value: $values) !== 2) {
@@ -219,7 +219,7 @@ trait HasConditions
                                                            column  : $column,
                                                            operator: $operator,
                                                            value   : $values,
-                                                           boolean : $boolean
+                                                           boolean : $boolean,
                                                        ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);

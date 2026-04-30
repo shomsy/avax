@@ -20,7 +20,7 @@ final readonly class EncryptionConfiguration
 
     public function __construct(
         private string $cipher = self::DEFAULT_CIPHER,
-        private array  $keyVersions = [],
+        private array $keyVersions = [],
         private string $currentVersion = '1',
         private string $salt = '',
     )
@@ -31,7 +31,7 @@ final readonly class EncryptionConfiguration
 
         if (! isset($this->keyVersions[$this->currentVersion])) {
             throw new InvalidArgumentException(
-                sprintf('Current key version "%s" not found in key versions', $this->currentVersion)
+                sprintf('Current key version "%s" not found in key versions', $this->currentVersion),
             );
         }
     }

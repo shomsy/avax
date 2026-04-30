@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\CLI\Console\System\Capabilities\Generators;
 
 use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
+use Override;
 
 /**
  * Generates entity class stubs.
@@ -15,16 +16,17 @@ class EntityGenerator extends CodeGenerator
      * Generate an entity class file.
      *
      * @param string $name Entity name or table name (e.g. "User" or "users")
-     * @param array  $data Additional data (e.g. ['fields' => [['name' => 'id', 'type' => 'int'], ...]])
+     * @param array $data Additional data (e.g. ['fields' => [['name' => 'id', 'type' => 'int'], ...]])
      *
      * @return string The generated file path
      */
+    #[Override]
     public function generate(string $name, array $data = []) : string
     {
         $className = Str::studly($name);
 
         // Remove "Entity" suffix if present, then add it back
-        $className = preg_replace('/Entity$/', '', $className) ?: $className;
+        $className = ! in_array(preg_replace('/Entity$/', '', $className), ['', '0'], true) && preg_replace('/Entity$/', '', $className) !== [] ? preg_replace('/Entity$/', '', $className) : $className;
         $className .= 'Entity';
 
         $subDir    = $data['subDir'] ?? 'Entities';
@@ -45,7 +47,7 @@ class EntityGenerator extends CodeGenerator
      */
     protected function buildStub(string $className, string $namespace, string $tableName, array $fields) : string
     {
-        if (empty($fields)) {
+        if ($fields === []) {
             $fields = [
                 ['name' => 'id', 'type' => 'int'],
                 ['name' => 'createdAt', 'type' => 'DateTimeImmutable'],

@@ -14,7 +14,7 @@ final readonly class ManyToOne
      */
     public function __construct(
         public string $targetEntity,
-        public array  $cascade = [],
-        public bool   $lazy = true
+        public array $cascade = [],
+        public bool  $lazy = true,
     ) {}
 }

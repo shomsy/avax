@@ -22,24 +22,17 @@ final class ConsistentHashRing
     private array $physicalNodes = [];
 
     /**
-     * @param int $virtualNodesPerWeightUnit Number of virtual nodes per weight unit (default 150)
-     */
-    public function __construct(
-        private readonly int $virtualNodesPerWeightUnit = 150
-    ) {}
-
-    /**
      * Add a cache node to the hash ring.
      */
-    public function addNode(CacheNode $node) : self
+    public function addNode(CacheNode $cacheNode) : self
     {
-        $this->physicalNodes[$node->id] = $node;
+        $this->physicalNodes[$cacheNode->id] = $cacheNode;
 
-        $virtualNodeCount = $node->virtualNodeCount();
+        $virtualNodeCount = $cacheNode->virtualNodeCount();
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash = $this->hash($node->id . '#' . $i);
-            $this->ring[$hash] = $node;
+            $hash              = $this->hash($cacheNode->id . '#' . $i);
+            $this->ring[$hash] = $cacheNode;
         }
 
         ksort($this->ring);
@@ -76,7 +69,7 @@ final class ConsistentHashRing
      */
     public function getNode(string $key) : CacheNode
     {
-        if (empty($this->ring)) {
+        if ($this->ring === []) {
             throw new RuntimeException('Cannot get node: hash ring is empty');
         }
 
@@ -89,13 +82,13 @@ final class ConsistentHashRing
         }
 
         // Wrap around to the first node
-        $firstNode = reset($this->ring);
+        $cacheNode = reset($this->ring);
 
-        if ($firstNode === false) {
+        if ($cacheNode === false) {
             throw new RuntimeException('Cannot get node: hash ring is empty');
         }
 
-        return $firstNode;
+        return $cacheNode;
     }
 
     /**
@@ -108,7 +101,7 @@ final class ConsistentHashRing
      */
     public function getNodes(string $key, int $count) : array
     {
-        if (empty($this->ring)) {
+        if ($this->ring === []) {
             throw new RuntimeException('Cannot get nodes: hash ring is empty');
         }
 
@@ -119,8 +112,8 @@ final class ConsistentHashRing
                 sprintf(
                     'Cannot get %d nodes: only %d physical nodes available',
                     $count,
-                    $physicalNodeCount
-                )
+                    $physicalNodeCount,
+                ),
             );
         }
 
@@ -130,7 +123,6 @@ final class ConsistentHashRing
 
         // Walk the ring forward from the key's hash position
         $ringKeys   = array_keys($this->ring);
-        $ringValues = array_values($this->ring);
         $ringLength = count($ringKeys);
 
         // Find starting position
@@ -138,8 +130,10 @@ final class ConsistentHashRing
         foreach ($ringKeys as $index => $ringHash) {
             if ($hash <= $ringHash) {
                 $startIndex = $index;
+
                 break;
             }
+
             $startIndex = $index;
         }
 
@@ -198,7 +192,7 @@ final class ConsistentHashRing
      */
     public function isEmpty() : bool
     {
-        return empty($this->physicalNodes);
+        return $this->physicalNodes === [];
     }
 
     /**
@@ -211,8 +205,7 @@ final class ConsistentHashRing
         // Additional mixing to improve distribution
         $mixed = $crc ^ ($crc >> 16);
         $mixed = ($mixed * 0x45d9f3b) & 0xFFFFFFFF;
-        $mixed = ($mixed ^ ($mixed >> 16)) & 0xFFFFFFFF;
 
-        return (int) $mixed;
+        return ($mixed ^ ($mixed >> 16)) & 0xFFFFFFFF;
     }
 }

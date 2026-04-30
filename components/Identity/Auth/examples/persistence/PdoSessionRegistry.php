@@ -51,7 +51,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
             revokedAt        : isset($row['revoked_at']) && $row['revoked_at'] !== null
                                    ? new DateTimeImmutable(datetime: (string) $row['revoked_at'])
                                    : null,
-            revokeReason     : isset($row['revoke_reason']) ? (string) $row['revoke_reason'] : null
+            revokeReason     : isset($row['revoke_reason']) ? (string) $row['revoke_reason'] : null,
         );
     }
 
@@ -78,7 +78,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
                 ip_created = COALESCE(EXCLUDED.ip_created, auth_sessions.ip_created),
                 user_agent_created = COALESCE(EXCLUDED.user_agent_created, auth_sessions.user_agent_created),
                 revoked_at = EXCLUDED.revoked_at,
-                revoke_reason = EXCLUDED.revoke_reason'
+                revoke_reason = EXCLUDED.revoke_reason',
         );
 
         $statement->execute(params: $this->mapRecord(record: $record));
@@ -107,7 +107,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
-            query: 'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC'
+            query: 'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC',
         );
         $statement->execute(params: ['user_id' => $userId->value]);
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
@@ -115,8 +115,9 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         return array_map(
         /**
          * @throws DateMalformedStringException
-         */ callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
-            array   : $rows
+         */
+            callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+            array   : $rows,
         );
     }
 
@@ -124,7 +125,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
-            query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id'
+            query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
         );
         $statement->execute(params: [
                                         'session_id'    => $sessionId,
@@ -137,7 +138,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
-            query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id'
+            query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
         );
         $statement->execute(params: [
                                         'user_id'       => $userId->value,

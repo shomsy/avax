@@ -9,19 +9,11 @@ namespace Avax\Components\Application\Text;
  */
 final readonly class MatchResult
 {
-    public array $matches;
-    public bool  $matched;
-
     /**
      * @param array<int|string, string> $matches
      */
-    public function __construct(
-        bool  $matched,
-        array $matches
-    )
+    public function __construct(public bool $matched, public array $matches)
     {
-        $this->matched = $matched;
-        $this->matches = $matches;
     }
 
     /**
@@ -37,7 +29,7 @@ final readonly class MatchResult
      */
     public function namedGroups() : array
     {
-        return array_filter(array: $this->matches, callback: static function ($key) { return ! is_int(value: $key); }, mode: ARRAY_FILTER_USE_KEY);
+        return array_filter(array: $this->matches, callback: static fn ($key) : bool => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
     }
 
     /**

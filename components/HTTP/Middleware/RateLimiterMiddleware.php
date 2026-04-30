@@ -14,10 +14,10 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private RateLimiterInterface $limiter,
-        private object               $responseFactory,
-        private string               $keySource = 'ip',
-        private int                  $maxAttempts = 60,
-        private int                  $decaySeconds = 60
+        private object $responseFactory,
+        private string $keySource = 'ip',
+        private int    $maxAttempts = 60,
+        private int    $decaySeconds = 60,
     ) {}
 
     public function handle(RequestInterface $request, callable $next) : ResponseInterface
@@ -34,18 +34,33 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                 return $this->responseFactory->rateLimited($remaining);
             }
 
-            return new class($remaining) implements ResponseInterface {
+            return new class ($remaining) implements ResponseInterface {
                 public function __construct(private int $retryAfter) {}
 
-                public function getStatusCode() : int { return 429; }
+                public function getStatusCode() : int
+                {
+                    return 429;
+                }
 
-                public function withStatus(int $code, string $reasonPhrase = '') : self { return $this; }
+                public function withStatus(int $code, string $reasonPhrase = '') : self
+                {
+                    return $this;
+                }
 
-                public function getReasonPhrase() : string { return 'Too Many Requests'; }
+                public function getReasonPhrase() : string
+                {
+                    return 'Too Many Requests';
+                }
 
-                public function getProtocolVersion() : string { return '1.1'; }
+                public function getProtocolVersion() : string
+                {
+                    return '1.1';
+                }
 
-                public function withProtocolVersion(string $version) : self { return $this; }
+                public function withProtocolVersion(string $version) : self
+                {
+                    return $this;
+                }
 
                 public function getHeaders() : array
                 {
@@ -55,21 +70,45 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                     ];
                 }
 
-                public function hasHeader(string $name) : bool { return isset($this->getHeaders()[$name]); }
+                public function hasHeader(string $name) : bool
+                {
+                    return isset($this->getHeaders()[$name]);
+                }
 
-                public function getHeader(string $name) : array { return $this->getHeaders()[$name] ?? []; }
+                public function getHeader(string $name) : array
+                {
+                    return $this->getHeaders()[$name] ?? [];
+                }
 
-                public function getHeaderLine(string $name) : string { return implode(', ', $this->getHeader($name)); }
+                public function getHeaderLine(string $name) : string
+                {
+                    return implode(', ', $this->getHeader($name));
+                }
 
-                public function withHeader(string $name, $value) : self { return $this; }
+                public function withHeader(string $name, $value) : self
+                {
+                    return $this;
+                }
 
-                public function withAddedHeader(string $name, $value) : self { return $this; }
+                public function withAddedHeader(string $name, $value) : self
+                {
+                    return $this;
+                }
 
-                public function withoutHeader(string $name) : self { return $this; }
+                public function withoutHeader(string $name) : self
+                {
+                    return $this;
+                }
 
-                public function getBody() : mixed { return json_encode(['message' => 'Too Many Requests', 'retry_after' => $this->retryAfter]); }
+                public function getBody() : mixed
+                {
+                    return json_encode(['message' => 'Too Many Requests', 'retry_after' => $this->retryAfter]);
+                }
 
-                public function withBody(mixed $body) : self { return $this; }
+                public function withBody(mixed $body) : self
+                {
+                    return $this;
+                }
             };
         }
 

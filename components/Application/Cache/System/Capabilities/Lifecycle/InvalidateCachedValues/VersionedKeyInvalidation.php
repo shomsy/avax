@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues;
 
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheVersion;
+use Override;
 
 final class VersionedKeyInvalidation implements InvalidationStrategy
 {
-    private CacheVersion|null $currentVersion = null;
+    private CacheVersion|null $cacheVersion = null;
 
     public function __construct(
-        private CacheVersion $initialVersion,
-        CacheVersion|null    $currentVersion = null
+        CacheVersion  $initialVersion,
+        ?CacheVersion $currentVersion = null,
     )
     {
-        $this->currentVersion = $currentVersion ?? $initialVersion;
+        $this->cacheVersion = $currentVersion ?? $initialVersion;
     }
 
+    #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
     {
         if ($reason === 'version_change') {
@@ -26,15 +28,10 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
 
         $keyVersion = $context['key_version'] ?? null;
 
-        if ($keyVersion instanceof CacheVersion && $this->currentVersion instanceof CacheVersion) {
-            if (! $keyVersion->isCompatibleWith(other: $this->currentVersion)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $keyVersion instanceof CacheVersion && $this->cacheVersion instanceof CacheVersion && ! $keyVersion->isCompatibleWith(other: $this->cacheVersion);
     }
 
+    #[Override]
     public function strategyName() : string
     {
         return 'versioned_key';
@@ -43,13 +40,13 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
     public function bumpVersion() : self
     {
         $new                 = clone $this;
-        $new->currentVersion = $this->currentVersion->incrementMajor();
+        $new->cacheVersion = $this->cacheVersion->incrementMajor();
 
         return $new;
     }
 
     public function getCurrentVersion() : CacheVersion|null
     {
-        return $this->currentVersion;
+        return $this->cacheVersion;
     }
 }

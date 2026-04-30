@@ -27,16 +27,17 @@ final readonly class StartMfaEnrollment
     private string $issuer;
 
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private TotpInterface                               $totp,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        string|null                                         $issuer = null,
-        private int                                         $expiresAfterSeconds = 900
+        #[SensitiveParameter]
+        private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface     $mfaStore,
+        private TotpInterface         $totp,
+        private AuditLogInterface     $auditLog,
+        private Clock                 $clock,
+        string                        $issuer = null,
+        private int                   $expiresAfterSeconds = 900,
     )
     {
-        $issuer       ??= 'Avax Auth';
+        $issuer ??= 'Avax Auth';
         $this->issuer = $issuer;
     }
 
@@ -67,7 +68,7 @@ final readonly class StartMfaEnrollment
             issuer      : $this->issuer,
             secret      : $this->totp->generateSecret(),
             startedAt   : $startedAt,
-            expiresAt   : $startedAt->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
+            expiresAt   : $startedAt->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
         );
         $this->mfaStore->startEnrollment(record: $record);
         $this->auditLog->record(event: new AuditEvent(
@@ -76,7 +77,7 @@ final readonly class StartMfaEnrollment
                                            context   : [
                                                            'user_id' => $user->id,
                                                            'method'  => $record->method->value,
-                                                       ]
+                                                       ],
                                        ));
 
         return new MfaEnrollment(
@@ -87,7 +88,7 @@ final readonly class StartMfaEnrollment
             secret      : $record->secret,
             otpauthUri  : $this->totp->provisioningUri(issuer: $record->issuer, accountLabel: $record->accountLabel, secret: $record->secret),
             startedAt   : $record->startedAt,
-            expiresAt   : $record->expiresAt
+            expiresAt   : $record->expiresAt,
         );
     }
 }

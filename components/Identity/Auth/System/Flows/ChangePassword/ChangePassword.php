@@ -30,17 +30,22 @@ use SensitiveParameter;
 final readonly class ChangePassword
 {
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private PasswordHasher                  $passwordHasher,
-        #[SensitiveParameter] private IdentityInterface               $identity,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private LoginRateLimit|null                                   $rateLimit = null,
-        private RequireFreshMfa|null                                  $requireFreshMfa = null
+        private UserSourceInterface             $userSource,
+        #[SensitiveParameter]
+        private PasswordHasher                  $passwordHasher,
+        #[SensitiveParameter]
+        private IdentityInterface               $identity,
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private LoginRateLimit|null             $rateLimit = null,
+        private RequireFreshMfa|null            $requireFreshMfa = null,
     ) {}
 
     /**
@@ -94,7 +99,7 @@ final readonly class ChangePassword
                                            occurredAt: $this->clock->now(),
                                            context   : [
                                                            'user_id' => $user->getId()->value,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

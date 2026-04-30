@@ -16,8 +16,9 @@ use SensitiveParameter;
 final readonly class Tenancy
 {
     public function __construct(
-        private Tenants                        $tenants,
-        #[SensitiveParameter] private Security $security
+        private Tenants  $tenants,
+        #[SensitiveParameter]
+        private Security $security,
     ) {}
 
     public function tenants() : Tenants

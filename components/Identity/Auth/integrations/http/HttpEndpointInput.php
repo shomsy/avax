@@ -28,19 +28,20 @@ final readonly class HttpEndpointInput
      * @param array<string, mixed> $server
      */
     public function __construct(
-        public string                    $method,
-        public string                    $path,
-        #[SensitiveParameter] array|null $headers = null,
-        array|null                       $query = null,
-        array|null                       $routeParameters = null,
-        array|null                       $body = null,
-        public array                     $server = []
+        public string $method,
+        public string $path,
+        #[SensitiveParameter]
+        array         $headers = null,
+        array         $query = null,
+        array         $routeParameters = null,
+        array         $body = null,
+        public array  $server = [],
     )
     {
-        $headers               ??= [];
-        $query                 ??= [];
-        $routeParameters       ??= [];
-        $body                  ??= [];
+        $headers         ??= [];
+        $query           ??= [];
+        $routeParameters ??= [];
+        $body            ??= [];
         $this->headers         = $headers;
         $this->query           = $query;
         $this->routeParameters = $routeParameters;

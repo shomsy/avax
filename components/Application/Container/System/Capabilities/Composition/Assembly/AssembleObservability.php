@@ -14,18 +14,18 @@ use Avax\Components\Application\Container\System\Foundation\Time\Clock;
  */
 final class AssembleObservability
 {
-    public function assemble(CreateContainerConfig $config) : ObservabilityAssembly
+    public function assemble(CreateContainerConfig $createContainerConfig): ObservabilityAssembly
     {
-        $clock   = new Clock;
-        $metrics = new ResolutionMetrics;
+        $clock   = new Clock();
+        $resolutionMetrics = new ResolutionMetrics();
 
         return new ObservabilityAssembly(
             clock   : $clock,
-            metrics : $metrics,
+            metrics : $resolutionMetrics,
             timeline: new ResolutionTimeline(
-                          clock  : $clock,
-                          enabled: $config->usesDetailedDiagnostics()
-                      )
+                clock  : $clock,
+                enabled: $createContainerConfig->usesDetailedDiagnostics(),
+            ),
         );
     }
 }

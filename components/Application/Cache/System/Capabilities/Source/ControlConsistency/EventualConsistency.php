@@ -15,7 +15,7 @@ enum CacheConsistencyLevel: string
 final readonly class EventualConsistency
 {
     public function __construct(
-        private int $maxConsistencyWindowMs = 1000
+        private int $maxConsistencyWindowMs = 1000,
     ) {}
 
     public function isWithinWindow(int $operationTimestamp, int $currentTimestamp) : bool

@@ -31,20 +31,17 @@ use Throwable;
  */
 class ConnectionFailure extends DatabaseException
 {
-    public readonly string $name;
-
     /**
-     * @param string         $name     The nickname of the connection that failed.
-     * @param string         $message  The detailed explanation of the failure.
-     * @param Throwable|null $previous The raw technical error from the network or driver.
+     * @param string         $name      The nickname of the connection that failed.
+     * @param string         $message   The detailed explanation of the failure.
+     * @param Throwable|null $throwable The raw technical error from the network or driver.
      */
     public function __construct(
-        string         $name,
-        string         $message = '',
-        Throwable|null $previous = null
+        public readonly string $name,
+        string                 $message = '',
+        ?Throwable             $throwable = null,
     )
     {
-        $this->name = $name;
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 }

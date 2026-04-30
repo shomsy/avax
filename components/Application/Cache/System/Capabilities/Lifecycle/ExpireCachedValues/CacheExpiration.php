@@ -12,11 +12,11 @@ interface CacheExpiration
 {
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
-        Clock                 $clock
+        Clock $clock,
     ) : Timestamp|null;
 
     public function isExpired(
         Timestamp|null $expiresAt,
-        Clock          $clock
+        Clock $clock,
     ) : bool;
 }

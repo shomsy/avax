@@ -6,10 +6,10 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 
 use Exception;
 
-final class RetryablePool
+final readonly class RetryablePool
 {
     public function __construct(
-        private BaseConnectionPool $pool,
+        private BaseConnectionPool $baseConnectionPool,
         private int                $maxRetries = 3,
     ) {}
 
@@ -22,7 +22,7 @@ final class RetryablePool
 
         while ( $attempts < $this->maxRetries ) {
             try {
-                return $operation($this->pool);
+                return $operation($this->baseConnectionPool);
             } catch (Exception $exception) {
                 $attempts++;
                 if ($attempts >= $this->maxRetries) {

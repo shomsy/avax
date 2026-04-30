@@ -17,10 +17,10 @@ final readonly class NPlusOneQueryReport
      */
     public function __construct(
         public QueryFingerprint $pattern,
-        public int              $count,
-        public float            $timeSpanMs,
-        public array            $sampleQueries = [],
-        public string|null      $suggestion = null,
+        public int         $count,
+        public float       $timeSpanMs,
+        public array       $sampleQueries = [],
+        public string|null $suggestion = null,
     ) {}
 
     /**

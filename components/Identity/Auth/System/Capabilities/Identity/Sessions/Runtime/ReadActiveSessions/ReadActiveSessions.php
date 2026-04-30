@@ -20,9 +20,11 @@ use SensitiveParameter;
 final readonly class ReadActiveSessions
 {
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private Clock                                               $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
+        #[SensitiveParameter]
+        private CurrentAuthentication         $currentAuthentication,
+        private Clock                         $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null $sessionRegistry = null,
     ) {}
 
     /**
@@ -69,7 +71,7 @@ final readonly class ReadActiveSessions
             userAgent        : $record->userAgentCreated,
             current          : $record->sessionId === $currentSessionId,
             revokedAt        : $record->revokedAt,
-            revokeReason     : $record->revokeReason
+            revokeReason     : $record->revokeReason,
         );
     }
 }

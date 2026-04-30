@@ -9,12 +9,12 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class WriteValueToSource
 {
     public function __construct(
-        private CacheSource $source
+        private CacheSource $cacheSource,
     ) {}
 
-    public function write(CacheKey $key, mixed $value) : void
+    public function write(CacheKey $cacheKey, mixed $value) : void
     {
-        $sourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
-        $this->source->write(key: $sourceKey, value: $value);
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $this->cacheSource->write(key: $cacheSourceKey, value: $value);
     }
 }

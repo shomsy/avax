@@ -37,7 +37,7 @@ final class GlobalErrorHandler
     public function __construct(
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
         private readonly ShutdownErrorHandler $shutdownErrorHandler,
-        private readonly Logging              $logger,
+        private readonly Logging $logger,
     ) {}
 
     /**
@@ -147,7 +147,7 @@ final class GlobalErrorHandler
             $this->logger->critical(
                 'Error handler failed: ' . $handlerException->getMessage(),
                 [
-                    'original_error'    => [
+                    'original_error' => [
                         'severity' => $severity,
                         'message'  => $message,
                         'file'     => $file,

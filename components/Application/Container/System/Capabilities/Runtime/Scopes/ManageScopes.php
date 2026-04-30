@@ -6,49 +6,39 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\ServicePool;
+use Override;
 
 /**
  * Owns shared and scoped instance lifecycle operations.
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    private DisposeInstances       $disposer;
-    private ResolutionMetrics|null $metrics;
-    private ServicePool            $pool;
-    private ScopeStore             $store;
-
-    public function __construct(
-        ScopeStore             $store,
-        ServicePool            $pool,
-        DisposeInstances|null  $disposer = null,
-        ResolutionMetrics|null $metrics = null
-    )
+    public function __construct(private ScopeStore $scopeStore, private ServicePool $servicePool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
     {
-        $this->store    = $store;
-        $this->pool     = $pool;
-        $this->metrics  = $metrics;
-        $this->disposer = $disposer ?? new DisposeInstances;
     }
 
     /**
      * Stores one shared instance.
      */
+    #[Override]
     public function instance(string $abstract, mixed $instance) : void
     {
-        $this->pool->set(abstract: $abstract, instance: $instance);
+        $this->servicePool->set(abstract: $abstract, instance: $instance);
     }
 
     /**
      * Stores one scoped instance.
      */
+    #[Override]
     public function set(string $abstract, mixed $instance) : void
     {
-        $this->store->set(abstract: $abstract, instance: $instance);
+        $this->scopeStore->set(abstract: $abstract, instance: $instance);
     }
 
     /**
      * Runs one callback inside a temporary active scope.
      */
+    #[Override]
     public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = '') : mixed
     {
         $this->openScope(kind: $kind, scopeId: $scopeId);
@@ -63,86 +53,89 @@ final readonly class ManageScopes implements ScopeInterface
     /**
      * Opens one new scope layer.
      */
+    #[Override]
     public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
     {
-        $this->store->open(kind: $kind, scopeId: $scopeId);
-        $this->metrics?->increment(name: 'container_scope_open_total');
+        $this->scopeStore->open(kind: $kind, scopeId: $scopeId);
+        $this->resolutionMetrics?->increment(name: 'container_scope_open_total');
     }
 
     /**
      * Closes the current scope layer.
      */
-    public function closeScope(string|null $kind = null) : void
+    #[Override]
+    public function closeScope(?string $kind = null) : void
     {
-        $frame = $this->store->close(kind: $kind);
+        $frame = $this->scopeStore->close(kind: $kind);
         foreach ($frame['pooled'] as $serviceId => $options) {
             $instance = $frame['items'][$serviceId] ?? null;
             unset($frame['items'][$serviceId], $frame['disposable'][$serviceId]);
 
-            $released = $this->pool->releasePooled(
+            $released = $this->servicePool->releasePooled(
                 abstract        : $serviceId,
                 instance        : $instance,
                 maxSize         : $options['maxSize'],
                 resetBeforeReuse: $options['resetBeforeReuse'],
-                disposable      : $options['disposable']
+                disposable      : $options['disposable'],
             );
 
             if (! ($released['returned'] ?? false)) {
-                $this->disposer?->dispose(
+                $this->disposeInstances?->dispose(
                     instance  : $instance,
-                    disposable: $options['disposable'] || ($released['overflow'] ?? false) || ($released['unsafe'] ?? false)
+                    disposable: $options['disposable'] || ($released['overflow'] ?? false) || ($released['unsafe'] ?? false),
                 );
             }
         }
 
-        $this->disposer?->disposeMany(
+        $this->disposeInstances?->disposeMany(
             instances : $frame['items'],
-            disposable: $frame['disposable']
+            disposable: $frame['disposable'],
         );
-        $this->metrics?->increment(name: 'container_scope_close_total');
+        $this->resolutionMetrics?->increment(name: 'container_scope_close_total');
     }
 
     /**
      * Clears all shared and scoped runtime state.
      */
+    #[Override]
     public function terminate() : void
     {
-        $shared = $this->pool->drain();
-        $this->disposer?->disposeMany(instances: $shared['items'], disposable: $shared['disposable']);
+        $shared = $this->servicePool->drain();
+        $this->disposeInstances?->disposeMany(instances: $shared['items'], disposable: $shared['disposable']);
 
-        $pooled = $this->pool->drainPooled();
+        $pooled = $this->servicePool->drainPooled();
         foreach ($pooled['items'] as $serviceId => $bucket) {
             $options = $pooled['options'][$serviceId] ?? [
                 'disposable' => false,
             ];
 
             foreach ($bucket as $instance) {
-                $this->disposer?->dispose(
+                $this->disposeInstances?->dispose(
                     instance  : $instance,
-                    disposable: (bool) ($options['disposable'] ?? false)
+                    disposable: (bool) ($options['disposable'] ?? false),
                 );
             }
         }
 
-        $frames = $this->store->terminate();
+        $frames = $this->scopeStore->terminate();
         foreach (array_reverse(array: $frames) as $frame) {
             foreach ($frame['pooled'] as $serviceId => $options) {
                 $instance = $frame['items'][$serviceId] ?? null;
                 unset($frame['items'][$serviceId], $frame['disposable'][$serviceId]);
 
-                $this->disposer?->dispose(
+                $this->disposeInstances?->dispose(
                     instance  : $instance,
-                    disposable: (bool) ($options['disposable'] ?? false)
+                    disposable: (bool) ($options['disposable'] ?? false),
                 );
             }
 
-            $this->disposer?->disposeMany(
+            $this->disposeInstances?->disposeMany(
                 instances : $frame['items'],
-                disposable: $frame['disposable']
+                disposable: $frame['disposable'],
             );
         }
 
-        $this->metrics?->increment(name: 'container_scope_terminate_total');
+        $this->resolutionMetrics?->increment(name: 'container_scope_terminate_total');
     }
 
     /**
@@ -157,110 +150,116 @@ final readonly class ManageScopes implements ScopeInterface
      */
     public function snapshot() : array
     {
-        $snapshot = $this->store->snapshot();
+        $snapshot = $this->scopeStore->snapshot();
 
         return [
-            'shared'          => $this->pool->snapshot(),
+            'shared'          => $this->servicePool->snapshot(),
             'scoped'          => $snapshot['scoped'],
             'pooled'          => $snapshot['pooled'],
-            'pooledAvailable' => $this->pool->pooledSnapshot(),
-            'pooledStats'     => $this->pool->pooledStats(),
+            'pooledAvailable' => $this->servicePool->pooledSnapshot(),
+            'pooledStats'     => $this->servicePool->pooledStats(),
             'frames'          => $snapshot['frames'],
         ];
     }
 
     public function hasShared(string $abstract) : bool
     {
-        return $this->pool->has(abstract: $abstract);
+        return $this->servicePool->has(abstract: $abstract);
     }
 
     /**
      * Returns whether one instance is available in shared or scoped storage.
      */
+    #[Override]
     public function has(string $abstract) : bool
     {
-        return $this->store->has(abstract: $abstract) || $this->pool->has(abstract: $abstract);
+        if ($this->scopeStore->has(abstract: $abstract)) {
+            return true;
+        }
+
+        return (bool) $this->servicePool->has(abstract: $abstract);
     }
 
     public function getShared(string $abstract) : mixed
     {
-        return $this->pool->get(abstract: $abstract);
+        return $this->servicePool->get(abstract: $abstract);
     }
 
     /**
      * Reads one shared or scoped instance.
      */
+    #[Override]
     public function get(string $abstract) : mixed
     {
-        if ($this->store->has(abstract: $abstract)) {
-            return $this->store->get(abstract: $abstract);
+        if ($this->scopeStore->has(abstract: $abstract)) {
+            return $this->scopeStore->get(abstract: $abstract);
         }
 
-        return $this->pool->get(abstract: $abstract);
+        return $this->servicePool->get(abstract: $abstract);
     }
 
     public function hasScoped(string $abstract, string $kind = ScopeKind::ANY) : bool
     {
-        return $this->store->hasFor(abstract: $abstract, kind: $kind);
+        return $this->scopeStore->hasFor(abstract: $abstract, kind: $kind);
     }
 
     public function getScoped(string $abstract, string $kind = ScopeKind::ANY) : mixed
     {
-        return $this->store->getFor(abstract: $abstract, kind: $kind);
+        return $this->scopeStore->getFor(abstract: $abstract, kind: $kind);
     }
 
     public function setScoped(
-        string      $abstract,
-        mixed       $instance,
-        string|null $kind = null,
-        bool        $disposable = false
+        string  $abstract,
+        mixed   $instance,
+        ?string $kind = null,
+        bool    $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
-        $this->store->setFor(
+        $this->scopeStore->setFor(
             abstract  : $abstract,
             instance  : $instance,
             kind      : $kind,
-            disposable: $disposable
+            disposable: $disposable,
         );
     }
 
     public function setShared(string $abstract, mixed $instance, bool $disposable = false) : void
     {
-        $this->pool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
+        $this->servicePool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
     }
 
     /**
      * @return array{hit: bool, instance: mixed}
      */
     public function checkoutPooled(
-        string    $abstract,
-        string    $kind,
-        int       $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool      $disposable = false
+        string $abstract,
+        string $kind,
+        int    $maxSize,
+        ?bool  $resetBeforeReuse = null,
+        bool   $disposable = false,
     ) : array
     {
         $resetBeforeReuse ??= true;
-        if ($this->store->hasPooledFor(abstract: $abstract, kind: $kind)) {
+        if ($this->scopeStore->hasPooledFor(abstract: $abstract, kind: $kind)) {
             return [
                 'hit'      => true,
-                'instance' => $this->store->getFor(abstract: $abstract, kind: $kind),
+                'instance' => $this->scopeStore->getFor(abstract: $abstract, kind: $kind),
             ];
         }
 
-        $checkedOut = $this->pool->checkoutPooled(abstract: $abstract);
+        $checkedOut = $this->servicePool->checkoutPooled(abstract: $abstract);
         if (! ($checkedOut['hit'] ?? false)) {
             return $checkedOut;
         }
 
-        $this->store->setPooledFor(
+        $this->scopeStore->setPooledFor(
             abstract        : $abstract,
             instance        : $checkedOut['instance'],
             kind            : $kind,
             maxSize         : $maxSize,
             resetBeforeReuse: $resetBeforeReuse,
-            disposable      : $disposable
+            disposable      : $disposable,
         );
 
         return $checkedOut;
@@ -268,36 +267,36 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function hasPooled(string $abstract, string $kind) : bool
     {
-        return $this->store->hasPooledFor(abstract: $abstract, kind: $kind);
+        return $this->scopeStore->hasPooledFor(abstract: $abstract, kind: $kind);
     }
 
     public function getPooled(string $abstract, string $kind) : mixed
     {
-        return $this->store->getFor(abstract: $abstract, kind: $kind);
+        return $this->scopeStore->getFor(abstract: $abstract, kind: $kind);
     }
 
     public function setPooled(
-        string    $abstract,
-        mixed     $instance,
-        string    $kind,
-        int       $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool      $disposable = false
+        string $abstract,
+        mixed  $instance,
+        string $kind,
+        int    $maxSize,
+        ?bool  $resetBeforeReuse = null,
+        bool   $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;
-        $this->store->setPooledFor(
+        $this->scopeStore->setPooledFor(
             abstract        : $abstract,
             instance        : $instance,
             kind            : $kind,
             maxSize         : $maxSize,
             resetBeforeReuse: $resetBeforeReuse,
-            disposable      : $disposable
+            disposable      : $disposable,
         );
     }
 
     public function hasActiveScope(string $kind = ScopeKind::ANY) : bool
     {
-        return $this->store->hasActive(kind: $kind);
+        return $this->scopeStore->hasActive(kind: $kind);
     }
 }

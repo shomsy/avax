@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 final class ResolveGreeter
 {
@@ -14,16 +14,12 @@ final class ResolveGreeter
 
 final class NeedsResolveGreeter
 {
-    public ResolveGreeter $greeter;
-
-    public function __construct(ResolveGreeter $greeter) { $this->greeter = $greeter; }
+    public function __construct(public ResolveGreeter $resolveGreeter) {}
 }
 
 final class ResolveWithParameters
 {
-    public string $name;
-
-    public function __construct(string $name) { $this->name = $name; }
+    public function __construct(public string $name) {}
 }
 
 $container = makeTestContainer();

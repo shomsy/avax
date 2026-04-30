@@ -15,20 +15,20 @@ final readonly class RunSagaStep
 {
     public function __construct(
         private StoreSagaState $storeSagaState,
-        private InspectSaga    $inspectSaga
+        private InspectSaga $inspectSaga,
     ) {}
 
     public function execute(
-        SagaInstance   $instance,
+        SagaInstance $instance,
         SagaDefinition $definition,
-        callable       $stepRunner
+        callable     $stepRunner,
     ) : SagaStepResult
     {
         $currentStep = $instance->currentStepName;
         if ($currentStep === null) {
             return SagaStepResult::failure(
                 stepName: 'no_step',
-                error   : 'No current step to execute.'
+                error   : 'No current step to execute.',
             );
         }
 
@@ -36,7 +36,7 @@ final readonly class RunSagaStep
         if ($stepDef === null) {
             return SagaStepResult::failure(
                 stepName: $currentStep,
-                error   : sprintf('Step %s not found in definition.', $currentStep)
+                error   : sprintf('Step %s not found in definition.', $currentStep),
             );
         }
 
@@ -53,7 +53,7 @@ final readonly class RunSagaStep
                     stepName  : $currentStep,
                     output    : is_array($output) ? $output : ['result' => $output],
                     attempt   : $attempt,
-                    durationMs: $duration
+                    durationMs: $duration,
                 );
             } catch (Throwable $e) {
                 if (! $policy->canRetry(currentAttempt: $attempt)) {
@@ -63,7 +63,7 @@ final readonly class RunSagaStep
                         stepName  : $currentStep,
                         error     : $e->getMessage(),
                         attempt   : $attempt,
-                        durationMs: $duration
+                        durationMs: $duration,
                     );
                 }
 
@@ -78,14 +78,14 @@ final readonly class RunSagaStep
             stepName  : $currentStep,
             error     : '_MAX_RETRIES_EXCEEDED',
             attempt   : $attempt,
-            durationMs: $duration
+            durationMs: $duration,
         );
     }
 
     public function scheduleNext(
         SagaInstance   $currentInstance,
         SagaStepResult $result,
-        SagaDefinition $definition
+        SagaDefinition $definition,
     ) : SagaInstance
     {
         if (! $result->success) {
@@ -100,7 +100,7 @@ final readonly class RunSagaStep
         return $currentInstance->advanceTo(
             stepName : $nextStep->name,
             stepIndex: $currentInstance->currentStepIndex + 1,
-            result   : $result->toArray()
+            result   : $result->toArray(),
         );
     }
 

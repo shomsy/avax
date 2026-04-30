@@ -52,7 +52,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
     {
         return array_values(array: array_filter(
                                        array   : $this->members,
-                                       callback: static fn (TenantMember $member) : bool => $member->tenantId === $tenantId
+                                       callback: static fn (TenantMember $member) : bool => $member->tenantId === $tenantId,
                                    ));
     }
 
@@ -105,7 +105,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
             invitedBy       : $invite->invitedBy,
             createdAt       : $invite->createdAt,
             acceptedAt      : $acceptedAt,
-            acceptedByUserId: $acceptedByUserId
+            acceptedByUserId: $acceptedByUserId,
         );
     }
 }

@@ -30,7 +30,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         return new EmailChangeChallenge(
             dispatched: true,
             token     : $token,
-            expiresAt : $expiresAt
+            expiresAt : $expiresAt,
         );
     }
 
@@ -50,7 +50,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         return new EmailChangeRecord(
             userId   : new UserId(value: $record['user_id']),
             newEmail : $record['new_email'],
-            expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at'])
+            expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at']),
         );
     }
 }

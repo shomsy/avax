@@ -23,7 +23,7 @@ final readonly class RecordSagaStarted
                                                        instanceId   : $instance->id,
                                                        type         : 'saga.started',
                                                        payload      : ['definition' => $instance->definitionName, 'current_step' => $instance->currentStepName],
-                                                       correlationId: $instance->correlationId->value
+                                                       correlationId: $instance->correlationId->value,
                                                    ));
     }
 }

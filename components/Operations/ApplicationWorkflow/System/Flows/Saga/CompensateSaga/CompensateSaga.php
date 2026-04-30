@@ -19,23 +19,22 @@ final readonly class CompensateSaga
     public function __construct(
         private StoreSagaState          $storeSagaState,
         private InspectSaga             $inspectSaga,
-        private ChooseCompensationSteps $chooseCompensationSteps
+        private ChooseCompensationSteps $chooseCompensationSteps,
     ) {}
 
     public function compensate(
-        SagaInstance   $instance,
+        SagaInstance $instance,
         SagaDefinition $definition,
-        callable       $compensationRunner
+        callable     $compensationRunner,
     ) : SagaInstance
     {
         if ($instance->status === SagaInstanceStatus::COMPENSATED) {
             return $instance;
         }
 
-        if ($instance->status !== SagaInstanceStatus::FAILED &&
-            $instance->status !== SagaInstanceStatus::COMPENSATING) {
+        if ($instance->status !== SagaInstanceStatus::FAILED && $instance->status !== SagaInstanceStatus::COMPENSATING) {
             throw new SagaCompensationFailure(
-                message: sprintf('Saga %s is not in failed state, cannot compensate.', $instance->id)
+                message: sprintf('Saga %s is not in failed state, cannot compensate.', $instance->id),
             );
         }
 
@@ -64,8 +63,8 @@ final readonly class CompensateSaga
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::compensated(
                      sagaId  : $instance->id,
-                     sagaName: $instance->definitionName
-                 )
+                     sagaName: $instance->definitionName,
+                 ),
         );
 
         return $compensated;
@@ -95,24 +94,24 @@ final readonly class CompensateSaga
 
 final readonly class CompensationStepResult
 {
-    public string                 $stepName;
-    public bool                   $success;
-    public array                  $output;
-    public string|null            $error;
-    public float                  $durationMs;
+    public string      $stepName;
+    public bool        $success;
+    public array       $output;
+    public string|null $error;
+    public float       $durationMs;
     public DateTimeImmutable|null $completedAt;
 
     private function __construct(
-        string                 $stepName,
-        bool                   $success,
-        array|null             $output = null,
-        string|null            $error = null,
-        float|null             $durationMs = null,
-        DateTimeImmutable|null $completedAt = null
+        string            $stepName,
+        bool              $success,
+        array             $output = null,
+        string            $error = null,
+        float             $durationMs = null,
+        DateTimeImmutable $completedAt = null,
     )
     {
-        $output            ??= [];
-        $durationMs        ??= 0.0;
+        $output     ??= [];
+        $durationMs ??= 0.0;
         $this->stepName    = $stepName;
         $this->success     = $success;
         $this->output      = $output;
@@ -122,9 +121,9 @@ final readonly class CompensationStepResult
     }
 
     public static function success(
-        string     $stepName,
-        array|null $output = null,
-        float      $durationMs = 0.0
+        string $stepName,
+        array  $output = null,
+        float  $durationMs = 0.0,
     ) : self
     {
         $output ??= [];
@@ -134,14 +133,14 @@ final readonly class CompensationStepResult
             success    : true,
             output     : $output,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable()
+            completedAt: new DateTimeImmutable(),
         );
     }
 
     public static function failure(
         string $stepName,
         string $error,
-        float  $durationMs = 0.0
+        float $durationMs = 0.0,
     ) : self
     {
         return new self(
@@ -149,7 +148,7 @@ final readonly class CompensationStepResult
             success    : false,
             error      : $error,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable()
+            completedAt: new DateTimeImmutable(),
         );
     }
 
@@ -168,16 +167,16 @@ final readonly class CompensationStepResult
 
 final readonly class CompensationPlan
 {
-    public string      $sagaId;
-    public array       $steps;
+    public string $sagaId;
+    public array  $steps;
     public string|null $failedOnStep;
-    public bool        $isRecoverable;
+    public bool   $isRecoverable;
 
     private function __construct(
-        string      $sagaId,
-        array       $steps,
+        string $sagaId,
+        array  $steps,
         string|null $failedOnStep,
-        bool        $isRecoverable
+        bool   $isRecoverable,
     )
     {
         $this->sagaId        = $sagaId;
@@ -189,24 +188,24 @@ final readonly class CompensationPlan
     public static function create(
         string      $sagaId,
         array       $steps,
-        string|null $failedOnStep
+        string|null $failedOnStep,
     ) : self
     {
         return new self(
             sagaId       : $sagaId,
             steps        : $steps,
             failedOnStep : $failedOnStep,
-            isRecoverable: ! empty($steps)
+            isRecoverable: ! empty($steps),
         );
     }
 
     public function toArray() : array
     {
         return [
-            'saga_id'        => $this->sagaId,
-            'steps'          => array_map(
+            'saga_id' => $this->sagaId,
+            'steps'   => array_map(
                 static fn ($step) => $step->toArray(),
-                $this->steps
+                $this->steps,
             ),
             'failed_on_step' => $this->failedOnStep,
             'is_recoverable' => $this->isRecoverable,

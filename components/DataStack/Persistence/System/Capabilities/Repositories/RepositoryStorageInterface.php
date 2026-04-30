@@ -23,24 +23,24 @@ interface RepositoryStorageInterface
     /**
      * Find entities by criteria with optional ordering and pagination.
      *
-     * @param class-string               $entityClass
-     * @param array<string, mixed>       $criteria
+     * @param class-string         $entityClass
+     * @param array<string, mixed> $criteria
      * @param array<string, string>|null $orderBy
      *
      * @return array<object>
      */
     public function findBy(
-        string     $entityClass,
-        array      $criteria,
-        array|null $orderBy = null,
-        int|null   $limit = null,
-        int|null   $offset = null,
+        string $entityClass,
+        array  $criteria,
+        array  $orderBy = null,
+        int    $limit = null,
+        int    $offset = null,
     ) : array;
 
     /**
      * Check if any entity exists matching the criteria.
      *
-     * @param class-string         $entityClass
+     * @param class-string $entityClass
      * @param array<string, mixed> $criteria
      */
     public function exists(string $entityClass, array $criteria) : bool;
@@ -48,7 +48,7 @@ interface RepositoryStorageInterface
     /**
      * Count entities matching the criteria.
      *
-     * @param class-string         $entityClass
+     * @param class-string $entityClass
      * @param array<string, mixed> $criteria
      */
     public function count(string $entityClass, array $criteria) : int;

@@ -8,11 +8,12 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
+use Override;
 
 final readonly class SlidingExpiration implements CacheExpiration
 {
     public function __construct(
-        private int $windowSeconds
+        private int $windowSeconds,
     ) {}
 
     public static function seconds(int $seconds) : self
@@ -20,9 +21,10 @@ final readonly class SlidingExpiration implements CacheExpiration
         return new self(windowSeconds: $seconds);
     }
 
+    #[Override]
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
-        Clock                 $clock
+        Clock $clock,
     ) : Timestamp|null
     {
         if ($ttl === null) {
@@ -40,21 +42,22 @@ final readonly class SlidingExpiration implements CacheExpiration
 
     public function slide(Timestamp|null $currentExpiresAt, Clock $clock) : Timestamp|null
     {
-        if ($currentExpiresAt === null) {
+        if (! $currentExpiresAt instanceof Timestamp) {
             return null;
         }
 
         return $clock->now()->add(
-            duration: Duration::ofSeconds(seconds: $this->windowSeconds)
+            duration: Duration::ofSeconds(seconds: $this->windowSeconds),
         );
     }
 
+    #[Override]
     public function isExpired(
         Timestamp|null $expiresAt,
-        Clock          $clock
+        Clock $clock,
     ) : bool
     {
-        if ($expiresAt === null) {
+        if (! $expiresAt instanceof Timestamp) {
             return true;
         }
 

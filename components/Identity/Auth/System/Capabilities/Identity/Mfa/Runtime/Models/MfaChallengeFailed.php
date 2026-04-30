@@ -13,9 +13,9 @@ final class MfaChallengeFailed extends RuntimeException
 {
     public function __construct(
         private readonly MfaChallengeFailure $reason,
-        private readonly int|null            $retryAfter = null,
-        string                               $message = 'MFA verification failed.',
-        int                                  $code = 401
+        private readonly int|null $retryAfter = null,
+        string                    $message = 'MFA verification failed.',
+        int                       $code = 401,
     )
     {
         parent::__construct(message: $message, code: $code);
@@ -25,7 +25,7 @@ final class MfaChallengeFailed extends RuntimeException
     {
         return new self(
             reason : MfaChallengeFailure::INVALID,
-            message: 'MFA code is invalid.'
+            message: 'MFA code is invalid.',
         );
     }
 
@@ -33,7 +33,7 @@ final class MfaChallengeFailed extends RuntimeException
     {
         return new self(
             reason : MfaChallengeFailure::EXPIRED,
-            message: 'MFA challenge has expired.'
+            message: 'MFA challenge has expired.',
         );
     }
 
@@ -43,7 +43,7 @@ final class MfaChallengeFailed extends RuntimeException
             reason    : MfaChallengeFailure::LOCKED,
             retryAfter: $retryAfter,
             message   : 'MFA verification is temporarily locked.',
-            code      : 429
+            code      : 429,
         );
     }
 
@@ -51,7 +51,7 @@ final class MfaChallengeFailed extends RuntimeException
     {
         return new self(
             reason : MfaChallengeFailure::NOT_FOUND,
-            message: 'MFA challenge is missing.'
+            message: 'MFA challenge is missing.',
         );
     }
 
@@ -60,7 +60,7 @@ final class MfaChallengeFailed extends RuntimeException
         return new self(
             reason : MfaChallengeFailure::NOT_ENABLED,
             message: 'MFA is not enabled for this user.',
-            code   : 409
+            code   : 409,
         );
     }
 

@@ -13,6 +13,6 @@ final readonly class TrimValues
 
     public function __invoke(string $characters = " \t\n\r\0\x0B") : array
     {
-        return array_map(fn ($value) => is_string($value) ? trim($value, $characters) : $value, $this->items);
+        return array_map(static fn ($value) => is_string($value) ? trim($value, $characters) : $value, $this->items);
     }
 }

@@ -15,14 +15,16 @@ use SensitiveParameter;
 final readonly class MfaEnrollment
 {
     public function __construct(
-        public MfaMethod                     $method,
-        public MfaStatus                     $status,
-        #[SensitiveParameter] public string  $accountLabel,
-        public string                        $issuer,
-        #[SensitiveParameter] private string $secret,
-        public string                        $otpauthUri,
-        public DateTimeImmutable             $startedAt,
-        public DateTimeImmutable             $expiresAt
+        public MfaMethod         $method,
+        public MfaStatus         $status,
+        #[SensitiveParameter]
+        public string            $accountLabel,
+        public string            $issuer,
+        #[SensitiveParameter]
+        private string           $secret,
+        public string            $otpauthUri,
+        public DateTimeImmutable $startedAt,
+        public DateTimeImmutable $expiresAt,
     ) {}
 
     public function secret() : string

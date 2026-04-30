@@ -44,7 +44,7 @@ final readonly class RollbackTenantSecurityChange
             approvedBy  : $changeRequest->approvedBy,
             approvedAt  : $changeRequest->approvedAt,
             appliedAt   : $changeRequest->appliedAt,
-            rolledBackAt: $this->clock->now()
+            rolledBackAt: $this->clock->now(),
         );
         $this->changeRequestStore->save(changeRequest: $rolledBack);
         $this->auditLog->record(event: new AuditEvent(
@@ -53,7 +53,7 @@ final readonly class RollbackTenantSecurityChange
                                            context   : [
                                                            'change_id' => $rolledBack->changeId,
                                                            'tenant'    => $rolledBack->tenantSlug,
-                                                       ]
+                                                       ],
                                        ));
 
         return $rollback;

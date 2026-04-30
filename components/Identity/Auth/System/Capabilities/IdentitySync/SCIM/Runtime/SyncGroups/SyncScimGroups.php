@@ -55,7 +55,7 @@ final readonly class SyncScimGroups
                                                            email         : $user->getEmail()->value,
                                                            username      : $user->getUsername(),
                                                            groups        : $data->groups,
-                                                           state         : $data->state
+                                                           state         : $data->state,
                                                        ));
     }
 }

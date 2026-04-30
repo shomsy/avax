@@ -41,7 +41,7 @@ final readonly class SyncFederationMetadata
                                                                                                                                                                                                                                                                                                                                                                                                                                                                           'single_sign_on_url' => $metadata->singleSignOnUrl,
                                                                               'claims' => $metadata->claims,
                                                                           ], flags: JSON_THROW_ON_ERROR)),
-            syncedAt      : $this->clock->now()
+            syncedAt      : $this->clock->now(),
         );
         $this->connectionStore->save(connection: $synced);
         $this->auditLog->record(event: new AuditEvent(
@@ -51,7 +51,7 @@ final readonly class SyncFederationMetadata
                                                            'connection_id'   => $synced->connectionId,
                                                            'tenant'          => $synced->tenantSlug,
                                                            'metadata_issuer' => $synced->metadataIssuer,
-                                                       ]
+                                                       ],
                                        ));
 
         return $synced;

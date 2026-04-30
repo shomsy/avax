@@ -12,7 +12,7 @@ final readonly class ReadMappedInputName
     /**
      * @param object[] $attributes
      */
-    public function read(string $fieldName, array $attributes, DataTransferConfig $config) : FieldInputName
+    public function read(string $fieldName, array $attributes, DataTransferConfig $dataTransferConfig) : FieldInputName
     {
         foreach ($attributes as $attribute) {
             if ($attribute instanceof MapFrom) {
@@ -20,6 +20,6 @@ final readonly class ReadMappedInputName
             }
         }
 
-        return new FieldInputName(value: $config->inputNameFor(fieldName: $fieldName));
+        return new FieldInputName(value: $dataTransferConfig->inputNameFor(fieldName: $fieldName));
     }
 }

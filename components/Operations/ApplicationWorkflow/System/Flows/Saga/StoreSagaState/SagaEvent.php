@@ -21,6 +21,6 @@ final readonly class SagaEvent
         public array             $payload = [],
         public string|null       $correlationId = null,
         public string|null       $causationId = null,
-        public DateTimeImmutable $occurredAt = new DateTimeImmutable()
+        public DateTimeImmutable $occurredAt = new DateTimeImmutable(),
     ) {}
 }

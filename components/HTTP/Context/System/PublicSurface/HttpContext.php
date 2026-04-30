@@ -18,7 +18,7 @@ final readonly class HttpContext implements HttpContextInterface
 {
     public function __construct(
         private ?ServerRequestInterface $request,
-        private GlobalsProviderInterface $globals
+        private GlobalsProviderInterface $globals,
     ) {}
 
     public function request() : ?ServerRequestInterface

@@ -10,8 +10,8 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Ret
 final readonly class RetryPolicy
 {
     public function __construct(
-        public int    $maxAttempts = 3,
-        public int    $backoffMs = 100,
+        public int $maxAttempts = 3,
+        public int $backoffMs = 100,
         public string $backoffType = 'exponential',
     ) {}
 

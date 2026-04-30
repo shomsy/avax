@@ -14,7 +14,9 @@ use SensitiveParameter;
 final readonly class ChangePasswordData
 {
     public function __construct(
-        #[SensitiveParameter] public string $currentPassword,
-        #[SensitiveParameter] public string $newPassword
+        #[SensitiveParameter]
+        public string $currentPassword,
+        #[SensitiveParameter]
+        public string $newPassword,
     ) {}
 }

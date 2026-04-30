@@ -42,7 +42,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     }
 
     public function emailExists(
-        #[SensitiveParameter] string $email
+        #[SensitiveParameter]
+        string $email,
     ) : bool
     {
         return array_any(array: $this->users, callback: static fn ($user) => strtolower(string: $user->getEmail()->value) === strtolower(string: $email));
@@ -75,8 +76,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 passwordHash: $passwordHash,
                 roles       : $user->roles,
                 permissions : $user->permissions,
-                isActive    : $user->isActive
-            )
+                isActive    : $user->isActive,
+            ),
         );
     }
 
@@ -112,8 +113,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
                 permissions : $user->permissions,
-                isActive    : $user->isActive
-            )
+                isActive    : $user->isActive,
+            ),
         );
     }
 
@@ -128,8 +129,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 passwordHash: $user->passwordHash,
                 roles       : $roles,
                 permissions : $user->permissions,
-                isActive    : $user->isActive
-            )
+                isActive    : $user->isActive,
+            ),
         );
     }
 
@@ -144,8 +145,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
                 permissions : $permissions,
-                isActive    : $user->isActive
-            )
+                isActive    : $user->isActive,
+            ),
         );
     }
 
@@ -165,8 +166,8 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
                 permissions : $user->permissions,
-                isActive    : $isActive
-            )
+                isActive    : $isActive,
+            ),
         );
     }
 

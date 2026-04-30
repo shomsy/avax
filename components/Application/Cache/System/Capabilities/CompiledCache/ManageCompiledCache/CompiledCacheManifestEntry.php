@@ -9,12 +9,12 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CompiledCacheManifestEntry
 {
     public function __construct(
-        public CompiledCacheName $name,
-        public CompiledCachePath $path,
-        public Timestamp         $createdAt,
+        public CompiledCacheName $compiledCacheName,
+        public CompiledCachePath $compiledCachePath,
+        public Timestamp         $timestamp,
         public string            $sourceFingerprint,
         public string|null       $phpVersion = null,
-        public string|null       $frameworkVersion = null
+        public string|null       $frameworkVersion = null,
     ) {}
 
     public static function fromArray(array $data) : self
@@ -23,7 +23,7 @@ final readonly class CompiledCacheManifestEntry
             name             : $data['name'],
             path             : $data['path'],
             createdAt        : $data['createdAt'],
-            sourceFingerprint: $data['sourceFingerprint']
+            sourceFingerprint: $data['sourceFingerprint'],
         );
     }
 
@@ -31,23 +31,23 @@ final readonly class CompiledCacheManifestEntry
         string $name,
         string $path,
         int    $createdAt,
-        string $sourceFingerprint
+        string $sourceFingerprint,
     ) : self
     {
         return new self(
             name             : new CompiledCacheName(name: $name),
             path             : new CompiledCachePath(path: $path),
             createdAt        : Timestamp::fromUnixTime(timestamp: $createdAt),
-            sourceFingerprint: $sourceFingerprint
+            sourceFingerprint: $sourceFingerprint,
         );
     }
 
     public function toArray() : array
     {
         return [
-            'name'              => $this->name->toString(),
-            'path'              => $this->path->toString(),
-            'createdAt'         => $this->createdAt->seconds,
+            'name'      => $this->compiledCacheName->toString(),
+            'path'      => $this->compiledCachePath->toString(),
+            'createdAt' => $this->timestamp->seconds,
             'sourceFingerprint' => $this->sourceFingerprint,
             'phpVersion'        => $this->phpVersion,
             'frameworkVersion'  => $this->frameworkVersion,

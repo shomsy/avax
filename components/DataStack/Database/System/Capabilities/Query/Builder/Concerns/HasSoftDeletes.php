@@ -49,20 +49,20 @@ trait HasSoftDeletes
      *      domain records.
      *
      * @return QueryBuilder|HasSoftDeletes A
-     *                                                                                                                                fresh,
-     *                                                                                                                                cloned
-     *                                                                                                                                builder
-     *                                                                                                                                instance
-     *                                                                                                                                with
-     *                                                                                                                                soft-deleted
-     *                                                                                                                                inclusion
-     *                                                                                                                                active.
+     *                                     fresh,
+     *                                     cloned
+     *                                     builder
+     *                                     instance
+     *                                     with
+     *                                     soft-deleted
+     *                                     inclusion
+     *                                     active.
      */
     public function withTrashed() : self
     {
         return clone(object: $this, withProperties: [
-            "usesSoftDeletes" => true,
-            "withTrashed"     => true
+            'usesSoftDeletes' => true,
+            'withTrashed'     => true,
         ]);
     }
 
@@ -70,16 +70,16 @@ trait HasSoftDeletes
      * Filter the results     *
      *
      * @return HasSoftDeletes|QueryBuilder \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
-     *                                                                                                                                \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
-     *                                                                                                                                A
-     *                                                                                                                                fresh,
-     *                                                                                                                                cloned
-     *                                                                                                                                builder
-     *                                                                                                                                instance
-     *                                                                                                                                targeting
-     *                                                                                                                                only
-     *                                                                                                                                deleted
-     *                                                                                                                                records.
+     *                                     \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
+     *                                     A
+     *                                     fresh,
+     *                                     cloned
+     *                                     builder
+     *                                     instance
+     *                                     targeting
+     *                                     only
+     *                                     deleted
+     *                                     records.
      *
      * @see
      * /docs/Foundation/Database/DSL/SoftDeletes.md#only-deleted-records
@@ -92,8 +92,8 @@ trait HasSoftDeletes
     public function onlyTrashed() : self
     {
         return clone(object: $this, withProperties: [
-            "usesSoftDeletes" => true,
-            "onlyTrashed"     => true
+            'usesSoftDeletes' => true,
+            'onlyTrashed'     => true,
         ]);
     }
 
@@ -103,7 +103,7 @@ trait HasSoftDeletes
     public function usingSoftDeletes() : self
     {
         return clone(object: $this, withProperties: [
-            "usesSoftDeletes" => true
+            'usesSoftDeletes' => true,
         ]);
     }
 
@@ -139,16 +139,16 @@ trait HasSoftDeletes
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      *
      * @return QueryBuilder|HasSoftDeletes A
-     *                                                                                                                                fresh,
-     *                                                                                                                                cloned
-     *                                                                                                                                builder
-     *                                                                                                                                instance
-     *                                                                                                                                with
-     *                                                                                                                                the
-     *                                                                                                                                appropriate
-     *                                                                                                                                deletion
-     *                                                                                                                                filters
-     *                                                                                                                                injected.
+     *                                     fresh,
+     *                                     cloned
+     *                                     builder
+     *                                     instance
+     *                                     with
+     *                                     the
+     *                                     appropriate
+     *                                     deletion
+     *                                     filters
+     *                                     injected.
      */
     public function withSoftDeleteFilter(string $column = 'deleted_at') : self
     {
@@ -174,18 +174,18 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NOT NULL" logic, acting as a
      * categorical filter for required technical metadata.
      *
-     * @param string $column  The technical field name to target for the non-null check.
+     * @param string $column The technical field name to target for the non-null check.
      * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      *
      * @return QueryBuilder|HasSoftDeletes A
-     *                                                                                                                                fresh,
-     *                                                                                                                                cloned
-     *                                                                                                                                builder
-     *                                                                                                                                instance
-     *                                                                                                                                with
-     *                                                                                                                                the
-     *                                                                                                                                non-null
-     *                                                                                                                                filter.
+     *                                     fresh,
+     *                                     cloned
+     *                                     builder
+     *                                     instance
+     *                                     with
+     *                                     the
+     *                                     non-null
+     *                                     filter.
      */
     public function whereNotNull(string $column, string $boolean = 'AND') : self
     {
@@ -199,23 +199,23 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NULL" logic, primarily used for
      * checking existence flags or soft-delete statuses.
      *
-     * @param string      $column  The technical field name to target for the null check.
+     * @param string $column The technical field name to target for the null check.
      * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
+     * @param bool   $not    Flag indicating whether to check for existence (IS NOT NULL) instead.
      *
      * @return QueryBuilder|HasSoftDeletes A
-     *                                                                                                                                fresh,
-     *                                                                                                                                cloned
-     *                                                                                                                                builder
-     *                                                                                                                                instance
-     *                                                                                                                                with
-     *                                                                                                                                the
-     *                                                                                                                                null
-     *                                                                                                                                filter.
+     *                                     fresh,
+     *                                     cloned
+     *                                     builder
+     *                                     instance
+     *                                     with
+     *                                     the
+     *                                     null
+     *                                     filter.
      */
-    public function whereNull(string $column, string|null $boolean = null, bool $not = false) : self
+    public function whereNull(string $column, string $boolean = null, bool $not = false) : self
     {
-        $boolean  ??= 'AND';
+        $boolean      ??= 'AND';
         $operator = $not ? 'IS NOT NULL' : 'IS NULL';
 
         $clone        = clone $this;
@@ -223,7 +223,7 @@ trait HasSoftDeletes
                                                            column  : $column,
                                                            operator: $operator,
                                                            boolean : $boolean,
-                                                           type    : 'Null'
+                                                           type    : 'Null',
                                                        ));
 
         return $clone;

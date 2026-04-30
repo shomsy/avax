@@ -14,8 +14,8 @@ use Throwable;
 final readonly class ReadMigrationStatus
 {
     public function __construct(
-        private MigrationRepository $repository,
-        private MigrationLoader     $loader
+        private MigrationRepository $migrationRepository,
+        private MigrationLoader     $migrationLoader,
     ) {}
 
     /**
@@ -28,8 +28,8 @@ final readonly class ReadMigrationStatus
      */
     public function read(string $path) : array
     {
-        $all    = $this->loader->load(path: $path);
-        $ran    = $this->repository->getRan();
+        $all                  = $this->migrationLoader->load(path: $path);
+        $ran                  = $this->migrationRepository->getRan();
         $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
         $rows   = [];
 
@@ -39,7 +39,7 @@ final readonly class ReadMigrationStatus
 
             if ($isRan) {
                 $dbChecksum   = $ranMap[$name];
-                $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
+                $fileChecksum = $this->migrationLoader->getChecksum(name: $name, path: $path);
 
                 $integrity = match (true) {
                     ! $dbChecksum                 => 'LEGACY',

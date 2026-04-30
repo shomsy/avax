@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Foundation\Compression;
 
+use Override;
 use Stringable;
 
 final readonly class CompressedCachePayload implements Stringable
@@ -11,8 +12,8 @@ final readonly class CompressedCachePayload implements Stringable
     public function __construct(
         public string $data,
         public string $algorithm,
-        public int    $originalSize,
-        public int    $compressedSize
+        public int $originalSize,
+        public int $compressedSize,
     ) {}
 
     public function spaceSavedPercentage() : float
@@ -43,6 +44,7 @@ final readonly class CompressedCachePayload implements Stringable
         return $this->compressedSize / $this->originalSize;
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->data;

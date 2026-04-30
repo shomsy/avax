@@ -24,7 +24,7 @@ final readonly class RecordSagaStepFailed
                                                        instanceId   : $instanceId,
                                                        type         : 'saga.step.failed',
                                                        payload      : ['step' => $stepName, 'failure' => $failure->getMessage()],
-                                                       correlationId: $correlationId
+                                                       correlationId: $correlationId,
                                                    ));
     }
 }

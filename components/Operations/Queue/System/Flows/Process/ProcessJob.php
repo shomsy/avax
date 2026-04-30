@@ -38,6 +38,7 @@ final class ProcessJob
             $executeAt = $jobData['executeAt'] ?? null;
             if ($executeAt !== null && $executeAt > time()) {
                 $broker->push($queue, $jobData);
+
                 break;
             }
 

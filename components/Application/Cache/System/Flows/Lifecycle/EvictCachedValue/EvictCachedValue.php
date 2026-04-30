@@ -15,17 +15,16 @@ use Throwable;
 final readonly class EvictCachedValue
 {
     public function __construct(
-        private CacheStore                      $store,
-        private Clock                           $clock,
-        private ChooseCachedValueForReplacement $policy = new LeastRecentlyUsedReplacement(),
-        private CacheMetrics|null               $metrics = null
+        private CacheStore                      $cacheStore,
+        private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
+        private CacheMetrics|null               $cacheMetrics = null,
     ) {}
 
-    public function evict(CacheKey $key) : bool
+    public function evict(CacheKey $cacheKey) : bool
     {
         try {
-            $this->store->forget(key: $key);
-            $this->metrics?->recordEviction();
+            $this->cacheStore->forget(key: $cacheKey);
+            $this->cacheMetrics?->recordEviction();
 
             return true;
         } catch (Throwable) {
@@ -35,26 +34,26 @@ final readonly class EvictCachedValue
 
     public function evictUntilCapacityIsSafe(
         array $entries,
-        int   $maxCapacity
+        int $maxCapacity,
     ) : int
     {
         $evicted = 0;
 
         while ( count($entries) > $maxCapacity ) {
-            $keyToEvict = $this->policy->choose(entries: $entries);
+            $keyToEvict = $this->chooseCachedValueForReplacement->choose(entries: $entries);
 
             if ($keyToEvict === null) {
                 break;
             }
 
             $cacheKey = CacheKey::create(key: $keyToEvict);
-            $this->store->forget(key: $cacheKey);
+            $this->cacheStore->forget(key: $cacheKey);
             $evicted++;
 
             unset($entries[$keyToEvict]);
         }
 
-        $this->metrics?->recordEviction();
+        $this->cacheMetrics?->recordEviction();
 
         return $evicted;
     }

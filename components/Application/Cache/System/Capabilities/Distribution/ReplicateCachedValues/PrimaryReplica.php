@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class PrimaryReplica
 {
     public function __construct(
-        public int $index = 0
+        public int $index = 0,
     ) {}
 
     public function isPrimary() : bool

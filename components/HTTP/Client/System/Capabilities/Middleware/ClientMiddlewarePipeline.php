@@ -48,7 +48,7 @@ final readonly class ClientMiddlewarePipeline
      *
      * Convenience method that resolves and executes in one call.
      *
-     * @param OutboundRequest                          $request      The outbound request
+     * @param OutboundRequest $request The outbound request
      * @param Closure(OutboundRequest): ClientResponse $finalHandler The terminal handler
      */
     public function execute(OutboundRequest $request, Closure $finalHandler) : ClientResponse

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\PublicSurface;
@@ -9,10 +10,10 @@ namespace Avax\Components\Identity\Tokens\System\PublicSurface;
 interface TokensInterface
 {
     public function authorize(array $request) : object;
-    
+
     public function exchangeCode(string $code) : object;
-    
+
     public function introspect(string $token) : object;
-    
+
     public function revoke(string $token) : void;
 }

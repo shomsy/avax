@@ -15,7 +15,7 @@ if (! function_exists(function: 'connection')) {
      * @throws RuntimeException If the database connection service is not available in the dependency injection container.
      * @throws Throwable
      */
-    function connection(string|null $connectionName = null) : PDO
+    function connection(string $connectionName = null) : PDO
     {
         /** @var Connections $connections */
         $connections = app(abstract: Connections::class);

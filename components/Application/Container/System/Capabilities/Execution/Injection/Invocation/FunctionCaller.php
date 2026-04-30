@@ -20,68 +20,61 @@ use Throwable;
  */
 final class FunctionCaller
 {
-    private ServiceResolver|null $resolver = null;
+    private ServiceResolver|null $serviceResolver = null;
 
     /** @var array<string, ResolvePlan> */
-    private array                         $plans = [];
-    private readonly ResolveCallArguments $arguments;
+    private array $plans = [];
 
-    public function __construct(
-        ResolveCallArguments $arguments
-    )
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
     {
-        $this->arguments = $arguments;
     }
 
     /**
      * Attaches the runtime resolver used for argument resolution.
      */
-    public function setResolver(ServiceResolver $resolver) : void
+    public function setResolver(ServiceResolver $serviceResolver) : void
     {
-        $this->resolver = $resolver;
+        $this->serviceResolver = $serviceResolver;
     }
 
     /**
      * Calls one target with container-resolved arguments.
      *
-     * @param callable|string      $target
      * @param array<string, mixed> $parameters
-     * @param ResolveRequest|null  $request
      *
-     * @return mixed
      * @throws ReflectionException
      * @throws Throwable
      */
     public function call(
-        callable|string     $target,
-        array|null          $parameters = null,
-        ResolveRequest|null $request = null
+        callable|string $target,
+        ?array          $parameters = null,
+        ?ResolveRequest $resolveRequest = null,
     ) : mixed
     {
         $parameters ??= [];
-        if ($this->resolver === null) {
+        if ($this->serviceResolver === null) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
-        $normalized = $this->normalizeTarget(target: $target, request: $request);
-        $reflection = $this->reflect(target: $normalized);
-        $arguments  = $this->arguments->resolvePlan(
-            plan     : $this->planFor(reflection: $reflection),
+        $normalized                 = $this->normalizeTarget(target: $target, request: $resolveRequest);
+        $reflectionFunctionAbstract = $this->reflect(target: $normalized);
+        $arguments                  = $this->resolveCallArguments->resolvePlan(
+            plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             overrides: $parameters,
-            resolver : $this->resolver,
-            request  : $request ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflection))
+            resolver : $this->serviceResolver,
+            request  : $resolveRequest ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflectionFunctionAbstract)),
         );
 
-        if ($reflection instanceof ReflectionMethod) {
+        if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
             $object = is_object(value: $normalized)
                 ? $normalized
                 : (is_array(value: $normalized) && is_object(value: $normalized[0]) ? $normalized[0] : null);
 
-            return $reflection->invokeArgs(object: $object, args: $arguments);
+            return $reflectionFunctionAbstract->invokeArgs(object: $object, args: $arguments);
         }
 
         /** @var ReflectionFunction $reflection */
-        return $reflection->invokeArgs(args: $arguments);
+        return $reflectionFunctionAbstract->invokeArgs(args: $arguments);
     }
 
     /**
@@ -95,14 +88,14 @@ final class FunctionCaller
      * @throws Throwable
      * @throws Throwable
      */
-    private function normalizeTarget(callable|string $target, ResolveRequest|null $request = null) : callable|string|array
+    private function normalizeTarget(callable|string $target, ?ResolveRequest $resolveRequest = null) : callable|string|array
     {
-        $context = $request?->context ?? [];
+        $context = $resolveRequest?->context ?? [];
 
         if (is_string(value: $target) && class_exists(class: $target) && method_exists(object_or_class: $target, method: '__invoke')) {
             return $context !== []
-                ? $this->resolver->makeInContext(id: $target, parameters: [], context: $context)
-                : $this->resolver->get(id: $target);
+                ? $this->serviceResolver->makeInContext(id: $target, parameters: [], context: $context)
+                : $this->serviceResolver->get(id: $target);
         }
 
         if (is_string(value: $target) && str_contains(haystack: $target, needle: '@')) {
@@ -110,9 +103,9 @@ final class FunctionCaller
 
             return [
                 $context !== []
-                    ? $this->resolver->makeInContext(id: $class, parameters: [], context: $context)
-                    : $this->resolver->get(id: $class),
-                $method
+                    ? $this->serviceResolver->makeInContext(id: $class, parameters: [], context: $context)
+                    : $this->serviceResolver->get(id: $class),
+                $method,
             ];
         }
 
@@ -124,9 +117,9 @@ final class FunctionCaller
                 ? [$class, $method]
                 : [
                     $context !== []
-                        ? $this->resolver->makeInContext(id: $class, parameters: [], context: $context)
-                        : $this->resolver->get(id: $class),
-                    $method
+                        ? $this->serviceResolver->makeInContext(id: $class, parameters: [], context: $context)
+                        : $this->serviceResolver->get(id: $class),
+                    $method,
                 ];
         }
 
@@ -135,9 +128,9 @@ final class FunctionCaller
             if (! $reflection->isStatic()) {
                 return [
                     $context !== []
-                        ? $this->resolver->makeInContext(id: $target[0], parameters: [], context: $context)
-                        : $this->resolver->get(id: $target[0]),
-                    $target[1]
+                        ? $this->serviceResolver->makeInContext(id: $target[0], parameters: [], context: $context)
+                        : $this->serviceResolver->get(id: $target[0]),
+                    $target[1],
                 ];
             }
         }
@@ -165,37 +158,33 @@ final class FunctionCaller
         throw new ContainerException(message: 'Unsupported callable target.');
     }
 
-    private function planFor(ReflectionFunctionAbstract $reflection) : ResolvePlan
+    private function planFor(ReflectionFunctionAbstract $reflectionFunctionAbstract) : ResolvePlan
     {
-        $key = $this->planKeyOf(reflection: $reflection);
+        $key = $this->planKeyOf(reflection: $reflectionFunctionAbstract);
 
-        if (isset($this->plans[$key])) {
-            return $this->plans[$key];
-        }
-
-        return $this->plans[$key] = $this->arguments->createPlan(parameters: $reflection->getParameters());
+        return $this->plans[$key] ?? ($this->plans[$key] = $this->resolveCallArguments->createPlan(parameters: $reflectionFunctionAbstract->getParameters()));
     }
 
-    private function planKeyOf(ReflectionFunctionAbstract $reflection) : string
+    private function planKeyOf(ReflectionFunctionAbstract $reflectionFunctionAbstract) : string
     {
-        if ($reflection instanceof ReflectionMethod) {
-            return 'method:' . $reflection->class . '::' . $reflection->getName();
+        if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
+            return 'method:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
         }
 
-        if ($reflection instanceof ReflectionFunction && $reflection->isClosure()) {
-            return 'closure:' . ($reflection->getFileName() ?: 'internal') . ':' . $reflection->getStartLine() . ':' . $reflection->getEndLine();
+        if ($reflectionFunctionAbstract instanceof ReflectionFunction && $reflectionFunctionAbstract->isClosure()) {
+            return 'closure:' . ($reflectionFunctionAbstract->getFileName() ?: 'internal') . ':' . $reflectionFunctionAbstract->getStartLine() . ':' . $reflectionFunctionAbstract->getEndLine();
         }
 
-        return 'function:' . $reflection->getName();
+        return 'function:' . $reflectionFunctionAbstract->getName();
     }
 
-    private function nameOf(ReflectionFunctionAbstract $reflection) : string
+    private function nameOf(ReflectionFunctionAbstract $reflectionFunctionAbstract) : string
     {
-        if ($reflection instanceof ReflectionMethod) {
-            return 'call:' . $reflection->class . '::' . $reflection->getName();
+        if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
+            return 'call:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
         }
 
-        return 'call:' . $reflection->getName();
+        return 'call:' . $reflectionFunctionAbstract->getName();
     }
 
     /**

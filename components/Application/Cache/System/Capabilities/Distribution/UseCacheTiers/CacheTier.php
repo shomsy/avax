@@ -7,10 +7,10 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Use
 final readonly class CacheTier
 {
     public function __construct(
-        public CacheTierName $name,
+        public CacheTierName $cacheTierName,
         public int           $priority,
         public int           $maxSize = 1000,
-        public int           $ttlDefault = 3600
+        public int           $ttlDefault = 3600,
     ) {}
 
     public static function l1(string $name = 'L1', int $maxSize = 1000) : self
@@ -19,7 +19,7 @@ final readonly class CacheTier
             name      : CacheTierName::from(value: $name),
             priority  : 1,
             maxSize   : $maxSize,
-            ttlDefault: 3600
+            ttlDefault: 3600,
         );
     }
 
@@ -29,7 +29,7 @@ final readonly class CacheTier
             name      : CacheTierName::from(value: $name),
             priority  : 2,
             maxSize   : $maxSize,
-            ttlDefault: 7200
+            ttlDefault: 7200,
         );
     }
 

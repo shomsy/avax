@@ -30,14 +30,14 @@ use ReflectionException;
 final class AuthServiceProvider extends ServiceProvider
 {
     #[Override]
-    public function register() : void
+    public function register(): void
     {
         $this->registerFoundation();
         $this->registerIdentity();
         $this->registerAuth();
     }
 
-    private function registerFoundation() : void
+    private function registerFoundation(): void
     {
         if (! $this->app->has(id: PasswordHasher::class)) {
             $this->app->singleton(id: PasswordHasher::class, implementation: PasswordHasher::class);
@@ -56,7 +56,7 @@ final class AuthServiceProvider extends ServiceProvider
         }
     }
 
-    private function registerIdentity() : void
+    private function registerIdentity(): void
     {
         if (! $this->app->has(id: IdentityInterface::class)) {
             $this->app->singleton(id: IdentityInterface::class, implementation: function () {
@@ -71,19 +71,19 @@ final class AuthServiceProvider extends ServiceProvider
                 if ($sessionIdentity === null && $jwtIdentity === null) {
                     throw ConfigurationException::missingIdentityBackend(
                         buildPath: 'AuthServiceProvider::registerIdentity()',
-                        hint     : 'Provide a SessionIdentityInterface or JwtIdentityInterface binding.'
+                        hint     : 'Provide a SessionIdentityInterface or JwtIdentityInterface binding.',
                     );
                 }
 
                 return Identity::fromBackends(
                     sessionIdentity: $sessionIdentity,
-                    jwtIdentity    : $jwtIdentity
+                    jwtIdentity    : $jwtIdentity,
                 );
             });
         }
     }
 
-    private function registerAuth() : void
+    private function registerAuth(): void
     {
         if (! $this->app->has(id: Auth::class)) {
             $this->app->singleton(id: Auth::class, implementation: function () {
@@ -107,7 +107,7 @@ final class AuthServiceProvider extends ServiceProvider
     /**
      * @throws ReflectionException
      */
-    private function applyOptionalBindings(AuthBuilder $builder) : AuthBuilder
+    private function applyOptionalBindings(AuthBuilder $builder): AuthBuilder
     {
         if ($this->app->has(id: Clock::class)) {
             $builder->withClock(clock: $this->app->get(id: Clock::class));
@@ -123,7 +123,7 @@ final class AuthServiceProvider extends ServiceProvider
     /**
      * @throws ReflectionException
      */
-    private function resolveLoginRateLimit() : LoginRateLimit|null
+    private function resolveLoginRateLimit(): LoginRateLimit|null
     {
         if ($this->app->has(id: LoginRateLimit::class)) {
             return $this->app->get(id: LoginRateLimit::class);
@@ -135,7 +135,7 @@ final class AuthServiceProvider extends ServiceProvider
 
         return new LoginRateLimit(
             storage: $this->app->get(id: LoginRateLimitStorageInterface::class),
-            clock  : $this->app->get(id: Clock::class)
+            clock  : $this->app->get(id: Clock::class),
         );
     }
 }

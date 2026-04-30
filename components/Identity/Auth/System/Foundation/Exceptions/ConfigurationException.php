@@ -13,11 +13,12 @@ class ConfigurationException extends AuthException
      * @param array<string, scalar|list<string>|null> $context
      */
     public function __construct(
-        string                                        $message,
-        #[SensitiveParameter] private readonly string $errorCode = 'auth.configuration.invalid',
-        private readonly array                        $context = [],
-        int                                           $code = 0,
-        Throwable|null                                $previous = null
+        string                  $message,
+        #[SensitiveParameter]
+        private readonly string $errorCode = 'auth.configuration.invalid',
+        private readonly array  $context = [],
+        int                     $code = 0,
+        Throwable               $previous = null,
     )
     {
         parent::__construct(message: $message, code: $code, previous: $previous);
@@ -31,7 +32,7 @@ class ConfigurationException extends AuthException
             context  : [
                            'build_path' => $buildPath,
                            'option'     => 'forUser()',
-                       ]
+                       ],
         );
     }
 
@@ -43,13 +44,13 @@ class ConfigurationException extends AuthException
             context  : [
                            'build_path' => $buildPath,
                            'options'    => ['withIdentity()', 'withIdentityBackends()'],
-                       ]
+                       ],
         );
     }
 
     public static function missingIdentityBackend(
-        string|null $buildPath = null,
-        string      $hint = 'Provide at least one session or JWT backend.'
+        string $buildPath = null,
+        string $hint = 'Provide at least one session or JWT backend.',
     ) : self
     {
         $buildPath ??= 'AuthBuilder::ready()';
@@ -60,7 +61,7 @@ class ConfigurationException extends AuthException
             context  : [
                            'build_path' => $buildPath,
                            'hint'       => $hint,
-                       ]
+                       ],
         );
     }
 
@@ -74,7 +75,7 @@ class ConfigurationException extends AuthException
                            'capability'  => 'enterprise_mode',
                            'requirement' => 'session_registry',
                            'option'      => 'withSessionRegistry()',
-                       ]
+                       ],
         );
     }
 
@@ -83,7 +84,7 @@ class ConfigurationException extends AuthException
         string $requirement,
         string $buildPath,
         string $option,
-        string $cause
+        string $cause,
     ) : self
     {
         return new self(
@@ -95,7 +96,7 @@ class ConfigurationException extends AuthException
                            'requirement' => $requirement,
                            'option'      => $option,
                            'cause'       => $cause,
-                       ]
+                       ],
         );
     }
 

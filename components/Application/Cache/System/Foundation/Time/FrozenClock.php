@@ -4,27 +4,30 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Foundation\Time;
 
+use Override;
+
 final class FrozenClock implements Clock
 {
-    private Timestamp $frozenAt;
+    private Timestamp $timestamp;
 
-    public function __construct(Timestamp|null $timestamp = null)
+    public function __construct(?Timestamp $timestamp = null)
     {
-        $this->frozenAt = $timestamp ?? Timestamp::now();
+        $this->timestamp = $timestamp ?? Timestamp::now();
     }
 
+    #[Override]
     public function now() : Timestamp
     {
-        return $this->frozenAt;
+        return $this->timestamp;
     }
 
     public function moveForward(Duration $duration) : void
     {
-        $this->frozenAt = $this->frozenAt->add(duration: $duration);
+        $this->timestamp = $this->timestamp->add(duration: $duration);
     }
 
-    public function reset(Timestamp|null $timestamp = null) : void
+    public function reset(?Timestamp $timestamp = null) : void
     {
-        $this->frozenAt = $timestamp ?? Timestamp::now();
+        $this->timestamp = $timestamp ?? Timestamp::now();
     }
 }

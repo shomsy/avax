@@ -6,11 +6,11 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Expire
 
 final readonly class DecideStaleValueCanBeServed
 {
-    public function __construct(private StaleValuePolicy $policy = StaleValuePolicy::DO_NOT_SERVE_STALE) {}
+    public function __construct(private StaleValuePolicy $staleValuePolicy = StaleValuePolicy::DO_NOT_SERVE_STALE) {}
 
     public function canServeStale() : bool
     {
-        return $this->policy === StaleValuePolicy::SERVE_STALE_WHILE_REVALIDATING
-            || $this->policy === StaleValuePolicy::SERVE_STALE_FOREVER;
+        return $this->staleValuePolicy === StaleValuePolicy::SERVE_STALE_WHILE_REVALIDATING
+            || $this->staleValuePolicy === StaleValuePolicy::SERVE_STALE_FOREVER;
     }
 }

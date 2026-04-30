@@ -26,16 +26,16 @@ use Avax\Components\Application\Filesystem\Filesystem as FilesystemInterface;
  */
 readonly class LocalFilesystem implements FilesystemInterface
 {
-    public function __construct(private ResolveDisk $diskResolver = new ResolveDisk()) {}
+    public function __construct(private ResolveDisk $resolveDisk = new ResolveDisk()) {}
 
     public function get(string $path) : string
     {
         return (new ReadFile(disk: $this->disk()))->execute(path: $path);
     }
 
-    public function disk(string|null $name = null) : Disk
+    public function disk(?string $name = null) : Disk
     {
-        return $this->diskResolver->execute(name: $name);
+        return $this->resolveDisk->execute(name: $name);
     }
 
     public function put(string $path, string $content) : void
@@ -83,7 +83,7 @@ readonly class LocalFilesystem implements FilesystemInterface
         return (new EnsureDirectoryIsWritable(disk: $this->disk()))->execute(path: $path);
     }
 
-    public function createDirectory(string $path, int $permissions = 0755) : void
+    public function createDirectory(string $path, int $permissions = 0o755) : void
     {
         (new CreateDirectory(disk: $this->disk()))->execute(path: $path, permissions: $permissions);
     }

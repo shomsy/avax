@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-
 /**
  * Adds support for CTEs and Window Functions.
  */
@@ -25,7 +23,7 @@ trait HasAdvancedQueries
     public function with(string $name, mixed $query, bool $recursive = false) : static
     {
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withCte($name, $query, $recursive)
+            'state' => $this->state->withCte($name, $query, $recursive),
         ]);
     }
 
@@ -35,7 +33,7 @@ trait HasAdvancedQueries
     public function over(string $name, mixed $window) : static
     {
         return clone(object: $this, withProperties: [
-            "state" => $this->state->withWindow($name, $window)
+            'state' => $this->state->withWindow($name, $window),
         ]);
     }
 }

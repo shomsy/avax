@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes;
@@ -9,6 +10,6 @@ use Attribute;
 final readonly class Required
 {
     public function __construct(
-        public string $message = 'This field is required'
+        public string $message = 'This field is required',
     ) {}
 }

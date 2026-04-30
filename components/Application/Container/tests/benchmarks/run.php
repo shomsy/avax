@@ -49,8 +49,6 @@ final class BenchPooledService implements ResettableInterface
     {
         return 'pooled';
     }
-
-    public function reset() : void {}
 }
 
 final class BenchLazyService
@@ -71,17 +69,16 @@ final class BenchDeferredService
 
 final class BenchDeferredProviderService implements BenchDeferredProviderContract
 {
+    #[Override]
     public function value() : string
     {
         return 'deferred-provider';
     }
 }
 
-final class BenchDeferredProvider implements DeferredProviderInterface
+final readonly class BenchDeferredProvider implements DeferredProviderInterface
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app) { $this->app = $app; }
+    public function __construct(private ContainerInterface $container) {}
 
     public function dependsOn() : array
     {
@@ -100,68 +97,39 @@ final class BenchDeferredProvider implements DeferredProviderInterface
 
     public function register() : void
     {
-        $this->app->singleton(abstract: BenchDeferredProviderContract::class, concrete: BenchDeferredProviderService::class);
+        $this->container->singleton(abstract: BenchDeferredProviderContract::class, concrete: BenchDeferredProviderService::class);
     }
-
-    public function boot() : void {}
 }
 
 final class BenchDeep5
 {
-    public BenchDeep4 $next;
-
-    public function __construct(BenchDeep4 $next) { $this->next = $next; }
+    public function __construct(public BenchDeep4 $benchDeep4) {}
 }
 
 final class BenchDeep4
 {
-    public BenchDeep3 $next;
-
-    public function __construct(BenchDeep3 $next) { $this->next = $next; }
+    public function __construct(public BenchDeep3 $benchDeep3) {}
 }
 
 final class BenchDeep3
 {
-    public BenchDeep2 $next;
-
-    public function __construct(BenchDeep2 $next) { $this->next = $next; }
+    public function __construct(public BenchDeep2 $benchDeep2) {}
 }
 
 final class BenchDeep2
 {
-    public BenchDeep1 $next;
-
-    public function __construct(BenchDeep1 $next) { $this->next = $next; }
+    public function __construct(public BenchDeep1 $benchDeep1) {}
 }
 
 final class BenchDeep1
 {
-    public BenchSharedService $shared;
-
-    public function __construct(BenchSharedService $shared) { $this->shared = $shared; }
+    public function __construct(public BenchSharedService $benchSharedService) {}
 }
 
 final class BenchWideRoot
 {
-    public BenchWide5 $five;
-    public BenchWide4 $four;
-    public BenchWide3 $three;
-    public BenchWide2 $two;
-    public BenchWide1 $one;
-
-    public function __construct(
-        BenchWide1 $one,
-        BenchWide2 $two,
-        BenchWide3 $three,
-        BenchWide4 $four,
-        BenchWide5 $five
-    )
+    public function __construct(public BenchWide1 $benchWide1, public BenchWide2 $benchWide2, public BenchWide3 $benchWide3, public BenchWide4 $benchWide4, public BenchWide5 $benchWide5)
     {
-        $this->one   = $one;
-        $this->two   = $two;
-        $this->three = $three;
-        $this->four  = $four;
-        $this->five  = $five;
     }
 }
 
@@ -183,9 +151,9 @@ final class BenchInjectionTarget
     public BenchSharedService|null $methodDependency = null;
 
     #[Inject]
-    public function wire(BenchSharedService $shared) : void
+    public function wire(BenchSharedService $benchSharedService) : void
     {
-        $this->methodDependency = $shared;
+        $this->methodDependency = $benchSharedService;
     }
 }
 
@@ -215,11 +183,11 @@ function benchmark(callable $callback, int $iterations = 1) : array
  * @param array<string, mixed> $settings
  */
 function benchContainer(
-    array|null  $settings = null,
-    string|null $compileMode = null,
-    bool|null   $debug = null,
-    string|null $diagnosticsMode = null,
-    string      $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
+    ?array  $settings = null,
+    ?string $compileMode = null,
+    ?bool   $debug = null,
+    ?string $diagnosticsMode = null,
+    string  $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
 ) : Container
 {
     $settings        ??= [];
@@ -234,7 +202,7 @@ function benchContainer(
         settings       : $settings,
         compileMode    : $compileMode,
         diagnosticsMode: $diagnosticsMode,
-        executionMode  : $executionMode
+        executionMode  : $executionMode,
     ));
 }
 
@@ -245,9 +213,9 @@ function benchContainer(
  */
 function measureScenario(array $scenario) : array
 {
-    $result     = benchmark(
+    $result = benchmark(
         callback  : $scenario['callback'],
-        iterations: $scenario['iterations']
+        iterations: $scenario['iterations'],
     );
     $timeMs     = $result['time_ms'];
     $iterations = max(1, $scenario['iterations']);
@@ -276,13 +244,13 @@ function measureScenarioForGuard(array $scenario, int $runs = 3) : array
 
     $timeSamples = array_values(array: array_map(
                                            callback: static fn (array $sample) : float => (float) $sample['time_ms'],
-                                           array   : $samples
+                                           array   : $samples,
                                        ));
     sort(array: $timeSamples);
 
     $peakSamples = array_values(array: array_map(
                                            callback: static fn (array $sample) : float => (float) $sample['peak_mb'],
-                                           array   : $samples
+                                           array   : $samples,
                                        ));
     sort(array: $peakSamples);
 
@@ -307,7 +275,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'cold_boot',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
@@ -316,7 +284,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'warm_boot',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->warmCompiled(serviceIds: [BenchSharedService::class]);
@@ -325,7 +293,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'cached_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
@@ -335,7 +303,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'worker_cached_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -349,7 +317,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'uncached_resolve',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchTransientService::class, concrete: BenchTransientService::class);
                 $container->make(abstract: BenchTransientService::class);
@@ -358,7 +326,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'request_lifecycle',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -374,7 +342,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deep_graph',
             'iterations' => 1000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->get(id: BenchDeep5::class);
             },
@@ -382,7 +350,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'wide_graph',
             'iterations' => 1000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->get(id: BenchWideRoot::class);
             },
@@ -390,7 +358,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'scoped_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->scoped(abstract: BenchScopedService::class, concrete: BenchScopedService::class);
                 $container->openScope();
@@ -401,7 +369,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'pooled_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchPooledService::class, concrete: BenchPooledService::class)->pooled(maxSize: 8);
                 $container->openScope();
@@ -412,9 +380,10 @@ function benchmarkScenarios() : array
         [
             'name'       => 'lazy_service',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchLazyService::class, concrete: BenchLazyService::class);
+
                 $lazy = $container->lazy(abstract: BenchLazyService::class);
                 $lazy->value();
             },
@@ -422,7 +391,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deferred_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->defer(abstract: BenchDeferredService::class, concrete: BenchDeferredService::class);
                 $container->get(id: BenchDeferredService::class);
@@ -431,7 +400,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deferred_provider',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bootProviders(providers: [BenchDeferredProvider::class]);
                 $container->get(id: BenchDeferredProviderContract::class);
@@ -440,16 +409,16 @@ function benchmarkScenarios() : array
         [
             'name'       => 'function_call_injection',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
-                $container->call(callable: static fn (BenchSharedService $shared) : string => $shared->value());
+                $container->call(callable: static fn (BenchSharedService $benchSharedService) : string => $benchSharedService->value());
             },
         ],
         [
             'name'       => 'property_injection',
             'iterations' => 2000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->injectInto(target: new BenchInjectionTarget());
@@ -458,9 +427,10 @@ function benchmarkScenarios() : array
         [
             'name'       => 'method_injection',
             'iterations' => 2000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
+
                 $target = new BenchInjectionTarget();
                 $container->injectInto(target: $target);
                 $target->methodDependency?->value();
@@ -469,7 +439,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'compile_time',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchDeep5::class);
@@ -487,12 +457,12 @@ function benchmarkScenarios() : array
         [
             'name'       => 'prod_compiled_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
                     $container = benchContainer(
-                        compileMode: CreateContainerConfig::COMPILE_MODE_PRODUCTION
+                        compileMode: CreateContainerConfig::COMPILE_MODE_PRODUCTION,
                     );
                     $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                     $container->warmCompiled(serviceIds: [BenchSharedService::class]);
@@ -504,13 +474,13 @@ function benchmarkScenarios() : array
         [
             'name'       => 'generated_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
                     $container = benchContainer(
                         compileMode  : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
-                        executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED
+                        executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
                     );
                     $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                     $container->warmCompiled(serviceIds: [BenchSharedService::class]);
@@ -522,14 +492,14 @@ function benchmarkScenarios() : array
         [
             'name'       => 'dev_compiled_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
                     $container = benchContainer(
                         compileMode    : CreateContainerConfig::COMPILE_MODE_DEV,
                         debug          : true,
-                        diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
+                        diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
                     );
                     $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                     $container->warmCompiled(serviceIds: [BenchSharedService::class]);
@@ -555,7 +525,7 @@ function benchmarkPhpSettings() : array
 
 /**
  * @param array<string, array{max_time_ms: float, max_peak_mb: float}> $thresholds
- * @param array<string, array<string, mixed>>                          $results
+ * @param array<string, array<string, mixed>> $results
  */
 function assertThresholds(array $thresholds, array $results) : void
 {
@@ -563,16 +533,17 @@ function assertThresholds(array $thresholds, array $results) : void
 
     foreach ($thresholds as $name => $threshold) {
         if (! isset($results[$name])) {
-            $failures[] = "Missing benchmark result for [{$name}].";
+            $failures[] = sprintf('Missing benchmark result for [%s].', $name);
+
             continue;
         }
 
         if ($results[$name]['time_ms'] > $threshold['max_time_ms']) {
-            $failures[] = "[{$name}] exceeded max_time_ms {$threshold['max_time_ms']} with {$results[$name]['time_ms']}.";
+            $failures[] = sprintf('[%s] exceeded max_time_ms %s with %s.', $name, $threshold['max_time_ms'], $results[$name]['time_ms']);
         }
 
         if ($results[$name]['peak_mb'] > $threshold['max_peak_mb']) {
-            $failures[] = "[{$name}] exceeded max_peak_mb {$threshold['max_peak_mb']} with {$results[$name]['peak_mb']}.";
+            $failures[] = sprintf('[%s] exceeded max_peak_mb %s with %s.', $name, $threshold['max_peak_mb'], $results[$name]['peak_mb']);
         }
     }
 
@@ -607,15 +578,15 @@ if ($guard) {
 if ($jsonOutput || is_string(value: $outputPath)) {
     $payload = json_encode(value: [
                                       'meta' => [
-                                          'php' => PHP_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              'sapi' => PHP_SAPI,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              'timestamp' => gmdate(format: 'c'),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'dockerImage' => BENCHMARK_DOCKER_IMAGE,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              'phpSettings' => benchmarkPhpSettings(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                'suiteVersion' => BENCHMARK_SUITE_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'buildMarker' => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'guard' => $guard,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               'scenarioCount' => count(value: $results),
+                                          'php'           => PHP_VERSION,
+                                          'sapi'          => PHP_SAPI,
+                                          'timestamp'     => gmdate(format: 'c'),
+                                          'dockerImage'   => BENCHMARK_DOCKER_IMAGE,
+                                          'phpSettings'   => benchmarkPhpSettings(),
+                                          'suiteVersion'  => BENCHMARK_SUITE_VERSION,
+                                          'buildMarker'   => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
+                                          'guard'         => $guard,
+                                          'scenarioCount' => count(value: $results),
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'scenarios' => array_keys(array: $results),
                                       ],
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               'results' => $results,
@@ -623,12 +594,12 @@ if ($jsonOutput || is_string(value: $outputPath)) {
 
     if (is_string(value: $outputPath) && $outputPath !== '') {
         $directory = dirname(path: $outputPath);
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new RuntimeException(message: "Cannot create benchmark artifact directory [{$directory}].");
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o775, recursive: true) && ! is_dir(filename: $directory)) {
+            throw new RuntimeException(message: sprintf('Cannot create benchmark artifact directory [%s].', $directory));
         }
 
         if (file_put_contents(filename: $outputPath, data: $payload, flags: LOCK_EX) === false) {
-            throw new RuntimeException(message: "Cannot write benchmark artifact [{$outputPath}].");
+            throw new RuntimeException(message: sprintf('Cannot write benchmark artifact [%s].', $outputPath));
         }
     }
 
@@ -644,7 +615,7 @@ foreach ($results as $name => $result) {
         data  : str_pad(string: $name, length: 24)
                 . str_pad(string: number_format(num: $result['time_ms'], decimals: 2) . ' ms', length: 14)
                 . str_pad(string: number_format(num: $result['ops_per_s'], decimals: 2) . ' ops/s', length: 18)
-                . number_format(num: $result['peak_mb'], decimals: 2) . " MB\n"
+                . number_format(num: $result['peak_mb'], decimals: 2) . " MB\n",
     );
 }
 

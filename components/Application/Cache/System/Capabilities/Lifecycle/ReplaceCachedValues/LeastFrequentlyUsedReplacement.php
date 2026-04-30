@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues;
 
+use Override;
+
 final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValueForReplacement
 {
+    #[Override]
     public function choose(array $entries) : string|null
     {
-        if (count($entries) === 0) {
+        if ($entries === []) {
             return null;
         }
 

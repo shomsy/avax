@@ -21,17 +21,17 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
      * @throws RandomException
      */
     public function issue(
-        UserId                     $userId,
-        DateTimeImmutable          $expiresAt,
-        string|null                $familyId = null,
-        DateTimeImmutable|null     $mfaVerifiedAt = null,
-        bool                       $phishingResistant = false,
-        string|null                $clientId = null,
-        array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        UserId                $userId,
+        DateTimeImmutable     $expiresAt,
+        string                $familyId = null,
+        DateTimeImmutable     $mfaVerifiedAt = null,
+        bool                  $phishingResistant = false,
+        string                $clientId = null,
+        array                 $scopes = [],
+        OAuthSenderConstraint $senderConstraint = null,
     ) : IssuedRefreshToken
     {
-        $tokenId  = bin2hex(string: random_bytes(length: 32));
+        $tokenId = bin2hex(string: random_bytes(length: 32));
         $familyId ??= bin2hex(string: random_bytes(length: 16));
 
         $record = new RefreshTokenRecord(
@@ -43,7 +43,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             phishingResistant: $phishingResistant,
             clientId         : $clientId,
             scopes           : $scopes,
-            senderConstraint : $senderConstraint
+            senderConstraint : $senderConstraint,
         );
 
         $this->tokens[$tokenId] = $record;
@@ -54,7 +54,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             expiresAt        : $expiresAt,
             familyId         : $familyId,
             mfaVerifiedAt    : $mfaVerifiedAt,
-            phishingResistant: $phishingResistant
+            phishingResistant: $phishingResistant,
         );
     }
 

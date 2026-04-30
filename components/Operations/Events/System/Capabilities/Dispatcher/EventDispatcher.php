@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\Dispatcher;
@@ -11,7 +12,7 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
 final readonly class EventDispatcher
 {
     public function __construct(
-        private ListenerRegistry $registry
+        private ListenerRegistry $registry,
     ) {}
 
     /**

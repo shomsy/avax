@@ -5,175 +5,176 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache;
 
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Override;
 use Stringable;
 
 final readonly class CacheOperation implements Stringable
 {
     public function __construct(
         public string      $operation,
-        public CacheKey    $key,
+        public CacheKey    $cacheKey,
         public float       $timestamp,
         public int|null    $ttlSeconds = null,
         public int|null    $durationMicroseconds = null,
         public string|null $storeName = null,
-        public string|null $tier = null
+        public string|null $tier = null,
     ) {}
 
     public static function read(
-        CacheKey    $key,
-        float       $timestamp,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'read',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function write(
-        CacheKey    $key,
-        float       $timestamp,
-        int         $ttlSeconds,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        int      $ttlSeconds,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'write',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             ttlSeconds          : $ttlSeconds,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function delete(
-        CacheKey    $key,
-        float       $timestamp,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'delete',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function hit(
-        CacheKey    $key,
-        float       $timestamp,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'hit',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function miss(
-        CacheKey    $key,
-        float       $timestamp,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'miss',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function eviction(
-        CacheKey    $key,
-        float       $timestamp,
-        string      $reason,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        string   $reason,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation: 'eviction',
-            key      : $key,
+            key      : $cacheKey,
             timestamp: $timestamp,
-            storeName: $storeName
+            storeName: $storeName,
         );
     }
 
     public static function invalidation(
-        CacheKey    $key,
-        float       $timestamp,
-        string      $reason,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        string   $reason,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation: 'invalidation',
-            key      : $key,
+            key      : $cacheKey,
             timestamp: $timestamp,
-            storeName: $storeName
+            storeName: $storeName,
         );
     }
 
     public static function refresh(
-        CacheKey    $key,
-        float       $timestamp,
-        int|null    $durationMicroseconds = null,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        ?int     $durationMicroseconds = null,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation           : 'refresh',
-            key                 : $key,
+            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
-            storeName           : $storeName
+            storeName           : $storeName,
         );
     }
 
     public static function sourceFailure(
-        CacheKey    $key,
-        float       $timestamp,
-        string      $error,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        string   $error,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation: 'source_failure',
-            key      : $key,
+            key      : $cacheKey,
             timestamp: $timestamp,
-            storeName: $storeName
+            storeName: $storeName,
         );
     }
 
     public static function storeFailure(
-        CacheKey    $key,
-        float       $timestamp,
-        string      $error,
-        string|null $storeName = null
+        CacheKey $cacheKey,
+        float    $timestamp,
+        string   $error,
+        ?string  $storeName = null,
     ) : self
     {
         return new self(
             operation: 'store_failure',
-            key      : $key,
+            key      : $cacheKey,
             timestamp: $timestamp,
-            storeName: $storeName
+            storeName: $storeName,
         );
     }
 
@@ -192,13 +193,14 @@ final readonly class CacheOperation implements Stringable
         return $this->operation === 'delete';
     }
 
+    #[Override]
     public function __toString() : string
     {
         return sprintf(
             '%s:%s at %s',
             $this->operation,
-            $this->key->fullKey(),
-            date('Y-m-d H:i:s', (int) $this->timestamp)
+            $this->cacheKey->fullKey(),
+            date('Y-m-d H:i:s', (int) $this->timestamp),
         );
     }
 }

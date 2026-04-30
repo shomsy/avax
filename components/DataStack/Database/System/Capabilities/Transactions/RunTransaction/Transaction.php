@@ -17,14 +17,14 @@ use Throwable;
 final class Transaction implements TransactionManagerInterface
 {
     /** @var int How many bubbles deep are we currently? (0 = no transaction active). */
-    private int                         $transactions = 0;
+    private int $transactions = 0;
     private readonly DatabaseConnection $connection;
 
     /**
      * @param DatabaseConnection $connection The physical persistence gateway to use.
      */
     private function __construct(
-        DatabaseConnection $connection
+        DatabaseConnection $connection,
     )
     {
         $this->connection = $connection;
@@ -80,7 +80,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : 'Transaction failed: ' . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
     }
@@ -104,7 +104,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : 'Failed to begin transaction: ' . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
 
@@ -129,7 +129,7 @@ final class Transaction implements TransactionManagerInterface
                 throw new TransactionException(
                     message     : 'Cannot commit: no active transaction',
                     nestingLevel: 0,
-                    previous    : null
+                    previous    : null,
                 );
             }
 
@@ -146,7 +146,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : 'Failed to commit transaction: ' . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
 
@@ -163,7 +163,7 @@ final class Transaction implements TransactionManagerInterface
                 throw new TransactionException(
                     message     : 'Cannot rollback: no active transaction',
                     nestingLevel: 0,
-                    previous    : null
+                    previous    : null,
                 );
             }
 
@@ -178,10 +178,11 @@ final class Transaction implements TransactionManagerInterface
             }
         } catch (Throwable $e) {
             $this->transactions = 0;
+
             throw new TransactionException(
                 message     : 'Failed to rollback transaction: ' . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
 
@@ -216,7 +217,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : "Invalid savepoint name: {$name}. Only alphanumeric characters and underscores are allowed.",
                 nestingLevel: $this->transactions,
-                previous    : null
+                previous    : null,
             );
         }
 
@@ -226,7 +227,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : "Failed to create savepoint [{$name}]: " . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
 
@@ -252,7 +253,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : "Invalid savepoint name: {$name}. Only alphanumeric characters and underscores are allowed.",
                 nestingLevel: $this->transactions,
-                previous    : null
+                previous    : null,
             );
         }
 
@@ -262,7 +263,7 @@ final class Transaction implements TransactionManagerInterface
             throw new TransactionException(
                 message     : "Failed to rollback to savepoint [{$name}]: " . $e->getMessage(),
                 nestingLevel: $this->transactions,
-                previous    : $e
+                previous    : $e,
             );
         }
 

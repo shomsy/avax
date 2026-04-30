@@ -17,7 +17,7 @@ enum SagaRecoveryAction: string
 final readonly class MarkSagaAsUnrecoverable
 {
     public function __construct(
-        private SagaRecoveryAction $action
+        private SagaRecoveryAction $action,
     ) {}
 
     public function describeResponsibility() : string
@@ -37,7 +37,7 @@ final readonly class MarkSagaAsUnrecoverable
             sagaId     : $sagaData['id'],
             recoverable: ! $shouldAbandon,
             action     : $shouldAbandon ? SagaRecoveryAction::ABANDON : $this->action,
-            reason     : implode('; ', $failureReasons)
+            reason     : implode('; ', $failureReasons),
         );
     }
 
@@ -64,9 +64,9 @@ final readonly class MarkSagaAsUnrecoverable
 final readonly class SagaRecoveryResult
 {
     public function __construct(
-        public string             $sagaId,
-        public bool               $recoverable,
+        public string $sagaId,
+        public bool   $recoverable,
         public SagaRecoveryAction $action,
-        public string             $reason
+        public string $reason,
     ) {}
 }

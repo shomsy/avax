@@ -35,14 +35,14 @@ final readonly class RetryPolicy
      * @param bool      $retryOnConnectionError Whether to retry on connection errors
      */
     public function __construct(
-        public int   $attempts = 3,
-        public int   $baseDelayMs = 1000,
+        public int  $attempts = 3,
+        public int  $baseDelayMs = 1000,
         public float $backoffMultiplier = 2.0,
-        public int   $maxDelayMs = 30_000,
-        public bool  $jitter = false,
+        public int  $maxDelayMs = 30_000,
+        public bool $jitter = false,
         public array $retryOnStatus = [500, 502, 503, 504],
-        public bool  $retryOnTimeout = true,
-        public bool  $retryOnConnectionError = true,
+        public bool $retryOnTimeout = true,
+        public bool $retryOnConnectionError = true,
     ) {}
 
     /**
@@ -51,10 +51,10 @@ final readonly class RetryPolicy
      * Delays: baseDelay, baseDelay*multiplier, baseDelay*multiplier^2, ...
      */
     public static function exponential(
-        int   $attempts = 3,
-        int   $baseDelayMs = 1000,
+        int $attempts = 3,
+        int $baseDelayMs = 1000,
         float $multiplier = 2.0,
-        int   $maxDelayMs = 30_000,
+        int $maxDelayMs = 30_000,
     ) : self
     {
         return new self(
@@ -178,8 +178,8 @@ final readonly class RetryPolicy
         // Add jitter if enabled (±25% random variation)
         if ($this->jitter) {
             $jitterRange = (int) ($delay * 0.25);
-            $delay       += random_int(-$jitterRange, $jitterRange);
-            $delay       = max(1, $delay); // Ensure positive delay
+            $delay += random_int(-$jitterRange, $jitterRange);
+            $delay = max(1, $delay); // Ensure positive delay
         }
 
         return $delay;

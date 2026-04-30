@@ -29,7 +29,7 @@ class TemplateEngine extends BladeOne
      *
      * @param string $templatePath The path to template files.
      * @param string $compiledPath The path where compiled templates are stored.
-     * @param int    $mode         BladeOne mode (e.g., MODE_AUTO).
+     * @param int $mode BladeOne mode (e.g., MODE_AUTO).
      *
      * @throws FoundationContainerException
      * @throws ContainerExceptionInterface
@@ -39,7 +39,7 @@ class TemplateEngine extends BladeOne
     public function __construct(
         string $templatePath,
         string $compiledPath,
-        int    $mode = BladeOne::MODE_AUTO,
+        int $mode = BladeOne::MODE_AUTO,
     )
     {
         // Initialize the parent BladeOne class with provided paths and mode
@@ -102,7 +102,7 @@ class TemplateEngine extends BladeOne
             handler: fn ($expression) : string => sprintf(
                 "<?php echo '%s/' . ltrim(%s, '\"\\'/'); ?>",
                 $this->baseAssetPath,
-                $expression
+                $expression,
             ),
         );
     }
@@ -119,7 +119,7 @@ class TemplateEngine extends BladeOne
             name   : 'datetime',
             handler: static fn ($expression) : string => sprintf(
                 "<?php echo (new DateTime(%s))->format('Y-m-d H:i:s'); ?>",
-                $expression
+                $expression,
             ),
         );
     }
@@ -136,7 +136,7 @@ class TemplateEngine extends BladeOne
             name   : 'ifenv',
             handler: static fn ($expression) : string => sprintf(
                 "<?php if (config('cashback.env') === %s): ?>",
-                $expression
+                $expression,
             ),
         );
         $this->directive(
@@ -157,7 +157,7 @@ class TemplateEngine extends BladeOne
             name   : 'markdown',
             handler: static fn ($expression) : string => sprintf(
                 '<?php echo (new Parsedown())->text(%s); ?>',
-                $expression
+                $expression,
             ),
         );
     }
@@ -239,7 +239,7 @@ class TemplateEngine extends BladeOne
             handler: static fn ($expression) : string => sprintf(
                 "<?php if (%s) { include '%s' ; } ?>",
                 $expression[0],
-                $expression[1]
+                $expression[1],
             ),
         );
     }
@@ -257,7 +257,7 @@ class TemplateEngine extends BladeOne
                 $expression,
             ) : string => sprintf(
                 "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
-                $expression
+                $expression,
             ),
         );
     }

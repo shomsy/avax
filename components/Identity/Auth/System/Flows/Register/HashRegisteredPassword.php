@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Register;
@@ -12,7 +13,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\PasswordHashing\P
 final readonly class HashRegisteredPassword
 {
     public function __construct(
-        private PasswordHasher $hasher
+        private PasswordHasher $hasher,
     ) {}
 
     public function execute(string $password) : string

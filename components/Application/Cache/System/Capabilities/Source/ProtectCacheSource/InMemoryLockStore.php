@@ -6,21 +6,19 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCa
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Override;
 
 final class InMemoryLockStore implements CacheLockStore
 {
-    /** @var array<string, CacheLockOwner> */
-    private array $locks = [];
-
     public function __construct(
-        private Clock $clock = new SystemClock(),
+        private readonly Clock $clock = new SystemClock(),
         /** @var array<string, CacheLockOwner> */
-        array         $locks = []
+        private array          $locks = []
     )
     {
-        $this->locks = $locks;
     }
 
+    #[Override]
     public function acquire(string $key, string $owner, int $ttlSeconds) : bool
     {
         if ($this->isAcquired(key: $key)) {
@@ -34,12 +32,13 @@ final class InMemoryLockStore implements CacheLockStore
         $this->locks[$key] = CacheLockOwner::current(
             ownerId   : $owner,
             ttlSeconds: $ttlSeconds,
-            clock     : $this->clock
+            clock     : $this->clock,
         );
 
         return true;
     }
 
+    #[Override]
     public function isAcquired(string $key) : bool
     {
         if (! isset($this->locks[$key])) {
@@ -57,6 +56,7 @@ final class InMemoryLockStore implements CacheLockStore
         return true;
     }
 
+    #[Override]
     public function release(string $key, string $owner) : void
     {
         $existingOwner = $this->locks[$key] ?? null;
@@ -66,6 +66,7 @@ final class InMemoryLockStore implements CacheLockStore
         }
     }
 
+    #[Override]
     public function getOwner(string $key) : CacheLockOwner|null
     {
         if (! $this->isAcquired(key: $key)) {

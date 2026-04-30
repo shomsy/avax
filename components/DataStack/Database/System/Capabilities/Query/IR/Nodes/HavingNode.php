@@ -15,7 +15,7 @@ final class HavingNode
         return 'HAVING ' . preg_replace(
                 pattern    : '/^(AND|OR)\s+/i',
                 replacement: '',
-                subject    : $this->condition->getSql(grammar: $grammar)
+                subject    : $this->condition->getSql(grammar: $grammar),
             );
     }
 }

@@ -14,7 +14,7 @@ use Throwable;
 final readonly class ConnectionFailed extends Event
 {
     public Throwable $exception;
-    public string    $connectionName;
+    public string $connectionName;
 
     /**
      * @param string    $connectionName The technical identifier of the database gateway that failed to respond.
@@ -23,9 +23,9 @@ final readonly class ConnectionFailed extends Event
      *                                  specific execution scope.
      */
     public function __construct(
-        string    $connectionName,
+        string $connectionName,
         Throwable $exception,
-        string    $correlationId
+        string $correlationId,
     )
     {
         $this->connectionName = $connectionName;

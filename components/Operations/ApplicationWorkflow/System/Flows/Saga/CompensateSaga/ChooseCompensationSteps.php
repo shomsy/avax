@@ -54,7 +54,7 @@ final readonly class ChooseCompensationSteps
 
         if ($saga->status === SagaInstanceStatus::PENDING) {
             throw new InvalidArgumentException(
-                message: sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id)
+                message: sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id),
             );
         }
     }

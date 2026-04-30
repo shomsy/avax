@@ -25,14 +25,17 @@ use SensitiveParameter;
 final readonly class RefreshAuthentication
 {
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        #[SensitiveParameter] private JwtIdentityInterface|null       $jwtIdentity = null,
-        private DeterministicRiskEngine|null                          $riskEngine = null
+        private UserSourceInterface             $userSource,
+        private ProjectAuthenticatedUser        $projectAuthenticatedUser,
+        #[SensitiveParameter]
+        private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[SensitiveParameter]
+        private JwtIdentityInterface|null       $jwtIdentity = null,
+        private DeterministicRiskEngine|null    $riskEngine = null,
     ) {}
 
     /**
@@ -56,7 +59,7 @@ final readonly class RefreshAuthentication
                                                                'reason'     => 'missing_or_expired',
                                                                'ip_address' => $request->ipAddress,
                                                                'user_agent' => $request->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             throw RefreshAuthenticationFailed::invalidToken();
@@ -70,7 +73,7 @@ final readonly class RefreshAuthentication
                                                                'reason'     => 'oauth_bound_token',
                                                                'ip_address' => $request->ipAddress,
                                                                'user_agent' => $request->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             throw RefreshAuthenticationFailed::invalidToken();
@@ -88,7 +91,7 @@ final readonly class RefreshAuthentication
                                                                'risk_action' => $riskDecision?->action->value,
                                                                'ip_address'  => $request->ipAddress,
                                                                'user_agent'  => $request->userAgent,
-                                                           ]
+                                                           ],
                                            ));
 
             throw RefreshAuthenticationFailed::invalidToken();
@@ -98,6 +101,7 @@ final readonly class RefreshAuthentication
 
         if ($user === null || ! $user->isActive()) {
             $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
+
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
@@ -107,7 +111,7 @@ final readonly class RefreshAuthentication
             phishingResistant   : $record->phishingResistant,
             clientId            : $record->clientId,
             scopes              : $record->scopes,
-            refreshTokenFamilyId: $record->familyId
+            refreshTokenFamilyId: $record->familyId,
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId           : $record->userId,
@@ -116,7 +120,7 @@ final readonly class RefreshAuthentication
             mfaVerifiedAt    : $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId         : $record->clientId,
-            scopes           : $record->scopes
+            scopes           : $record->scopes,
         );
         $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $refreshToken->tokenId);
 
@@ -127,7 +131,7 @@ final readonly class RefreshAuthentication
             accessTokenExpiresAt: $accessToken->expiresAt,
             refreshTokenId      : $refreshToken->tokenId,
             mfaVerifiedAt       : $record->mfaVerifiedAt,
-            phishingResistant   : $record->phishingResistant
+            phishingResistant   : $record->phishingResistant,
         );
 
         $this->currentAuthentication->store(context: $context);
@@ -139,13 +143,13 @@ final readonly class RefreshAuthentication
                                                            'family_id'  => $refreshToken->familyId,
                                                            'ip_address' => $request->ipAddress,
                                                            'user_agent' => $request->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return AuthenticationResult::success(
             context     : $context,
             accessToken : $accessToken->token,
-            refreshToken: $refreshToken->token
+            refreshToken: $refreshToken->token,
         );
     }
 }

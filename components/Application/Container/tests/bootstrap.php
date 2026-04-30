@@ -43,7 +43,7 @@ namespace {
             if (is_file(filename: $path)) {
                 require_once $path;
             }
-        }
+        },
     );
 
     function assertTrue(bool $condition, string $message) : void
@@ -57,7 +57,7 @@ namespace {
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
-                message: $message . ' Expected ' . var_export(value: $expected, return: true) . ' but got ' . var_export(value: $actual, return: true) . '.'
+                message: $message . ' Expected ' . var_export(value: $expected, return: true) . ' but got ' . var_export(value: $actual, return: true) . '.',
             );
         }
     }
@@ -88,7 +88,7 @@ namespace {
             throw new RuntimeException(
                 message : $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
                 code    : 0,
-                previous: $throwable
+                previous: $throwable,
             );
         }
 
@@ -96,7 +96,7 @@ namespace {
     }
 
     function makeTestContainer(
-        CreateContainerConfig|null $config = null
+        CreateContainerConfig $config = null,
     ) : Container
     {
         return new CreateContainer()->create(config: $config);

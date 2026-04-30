@@ -21,11 +21,13 @@ use SensitiveParameter;
 final readonly class RevokeSession
 {
     public function __construct(
-        private IdentityInterface                                   $identity,
-        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private AuditLogInterface                                   $auditLog,
-        private Clock                                               $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
+        private IdentityInterface             $identity,
+        #[SensitiveParameter]
+        private CurrentAuthentication         $currentAuthentication,
+        private AuditLogInterface             $auditLog,
+        private Clock                         $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null $sessionRegistry = null,
     ) {}
 
     /**
@@ -66,7 +68,7 @@ final readonly class RevokeSession
                                                            'user_id'    => $user->id,
                                                            'session_id' => $sessionId,
                                                            'reason'     => 'user_revoke',
-                                                       ]
+                                                       ],
                                        ));
     }
 }

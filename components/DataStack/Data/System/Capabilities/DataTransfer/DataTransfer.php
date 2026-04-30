@@ -6,7 +6,6 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer;
 
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\DefaultValue;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\EmailRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Hidden;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\IntegerRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinLengthRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinRule;
@@ -29,11 +28,11 @@ use Throwable;
  */
 final class DataTransfer
 {
-    private static DataTransferConfig|null $config;
+    private static DataTransferConfig|null $dataTransferConfig = null;
 
-    public static function configure(DataTransferConfig $config) : void
+    public static function configure(DataTransferConfig $dataTransferConfig) : void
     {
-        self::$config = $config;
+        self::$dataTransferConfig = $dataTransferConfig;
     }
 
     /**
@@ -41,8 +40,6 @@ final class DataTransfer
      *
      * @template T of object
      * @param class-string<T> $class
-     *
-     * @return DataTransferResult
      */
     public static function tryCreate(string $class, array|object $input) : DataTransferResult
     {
@@ -54,8 +51,8 @@ final class DataTransfer
             return DataTransferResult::failure(
                 failure: new DataTransferFailure(
                              message : 'Data transfer failed.',
-                             previous: $exception
-                         )
+                             previous: $exception,
+                         ),
             );
         }
     }
@@ -70,11 +67,11 @@ final class DataTransfer
      */
     public static function create(string $class, array|object $input) : object
     {
-        $config    = self::$config ?? DataTransferConfig::default();
+            self::$dataTransferConfig ?? DataTransferConfig::default();
         $inputData = is_array($input) ? $input : (array) $input;
 
-        $reflection = new ReflectionClass($class);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $reflectionClass = new ReflectionClass($class);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $values     = [];
         $violations = [];
@@ -96,8 +93,9 @@ final class DataTransfer
             if ($isRequired && ! $hasValue && $value === null) {
                 $violations[] = new DataTransferViolation(
                     field  : $propertyName,
-                    message: "Field \"{$propertyName}\" is required."
+                    message: sprintf('Field "%s" is required.', $propertyName),
                 );
+
                 continue;
             }
 
@@ -123,10 +121,10 @@ final class DataTransfer
                     $validationResult = self::validatePropertyValue(
                         $shortName,
                         $value,
-                        $propertyName
+                        $propertyName,
                     );
 
-                    if ($validationResult !== null) {
+                    if ($validationResult instanceof DataTransferViolation) {
                         $violations[] = $validationResult;
                     }
                 }
@@ -135,10 +133,10 @@ final class DataTransfer
             $values[$propertyName] = $value;
         }
 
-        if (! empty($violations)) {
+        if ($violations !== []) {
             throw new DataTransferFailure(
                 message   : 'Data validation failed.',
-                violations: new DataTransferViolations($violations)
+                violations: new DataTransferViolations($violations),
             );
         }
 
@@ -151,7 +149,7 @@ final class DataTransfer
     private static function validatePropertyValue(
         string $ruleName,
         mixed  $value,
-        string $propertyName
+        string $propertyName,
     ) : DataTransferViolation|null
     {
         try {
@@ -169,16 +167,16 @@ final class DataTransfer
             }
 
             return null;
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $invalidArgumentException) {
             return new DataTransferViolation(
                 field  : $propertyName,
-                message: $e->getMessage()
+                message: $invalidArgumentException->getMessage(),
             );
         }
     }
 
     public static function config() : DataTransferConfig
     {
-        return self::$config ??= DataTransferConfig::default();
+        return self::$dataTransferConfig ??= DataTransferConfig::default();
     }
 }

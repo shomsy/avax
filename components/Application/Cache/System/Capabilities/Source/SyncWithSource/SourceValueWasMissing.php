@@ -7,6 +7,6 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithS
 final readonly class SourceValueWasMissing
 {
     public function __construct(
-        public CacheSourceKey $key
+        public CacheSourceKey $cacheSourceKey,
     ) {}
 }

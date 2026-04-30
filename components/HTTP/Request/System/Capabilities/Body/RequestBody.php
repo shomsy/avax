@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Body;
@@ -7,7 +8,7 @@ final class RequestBody
 {
     public function __construct(
         private RawBody $raw,
-        private ParsedBody $parsed
+        private ParsedBody $parsed,
     ) {}
 
     public function raw(): RawBody

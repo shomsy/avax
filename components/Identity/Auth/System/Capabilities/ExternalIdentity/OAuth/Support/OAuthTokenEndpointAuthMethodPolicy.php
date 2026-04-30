@@ -12,10 +12,10 @@ use InvalidArgumentException;
 final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
-        OAuthClientType                   $type,
-        OAuthTokenEndpointAuthMethod|null $requested = null,
-        OAuthTokenEndpointAuthMethod|null $current = null,
-        bool                              $workloadIdentity = false
+        OAuthClientType              $type,
+        OAuthTokenEndpointAuthMethod $requested = null,
+        OAuthTokenEndpointAuthMethod $current = null,
+        bool                         $workloadIdentity = false,
     ) : OAuthTokenEndpointAuthMethod
     {
         $default = $this->defaultForType(type: $type);
@@ -43,9 +43,9 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
     }
 
     private function isCompatible(
-        OAuthClientType              $type,
+        OAuthClientType $type,
         OAuthTokenEndpointAuthMethod $method,
-        bool                         $workloadIdentity
+        bool            $workloadIdentity,
     ) : bool
     {
         if ($type === OAuthClientType::PUBLIC) {

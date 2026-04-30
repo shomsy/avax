@@ -8,11 +8,12 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use DateInterval;
+use Override;
 
 final readonly class ExpiresAfter implements CacheExpiration
 {
     public function __construct(
-        private Duration $duration
+        private Duration $duration,
     ) {}
 
     public static function seconds(int $seconds) : self
@@ -25,20 +26,22 @@ final readonly class ExpiresAfter implements CacheExpiration
         return new self(duration: Duration::ofMilliseconds(milliseconds: $milliseconds));
     }
 
+    #[Override]
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
-        Clock                 $clock
+        Clock $clock,
     ) : Timestamp|null
     {
         return $clock->now()->add(duration: $this->duration);
     }
 
+    #[Override]
     public function isExpired(
         Timestamp|null $expiresAt,
-        Clock          $clock
+        Clock $clock,
     ) : bool
     {
-        if ($expiresAt === null) {
+        if (! $expiresAt instanceof Timestamp) {
             return true;
         }
 

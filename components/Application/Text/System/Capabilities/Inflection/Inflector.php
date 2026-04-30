@@ -68,8 +68,8 @@ final class Inflector
         }
 
         // Apply rules
-        foreach ($this->pluralRules as $rule) {
-            $result = preg_replace($rule['pattern'], $rule['replacement'], $word);
+        foreach ($this->pluralRules as $pluralRule) {
+            $result = preg_replace($pluralRule['pattern'], $pluralRule['replacement'], $word);
             if ($result !== $word) {
                 return (string) $result;
             }
@@ -102,8 +102,8 @@ final class Inflector
         }
 
         // Apply rules
-        foreach ($this->singularRules as $rule) {
-            $result = preg_replace($rule['pattern'], $rule['replacement'], $word);
+        foreach ($this->singularRules as $singularRule) {
+            $result = preg_replace($singularRule['pattern'], $singularRule['replacement'], $word);
             if ($result !== $word) {
                 return (string) $result;
             }
@@ -124,7 +124,7 @@ final class Inflector
             $words = [$value];
         }
 
-        return implode('', array_map(fn (string $w) : string => ucfirst(strtolower($w)), $words));
+        return implode('', array_map(static fn (string $w) : string => ucfirst(strtolower($w)), $words));
     }
 
     public function kebabCase(string $value) : string
@@ -135,9 +135,9 @@ final class Inflector
     public function snakeCase(string $value, string $delimiter = '_') : string
     {
         $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/[\s\-]+/', $delimiter, $value);
+        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', (string) $value);
+        $value = preg_replace('/[\s\-]+/', $delimiter, (string) $value);
 
-        return strtolower($value);
+        return strtolower((string) $value);
     }
 }

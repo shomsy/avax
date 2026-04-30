@@ -21,16 +21,16 @@ use LogicException;
 final readonly class AsyncWriteFile
 {
     /**
-     * @param string                     $path     Absolute or relative file path to write
-     * @param string                     $contents File contents to write
-     * @param array<string, mixed>       $options  Write operation options (permissions, append mode, etc.)
-     * @param AsyncOperationPromise|null $promise  The promise associated with this operation (null until scheduled)
+     * @param string                     $path                  Absolute or relative file path to write
+     * @param string                     $contents              File contents to write
+     * @param array<string, mixed>       $options               Write operation options (permissions, append mode, etc.)
+     * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string                 $path,
         public string                 $contents,
         public array                  $options = [],
-        public ?AsyncOperationPromise $promise = null,
+        public ?AsyncOperationPromise $asyncOperationPromise = null,
     ) {}
 
     /**
@@ -53,11 +53,11 @@ final readonly class AsyncWriteFile
     public static function withPromise(
         string                $path,
         string                $contents,
-        AsyncOperationPromise $promise,
+        AsyncOperationPromise $asyncOperationPromise,
         array                 $options = [],
     ) : self
     {
-        return new self($path, $contents, $options, $promise);
+        return new self($path, $contents, $options, $asyncOperationPromise);
     }
 
     /**
@@ -65,7 +65,7 @@ final readonly class AsyncWriteFile
      */
     public function isScheduled() : bool
     {
-        return $this->promise !== null;
+        return $this->asyncOperationPromise !== null;
     }
 
     /**
@@ -73,15 +73,15 @@ final readonly class AsyncWriteFile
      *
      * @throws LogicException If a promise is already attached
      */
-    public function attachPromise(AsyncOperationPromise $promise) : self
+    public function attachPromise(AsyncOperationPromise $asyncOperationPromise) : self
     {
-        if ($this->promise !== null) {
+        if ($this->asyncOperationPromise !== null) {
             throw new LogicException(
-                sprintf('Cannot attach promise to write operation for "%s": promise already set', $this->path)
+                sprintf('Cannot attach promise to write operation for "%s": promise already set', $this->path),
             );
         }
 
         // Cannot modify readonly class, so we return a new instance
-        return new self($this->path, $this->contents, $this->options, $promise);
+        return new self($this->path, $this->contents, $this->options, $asyncOperationPromise);
     }
 }

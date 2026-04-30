@@ -15,10 +15,11 @@ use SensitiveParameter;
 final readonly class IntrospectToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface               $clientRegistry,
-        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface                          $auditLog,
-        private Clock                                      $clock
+        private OAuthClientRegistryInterface $clientRegistry,
+        #[SensitiveParameter]
+        private JwtIdentityInterface         $jwtIdentity,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
     ) {}
 
     /**
@@ -43,13 +44,13 @@ final readonly class IntrospectToken
                 expiresAt        : $resolved->expiresAt,
                 mfaVerifiedAt    : $resolved->mfaVerifiedAt,
                 phishingResistant: $resolved->phishingResistant,
-                senderConstraint : $resolved->senderConstraint
+                senderConstraint : $resolved->senderConstraint,
             );
         } else {
             $workload = $this->jwtIdentity->resolveWorkloadToken(
                 token           : $data->token,
                 expectedAudience: $data->expectedAudience,
-                expectedIssuer  : $data->expectedIssuer
+                expectedIssuer  : $data->expectedIssuer,
             );
 
             if ($workload === null || $workload->clientId !== $data->clientId) {
@@ -64,7 +65,7 @@ final readonly class IntrospectToken
                     subject         : $workload->subject,
                     audience        : $workload->audience,
                     issuer          : $workload->issuer,
-                    workloadIdentity: true
+                    workloadIdentity: true,
                 );
             }
         }
@@ -75,7 +76,7 @@ final readonly class IntrospectToken
                                            context   : [
                                                            'client_id' => $data->clientId,
                                                            'active'    => $result->active ? 1 : 0,
-                                                       ]
+                                                       ],
                                        ));
 
         return $result;

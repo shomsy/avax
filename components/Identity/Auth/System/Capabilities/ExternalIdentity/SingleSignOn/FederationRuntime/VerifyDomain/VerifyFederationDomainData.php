@@ -9,7 +9,8 @@ use SensitiveParameter;
 final readonly class VerifyFederationDomainData
 {
     public function __construct(
-        public string                       $connectionId,
-        #[SensitiveParameter] public string $verificationToken
+        public string $connectionId,
+        #[SensitiveParameter]
+        public string $verificationToken,
     ) {}
 }

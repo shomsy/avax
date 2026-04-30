@@ -20,7 +20,7 @@ final readonly class EncryptionKey
     {
         if (strlen($this->keyMaterial) !== self::KEY_LENGTH) {
             throw new InvalidArgumentException(
-                sprintf('Encryption key must be exactly %d bytes, got %d', self::KEY_LENGTH, strlen($this->keyMaterial))
+                sprintf('Encryption key must be exactly %d bytes, got %d', self::KEY_LENGTH, strlen($this->keyMaterial)),
             );
         }
     }

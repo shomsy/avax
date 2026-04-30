@@ -31,7 +31,7 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
         return new EmailVerificationChallenge(
             dispatched: true,
             token     : $token,
-            expiresAt : $expiresAt
+            expiresAt : $expiresAt,
         );
     }
 

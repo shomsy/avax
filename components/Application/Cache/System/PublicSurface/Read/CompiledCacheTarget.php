@@ -6,13 +6,14 @@ namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use InvalidArgumentException;
+use Override;
 
 final readonly class CompiledCacheTarget implements CacheReadTarget
 {
     public function __construct(
         public string               $name,
         public mixed                $builder,
-        public CompiledCacheSources $sources,
+        public CompiledCacheSources $compiledCacheSources,
     )
     {
         if (! is_callable($this->builder)) {
@@ -23,12 +24,13 @@ final readonly class CompiledCacheTarget implements CacheReadTarget
     public static function artifact(
         string               $name,
         callable             $builder,
-        CompiledCacheSources $sources
+        CompiledCacheSources $compiledCacheSources,
     ) : self
     {
-        return new self(name: $name, builder: $builder, sources: $sources);
+        return new self(name: $name, builder: $builder, sources: $compiledCacheSources);
     }
 
+    #[Override]
     public function kind() : CacheReadKind
     {
         return CacheReadKind::COMPILED;

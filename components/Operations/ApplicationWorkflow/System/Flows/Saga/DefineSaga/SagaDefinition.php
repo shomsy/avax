@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga;
 
-use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repository;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -30,48 +29,48 @@ enum SagaStartCondition: string
 
 final readonly class SagaDefinition implements IteratorAggregate
 {
-    public string                 $name;
-    public string                 $type;
-    public array                  $steps;
-    public array                  $stepOrder;
-    public TenantBoundary|null    $tenantBoundary;
-    public SagaStartCondition     $startCondition;
-    public string|null            $startTrigger;
-    public int                    $timeoutSeconds;
-    public int                    $maxDurationSeconds;
-    public bool                   $allowConcurrent;
-    public bool                   $allowRemoteCompensation;
-    public string|null            $description;
-    public SagaStatus             $status;
+    public string              $name;
+    public string              $type;
+    public array               $steps;
+    public array               $stepOrder;
+    public TenantBoundary|null $tenantBoundary;
+    public SagaStartCondition  $startCondition;
+    public string|null         $startTrigger;
+    public int                 $timeoutSeconds;
+    public int                 $maxDurationSeconds;
+    public bool                $allowConcurrent;
+    public bool                $allowRemoteCompensation;
+    public string|null         $description;
+    public SagaStatus          $status;
     public DateTimeImmutable|null $createdAt;
     public DateTimeImmutable|null $updatedAt;
 
     private function __construct(
-        string                  $name,
-        string                  $type,
-        array|null              $steps = null,
-        array|null              $stepOrder = null,
-        TenantBoundary|null     $tenantBoundary = null,
-        SagaStartCondition|null $startCondition = null,
-        string|null             $startTrigger = null,
-        int|null                $timeoutSeconds = null,
-        int|null                $maxDurationSeconds = null,
-        bool|null               $allowConcurrent = null,
-        bool|null               $allowRemoteCompensation = null,
-        string|null             $description = null,
-        SagaStatus|null         $status = null,
-        DateTimeImmutable|null  $createdAt = null,
-        DateTimeImmutable|null  $updatedAt = null
+        string             $name,
+        string             $type,
+        array              $steps = null,
+        array              $stepOrder = null,
+        TenantBoundary     $tenantBoundary = null,
+        SagaStartCondition $startCondition = null,
+        string             $startTrigger = null,
+        int                $timeoutSeconds = null,
+        int                $maxDurationSeconds = null,
+        bool               $allowConcurrent = null,
+        bool               $allowRemoteCompensation = null,
+        string             $description = null,
+        SagaStatus         $status = null,
+        DateTimeImmutable  $createdAt = null,
+        DateTimeImmutable  $updatedAt = null,
     )
     {
-        $steps                         ??= [];
-        $stepOrder                     ??= [];
-        $startCondition                ??= SagaStartCondition::MANUAL;
-        $timeoutSeconds                ??= 3600;
-        $maxDurationSeconds            ??= 86400;
-        $allowConcurrent               ??= false;
-        $allowRemoteCompensation       ??= false;
-        $status                        ??= SagaStatus::DRAFT;
+        $steps                   ??= [];
+        $stepOrder               ??= [];
+        $startCondition          ??= SagaStartCondition::MANUAL;
+        $timeoutSeconds          ??= 3600;
+        $maxDurationSeconds      ??= 86400;
+        $allowConcurrent         ??= false;
+        $allowRemoteCompensation ??= false;
+        $status                  ??= SagaStatus::DRAFT;
         $this->name                    = $name;
         $this->type                    = $type;
         $this->steps                   = $steps;
@@ -95,9 +94,9 @@ final readonly class SagaDefinition implements IteratorAggregate
     }
 
     public static function create(
-        string      $name,
-        string|null $type = null,
-        array       $options = []
+        string $name,
+        string $type = null,
+        array  $options = [],
     ) : self
     {
         $type ??= 'long_running_process';
@@ -126,7 +125,7 @@ final readonly class SagaDefinition implements IteratorAggregate
             description            : $options['description'] ?? null,
             status                 : SagaStatus::DRAFT,
             createdAt              : new DateTimeImmutable(),
-            updatedAt              : new DateTimeImmutable()
+            updatedAt              : new DateTimeImmutable(),
         );
     }
 
@@ -170,7 +169,7 @@ final readonly class SagaDefinition implements IteratorAggregate
             description            : $this->description,
             status                 : SagaStatus::DRAFT,
             createdAt              : $this->createdAt,
-            updatedAt              : new DateTimeImmutable()
+            updatedAt              : new DateTimeImmutable(),
         );
     }
 

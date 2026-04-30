@@ -27,10 +27,10 @@ final class TypeGuesser
         $normalized = strtolower(string: $column);
 
         return match (true) {
-            str_ends_with(haystack: $normalized, needle: '_id') || $normalized === 'id'                                     => 'int',
+            str_ends_with(haystack: $normalized, needle: '_id') || $normalized === 'id'                                  => 'int',
             str_starts_with(haystack: $normalized, needle: 'is_') || str_starts_with(haystack: $normalized, needle: 'has_') => 'bool',
-            str_ends_with(haystack: $normalized, needle: '_at') || str_ends_with(haystack: $normalized, needle: '_date')    => DateTimeInterface::class,
-            str_contains(haystack: $normalized, needle: 'count') || str_contains(haystack: $normalized, needle: 'total')    => 'int',
+            str_ends_with(haystack: $normalized, needle: '_at') || str_ends_with(haystack: $normalized, needle: '_date') => DateTimeInterface::class,
+            str_contains(haystack: $normalized, needle: 'count') || str_contains(haystack: $normalized, needle: 'total') => 'int',
             str_contains(haystack: $normalized, needle: 'amount') || str_contains(haystack: $normalized, needle: 'price')   => 'float',
             default                                                                                                         => 'string',
         };

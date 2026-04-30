@@ -28,7 +28,7 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     {
         return array_values(array: array_filter(
                                        array   : $this->identities,
-                                       callback: static fn (ScimProvisionedIdentity $identity) : bool => $identity->directoryId === $directoryId
+                                       callback: static fn (ScimProvisionedIdentity $identity) : bool => $identity->directoryId === $directoryId,
                                    ));
     }
 

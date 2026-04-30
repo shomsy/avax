@@ -43,7 +43,7 @@ final class IdentityPolicyCatalog
             idleTimeoutSeconds    : 1_800,
             absoluteTimeoutSeconds: 43_200,
             freshMfaMaxAgeSeconds : null,
-            recoveryPath          : RecoveryPath::PASSWORD_RESET
+            recoveryPath          : RecoveryPath::PASSWORD_RESET,
         );
     }
 
@@ -66,7 +66,7 @@ final class IdentityPolicyCatalog
             idleTimeoutSeconds    : 900,
             absoluteTimeoutSeconds: 28_800,
             freshMfaMaxAgeSeconds : 300,
-            recoveryPath          : RecoveryPath::MFA_RECOVERY
+            recoveryPath          : RecoveryPath::MFA_RECOVERY,
         );
     }
 
@@ -92,7 +92,7 @@ final class IdentityPolicyCatalog
             phishingResistantRequired : true,
             adminElevationRequired    : true,
             separationOfDutiesRequired: true,
-            privilegedApprovalRequired: true
+            privilegedApprovalRequired: true,
         );
     }
 
@@ -116,7 +116,7 @@ final class IdentityPolicyCatalog
             freshMfaMaxAgeSeconds     : 180,
             recoveryPath              : RecoveryPath::ADMIN_APPROVAL,
             separationOfDutiesRequired: true,
-            privilegedApprovalRequired: true
+            privilegedApprovalRequired: true,
         );
     }
 
@@ -139,7 +139,7 @@ final class IdentityPolicyCatalog
             freshMfaMaxAgeSeconds     : 180,
             recoveryPath              : RecoveryPath::ADMIN_APPROVAL,
             phishingResistantRequired : true,
-            separationOfDutiesRequired: true
+            separationOfDutiesRequired: true,
         );
     }
 
@@ -159,7 +159,7 @@ final class IdentityPolicyCatalog
             absoluteTimeoutSeconds         : 3_600,
             freshMfaMaxAgeSeconds          : null,
             recoveryPath                   : RecoveryPath::NONE,
-            senderConstrainedTokensRequired: true
+            senderConstrainedTokensRequired: true,
         );
     }
 
@@ -180,7 +180,7 @@ final class IdentityPolicyCatalog
             recoveryPath              : RecoveryPath::ADMIN_APPROVAL,
             phishingResistantRequired : true,
             separationOfDutiesRequired: true,
-            privilegedApprovalRequired: true
+            privilegedApprovalRequired: true,
         );
     }
 }

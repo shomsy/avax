@@ -14,9 +14,11 @@ final class ToSingular
         if (preg_match('/ies$/i', $value)) {
             return substr($value, 0, -3) . 'y';
         }
+
         if (preg_match('/es$/i', $value)) {
             return substr($value, 0, -2);
         }
+
         if (preg_match('/s$/i', $value)) {
             return substr($value, 0, -1);
         }

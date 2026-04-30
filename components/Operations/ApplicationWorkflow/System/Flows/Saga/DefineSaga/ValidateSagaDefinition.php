@@ -27,6 +27,7 @@ final readonly class ValidateSagaDefinition
             foreach ($this->definition as $step) {
                 if ($step->hasCompensation()) {
                     $hasCompensation = true;
+
                     break;
                 }
             }
@@ -67,7 +68,7 @@ final readonly class ValidateSagaDefinition
             $this->warnings[] = sprintf(
                 'Step timeouts (%ds) exceed max saga duration (%ds).',
                 $totalTimeout,
-                $this->definition->maxDurationSeconds
+                $this->definition->maxDurationSeconds,
             );
         }
 

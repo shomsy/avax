@@ -34,7 +34,7 @@ final readonly class Tenants
         private ReadTenantMembers       $readTenantMembers,
         private RemoveTenantMember      $removeTenantMember,
         private SuspendTenantMember     $suspendTenantMember,
-        private TransferTenantOwnership $transferTenantOwnership
+        private TransferTenantOwnership $transferTenantOwnership,
     ) {}
 
     /**

@@ -34,7 +34,10 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
     /**
      * @param LoggerInterface|null $logger Optional technical logger for capturing observer execution failures.
      */
-    public function __construct(LoggerInterface|null $logger = null) { $this->logger = $logger; }
+    public function __construct(LoggerInterface $logger = null)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Coordinate the sequential and defensive triggering of all authorized observers.
@@ -44,7 +47,7 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
      * the signal payload while providing a safety boundary to isolate
      * cross-observer side-effects.
      *
-     * @param Event              $event     The technical signal payload to be distributed.
+     * @param Event $event The technical signal payload to be distributed.
      * @param iterable<callable> $listeners The collection of authorized technical handlers to be triggered.
      */
     public function handle(Event $event, iterable $listeners) : void
@@ -59,7 +62,7 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
                     context: [
                                  'event'     => $event::class,
                                  'exception' => $e,
-                             ]
+                             ],
                 );
             }
         }

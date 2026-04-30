@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\PublicSurface;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection as CollectionCapability;
 
 /**
  * Collection - Enterprise-grade fluent collection wrapper.
@@ -23,7 +22,10 @@ final class Collection
         return new self($items);
     }
 
-    public function all(): array { return $this->items; }
+    public function all() : array
+    {
+        return $this->items;
+    }
 
     public function map(callable $callback): self
     {

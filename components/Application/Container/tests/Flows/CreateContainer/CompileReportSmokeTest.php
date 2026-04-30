@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -27,15 +27,14 @@ final class CompileReportDeferredService
     }
 }
 
-final class CompileReportService implements CompileReportContract
+final readonly class CompileReportService implements CompileReportContract
 {
-    private CompileReportDependency $dependency;
+    public function __construct(private CompileReportDependency $compileReportDependency) {}
 
-    public function __construct(CompileReportDependency $dependency) { $this->dependency = $dependency; }
-
+    #[Override]
     public function dependency() : CompileReportDependency
     {
-        return $this->dependency;
+        return $this->compileReportDependency;
     }
 }
 
@@ -43,7 +42,7 @@ $cacheDir = sys_get_temp_dir() . '/container-compile-report-' . uniqid();
 $config   = CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'compile-report-smoke',
-    compileMode : CreateContainerConfig::COMPILE_MODE_WARMUP
+    compileMode : CreateContainerConfig::COMPILE_MODE_WARMUP,
 );
 
 $container = makeTestContainer(config: $config);
@@ -73,42 +72,42 @@ assertSame(expected: ['shared' => 1, 'transient' => 2], actual: $report->lifetim
 assertSame(
     expected: 'shared',
     actual  : $report->metadata?->lifetimePlans()[CompileReportContract::class]->name,
-    message : 'Compile metadata should expose first-class lifetime plans.'
+    message : 'Compile metadata should expose first-class lifetime plans.',
 );
 assertSame(
     expected: CompileReportContract::class,
     actual  : $report->metadata?->aliases['compile.report'] ?? null,
-    message : 'Compile metadata should expose flattened alias mappings.'
+    message : 'Compile metadata should expose flattened alias mappings.',
 );
 assertSame(
     expected: [CompileReportContract::class],
     actual  : $report->metadata?->tags['reports'] ?? [],
-    message : 'Compile metadata should expose deterministic tag indexes.'
+    message : 'Compile metadata should expose deterministic tag indexes.',
 );
 assertSame(
     expected: [CompileReportDependency::class],
     actual  : $report->metadata?->dependencies[CompileReportContract::class] ?? [],
-    message : 'Compile metadata should expose compiled dependency graphs.'
+    message : 'Compile metadata should expose compiled dependency graphs.',
 );
 assertSame(
     expected: CreateContainerConfig::COMPILE_MODE_WARMUP,
     actual  : $report->compileMode,
-    message : 'Compile reports should expose the active compile mode.'
+    message : 'Compile reports should expose the active compile mode.',
 );
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_COMPILED,
     actual  : $report->executionMode,
-    message : 'Compile reports should expose the active execution mode.'
+    message : 'Compile reports should expose the active execution mode.',
 );
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_NONE,
     actual  : $report->pruneMode,
-    message : 'Compile reports should expose the active prune mode.'
+    message : 'Compile reports should expose the active prune mode.',
 );
 assertSame(
     expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
     actual  : $report->metadata?->diagnosticsMode,
-    message : 'Compile metadata should expose the diagnostics mode that produced the artifact.'
+    message : 'Compile metadata should expose the diagnostics mode that produced the artifact.',
 );
 assertTrue(condition: $report->metadata?->warmed ?? false, message: 'Warm compilation should mark the artifact metadata as warmed.');
 assertSame(expected: 8, actual: $report->metadata?->schemaVersion, message: 'Compile metadata should expose a stable schema version.');
@@ -116,44 +115,44 @@ assertTrue(condition: ($report->metadata?->dependencyGraphRevision ?? '') !== ''
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_COMPILED,
     actual  : $report->metadata?->executionMode,
-    message : 'Compile metadata should expose the execution mode that produced the artifact.'
+    message : 'Compile metadata should expose the execution mode that produced the artifact.',
 );
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_NONE,
     actual  : $report->metadata?->pruneMode,
-    message : 'Compile metadata should expose the prune mode that produced the artifact.'
+    message : 'Compile metadata should expose the prune mode that produced the artifact.',
 );
 assertSame(
     expected: 'default',
     actual  : $report->metadata?->ownership[CompileReportContract::class]['ownerSlice'] ?? null,
-    message : 'Compile metadata should expose derived ownership maps.'
+    message : 'Compile metadata should expose derived ownership maps.',
 );
 assertTrue(
     condition: isset($report->metadata?->slices['default']),
-    message  : 'Compile metadata should expose derived slice manifests.'
+    message  : 'Compile metadata should expose derived slice manifests.',
 );
 assertSame(
     expected: $report->path,
     actual  : $report->metadata?->artifactPaths['compiled'] ?? null,
-    message : 'Compile metadata should expose the compiled artifact path.'
+    message : 'Compile metadata should expose the compiled artifact path.',
 );
 assertTrue(
     condition: array_key_exists(key: 'reusedServices', array: $report->statistics),
-    message  : 'Compile reports should expose incremental compilation statistics.'
+    message  : 'Compile reports should expose incremental compilation statistics.',
 );
 assertTrue(
     condition: ($report->statistics['reusedServices'] ?? 0) >= 1,
-    message  : 'Repeated compilation should reuse stable compiled service sources when signatures stay unchanged.'
+    message  : 'Repeated compilation should reuse stable compiled service sources when signatures stay unchanged.',
 );
 assertSame(
     expected: CreateContainerConfig::PRUNE_MODE_NONE,
     actual  : $report->pruning['mode'] ?? null,
-    message : 'Compile reports should expose pruning posture even when pruning is disabled.'
+    message : 'Compile reports should expose pruning posture even when pruning is disabled.',
 );
 assertSame(
     expected: $report->invalidatedServices,
     actual  : $report->metadata?->invalidatedServices ?? [],
-    message : 'Compile reports and artifact metadata should agree on invalidated services.'
+    message : 'Compile reports and artifact metadata should agree on invalidated services.',
 );
 
 echo basename(path: __FILE__) . " ok\n";

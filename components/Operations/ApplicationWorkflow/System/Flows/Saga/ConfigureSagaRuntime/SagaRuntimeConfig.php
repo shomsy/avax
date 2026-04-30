@@ -14,9 +14,9 @@ final readonly class SagaRuntimeConfig
 {
     public function __construct(
         public StoreSagaState|null $store = null,
-        public Closure|null        $stepRunner = null,
-        public Closure|null        $messageBus = null,
-        public Closure|null        $eventRecorder = null
+        public Closure|null $stepRunner = null,
+        public Closure|null $messageBus = null,
+        public Closure|null $eventRecorder = null,
     ) {}
 
     public function withStore(StoreSagaState $store) : self
@@ -25,7 +25,7 @@ final readonly class SagaRuntimeConfig
             store        : $store,
             stepRunner   : $this->stepRunner,
             messageBus   : $this->messageBus,
-            eventRecorder: $this->eventRecorder
+            eventRecorder: $this->eventRecorder,
         );
     }
 
@@ -35,7 +35,7 @@ final readonly class SagaRuntimeConfig
             store        : $this->store,
             stepRunner   : $stepRunner,
             messageBus   : $this->messageBus,
-            eventRecorder: $this->eventRecorder
+            eventRecorder: $this->eventRecorder,
         );
     }
 
@@ -45,7 +45,7 @@ final readonly class SagaRuntimeConfig
             store        : $this->store,
             stepRunner   : $this->stepRunner,
             messageBus   : $messageBus,
-            eventRecorder: $this->eventRecorder
+            eventRecorder: $this->eventRecorder,
         );
     }
 

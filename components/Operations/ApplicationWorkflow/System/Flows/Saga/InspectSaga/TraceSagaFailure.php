@@ -16,7 +16,7 @@ final readonly class TraceSagaFailure
     {
         return array_values(array: array_filter(
                                        array   : $timeline->events,
-                                       callback: static fn (SagaRuntimeEvent $event) : bool => str_contains(haystack: $event->type, needle: 'failed')
+                                       callback: static fn (SagaRuntimeEvent $event) : bool => str_contains(haystack: $event->type, needle: 'failed'),
                                    ));
     }
 }

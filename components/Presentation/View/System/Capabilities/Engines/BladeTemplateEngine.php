@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Capabilities\Engines;
 
 use Jenssegers\Blade\Blade;
-use Throwable;
 
 class BladeTemplateEngine extends Blade implements TemplateEngineInterface
 {
@@ -16,8 +16,8 @@ class BladeTemplateEngine extends Blade implements TemplateEngineInterface
 
     private function configureCustomDirectives(): void
     {
-        $this->compiler()->directive('csrf', fn() => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
-        $this->compiler()->directive('method', fn($expression) => "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . $expression . '\">'; ?>");
+        $this->compiler()->directive('csrf', static fn () => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
+        $this->compiler()->directive('method', static fn ($expression) => "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . $expression . '\">'; ?>");
     }
 
     public function render(string $view, array $data = []): string

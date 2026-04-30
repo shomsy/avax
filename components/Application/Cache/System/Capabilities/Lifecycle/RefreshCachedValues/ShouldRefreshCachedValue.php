@@ -11,14 +11,14 @@ final readonly class ShouldRefreshCachedValue
 {
     public function __construct(
         private Clock         $clock,
-        private RefreshPolicy $policy = RefreshPolicy::DO_NOT_REFRESH,
+        private RefreshPolicy $refreshPolicy = RefreshPolicy::DO_NOT_REFRESH,
         private int           $refreshAheadWindowSeconds = 60,
-        private int           $staleThresholdSeconds = 300
+        private int           $staleThresholdSeconds = 300,
     ) {}
 
     public function shouldRefresh(CachedValueLifecycle|null $lifecycle) : bool
     {
-        return match ($this->policy) {
+        return match ($this->refreshPolicy) {
             RefreshPolicy::DO_NOT_REFRESH      => false,
             RefreshPolicy::REFRESH_ON_READ     => $this->shouldRefreshOnRead(lifecycle: $lifecycle),
             RefreshPolicy::REFRESH_AHEAD       => $this->shouldRefreshAhead(lifecycle: $lifecycle),
@@ -29,7 +29,7 @@ final readonly class ShouldRefreshCachedValue
 
     private function shouldRefreshOnRead(CachedValueLifecycle|null $lifecycle) : bool
     {
-        if ($lifecycle === null) {
+        if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;
         }
 
@@ -38,7 +38,7 @@ final readonly class ShouldRefreshCachedValue
 
     private function shouldRefreshAhead(CachedValueLifecycle|null $lifecycle) : bool
     {
-        if ($lifecycle === null) {
+        if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;
         }
 
@@ -49,7 +49,7 @@ final readonly class ShouldRefreshCachedValue
 
     private function shouldRefreshWhenStale(CachedValueLifecycle|null $lifecycle) : bool
     {
-        if ($lifecycle === null) {
+        if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;
         }
 

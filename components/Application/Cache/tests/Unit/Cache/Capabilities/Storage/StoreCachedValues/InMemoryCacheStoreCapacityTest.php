@@ -15,27 +15,28 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryCacheStoreCapacityTest extends TestCase
 {
-    private FrozenClock $clock;
+    private FrozenClock $frozenClock;
 
     public function test_store_respects_max_entries() : void
     {
-        $store = new InMemoryCacheStore(
-            clock     : $this->clock,
-            maxEntries: 3
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock     : $this->frozenClock,
+            maxEntries: 3,
         );
 
         for ($i = 1; $i <= 3; $i++) {
-            $store->write(
-                key   : $this->makeKey(key: "key_{$i}"),
-                record: $this->makeRecord(value: "value_{$i}", ttlSeconds: 3600)
+            $inMemoryCacheStore->write(
+                key   : $this->makeKey(key: 'key_' . $i),
+                record: $this->makeRecord(value: 'value_' . $i, ttlSeconds: 3600),
             );
         }
 
-        $this->assertSame(expected: 3, actual: $store->count());
+        $this->assertSame(expected: 3, actual: $inMemoryCacheStore->count());
     }
 
     private function makeKey(string $key) : CacheKey
@@ -45,107 +46,110 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
 
     private function makeRecord(mixed $value, int $ttlSeconds) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
+        $now = $this->frozenClock->now();
         $expiresAt = $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds));
 
-        $lifecycle = CachedValueLifecycle::create(
+        $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $expiresAt,
-            clock    : $this->clock
+            clock    : $this->frozenClock,
         );
 
         return new StoredCacheRecord(
             value    : $value,
-            lifecycle: $lifecycle
+            lifecycle: $cachedValueLifecycle,
         );
     }
 
     public function test_lru_eviction_respects_access_order() : void
     {
-        $store = new InMemoryCacheStore(
-            clock            : $this->clock,
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock            : $this->frozenClock,
             maxEntries       : 3,
-            replacementPolicy: new LeastRecentlyUsedReplacement()
+            replacementPolicy: new LeastRecentlyUsedReplacement(),
         );
 
-        $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
-        $store->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
-        $store->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
 
-        $this->clock->moveForward(duration: Duration::ofSeconds(seconds: 1));
-        $store->read(key: $this->makeKey(key: 'key_1'), clock: $this->clock);
+        $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
+        $inMemoryCacheStore->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
 
-        $this->clock->moveForward(duration: Duration::ofSeconds(seconds: 1));
-        $store->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
+        $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
 
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $store->exists(key: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_4')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertFalse(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_2')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_3')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_4')));
     }
 
     public function test_fifo_eviction_respects_creation_order() : void
     {
-        $store = new InMemoryCacheStore(
-            clock            : $this->clock,
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock            : $this->frozenClock,
             maxEntries       : 3,
-            replacementPolicy: new FirstInFirstOutReplacement()
+            replacementPolicy: new FirstInFirstOutReplacement(),
         );
 
-        $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
-        $this->clock->moveForward(duration: Duration::ofSeconds(seconds: 1));
-        $store->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
-        $this->clock->moveForward(duration: Duration::ofSeconds(seconds: 1));
-        $store->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
 
-        $store->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
+        $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
+        $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
 
-        $this->assertFalse(condition: $store->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_4')));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
+
+        $this->assertFalse(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_2')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_3')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_4')));
     }
 
     public function test_expired_entries_are_evicted_first() : void
     {
-        $store = new InMemoryCacheStore(
-            clock     : $this->clock,
-            maxEntries: 3
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock     : $this->frozenClock,
+            maxEntries: 3,
         );
 
-        $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 1));
-        $this->clock->moveForward(duration: Duration::ofSeconds(seconds: 2));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 1));
 
-        $store->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
-        $store->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
+        $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 2));
 
-        $this->assertSame(expected: 3, actual: $store->count());
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
 
-        $store->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
+        $this->assertSame(expected: 3, actual: $inMemoryCacheStore->count());
 
-        $this->assertFalse(condition: $store->exists(key: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $store->exists(key: $this->makeKey(key: 'key_4')));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
+
+        $this->assertFalse(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_2')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_3')));
+        $this->assertTrue(condition: $inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_4')));
     }
 
     public function test_no_replacement_policy_throws_when_capacity_exceeded() : void
     {
-        $store = new InMemoryCacheStore(
-            clock            : $this->clock,
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock            : $this->frozenClock,
             maxEntries       : 2,
-            replacementPolicy: new NoReplacement()
+            replacementPolicy: new NoReplacement(),
         );
 
-        $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
-        $store->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_2'), record: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
 
         $this->expectException(exception: CacheCapacityWasExceeded::class);
-        $store->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
+        $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
     }
 
+    #[Override]
     protected function setUp() : void
     {
-        $this->clock = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
     }
 }

@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues;
 
-final readonly class CacheKeyPrefix
+use Override;
+use Stringable;
+
+final readonly class CacheKeyPrefix implements Stringable
 {
     private string $prefix;
 
     public function __construct(
         string        $prefix,
-        public string $separator = ':'
+        public string $separator = ':',
     )
     {
         $this->prefix = trim($prefix);
@@ -20,9 +23,9 @@ final readonly class CacheKeyPrefix
         }
     }
 
-    public static function fromNamespace(CacheNamespace $namespace, string $separator = ':') : self
+    public static function fromNamespace(CacheNamespace $cacheNamespace, string $separator = ':') : self
     {
-        return new self(prefix: $namespace->toString(), separator: $separator);
+        return new self(prefix: $cacheNamespace->toString(), separator: $separator);
     }
 
     public function toString() : string
@@ -35,7 +38,7 @@ final readonly class CacheKeyPrefix
         return CacheKey::create(
             key      : $this->prefix . $key,
             namespace: null,
-            version  : null
+            version  : null,
         );
     }
 
@@ -58,8 +61,9 @@ final readonly class CacheKeyPrefix
         return str_starts_with($fullKey, $this->prefix);
     }
 
+    #[Override]
     public function __toString() : string
     {
-        return $this->toString();
+        return $this->prefix;
     }
 }

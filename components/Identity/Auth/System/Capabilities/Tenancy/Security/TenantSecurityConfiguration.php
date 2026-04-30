@@ -13,22 +13,22 @@ final readonly class TenantSecurityConfiguration
     public array $verifiedDomains;
 
     /**
-     * @param list<string>                $verifiedDomains
+     * @param list<string> $verifiedDomains
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string      $tenantSlug,
+        public string $tenantSlug,
         public string|null $federationConnectionId = null,
         public string|null $scimDirectoryId = null,
-        array|null         $verifiedDomains = null,
-        array|null         $groupRoleMap = null,
-        string|null        $policyProfile = null,
-        public int         $rolloutVersion = 1
+        array         $verifiedDomains = null,
+        array         $groupRoleMap = null,
+        string        $policyProfile = null,
+        public int    $rolloutVersion = 1,
     )
     {
-        $verifiedDomains       ??= [];
-        $groupRoleMap          ??= [];
-        $policyProfile         ??= 'user';
+        $verifiedDomains ??= [];
+        $groupRoleMap    ??= [];
+        $policyProfile   ??= 'user';
         $this->verifiedDomains = $verifiedDomains;
         $this->groupRoleMap    = $groupRoleMap;
         $this->policyProfile   = $policyProfile;

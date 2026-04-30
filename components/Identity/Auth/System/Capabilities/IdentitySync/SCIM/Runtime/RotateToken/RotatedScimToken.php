@@ -10,7 +10,8 @@ use SensitiveParameter;
 final readonly class RotatedScimToken
 {
     public function __construct(
-        public ScimDirectory                $directory,
-        #[SensitiveParameter] public string $plainTextToken
+        public ScimDirectory $directory,
+        #[SensitiveParameter]
+        public string        $plainTextToken,
     ) {}
 }

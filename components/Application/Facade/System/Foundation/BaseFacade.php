@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Facade\System\Foundation;
 
+use Override;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -17,7 +18,6 @@ abstract class BaseFacade implements FacadeInterface
     /** @var array<string, mixed> Cached resolved instances */
     protected static array $resolvedInstances = [];
 
-    /** @var ContainerInterface|null */
     protected static ?ContainerInterface $container = null;
 
     public static function __callStatic(string $method, array $args): mixed
@@ -31,11 +31,13 @@ abstract class BaseFacade implements FacadeInterface
         return $instance->{$method}(...$args);
     }
 
+    #[Override]
     public static function getFacadeAccessor() : string
     {
         return static::$accessor;
     }
 
+    #[Override]
     public static function clearResolvedInstance() : void
     {
         unset(static::$resolvedInstances[static::getFacadeAccessor()]);
@@ -59,7 +61,7 @@ abstract class BaseFacade implements FacadeInterface
     public static function fake(callable|object|null $callback = null) : mixed
     {
         if ($callback === null) {
-            $callback = static fn () => null;
+            $callback = static fn () : null => null;
         }
 
         $instance                                               = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
@@ -78,7 +80,7 @@ abstract class BaseFacade implements FacadeInterface
         }
 
         // Resolve from container
-        if (static::$container !== null) {
+        if (static::$container instanceof ContainerInterface) {
             return static::$container->get($accessor);
         }
 
@@ -87,6 +89,6 @@ abstract class BaseFacade implements FacadeInterface
             return app($accessor);
         }
 
-        throw new RuntimeException("No container available to resolve facade accessor '{$accessor}'");
+        throw new RuntimeException(sprintf("No container available to resolve facade accessor '%s'", $accessor));
     }
 }

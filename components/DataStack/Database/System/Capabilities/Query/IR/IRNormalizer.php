@@ -31,7 +31,7 @@ final class IRNormalizer
                     'table' => $join->table,
                     'alias' => $join->alias,
                 ],
-                array   : $query->getJoins()
+                array   : $query->getJoins(),
             ),
             'wheres'   => array_map(
                 callback: static fn ($where) => [
@@ -39,7 +39,7 @@ final class IRNormalizer
                     'operator' => $where->operator->value,
                     'boolean'  => strtoupper(string: $where->boolean),
                 ],
-                array   : $query->getWheres()
+                array   : $query->getWheres(),
             ),
             'groups'   => array_values(array: $query->getGroups()),
             'orders'   => array_map(
@@ -48,7 +48,7 @@ final class IRNormalizer
                     'direction' => strtoupper(string: $order->direction),
                     'nulls'     => $order->nulls,
                 ],
-                array   : $query->getOrders()
+                array   : $query->getOrders(),
             ),
             'limit'    => $query->getLimit(),
             'offset'   => $query->getOffset(),
@@ -59,7 +59,7 @@ final class IRNormalizer
                     'columns' => $cte->columns,
                     'type'    => $cte->type->name,
                 ],
-                array   : $query->getCTEs()
+                array   : $query->getCTEs(),
             ),
         ];
     }

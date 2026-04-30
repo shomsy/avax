@@ -102,8 +102,8 @@ final readonly class CheckSourceTruth
      */
     private function legacySystemRootReferenceIssues(string $repositoryRoot) : array
     {
-        $issues        = [];
-        $trackedFiles  = [
+        $issues       = [];
+        $trackedFiles = [
             'AGENTS.md',
             'docs/STATUS.md',
             'docs/architecture/system-shape.md',
@@ -169,6 +169,7 @@ final readonly class CheckSourceTruth
 
             if ($paths === []) {
                 $issues[] = "Capability matrix row '{$capability}' has no evidence paths.";
+
                 continue;
             }
 
@@ -254,6 +255,7 @@ final readonly class CheckSourceTruth
 
             if ($contents === '') {
                 $issues[] = "Missing ownership how-this-works doc: {$relativePath}";
+
                 continue;
             }
 

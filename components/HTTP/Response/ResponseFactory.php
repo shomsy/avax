@@ -47,7 +47,7 @@ final class ResponseFactory
         return $this->json(
             ['message' => 'Too Many Requests', 'retry_after' => $retryAfter],
             429,
-            ['retry-after' => [(string) $retryAfter]]
+            ['retry-after' => [(string) $retryAfter]],
         );
     }
 

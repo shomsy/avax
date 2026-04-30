@@ -34,7 +34,7 @@ final readonly class Comparator
             is_int($value)               => 'int:' . $value,
             is_float($value)             => 'float:' . sprintf('%.14F', $value),
             is_string($value)            => 'string:' . $value,
-            $value instanceof Stringable => 'stringable:' . (string) $value,
+            $value instanceof Stringable => 'stringable:' . $value,
             is_array($value)             => 'array:' . json_encode($value, JSON_THROW_ON_ERROR),
             is_object($value)            => 'object:' . serialize($value),
             default                      => 'value:' . serialize($value),

@@ -29,7 +29,7 @@ final readonly class ReadWorkloadIdentities
                 allowedAudiences         : $client->allowedAudiences,
                 audienceScopeBoundaries  : $client->audienceScopeBoundaries,
                 requiredSenderConstraint : $client->requiredSenderConstraint,
-                phishingResistantRequired: $client->phishingResistantRequired
+                phishingResistantRequired: $client->phishingResistantRequired,
             );
         }
 
@@ -37,8 +37,8 @@ final readonly class ReadWorkloadIdentities
             array   : $profiles,
             callback: static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right) : int => strcmp(
                 string1: $left->clientId,
-                string2: $right->clientId
-            )
+                string2: $right->clientId,
+            ),
         );
 
         return $profiles;

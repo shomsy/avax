@@ -14,7 +14,7 @@ use SensitiveParameter;
  */
 final readonly class ValidateEmail
 {
-    private const EMAIL_PATTERN = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    private const string EMAIL_PATTERN = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
 
     /**
      * Performs strict validation of the given email string.

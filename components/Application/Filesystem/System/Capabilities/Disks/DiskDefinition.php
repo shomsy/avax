@@ -9,6 +9,6 @@ readonly class DiskDefinition
     public function __construct(
         public string $name,
         public string $driver,
-        public array  $config = []
+        public array $config = [],
     ) {}
 }

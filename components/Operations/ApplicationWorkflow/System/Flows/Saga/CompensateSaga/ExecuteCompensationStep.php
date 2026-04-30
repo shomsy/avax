@@ -15,12 +15,12 @@ final readonly class ExecuteCompensationStep
 
     public function execute(
         SagaStepDefinition $step,
-        array              $previousResult
+        array $previousResult,
     ) : array
     {
         if ($step->compensationComponent === null) {
             throw new SagaCompensationFailure(
-                message: sprintf('No compensation defined for step %s.', $step->name)
+                message: sprintf('No compensation defined for step %s.', $step->name),
             );
         }
 
@@ -46,7 +46,7 @@ final readonly class RecordCompensationCompleted
     public function record(
         string $sagaId,
         string $stepName,
-        array  $result
+        array $result,
     ) : void
     {
         $this->inspect->record(
@@ -55,8 +55,8 @@ final readonly class RecordCompensationCompleted
                 sagaName: '',
                 type    : 'compensation_completed',
                 payload : $result,
-                stepName: $stepName
-            )
+                stepName: $stepName,
+            ),
         );
     }
 }
@@ -68,7 +68,7 @@ final readonly class RecordCompensationFailed
     public function record(
         string $sagaId,
         string $stepName,
-        string $error
+        string $error,
     ) : void
     {
         $this->inspect->record(
@@ -77,8 +77,8 @@ final readonly class RecordCompensationFailed
                 sagaName: '',
                 type    : 'compensation_failed',
                 payload : ['error' => $error],
-                stepName: $stepName
-            )
+                stepName: $stepName,
+            ),
         );
     }
 }
@@ -90,7 +90,7 @@ final readonly class PublishSagaCompensated
     public function publish(
         string $sagaId,
         string $definitionName,
-        array  $compensationResults
+        array $compensationResults,
     ) : void
     {
         $topic = sprintf('saga.%s.compensated', $definitionName);
@@ -105,7 +105,7 @@ final readonly class PublishSagaCompensated
 
 class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', Throwable|null $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

@@ -110,7 +110,7 @@ final class GraphExporter
     {
         $json = $this->toJson(artifact: $artifact);
 
-        $template = <<<'HTML'
+        $template = <<<'HTML_WRAP'
             <!doctype html>
             <html lang="en">
             <head>
@@ -322,7 +322,7 @@ final class GraphExporter
               </script>
             </body>
             </html>
-            HTML;
+            HTML_WRAP;
 
         return str_replace(search: '__GRAPH_DATA__', replace: $json, subject: $template);
     }

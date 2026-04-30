@@ -14,7 +14,7 @@ final class Hydrator
     public function __construct(private readonly IdentityMap $identityMap) {}
 
     /**
-     * @param class-string         $entityClass
+     * @param class-string $entityClass
      * @param array<string, mixed> $row
      */
     public function hydrate(string $entityClass, array $row, EntityMetadata $metadata) : object
@@ -25,7 +25,7 @@ final class Hydrator
         if ($identifier !== null && array_key_exists(key: $identifier->column, array: $row)) {
             $entity = $this->identityMap->get(
                 entityClass: $entityClass,
-                id         : $row[$identifier->column]
+                id         : $row[$identifier->column],
             );
         }
 
@@ -45,7 +45,7 @@ final class Hydrator
             $this->identityMap->put(
                 entityClass: $entityClass,
                 id         : $row[$identifier->column],
-                entity     : $entity
+                entity     : $entity,
             );
         }
 

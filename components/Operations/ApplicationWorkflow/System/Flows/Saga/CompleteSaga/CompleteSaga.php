@@ -17,7 +17,7 @@ final readonly class CompleteSaga
 {
     public function __construct(
         private StoreSagaState $storeSagaState,
-        private InspectSaga    $inspectSaga
+        private InspectSaga $inspectSaga,
     ) {}
 
     public function complete(SagaInstance $instance) : SagaInstance
@@ -28,7 +28,7 @@ final readonly class CompleteSaga
 
         if ($instance->status === SagaInstanceStatus::FAILED) {
             throw new SagaCompletionFailure(
-                message: sprintf('Cannot complete failed saga %s.', $instance->id)
+                message: sprintf('Cannot complete failed saga %s.', $instance->id),
             );
         }
 
@@ -39,8 +39,8 @@ final readonly class CompleteSaga
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::completed(
                      sagaId  : $instance->id,
-                     sagaName: $instance->definitionName
-                 )
+                     sagaName: $instance->definitionName,
+                 ),
         );
 
         return $completed;
@@ -48,7 +48,7 @@ final readonly class CompleteSaga
 
     public function detectCompletion(
         SagaInstance   $instance,
-        SagaDefinition $definition
+        SagaDefinition $definition,
     ) : bool
     {
         if ($instance->currentStepName === null) {
@@ -75,28 +75,28 @@ final readonly class CompleteSaga
                      sagaId  : $instance->id,
                      sagaName: $instance->definitionName,
                      type    : 'saga_completed',
-                     payload : $payload
-                 )
+                     payload : $payload,
+                 ),
         );
     }
 }
 
 final readonly class SagaCompletion
 {
-    public string            $sagaId;
-    public string            $definitionName;
-    public array             $finalData;
-    public array             $completedSteps;
+    public string $sagaId;
+    public string $definitionName;
+    public array  $finalData;
+    public array  $completedSteps;
     public DateTimeImmutable $completedAt;
-    public float             $totalDurationMs;
+    public float  $totalDurationMs;
 
     private function __construct(
-        string            $sagaId,
-        string            $definitionName,
-        array             $finalData,
-        array             $completedSteps,
+        string $sagaId,
+        string $definitionName,
+        array  $finalData,
+        array  $completedSteps,
         DateTimeImmutable $completedAt,
-        float             $totalDurationMs
+        float  $totalDurationMs,
     )
     {
         $this->sagaId          = $sagaId;
@@ -109,7 +109,7 @@ final readonly class SagaCompletion
 
     public static function fromInstance(
         SagaInstance $instance,
-        float        $startTimeMs
+        float $startTimeMs,
     ) : self
     {
         return new self(
@@ -118,7 +118,7 @@ final readonly class SagaCompletion
             finalData      : $instance->data,
             completedSteps : $instance->completedSteps,
             completedAt    : new DateTimeImmutable(),
-            totalDurationMs: (microtime(true) * 1000) - $startTimeMs
+            totalDurationMs: (microtime(true) * 1000) - $startTimeMs,
         );
     }
 

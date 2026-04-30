@@ -22,8 +22,7 @@ final class Blueprint
     private array $commands = [];
 
     // Whether the table is being created or altered
-    private bool            $creating = true;
-    private readonly string $table;
+    private bool $creating = true;
 
     /**
      * Constructor promoting the target table name via PHP 8.3 features.
@@ -32,11 +31,8 @@ final class Blueprint
      *
      * @param string $table Technical table name
      */
-    public function __construct(
-        string $table
-    )
+    public function __construct(private readonly string $table)
     {
-        $this->table = $table;
     }
 
     /**
@@ -71,10 +67,10 @@ final class Blueprint
      */
     private function addColumn(string $type, string $name) : ColumnDefinition
     {
-        $column          = new ColumnDefinition(name: $name, type: $type);
-        $this->columns[] = $column;
+        $columnDefinition = new ColumnDefinition(name: $name, type: $type);
+        $this->columns[]  = $columnDefinition;
 
-        return $column;
+        return $columnDefinition;
     }
 
     // ========================================
@@ -134,15 +130,15 @@ final class Blueprint
      *
      * -- intent: provide exact numeric storage for financial data.
      *
-     * @param string   $name      Technical name
+     * @param string $name  Technical name
      * @param int|null $precision Total number of digits
-     * @param int      $scale     Number of decimal places
+     * @param int    $scale Number of decimal places
      */
-    public function decimal(string $name, int|null $precision = null, int $scale = 2) : ColumnDefinition
+    public function decimal(string $name, ?int $precision = null, int $scale = 2) : ColumnDefinition
     {
         $precision ??= 8;
 
-        return $this->addColumn(type: "DECIMAL({$precision},{$scale})", name: $name);
+        return $this->addColumn(type: sprintf('DECIMAL(%d,%d)', $precision, $scale), name: $name);
     }
 
     /**
@@ -243,7 +239,7 @@ final class Blueprint
      */
     public function string(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "VARCHAR({$length})", name: $name);
+        return $this->addColumn(type: sprintf('VARCHAR(%d)', $length), name: $name);
     }
 
     /**
@@ -256,7 +252,7 @@ final class Blueprint
      */
     public function char(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "CHAR({$length})", name: $name);
+        return $this->addColumn(type: sprintf('CHAR(%d)', $length), name: $name);
     }
 
     /**
@@ -317,7 +313,7 @@ final class Blueprint
      */
     public function nchar(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "NCHAR({$length})", name: $name);
+        return $this->addColumn(type: sprintf('NCHAR(%d)', $length), name: $name);
     }
 
     /**
@@ -330,7 +326,7 @@ final class Blueprint
      */
     public function nvarchar(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "NVARCHAR({$length})", name: $name);
+        return $this->addColumn(type: sprintf('NVARCHAR(%d)', $length), name: $name);
     }
 
     /**
@@ -355,7 +351,7 @@ final class Blueprint
      */
     public function binary(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "BINARY({$length})", name: $name);
+        return $this->addColumn(type: sprintf('BINARY(%d)', $length), name: $name);
     }
 
     /**
@@ -392,7 +388,7 @@ final class Blueprint
      */
     public function varbinary(string $name, int $length = 255) : ColumnDefinition
     {
-        return $this->addColumn(type: "VARBINARY({$length})", name: $name);
+        return $this->addColumn(type: sprintf('VARBINARY(%d)', $length), name: $name);
     }
 
     /**
@@ -465,7 +461,7 @@ final class Blueprint
      */
     public function bit(string $name, int $length = 1) : ColumnDefinition
     {
-        return $this->addColumn(type: "BIT({$length})", name: $name);
+        return $this->addColumn(type: sprintf('BIT(%d)', $length), name: $name);
     }
 
     // ========================================
@@ -605,7 +601,7 @@ final class Blueprint
      */
     public function enum(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: static fn ($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn ($v) : string => sprintf("'%s'", $v), array: $values);
 
         return $this->addColumn(type: 'ENUM(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -620,7 +616,7 @@ final class Blueprint
      */
     public function set(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: static fn ($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn ($v) : string => sprintf("'%s'", $v), array: $values);
 
         return $this->addColumn(type: 'SET(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -854,10 +850,10 @@ final class Blueprint
      */
     private function toCreateSql(GrammarInterface $grammar) : array
     {
-        $renderer = new ColumnSQLRenderer;
+        $columnSQLRenderer = new ColumnSQLRenderer();
         $columns  = array_map(
-            callback: fn (ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
-            array   : $this->columns
+            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(column: $columnDefinition, grammar: $grammar),
+            array   : $this->columns,
         );
 
         // noinspection SqlNoDataSourceInspection
@@ -874,12 +870,12 @@ final class Blueprint
     private function toAlterSql(GrammarInterface $grammar) : array
     {
         $sql      = [];
-        $renderer = new ColumnSQLRenderer;
+        $columnSQLRenderer = new ColumnSQLRenderer();
 
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
             // noinspection SqlNoDataSourceInspection
-            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $renderer->render(column: $column, grammar: $grammar);
+            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(column: $column, grammar: $grammar);
         }
 
         // Handle commands (DROP, RENAME)

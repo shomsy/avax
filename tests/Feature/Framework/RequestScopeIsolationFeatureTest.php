@@ -13,7 +13,6 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScopeNotOpen;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
-use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Flows\HandleIncomingHttp\CloseHttpRequestScope;
 use Avax\Framework\System\Flows\HandleIncomingHttp\OpenHttpRequestScope;
@@ -55,12 +54,18 @@ final class RequestScopeIsolationFeatureTest extends TestCase
         $scope2 = $store->open();
 
         // All request-1 data must be gone
-        self::assertNull($scope2->read(key: 'db_connection'),
-                         'DB connection from request 1 must not persist');
-        self::assertNull($scope2->read(key: 'query_builder'),
-                         'Query builder from request 1 must not persist');
-        self::assertNull($scope2->read(key: 'service_container_scope'),
-                         'Service container scope from request 1 must not persist');
+        self::assertNull(
+            $scope2->read(key: 'db_connection'),
+            'DB connection from request 1 must not persist',
+        );
+        self::assertNull(
+            $scope2->read(key: 'query_builder'),
+            'Query builder from request 1 must not persist',
+        );
+        self::assertNull(
+            $scope2->read(key: 'service_container_scope'),
+            'Service container scope from request 1 must not persist',
+        );
 
         // Request 2 writes its own data
         $scope2->write(key: 'db_connection', value: 'replica-conn-2');
@@ -110,12 +115,18 @@ final class RequestScopeIsolationFeatureTest extends TestCase
         $idPropB->setValue($scopeB, 'session-request-b');
 
         // Session B should NOT have any of Session A's data
-        self::assertNull($scopeB->get(key: 'user_id'),
-                         'User ID from session A must not leak into session B');
-        self::assertNull($scopeB->get(key: 'user_email'),
-                         'User email from session A must not leak into session B');
-        self::assertNull($scopeB->get(key: 'cart_items'),
-                         'Cart items from session A must not leak into session B');
+        self::assertNull(
+            $scopeB->get(key: 'user_id'),
+            'User ID from session A must not leak into session B',
+        );
+        self::assertNull(
+            $scopeB->get(key: 'user_email'),
+            'User email from session A must not leak into session B',
+        );
+        self::assertNull(
+            $scopeB->get(key: 'cart_items'),
+            'Cart items from session A must not leak into session B',
+        );
 
         // Session B sets its own data
         $scopeB->set(key: 'user_id', value: 200);
@@ -173,14 +184,22 @@ final class RequestScopeIsolationFeatureTest extends TestCase
         $scopeB = $scopeStore->current();
 
         // Auth context from Request A must NOT persist
-        self::assertNull($scopeB->read(key: 'auth_user_id'),
-                         'Auth user_id from request A must not leak into request B');
-        self::assertNull($scopeB->read(key: 'auth_user_name'),
-                         'Auth user_name from request A must not leak into request B');
-        self::assertNull($scopeB->read(key: 'auth_user_role'),
-                         'Auth user_role from request A must not leak into request B');
-        self::assertNull($scopeB->read(key: 'auth_authenticated'),
-                         'Auth authenticated flag from request A must not leak into request B');
+        self::assertNull(
+            $scopeB->read(key: 'auth_user_id'),
+            'Auth user_id from request A must not leak into request B',
+        );
+        self::assertNull(
+            $scopeB->read(key: 'auth_user_name'),
+            'Auth user_name from request A must not leak into request B',
+        );
+        self::assertNull(
+            $scopeB->read(key: 'auth_user_role'),
+            'Auth user_role from request A must not leak into request B',
+        );
+        self::assertNull(
+            $scopeB->read(key: 'auth_authenticated'),
+            'Auth authenticated flag from request A must not leak into request B',
+        );
 
         $closeB = new CloseHttpRequestScope(requestScopes: $scopeStore);
         $closeB->close();
@@ -266,12 +285,21 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             $scope->write(key: 'request_uri', value: $requestData['uri']);
 
             // Verify we read back exactly what we just wrote
-            self::assertSame($requestData['user_id'], $scope->read(key: 'current_user_id'),
-                             "User ID mismatch for {$requestData['uri']}");
-            self::assertSame($requestData['role'], $scope->read(key: 'current_role'),
-                             "Role mismatch for {$requestData['uri']}");
-            self::assertSame($requestData['uri'], $scope->read(key: 'request_uri'),
-                             "URI mismatch for {$requestData['uri']}");
+            self::assertSame(
+                $requestData['user_id'],
+                $scope->read(key: 'current_user_id'),
+                "User ID mismatch for {$requestData['uri']}",
+            );
+            self::assertSame(
+                $requestData['role'],
+                $scope->read(key: 'current_role'),
+                "Role mismatch for {$requestData['uri']}",
+            );
+            self::assertSame(
+                $requestData['uri'],
+                $scope->read(key: 'request_uri'),
+                "URI mismatch for {$requestData['uri']}",
+            );
 
             // Close and reset (simulating worker loop behavior)
             $close = new CloseHttpRequestScope(requestScopes: $scopeStore);
@@ -279,10 +307,14 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             $registry->resetAll();
 
             // Verify clean state
-            self::assertFalse($scopeStore->hasCurrent(),
-                              'Scope store should not have current scope after reset');
-            self::assertNull($context->lastResult(),
-                             'Context should not have last result after reset');
+            self::assertFalse(
+                $scopeStore->hasCurrent(),
+                'Scope store should not have current scope after reset',
+            );
+            self::assertNull(
+                $context->lastResult(),
+                'Context should not have last result after reset',
+            );
         }
     }
 
@@ -297,8 +329,11 @@ final class RequestScopeIsolationFeatureTest extends TestCase
 
         $report = $registry->resetAll();
 
-        self::assertCount(2, $report->resetComponents(),
-                          'Both registered components should be reset');
+        self::assertCount(
+            2,
+            $report->resetComponents(),
+            'Both registered components should be reset',
+        );
         self::assertEmpty($report->failures(),
                           'No failures should occur during reset');
     }

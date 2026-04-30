@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\PublicSurface;
 
-use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
-use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\RepositoryRegistry;
 use Avax\Components\DataStack\Persistence\System\Capabilities\IdentityMap\IdentityMap;
+use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\RepositoryRegistry;
+use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
 
 /**
  * EntityManager - Primary entry point for Entity Persistence (ORM).
@@ -15,8 +16,8 @@ final readonly class EntityManager
 {
     public function __construct(
         private UnitOfWorkInterface $unitOfWork,
-        private RepositoryRegistry  $repositoryRegistry,
-        private IdentityMap         $identityMap
+        private RepositoryRegistry $repositoryRegistry,
+        private IdentityMap        $identityMap,
     ) {}
 
     public function find(string $entityClass, mixed $id) : ?object
@@ -34,7 +35,7 @@ final readonly class EntityManager
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(?string $connectionName = null) : void
+    public function flush(string $connectionName = null) : void
     {
         $this->unitOfWork->flush($connectionName);
     }

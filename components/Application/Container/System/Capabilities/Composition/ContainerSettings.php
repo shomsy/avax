@@ -9,15 +9,11 @@ namespace Avax\Components\Application\Container\System\Capabilities\Composition;
  */
 final class ContainerSettings
 {
-    /** @var array<string, mixed> */
-    private array $items;
-
     /**
      * @param array<string, mixed> $items
      */
-    public function __construct(array $items = [])
+    public function __construct(private array $items = [])
     {
-        $this->items = $items;
     }
 
     public function set(string $key, mixed $value) : void

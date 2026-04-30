@@ -18,17 +18,18 @@ use SensitiveParameter;
 final readonly class AuthBootstrapValidator
 {
     public static function validate(
-        UserSourceInterface|null                              $userSource,
-        IdentityInterface|null                                $identity,
-        AuthCapabilityRequests                                $requests,
-        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry,
-        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore,
-        PasskeyRuntimeInterface|null                          $passkeyRuntime,
-        FederationRuntimeInterface|null                       $federationRuntime,
-        OidcProviderInterface|null                            $oidcProvider,
-        string                                                $buildPath = 'AuthBuilder::ready()'
-    ) : void
-    {
+        UserSourceInterface|null $userSource,
+        IdentityInterface|null $identity,
+        AuthCapabilityRequests $requests,
+        #[SensitiveParameter]
+        SessionRegistryInterface|null $sessionRegistry,
+        #[SensitiveParameter]
+        RefreshTokenStoreInterface|null $refreshTokenStore,
+        PasskeyRuntimeInterface|null $passkeyRuntime,
+        FederationRuntimeInterface|null $federationRuntime,
+        OidcProviderInterface|null $oidcProvider,
+        string $buildPath = 'AuthBuilder::ready()',
+    ): void {
         if ($userSource === null) {
             throw ConfigurationException::missingUserSource(buildPath: $buildPath);
         }
@@ -40,7 +41,7 @@ final readonly class AuthBootstrapValidator
         if ($identity->sessionIdentity() === null && $identity->jwtIdentity() === null) {
             throw ConfigurationException::missingIdentityBackend(
                 buildPath: $buildPath,
-                hint     : 'Use withIdentity() or withIdentityBackends() to provide a session and/or JWT backend.'
+                hint     : 'Use withIdentity() or withIdentityBackends() to provide a session and/or JWT backend.',
             );
         }
 
@@ -54,7 +55,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'runtime',
                 buildPath  : $buildPath,
                 option     : 'withPasskeyRuntime()',
-                cause      : 'Passkey-specific configuration was provided.'
+                cause      : 'Passkey-specific configuration was provided.',
             );
         }
 
@@ -64,7 +65,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'provider',
                 buildPath  : $buildPath,
                 option     : 'withOidcProvider()',
-                cause      : 'OIDC request-object storage was provided without an OIDC provider.'
+                cause      : 'OIDC request-object storage was provided without an OIDC provider.',
             );
         }
 
@@ -74,7 +75,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'jwt_identity',
                 buildPath  : $buildPath,
                 option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
-                cause      : 'OAuth or OIDC configuration was provided.'
+                cause      : 'OAuth or OIDC configuration was provided.',
             );
         }
 
@@ -84,7 +85,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'refresh_token_store',
                 buildPath  : $buildPath,
                 option     : 'withRefreshTokenStore()',
-                cause      : 'OAuth or OIDC configuration was provided.'
+                cause      : 'OAuth or OIDC configuration was provided.',
             );
         }
 
@@ -94,7 +95,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'runtime',
                 buildPath  : $buildPath,
                 option     : 'withFederationRuntime()',
-                cause      : 'Federation-specific configuration was provided.'
+                cause      : 'Federation-specific configuration was provided.',
             );
         }
 
@@ -104,7 +105,7 @@ final readonly class AuthBootstrapValidator
                 requirement: 'provisionable_user_source',
                 buildPath  : $buildPath,
                 option     : 'forUser(ProvisionableUserSourceInterface)',
-                cause      : 'SCIM-specific storage was provided.'
+                cause      : 'SCIM-specific storage was provided.',
             );
         }
     }

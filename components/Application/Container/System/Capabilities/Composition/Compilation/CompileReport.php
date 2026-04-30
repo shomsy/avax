@@ -14,81 +14,81 @@ final readonly class CompileReport implements JsonSerializable
 {
     public const int SCHEMA_VERSION = 2;
     public ArtifactMetadata|null $metadata;
-    public array                 $pruning;
-    public array                 $statistics;
-    public array                 $invalidationReasons;
-    public array                 $compatibilityIssues;
-    public array                 $validationIssues;
-    public array                 $invalidatedServices;
-    public array                 $changedServices;
-    public array                 $entries;
-    public array                 $lifetimePlanSummary;
-    public int                   $providerBootPlanSize;
-    public int                   $decorationMapSize;
-    public int                   $aliasMapSize;
-    public int                   $tagIndexSize;
-    public int                   $lazyServicesCount;
-    public int                   $deferredServicesCount;
-    public int                   $invalidatedServicesCount;
-    public int                   $reusedServicesCount;
-    public int                   $compiledServicesCount;
-    public int                   $totalServices;
-    public bool                  $checksumValid;
-    public string                $fingerprint;
-    public string                $environment;
-    public string                $pruneMode;
-    public string                $executionMode;
-    public string                $compileMode;
-    public string                $cacheVersion;
-    public string                $metadataPath;
-    public string                $path;
-    public array                 $warnings;
-    public string                $freshnessState;
-    public bool                  $compatible;
-    public bool                  $available;
+    public array  $pruning;
+    public array  $statistics;
+    public array  $invalidationReasons;
+    public array  $compatibilityIssues;
+    public array  $validationIssues;
+    public array  $invalidatedServices;
+    public array  $changedServices;
+    public array  $entries;
+    public array  $lifetimePlanSummary;
+    public int    $providerBootPlanSize;
+    public int    $decorationMapSize;
+    public int    $aliasMapSize;
+    public int    $tagIndexSize;
+    public int    $lazyServicesCount;
+    public int    $deferredServicesCount;
+    public int    $invalidatedServicesCount;
+    public int    $reusedServicesCount;
+    public int    $compiledServicesCount;
+    public int    $totalServices;
+    public bool   $checksumValid;
+    public string $fingerprint;
+    public string $environment;
+    public string $pruneMode;
+    public string $executionMode;
+    public string $compileMode;
+    public string $cacheVersion;
+    public string $metadataPath;
+    public string $path;
+    public array  $warnings;
+    public string $freshnessState;
+    public bool   $compatible;
+    public bool   $available;
 
     /**
-     * @param list<string>       $entries
-     * @param list<string>       $changedServices
-     * @param list<string>       $invalidatedServices
-     * @param list<string>       $validationIssues
-     * @param list<string>       $invalidationReasons
+     * @param list<string> $entries
+     * @param list<string> $changedServices
+     * @param list<string> $invalidatedServices
+     * @param list<string> $validationIssues
+     * @param list<string> $invalidationReasons
      * @param array<string, int> $statistics
      */
     public function __construct(
-        bool                  $available,
-        bool                  $compatible,
-        string                $freshnessState,
-        array                 $warnings,
-        string                $path,
-        string                $metadataPath,
-        string                $cacheVersion,
-        string                $compileMode,
-        string                $executionMode,
-        string                $pruneMode,
-        string                $environment,
-        string                $fingerprint,
-        bool                  $checksumValid,
-        int                   $totalServices,
-        int                   $compiledServicesCount,
-        int                   $reusedServicesCount,
-        int                   $invalidatedServicesCount,
-        int                   $deferredServicesCount,
-        int                   $lazyServicesCount,
-        int                   $tagIndexSize,
-        int                   $aliasMapSize,
-        int                   $decorationMapSize,
-        int                   $providerBootPlanSize,
-        array                 $lifetimePlanSummary,
-        array                 $entries,
-        array                 $changedServices,
-        array                 $invalidatedServices,
-        array                 $validationIssues,
-        array                 $compatibilityIssues,
-        array                 $invalidationReasons,
-        array                 $statistics,
-        array                 $pruning,
-        ArtifactMetadata|null $metadata = null
+        bool             $available,
+        bool             $compatible,
+        string           $freshnessState,
+        array            $warnings,
+        string           $path,
+        string           $metadataPath,
+        string           $cacheVersion,
+        string           $compileMode,
+        string           $executionMode,
+        string           $pruneMode,
+        string           $environment,
+        string           $fingerprint,
+        bool             $checksumValid,
+        int              $totalServices,
+        int              $compiledServicesCount,
+        int              $reusedServicesCount,
+        int              $invalidatedServicesCount,
+        int              $deferredServicesCount,
+        int              $lazyServicesCount,
+        int              $tagIndexSize,
+        int              $aliasMapSize,
+        int              $decorationMapSize,
+        int              $providerBootPlanSize,
+        array            $lifetimePlanSummary,
+        array            $entries,
+        array            $changedServices,
+        array            $invalidatedServices,
+        array            $validationIssues,
+        array            $compatibilityIssues,
+        array            $invalidationReasons,
+        array            $statistics,
+        array            $pruning,
+        ArtifactMetadata $metadata = null,
     )
     {
         $this->available                = $available;

@@ -27,16 +27,17 @@ final readonly class StartMfaChallenge
     private int $expiresAfterSeconds;
 
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private GeneralMfaStoreInterface                    $mfaStore,
-        private MfaChallengeStoreInterface                  $challengeStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock,
-        int|null                                            $expiresAfterSeconds = null,
-        private int                                         $maxAttempts = 5
+        #[SensitiveParameter]
+        private CurrentAuthentication      $currentAuthentication,
+        private GeneralMfaStoreInterface   $mfaStore,
+        private MfaChallengeStoreInterface $challengeStore,
+        private AuditLogInterface          $auditLog,
+        private Clock                      $clock,
+        int                                $expiresAfterSeconds = null,
+        private int                        $maxAttempts = 5,
     )
     {
-        $expiresAfterSeconds       ??= 300;
+        $expiresAfterSeconds ??= 300;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
     }
 
@@ -49,7 +50,7 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -61,7 +62,7 @@ final readonly class StartMfaChallenge
             userId   : new UserId(value: $user->id),
             purpose  : MfaChallengePurpose::STEP_UP,
             ipAddress: $ipAddress,
-            userAgent: $userAgent
+            userAgent: $userAgent,
         );
     }
 
@@ -71,10 +72,11 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      */
     private function issueForUserId(
-        UserId                            $userId,
-        MfaChallengePurpose               $purpose,
-        #[SensitiveParameter] string|null $ipAddress,
-        string|null                       $userAgent
+        UserId              $userId,
+        MfaChallengePurpose $purpose,
+        #[SensitiveParameter]
+        string|null         $ipAddress,
+        string|null         $userAgent,
     ) : MfaChallenge
     {
         if (! $this->mfaStore->isEnabled(userId: $userId)) {
@@ -90,7 +92,7 @@ final readonly class StartMfaChallenge
             purpose    : $purpose,
             createdAt  : $now,
             expiresAt  : $now->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
-            maxAttempts: $this->maxAttempts
+            maxAttempts: $this->maxAttempts,
         );
 
         $this->challengeStore->issue(record: $record);
@@ -103,14 +105,14 @@ final readonly class StartMfaChallenge
                                                            'purpose'      => $purpose->value,
                                                            'ip_address'   => $ipAddress,
                                                            'user_agent'   => $userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return $record->toBoundary();
     }
 
     /**
-     * @param User        $user
+     * @param User $user
      * @param string|null $ipAddress
      * @param string|null $userAgent
      *
@@ -118,13 +120,13 @@ final readonly class StartMfaChallenge
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),
             purpose  : MfaChallengePurpose::LOGIN,
             ipAddress: $ipAddress,
-            userAgent: $userAgent
+            userAgent: $userAgent,
         );
     }
 }

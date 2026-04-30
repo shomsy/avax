@@ -25,10 +25,13 @@ use SensitiveParameter;
 final readonly class Account
 {
     public function __construct(
-        #[SensitiveParameter] private ChangePassword          $changePassword,
-        #[SensitiveParameter] private BeginEmailChange        $beginEmailChange,
-        #[SensitiveParameter] private ConfirmEmailChange|null $confirmEmailChange,
-        private Register                                      $register
+        #[SensitiveParameter]
+        private ChangePassword          $changePassword,
+        #[SensitiveParameter]
+        private BeginEmailChange        $beginEmailChange,
+        #[SensitiveParameter]
+        private ConfirmEmailChange|null $confirmEmailChange,
+        private Register                $register,
     ) {}
 
     /**

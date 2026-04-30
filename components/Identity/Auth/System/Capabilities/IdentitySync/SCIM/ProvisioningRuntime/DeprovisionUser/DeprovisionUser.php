@@ -20,14 +20,16 @@ use SensitiveParameter;
 final readonly class DeprovisionUser
 {
     public function __construct(
-        private ProvisionableUserSourceInterface                      $userSource,
-        private RequireAdminElevation                                 $requireAdminElevation,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private AdminElevationStoreInterface|null                     $adminElevationStore = null,
-        private LifecycleOrchestrator|null                            $lifecycle = null
+        private ProvisionableUserSourceInterface  $userSource,
+        private RequireAdminElevation             $requireAdminElevation,
+        private AuditLogInterface                 $auditLog,
+        private Clock                             $clock,
+        #[SensitiveParameter]
+        private SessionRegistryInterface|null     $sessionRegistry = null,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface|null   $refreshTokenStore = null,
+        private AdminElevationStoreInterface|null $adminElevationStore = null,
+        private LifecycleOrchestrator|null        $lifecycle = null,
     ) {}
 
     public function execute(int $userId) : void
@@ -46,7 +48,7 @@ final readonly class DeprovisionUser
         $this->auditLog->record(event: new AuditEvent(
                                            name      : 'auth.provisioning.user.deprovisioned',
                                            occurredAt: $this->clock->now(),
-                                           context   : ['subject_user_id' => $userId]
+                                           context   : ['subject_user_id' => $userId],
                                        ));
     }
 }

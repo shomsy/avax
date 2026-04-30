@@ -26,7 +26,7 @@ final class HandleHttpFailure
      * @param OutboundRequest     $request       The original request
      * @param callable            $retryCallback Callback to execute for retry (receives OutboundRequest, returns
      *                                           ClientResponse)
-     * @param Throwable          $exception     The exception that occurred
+     * @param Throwable           $exception     The exception that occurred
      * @param RequestOptions|null $options       Request options (may contain retry policy)
      *
      * @return ClientResponse The response from a successful retry
@@ -36,9 +36,9 @@ final class HandleHttpFailure
      */
     public function handle(
         OutboundRequest $request,
-        callable        $retryCallback,
+        callable       $retryCallback,
         Throwable      $exception,
-        ?RequestOptions $options = null,
+        RequestOptions $options = null,
     ) : ClientResponse
     {
         $retryPolicy = $options?->retryPolicy;
@@ -75,6 +75,7 @@ final class HandleHttpFailure
                         url    : $request->url,
                         method : $request->method,
                     );
+
                     continue;
                 }
 
@@ -97,7 +98,7 @@ final class HandleHttpFailure
     /**
      * Rethrow an exception with additional context.
      *
-     * @param Throwable      $exception  The original exception
+     * @param Throwable       $exception  The original exception
      * @param OutboundRequest $request    The request that failed
      * @param int             $retryCount Number of retries attempted
      *
@@ -105,9 +106,9 @@ final class HandleHttpFailure
      * @throws HttpTimeout
      */
     private function rethrow(
-        Throwable      $exception,
+        Throwable $exception,
         OutboundRequest $request,
-        int             $retryCount = 0,
+        int       $retryCount = 0,
     ) : never
     {
         $message = $exception->getMessage();

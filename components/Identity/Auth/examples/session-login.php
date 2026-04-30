@@ -21,7 +21,7 @@ $userSource->create(user: User::create(
     id          : new UserId(value: 1),
     email       : new UserEmail(value: 'user@example.com'),
     username    : 'user',
-    passwordHash: $passwordHasher->hash(password: 'password')
+    passwordHash: $passwordHasher->hash(password: 'password'),
 ));
 
 $auth = Auth::configuration()
@@ -33,7 +33,7 @@ $auth = Auth::configuration()
 try {
     $loginResult = $auth->login(credentials: new Credentials(
                                                  identifier: 'user@example.com',
-                                                 password  : 'password'
+                                                 password  : 'password',
                                              ));
 
     echo 'Welcome, ' . $loginResult->user()->email() . PHP_EOL;

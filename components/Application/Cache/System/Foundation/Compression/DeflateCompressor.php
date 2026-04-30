@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Foundation\Compression;
 
 use InvalidArgumentException;
+use Override;
 use RuntimeException;
 
 final readonly class DeflateCompressor implements CacheCompressor
 {
-    public const ALGORITHM = 'deflate';
-    public const LEVEL     = -1;
+    public const string ALGORITHM = 'deflate';
 
+    public const int LEVEL = -1;
+
+    #[Override]
     public function compress(string $data) : CompressedCachePayload
     {
         $originalSize = strlen($data);
@@ -25,19 +28,20 @@ final readonly class DeflateCompressor implements CacheCompressor
             data          : $compressed,
             algorithm     : self::ALGORITHM,
             originalSize  : $originalSize,
-            compressedSize: strlen($compressed)
+            compressedSize: strlen($compressed),
         );
     }
 
-    public function decompress(CompressedCachePayload $payload) : string
+    #[Override]
+    public function decompress(CompressedCachePayload $compressedCachePayload) : string
     {
-        if ($payload->algorithm !== self::ALGORITHM) {
+        if ($compressedCachePayload->algorithm !== self::ALGORITHM) {
             throw new InvalidArgumentException(
-                message: sprintf('Cannot decompress payload with algorithm "%s"', $payload->algorithm)
+                message: sprintf('Cannot decompress payload with algorithm "%s"', $compressedCachePayload->algorithm),
             );
         }
 
-        $decompressed = zlib_decode($payload->data);
+        $decompressed = zlib_decode($compressedCachePayload->data);
 
         if ($decompressed === false) {
             throw new RuntimeException(message: 'Failed to decompress data');
@@ -46,6 +50,7 @@ final readonly class DeflateCompressor implements CacheCompressor
         return $decompressed;
     }
 
+    #[Override]
     public function algorithm() : string
     {
         return self::ALGORITHM;

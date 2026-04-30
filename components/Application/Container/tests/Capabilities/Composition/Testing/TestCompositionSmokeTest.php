@@ -31,7 +31,10 @@ final class LoginFlowEntry
 {
     public TestingClockContract $clock;
 
-    public function __construct(TestingClockContract $clock) { $this->clock = $clock; }
+    public function __construct(TestingClockContract $clock)
+    {
+        $this->clock = $clock;
+    }
 }
 
 $composition = TestComposition::create();

@@ -11,6 +11,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iter
 use Countable;
 use IteratorAggregate;
 use JsonException;
+use Override;
 use Traversable;
 
 /**
@@ -30,7 +31,7 @@ final readonly class Set implements IteratorAggregate, Countable
         iterable $items = [],
     )
     {
-        $this->items = self::normalize(items: $items);
+        $this->items = $this->normalize(items: $items);
     }
 
     /**
@@ -38,7 +39,7 @@ final readonly class Set implements IteratorAggregate, Countable
      *
      * @return array<int, mixed>
      */
-    private static function normalize(iterable $items) : array
+    private function normalize(iterable $items) : array
     {
         $normalized = [];
         $seen       = [];
@@ -90,7 +91,7 @@ final readonly class Set implements IteratorAggregate, Countable
                                          } catch (JsonException) {
                                              return serialize($item) !== $hash;
                                          }
-                                     }
+                                     },
                                  ));
 
         return new self(items: $filtered);
@@ -107,7 +108,7 @@ final readonly class Set implements IteratorAggregate, Countable
 
         return new self(items: array_values(array_filter(
                                                 $this->items,
-                                                static fn (mixed $item) : bool => $other->contains(value: $item)
+                                                static fn (mixed $item) : bool => $other->contains(value: $item),
                                             )));
     }
 
@@ -140,7 +141,7 @@ final readonly class Set implements IteratorAggregate, Countable
 
         return new self(items: array_values(array_filter(
                                                 $this->items,
-                                                static fn (mixed $item) : bool => ! $other->contains(value: $item)
+                                                static fn (mixed $item) : bool => ! $other->contains(value: $item),
                                             )));
     }
 
@@ -149,11 +150,13 @@ final readonly class Set implements IteratorAggregate, Countable
         return new DataList(items: $this->items);
     }
 
+    #[Override]
     public function count() : int
     {
         return count($this->items);
     }
 
+    #[Override]
     public function getIterator() : Traversable
     {
         return new ArrayIterator(array: $this->items);

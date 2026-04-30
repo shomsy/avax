@@ -26,7 +26,7 @@ final readonly class ConvertCollectionToJson
 
         if ($json === false) {
             throw new InvalidArgumentException(
-                message: 'Failed to encode collection to JSON: ' . json_last_error_msg()
+                message: 'Failed to encode collection to JSON: ' . json_last_error_msg(),
             );
         }
 

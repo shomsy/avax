@@ -9,7 +9,8 @@ use SensitiveParameter;
 final readonly class RegisteredScimDirectory
 {
     public function __construct(
-        public ScimDirectory                $directory,
-        #[SensitiveParameter] public string $plainTextToken
+        public ScimDirectory $directory,
+        #[SensitiveParameter]
+        public string        $plainTextToken,
     ) {}
 }

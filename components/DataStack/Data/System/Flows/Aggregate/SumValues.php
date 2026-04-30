@@ -25,8 +25,13 @@ final class SumValues
 
     private function extract(mixed $item, string|callable|null $key) : mixed
     {
-        if ($key === null) return $item;
-        if (is_callable($key)) return $key($item);
+        if ($key === null) {
+            return $item;
+        }
+
+        if (is_callable($key)) {
+            return $key($item);
+        }
 
         if (is_array($item)) {
             return $item[$key] ?? 0;

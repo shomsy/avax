@@ -20,33 +20,33 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class LifetimePlan
 {
-    public bool   $poolResetBeforeReuse;
-    public int    $poolSize;
-    public bool   $disposable;
-    public bool   $lazy;
-    public bool   $warm;
+    public bool $poolResetBeforeReuse;
+    public int  $poolSize;
+    public bool $disposable;
+    public bool $lazy;
+    public bool $warm;
     public string $scopeKind;
     public string $storage;
     public string $name;
     public string $serviceId;
 
     public function __construct(
-        string      $serviceId,
-        string      $name,
-        string      $storage,
-        string|null $scopeKind = null,
-        bool|null   $warm = null,
-        bool|null   $lazy = null,
-        bool|null   $disposable = null,
-        int|null    $poolSize = null,
-        bool        $poolResetBeforeReuse = true
+        string $serviceId,
+        string $name,
+        string $storage,
+        string $scopeKind = null,
+        bool   $warm = null,
+        bool   $lazy = null,
+        bool   $disposable = null,
+        int    $poolSize = null,
+        bool   $poolResetBeforeReuse = true,
     )
     {
-        $scopeKind                  ??= '';
-        $warm                       ??= false;
-        $lazy                       ??= false;
-        $disposable                 ??= false;
-        $poolSize                   ??= 8;
+        $scopeKind  ??= '';
+        $warm       ??= false;
+        $lazy       ??= false;
+        $disposable ??= false;
+        $poolSize   ??= 8;
         $this->serviceId            = $serviceId;
         $this->name                 = $name;
         $this->storage              = $storage;
@@ -75,7 +75,7 @@ final readonly class LifetimePlan
             lazy                : (bool) ($registration?->lazy ?? false),
             disposable          : (bool) ($registration?->disposable ?? false),
             poolSize            : max(1, (int) ($registration?->poolSize ?? 8)),
-            poolResetBeforeReuse: (bool) ($registration?->poolResetBeforeReuse ?? true)
+            poolResetBeforeReuse: (bool) ($registration?->poolResetBeforeReuse ?? true),
         );
     }
 
@@ -122,7 +122,7 @@ final readonly class LifetimePlan
             lazy                : (bool) ($state['lazy'] ?? false),
             disposable          : (bool) ($state['disposable'] ?? false),
             poolSize            : max(1, (int) ($state['poolSize'] ?? 8)),
-            poolResetBeforeReuse: (bool) ($state['poolResetBeforeReuse'] ?? true)
+            poolResetBeforeReuse: (bool) ($state['poolResetBeforeReuse'] ?? true),
         );
     }
 

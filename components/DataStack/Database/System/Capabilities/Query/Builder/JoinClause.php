@@ -26,13 +26,16 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class JoinClause
 {
     /** @var array<int, array{first: string, operator: string, second: string, boolean: string}> Collection of captured join conditions. */
-    private array                     $conditions = [];
+    private array $conditions = [];
     private readonly GrammarInterface $grammar;
 
     /**
      * @param GrammarInterface $grammar The authorized technical SQL grammar used for secure identifier projection.
      */
-    public function __construct(GrammarInterface $grammar) { $this->grammar = $grammar; }
+    public function __construct(GrammarInterface $grammar)
+    {
+        $this->grammar = $grammar;
+    }
 
     /**
      * Coordinate the addition of an 'OR ON' logical condition to the join clause.
@@ -41,14 +44,14 @@ final class JoinClause
      * Appends a new comparison constraint linked via the OR logical operator,
      * allowing for alternative relationship matches.
      *
-     * @param string      $first     The structural identifier of the left-hand column.
-     * @param string|null $operator  The technical comparison operator (defaults to '=' if second is provided).
-     * @param string|null $second    The structural identifier of the right-hand column or the value (if operator is
-     *                               omitted).
+     * @param string      $first    The structural identifier of the left-hand column.
+     * @param string|null $operator The technical comparison operator (defaults to '=' if second is provided).
+     * @param string|null $second   The structural identifier of the right-hand column or the value (if operator is
+     *                              omitted).
      *
      * @return self The current builder instance for further fluent configuration.
      */
-    public function orOn(string $first, string|null $operator = null, string|null $second = null) : self
+    public function orOn(string $first, string $operator = null, string $second = null) : self
     {
         return $this->on(first: $first, operator: $operator, second: $second, boolean: 'OR');
     }
@@ -61,14 +64,14 @@ final class JoinClause
      * supporting both the standard three-argument form and the shortcut
      * two-argument equality form.
      *
-     * @param string      $first    The structural identifier of the left-hand column.
+     * @param string      $first   The structural identifier of the left-hand column.
      * @param string|null $operator The technical comparison operator or the target value (for shortcuts).
-     * @param string|null $second   The structural identifier of the right-hand target column.
-     * @param string      $boolean  The logical joiner used to link this condition ('AND' or 'OR').
+     * @param string|null $second  The structural identifier of the right-hand target column.
+     * @param string      $boolean The logical joiner used to link this condition ('AND' or 'OR').
      *
      * @return self The current builder instance.
      */
-    public function on(string $first, string|null $operator = null, string|null $second = null, string $boolean = 'AND') : self
+    public function on(string $first, string $operator = null, string $second = null, string $boolean = 'AND') : self
     {
         // Technical shortcut: handle two-argument equality form.
         if ($operator !== null && $second === null) {
@@ -79,7 +82,7 @@ final class JoinClause
         $this->conditions[] = [
             'first'    => $first,
             'operator' => $operator ?? '=',
-            'second'   => $second ?? '',
+            'second' => $second ?? '',
             'boolean'  => $boolean,
         ];
 

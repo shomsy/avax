@@ -17,18 +17,21 @@ final readonly class PushedAuthorizationRequest
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] public string          $requestUri,
-        public DateTimeImmutable                     $expiresAt,
-        public string                                $clientId,
-        public string                                $redirectUri,
-        array|null                                   $scopes = null,
-        public string|null                           $state = null,
-        public string|null                           $nonce = null,
-        #[SensitiveParameter] public string|null     $codeChallenge = null,
-        #[SensitiveParameter] public PkceMethod|null $codeChallengeMethod = null
+        #[SensitiveParameter]
+        public string            $requestUri,
+        public DateTimeImmutable $expiresAt,
+        public string            $clientId,
+        public string            $redirectUri,
+        array                    $scopes = null,
+        public string|null       $state = null,
+        public string|null       $nonce = null,
+        #[SensitiveParameter]
+        public string|null       $codeChallenge = null,
+        #[SensitiveParameter]
+        public PkceMethod|null   $codeChallengeMethod = null,
     )
     {
-        $scopes       ??= [];
+        $scopes ??= [];
         $this->scopes = $scopes;
     }
 }

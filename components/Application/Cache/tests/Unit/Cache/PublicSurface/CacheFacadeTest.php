@@ -8,6 +8,7 @@ use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Avax\Tests\TestCase;
+use Override;
 
 final class CacheFacadeTest extends TestCase
 {
@@ -61,7 +62,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn () => 'loaded');
+        $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn () : string => 'loaded');
 
         $this->assertSame(expected: 'loaded', actual: $result);
     }
@@ -130,12 +131,14 @@ final class CacheFacadeTest extends TestCase
         Cache::get(key: 'key');
     }
 
+    #[Override]
     protected function setUp() : void
     {
         parent::setUp();
         Cache::reset();
     }
 
+    #[Override]
     protected function tearDown() : void
     {
         parent::tearDown();

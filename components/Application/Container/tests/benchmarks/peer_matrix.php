@@ -62,7 +62,7 @@ function parityIssuesFor(string $peerName, array $current, array $peer) : array
     }
 
     $currentSettings = $current['meta']['phpSettings'] ?? [];
-    $peerSettings    = $peer['meta']['phpSettings'] ?? [];
+    $peerSettings = $peer['meta']['phpSettings'] ?? [];
     if ($currentSettings !== $peerSettings) {
         $issues[] = "peer [{$peerName}] PHP settings do not match the canonical benchmark settings";
     }
@@ -101,7 +101,7 @@ function peerThresholdFor(string $scenario, array $thresholds) : array
 
 /**
  * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
- * @param array<string, array<string, float>>                                                            $thresholds
+ * @param array<string, array<string, float>> $thresholds
  *
  * @return array<string, mixed>
  */
@@ -127,20 +127,20 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
             'suiteVersion'   => (string) ($current['meta']['suiteVersion'] ?? ''),
             'thresholdsFile' => __DIR__ . '/peer-thresholds.php',
         ],
-        'artifactMeta'  => array_map(
+        'artifactMeta' => array_map(
             callback: static fn (array $artifact) : array => $artifact['meta'],
-            array   : $artifacts
+            array   : $artifacts,
         ),
-        'parityIssues'  => [],
-        'regressions'   => [],
-        'comparisons'   => [],
+        'parityIssues' => [],
+        'regressions'  => [],
+        'comparisons'  => [],
     ];
 
     foreach ($peers as $peerName) {
         $peer                    = $artifacts[$peerName];
         $payload['parityIssues'] = array_merge(
             $payload['parityIssues'],
-            parityIssuesFor(peerName: $peerName, current: $current, peer: $peer)
+            parityIssuesFor(peerName: $peerName, current: $current, peer: $peer),
         );
 
         $scenarios = benchmarkScenariosForArtifact(artifact: $current);
@@ -152,11 +152,11 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
             $timeRatio  = ((float) ($peerRow['time_ms'] ?? 0.0)) > 0.0
                 ? ((float) ($currentRow['time_ms'] ?? 0.0)) / (float) $peerRow['time_ms']
                 : 0.0;
-            $peakRatio  = ((float) ($peerRow['peak_mb'] ?? 0.0)) > 0.0
+            $peakRatio = ((float) ($peerRow['peak_mb'] ?? 0.0)) > 0.0
                 ? ((float) ($currentRow['peak_mb'] ?? 0.0)) / (float) $peerRow['peak_mb']
                 : 0.0;
-            $threshold  = peerThresholdFor(scenario: $scenario, thresholds: $thresholds);
-            $regressed  = $timeRatio > $threshold['max_time_ratio_vs_peer']
+            $threshold = peerThresholdFor(scenario: $scenario, thresholds: $thresholds);
+            $regressed = $timeRatio > $threshold['max_time_ratio_vs_peer']
                 || $peakRatio > $threshold['max_peak_ratio_vs_peer'];
 
             $peerRows[$scenario] = [
@@ -212,7 +212,7 @@ $json       = json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESC
 
 if (is_string(value: $outputPath) && $outputPath !== '') {
     $directory = dirname(path: $outputPath);
-    if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
+    if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o775, recursive: true) && ! is_dir(filename: $directory)) {
         throw new RuntimeException(message: "Cannot create peer benchmark artifact directory [{$directory}].");
     }
 
@@ -226,10 +226,10 @@ if ($failOnRegression && ($payload['parityIssues'] !== [] || $payload['regressio
         message: "Peer benchmark matrix failed:\n- "
                  . array_map(
                    callback: static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
-                   array   : $payload['regressions']
+                   array   : $payload['regressions'],
                )
                      |> (static fn ($x) => array_merge($payload['parityIssues'], $x))
-                     |> (static fn ($x) => implode(separator: "\n- ", array: $x))
+                     |> (static fn ($x) => implode(separator: "\n- ", array: $x)),
     );
 }
 

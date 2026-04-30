@@ -20,6 +20,6 @@ final class PoolException extends RuntimeException
 
     public static function timeout(int $timeoutMs) : self
     {
-        return new self(message: "Connection timeout after {$timeoutMs}ms");
+        return new self(message: sprintf('Connection timeout after %dms', $timeoutMs));
     }
 }

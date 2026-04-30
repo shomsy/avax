@@ -27,7 +27,7 @@ final class RegisterDataServices
             readNestedValue : new ReadNestedValue(),
             writeNestedValue: new WriteNestedValue(),
             sumValues       : $sumValues,
-            averageValues   : new AverageValues($sumValues)
+            averageValues   : new AverageValues($sumValues),
         );
     }
 }

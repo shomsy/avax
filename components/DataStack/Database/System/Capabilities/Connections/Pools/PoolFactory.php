@@ -11,22 +11,22 @@ final class PoolFactory
 {
     public static function createLazy(
         string $driver,
-        array  $config,
-        int    $maxConnections = 20,
+        array $config,
+        int   $maxConnections = 20,
     ) : ConnectionPoolInterface
     {
         return new LazyConnectionPool(
             config        : $config,
             maxConnections: $maxConnections,
-            factory       : static fn () => self::create(driver: $driver, config: $config, minConnections: 0, maxConnections: $maxConnections),
+            factory       : static fn () : ConnectionPoolInterface => self::create(driver: $driver, config: $config, minConnections: 0, maxConnections: $maxConnections),
         );
     }
 
     public static function create(
-        string   $driver,
-        array    $config,
-        int|null $minConnections = null,
-        int      $maxConnections = 20,
+        string $driver,
+        array  $config,
+        ?int   $minConnections = null,
+        int    $maxConnections = 20,
     ) : ConnectionPoolInterface
     {
         $minConnections ??= 5;
@@ -44,7 +44,7 @@ final class PoolFactory
             Dialect::CLICKHOUSE    => new ClickHousePool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
             Dialect::COCKROACHDB   => new CockroachDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
             Dialect::YUGABYTEDB    => new YugabyteDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            default                => throw new InvalidArgumentException(message: "Unsupported driver: {$driver}"),
+            default => throw new InvalidArgumentException(message: 'Unsupported driver: ' . $driver),
         };
     }
 }

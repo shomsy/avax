@@ -48,7 +48,7 @@ interface EventBusInterface
     /**
      * Manually sign up a single listener for a specific signal.
      *
-     * @param string   $event    The full name of the News Type you want to hear.
+     * @param string $event The full name of the News Type you want to hear.
      * @param callable $listener The specific code block to run.
      */
     public function subscribe(string $event, callable $listener) : void;

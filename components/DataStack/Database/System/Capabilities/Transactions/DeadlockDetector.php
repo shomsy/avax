@@ -15,13 +15,13 @@ use Throwable;
 final readonly class DeadlockReport
 {
     public function __construct(
-        public bool   $isDeadlock,
+        public bool  $isDeadlock,
         public string $type = '',
         public string $message = '',
         public string $errorCode = '',
         public string $suggestion = '',
-        public array  $affectedTables = [],
-        public float  $detectedAt = 0.0,
+        public array $affectedTables = [],
+        public float $detectedAt = 0.0,
     ) {}
 
     /**
@@ -32,7 +32,7 @@ final readonly class DeadlockReport
         string $message,
         string $errorCode,
         string $suggestion,
-        array  $affectedTables = [],
+        array $affectedTables = [],
     ) : self
     {
         return new self(
@@ -117,7 +117,7 @@ final class DeadlockDetector
      */
     private DeadlockDetectorConfig $config;
 
-    public function __construct(DeadlockDetectorConfig|null $config = null)
+    public function __construct(DeadlockDetectorConfig $config = null)
     {
         $this->config = $config ?? new DeadlockDetectorConfig();
     }
@@ -293,7 +293,7 @@ final class DeadlockDetector
 final readonly class DeadlockDetectorConfig
 {
     /**
-     * @param list<string> $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
+     * @param list<string> $deadlockSqlStates SQLSTATE codes that indicate deadlocks
      * @param list<string> $deadlockErrorCodes Additional error codes to check
      */
     public function __construct(

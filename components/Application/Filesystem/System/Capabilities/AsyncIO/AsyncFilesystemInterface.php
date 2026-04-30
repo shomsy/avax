@@ -25,7 +25,7 @@ interface AsyncFilesystemInterface
     /**
      * Asynchronously read the contents of a file.
      *
-     * @param string               $path    The file path to read
+     * @param string $path The file path to read
      * @param array<string, mixed> $options Optional flags (e.g., encoding, offset, length)
      *
      * @return AsyncOperationPromise Promise resolving to file contents (string)
@@ -55,7 +55,7 @@ interface AsyncFilesystemInterface
     /**
      * Asynchronously delete a file or directory.
      *
-     * @param string               $path    The path to delete
+     * @param string $path The path to delete
      * @param array<string, mixed> $options Optional flags (e.g., recursive for directories)
      *
      * @return AsyncOperationPromise Promise resolving to true on success
@@ -65,7 +65,7 @@ interface AsyncFilesystemInterface
     /**
      * Asynchronously list the contents of a directory.
      *
-     * @param string               $path    The directory path to list
+     * @param string $path The directory path to list
      * @param array<string, mixed> $options Optional flags (e.g., recursive, include hidden, filter)
      *
      * @return AsyncOperationPromise Promise resolving to array of file/directory paths

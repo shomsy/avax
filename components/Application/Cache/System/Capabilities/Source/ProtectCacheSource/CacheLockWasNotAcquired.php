@@ -12,24 +12,24 @@ final class CacheLockWasNotAcquired extends RuntimeException
 {
     public function __construct(
         string                   $message,
-        public readonly CacheKey $key,
+        public readonly CacheKey $cacheKey,
         public readonly int      $timeoutSeconds,
-        Throwable|null           $previous = null
+        ?Throwable               $throwable = null,
     )
     {
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
-    public static function timeout(CacheKey $key, int $timeoutSeconds) : self
+    public static function timeout(CacheKey $cacheKey, int $timeoutSeconds) : self
     {
         return new self(
             message       : sprintf(
                                 'Lock for key "%s" could not be acquired after %d seconds',
-                                $key->fullKey(),
-                                $timeoutSeconds
+                                $cacheKey->fullKey(),
+                                $timeoutSeconds,
                             ),
-            key           : $key,
-            timeoutSeconds: $timeoutSeconds
+            key           : $cacheKey,
+            timeoutSeconds: $timeoutSeconds,
         );
     }
 }

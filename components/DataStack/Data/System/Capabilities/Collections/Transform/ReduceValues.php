@@ -15,9 +15,7 @@ final readonly class ReduceValues
 
     /**
      * @param callable $callback fn(mixed $carry, mixed $item, int|string $key): mixed
-     * @param mixed    $initial
      *
-     * @return mixed
      */
     public function __invoke(callable $callback, mixed $initial = null) : mixed
     {
@@ -26,9 +24,7 @@ final readonly class ReduceValues
 
     /**
      * @param callable $callback fn(mixed $carry, mixed $item, int|string $key): mixed
-     * @param mixed    $initial
      *
-     * @return mixed
      */
     public function reduce(callable $callback, mixed $initial = null) : mixed
     {

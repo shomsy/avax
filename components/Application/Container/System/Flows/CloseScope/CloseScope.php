@@ -11,20 +11,15 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Service
  */
 final readonly class CloseScope
 {
-    private ServiceResolver $resolver;
-
-    public function __construct(
-        ServiceResolver $resolver
-    )
+    public function __construct(private ServiceResolver $serviceResolver)
     {
-        $this->resolver = $resolver;
     }
 
     /**
      * Closes the current scope frame.
      */
-    public function close(string|null $kind = null) : void
+    public function close(?string $kind = null) : void
     {
-        $this->resolver->closeScope(kind: $kind);
+        $this->serviceResolver->closeScope(kind: $kind);
     }
 }

@@ -12,15 +12,15 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObje
 final readonly class ColumnIdentifier
 {
     public string|null $alias;
-    public string      $name;
+    public string $name;
 
     /**
-     * @param string      $name  The technical identifier of the database column.
+     * @param string $name The technical identifier of the database column.
      * @param string|null $alias The optional domain-specific label (alias) for the projection.
      */
     public function __construct(
-        string      $name,
-        string|null $alias = null
+        string $name,
+        string $alias = null,
     )
     {
         $this->name  = $name;

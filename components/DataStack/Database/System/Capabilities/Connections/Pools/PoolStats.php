@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
-final class PoolStats
+final readonly class PoolStats
 {
     public function __construct(
-        public readonly int   $totalConnections,
-        public readonly int   $activeConnections,
-        public readonly int   $idleConnections,
-        public readonly int   $waitingRequests,
-        public readonly float $averageWaitTimeMs,
+        public int   $totalConnections,
+        public int   $activeConnections,
+        public int   $idleConnections,
+        public int   $waitingRequests,
+        public float $averageWaitTimeMs,
     ) {}
 }

@@ -9,6 +9,8 @@ use SensitiveParameter;
 final readonly class BackChannelLogoutData
 {
     public function __construct(
-        #[SensitiveParameter] public string $logoutToken
-    ) {}
+        #[SensitiveParameter]
+        public string $logoutToken,
+    ) {
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
 use Avax\Components\Application\Filesystem\System\Capabilities\Storage\StorageInterface;
+use RuntimeException;
 
 /**
  * Storage Public Surface.
@@ -46,7 +47,7 @@ final class Storage
         return self::getStorage()->delete($path);
     }
 
-    public static function makeDirectory(string $path, int $permissions = 0755): bool
+    public static function makeDirectory(string $path, int $permissions = 0o755) : bool
     {
         return self::getStorage()->createDirectory($path, $permissions);
     }
@@ -83,8 +84,8 @@ final class Storage
 
     private static function getStorage(): StorageInterface
     {
-        if (self::$storage === null) {
-            throw new \RuntimeException('Storage not configured. Call Storage::setStorage() first.');
+        if (! self::$storage instanceof StorageInterface) {
+            throw new RuntimeException('Storage not configured. Call Storage::setStorage() first.');
         }
 
         return self::$storage;

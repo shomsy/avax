@@ -68,37 +68,37 @@ final class ServiceResolver
     private array $lazyServices = [];
 
     /** @var array{environment: string, flags: list<string>, tenant: string, region: string, mode: string}|null */
-    private array|null                      $compositionState = null;
-    private readonly string                 $asyncTarget;
-    private readonly string                 $sliceBoundaryMode;
-    private readonly string                 $environment;
-    private readonly string                 $diagnosticsMode;
-    private readonly FunctionCaller         $caller;
-    private readonly InjectMethods          $injectMethods;
-    private readonly InjectProperties       $injectProperties;
+    private array|null                $compositionState = null;
+    private readonly string           $asyncTarget;
+    private readonly string           $sliceBoundaryMode;
+    private readonly string           $environment;
+    private readonly string           $diagnosticsMode;
+    private readonly FunctionCaller   $caller;
+    private readonly InjectMethods    $injectMethods;
+    private readonly InjectProperties $injectProperties;
     private readonly CreateServiceBlueprint $blueprints;
-    private readonly BuildService           $builder;
-    private readonly ManageScopes           $scopes;
-    private readonly ServiceRegistry        $registrations;
+    private readonly BuildService     $builder;
+    private readonly ManageScopes     $scopes;
+    private readonly ServiceRegistry  $registrations;
 
     public function __construct(
-        ServiceRegistry               $registrations,
-        ManageScopes                  $scopes,
-        BuildService                  $builder,
-        CreateServiceBlueprint        $blueprints,
-        InjectProperties              $injectProperties,
-        InjectMethods                 $injectMethods,
-        FunctionCaller                $caller,
-        ResolutionMetrics|null        $metrics = null,
-        ResolutionTimeline|null       $timeline = null,
-        ResolutionPolicy|null         $policy = null,
-        CompiledRuntime|null          $compiledRuntime = null,
-        DeferredProviderRegistry|null $deferredProviders = null,
-        string|null                   $diagnosticsMode = null,
-        string|null                   $environment = null,
-        string|null                   $sliceBoundaryMode = null,
-        string|null                   $asyncTarget = null,
-        GovernComposition|null        $governor = null
+        ServiceRegistry          $registrations,
+        ManageScopes             $scopes,
+        BuildService             $builder,
+        CreateServiceBlueprint   $blueprints,
+        InjectProperties         $injectProperties,
+        InjectMethods            $injectMethods,
+        FunctionCaller           $caller,
+        ResolutionMetrics        $metrics = null,
+        ResolutionTimeline       $timeline = null,
+        ResolutionPolicy         $policy = null,
+        CompiledRuntime          $compiledRuntime = null,
+        DeferredProviderRegistry $deferredProviders = null,
+        string                   $diagnosticsMode = null,
+        string                   $environment = null,
+        string                   $sliceBoundaryMode = null,
+        string                   $asyncTarget = null,
+        GovernComposition        $governor = null,
     )
     {
         $diagnosticsMode         ??= CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL;
@@ -117,13 +117,13 @@ final class ServiceResolver
         $this->sliceBoundaryMode = $sliceBoundaryMode;
         $this->asyncTarget       = $asyncTarget;
         $this->telemetry         = new ResolutionTelemetry(
-            metrics : $metrics ?? new ResolutionMetrics,
-            timeline: $timeline ?? new ResolutionTimeline
+            metrics : $metrics ?? new ResolutionMetrics(),
+            timeline: $timeline ?? new ResolutionTimeline(),
         );
-        $this->policy            = $policy ?? new ResolutionPolicy;
+        $this->policy            = $policy ?? new ResolutionPolicy();
         $this->compiledRuntime   = $compiledRuntime ?? new CompiledRuntime(metrics: $metrics);
-        $this->deferredProviders = $deferredProviders ?? new DeferredProviderRegistry;
-        $this->governor          = $governor ?? new GovernComposition;
+        $this->deferredProviders = $deferredProviders ?? new DeferredProviderRegistry();
+        $this->governor          = $governor ?? new GovernComposition();
     }
 
     /**
@@ -186,16 +186,16 @@ final class ServiceResolver
      */
     public function describeService(string $id) : array
     {
-        $resolved          = $this->registrations->resolveAlias(abstract: $id);
-        $registration      = $this->registrations->get(abstract: $resolved);
-        $lifetimePlan      = LifetimePlan::fromRegistration(
+        $resolved       = $this->registrations->resolveAlias(abstract: $id);
+        $registration   = $this->registrations->get(abstract: $resolved);
+        $lifetimePlan   = LifetimePlan::fromRegistration(
             serviceId   : $resolved,
-            registration: $registration
+            registration: $registration,
         );
-        $blueprintClass    = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
+        $blueprintClass = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
             ? $registration->concrete
             : (class_exists(class: $resolved) ? $resolved : null);
-        $blueprint         = is_string(value: $blueprintClass)
+        $blueprint      = is_string(value: $blueprintClass)
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
         $compiledArtifact  = $this->compiledRuntime->report(serviceIds: [$resolved]);
@@ -233,7 +233,7 @@ final class ServiceResolver
             'overrides'          => $overrides,
             'aliases'            => array_keys(array: array_filter(
                                                           array   : $this->registrations->allAliases(),
-                                                          callback: static fn (string $target) : bool => $target === $resolved
+                                                          callback: static fn (string $target) : bool => $target === $resolved,
                                                       )),
             'aliasChain'         => $aliasChain,
             'decorationChain'    => $decorationChain,
@@ -265,7 +265,7 @@ final class ServiceResolver
                 compiledArtifact: $compiledArtifact?->toArray() ?? ['available' => false],
                 cacheState      : $cacheState,
                 aliasChain      : $aliasChain,
-                decorationChain : $decorationChain
+                decorationChain : $decorationChain,
             ),
         ];
     }
@@ -295,18 +295,18 @@ final class ServiceResolver
         $request = $this->normalizeRequest(request: $request);
         $this->deferredProviders->bootIfNeeded(
             serviceId: $request->serviceId,
-            metrics  : $this->telemetry->metrics()
+            metrics  : $this->telemetry->metrics(),
         );
         $registration = $this->registrationFor(request: $request);
         $lifetime     = LifetimePlan::fromRegistration(
             serviceId   : $request->serviceId,
-            registration: $registration
+            registration: $registration,
         );
 
         $this->telemetry->timeline()->record(
             action   : 'resolve',
             serviceId: $request->serviceId,
-            outcome  : 'started'
+            outcome  : 'started',
         );
         $this->telemetry->metrics()->increment(name: 'container_resolve_total');
 
@@ -315,28 +315,28 @@ final class ServiceResolver
                 throw new ContainerException(
                     message: "Resolution blocked for [{$request->serviceId}] by policy. "
                              . 'Dependency path [' . $request->getPath() . ']. '
-                             . 'Likely fix: resolve an exported entry or public capability instead of reaching into an internal implementation detail.'
+                             . 'Likely fix: resolve an exported entry or public capability instead of reaching into an internal implementation detail.',
                 );
             }
 
             if ($request->contains(serviceId: $request->serviceId) && $request->parent !== null) {
                 throw new ContainerException(
                     message: "Circular dependency detected along [{$request->getPath()}]. "
-                             . 'Likely fix: remove the back-reference, inject an interface boundary, or defer one side of the graph.'
+                             . 'Likely fix: remove the back-reference, inject an interface boundary, or defer one side of the graph.',
                 );
             }
 
             $this->assertRuntimeAccess(
                 request     : $request,
                 registration: $registration,
-                lifetime    : $lifetime
+                lifetime    : $lifetime,
             );
 
             if ($this->hasStored(serviceId: $request->serviceId, lifetime: $lifetime)) {
                 $this->telemetry->timeline()->record(
                     action   : 'resolve',
                     serviceId: $request->serviceId,
-                    outcome  : 'cached'
+                    outcome  : 'cached',
                 );
                 $this->telemetry->metrics()->increment(name: 'container_resolve_cached_total');
 
@@ -349,14 +349,14 @@ final class ServiceResolver
                     kind            : $lifetime->scopeKind(),
                     maxSize         : $lifetime->poolSize,
                     resetBeforeReuse: $lifetime->poolResetBeforeReuse,
-                    disposable      : $lifetime->disposable
+                    disposable      : $lifetime->disposable,
                 );
 
                 if (($checkedOut['hit'] ?? false) === true) {
                     $this->telemetry->timeline()->record(
                         action   : 'resolve',
                         serviceId: $request->serviceId,
-                        outcome  : 'cached'
+                        outcome  : 'cached',
                     );
                     $this->telemetry->metrics()->increment(name: 'container_resolve_cached_total');
                     $this->telemetry->metrics()->increment(name: 'container_pooled_hits_total');
@@ -375,14 +375,14 @@ final class ServiceResolver
                 $this->storeResolved(
                     abstract: $request->serviceId,
                     instance: $resolved,
-                    lifetime: $lifetime
+                    lifetime: $lifetime,
                 );
             }
 
             $this->telemetry->timeline()->record(
                 action   : 'resolve',
                 serviceId: $request->serviceId,
-                outcome  : 'resolved'
+                outcome  : 'resolved',
             );
 
             return $resolved;
@@ -390,7 +390,7 @@ final class ServiceResolver
             $this->telemetry->timeline()->record(
                 action   : 'resolve',
                 serviceId: $request->serviceId,
-                outcome  : 'failed'
+                outcome  : 'failed',
             );
             $this->telemetry->metrics()->increment(name: 'container_resolve_failures_total');
 
@@ -411,7 +411,7 @@ final class ServiceResolver
             context        : $request->context,
             parent         : $request->parent,
             manualInjection: $request->manualInjection,
-            consumer       : $request->consumer
+            consumer       : $request->consumer,
         );
     }
 
@@ -439,9 +439,9 @@ final class ServiceResolver
     }
 
     private function assertRuntimeAccess(
-        ResolveRequest           $request,
+        ResolveRequest $request,
         ServiceRegistration|null $registration,
-        LifetimePlan             $lifetime
+        LifetimePlan   $lifetime,
     ) : void
     {
         if (! $registration instanceof ServiceRegistration) {
@@ -459,7 +459,7 @@ final class ServiceResolver
                              . 'Environment [' . $conditions['environment'] . '], flags [' . implode(separator: ', ', array: $conditions['flags']) . '], '
                              . 'tenant [' . $conditions['tenant'] . '], region [' . $conditions['region'] . '], mode [' . $conditions['mode'] . ']. '
                              . 'Why: ' . implode(separator: '; ', array: $conditions['reasons']) . '. '
-                             . 'Likely fix: activate a matching profile, flag set, tenant, region, or mode, or request a compatible implementation.'
+                             . 'Likely fix: activate a matching profile, flag set, tenant, region, or mode, or request a compatible implementation.',
                 );
             }
         }
@@ -471,7 +471,7 @@ final class ServiceResolver
             throw new ContainerException(
                 message: "Service [{$request->serviceId}] uses lifetime [{$lifetime->name}] and requires an active [{$lifetime->scopeKind()}] scope. "
                          . 'Dependency path [' . $request->getPath() . ']. '
-                         . "Likely fix: openScope('{$lifetime->scopeKind()}') before resolving it or change the service lifetime."
+                         . "Likely fix: openScope('{$lifetime->scopeKind()}') before resolving it or change the service lifetime.",
             );
         }
 
@@ -479,24 +479,24 @@ final class ServiceResolver
         if (is_string(value: $consumerId) && $consumerId !== '') {
             $this->assertRestrictedRuntimeDependency(
                 consumerId: $consumerId,
-                request   : $request
+                request   : $request,
             );
 
             if (! $this->consumerCanAccess(
                 consumerId: $consumerId,
-                request   : $request
+                request   : $request,
             )) {
-                $access     = $this->accessForConsumer(
+                $access   = $this->accessForConsumer(
                     consumerId: $consumerId,
-                    request   : $request
+                    request   : $request,
                 );
-                $consumer   = $access['consumer']['ownerSlice'] ?? ($access['viewer']['slice'] ?? 'unknown');
+                $consumer = $access['consumer']['ownerSlice'] ?? ($access['viewer']['slice'] ?? 'unknown');
                 $dependency = $access['dependency']['ownerSlice'] ?? 'unknown';
 
                 throw new ContainerException(
                     message: "Illegal cross-slice dependency [{$consumerId}] -> [{$request->serviceId}] along [{$request->getPath()}]. "
                              . "Consumer slice [{$consumer}] cannot use dependency slice [{$dependency}]: {$access['reason']}. "
-                             . 'Likely fix: export the dependency intentionally, import its slice, or move the dependency back to the owning flow.'
+                             . 'Likely fix: export the dependency intentionally, import its slice, or move the dependency back to the owning flow.',
                 );
             }
 
@@ -513,22 +513,23 @@ final class ServiceResolver
                 throw new ContainerException(
                     message: "Slice view [{$slice}] can only resolve authored services, but [{$request->serviceId}] is not registered. "
                              . 'Dependency path [' . $request->getPath() . ']. '
-                             . 'Likely fix: bind the unit to its owning slice explicitly before resolving it through a slice view.'
+                             . 'Likely fix: bind the unit to its owning slice explicitly before resolving it through a slice view.',
                 );
             }
 
             if (! $this->registrations->allowsSliceAccess(
                 viewerSlice: $slice,
-                serviceId  : $request->serviceId
+                serviceId  : $request->serviceId,
             )) {
                 $access = $this->registrations->sliceAccessTo(
                     viewerSlice: $slice,
-                    serviceId  : $request->serviceId
+                    serviceId  : $request->serviceId,
                 );
+
                 throw new ContainerException(
                     message: "Slice view [{$slice}] cannot resolve [{$request->serviceId}]: {$access['reason']}. "
                              . 'Dependency path [' . $request->getPath() . ']. '
-                             . 'Likely fix: expose the dependency publicly, export and import the owning slice, or resolve it from its owning slice view.'
+                             . 'Likely fix: expose the dependency publicly, export and import the owning slice, or resolve it from its owning slice view.',
                 );
             }
 
@@ -540,9 +541,10 @@ final class ServiceResolver
             && $metadata->ownerSlice !== 'default'
         ) {
             $topLevel = $this->registrations->topLevelAccessTo(serviceId: $request->serviceId);
+
             throw new ContainerException(
                 message: "Service [{$request->serviceId}] is not part of the top-level container surface: {$topLevel['reason']}. "
-                         . "Likely fix: mark the flow root as entry(), export the shared capability, or resolve it from its owning slice instead of the top level."
+                         . 'Likely fix: mark the flow root as entry(), export the shared capability, or resolve it from its owning slice instead of the top level.',
             );
         }
     }
@@ -645,7 +647,7 @@ final class ServiceResolver
         if (is_array(value: $configuredFlags)) {
             $flags = array_map(
                     callback: static fn (mixed $flag) : string => is_string(value: $flag) ? trim(string: $flag) : '',
-                    array   : $configuredFlags
+                    array   : $configuredFlags,
                 )
                     |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $flag) : bool => $flag !== ''))
                     |> array_values(...);
@@ -673,7 +675,7 @@ final class ServiceResolver
             return $settings->concrete;
         }
 
-        return new ContainerSettings;
+        return new ContainerSettings();
     }
 
     /**
@@ -708,7 +710,7 @@ final class ServiceResolver
         throw new ContainerException(
             message: "Service locator drift blocked for [{$consumerId}] -> [{$request->serviceId}] along [{$request->getPath()}]. "
                      . 'Only container configuration and foundation.system services may depend on container runtime internals. '
-                     . 'Likely fix: inject the concrete dependency boundary instead of the container, resolver, registry, or raw settings object.'
+                     . 'Likely fix: inject the concrete dependency boundary instead of the container, resolver, registry, or raw settings object.',
         );
     }
 
@@ -750,13 +752,13 @@ final class ServiceResolver
         if ($slice !== '' && ! $this->registrations->has(abstract: $consumerId)) {
             return $this->registrations->allowsSliceAccess(
                 viewerSlice: $slice,
-                serviceId  : $request->serviceId
+                serviceId  : $request->serviceId,
             );
         }
 
         return $this->registrations->allowsAccess(
             consumerId  : $consumerId,
-            dependencyId: $request->serviceId
+            dependencyId: $request->serviceId,
         );
     }
 
@@ -823,13 +825,13 @@ final class ServiceResolver
         if ($slice !== '' && ! $this->registrations->has(abstract: $consumerId)) {
             return $this->registrations->sliceAccessTo(
                 viewerSlice: $slice,
-                serviceId  : $request->serviceId
+                serviceId  : $request->serviceId,
             );
         }
 
         return $this->registrations->accessTo(
             consumerId  : $consumerId,
-            dependencyId: $request->serviceId
+            dependencyId: $request->serviceId,
         );
     }
 
@@ -842,14 +844,14 @@ final class ServiceResolver
         if ($lifetime->isPooled()) {
             return $this->scopes->hasPooled(
                 abstract: $serviceId,
-                kind    : $lifetime->scopeKind()
+                kind    : $lifetime->scopeKind(),
             );
         }
 
         if ($lifetime->isScoped()) {
             return $this->scopes->hasScoped(
                 abstract: $serviceId,
-                kind    : $lifetime->scopeKind()
+                kind    : $lifetime->scopeKind(),
             );
         }
 
@@ -865,14 +867,14 @@ final class ServiceResolver
         if ($lifetime->isPooled()) {
             return $this->scopes->getPooled(
                 abstract: $serviceId,
-                kind    : $lifetime->scopeKind()
+                kind    : $lifetime->scopeKind(),
             );
         }
 
         if ($lifetime->isScoped()) {
             return $this->scopes->getScoped(
                 abstract: $serviceId,
-                kind    : $lifetime->scopeKind()
+                kind    : $lifetime->scopeKind(),
             );
         }
 
@@ -903,19 +905,19 @@ final class ServiceResolver
             throw new ServiceNotFoundException(
                 message: "Service [{$request->serviceId}] is not registered and cannot be autowired. "
                          . 'Dependency path [' . $request->getPath() . ']. '
-                         . 'Likely fix: bind the service explicitly, add a compatible class-backed registration, or pass a runtime override.'
+                         . 'Likely fix: bind the service explicitly, add a compatible class-backed registration, or pass a runtime override.',
             );
         }
 
         $resolved = $this->evaluateCandidate(
             candidate   : $candidate,
             request     : $request,
-            registration: $registration
+            registration: $registration,
         );
 
         return $this->applyExtenders(
             abstract: $request->serviceId,
-            instance: $resolved
+            instance: $resolved,
         );
     }
 
@@ -925,7 +927,7 @@ final class ServiceResolver
         if ($consumer !== null) {
             $contextual = $this->registrations->getContextualMatch(
                 consumer: $consumer,
-                needs   : $request->serviceId
+                needs   : $request->serviceId,
             );
             if ($contextual !== null) {
                 return $contextual;
@@ -941,8 +943,8 @@ final class ServiceResolver
     }
 
     /**
-     * @param mixed                    $candidate
-     * @param ResolveRequest           $request
+     * @param mixed          $candidate
+     * @param ResolveRequest $request
      * @param ServiceRegistration|null $registration
      *
      * @return mixed
@@ -958,7 +960,7 @@ final class ServiceResolver
         if ($candidate instanceof Closure) {
             return $this->invokeFactory(
                 factory  : $candidate,
-                overrides: array_merge($registration?->arguments ?? [], $request->overrides)
+                overrides: array_merge($registration?->arguments ?? [], $request->overrides),
             );
         }
 
@@ -967,11 +969,11 @@ final class ServiceResolver
                 return $this->resolveRequest(request: $request->child(serviceId: $candidate));
             }
 
-            $resolved  = $this->builder->build(
+            $resolved = $this->builder->build(
                 class    : $candidate,
                 resolver : $this,
                 overrides: array_merge($registration?->arguments ?? [], $request->overrides),
-                request  : $request
+                request  : $request,
             );
             $blueprint = $this->blueprints->createFor(class: $candidate);
 
@@ -980,14 +982,14 @@ final class ServiceResolver
                 blueprint: $blueprint,
                 overrides: $request->overrides,
                 resolver : $this,
-                request  : $request
+                request  : $request,
             );
             $this->injectMethods->inject(
                 target   : $resolved,
                 blueprint: $blueprint,
                 overrides: $request->overrides,
                 resolver : $this,
-                request  : $request
+                request  : $request,
             );
 
             return $resolved;
@@ -1049,7 +1051,7 @@ final class ServiceResolver
             $this->scopes->setShared(
                 abstract  : $abstract,
                 instance  : $instance,
-                disposable: $lifetime->disposable
+                disposable: $lifetime->disposable,
             );
 
             return;
@@ -1062,7 +1064,7 @@ final class ServiceResolver
                 kind            : $lifetime->scopeKind(),
                 maxSize         : $lifetime->poolSize,
                 resetBeforeReuse: $lifetime->poolResetBeforeReuse,
-                disposable      : $lifetime->disposable
+                disposable      : $lifetime->disposable,
             );
 
             return;
@@ -1073,7 +1075,7 @@ final class ServiceResolver
                 abstract  : $abstract,
                 instance  : $instance,
                 kind      : $lifetime->scopeKind(),
-                disposable: $lifetime->disposable
+                disposable: $lifetime->disposable,
             );
         }
     }
@@ -1089,6 +1091,7 @@ final class ServiceResolver
         foreach ($snapshot['frames'] as $frame) {
             if (in_array(needle: $serviceId, haystack: $frame['pooledServices'] ?? [], strict: true)) {
                 $checkedOut = true;
+
                 break;
             }
         }
@@ -1105,7 +1108,7 @@ final class ServiceResolver
             ],
             'activeScopeKinds' => array_values(array: array_map(
                                                           callback: static fn (array $frame) : string => $frame['kind'],
-                                                          array   : $snapshot['frames']
+                                                          array   : $snapshot['frames'],
                                                       )),
         ];
     }
@@ -1119,7 +1122,7 @@ final class ServiceResolver
     {
         return array_map(
             callback: function (string $descriptor) use ($serviceId) : array {
-                $metadata   = $this->registrations->ownership(abstract: $descriptor)
+                $metadata = $this->registrations->ownership(abstract: $descriptor)
                     ?? RegistrationMetadata::for(unitId: $descriptor);
                 $registered = $this->registrations->has(abstract: $descriptor);
 
@@ -1131,15 +1134,15 @@ final class ServiceResolver
                     'reason'     => $registered
                         ? 'decorator resolves through a registered ownership-aware unit'
                         : 'decorator is not a registered service and only has descriptor-level diagnostics',
-                    'access'     => $registered
+                    'access' => $registered
                         ? $this->registrations->accessTo(
                             consumerId  : $serviceId,
-                            dependencyId: $descriptor
+                            dependencyId: $descriptor,
                         )
                         : null,
                 ];
             },
-            array   : $chain
+            array   : $chain,
         );
     }
 
@@ -1235,7 +1238,7 @@ final class ServiceResolver
             $dependents[$serviceId] ??= [];
 
             foreach ($dependencies as $dependency) {
-                $dependents[$dependency]   ??= [];
+                $dependents[$dependency] ??= [];
                 $dependents[$dependency][] = $serviceId;
             }
         }
@@ -1301,7 +1304,7 @@ final class ServiceResolver
 
         usort(
             array   : $matches,
-            callback: static fn (array $left, array $right) : int => [$left['consumer'], $left['target']] <=> [$right['consumer'], $right['target']]
+            callback: static fn (array $left, array $right) : int => [$left['consumer'], $left['target']] <=> [$right['consumer'], $right['target']],
         );
 
         return $matches;
@@ -1337,29 +1340,29 @@ final class ServiceResolver
     }
 
     /**
-     * @param string                   $id
-     * @param string                   $resolvedId
+     * @param string                $id
+     * @param string                $resolvedId
      * @param ServiceRegistration|null $registration
-     * @param ServiceBlueprint|null    $blueprint
-     * @param array                    $compiledState
-     * @param array                    $compiledArtifact
-     * @param array                    $cacheState
-     * @param array                    $aliasChain
-     * @param array                    $decorationChain
+     * @param ServiceBlueprint|null $blueprint
+     * @param array                 $compiledState
+     * @param array                 $compiledArtifact
+     * @param array                 $cacheState
+     * @param array                 $aliasChain
+     * @param array                 $decorationChain
      *
      * @return array<string, mixed>
      * @throws ReflectionException
      */
     private function explainService(
-        string                   $id,
-        string                   $resolvedId,
+        string                $id,
+        string                $resolvedId,
         ServiceRegistration|null $registration,
-        ServiceBlueprint|null    $blueprint,
-        array                    $compiledState,
-        array                    $compiledArtifact,
-        array                    $cacheState,
-        array                    $aliasChain,
-        array                    $decorationChain
+        ServiceBlueprint|null $blueprint,
+        array                 $compiledState,
+        array                 $compiledArtifact,
+        array                 $cacheState,
+        array                 $aliasChain,
+        array                 $decorationChain,
     ) : array
     {
         $contextualBindings = $this->contextualBindingsFor(serviceId: $resolvedId);
@@ -1377,11 +1380,11 @@ final class ServiceResolver
             ];
 
         return [
-            'failureChain'     => $this->failureChainFor(
+            'failureChain'   => $this->failureChainFor(
                 resolvedId      : $resolvedId,
                 registration    : $registration,
                 compiledState   : $compiledState,
-                compiledArtifact: $compiledArtifact
+                compiledArtifact: $compiledArtifact,
             ),
             'dependencyChain'  => $this->dependencyChainFor(serviceId: $resolvedId, seen: []),
             'contextualWinner' => [
@@ -1392,7 +1395,7 @@ final class ServiceResolver
                     ? 'no contextual override is registered for this service'
                     : 'contextual overrides exist, but no active consumer selected one for this direct diagnostics request',
             ],
-            'aliasExpansion'   => [
+            'aliasExpansion' => [
                 'requestedId' => $id,
                 'resolvedId'  => $resolvedId,
                 'chain'       => $aliasChain,
@@ -1400,14 +1403,14 @@ final class ServiceResolver
                     ? 'requested id resolves through the alias chain shown here'
                     : 'requested id is already canonical',
             ],
-            'decoration'       => [
+            'decoration'     => [
                 'chain'  => $decorationChain,
                 'count'  => count(value: $decorationChain),
                 'reason' => $decorationChain === []
                     ? 'no decorators or extenders are registered for this service'
                     : 'decorators and extenders will run in the listed order',
             ],
-            'cache'            => [
+            'cache'          => [
                 'state'  => $cacheState,
                 'reason' => match (true) {
                     $cacheState['cached']                           => 'service is already stored in shared or scoped runtime state',
@@ -1418,28 +1421,28 @@ final class ServiceResolver
                     default                                         => 'service will resolve through a fresh build path and then enter lifetime storage if needed',
                 },
             ],
-            'compiled'         => [
+            'compiled'       => [
                 'state'  => $compiledState,
                 'reason' => $compiledState['reason'],
             ],
-            'owner'            => [
+            'owner'          => [
                 'metadata' => $ownership->toArray(),
                 'reason'   => 'ownership metadata explains who owns this unit, what slice it belongs to, and how visible it is',
             ],
-            'override'         => [
+            'override'       => [
                 'history' => $overrides,
                 'reason'  => $overrides === []
                     ? 'no previous authored registration for this abstract was replaced'
                     : 'the service was rebound after one or more previous authored registrations; inspect the history to explain override posture',
             ],
-            'conditions'       => [
+            'conditions'     => [
                 'state'  => $conditions,
                 'reason' => $conditions['active']
                     ? 'all active composition conditions match this registration'
                     : 'one or more environment, flag, tenant, region, or mode conditions exclude this registration',
             ],
-            'fallback'         => $fallback,
-            'blueprint'        => [
+            'fallback'       => $fallback,
+            'blueprint'      => [
                 'available' => $blueprint !== null,
                 'reason'    => $blueprint !== null
                     ? 'compiled and dynamic resolution can explain constructor and injection metadata from the blueprint'
@@ -1452,10 +1455,10 @@ final class ServiceResolver
      * @return list<string>
      */
     private function failureChainFor(
-        string                   $resolvedId,
+        string $resolvedId,
         ServiceRegistration|null $registration,
-        array                    $compiledState,
-        array                    $compiledArtifact
+        array  $compiledState,
+        array  $compiledArtifact,
     ) : array
     {
         $failures = [];
@@ -1526,9 +1529,9 @@ final class ServiceResolver
         $node['dependencies'] = array_map(
             callback: fn (string $dependency) : array => $this->dependencyChainFor(
                 serviceId: $dependency,
-                seen     : array_merge($seen, [$resolvedId])
+                seen     : array_merge($seen, [$resolvedId]),
             ),
-            array   : $dependencies
+            array   : $dependencies,
         );
 
         return $node;
@@ -1573,7 +1576,7 @@ final class ServiceResolver
         $sharedServiceCount = count(value: $scopeSnapshot['shared']);
         $scopedServiceCount = array_sum(array: array_map(
                                                    callback: static fn (array $scope) : int => count(value: $scope),
-                                                   array   : $scopeSnapshot['scoped']
+                                                   array   : $scopeSnapshot['scoped'],
                                                ));
 
         return new RuntimeReport(
@@ -1602,11 +1605,11 @@ final class ServiceResolver
                                       'pooledStats'     => $scopeSnapshot['pooledStats'],
                                       'scoped'          => array_map(
                                           callback: fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
-                                          array   : $scopeSnapshot['scoped']
+                                          array   : $scopeSnapshot['scoped'],
                                       ),
                                   ],
             hotPath             : $this->compiledRuntime->summary(),
-            compiled            : $this->compiledRuntime->report()
+            compiled            : $this->compiledRuntime->report(),
         );
     }
 
@@ -1629,7 +1632,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -1646,7 +1649,7 @@ final class ServiceResolver
 
         $plan['viewAccess'] = $this->registrations->sliceAccessTo(
             viewerSlice: $slice,
-            serviceId  : (string) ($plan['resolvedId'] ?? $id)
+            serviceId  : (string) ($plan['resolvedId'] ?? $id),
         );
 
         return $plan;
@@ -1703,7 +1706,7 @@ final class ServiceResolver
                 [
                     'sliceView'  => $this->registrations->sliceView(slice: $slice),
                     'viewAccess' => $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $resolved),
-                ]
+                ],
             );
         }
 
@@ -1757,7 +1760,7 @@ final class ServiceResolver
             registrations: $this->registrations,
             blueprints   : $this->blueprints,
             policy       : $this->policy,
-            environment  : $this->environment
+            environment  : $this->environment,
         );
     }
 
@@ -1768,7 +1771,7 @@ final class ServiceResolver
     {
         return array_values(array: array_map(
                                        callback: static fn (array $row) : string => $row['serviceId'],
-                                       array   : $this->registrations->sliceView(slice: $slice)['visible'] ?? []
+                                       array   : $this->registrations->sliceView(slice: $slice)['visible'] ?? [],
                                    ));
     }
 
@@ -1804,6 +1807,7 @@ final class ServiceResolver
 
                 if ($access['allowed'] ?? false) {
                     $visible[] = $row;
+
                     continue;
                 }
 
@@ -1824,14 +1828,14 @@ final class ServiceResolver
                     'exports'    => array_column(array: $visible, column_key: 'serviceId'),
                     'public'     => array_filter(
                             array   : $visible,
-                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC
+                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::PUBLIC,
                         )
                             |> array_values(...)
                             |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
                             |> array_values(...),
                     'shared'     => array_filter(
                             array   : $visible,
-                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED
+                            callback: static fn (array $row) : bool => $row['visibility'] === RegistrationVisibility::SHARED,
                         )
                             |> array_values(...)
                             |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
@@ -1875,7 +1879,7 @@ final class ServiceResolver
                 'manifest'       => $this->registrations->sliceManifest(slice: $import),
                 'visibleExports' => array_filter(
                         array   : $view['visible'] ?? [],
-                        callback: static fn (array $row) : bool => $row['ownerSlice'] === $import
+                        callback: static fn (array $row) : bool => $row['ownerSlice'] === $import,
                     )
                         |> array_values(...)
                         |> (static fn ($x) => array_map(callback: static fn (array $row) : string => $row['serviceId'], array: $x))
@@ -1932,7 +1936,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return list<string>
@@ -1951,7 +1955,7 @@ final class ServiceResolver
             ? $visibleIds
             : array_map(
                 callback: fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                array   : $serviceIds
+                array   : $serviceIds,
             )
                 |> (static fn ($x) => array_intersect($visibleIds, $x))
                 |> array_values(...);
@@ -1987,7 +1991,7 @@ final class ServiceResolver
                 $graph[$class] = $this->dependenciesForValidation(
                     serviceId: $class,
                     blueprint: $blueprint,
-                    issues   : $issues
+                    issues   : $issues,
                 );
             } catch (Throwable $throwable) {
                 $issues[] = "Service [{$class}] cannot be analyzed: {$throwable->getMessage()}";
@@ -2040,7 +2044,7 @@ final class ServiceResolver
         $this->validateDisposalSemantics(issues: $issues);
         $governance = $this->governanceReport(
             graph     : $graph,
-            dependents: $this->buildDependents(graph: $graph)
+            dependents: $this->buildDependents(graph: $graph),
         );
         foreach ($this->governor->messages(report: $governance) as $message) {
             $issues[] = $message . '.';
@@ -2060,7 +2064,7 @@ final class ServiceResolver
         $this->deferredProviders->bootFor(
             serviceIds   : $serviceIds,
             registrations: $this->registrations,
-            metrics      : $this->telemetry->metrics()
+            metrics      : $this->telemetry->metrics(),
         );
     }
 
@@ -2121,7 +2125,7 @@ final class ServiceResolver
 
         return array_filter(
                 array   : $classes,
-                callback: static fn (string $class) : bool => class_exists(class: $class)
+                callback: static fn (string $class) : bool => class_exists(class: $class),
             )
                 |> array_unique(...)
                 |> array_values(...);
@@ -2131,7 +2135,7 @@ final class ServiceResolver
     {
         $this->deferredProviders->bootIfNeeded(
             serviceId: $serviceId,
-            metrics  : $this->telemetry->metrics()
+            metrics  : $this->telemetry->metrics(),
         );
     }
 
@@ -2237,7 +2241,7 @@ final class ServiceResolver
                 graph    : $graph,
                 state    : $state,
                 stack    : [],
-                issues   : $issues
+                issues   : $issues,
             );
         }
 
@@ -2246,16 +2250,16 @@ final class ServiceResolver
 
     /**
      * @param array<string, list<string>> $graph
-     * @param array<string, string>       $state
-     * @param list<string>                $stack
-     * @param list<string>                $issues
+     * @param array<string, string> $state
+     * @param list<string>          $stack
+     * @param list<string>          $issues
      */
     private function visitDependency(
         string $serviceId,
-        array  $graph,
-        array  &$state,
-        array  $stack,
-        array  &$issues
+        array $graph,
+        array &$state,
+        array $stack,
+        array &$issues,
     ) : void
     {
         $currentState = $state[$serviceId] ?? 'new';
@@ -2285,7 +2289,7 @@ final class ServiceResolver
                 graph    : $graph,
                 state    : $state,
                 stack    : $stack,
-                issues   : $issues
+                issues   : $issues,
             );
         }
 
@@ -2294,7 +2298,7 @@ final class ServiceResolver
 
     /**
      * @param array<string, list<string>> $graph
-     * @param list<string>                $issues
+     * @param list<string> $issues
      */
     private function validateSliceAccess(array $graph, array &$issues) : void
     {
@@ -2302,7 +2306,7 @@ final class ServiceResolver
             foreach ($dependencies as $dependency) {
                 $access = $this->registrations->accessTo(
                     consumerId  : $serviceId,
-                    dependencyId: $dependency
+                    dependencyId: $dependency,
                 );
 
                 if (($access['allowed'] ?? false) === true) {
@@ -2316,20 +2320,20 @@ final class ServiceResolver
 
     /**
      * @param array<string, list<string>> $graph
-     * @param list<string>                $issues
+     * @param list<string> $issues
      */
     private function validateLifetimeAccess(array $graph, array &$issues) : void
     {
         foreach ($graph as $serviceId => $dependencies) {
             $consumerLifetime = LifetimePlan::fromRegistration(
                 serviceId   : $serviceId,
-                registration: $this->registrations->get(abstract: $serviceId)
+                registration: $this->registrations->get(abstract: $serviceId),
             );
 
             foreach ($dependencies as $dependency) {
                 $dependencyLifetime = LifetimePlan::fromRegistration(
                     serviceId   : $dependency,
-                    registration: $this->registrations->get(abstract: $dependency)
+                    registration: $this->registrations->get(abstract: $dependency),
                 );
 
                 if (
@@ -2429,7 +2433,7 @@ final class ServiceResolver
         foreach ($this->registrations->duplicateConcepts() as $duplicate) {
             $services = array_map(
                 callback: static fn (array $service) : string => $service['serviceId'] . '@' . $service['ownerSlice'],
-                array   : $duplicate['services']
+                array   : $duplicate['services'],
             );
 
             $issues[] = "Duplicate concept [{$duplicate['concept']}] is owned by multiple units: " . implode(separator: ', ', array: $services) . '.';
@@ -2544,7 +2548,7 @@ final class ServiceResolver
 
                 $access = $this->registrations->accessTo(
                     consumerId  : $serviceId,
-                    dependencyId: $descriptor
+                    dependencyId: $descriptor,
                 );
 
                 if (! ($access['allowed'] ?? false)) {
@@ -2606,7 +2610,7 @@ final class ServiceResolver
         foreach ($this->registrations->all() as $serviceId => $registration) {
             $lifetime = LifetimePlan::fromRegistration(
                 serviceId   : $serviceId,
-                registration: $registration
+                registration: $registration,
             );
 
             if ($lifetime->isPooled()) {
@@ -2647,7 +2651,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -2663,7 +2667,7 @@ final class ServiceResolver
             ? $serviceIds
             : array_values(array: array_map(
                                       callback: static fn (array $row) : string => $row['serviceId'],
-                                      array   : $this->debugSlice(slice: $slice)['visible'] ?? []
+                                      array   : $this->debugSlice(slice: $slice)['visible'] ?? [],
                                   ));
 
         $violations = [];
@@ -2710,7 +2714,7 @@ final class ServiceResolver
             foreach ($dependencies as $dependency) {
                 $access = $this->registrations->accessTo(
                     consumerId  : $serviceId,
-                    dependencyId: $dependency
+                    dependencyId: $dependency,
                 );
                 if ($access['allowed'] ?? false) {
                     continue;
@@ -2720,7 +2724,7 @@ final class ServiceResolver
                     'consumerId'   => $serviceId,
                     'dependencyId' => $dependency,
                     'reason'       => $access['reason'],
-                    'consumer'     => $access['consumer'] ?? [],
+                    'consumer' => $access['consumer'] ?? [],
                     'dependency'   => $access['dependency'] ?? [],
                 ];
             }
@@ -2729,7 +2733,7 @@ final class ServiceResolver
         usort(
             array   : $violations,
             callback: static fn (array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']]
-                <=> [$right['consumerId'], $right['dependencyId']]
+                <=> [$right['consumerId'], $right['dependencyId']],
         );
 
         return [
@@ -2791,9 +2795,9 @@ final class ServiceResolver
         $scope['pooledAvailable'] = array_intersect_key($scope['pooledAvailable'], $visibleIds);
         $scope['scoped']          = array_map(
             callback: static fn (array $frame) : array => array_intersect_key($frame, $visibleIds),
-            array   : $scope['scoped']
+            array   : $scope['scoped'],
         );
-        $scope['sliceView']       = $this->registrations->sliceView(slice: $slice);
+        $scope['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
         return $scope;
     }
@@ -2814,7 +2818,7 @@ final class ServiceResolver
             'pooledStats'     => $snapshot['pooledStats'],
             'scoped'          => array_map(
                 callback: fn (array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
-                array   : $snapshot['scoped']
+                array   : $snapshot['scoped'],
             ),
         ];
     }
@@ -2834,15 +2838,15 @@ final class ServiceResolver
             return $report;
         }
 
-        $visible             = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
-        $report['items']     = array_values(array: array_filter(
-                                                       array   : $report['items'],
-                                                       callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
-                                                   ));
-        $report['services']  = array_values(array: array_filter(
-                                                       array   : $report['services'],
-                                                       callback: static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')])
-                                                   ));
+        $visible            = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
+        $report['items']    = array_values(array: array_filter(
+                                                      array   : $report['items'],
+                                                      callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')]),
+                                                  ));
+        $report['services'] = array_values(array: array_filter(
+                                                      array   : $report['services'],
+                                                      callback: static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')]),
+                                                  ));
         $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
         return $report;
@@ -2863,7 +2867,7 @@ final class ServiceResolver
             $registration = $this->registrations->get(abstract: $serviceId);
             $items[]      = [
                 'serviceId'  => $serviceId,
-                'order'      => $registration?->groupOrder ?? 0,
+                'order' => $registration?->groupOrder ?? 0,
                 'ownerSlice' => $registration?->metadata->ownerSlice ?? 'default',
                 'visibility' => $registration?->metadata->visibility ?? RegistrationVisibility::PUBLIC,
             ];
@@ -2874,7 +2878,7 @@ final class ServiceResolver
             'items'    => $items,
             'services' => array_map(
                 callback: fn (string $serviceId) : array => $this->describeService(id: $serviceId),
-                array   : $serviceIds
+                array   : $serviceIds,
             ),
         ];
     }
@@ -2923,7 +2927,7 @@ final class ServiceResolver
             'group'              => $groupName !== null ? $this->debugGroup(group: $groupName) : null,
             'tags'               => array_map(
                 callback: fn (string $tag) : array => $this->debugTags(tag: $tag),
-                array   : $tags
+                array   : $tags,
             ),
             'decorators'         => $description['decorationDetails'] ?? [],
             'compiledState'      => $description['compiledState'] ?? [],
@@ -2947,7 +2951,7 @@ final class ServiceResolver
             'ids'      => $ids,
             'services' => array_map(
                 callback: fn (string $id) => $this->describeService(id: $id),
-                array   : $ids
+                array   : $ids,
             ),
         ];
     }
@@ -2975,6 +2979,7 @@ final class ServiceResolver
             $access = $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $serviceId);
             if ($access['allowed']) {
                 $visibleIds[] = $serviceId;
+
                 continue;
             }
 
@@ -2991,14 +2996,14 @@ final class ServiceResolver
             'ids'       => $visibleIds,
             'services'  => array_map(
                 callback: fn (string $serviceId) : array => $this->describeServiceInContext(id: $serviceId, context: $context),
-                array   : $visibleIds
+                array   : $visibleIds,
             ),
             'hidden'    => $hidden,
         ];
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -3017,20 +3022,20 @@ final class ServiceResolver
         $description['sliceView']  = $this->registrations->sliceView(slice: $slice);
         $description['viewAccess'] = $this->registrations->sliceAccessTo(
             viewerSlice: $slice,
-            serviceId  : $resolved
+            serviceId  : $resolved,
         );
 
         return $description;
     }
 
-    public function exportGraph(string|null $format = null, string|null $kind = null, string $id = '') : string
+    public function exportGraph(string $format = null, string $kind = null, string $id = '') : string
     {
         $format ??= 'json';
         $kind   ??= 'dependency';
 
-        return (new GraphExporter)->export(
+        return (new GraphExporter())->export(
             artifact: $this->graphArtifact(kind: $kind, id: $id),
-            format  : $format
+            format  : $format,
         );
     }
 
@@ -3039,9 +3044,9 @@ final class ServiceResolver
      *
      * @return array<string, mixed>
      */
-    private function graphArtifact(string $kind, string|null $id = null, array $context = []) : array
+    private function graphArtifact(string $kind, string $id = null, array $context = []) : array
     {
-        $id             ??= '';
+        $id ??= '';
         $normalizedKind = strtolower(string: trim(string: $kind));
         $slice          = SliceContext::from(context: $context);
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
@@ -3130,7 +3135,7 @@ final class ServiceResolver
             ? array_filter(
                 array   : $this->registrations->sliceManifests(),
                 callback: static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
-                mode    : ARRAY_FILTER_USE_KEY
+                mode    : ARRAY_FILTER_USE_KEY,
             )
             : $this->registrations->sliceManifests();
         $nodes     = [];
@@ -3165,7 +3170,7 @@ final class ServiceResolver
             ? array_filter(
                 array   : $this->registrations->sliceManifests(),
                 callback: static fn (string $manifestSlice) : bool => $manifestSlice === $slice,
-                mode    : ARRAY_FILTER_USE_KEY
+                mode    : ARRAY_FILTER_USE_KEY,
             )
             : $this->registrations->sliceManifests();
         $nodes     = [];
@@ -3251,7 +3256,7 @@ final class ServiceResolver
             graph        : $graph,
             dependents   : $dependents,
             governance   : $governance,
-            structureDiff: $this->structureDiff(graph: $graph)
+            structureDiff: $this->structureDiff(graph: $graph),
         );
 
         $nodes   = [];
@@ -3282,7 +3287,7 @@ final class ServiceResolver
                     'label' => $serviceId,
                     'type'  => 'service',
                 ];
-                $edges[]           = [
+                $edges[] = [
                     'from'  => 'bucket:' . $bucket,
                     'to'    => $serviceId,
                     'label' => 'recommends',
@@ -3306,8 +3311,8 @@ final class ServiceResolver
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
-     * @param array<string, mixed>        $governance
-     * @param array<string, mixed>        $structureDiff
+     * @param array<string, mixed> $governance
+     * @param array<string, mixed> $structureDiff
      *
      * @return array<string, mixed>
      */
@@ -3315,7 +3320,7 @@ final class ServiceResolver
         array $graph,
         array $dependents,
         array $governance,
-        array $structureDiff
+        array $structureDiff,
     ) : array
     {
         $singleConsumerShared = [];
@@ -3330,7 +3335,7 @@ final class ServiceResolver
             $consumers      = $dependents[$serviceId] ?? [];
             $consumerSlices = array_map(
                     callback: fn (string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
-                    array   : $consumers
+                    array   : $consumers,
                 )
                     |> array_unique(...)
                     |> array_values(...);
@@ -3346,7 +3351,7 @@ final class ServiceResolver
                     'consumerCount' => count(value: $consumers),
                     'consumers'     => $consumers,
                 ];
-                $speculativeShared[]    = [
+                $speculativeShared[] = [
                     'serviceId'  => $serviceId,
                     'ownerSlice' => $metadata->ownerSlice,
                     'reason'     => 'shared visibility has one or zero known consumers',
@@ -3413,11 +3418,11 @@ final class ServiceResolver
             'structuralDrift'      => [
                 'changedDependencies' => count(value: array_filter(
                                                           array   : $structureDiff['dependencies'] ?? [],
-                                                          callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
+                                                          callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false),
                                                       )),
                 'changedOwnership'    => count(value: array_filter(
                                                           array   : $structureDiff['ownership'] ?? [],
-                                                          callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false)
+                                                          callback: static fn (array $change) : bool => (bool) ($change['changed'] ?? false),
                                                       )),
             ],
         ];
@@ -3439,7 +3444,7 @@ final class ServiceResolver
         $ownershipDiff  = [];
 
         foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $graph), array_keys(array: $metadata?->dependencies ?? [])))) as $serviceId) {
-            $current  = $graph[$serviceId] ?? [];
+            $current = $graph[$serviceId] ?? [];
             $compiled = $metadata?->dependencies[$serviceId] ?? [];
             sort(array: $current);
             sort(array: $compiled);
@@ -3453,7 +3458,7 @@ final class ServiceResolver
 
         foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $currentOwnership), array_keys(array: $metadata?->ownership ?? [])))) as $serviceId) {
             $ownershipDiff[$serviceId] = [
-                'current'  => $currentOwnership[$serviceId] ?? [],
+                'current' => $currentOwnership[$serviceId] ?? [],
                 'compiled' => $metadata?->ownership[$serviceId] ?? [],
                 'changed'  => ($currentOwnership[$serviceId] ?? []) !== ($metadata?->ownership[$serviceId] ?? []),
             ];
@@ -3487,7 +3492,7 @@ final class ServiceResolver
 
         $governance = $this->governanceReport(
             graph     : $graph,
-            dependents: $this->buildDependents(graph: $graph)
+            dependents: $this->buildDependents(graph: $graph),
         );
         $findings   = $governance['findings'] ?? [];
         $nodes      = [];
@@ -3503,7 +3508,7 @@ final class ServiceResolver
                     'label' => $finding['code'] . ' ' . $finding['severity'],
                     'type'  => 'policy',
                 ];
-                $edges[]           = ['from' => $serviceId, 'to' => $findingId, 'label' => $finding['category']];
+                $edges[] = ['from' => $serviceId, 'to' => $findingId, 'label' => $finding['category']];
             }
         }
 
@@ -3558,19 +3563,19 @@ final class ServiceResolver
      */
     public function exportGraphInContext(string $format, string $kind, string $id, array $context) : string
     {
-        return (new GraphExporter)->export(
+        return (new GraphExporter())->export(
             artifact: $this->graphArtifact(kind: $kind, id: $id, context: $context),
-            format  : $format
+            format  : $format,
         );
     }
 
-    public function diffGraph(string|null $format = null, string $id = '') : string
+    public function diffGraph(string $format = null, string $id = '') : string
     {
         $format ??= 'json';
 
-        return (new GraphExporter)->export(
+        return (new GraphExporter())->export(
             artifact: $this->graphDiffArtifact(id: $id),
-            format  : $format
+            format  : $format,
         );
     }
 
@@ -3579,9 +3584,9 @@ final class ServiceResolver
      *
      * @return array<string, mixed>
      */
-    private function graphDiffArtifact(string|null $id = null, array $context = []) : array
+    private function graphDiffArtifact(string $id = null, array $context = []) : array
     {
-        $id    ??= '';
+        $id ??= '';
         $slice = SliceContext::from(context: $context);
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
             $slice = $id;
@@ -3605,7 +3610,7 @@ final class ServiceResolver
                 continue;
             }
 
-            $current  = $change['current'] ?? [];
+            $current = $change['current'] ?? [];
             $compiled = $change['compiled'] ?? [];
             foreach (array_values(array: array_diff($current, $compiled)) as $dependency) {
                 $added[]            = ['from' => $serviceId, 'to' => $dependency];
@@ -3633,7 +3638,7 @@ final class ServiceResolver
                 continue;
             }
 
-            $ownershipMoves[]                 = [
+            $ownershipMoves[] = [
                 'serviceId' => $serviceId,
                 'from'      => $compiledOwner,
                 'to'        => $currentOwner,
@@ -3669,7 +3674,7 @@ final class ServiceResolver
                 'ownershipMoves'      => $ownershipMoves,
                 'exportImportChanges' => $sliceChanges,
             ],
-            'raw'           => $structureDiff,
+            'raw' => $structureDiff,
         ];
     }
 
@@ -3680,7 +3685,7 @@ final class ServiceResolver
      */
     private function sliceChangeSet(array $diff, string $slice = '') : array
     {
-        $current        = $diff['current'] ?? [];
+        $current = $diff['current'] ?? [];
         $compiled       = $diff['compiled'] ?? [];
         $slices         = array_values(array: array_unique(array: array_merge(array_keys(array: $current), array_keys(array: $compiled))));
         $addedImports   = [];
@@ -3720,9 +3725,9 @@ final class ServiceResolver
      */
     public function diffGraphInContext(string $format, string $id, array $context) : string
     {
-        return (new GraphExporter)->export(
+        return (new GraphExporter())->export(
             artifact: $this->graphDiffArtifact(id: $id, context: $context),
-            format  : $format
+            format  : $format,
         );
     }
 
@@ -3738,7 +3743,7 @@ final class ServiceResolver
 
         return [
             'service' => $description['resolvedId'] ?? $id,
-            'why'     => $description['explain'] ?? [],
+            'why' => $description['explain'] ?? [],
         ];
     }
 
@@ -3754,9 +3759,9 @@ final class ServiceResolver
 
         return [
             'service'    => $description['resolvedId'] ?? $id,
-            'sliceView'  => $description['sliceView'] ?? null,
+            'sliceView' => $description['sliceView'] ?? null,
             'viewAccess' => $description['viewAccess'] ?? null,
-            'why'        => $description['explain'] ?? [],
+            'why'       => $description['explain'] ?? [],
         ];
     }
 
@@ -3769,9 +3774,9 @@ final class ServiceResolver
         $graph = $this->debugGraph(id: $id);
 
         return [
-            'service'    => $graph['service'] ?? $id,
+            'service' => $graph['service'] ?? $id,
             'dependents' => $graph['dependents'] ?? [],
-            'impact'     => $graph['impact'] ?? [],
+            'impact'  => $graph['impact'] ?? [],
         ];
     }
 
@@ -3790,7 +3795,7 @@ final class ServiceResolver
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
             return $this->debugGraphInContext(
                 id     : '',
-                context: SliceContext::with(context: [], slice: $id)
+                context: SliceContext::with(context: [], slice: $id),
             );
         }
 
@@ -3806,7 +3811,7 @@ final class ServiceResolver
             graph        : $graph,
             dependents   : $dependents,
             governance   : $governance,
-            structureDiff: $structureDiff
+            structureDiff: $structureDiff,
         );
 
         if ($id === '') {
@@ -3846,11 +3851,11 @@ final class ServiceResolver
             'topLevelAccess'    => $this->registrations->topLevelAccessTo(serviceId: $resolved),
             'structureDiff'     => [
                 'dependencies' => $structureDiff['dependencies'][$resolved] ?? ['current' => $graph[$resolved] ?? [], 'compiled' => [], 'changed' => false],
-                'ownership'    => $structureDiff['ownership'][$resolved] ?? ['current' => $description['ownership'] ?? [], 'compiled' => [], 'changed' => false],
+                'ownership' => $structureDiff['ownership'][$resolved] ?? ['current' => $description['ownership'] ?? [], 'compiled' => [], 'changed' => false],
             ],
             'duplicateConcepts' => array_values(array: array_filter(
                                                            array   : $duplicates,
-                                                           callback: static fn (array $duplicate) : bool => in_array(needle: $resolved, haystack: array_column(array: $duplicate['services'], column_key: 'serviceId'), strict: true)
+                                                           callback: static fn (array $duplicate) : bool => in_array(needle: $resolved, haystack: array_column(array: $duplicate['services'], column_key: 'serviceId'), strict: true),
                                                        )),
             'governance'        => [
                 'profile'  => $governance['profile'],
@@ -3861,7 +3866,7 @@ final class ServiceResolver
             'architecture'      => $this->architectureForService(
                 serviceId   : $resolved,
                 architecture: $architecture,
-                governance  : $governance
+                governance  : $governance,
             ),
             'policyFindings'    => $findings[$resolved] ?? [],
             'policyWarnings'    => $warnings[$resolved] ?? [],
@@ -3900,7 +3905,7 @@ final class ServiceResolver
             foreach (($graph['groups'] ?? []) as $group => $items) {
                 $filteredItems = array_values(array: array_filter(
                                                          array   : $items,
-                                                         callback: static fn (array $item) : bool => in_array(needle: (string) ($item['serviceId'] ?? ''), haystack: $visibleIds, strict: true)
+                                                         callback: static fn (array $item) : bool => in_array(needle: (string) ($item['serviceId'] ?? ''), haystack: $visibleIds, strict: true),
                                                      ));
                 if ($filteredItems !== []) {
                     $filteredGroups[$group] = $filteredItems;
@@ -3908,12 +3913,12 @@ final class ServiceResolver
             }
 
             return [
-                'sliceView'      => $view,
-                'graph'          => $filteredGraph,
-                'dependents'     => $filteredDependents,
-                'governance'     => array_merge(
+                'sliceView'  => $view,
+                'graph'      => $filteredGraph,
+                'dependents' => $filteredDependents,
+                'governance' => array_merge(
                     $graph['governance'] ?? [],
-                    ['findings' => $filteredFindings]
+                    ['findings' => $filteredFindings],
                 ),
                 'architecture'   => $this->debugArchitectureInContext(id: '', context: $context),
                 'policyFindings' => $filteredFindings,
@@ -3927,7 +3932,7 @@ final class ServiceResolver
         $graph['sliceView']  = $view;
         $graph['viewAccess'] = $this->registrations->sliceAccessTo(
             viewerSlice: $slice,
-            serviceId  : $resolved
+            serviceId  : $resolved,
         );
 
         return $graph;
@@ -3955,7 +3960,7 @@ final class ServiceResolver
                 [
                     'sliceView'  => $this->registrations->sliceView(slice: $slice),
                     'viewAccess' => $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $resolved),
-                ]
+                ],
             );
         }
 
@@ -3963,12 +3968,12 @@ final class ServiceResolver
         foreach (['singleConsumerShared', 'fakeFoundations', 'speculativeShared', 'promotionCandidates', 'namingSmells'] as $key) {
             $report[$key] = array_values(array: array_filter(
                                                     array   : $report[$key] ?? [],
-                                                    callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
+                                                    callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')]),
                                                 ));
         }
         $report['privateLeaks'] = array_values(array: array_filter(
                                                           array   : $report['privateLeaks'] ?? [],
-                                                          callback: static fn (array $item) : bool => isset($visible[(string) ($item['consumerId'] ?? '')])
+                                                          callback: static fn (array $item) : bool => isset($visible[(string) ($item['consumerId'] ?? '')]),
                                                       ));
         $report['sliceView']    = $this->registrations->sliceView(slice: $slice);
 
@@ -3990,7 +3995,7 @@ final class ServiceResolver
             graph        : $graph,
             dependents   : $dependents,
             governance   : $governance,
-            structureDiff: $this->structureDiff(graph: $graph)
+            structureDiff: $this->structureDiff(graph: $graph),
         );
 
         if ($id === '') {
@@ -4003,23 +4008,23 @@ final class ServiceResolver
             'service'              => $resolved,
             'singleConsumerShared' => array_values(array: array_filter(
                                                               array   : $insights['singleConsumerShared'] ?? [],
-                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
+                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved,
                                                           )),
             'fakeFoundations'      => array_values(array: array_filter(
                                                               array   : $insights['fakeFoundations'] ?? [],
-                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
+                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved,
                                                           )),
             'speculativeShared'    => array_values(array: array_filter(
                                                               array   : $insights['speculativeShared'] ?? [],
-                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
+                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved,
                                                           )),
             'promotionCandidates'  => array_values(array: array_filter(
                                                               array   : $insights['promotionCandidates'] ?? [],
-                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
+                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved,
                                                           )),
             'namingSmells'         => array_values(array: array_filter(
                                                               array   : $insights['namingSmells'] ?? [],
-                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved
+                                                              callback: static fn (array $item) : bool => $item['serviceId'] === $resolved,
                                                           )),
             'governance'           => $governance['findings'][$resolved] ?? [],
         ];
@@ -4088,7 +4093,7 @@ final class ServiceResolver
         foreach ($governance['findings'] ?? [] as $serviceId => $findings) {
             $warnings[$serviceId] = array_map(
                 callback: static fn (array $finding) : string => $finding['message'],
-                array   : $findings
+                array   : $findings,
             );
         }
 
@@ -4116,7 +4121,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -4127,11 +4132,11 @@ final class ServiceResolver
         $graph = $this->debugGraphInContext(id: $id, context: $context);
 
         return [
-            'service'    => $graph['service'] ?? $id,
-            'sliceView'  => $graph['sliceView'] ?? null,
+            'service'   => $graph['service'] ?? $id,
+            'sliceView' => $graph['sliceView'] ?? null,
             'viewAccess' => $graph['viewAccess'] ?? null,
             'dependents' => $graph['dependents'] ?? [],
-            'impact'     => $graph['impact'] ?? [],
+            'impact'    => $graph['impact'] ?? [],
         ];
     }
 
@@ -4145,12 +4150,12 @@ final class ServiceResolver
 
         return [
             'service' => $graph['service'] ?? $id,
-            'impact'  => $graph['impact'] ?? [],
+            'impact' => $graph['impact'] ?? [],
         ];
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -4161,10 +4166,10 @@ final class ServiceResolver
         $graph = $this->debugGraphInContext(id: $id, context: $context);
 
         return [
-            'service'    => $graph['service'] ?? $id,
-            'sliceView'  => $graph['sliceView'] ?? null,
+            'service'   => $graph['service'] ?? $id,
+            'sliceView' => $graph['sliceView'] ?? null,
             'viewAccess' => $graph['viewAccess'] ?? null,
-            'impact'     => $graph['impact'] ?? [],
+            'impact'    => $graph['impact'] ?? [],
         ];
     }
 
@@ -4179,10 +4184,10 @@ final class ServiceResolver
         $description = $this->describeService(id: $id);
 
         return [
-            'service'        => $description['resolvedId'] ?? $id,
-            'ownership'      => $description['ownership'] ?? [],
+            'service'    => $description['resolvedId'] ?? $id,
+            'ownership'  => $description['ownership'] ?? [],
             'topLevelAccess' => $description['topLevelAccess'] ?? [],
-            'conditions'     => $description['conditions'] ?? [],
+            'conditions' => $description['conditions'] ?? [],
         ];
     }
 
@@ -4197,12 +4202,12 @@ final class ServiceResolver
         $description = $this->describeServiceInContext(id: $id, context: $context);
 
         return [
-            'service'        => $description['resolvedId'] ?? $id,
-            'ownership'      => $description['ownership'] ?? [],
+            'service'    => $description['resolvedId'] ?? $id,
+            'ownership'  => $description['ownership'] ?? [],
             'topLevelAccess' => $description['topLevelAccess'] ?? [],
-            'conditions'     => $description['conditions'] ?? [],
-            'sliceView'      => $description['sliceView'] ?? null,
-            'viewAccess'     => $description['viewAccess'] ?? null,
+            'conditions' => $description['conditions'] ?? [],
+            'sliceView'  => $description['sliceView'] ?? null,
+            'viewAccess' => $description['viewAccess'] ?? null,
         ];
     }
 
@@ -4256,7 +4261,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param callable|string      $callable
+     * @param callable|string $callable
      * @param array<string, mixed> $parameters
      * @param array<string, mixed> $context
      *
@@ -4271,14 +4276,14 @@ final class ServiceResolver
         return $this->caller->call(
             target    : $callable,
             parameters: $parameters,
-            request   : new ResolveRequest(serviceId: $this->callableName(callable: $callable))->withContext(context: $context)
+            request   : new ResolveRequest(serviceId: $this->callableName(callable: $callable))->withContext(context: $context),
         );
     }
 
     /**
      * Calls one function, method, or invokable object through the resolver.
      *
-     * @param callable|string      $callable
+     * @param callable|string $callable
      * @param array<string, mixed> $parameters
      *
      * @return mixed
@@ -4342,7 +4347,7 @@ final class ServiceResolver
     {
         return $this->injectTarget(
             target : $target,
-            request: new ResolveRequest(serviceId: $target::class, manualInjection: true)
+            request: new ResolveRequest(serviceId: $target::class, manualInjection: true),
         );
     }
 
@@ -4359,14 +4364,14 @@ final class ServiceResolver
             blueprint: $blueprint,
             overrides: [],
             resolver : $this,
-            request  : $request
+            request  : $request,
         );
         $this->injectMethods->inject(
             target   : $target,
             blueprint: $blueprint,
             overrides: [],
             resolver : $this,
-            request  : $request
+            request  : $request,
         );
 
         $this->telemetry->metrics()->increment(name: 'container_injections_total');
@@ -4375,7 +4380,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param object               $target
+     * @param object $target
      * @param array<string, mixed> $context
      *
      * @return object
@@ -4386,7 +4391,7 @@ final class ServiceResolver
     {
         return $this->injectTarget(
             target : $target,
-            request: new ResolveRequest(serviceId: $target::class, manualInjection: true)->withContext(context: $context)
+            request: new ResolveRequest(serviceId: $target::class, manualInjection: true)->withContext(context: $context),
         );
     }
 
@@ -4415,16 +4420,16 @@ final class ServiceResolver
             target            : $target,
             injectedProperties: array_map(
                                     callback: static fn (array $property) => $property['serviceId'],
-                                    array   : $blueprint->injectableProperties
+                                    array   : $blueprint->injectableProperties,
                                 ),
             injectedMethods   : array_map(
                                     callback: static fn (array $method) => array_map(
                                         callback: static fn (array $parameter) => $parameter['serviceId'],
-                                        array   : $method['plan']->parameters
+                                        array   : $method['plan']->parameters,
                                     ),
-                                    array   : $blueprint->injectableMethods
+                                    array   : $blueprint->injectableMethods,
                                 ),
-            success           : $blueprint->injectableProperties !== [] || $blueprint->injectableMethods !== []
+            success           : $blueprint->injectableProperties !== [] || $blueprint->injectableMethods !== [],
         );
     }
 
@@ -4440,7 +4445,7 @@ final class ServiceResolver
     /**
      * Opens one new scope layer.
      */
-    public function openScope(string|null $kind = null, string $scopeId = '') : void
+    public function openScope(string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes->openScope(kind: $kind, scopeId: $scopeId);
@@ -4449,14 +4454,14 @@ final class ServiceResolver
     /**
      * Closes the current scope layer.
      */
-    public function closeScope(string|null $kind = null) : void
+    public function closeScope(string $kind = null) : void
     {
         $this->scopes->closeScope(kind: $kind);
     }
 
     /**
      * @param list<string> $serviceIds
-     * Compiles and marks the runtime as warmed up.
+     *                                 Compiles and marks the runtime as warmed up.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -4469,7 +4474,7 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
-     * @param bool         $warmed
+     * @param bool $warmed
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -4483,7 +4488,7 @@ final class ServiceResolver
             $validationIssues = $this->validate(serviceIds: $serviceIds);
             if ($validationIssues !== []) {
                 throw new ContainerException(
-                    message: "Container compile failed:\n- " . implode(separator: "\n- ", array: $validationIssues)
+                    message: "Container compile failed:\n- " . implode(separator: "\n- ", array: $validationIssues),
                 );
             }
         }
@@ -4494,12 +4499,12 @@ final class ServiceResolver
         $compiled = $this->compiledRuntime->compile(
             serviceIds      : $serviceIds,
             validationIssues: $validationIssues,
-            warmed          : $warmed
+            warmed          : $warmed,
         );
         if ($compiled !== null) {
             $this->compiledRuntime->attach(
                 compiled: $compiled,
-                revision: $this->registrations->revision()
+                revision: $this->registrations->revision(),
             );
         }
 
@@ -4573,7 +4578,7 @@ final class ServiceResolver
 
         return array_filter(
                 array   : $classes,
-                callback: static fn (string $class) : bool => class_exists(class: $class)
+                callback: static fn (string $class) : bool => class_exists(class: $class),
             )
                 |> array_unique(...)
                 |> array_values(...);
@@ -4596,7 +4601,7 @@ final class ServiceResolver
 
             $lifetime = LifetimePlan::fromRegistration(
                 serviceId   : $abstract,
-                registration: $registration
+                registration: $registration,
             );
 
             if (! $lifetime->isShared() || ! $lifetime->warm || $lifetime->lazy) {
@@ -4613,7 +4618,7 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
-     * Rebuilds compiled artifacts from scratch.
+     *                                 Rebuilds compiled artifacts from scratch.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -4664,7 +4669,7 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
-     * Builds compiled runtime artifacts for the requested service set.
+     *                                 Builds compiled runtime artifacts for the requested service set.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -4686,7 +4691,7 @@ final class ServiceResolver
     {
         return array_map(
             callback: fn (string $serviceId) => $this->get(id: $serviceId),
-            array   : $this->registrations->getTaggedIds(tag: $tag)
+            array   : $this->registrations->getTaggedIds(tag: $tag),
         );
     }
 
@@ -4708,19 +4713,19 @@ final class ServiceResolver
                                                   array   : $serviceIds,
                                                   callback: fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
                                                           viewerSlice: $slice,
-                                                          serviceId  : $serviceId
-                                                      )['allowed'] ?? false) === true
+                                                          serviceId  : $serviceId,
+                                                      )['allowed'] ?? false) === true,
                                               ));
         }
 
         return array_map(
             callback: fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
-            array   : $serviceIds
+            array   : $serviceIds,
         );
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return mixed
@@ -4729,7 +4734,7 @@ final class ServiceResolver
     public function getInContext(string $id, array $context) : mixed
     {
         return $this->resolveRequest(
-            request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id))->withContext(context: $context)
+            request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id))->withContext(context: $context),
         );
     }
 
@@ -4745,7 +4750,7 @@ final class ServiceResolver
     {
         return array_map(
             callback: fn (string $serviceId) => $this->get(id: $serviceId),
-            array   : $this->registrations->getGroupedIds(group: $group)
+            array   : $this->registrations->getGroupedIds(group: $group),
         );
     }
 
@@ -4767,14 +4772,14 @@ final class ServiceResolver
                                                   array   : $serviceIds,
                                                   callback: fn (string $serviceId) : bool => ($this->registrations->sliceAccessTo(
                                                           viewerSlice: $slice,
-                                                          serviceId  : $serviceId
-                                                      )['allowed'] ?? false) === true
+                                                          serviceId  : $serviceId,
+                                                      )['allowed'] ?? false) === true,
                                               ));
         }
 
         return array_map(
             callback: fn (string $serviceId) => $this->getInContext(id: $serviceId, context: $context),
-            array   : $serviceIds
+            array   : $serviceIds,
         );
     }
 
@@ -4789,14 +4794,14 @@ final class ServiceResolver
 
         return new LazyProxy(
             serviceId: $serviceId,
-            factory  : fn () => $this->make(id: $serviceId)
+            factory  : fn () => $this->make(id: $serviceId),
         );
     }
 
     /**
      * Resolves one service and asserts that the result is an object.
      *
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $parameters
      *
      * @return object
@@ -4807,8 +4812,8 @@ final class ServiceResolver
         $resolved = $this->resolveRequest(
             request: new ResolveRequest(
                          serviceId: $this->registrations->resolveAlias(abstract: $id),
-                         overrides: $parameters
-                     )
+                         overrides: $parameters,
+                     ),
         );
 
         if (! is_object(value: $resolved)) {
@@ -4820,7 +4825,7 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
-     * Returns one context-aware lazy proxy.
+     *                                      Returns one context-aware lazy proxy.
      */
     public function lazyInContext(string $abstract, array $context) : LazyProxy
     {
@@ -4830,12 +4835,12 @@ final class ServiceResolver
 
         return new LazyProxy(
             serviceId: $serviceId,
-            factory  : fn () => $this->makeInContext(id: $serviceId, parameters: [], context: $context)
+            factory  : fn () => $this->makeInContext(id: $serviceId, parameters: [], context: $context),
         );
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $parameters
      * @param array<string, mixed> $context
      *
@@ -4847,8 +4852,8 @@ final class ServiceResolver
         $resolved = $this->resolveRequest(
             request: new ResolveRequest(
                          serviceId: $this->registrations->resolveAlias(abstract: $id),
-                         overrides: $parameters
-                     )->withContext(context: $context)
+                         overrides: $parameters,
+                     )->withContext(context: $context),
         );
 
         if (! is_object(value: $resolved)) {
@@ -4861,7 +4866,7 @@ final class ServiceResolver
     /**
      * Resolves one dependency from an existing parent request.
      *
-     * @param string         $serviceId
+     * @param string $serviceId
      * @param ResolveRequest $request
      *
      * @return mixed
@@ -4873,7 +4878,7 @@ final class ServiceResolver
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      * @param array<string, mixed> $parameters
      *
@@ -4885,25 +4890,25 @@ final class ServiceResolver
         return $this->resolveRequest(
             request: new ResolveRequest(
                          serviceId: $this->registrations->resolveAlias(abstract: $id),
-                         overrides: $parameters
-                     )->withContext(context: $context)
+                         overrides: $parameters,
+                     )->withContext(context: $context),
         );
     }
 
     /**
      * @param array<string, mixed> $overrides
-     * Finishes one compiled object by running injections and decorators.
+     *                                        Finishes one compiled object by running injections and decorators.
      *
      * @throws ContainerException
      * @throws ReflectionException
      * @throws Throwable
      */
     public function finishCompiledService(
-        string         $serviceId,
-        object         $instance,
-        string         $class,
+        string $serviceId,
+        object $instance,
+        string $class,
         ResolveRequest $request,
-        array          $overrides = []
+        array  $overrides = [],
     ) : object
     {
         $blueprint = $this->blueprints->createFor(class: $class);
@@ -4914,7 +4919,7 @@ final class ServiceResolver
                 blueprint: $blueprint,
                 overrides: $overrides,
                 resolver : $this,
-                request  : $request
+                request  : $request,
             );
         }
 
@@ -4924,7 +4929,7 @@ final class ServiceResolver
                 blueprint: $blueprint,
                 overrides: $overrides,
                 resolver : $this,
-                request  : $request
+                request  : $request,
             );
         }
 
@@ -4947,7 +4952,7 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
-     * Registers one deferred provider and its owned service ids.
+     *                                 Registers one deferred provider and its owned service ids.
      *
      * @throws ContainerException
      */
@@ -4957,7 +4962,7 @@ final class ServiceResolver
             provider     : $provider,
             serviceIds   : $serviceIds,
             registrations: $this->registrations,
-            metrics      : $this->telemetry->metrics()
+            metrics      : $this->telemetry->metrics(),
         );
     }
 

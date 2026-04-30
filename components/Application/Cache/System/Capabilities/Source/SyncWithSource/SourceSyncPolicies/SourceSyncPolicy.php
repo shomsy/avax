@@ -56,16 +56,11 @@ enum SourceSyncPolicy: string
     public function description() : string
     {
         return match ($this) {
-            self::NO_SYNC       =>
-            'No synchronization. Cache and source are independent.',
-            self::WRITE_THROUGH =>
-            'Synchronous writes to both cache and source. Consistent but slower.',
-            self::WRITE_AROUND  =>
-            'Writes directly to source, invalidates cache. Good for read-heavy workloads.',
-            self::WRITE_BEHIND  =>
-            'Asynchronous writes to source. Fast but potential data loss risk.',
-            self::CACHE_ASIDE   =>
-            'Application manages cache explicitly. Cache is populated on read miss.',
+            self::NO_SYNC       => 'No synchronization. Cache and source are independent.',
+            self::WRITE_THROUGH => 'Synchronous writes to both cache and source. Consistent but slower.',
+            self::WRITE_AROUND  => 'Writes directly to source, invalidates cache. Good for read-heavy workloads.',
+            self::WRITE_BEHIND  => 'Asynchronous writes to source. Fast but potential data loss risk.',
+            self::CACHE_ASIDE   => 'Application manages cache explicitly. Cache is populated on read miss.',
         };
     }
 }

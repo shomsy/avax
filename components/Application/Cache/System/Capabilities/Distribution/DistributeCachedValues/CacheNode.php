@@ -4,42 +4,43 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
-use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CachePartitionKey;
+use Override;
 use Stringable;
 
 final readonly class CacheNode implements Stringable
 {
     public function __construct(
-        public CacheNodeId     $id,
-        public CacheNodeStatus $status = CacheNodeStatus::HEALTHY,
-        public float           $weight = 1.0
+        public CacheNodeId     $cacheNodeId,
+        public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
+        public float           $weight = 1.0,
     ) {}
 
-    public static function create(string $id, CacheNodeStatus $status = CacheNodeStatus::HEALTHY) : self
+    public static function create(string $id, CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY) : self
     {
         return new self(
             id    : CacheNodeId::from(id: $id),
-            status: $status
+            status: $cacheNodeStatus,
         );
     }
 
     public function isHealthy() : bool
     {
-        return $this->status === CacheNodeStatus::HEALTHY;
+        return $this->cacheNodeStatus === CacheNodeStatus::HEALTHY;
     }
 
-    public function withStatus(CacheNodeStatus $status) : self
+    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
     {
-        return new self(id: $this->id, status: $status, weight: $this->weight);
+        return new self(id: $this->cacheNodeId, status: $cacheNodeStatus, weight: $this->weight);
     }
 
     public function withWeight(float $weight) : self
     {
-        return new self(id: $this->id, status: $this->status, weight: $weight);
+        return new self(id: $this->cacheNodeId, status: $this->cacheNodeStatus, weight: $weight);
     }
 
+    #[Override]
     public function __toString() : string
     {
-        return $this->id->toString();
+        return (string) $this->cacheNodeId->toString();
     }
 }

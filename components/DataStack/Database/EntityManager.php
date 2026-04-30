@@ -11,14 +11,14 @@ use Throwable;
 
 final readonly class EntityManager
 {
-    public function __construct(private EntityManagerCapability $entityManager) {}
+    public function __construct(private EntityManagerCapability $entityManagerCapability) {}
 
     /**
      * @param class-string $entityClass
      */
     public function metadata(string $entityClass) : EntityMetadata
     {
-        return $this->entityManager->metadata(entityClass: $entityClass);
+        return $this->entityManagerCapability->metadata(entityClass: $entityClass);
     }
 
     /**
@@ -26,44 +26,44 @@ final readonly class EntityManager
      *
      * @throws Throwable
      */
-    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null) : object|null
     {
-        return $this->entityManager->find(
+        return $this->entityManagerCapability->find(
             entityClass   : $entityClass,
             id            : $id,
-            connectionName: $connectionName
+            connectionName: $connectionName,
         );
     }
 
     public function persist(object $entity) : void
     {
-        $this->entityManager->persist(entity: $entity);
+        $this->entityManagerCapability->persist(entity: $entity);
     }
 
     public function remove(object $entity) : void
     {
-        $this->entityManager->remove(entity: $entity);
+        $this->entityManagerCapability->remove(entity: $entity);
     }
 
     /**
      * @throws Throwable
      */
-    public function flush(string|null $connectionName = null) : void
+    public function flush(?string $connectionName = null) : void
     {
-        $this->entityManager->flush(connectionName: $connectionName);
+        $this->entityManagerCapability->flush(connectionName: $connectionName);
     }
 
     public function clear() : void
     {
-        $this->entityManager->clear();
+        $this->entityManagerCapability->clear();
     }
 
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, string|null $connectionName = null) : object
+    public function refresh(object $entity, ?string $connectionName = null) : object
     {
-        return $this->entityManager->refresh(entity: $entity, connectionName: $connectionName);
+        return $this->entityManagerCapability->refresh(entity: $entity, connectionName: $connectionName);
     }
 
     /**
@@ -71,14 +71,14 @@ final readonly class EntityManager
      */
     public function repository(string $entityClass) : EntityRepository
     {
-        return $this->entityManager->repository(entityClass: $entityClass);
+        return $this->entityManagerCapability->repository(entityClass: $entityClass);
     }
 
     /**
      * @throws Throwable
      */
-    public function transactional(callable $callback, string|null $connectionName = null) : mixed
+    public function transactional(callable $callback, ?string $connectionName = null) : mixed
     {
-        return $this->entityManager->transactional(callback: $callback, connectionName: $connectionName);
+        return $this->entityManagerCapability->transactional(callback: $callback, connectionName: $connectionName);
     }
 }

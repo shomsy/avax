@@ -38,7 +38,7 @@ final readonly class BeginTenantSecurityChange
             verifiedDomains       : $data->after->verifiedDomains,
             groupRoleMap          : $data->after->groupRoleMap,
             policyProfile         : $data->after->policyProfile,
-            rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion
+            rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion,
         );
         $changeRequest = new TenantSecurityChangeRequest(
             changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
@@ -49,7 +49,7 @@ final readonly class BeginTenantSecurityChange
             after      : $after,
             diff       : $this->diff(before: $before, after: $after),
             status     : TenantSecurityChangeRequestStatus::PENDING_APPROVAL,
-            requestedAt: $this->clock->now()
+            requestedAt: $this->clock->now(),
         );
 
         $this->changeRequestStore->save(changeRequest: $changeRequest);
@@ -61,7 +61,7 @@ final readonly class BeginTenantSecurityChange
                                                            'tenant'       => $changeRequest->tenantSlug,
                                                            'requested_by' => $changeRequest->requestedBy,
                                                            'diff'         => $this->encodeDiff(value: $changeRequest->diff),
-                                                       ]
+                                                       ],
                                        ));
 
         return $changeRequest;

@@ -60,7 +60,7 @@ if (! function_exists('d')) {
             }
         }
 
-        echo "</pre>";
+        echo '</pre>';
         exit(1);
     }
 }

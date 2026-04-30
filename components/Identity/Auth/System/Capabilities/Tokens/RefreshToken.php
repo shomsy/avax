@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Tokens;
+
+use DateTimeImmutable;
 
 /**
  * RefreshToken - Value object for a refresh token.
@@ -11,6 +14,6 @@ final readonly class RefreshToken
 {
     public function __construct(
         public string $value,
-        public \DateTimeImmutable $expiresAt
+        public DateTimeImmutable $expiresAt,
     ) {}
 }

@@ -22,13 +22,13 @@ final readonly class PrimaryReplicaPolicy
      * @param int               $maxReplicationRetries  Maximum number of replication retry attempts
      */
     public function __construct(
-        public bool              $readFromReplicaOnMiss = false,
-        public bool              $asyncReplication = false,
-        public bool              $syncReplication = true,
-        public bool              $failover = false,
+        public bool $readFromReplicaOnMiss = false,
+        public bool $asyncReplication = false,
+        public bool $syncReplication = true,
+        public bool $failover = false,
         public ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
-        public int               $failoverTimeoutSeconds = 30,
-        public int               $maxReplicationRetries = 3
+        public int  $failoverTimeoutSeconds = 30,
+        public int  $maxReplicationRetries = 3,
     ) {}
 
     /**
@@ -53,7 +53,7 @@ final readonly class PrimaryReplicaPolicy
             asyncReplication     : true,
             syncReplication      : false,
             failover             : true,
-            replicationPolicy    : ReplicationPolicy::ASYNCHRONOUS
+            replicationPolicy    : ReplicationPolicy::ASYNCHRONOUS,
         );
     }
 
@@ -69,7 +69,7 @@ final readonly class PrimaryReplicaPolicy
             asyncReplication     : false,
             syncReplication      : true,
             failover             : false,
-            replicationPolicy    : ReplicationPolicy::SYNCHRONOUS
+            replicationPolicy    : ReplicationPolicy::SYNCHRONOUS,
         );
     }
 
@@ -87,7 +87,7 @@ final readonly class PrimaryReplicaPolicy
             failover              : true,
             replicationPolicy     : ReplicationPolicy::QUORUM,
             failoverTimeoutSeconds: 15,
-            maxReplicationRetries : 5
+            maxReplicationRetries : 5,
         );
     }
 
@@ -103,7 +103,7 @@ final readonly class PrimaryReplicaPolicy
             asyncReplication     : true,
             syncReplication      : false,
             failover             : false,
-            replicationPolicy    : ReplicationPolicy::ASYNCHRONOUS
+            replicationPolicy    : ReplicationPolicy::ASYNCHRONOUS,
         );
     }
 
@@ -119,7 +119,7 @@ final readonly class PrimaryReplicaPolicy
             asyncReplication     : false,
             syncReplication      : true,
             failover             : false,
-            replicationPolicy    : ReplicationPolicy::SYNCHRONOUS
+            replicationPolicy    : ReplicationPolicy::SYNCHRONOUS,
         );
     }
 
@@ -135,7 +135,7 @@ final readonly class PrimaryReplicaPolicy
             failover              : true,
             replicationPolicy     : $this->replicationPolicy,
             failoverTimeoutSeconds: $timeoutSeconds,
-            maxReplicationRetries : $this->maxReplicationRetries
+            maxReplicationRetries : $this->maxReplicationRetries,
         );
     }
 
@@ -151,7 +151,7 @@ final readonly class PrimaryReplicaPolicy
             failover              : $this->failover,
             replicationPolicy     : $this->replicationPolicy,
             failoverTimeoutSeconds: $this->failoverTimeoutSeconds,
-            maxReplicationRetries : $this->maxReplicationRetries
+            maxReplicationRetries : $this->maxReplicationRetries,
         );
     }
 
@@ -167,7 +167,7 @@ final readonly class PrimaryReplicaPolicy
             failover              : $this->failover,
             replicationPolicy     : ReplicationPolicy::ASYNCHRONOUS,
             failoverTimeoutSeconds: $this->failoverTimeoutSeconds,
-            maxReplicationRetries : $this->maxReplicationRetries
+            maxReplicationRetries : $this->maxReplicationRetries,
         );
     }
 
@@ -183,26 +183,26 @@ final readonly class PrimaryReplicaPolicy
             failover              : $this->failover,
             replicationPolicy     : ReplicationPolicy::SYNCHRONOUS,
             failoverTimeoutSeconds: $this->failoverTimeoutSeconds,
-            maxReplicationRetries : $this->maxReplicationRetries
+            maxReplicationRetries : $this->maxReplicationRetries,
         );
     }
 
     /**
      * Create a policy with a specific replication policy.
      */
-    public function withReplicationPolicy(ReplicationPolicy $policy) : self
+    public function withReplicationPolicy(ReplicationPolicy $replicationPolicy) : self
     {
-        $async = $policy === ReplicationPolicy::ASYNCHRONOUS;
-        $sync  = $policy !== ReplicationPolicy::ASYNCHRONOUS;
+        $async = $replicationPolicy === ReplicationPolicy::ASYNCHRONOUS;
+        $sync  = $replicationPolicy !== ReplicationPolicy::ASYNCHRONOUS;
 
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
             asyncReplication      : $async,
             syncReplication       : $sync,
             failover              : $this->failover,
-            replicationPolicy     : $policy,
+            replicationPolicy     : $replicationPolicy,
             failoverTimeoutSeconds: $this->failoverTimeoutSeconds,
-            maxReplicationRetries : $this->maxReplicationRetries
+            maxReplicationRetries : $this->maxReplicationRetries,
         );
     }
 
@@ -218,7 +218,7 @@ final readonly class PrimaryReplicaPolicy
             failover              : $this->failover,
             replicationPolicy     : $this->replicationPolicy,
             failoverTimeoutSeconds: $this->failoverTimeoutSeconds,
-            maxReplicationRetries : $retries
+            maxReplicationRetries : $retries,
         );
     }
 

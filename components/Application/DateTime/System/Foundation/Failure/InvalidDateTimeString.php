@@ -12,7 +12,7 @@ final class InvalidDateTimeString extends DateTimeFailure
     )
     {
         parent::__construct(
-            message: "Invalid datetime string '{$input}': {$reason}",
+            message: sprintf("Invalid datetime string '%s': %s", $input, $reason),
         );
     }
 }

@@ -16,7 +16,10 @@ final readonly class QuotedIdentifier
     /**
      * @param string $value The pre-sanitized and dialect-aware quoted identifier technical string.
      */
-    public function __construct(string $value) { $this->value = $value; }
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
 
     /**
      * Return the quoted identifier string.

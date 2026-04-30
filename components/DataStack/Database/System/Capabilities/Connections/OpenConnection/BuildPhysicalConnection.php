@@ -28,7 +28,7 @@ final readonly class BuildPhysicalConnection
             driver  : $connectionConfig->driver,
             host    : $connectionConfig->host,
             database: $connectionConfig->database,
-            charset : $connectionConfig->charset
+            charset : $connectionConfig->charset,
         );
 
         try {
@@ -45,7 +45,7 @@ final readonly class BuildPhysicalConnection
 
             return new PdoConnection(
                 name: $connectionConfig->name,
-                pdo : $pdo
+                pdo : $pdo,
             );
         } catch (Throwable $throwable) {
             throw new ConnectionFailure(
@@ -53,9 +53,9 @@ final readonly class BuildPhysicalConnection
                 message : sprintf(
                               'Database connection [%s] failed: %s',
                               $connectionConfig->name,
-                              $throwable->getMessage()
+                              $throwable->getMessage(),
                           ),
-                previous: $throwable
+                previous: $throwable,
             );
         }
     }

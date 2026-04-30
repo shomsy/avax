@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
+use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerFacade;
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
 
 if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(DIContainerInterface|null $instance = null) : DIContainerInterface|null
+    function appInstance(DIContainerInterface $instance = null) : DIContainerInterface|null
     {
         static $container = null;
 
@@ -32,7 +32,7 @@ if (! function_exists('app')) {
      *   app()              -> returns container
      *   app(Service::class) -> resolves service
      */
-    function app(string|null $abstract = null) : mixed
+    function app(string $abstract = null) : mixed
     {
         $container = appInstance();
 

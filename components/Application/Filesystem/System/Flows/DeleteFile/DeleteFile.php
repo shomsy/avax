@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\DeleteFile;
 
-use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
 use Avax\Components\Application\Filesystem\System\Flows\Files\FileDeleteFailed;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
+use Throwable;
 
 final class DeleteFile
 {
@@ -13,8 +14,8 @@ final class DeleteFile
     {
         try {
             return Storage::delete($path);
-        } catch (\Throwable $e) {
-            throw new FileDeleteFailed(path: $path, previous: $e);
+        } catch (Throwable $throwable) {
+            throw new FileDeleteFailed(path: $path, code: $throwable->getCode(), previous: $throwable);
         }
     }
 }

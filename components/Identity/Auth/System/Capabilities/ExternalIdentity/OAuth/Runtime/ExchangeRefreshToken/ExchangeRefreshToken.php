@@ -21,13 +21,15 @@ use SensitiveParameter;
 final readonly class ExchangeRefreshToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface                     $clientRegistry,
-        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        private UserSourceInterface                              $userSource,
-        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                $auditLog,
-        private Clock                                            $clock,
-        private DeterministicRiskEngine|null                     $riskEngine = null
+        private OAuthClientRegistryInterface $clientRegistry,
+        #[SensitiveParameter]
+        private RefreshTokenStoreInterface   $refreshTokenStore,
+        private UserSourceInterface          $userSource,
+        #[SensitiveParameter]
+        private JwtIdentityInterface         $jwtIdentity,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock,
+        private DeterministicRiskEngine|null $riskEngine = null,
     ) {}
 
     /**
@@ -41,11 +43,13 @@ final readonly class ExchangeRefreshToken
 
         if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
             $this->recordFailure(data: $data, reason: 'client_authentication_failed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::REFRESH_TOKEN)) {
             $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
+
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
@@ -58,6 +62,7 @@ final readonly class ExchangeRefreshToken
             || $record->isExpiredAt(moment: $now)
         ) {
             $this->recordFailure(data: $data, reason: 'grant_not_found_or_expired');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -69,6 +74,7 @@ final readonly class ExchangeRefreshToken
                 || ! $record->senderConstraint->equals(other: $data->senderConstraint)
             ) {
                 $this->recordFailure(data: $data, reason: 'sender_constraint_mismatch');
+
                 throw OAuthTokenExchangeFailed::invalidSenderConstraint();
             }
         }
@@ -83,9 +89,10 @@ final readonly class ExchangeRefreshToken
                                                                'user_id'     => $record->userId->value,
                                                                'client_id'   => $record->clientId,
                                                                'risk_action' => $riskDecision?->action->value,
-                                                           ]
+                                                           ],
                                            ));
             $this->recordFailure(data: $data, reason: 'reuse_detected', suspicious: true);
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -94,6 +101,7 @@ final readonly class ExchangeRefreshToken
         if ($user === null || ! $user->isActive()) {
             $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
             $this->recordFailure(data: $data, reason: 'user_not_active');
+
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -104,7 +112,7 @@ final readonly class ExchangeRefreshToken
             clientId            : $client->clientId,
             scopes              : $record->scopes,
             senderConstraint    : $record->senderConstraint,
-            refreshTokenFamilyId: $record->familyId
+            refreshTokenFamilyId: $record->familyId,
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId           : $record->userId,
@@ -114,7 +122,7 @@ final readonly class ExchangeRefreshToken
             phishingResistant: $record->phishingResistant,
             clientId         : $client->clientId,
             scopes           : $record->scopes,
-            senderConstraint : $record->senderConstraint
+            senderConstraint : $record->senderConstraint,
         );
 
         $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $refreshToken->tokenId);
@@ -128,7 +136,7 @@ final readonly class ExchangeRefreshToken
                                                            'scope'      => implode(separator: ' ', array: $record->scopes),
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
 
         return new OAuthTokenGrant(
@@ -140,14 +148,14 @@ final readonly class ExchangeRefreshToken
             userId              : $user->getId()->value,
             scopes              : $record->scopes,
             tokenType           : $record->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint    : $record->senderConstraint
+            senderConstraint    : $record->senderConstraint,
         );
     }
 
     private function recordFailure(
         ExchangeRefreshTokenData $data,
-        string                   $reason,
-        bool                     $suspicious = false
+        string $reason,
+        bool   $suspicious = false,
     ) : void
     {
         $name = $suspicious
@@ -162,7 +170,7 @@ final readonly class ExchangeRefreshToken
                                                            'reason'     => $reason,
                                                            'ip_address' => $data->ipAddress,
                                                            'user_agent' => $data->userAgent,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

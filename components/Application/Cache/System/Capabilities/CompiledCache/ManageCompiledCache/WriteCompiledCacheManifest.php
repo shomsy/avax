@@ -10,24 +10,20 @@ use Random\RandomException;
 
 final class WriteCompiledCacheManifest
 {
-    public function __construct(
-        private Clock $clock = new SystemClock()
-    ) {}
-
     /**
      * @throws RandomException
      */
-    public function write(CompiledCacheManifest $manifest, CompiledCachePath $manifestPath) : void
+    public function write(CompiledCacheManifest $compiledCacheManifest, CompiledCachePath $compiledCachePath) : void
     {
-        $tempPath = $manifestPath->toString() . '.tmp.' . bin2hex(random_bytes(8));
+        $tempPath = $compiledCachePath->toString() . '.tmp.' . bin2hex(random_bytes(8));
 
-        $manifestDir = dirname($manifestPath->toString());
+        $manifestDir = dirname($compiledCachePath->toString());
         if (! is_dir($manifestDir)) {
-            mkdir($manifestDir, 0755, true);
+            mkdir($manifestDir, 0o755, true);
         }
 
         $entries = [];
-        foreach ($manifest->all() as $entry) {
+        foreach ($compiledCacheManifest->all() as $entry) {
             $entries[] = $entry->toArray();
         }
 
@@ -39,8 +35,9 @@ final class WriteCompiledCacheManifest
             throw new CompiledCacheManifestWasInvalid('Failed to write manifest to temporary file');
         }
 
-        if (! rename($tempPath, $manifestPath->toString())) {
+        if (! rename($tempPath, $compiledCachePath->toString())) {
             @unlink($tempPath);
+
             throw new CompiledCacheManifestWasInvalid('Failed to rename manifest temporary file');
         }
     }

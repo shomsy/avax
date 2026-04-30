@@ -26,8 +26,10 @@ use Throwable;
 final readonly class ServeOidcHttpSurface
 {
     public function __construct(
-        #[SensitiveParameter] private Auth            $auth,
-        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter]
+        private Auth            $auth,
+        #[SensitiveParameter]
+        private ReadBearerToken $readBearerToken = new ReadBearerToken(),
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
@@ -65,7 +67,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'public, max-age=300',
-                            ]
+                            ],
             );
         }
 
@@ -84,13 +86,13 @@ final readonly class ServeOidcHttpSurface
                                         'n'   => $key->modulus,
                                         'e'   => $key->exponent,
                                     ],
-                                    array   : $jsonWebKeySet->keys
+                                    array   : $jsonWebKeySet->keys,
                                 ),
                             ],
                 headers   : [
                                 'Content-Type'   => 'application/jwk-set+json',
                                 'System-Control' => 'public, max-age=300',
-                            ]
+                            ],
             );
         }
 
@@ -113,7 +115,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -129,7 +131,7 @@ final readonly class ServeOidcHttpSurface
                                                                            codeChallenge      : $this->readString(input: $input, keys: ['code_challenge', 'codeChallenge']),
                                                                            codeChallengeMethod: $this->readPkceMethod(input: $input),
                                                                            ipAddress          : $this->readString(input: $input, keys: ['ip_address', 'ipAddress']) ?? $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
-                                                                           userAgent          : $this->readString(input: $input, keys: ['user_agent', 'userAgent']) ?? $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
+                                                                           userAgent          : $this->readString(input: $input, keys: ['user_agent', 'userAgent']) ?? $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT'),
                                                                        ));
 
             return new JsonHttpResponse(
@@ -141,7 +143,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -154,7 +156,7 @@ final readonly class ServeOidcHttpSurface
                                                                      allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                      tokenEndpointAuthMethod        : $this->readTokenEndpointAuthMethod(input: $input),
                                                                      requestObjectSignatureRequired : $this->readBool(input: $input),
-                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
+                                                                     requestObjectVerificationKeyPem: $this->readMultilineString(input: $input),
                                                                  ));
 
             return new JsonHttpResponse(
@@ -163,7 +165,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -190,7 +192,7 @@ final readonly class ServeOidcHttpSurface
                                                                 allowedGrantTypes              : $this->readGrantTypes(input: $input),
                                                                 tokenEndpointAuthMethod        : $tokenEndpointAuthMethod,
                                                                 requestObjectSignatureRequired : $this->readBool(input: $input),
-                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input)
+                                                                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input),
                                                             ));
 
             return new JsonHttpResponse(
@@ -199,7 +201,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -212,7 +214,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -222,7 +224,7 @@ final readonly class ServeOidcHttpSurface
                                                         idTokenHint          : $this->readString(input: $input, keys: ['id_token_hint', 'idTokenHint']),
                                                         logoutToken          : $this->readString(input: $input, keys: ['logout_token', 'logoutToken']),
                                                         postLogoutRedirectUri: $this->readString(input: $input, keys: ['post_logout_redirect_uri', 'postLogoutRedirectUri']),
-                                                        state                : $this->readString(input: $input, keys: ['state'])
+                                                        state                : $this->readString(input: $input, keys: ['state']),
                                                     ));
 
             return new JsonHttpResponse(
@@ -236,13 +238,13 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
         if ($method === 'POST' && $path === '/oidc/backchannel-logout') {
             $result = $this->auth->oidcLogout(data: new OidcLogoutData(
-                                                        logoutToken: $this->readString(input: $input, keys: ['logout_token', 'logoutToken']) ?? ''
+                                                        logoutToken: $this->readString(input: $input, keys: ['logout_token', 'logoutToken']) ?? '',
                                                     ));
 
             return new JsonHttpResponse(
@@ -254,7 +256,7 @@ final readonly class ServeOidcHttpSurface
                 headers   : [
                                 'Content-Type'   => 'application/json',
                                 'System-Control' => 'no-store',
-                            ]
+                            ],
             );
         }
 
@@ -280,7 +282,7 @@ final readonly class ServeOidcHttpSurface
                             'error'             => $errorCode,
                             'error_description' => $message,
                         ],
-            headers   : ['Content-Type' => 'application/json']
+            headers   : ['Content-Type' => 'application/json'],
         );
     }
 
@@ -497,7 +499,7 @@ final readonly class ServeOidcHttpSurface
             'client_id'                           => $client->clientId,
             'client_name'                         => $client->name,
             'redirect_uris'                       => $client->redirectUris,
-            'grant_types'                         => array_map(callback: static fn (OAuthGrantType $grantType) : string => $grantType->value, array: $client->allowedGrantTypes),
+            'grant_types' => array_map(callback: static fn (OAuthGrantType $grantType) : string => $grantType->value, array: $client->allowedGrantTypes),
             'scope'                               => implode(separator: ' ', array: $client->allowedScopes),
             'token_endpoint_auth_method'          => $client->tokenEndpointAuthMethod->value,
             'request_object_signature_required'   => $client->requestObjectSignatureRequired,

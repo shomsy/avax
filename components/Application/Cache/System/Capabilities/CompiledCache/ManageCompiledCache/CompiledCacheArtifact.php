@@ -9,25 +9,25 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CompiledCacheArtifact
 {
     public function __construct(
-        public CompiledCacheName $name,
-        public CompiledCachePath $path,
-        public Timestamp         $createdAt,
+        public CompiledCacheName $compiledCacheName,
+        public CompiledCachePath $compiledCachePath,
+        public Timestamp         $timestamp,
         public string            $sourceFingerprint,
-        public mixed             $payload = null
+        public mixed             $payload = null,
     ) {}
 
     public static function create(
         string $name,
         string $path,
         int    $createdAt,
-        string $sourceFingerprint
+        string $sourceFingerprint,
     ) : self
     {
         return new self(
             name             : new CompiledCacheName(name: $name),
             path             : new CompiledCachePath(path: $path),
             createdAt        : Timestamp::fromUnixTime(timestamp: $createdAt),
-            sourceFingerprint: $sourceFingerprint
+            sourceFingerprint: $sourceFingerprint,
         );
     }
 
@@ -35,8 +35,8 @@ final readonly class CompiledCacheArtifact
     {
         return sprintf(
             'CompiledCacheArtifact(%s, %s)',
-            $this->name->toString(),
-            $this->path->toString()
+            $this->compiledCacheName->toString(),
+            $this->compiledCachePath->toString(),
         );
     }
 }

@@ -64,11 +64,11 @@ interface MaterializedViewInterface
 final readonly class MaterializedViewStats
 {
     public function __construct(
-        public string      $viewName,
-        public int         $rowsAffected = 0,
-        public float       $durationMs = 0.0,
-        public float       $refreshedAt = 0.0,
-        public bool        $success = true,
+        public string $viewName,
+        public int    $rowsAffected = 0,
+        public float  $durationMs = 0.0,
+        public float  $refreshedAt = 0.0,
+        public bool   $success = true,
         public string|null $error = null,
     ) {}
 
@@ -133,9 +133,9 @@ final class MaterializedView implements MaterializedViewInterface
      * @param float        $stalenessThreshold Seconds before view is considered stale
      */
     public function __construct(
-        string  $name,
+        string $name,
         Closure $query,
-        float   $stalenessThreshold = 3600.0,
+        float  $stalenessThreshold = 3600.0,
     )
     {
         $this->name               = $name;
@@ -175,7 +175,7 @@ final class MaterializedView implements MaterializedViewInterface
     {
         if ($this->data === null) {
             throw new RuntimeException(
-                "Materialized view '{$this->name}' has not been refreshed yet"
+                "Materialized view '{$this->name}' has not been refreshed yet",
             );
         }
 
@@ -185,7 +185,7 @@ final class MaterializedView implements MaterializedViewInterface
 
         return array_values(array_filter(
                                 $this->data,
-                                function (array $row) use ($filters) : bool {
+                                static function (array $row) use ($filters) : bool {
                                     foreach ($filters as $key => $value) {
                                         if (! isset($row[$key]) || $row[$key] !== $value) {
                                             return false;

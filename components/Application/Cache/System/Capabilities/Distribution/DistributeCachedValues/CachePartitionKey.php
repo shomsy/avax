@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues;
 
+use Override;
 use Stringable;
 
 final readonly class CachePartitionKey implements Stringable
 {
     public function __construct(
         public string $partition,
-        public string $key
+        public string $key,
     ) {}
 
     public static function create(string $partition, string $key) : self
@@ -18,6 +19,7 @@ final readonly class CachePartitionKey implements Stringable
         return new self(partition: $partition, key: $key);
     }
 
+    #[Override]
     public function __toString() : string
     {
         return $this->toString();

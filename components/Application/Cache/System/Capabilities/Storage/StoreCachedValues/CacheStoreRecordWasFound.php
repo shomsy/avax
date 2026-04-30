@@ -11,28 +11,28 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 final readonly class CacheStoreRecordWasFound
 {
     public function __construct(
-        public CacheKey          $key,
-        public StoredCacheRecord $record,
-        public Clock             $clock
+        public CacheKey          $cacheKey,
+        public StoredCacheRecord $storedCacheRecord,
+        public Clock             $clock,
     ) {}
 
     public function value() : mixed
     {
-        return $this->record->value;
+        return $this->storedCacheRecord->value;
     }
 
     public function isExpired() : bool
     {
-        return $this->record->isExpired(clock: $this->clock);
+        return $this->storedCacheRecord->isExpired(clock: $this->clock);
     }
 
     public function timeToLive() : int
     {
-        return $this->record->timeToLive(clock: $this->clock);
+        return $this->storedCacheRecord->timeToLive(clock: $this->clock);
     }
 
     public function lifecycle() : CachedValueLifecycle
     {
-        return $this->record->lifecycle;
+        return $this->storedCacheRecord->lifecycle;
     }
 }

@@ -26,9 +26,9 @@ final class ReadConnection
     /** @var array<string, ConnectionPool> */
     private array $pools = [];
 
-    private ExecutionScope|null               $scope;
+    private ExecutionScope|null         $scope;
     private readonly ResolveDefaultConnection $resolveDefaultConnection;
-    private readonly RememberConnection       $rememberConnection;
+    private readonly RememberConnection $rememberConnection;
 
     /**
      * @param array<string, mixed> $config
@@ -36,22 +36,22 @@ final class ReadConnection
      * @throws RandomException
      */
     public function __construct(
-        private readonly array         $config,
+        private readonly array   $config,
         private readonly EventBus|null $eventBus = null,
-        ExecutionScope|null            $scope = null,
-        ResolveDefaultConnection|null  $resolveDefaultConnection = null,
-        RememberConnection|null        $rememberConnection = null
+        ExecutionScope           $scope = null,
+        ResolveDefaultConnection $resolveDefaultConnection = null,
+        RememberConnection       $rememberConnection = null,
     )
     {
-        $this->scope                    = $scope ?? ExecutionScope::fresh();
+        $this->scope              = $scope ?? ExecutionScope::fresh();
         $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
-        $this->rememberConnection       = $rememberConnection ?? new RememberConnection();
+        $this->rememberConnection = $rememberConnection ?? new RememberConnection();
     }
 
     /**
      * @throws Throwable
      */
-    public function connection(string|null $name = null) : DatabaseConnection
+    public function connection(string $name = null) : DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
         $cached       = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);
@@ -75,7 +75,7 @@ final class ReadConnection
         return $this->rememberConnection->remember(
             connections: $this->connections,
             name       : $resolvedName,
-            connection : $this->open(config: $config)
+            connection : $this->open(config: $config),
         );
     }
 
@@ -88,7 +88,7 @@ final class ReadConnection
             ?? $this->rememberConnection->rememberPool(
                 pools: $this->pools,
                 name : $name,
-                pool : new ConnectionPool(config: $config, eventBus: $this->eventBus)
+                pool : new ConnectionPool(config: $config, eventBus: $this->eventBus),
             );
 
         if ($this->scope !== null) {
@@ -115,7 +115,7 @@ final class ReadConnection
         return new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
-            scope                  : $this->scope
+            scope                  : $this->scope,
         )->using(config: $config);
     }
 }

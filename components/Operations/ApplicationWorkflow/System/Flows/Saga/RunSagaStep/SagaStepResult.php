@@ -10,27 +10,27 @@ use DateTimeInterface;
 
 final readonly class SagaStepResult
 {
-    public string                 $stepName;
-    public bool                   $success;
-    public array                  $output;
-    public string|null            $error;
-    public int                    $attempt;
-    public float                  $durationMs;
+    public string      $stepName;
+    public bool        $success;
+    public array       $output;
+    public string|null $error;
+    public int         $attempt;
+    public float       $durationMs;
     public DateTimeImmutable|null $completedAt;
 
     private function __construct(
-        string                 $stepName,
-        bool                   $success,
-        array|null             $output = null,
-        string|null            $error = null,
-        int|null               $attempt = null,
-        float|null             $durationMs = null,
-        DateTimeImmutable|null $completedAt = null
+        string            $stepName,
+        bool              $success,
+        array             $output = null,
+        string            $error = null,
+        int               $attempt = null,
+        float             $durationMs = null,
+        DateTimeImmutable $completedAt = null,
     )
     {
-        $output            ??= [];
-        $attempt           ??= 1;
-        $durationMs        ??= 0.0;
+        $output     ??= [];
+        $attempt    ??= 1;
+        $durationMs ??= 0.0;
         $this->stepName    = $stepName;
         $this->success     = $success;
         $this->output      = $output;
@@ -41,10 +41,10 @@ final readonly class SagaStepResult
     }
 
     public static function success(
-        string     $stepName,
-        array|null $output = null,
-        int|null   $attempt = null,
-        float      $durationMs = 0.0
+        string $stepName,
+        array  $output = null,
+        int    $attempt = null,
+        float  $durationMs = 0.0,
     ) : self
     {
         $output  ??= [];
@@ -56,15 +56,15 @@ final readonly class SagaStepResult
             output     : $output,
             attempt    : $attempt,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable()
+            completedAt: new DateTimeImmutable(),
         );
     }
 
     public static function failure(
-        string   $stepName,
-        string   $error,
-        int|null $attempt = null,
-        float    $durationMs = 0.0
+        string $stepName,
+        string $error,
+        int    $attempt = null,
+        float  $durationMs = 0.0,
     ) : self
     {
         $attempt ??= 1;
@@ -75,7 +75,7 @@ final readonly class SagaStepResult
             error      : $error,
             attempt    : $attempt,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable()
+            completedAt: new DateTimeImmutable(),
         );
     }
 
@@ -95,24 +95,24 @@ final readonly class SagaStepResult
 
 final readonly class SagaStepExecutionPolicy
 {
-    public int  $maxRetries;
-    public int  $retryDelayMs;
-    public int  $timeoutSeconds;
+    public int $maxRetries;
+    public int $retryDelayMs;
+    public int $timeoutSeconds;
     public bool $continueOnFailure;
     public bool $isolationPerStep;
 
     private function __construct(
-        int|null  $maxRetries = null,
-        int|null  $retryDelayMs = null,
-        int|null  $timeoutSeconds = null,
-        bool|null $continueOnFailure = null,
-        bool      $isolationPerStep = true
+        int  $maxRetries = null,
+        int  $retryDelayMs = null,
+        int  $timeoutSeconds = null,
+        bool $continueOnFailure = null,
+        bool $isolationPerStep = true,
     )
     {
-        $maxRetries              ??= 0;
-        $retryDelayMs            ??= 1000;
-        $timeoutSeconds          ??= 30;
-        $continueOnFailure       ??= false;
+        $maxRetries        ??= 0;
+        $retryDelayMs      ??= 1000;
+        $timeoutSeconds    ??= 30;
+        $continueOnFailure ??= false;
         $this->maxRetries        = $maxRetries;
         $this->retryDelayMs      = $retryDelayMs;
         $this->timeoutSeconds    = $timeoutSeconds;
@@ -125,7 +125,7 @@ final readonly class SagaStepExecutionPolicy
         return new self(
             maxRetries    : 0,
             retryDelayMs  : 1000,
-            timeoutSeconds: 30
+            timeoutSeconds: 30,
         );
     }
 
@@ -134,7 +134,7 @@ final readonly class SagaStepExecutionPolicy
         return new self(
             maxRetries    : $step->maxRetries,
             retryDelayMs  : $step->retryDelayMs,
-            timeoutSeconds: $step->timeoutSeconds
+            timeoutSeconds: $step->timeoutSeconds,
         );
     }
 
@@ -145,7 +145,7 @@ final readonly class SagaStepExecutionPolicy
             retryDelayMs     : $this->retryDelayMs,
             timeoutSeconds   : $this->timeoutSeconds,
             continueOnFailure: $this->continueOnFailure,
-            isolationPerStep : $this->isolationPerStep
+            isolationPerStep : $this->isolationPerStep,
         );
     }
 

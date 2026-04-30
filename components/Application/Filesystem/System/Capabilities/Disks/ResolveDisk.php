@@ -10,13 +10,13 @@ use Avax\Components\Application\Filesystem\Disks\Local\LocalDisk;
 final readonly class ResolveDisk
 {
     public function __construct(
-        private FilesystemConfig $config = new FilesystemConfig(default: 'local', disks: ['local' => ['driver' => 'local']]),
+        private FilesystemConfig $filesystemConfig = new FilesystemConfig(default: 'local', disks: ['local' => ['driver' => 'local']]),
     ) {}
 
-    public function execute(string|null $name = null) : Disk
+    public function execute(?string $name = null) : Disk
     {
-        $name       ??= $this->config->default;
-        $diskConfig = $this->config->disk(name: $name)
+        $name       ??= $this->filesystemConfig->default;
+        $diskConfig = $this->filesystemConfig->disk(name: $name)
             ?? throw new UnsupportedDiskDriver(driver: $name);
         $driver     = $diskConfig['driver'] ?? $name;
 

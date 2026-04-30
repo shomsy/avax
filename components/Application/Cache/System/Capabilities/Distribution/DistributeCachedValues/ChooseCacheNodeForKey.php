@@ -9,16 +9,16 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class ChooseCacheNodeForKey
 {
     public function __construct(
-        private ConsistentHashRing $ring
+        private ConsistentHashRing $consistentHashRing,
     ) {}
 
-    public function choose(CacheKey $key) : CacheNode|null
+    public function choose(CacheKey $cacheKey) : CacheNode|null
     {
-        return $this->ring->getNodeForKey(key: $key);
+        return $this->consistentHashRing->getNodeForKey(key: $cacheKey);
     }
 
     public function chooseForPartition(int $partitionIndex) : CacheNode|null
     {
-        return $this->ring->getNodeForPartition(partitionIndex: $partitionIndex);
+        return $this->consistentHashRing->getNodeForPartition(partitionIndex: $partitionIndex);
     }
 }

@@ -9,14 +9,14 @@ use DateTimeZone;
 
 final class SystemClock
 {
-    private static ?DateTimeImmutable $frozen = null;
+    private static ?DateTimeImmutable $dateTimeImmutable = null;
 
-    public static function create(string|null $timezone = null) : DateTimeImmutable
+    public static function create(?string $timezone = null) : DateTimeImmutable
     {
-        if (self::$frozen !== null) {
+        if (self::$dateTimeImmutable !== null) {
             $tz = $timezone ?? date_default_timezone_get();
 
-            return self::$frozen->setTimezone(new DateTimeZone($tz));
+            return self::$dateTimeImmutable->setTimezone(new DateTimeZone($tz));
         }
 
         $tz = $timezone ?? date_default_timezone_get();
@@ -26,16 +26,16 @@ final class SystemClock
 
     public static function freeze(DateTimeImmutable $moment) : void
     {
-        self::$frozen = $moment;
+        self::$dateTimeImmutable = $moment;
     }
 
     public static function unfreeze() : void
     {
-        self::$frozen = null;
+        self::$dateTimeImmutable = null;
     }
 
     public static function isFrozen() : bool
     {
-        return self::$frozen !== null;
+        return self::$dateTimeImmutable !== null;
     }
 }

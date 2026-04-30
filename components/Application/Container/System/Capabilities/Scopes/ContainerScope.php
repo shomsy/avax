@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\System\PublicSurface\Container;
 
 final class ContainerScope
 {
-    public static function make(string $abstract)
+    public static function make(string $abstract) : object
     {
         return Container::make($abstract);
     }

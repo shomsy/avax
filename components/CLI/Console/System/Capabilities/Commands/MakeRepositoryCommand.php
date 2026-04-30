@@ -6,6 +6,7 @@ namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
 use Avax\Components\CLI\Console\System\Capabilities\Generators\RepositoryGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Override;
 use RuntimeException;
 
 /**
@@ -14,15 +15,20 @@ use RuntimeException;
 class MakeRepositoryCommand extends Command
 {
     protected string $name        = 'make:repository';
+
     protected string $description = 'Create a new repository class';
+
     protected string $signature   = 'make:repository {name} [--entity=]';
-    protected array  $arguments   = ['name'];
-    protected array  $options     = ['entity'];
+
+    protected array $arguments = ['name'];
+
+    protected array $options = ['entity'];
 
     public function __construct(
-        private readonly RepositoryGenerator $generator
+        private readonly RepositoryGenerator $repositoryGenerator,
     ) {}
 
+    #[Override]
     protected function handle() : int
     {
         $name = $this->argument(0);
@@ -30,7 +36,7 @@ class MakeRepositoryCommand extends Command
         if (empty($name)) {
             $name = $this->ask('Enter repository name');
 
-            if (empty($name)) {
+            if ($name === '' || $name === '0') {
                 $this->error('Repository name is required.');
 
                 return self::INVALID;
@@ -46,17 +52,17 @@ class MakeRepositoryCommand extends Command
         try {
             $data = [];
 
-            if ($entity !== null && $entity !== '') {
+            if ($entity !== '') {
                 $data['entity'] = $entity;
             }
 
-            $path = $this->generator->generate($name, $data);
+            $path = $this->repositoryGenerator->generate($name, $data);
 
-            $this->info("Repository created successfully: {$path}");
+            $this->info('Repository created successfully: ' . $path);
 
             return self::SUCCESS;
-        } catch (RuntimeException $e) {
-            $this->error('Failed to create repository: ' . $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->error('Failed to create repository: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

@@ -46,17 +46,17 @@ final class DeferredProviderRegistry
     /**
      * @param list<string> $serviceIds
      */
-    public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
+    public function bootFor(array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics $metrics = null) : void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
                 serviceId: $registrations->resolveAlias(abstract: $serviceId),
-                metrics  : $metrics
+                metrics  : $metrics,
             );
         }
     }
 
-    public function bootIfNeeded(string $serviceId, ResolutionMetrics|null $metrics = null) : void
+    public function bootIfNeeded(string $serviceId, ResolutionMetrics $metrics = null) : void
     {
         $providerClass = $this->serviceOwners[$serviceId] ?? null;
         if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
@@ -69,7 +69,7 @@ final class DeferredProviderRegistry
     /**
      * @param class-string<ServiceProviderInterface> $providerClass
      */
-    private function bootProvider(string $providerClass, ResolutionMetrics|null $metrics = null) : void
+    private function bootProvider(string $providerClass, ResolutionMetrics $metrics = null) : void
     {
         $provider = $this->providers[$providerClass] ?? null;
         if (! $provider instanceof ServiceProviderInterface) {
@@ -90,12 +90,12 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
+    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics $metrics = null) : void
     {
         $providerClass = $provider::class;
         $ids           = array_map(
-                callback: fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
-                array   : $serviceIds
+                callback: static fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
+                array   : $serviceIds,
             )
                 |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $serviceId) : bool => $serviceId !== ''))
                 |> array_unique(...)
@@ -113,7 +113,7 @@ final class DeferredProviderRegistry
             $existing = $this->serviceOwners[$serviceId] ?? null;
             if ($existing !== null && $existing !== $providerClass) {
                 throw new ContainerException(
-                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}]."
+                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}].",
                 );
             }
 

@@ -34,9 +34,9 @@ interface ConfiguratorInterface
      * hard-coded configuration keys and enhancing code consistency. If the key does not exist,
      * a default value can be returned.
      *
-     * @param string $key       The configuration key to retrieve.
-     * @param mixed  $default   A default value to return if the key does not exist.
-     *                          Use meaningful defaults relevant to the configuration context.
+     * @param string $key     The configuration key to retrieve.
+     * @param mixed  $default A default value to return if the key does not exist.
+     *                        Use meaningful defaults relevant to the configuration context.
      *
      * @return mixed The configuration value, or the default if the key is missing.
      *

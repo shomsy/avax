@@ -15,7 +15,7 @@ final class SyncDriver implements QueueDriverInterface
 {
     /** @var array<string, array{job: string, data: array, time: int}> */
     private array $pending = [];
-    private int   $counter = 0;
+    private int $counter = 0;
 
     public function later(DateTimeInterface $delay, string $job, array $data = []) : string
     {
@@ -95,8 +95,8 @@ final readonly class SyncJob implements Job
     public function __construct(
         private string $id,
         private string $job,
-        private array  $data,
-        private int    $attempts = 1,
+        private array $data,
+        private int   $attempts = 1,
     ) {}
 
     public function getId() : string

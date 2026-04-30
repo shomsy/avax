@@ -13,12 +13,11 @@ use Throwable;
 final readonly class ClearCache
 {
     public function __construct(
-        private CacheStore        $store,
-        private Clock             $clock,
-        private CacheMetrics|null $metrics = null
+        private CacheStore        $cacheStore,
+        private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
-    public function clearNamespace(CacheNamespace $namespace) : int
+    public function clearNamespace() : int
     {
         return $this->clear();
     }
@@ -26,13 +25,13 @@ final readonly class ClearCache
     public function clear() : bool
     {
         try {
-            $this->store->clear();
+            $this->cacheStore->clear();
 
-            $this->metrics?->recordDelete();
+            $this->cacheMetrics?->recordDelete();
 
             return true;
-        } catch (Throwable $e) {
-            $this->metrics?->recordStoreFailure();
+        } catch (Throwable) {
+            $this->cacheMetrics?->recordStoreFailure();
 
             return false;
         }

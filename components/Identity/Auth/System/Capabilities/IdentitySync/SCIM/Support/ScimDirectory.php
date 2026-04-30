@@ -15,21 +15,22 @@ final readonly class ScimDirectory
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string                       $directoryId,
-        public string                       $tenantSlug,
-        public string                       $name,
-        #[SensitiveParameter] public string $tokenHash,
-        public array                        $groupRoleMap,
-        public DateTimeImmutable            $createdAt,
-        public DateTimeImmutable|null       $rotatedAt = null,
-        ScimDirectoryHealth|null            $health = null,
-        public DateTimeImmutable|null       $healthCheckedAt = null,
-        public string|null                  $outageReason = null,
-        public DateTimeImmutable|null       $outageStartedAt = null,
-        public DateTimeImmutable|null       $outageRecoveredAt = null
+        public string                 $directoryId,
+        public string                 $tenantSlug,
+        public string                 $name,
+        #[SensitiveParameter]
+        public string                 $tokenHash,
+        public array                  $groupRoleMap,
+        public DateTimeImmutable      $createdAt,
+        public DateTimeImmutable|null $rotatedAt = null,
+        ScimDirectoryHealth           $health = null,
+        public DateTimeImmutable|null $healthCheckedAt = null,
+        public string|null            $outageReason = null,
+        public DateTimeImmutable|null $outageStartedAt = null,
+        public DateTimeImmutable|null $outageRecoveredAt = null,
     )
     {
-        $health       ??= ScimDirectoryHealth::HEALTHY;
+        $health ??= ScimDirectoryHealth::HEALTHY;
         $this->health = $health;
     }
 
@@ -38,7 +39,7 @@ final readonly class ScimDirectory
         return $this->health !== ScimDirectoryHealth::UNAVAILABLE;
     }
 
-    public function markOutage(DateTimeImmutable $startedAt, string|null $reason = null) : self
+    public function markOutage(DateTimeImmutable $startedAt, string $reason = null) : self
     {
         return new self(
             directoryId      : $this->directoryId,
@@ -52,7 +53,7 @@ final readonly class ScimDirectory
             healthCheckedAt  : $startedAt,
             outageReason     : trim(string: (string) $reason) !== '' ? trim(string: (string) $reason) : 'scim_outage',
             outageStartedAt  : $startedAt,
-            outageRecoveredAt: null
+            outageRecoveredAt: null,
         );
     }
 
@@ -70,7 +71,7 @@ final readonly class ScimDirectory
             healthCheckedAt  : $recoveredAt,
             outageReason     : null,
             outageStartedAt  : $this->outageStartedAt,
-            outageRecoveredAt: $recoveredAt
+            outageRecoveredAt: $recoveredAt,
         );
     }
 }

@@ -13,9 +13,11 @@ use SensitiveParameter;
 final readonly class IssuedAuthorizationCode
 {
     public function __construct(
-        #[SensitiveParameter] public string $code,
-        #[SensitiveParameter] public string $codeId,
-        public DateTimeImmutable            $expiresAt,
-        public string|null                  $state = null
+        #[SensitiveParameter]
+        public string            $code,
+        #[SensitiveParameter]
+        public string            $codeId,
+        public DateTimeImmutable $expiresAt,
+        public string|null       $state = null,
     ) {}
 }

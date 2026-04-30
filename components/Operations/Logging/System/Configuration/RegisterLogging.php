@@ -19,8 +19,8 @@ final class RegisterLogging
         return new Log(
             writer: new RotatingFileWriter(
                         baseLogPath: $logPath,
-                        timezone   : config('app.timezone', 'UTC')
-                    )
+                        timezone   : config('app.timezone', 'UTC'),
+                    ),
         );
     }
 }

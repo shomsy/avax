@@ -23,13 +23,13 @@ final readonly class VerifyDpopProof
     private AuditLogInterface $auditLog;
 
     public function __construct(
-        private TokenCodecInterface           $codec,
+        private TokenCodecInterface $codec,
         private DpopProofReplayStoreInterface $replayStore,
-        AuditLogInterface|null                $auditLog = null,
-        private int                           $maxAgeSeconds = 300
+        AuditLogInterface           $auditLog = null,
+        private int                 $maxAgeSeconds = 300,
     )
     {
-        $auditLog       ??= new NullAuditLog();
+        $auditLog ??= new NullAuditLog();
         $this->auditLog = $auditLog;
     }
 
@@ -44,6 +44,7 @@ final readonly class VerifyDpopProof
 
         if ($proof === null || $proof === '') {
             $this->recordFailure(input: $input, reason: 'missing_proof');
+
             throw DpopProofFailed::missing();
         }
 
@@ -51,6 +52,7 @@ final readonly class VerifyDpopProof
 
         if (! is_array(value: $claims)) {
             $this->recordFailure(input: $input, reason: 'decode_failed');
+
             throw DpopProofFailed::invalid(reason: 'decode_failed');
         }
 
@@ -69,6 +71,7 @@ final readonly class VerifyDpopProof
             || ! is_string(value: $thumbprint)
         ) {
             $this->recordFailure(input: $input, reason: 'missing_required_claims');
+
             throw DpopProofFailed::invalid(reason: 'missing_required_claims');
         }
 
@@ -78,27 +81,31 @@ final readonly class VerifyDpopProof
 
         if ($age > $this->maxAgeSeconds) {
             $this->recordFailure(input: $input, reason: 'proof_expired');
+
             throw DpopProofFailed::invalid(reason: 'proof_expired');
         }
 
         if (strtoupper(string: $htm) !== strtoupper(string: $input->method)) {
             $this->recordFailure(input: $input, reason: 'method_mismatch');
+
             throw DpopProofFailed::invalid(reason: 'method_mismatch');
         }
 
         if (! $this->sameUri(expected: $htu, actual: $input->uri)) {
             $this->recordFailure(input: $input, reason: 'uri_mismatch');
+
             throw DpopProofFailed::invalid(reason: 'uri_mismatch');
         }
 
         if ($input->accessToken !== null) {
             $expectedAth = rtrim(
                 string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $input->accessToken, binary: true)), '+/', '-_'),
-                characters: '='
+                characters: '=',
             );
 
             if (! is_string(value: $ath) || ! hash_equals(known_string: $expectedAth, user_string: $ath)) {
                 $this->recordFailure(input: $input, reason: 'access_token_mismatch');
+
                 throw DpopProofFailed::invalid(reason: 'access_token_mismatch');
             }
         }
@@ -107,12 +114,13 @@ final readonly class VerifyDpopProof
 
         if (! $this->replayStore->remember(proofId: $proofId, expiresAt: $issuedAt->modify(modifier: "+{$this->maxAgeSeconds} seconds"))) {
             $this->recordFailure(input: $input, reason: 'replay_detected');
+
             throw DpopProofFailed::invalid(reason: 'replay_detected');
         }
 
         return new OAuthSenderConstraint(
             type      : OAuthSenderConstraintType::DPOP,
-            thumbprint: $thumbprint
+            thumbprint: $thumbprint,
         );
     }
 
@@ -155,7 +163,7 @@ final readonly class VerifyDpopProof
                                                            'reason' => $reason,
                                                            'method' => strtoupper(string: $input->method),
                                                            'uri'    => $input->uri,
-                                                       ]
+                                                       ],
                                        ));
     }
 

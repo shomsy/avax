@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 $artifactDir = sys_get_temp_dir() . '/container-benchmark-compare-' . uniqid();
-if (! mkdir(directory: $artifactDir, permissions: 0775, recursive: true) && ! is_dir(filename: $artifactDir)) {
-    throw new RuntimeException(message: "Cannot create benchmark comparison artifact directory [{$artifactDir}].");
+if (! mkdir(directory: $artifactDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $artifactDir)) {
+    throw new RuntimeException(message: sprintf('Cannot create benchmark comparison artifact directory [%s].', $artifactDir));
 }
 
 $left  = $artifactDir . '/left.json';

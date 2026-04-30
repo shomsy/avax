@@ -27,12 +27,12 @@ class Notifier
         return $this;
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null) : void
+    public function sendTo(mixed $notifiable, Notification $notification, string $channel = null) : void
     {
         $this->flow->sendTo($notifiable, $notification, $channel);
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null) : void
+    public function sendToMany(array $notifiables, Notification $notification, string $channel = null) : void
     {
         $this->flow->sendToMany($notifiables, $notification, $channel);
     }

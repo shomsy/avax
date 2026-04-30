@@ -9,25 +9,25 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class RouteCacheRead
 {
     public function __construct(
-        private ChooseCacheNodeForKey $router
+        private ChooseCacheNodeForKey $chooseCacheNodeForKey,
     ) {}
 
-    public function route(CacheKey $key) : CacheNode|null
+    public function route(CacheKey $cacheKey) : CacheNode|null
     {
-        return $this->router->choose(key: $key);
+        return $this->chooseCacheNodeForKey->choose(key: $cacheKey);
     }
 
-    public function getPreferredNode(CacheKey $key, array $availableNodes) : CacheNode|null
+    public function getPreferredNode(CacheKey $cacheKey, array $availableNodes) : CacheNode|null
     {
-        $preferred = $this->router->choose(key: $key);
+        $preferred = $this->chooseCacheNodeForKey->choose(key: $cacheKey);
 
         if ($preferred === null) {
             return $availableNodes[0] ?? null;
         }
 
-        foreach ($availableNodes as $node) {
-            if ($node->id->toString() === $preferred->id->toString()) {
-                return $node;
+        foreach ($availableNodes as $availableNode) {
+            if ($availableNode->id->toString() === $preferred->id->toString()) {
+                return $availableNode;
             }
         }
 

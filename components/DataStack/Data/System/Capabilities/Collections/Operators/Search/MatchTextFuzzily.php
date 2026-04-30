@@ -11,19 +11,21 @@ final readonly class MatchTextFuzzily
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(string $query, int $threshold = 70, string|null $key = null) : array
+    public function __invoke(string $query, int $threshold = 70, ?string $key = null) : array
     {
         return array_values(array_filter(
                                 $this->items,
-                                function ($item) use ($query, $threshold, $key) {
+                                static function ($item) use ($query, $threshold, $key) : bool {
                                     $target = $key !== null ? ($item[$key] ?? '') : $item;
-                                    if (! is_string($target)) return false;
+                                    if (! is_string($target)) {
+                                        return false;
+                                    }
 
                                     // Simple similarity implementation if FuzzyWuzzy is missing
                                     similar_text(strtolower($query), strtolower($target), $percent);
 
                                     return $percent >= $threshold;
-                                }
+                                },
                             ));
     }
 }

@@ -9,7 +9,7 @@ interface InvalidationStrategy
     public function shouldInvalidate(
         string $key,
         string $reason,
-        array  $context = []
+        array $context = [],
     ) : bool;
 
     public function strategyName() : string;

@@ -9,63 +9,63 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 class CacheResult
 {
     public function __construct(
-        public readonly CacheResultState $state,
+        public readonly CacheResultState $cacheResultState,
         public readonly mixed            $value,
-        public readonly CacheKey|null    $key = null,
-        public readonly string|null      $message = null
+        public readonly CacheKey|null    $cacheKey = null,
+        public readonly string|null      $message = null,
     ) {}
 
-    public static function hit(mixed $value, CacheKey|null $key = null) : self
+    public static function hit(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::HIT,
             value: $value,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
-    public static function miss(CacheKey|null $key = null) : self
+    public static function miss(?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::MISS,
             value: null,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
-    public static function expired(mixed $value, CacheKey|null $key = null) : self
+    public static function expired(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::EXPIRED,
             value: $value,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
-    public static function stale(mixed $value, CacheKey|null $key = null) : self
+    public static function stale(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::STALE,
             value: $value,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
-    public static function stored(bool $success, CacheKey|null $key = null) : self
+    public static function stored(bool $success, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
             value: $success,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
-    public static function deleted(bool $success, CacheKey|null $key = null) : self
+    public static function deleted(bool $success, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
             value: $success,
-            key  : $key
+            key  : $cacheKey,
         );
     }
 
@@ -73,28 +73,28 @@ class CacheResult
     {
         return new self(
             state: $success ? CacheResultState::CLEARED : CacheResultState::CLEAR_FAILED,
-            value: $success
+            value: $success,
         );
     }
 
-    public static function error(string $message, CacheKey|null $key = null) : self
+    public static function error(string $message, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state  : CacheResultState::ERROR,
             value  : null,
-            key    : $key,
-            message: $message
+            key    : $cacheKey,
+            message: $message,
         );
     }
 
     public function isMiss() : bool
     {
-        return $this->state === CacheResultState::MISS;
+        return $this->cacheResultState === CacheResultState::MISS;
     }
 
     public function isSuccess() : bool
     {
-        return in_array($this->state, [
+        return in_array($this->cacheResultState, [
             CacheResultState::HIT,
             CacheResultState::MISS,
             CacheResultState::EXPIRED,
@@ -116,11 +116,11 @@ class CacheResult
 
     public function isHit() : bool
     {
-        return $this->state === CacheResultState::HIT;
+        return $this->cacheResultState === CacheResultState::HIT;
     }
 
     public function isStale() : bool
     {
-        return $this->state === CacheResultState::STALE;
+        return $this->cacheResultState === CacheResultState::STALE;
     }
 }

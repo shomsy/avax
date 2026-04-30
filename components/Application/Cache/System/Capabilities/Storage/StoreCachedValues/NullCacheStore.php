@@ -6,21 +6,27 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCac
 
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Override;
 
 final class NullCacheStore implements CacheStore
 {
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    #[Override]
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void {}
+    #[Override]
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void {}
 
-    public function forget(CacheKey $key) : void {}
+    #[Override]
+    public function forget(CacheKey $cacheKey) : void {}
 
+    #[Override]
     public function clear() : void {}
 
-    public function exists(CacheKey $key) : bool
+    #[Override]
+    public function exists(CacheKey $cacheKey) : bool
     {
         return false;
     }

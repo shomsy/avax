@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Headers;
@@ -35,6 +36,7 @@ final class RequestHeaders
         foreach ($this->headers as $name => $value) {
             $result[$name] = $value->all();
         }
+
         return $result;
     }
 }

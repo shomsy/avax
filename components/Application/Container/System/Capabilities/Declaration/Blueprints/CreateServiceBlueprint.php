@@ -19,17 +19,17 @@ use ReflectionUnionType;
  */
 final readonly class CreateServiceBlueprint
 {
-    private BlueprintCache           $cache;
+    private BlueprintCache $cache;
     private ResolveDependencies|null $dependencies;
 
     public function __construct(
-        BlueprintCache|null      $cache = null,
-        ResolveDependencies|null $dependencies = null
+        BlueprintCache      $cache = null,
+        ResolveDependencies $dependencies = null,
     )
     {
         $this->dependencies = $dependencies;
-        $this->cache        = $cache ?? new BlueprintCache;
-        $this->dependencies ??= new ResolveDependencies;
+        $this->cache = $cache ?? new BlueprintCache();
+        $this->dependencies ??= new ResolveDependencies();
     }
 
     /**
@@ -56,7 +56,7 @@ final readonly class CreateServiceBlueprint
         $fingerprint = $this->cache->shouldValidateSource()
             ? $this->cacheFingerprintFor(class: $class)
             : '';
-        $cached      = $this->cache->get(class: $class, fingerprint: $fingerprint);
+        $cached = $this->cache->get(class: $class, fingerprint: $fingerprint);
         if ($cached !== null) {
             return $cached;
         }
@@ -66,11 +66,11 @@ final readonly class CreateServiceBlueprint
 
         $properties = array_values(array: array_filter(
                                               array   : $reflection->getProperties(),
-                                              callback: static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic()
+                                              callback: static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic(),
                                           ));
         $methods    = array_values(array: array_filter(
                                               array   : $reflection->getMethods(),
-                                              callback: static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic()
+                                              callback: static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic(),
                                           ));
 
         return $this->cache->put(blueprint: new ServiceBlueprint(
@@ -85,17 +85,17 @@ final readonly class CreateServiceBlueprint
                                                                               'serviceId' => $this->serviceIdFor(property: $property),
                                                                               'readonly'  => $property->isReadOnly(),
                                                                           ],
-                                                                          array   : $properties
+                                                                          array   : $properties,
                                                                       ),
                                                 injectableMethods   : array_map(
                                                                           callback: fn (ReflectionMethod $method) => [
                                                                               'name' => $method->getName(),
                                                                               'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
                                                                           ],
-                                                                          array   : $methods
+                                                                          array   : $methods,
                                                                       ),
                                                 shared              : $reflection->getAttributes(name: Singleton::class) !== [],
-                                                fingerprint         : $fingerprint
+                                                fingerprint         : $fingerprint,
                                             ));
     }
 

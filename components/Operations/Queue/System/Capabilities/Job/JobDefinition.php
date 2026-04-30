@@ -16,7 +16,7 @@ final class JobDefinition
         public readonly int         $maxAttempts = 3,
         public readonly int         $timeout = 60,
         public readonly int         $retryDelay = 0,
-        public readonly string|null $correlationId = null
+        public readonly string|null $correlationId = null,
     ) {}
 
     public static function fromArray(array $data) : self
@@ -28,7 +28,7 @@ final class JobDefinition
             maxAttempts  : $data['maxAttempts'] ?? 3,
             timeout      : $data['timeout'] ?? 60,
             retryDelay   : $data['retryDelay'] ?? 0,
-            correlationId: $data['correlationId'] ?? null
+            correlationId: $data['correlationId'] ?? null,
         );
     }
 
@@ -41,7 +41,7 @@ final class JobDefinition
             maxAttempts  : $this->maxAttempts,
             timeout      : $this->timeout,
             retryDelay   : $this->retryDelay,
-            correlationId: $this->correlationId
+            correlationId: $this->correlationId,
         );
     }
 
@@ -54,7 +54,7 @@ final class JobDefinition
             maxAttempts  : $this->maxAttempts,
             timeout      : $this->timeout,
             retryDelay   : $this->retryDelay,
-            correlationId: $this->correlationId
+            correlationId: $this->correlationId,
         );
     }
 
@@ -67,7 +67,7 @@ final class JobDefinition
             maxAttempts  : $maxAttempts,
             timeout      : $this->timeout,
             retryDelay   : $this->retryDelay,
-            correlationId: $this->correlationId
+            correlationId: $this->correlationId,
         );
     }
 
@@ -80,7 +80,7 @@ final class JobDefinition
             maxAttempts  : $this->maxAttempts,
             timeout      : $timeout,
             retryDelay   : $this->retryDelay,
-            correlationId: $this->correlationId
+            correlationId: $this->correlationId,
         );
     }
 
@@ -93,7 +93,7 @@ final class JobDefinition
             maxAttempts  : $this->maxAttempts,
             timeout      : $this->timeout,
             retryDelay   : $delay,
-            correlationId: $this->correlationId
+            correlationId: $this->correlationId,
         );
     }
 
@@ -106,7 +106,7 @@ final class JobDefinition
             maxAttempts  : $this->maxAttempts,
             timeout      : $this->timeout,
             retryDelay   : $this->retryDelay,
-            correlationId: $id
+            correlationId: $id,
         );
     }
 

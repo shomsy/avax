@@ -14,11 +14,11 @@ interface PasskeyRuntimeInterface
     public function beginRegistration(
         string $rpId,
         string $rpName,
-        int    $userId,
+        int   $userId,
         string $userName,
         string $displayName,
         string $challenge,
-        array  $excludeCredentialIds
+        array $excludeCredentialIds,
     ) : array;
 
     /**
@@ -27,7 +27,7 @@ interface PasskeyRuntimeInterface
     public function completeRegistration(
         string $rpId,
         string $challenge,
-        array  $response
+        array $response,
     ) : ResolvedPasskeyCredential;
 
     /**
@@ -38,17 +38,17 @@ interface PasskeyRuntimeInterface
     public function beginAuthentication(
         string $rpId,
         string $challenge,
-        array  $allowCredentialIds
+        array $allowCredentialIds,
     ) : array;
 
     /**
-     * @param array<string, mixed>    $response
+     * @param array<string, mixed> $response
      * @param list<PasskeyCredential> $knownCredentials
      */
     public function completeAuthentication(
         string $rpId,
         string $challenge,
-        array  $response,
-        array  $knownCredentials
+        array $response,
+        array $knownCredentials,
     ) : VerifiedPasskeyAuthentication;
 }

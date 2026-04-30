@@ -20,15 +20,15 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaSt
 final readonly class Saga
 {
     public function __construct(
-        private DefineSaga             $defineSaga,
-        private StartSaga              $startSaga,
-        private RunSagaStep            $runSagaStep,
-        private CompleteSaga           $completeSaga,
-        private CompensateSaga         $compensateSaga,
-        private ResumeSaga             $resumeSaga,
+        private DefineSaga     $defineSaga,
+        private StartSaga      $startSaga,
+        private RunSagaStep    $runSagaStep,
+        private CompleteSaga   $completeSaga,
+        private CompensateSaga $compensateSaga,
+        private ResumeSaga     $resumeSaga,
         private ProtectSagaIdempotency $protectSagaIdempotency,
-        private StoreSagaState         $storeSagaState,
-        private InspectSaga            $inspectSaga
+        private StoreSagaState $storeSagaState,
+        private InspectSaga    $inspectSaga,
     ) {}
 
     public static function inMemory() : self
@@ -46,7 +46,7 @@ final readonly class Saga
             resumeSaga            : new ResumeSaga(storeSagaState: $store),
             protectSagaIdempotency: $idempotency,
             storeSagaState        : $store,
-            inspectSaga           : $inspect
+            inspectSaga           : $inspect,
         );
     }
 

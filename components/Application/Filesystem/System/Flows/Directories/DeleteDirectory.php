@@ -6,9 +6,9 @@ namespace Avax\Components\Application\Filesystem\Directories;
 
 use Avax\Components\Application\Filesystem\Disks\Disk;
 
-final class DeleteDirectory
+final readonly class DeleteDirectory
 {
-    public function __construct(private readonly Disk $disk) {}
+    public function __construct(private Disk $disk) {}
 
     public function execute(string $path) : bool
     {

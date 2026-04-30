@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
@@ -13,6 +13,7 @@ interface LifecycleContract
 
 final class LifecycleService implements LifecycleContract
 {
+    #[Override]
     public function id() : string
     {
         return 'lifecycle';
@@ -21,9 +22,7 @@ final class LifecycleService implements LifecycleContract
 
 final class LifecycleScopedService
 {
-    public string $name = 'scoped';
-
-    public function __construct(string $name = 'scoped') { $this->name = $name; }
+    public function __construct(public string $name = 'scoped') {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-lifecycle-' . uniqid();

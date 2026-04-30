@@ -263,7 +263,7 @@ interface Auth
     /**
      * @return list<ScimDirectory>
      */
-    public function readScimDirectories(string|null $tenantSlug = null) : array;
+    public function readScimDirectories(string $tenantSlug = null) : array;
 
     public function rotateScimToken(string $directoryId) : RotatedScimToken;
 
@@ -347,22 +347,22 @@ interface Auth
      */
     public function requireAdminElevation() : void;
 
-    public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null;
+    public function assessCurrentRisk(string $ipAddress = null, string $userAgent = null) : RiskDecision|null;
 
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(int|null $userId = null) : array;
+    public function readRiskSignals(int $userId = null) : array;
 
-    public function explainAccessDenied(string $resource, string|null $requiredPermission = null, string|null $tenant = null, string|null $resourceTenant = null) : AuthIssueExplanation;
+    public function explainAccessDenied(string $resource, string $requiredPermission = null, string $tenant = null, string $resourceTenant = null) : AuthIssueExplanation;
 
-    public function explainStepUpRequired(string $action, bool|null $phishingResistantRequired = null, int|null $freshAfterSeconds = null) : AuthIssueExplanation;
+    public function explainStepUpRequired(string $action, bool $phishingResistantRequired = null, int $freshAfterSeconds = null) : AuthIssueExplanation;
 
-    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation;
+    public function explainSenderConstraintFailure(string $reason, string $requiredConstraint = null) : AuthIssueExplanation;
 
-    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation;
+    public function explainSessionRevocation(string $status, string $sessionId = null) : AuthIssueExplanation;
 
-    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation;
+    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation;
 
     // ── Capability accessors ──
 

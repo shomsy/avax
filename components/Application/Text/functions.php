@@ -123,7 +123,7 @@ function rx(string $pattern, string $flags = '') : Pattern
  *
  * @param string $pattern Raw regex pattern (without delimiters)
  * @param string $subject String to test against
- * @param string $flags   PCRE flags (e.g., 'i', 'u', 'm')
+ * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_test(string $pattern, string $subject, string $flags = '') : bool
 {
@@ -135,7 +135,7 @@ function rx_test(string $pattern, string $subject, string $flags = '') : bool
  *
  * @param string $pattern Raw regex pattern (without delimiters)
  * @param string $subject String to match against
- * @param string $flags   PCRE flags (e.g., 'i', 'u', 'm')
+ * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_match(string $pattern, string $subject, string $flags = '') : MatchResult
 {
@@ -145,10 +145,10 @@ function rx_match(string $pattern, string $subject, string $flags = '') : MatchR
 /**
  * Replace with regex pattern.
  *
- * @param string $pattern     Raw regex pattern (without delimiters)
+ * @param string $pattern Raw regex pattern (without delimiters)
  * @param string $replacement Replacement string
- * @param string $subject     String to replace in
- * @param string $flags       PCRE flags (e.g., 'i', 'u', 'm')
+ * @param string $subject String to replace in
+ * @param string $flags   PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_replace(string $pattern, string $replacement, string $subject, string $flags = '') : string
 {
@@ -173,7 +173,7 @@ function rx_replace_callback(string $pattern, string $subject, callable $fn, str
  *
  * @param string $pattern Raw regex pattern (without delimiters)
  * @param string $subject String to split
- * @param string $flags   PCRE flags (e.g., 'i', 'u', 'm')
+ * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_split(string $pattern, string $subject, string $flags = '') : array
 {
@@ -184,8 +184,7 @@ if (! function_exists(function: 'preview_text')) {
     /**
      * Shortens the given text for preview purposes.
      *
-     * @param string $text
-     * @param int    $limit Number of characters to show
+     * @param int $limit Number of characters to show
      *
      * @return string Truncated text with ellipsis if necessary.
      */

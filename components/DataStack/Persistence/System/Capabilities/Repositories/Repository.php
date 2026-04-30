@@ -19,7 +19,7 @@ abstract class Repository implements RepositoryInterface
 {
     public function __construct(
         private readonly RepositoryStorageInterface $storage,
-        private readonly UnitOfWorkInterface        $unitOfWork,
+        private readonly UnitOfWorkInterface $unitOfWork,
     ) {}
 
     public function findById(string|int $id) : object|null
@@ -35,16 +35,16 @@ abstract class Repository implements RepositoryInterface
      */
     abstract protected function entityClass() : string;
 
-    public function findAll(int|null $limit = null, int $offset = 0) : array
+    public function findAll(int $limit = null, int $offset = 0) : array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
 
     public function findBy(
-        array      $criteria,
-        array|null $orderBy = null,
-        int|null   $limit = null,
-        int|null   $offset = null,
+        array $criteria,
+        array $orderBy = null,
+        int   $limit = null,
+        int   $offset = null,
     ) : array
     {
         return $this->storage->findBy(

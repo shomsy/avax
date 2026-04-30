@@ -64,25 +64,25 @@ final readonly class RegistrationMetadata
      * @param list<string> $imports
      */
     public function __construct(
-        string      $unitId,
-        string|null $ownerSlice = null,
-        string|null $category = null,
-        string|null $visibility = null,
-        array|null  $profiles = null,
-        array|null  $flags = null,
-        array|null  $tenants = null,
-        array|null  $regions = null,
-        array|null  $modes = null,
-        string|null $overrideSource = null,
-        string|null $reason = null,
-        string|null $intent = null,
-        string|null $provenance = null,
-        bool|null   $exported = null,
-        array|null  $imports = null,
-        string|null $concept = null,
-        bool|null   $fallback = null,
-        bool|null   $ownerLocked = null,
-        bool        $categoryLocked = false
+        string $unitId,
+        string $ownerSlice = null,
+        string $category = null,
+        string $visibility = null,
+        array  $profiles = null,
+        array  $flags = null,
+        array  $tenants = null,
+        array  $regions = null,
+        array  $modes = null,
+        string $overrideSource = null,
+        string $reason = null,
+        string $intent = null,
+        string $provenance = null,
+        bool   $exported = null,
+        array  $imports = null,
+        string $concept = null,
+        bool   $fallback = null,
+        bool   $ownerLocked = null,
+        bool   $categoryLocked = false,
     )
     {
         $ownerSlice           ??= 'default';
@@ -118,7 +118,7 @@ final readonly class RegistrationMetadata
         $this->imports        = self::stringList(values: $imports);
         $this->concept        = self::normalizeText(
             value   : $concept,
-            fallback: self::derivedConcept(unitId: $unitId)
+            fallback: self::derivedConcept(unitId: $unitId),
         );
         $this->fallback       = $fallback;
         $this->ownerLocked    = $ownerLocked;
@@ -186,7 +186,7 @@ final readonly class RegistrationMetadata
         $segments   = explode(separator: '.', string: $normalized)
                 |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $segment) : bool => $segment !== ''))
                 |> array_values(...);
-        $last       = $segments !== [] ? $segments[array_key_last(array: $segments)] : $unitId;
+        $last = $segments !== [] ? $segments[array_key_last(array: $segments)] : $unitId;
 
         return strtolower(string: trim(string: $last)) ?: strtolower(string: $unitId);
     }
@@ -230,7 +230,7 @@ final readonly class RegistrationMetadata
             concept       : (string) ($state['concept'] ?? ''),
             fallback      : (bool) ($state['fallback'] ?? false),
             ownerLocked   : (bool) ($state['ownerLocked'] ?? false),
-            categoryLocked: (bool) ($state['categoryLocked'] ?? false)
+            categoryLocked: (bool) ($state['categoryLocked'] ?? false),
         );
     }
 
@@ -263,7 +263,7 @@ final readonly class RegistrationMetadata
             concept       : (string) ($overrides['concept'] ?? $this->concept),
             fallback      : (bool) ($overrides['fallback'] ?? $this->fallback),
             ownerLocked   : (bool) ($overrides['ownerLocked'] ?? $this->ownerLocked),
-            categoryLocked: (bool) ($overrides['categoryLocked'] ?? $this->categoryLocked)
+            categoryLocked: (bool) ($overrides['categoryLocked'] ?? $this->categoryLocked),
         );
     }
 
@@ -374,7 +374,7 @@ final readonly class RegistrationMetadata
         $normalized = RegistrationCategory::normalize(category: $category);
         if ($this->categoryLocked && $normalized !== $this->category) {
             throw new LogicException(
-                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}]."
+                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}].",
             );
         }
 
@@ -386,7 +386,7 @@ final readonly class RegistrationMetadata
         $normalized = self::normalizeSlice(slice: $ownerSlice);
         if ($this->ownerLocked && $normalized !== $this->ownerSlice) {
             throw new LogicException(
-                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}]."
+                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}].",
             );
         }
 
@@ -449,7 +449,7 @@ final readonly class RegistrationMetadata
         return $this->exported || in_array(
                 needle  : $this->visibility,
                 haystack: [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED],
-                strict  : true
+                strict  : true,
             );
     }
 

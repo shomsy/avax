@@ -16,9 +16,9 @@ final readonly class SagaRecoveryPlan
 {
     public function __construct(
         public SagaRecoveryStrategy $strategy,
-        public int                  $maxRetries,
-        public int                  $retryDelayMs,
-        public bool                 $allowSkipSteps
+        public int  $maxRetries,
+        public int  $retryDelayMs,
+        public bool $allowSkipSteps,
     ) {}
 
     public static function standard() : self
@@ -27,7 +27,7 @@ final readonly class SagaRecoveryPlan
             strategy      : SagaRecoveryStrategy::RETRY,
             maxRetries    : 3,
             retryDelayMs  : 1000,
-            allowSkipSteps: false
+            allowSkipSteps: false,
         );
     }
 
@@ -37,7 +37,7 @@ final readonly class SagaRecoveryPlan
             strategy      : SagaRecoveryStrategy::COMPENSATE,
             maxRetries    : 5,
             retryDelayMs  : 500,
-            allowSkipSteps: true
+            allowSkipSteps: true,
         );
     }
 

@@ -29,6 +29,7 @@ final readonly class VerifyMtlsSenderConstraint
 
         if ($thumbprint === null || $thumbprint === '') {
             $this->recordFailure(reason: 'missing_certificate', input: $input);
+
             throw MtlsBindingFailed::missingCertificate();
         }
 
@@ -37,12 +38,13 @@ final readonly class VerifyMtlsSenderConstraint
             && ! hash_equals(known_string: $input->expectedTokenThumbprint, user_string: $thumbprint)
         ) {
             $this->recordFailure(reason: 'binding_mismatch', input: $input);
+
             throw MtlsBindingFailed::mismatch();
         }
 
         return new OAuthSenderConstraint(
             type      : OAuthSenderConstraintType::MTLS,
-            thumbprint: $thumbprint
+            thumbprint: $thumbprint,
         );
     }
 
@@ -85,7 +87,7 @@ final readonly class VerifyMtlsSenderConstraint
                                                            'reason' => $reason,
                                                            'method' => strtoupper(string: $input->method),
                                                            'uri'    => $input->uri,
-                                                       ]
+                                                       ],
                                        ));
     }
 }

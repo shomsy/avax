@@ -12,8 +12,10 @@ use SensitiveParameter;
 final readonly class ConfirmMfaRecoveryData
 {
     public function __construct(
-        #[SensitiveParameter] public string      $token,
-        #[SensitiveParameter] public string|null $ipAddress = null,
-        public string|null                       $userAgent = null
+        #[SensitiveParameter]
+        public string      $token,
+        #[SensitiveParameter]
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

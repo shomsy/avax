@@ -14,7 +14,7 @@ final readonly class ExecuteSagaStep
 
     public function execute(
         SagaStepDefinition $step,
-        array              $sagaData
+        array $sagaData,
     ) : array
     {
         $startTime = microtime(true);
@@ -74,14 +74,14 @@ final readonly class RecordSagaStepCompleted
 
     public function record(
         SagaInstance $instance,
-        string       $stepName,
-        array        $result
+        string $stepName,
+        array  $result,
     ) : void
     {
         $instance = $instance->advanceTo(
             stepName : $stepName,
             stepIndex: $instance->currentStepIndex + 1,
-            result   : $result
+            result   : $result,
         );
 
         $this->store->set("saga_{$instance->id}", $instance->toArray());
@@ -91,8 +91,8 @@ final readonly class RecordSagaStepCompleted
                 sagaId  : $instance->id,
                 sagaName: $instance->definitionName,
                 stepName: $stepName,
-                output  : $result['output'] ?? []
-            )
+                output  : $result['output'] ?? [],
+            ),
         );
     }
 }
@@ -103,8 +103,8 @@ final readonly class RecordSagaStepFailed
 
     public function record(
         SagaInstance $instance,
-        string       $stepName,
-        string       $error
+        string $stepName,
+        string $error,
     ) : void
     {
         $instance = $instance->fail(error: $error);
@@ -116,8 +116,8 @@ final readonly class RecordSagaStepFailed
                 sagaId  : $instance->id,
                 sagaName: $instance->definitionName,
                 stepName: $stepName,
-                error   : $error
-            )
+                error   : $error,
+            ),
         );
     }
 }
@@ -126,7 +126,7 @@ final readonly class ScheduleNextSagaStep
 {
     public function schedule(
         SagaInstance       $current,
-        SagaStepDefinition $nextStep
+        SagaStepDefinition $nextStep,
     ) : SagaInstance
     {
         return $current;
@@ -137,7 +137,7 @@ final readonly class ChooseNextSagaStep
 {
     public function choose(
         SagaInstance $instance,
-        array        $definition
+        array $definition,
     ) : SagaStepDefinition|null
     {
         $currentIndex = $instance->currentStepIndex;

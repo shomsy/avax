@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer;
 
 use JsonSerializable;
+use Override;
 
 /**
  * Single validation violation for DTO
@@ -12,12 +13,13 @@ use JsonSerializable;
 final readonly class DataTransferViolation implements JsonSerializable
 {
     public function __construct(
-        public string      $field,
-        public string      $message,
+        public string $field,
+        public string $message,
         public string|null $code = null,
-        public mixed       $invalidValue = null,
+        public mixed  $invalidValue = null,
     ) {}
 
+    #[Override]
     public function jsonSerialize() : array
     {
         return [

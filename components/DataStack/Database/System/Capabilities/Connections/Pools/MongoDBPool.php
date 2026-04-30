@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
+use Override;
+
 /**
  * MongoDB connection pool.
  *
@@ -13,10 +15,10 @@ class MongoDBPool extends BaseConnectionPool
 {
     public function __construct(
         protected array $config = [],
-        int             $minConnections = 5,
-        int             $maxConnections = 20,
-        int             $connectionTimeoutMs = 10000,
-        int             $idleTimeoutMs = 300000,
+        int $minConnections = 5,
+        int $maxConnections = 20,
+        int $connectionTimeoutMs = 10000,
+        int $idleTimeoutMs = 300000,
     )
     {
         parent::__construct(
@@ -27,14 +29,16 @@ class MongoDBPool extends BaseConnectionPool
         );
     }
 
+    #[Override]
     protected function createConnection() : PooledConnection
     {
         // @todo Replace with real MongoDB Manager: new \MongoDB\Driver\Manager($this->config['dsn'] ?? 'mongodb://localhost')
         return new ArrayPooledConnection(config: $this->config);
     }
 
-    protected function validateConnection(PooledConnection $connection) : bool
+    #[Override]
+    protected function validateConnection(PooledConnection $pooledConnection) : bool
     {
-        return $connection->isValid();
+        return $pooledConnection->isValid();
     }
 }

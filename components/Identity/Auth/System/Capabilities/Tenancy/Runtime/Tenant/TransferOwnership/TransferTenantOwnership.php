@@ -39,7 +39,7 @@ final readonly class TransferTenantOwnership
                                                        userId  : $currentOwner->userId,
                                                        role    : TenantMemberRole::ADMIN,
                                                        state   : $currentOwner->state,
-                                                       joinedAt: $currentOwner->joinedAt
+                                                       joinedAt: $currentOwner->joinedAt,
                                                    ));
         }
 
@@ -48,7 +48,7 @@ final readonly class TransferTenantOwnership
                                                    userId  : $nextOwner->userId,
                                                    role    : TenantMemberRole::OWNER,
                                                    state   : TenantMemberState::ACTIVE,
-                                                   joinedAt: $nextOwner->joinedAt
+                                                   joinedAt: $nextOwner->joinedAt,
                                                ));
 
         $updated = new Tenant(
@@ -56,7 +56,7 @@ final readonly class TransferTenantOwnership
             slug       : $tenant->slug,
             name       : $tenant->name,
             ownerUserId: $data->newOwnerUserId,
-            createdAt  : $tenant->createdAt
+            createdAt  : $tenant->createdAt,
         );
         $this->tenantStore->saveTenant(tenant: $updated);
         $this->auditLog->record(event: new AuditEvent(
@@ -66,7 +66,7 @@ final readonly class TransferTenantOwnership
                                                            'tenant_id'         => $tenant->tenantId,
                                                            'tenant_slug'       => $tenant->slug,
                                                            'new_owner_user_id' => $data->newOwnerUserId,
-                                                       ]
+                                                       ],
                                        ));
 
         return $updated;

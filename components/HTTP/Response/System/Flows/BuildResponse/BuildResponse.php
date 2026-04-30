@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\Flows\BuildResponse;
@@ -10,7 +11,7 @@ final class BuildResponse
 {
     public function __construct(
         private NormalizeResponseBody $bodyNormalizer,
-        private NormalizeResponseHeaders $headerNormalizer
+        private NormalizeResponseHeaders $headerNormalizer,
     ) {}
 
     public function execute(mixed $content, int $status = 200, array $headers = []): ResponseInterface
@@ -18,7 +19,7 @@ final class BuildResponse
         return new Response(
             statusCode: $status,
             headers: $this->headerNormalizer->normalize($headers),
-            body: $this->bodyNormalizer->normalize($content)
+            body      : $this->bodyNormalizer->normalize($content),
         );
     }
 }

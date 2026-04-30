@@ -14,13 +14,13 @@ final readonly class SlowQueryReport
 {
     public function __construct(
         public string $sql,
-        public array  $bindings = [],
-        public float  $durationMs = 0.0,
-        public float  $thresholdMs = 0.0,
+        public array $bindings = [],
+        public float $durationMs = 0.0,
+        public float $thresholdMs = 0.0,
         public string $fingerprint = '',
         public string $connection = '',
-        public float  $timestamp = 0.0,
-        public int    $occurrences = 1,
+        public float $timestamp = 0.0,
+        public int   $occurrences = 1,
     ) {}
 
     /**
@@ -91,7 +91,7 @@ final readonly class SlowQueryReport
 final readonly class SlowQueryStatistics
 {
     public function __construct(
-        public int   $totalSlowQueries = 0,
+        public int $totalSlowQueries = 0,
         public float $totalDurationMs = 0.0,
         public float $averageDurationMs = 0.0,
         public float $maxDurationMs = 0.0,
@@ -202,9 +202,9 @@ final class SlowQueryDetector
     private int $maxEntries;
 
     public function __construct(
-        float                   $thresholdMs = 1000.0,
-        QueryFingerprinter|null $fingerprinter = null,
-        int                     $maxEntries = 0,
+        float              $thresholdMs = 1000.0,
+        QueryFingerprinter $fingerprinter = null,
+        int                $maxEntries = 0,
     )
     {
         $this->thresholdMs   = $thresholdMs;
@@ -260,8 +260,8 @@ final class SlowQueryDetector
      */
     public function record(
         string $sql,
-        float  $durationMs,
-        array  $bindings = [],
+        float $durationMs,
+        array $bindings = [],
         string $connection = '',
     ) : bool
     {
@@ -342,7 +342,9 @@ final class SlowQueryDetector
     public function topSlow(int $limit = 10) : array
     {
         $sorted = $this->slowQueries;
-        usort($sorted, static fn (SlowQueryReport $a, SlowQueryReport $b) : int => $b->durationMs <=> $a->durationMs
+        usort(
+            $sorted,
+            static fn (SlowQueryReport $a, SlowQueryReport $b) : int => $b->durationMs <=> $a->durationMs,
         );
 
         return array_slice($sorted, 0, $limit);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 4) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 4) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
@@ -15,6 +15,7 @@ interface CallArgumentGreeterContract
 
 final class CallArgumentGreeter implements CallArgumentGreeterContract
 {
+    #[Override]
     public function message() : string
     {
         return 'args';
@@ -23,9 +24,9 @@ final class CallArgumentGreeter implements CallArgumentGreeterContract
 
 final class CallArgumentTarget
 {
-    public function handle(CallArgumentGreeterContract $greeter, string $name = 'fallback') : array
+    public function handle(CallArgumentGreeterContract $callArgumentGreeterContract, string $name = 'fallback') : array
     {
-        return [$greeter->message(), $name];
+        return [$callArgumentGreeterContract->message(), $name];
     }
 }
 
@@ -38,7 +39,7 @@ $reflection = new ReflectionMethod(objectOrMethod: CallArgumentTarget::class, me
 $resolved   = $arguments->resolve(
     parameters: $reflection->getParameters(),
     overrides : ['name' => 'custom'],
-    resolver  : $resolver
+    resolver  : $resolver,
 );
 
 assertSame(expected: 'args', actual: $resolved[0]->message(), message: 'Call arguments should resolve container-backed dependencies.');

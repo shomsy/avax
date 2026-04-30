@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Cookies;
@@ -8,7 +9,7 @@ use Avax\Components\HTTP\Session\System\Configuration\SessionCookieSettings;
 final readonly class SessionCookieWriter
 {
     public function __construct(
-        private SessionCookieSettings $settings
+        private SessionCookieSettings $settings,
     ) {}
 
     public function write(string $sessionId) : void

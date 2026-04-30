@@ -17,16 +17,16 @@ final readonly class TestComposition
     private Container $container;
 
     private function __construct(
-        Container $container
+        Container $container,
     )
     {
         $this->container = $container;
     }
 
-    public static function create(CreateContainerConfig|null $config = null) : self
+    public static function create() : self
     {
         return new self(
-            container: (new CreateContainer)->create(config: $config)
+            container: (new CreateContainer())->create(),
         );
     }
 
@@ -36,14 +36,14 @@ final readonly class TestComposition
     }
 
     public function bindFlow(
-        string    $slice,
-        string    $abstract,
-        mixed     $concrete = null,
-        bool|null $entry = null,
-        array     $imports = []
+        string $slice,
+        string $abstract,
+        mixed  $concrete = null,
+        ?bool  $entry = null,
+        array  $imports = [],
     ) : ServiceRegistration
     {
-        $entry        ??= false;
+        $entry ??= false;
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asFlow(ownerSlice: $slice)
             ->asPrivate();
@@ -62,8 +62,8 @@ final readonly class TestComposition
     public function singletonCapability(
         string $slice,
         string $abstract,
-        mixed  $concrete = null,
-        bool   $exported = true
+        mixed $concrete = null,
+        bool  $exported = true,
     ) : ServiceRegistration
     {
         $registration = $this->container->singleton(abstract: $abstract, concrete: $concrete)
@@ -81,8 +81,8 @@ final readonly class TestComposition
     public function bindCapability(
         string $slice,
         string $abstract,
-        mixed  $concrete = null,
-        bool   $exported = false
+        mixed $concrete = null,
+        bool  $exported = false,
     ) : ServiceRegistration
     {
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)

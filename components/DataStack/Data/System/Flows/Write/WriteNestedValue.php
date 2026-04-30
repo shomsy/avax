@@ -19,6 +19,7 @@ final class WriteNestedValue
             if (! isset($current[$segment]) || ! is_array($current[$segment])) {
                 $current[$segment] = [];
             }
+
             $current = &$current[$segment];
         }
 

@@ -26,7 +26,7 @@ final class PostgreSQLGrammar extends BaseGrammar
 
         $conflictColumns = array_map(
             callback: fn ($col) => $this->wrap(value: $col),
-            array   : $uniqueBy
+            array   : $uniqueBy,
         );
         $conflictClause  = implode(separator: ', ', array: $conflictColumns);
 
@@ -100,15 +100,15 @@ final class PostgreSQLGrammar extends BaseGrammar
         return 'RETURNING ' . implode(separator: ', ', array: $cols);
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
-        $sql         = $function . '(';
+        $sql = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
-                array   : explode(separator: ',', string: $partitionBy)
+                array   : explode(separator: ',', string: $partitionBy),
             ));
             $sql              .= 'PARTITION BY ' . $partitionColumns;
         }

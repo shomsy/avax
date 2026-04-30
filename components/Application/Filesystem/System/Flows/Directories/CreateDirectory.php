@@ -6,11 +6,11 @@ namespace Avax\Components\Application\Filesystem\Directories;
 
 use Avax\Components\Application\Filesystem\Disks\Disk;
 
-final class CreateDirectory
+final readonly class CreateDirectory
 {
-    public function __construct(private readonly Disk $disk) {}
+    public function __construct(private Disk $disk) {}
 
-    public function execute(string $path, int $permissions = 0755) : bool
+    public function execute(string $path, int $permissions = 0o755) : bool
     {
         return $this->disk->createDirectory(path: $path, permissions: $permissions);
     }

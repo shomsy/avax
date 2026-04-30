@@ -33,8 +33,10 @@ final readonly class ServeScimHttpSurface
     private const string USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
 
     public function __construct(
-        #[SensitiveParameter] private Auth            $auth,
-        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter]
+        private Auth            $auth,
+        #[SensitiveParameter]
+        private ReadBearerToken $readBearerToken = new ReadBearerToken(),
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
@@ -137,7 +139,7 @@ final readonly class ServeScimHttpSurface
         return new JsonHttpResponse(
             statusCode: 200,
             body      : $body,
-            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE]
+            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE],
         );
     }
 
@@ -230,7 +232,7 @@ final readonly class ServeScimHttpSurface
                                          'totalResults' => count(value: $users),
                                          'startIndex'   => $startIndex,
                                          'itemsPerPage' => count(value: $slice),
-                                         'Resources'    => array_map(callback: fn (ScimUserProjection $user) : array => $this->userResource(user: $user), array: $slice),
+                                         'Resources' => array_map(callback: fn (ScimUserProjection $user) : array => $this->userResource(user: $user), array: $slice),
                                      ]);
     }
 
@@ -297,7 +299,7 @@ final readonly class ServeScimHttpSurface
                                        callback: static fn (ScimUserProjection $user) : bool => match ($field) {
                                            'externalId' => $user->externalId === $value,
                                            'userName'   => $user->username === $value,
-                                       }
+                                       },
                                    ));
     }
 
@@ -325,24 +327,24 @@ final readonly class ServeScimHttpSurface
     private function userResource(ScimUserProjection $user) : array
     {
         return [
-            'schemas'                   => [self::USER_SCHEMA, self::USER_EXTENSION_SCHEMA],
-            'id'                        => $user->externalId,
-            'externalId'                => $user->externalId,
-            'userName'                  => $user->username,
-            'active'                    => $user->state === ScimAccountState::ACTIVE,
-            'emails'                    => [[
+            'schemas'    => [self::USER_SCHEMA, self::USER_EXTENSION_SCHEMA],
+            'id'         => $user->externalId,
+            'externalId' => $user->externalId,
+            'userName'   => $user->username,
+            'active'     => $user->state === ScimAccountState::ACTIVE,
+            'emails'     => [[
                                                 'value'   => $user->email,
                                                 'primary' => true,
                                             ]],
-            'groups'                    => array_map(
+            'groups'     => array_map(
                 callback: static fn (string $group) : array => ['value' => $group, 'display' => $group],
-                array   : $user->groups
+                array   : $user->groups,
             ),
             self::USER_EXTENSION_SCHEMA => [
                 'state' => $user->state->value,
                 'roles' => $user->roles,
             ],
-            'meta'                      => [
+            'meta'       => [
                 'resourceType' => 'User',
             ],
         ];
@@ -362,11 +364,11 @@ final readonly class ServeScimHttpSurface
             headers   : [
                             'Content-Type' => self::SCIM_CONTENT_TYPE,
                             'Location'     => '/Users/' . rawurlencode(string: $result->externalId),
-                        ]
+                        ],
         );
     }
 
-    private function provisionData(HttpEndpointInput $input, string|null $forcedExternalId = null) : ProvisionScimUserData
+    private function provisionData(HttpEndpointInput $input, string $forcedExternalId = null) : ProvisionScimUserData
     {
         $body        = $input->body;
         $directoryId = $this->directoryId(input: $input);
@@ -380,7 +382,7 @@ final readonly class ServeScimHttpSurface
             email         : $this->email(body: $body, fallback: $existing?->email),
             username      : $this->username(body: $body, fallback: $existing?->username),
             groups        : $this->groups(body: $body, fallback: $existing !== null ? $existing->groups : []),
-            state         : $this->state(body: $body, fallback: $existing !== null ? $existing->state : ScimAccountState::ACTIVE)
+            state         : $this->state(body: $body, fallback: $existing !== null ? $existing->state : ScimAccountState::ACTIVE),
         );
     }
 
@@ -398,7 +400,7 @@ final readonly class ServeScimHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function email(array $body, string|null $fallback = null) : string
+    private function email(array $body, string $fallback = null) : string
     {
         $emails = $body['emails'] ?? null;
 
@@ -424,7 +426,7 @@ final readonly class ServeScimHttpSurface
     /**
      * @param array<string, mixed> $body
      */
-    private function username(array $body, string|null $fallback = null) : string
+    private function username(array $body, string $fallback = null) : string
     {
         if (is_scalar(value: $body['userName'] ?? null) || is_scalar(value: $body['username'] ?? null)) {
             return trim(string: (string) ($body['userName'] ?? $body['username']));
@@ -439,7 +441,7 @@ final readonly class ServeScimHttpSurface
 
     /**
      * @param array<string, mixed> $body
-     * @param list<string>         $fallback
+     * @param list<string> $fallback
      *
      * @return list<string>
      */
@@ -460,6 +462,7 @@ final readonly class ServeScimHttpSurface
         foreach ($groups as $candidate) {
             if (is_scalar(value: $candidate)) {
                 $resolved[] = trim(string: (string) $candidate);
+
                 continue;
             }
 
@@ -478,7 +481,7 @@ final readonly class ServeScimHttpSurface
     {
         if (is_scalar(value: $body['state'] ?? null)) {
             $state = ScimAccountState::tryFrom(
-                value: strtolower(string: trim(string: (string) $body['state']))
+                value: strtolower(string: trim(string: (string) $body['state'])),
             );
 
             if ($state !== null) {
@@ -501,7 +504,7 @@ final readonly class ServeScimHttpSurface
 
         return $this->listResponse(resources: array_map(
                                                   callback: fn (ScimGroupProjection $group) : array => $this->groupResource(group: $group),
-                                                  array   : $groups
+                                                  array   : $groups,
                                               ));
     }
 
@@ -520,17 +523,17 @@ final readonly class ServeScimHttpSurface
                     'display' => $member->email,
                     '$ref'    => '/Users/' . rawurlencode(string: $member->externalId),
                 ],
-                array   : $group->members
+                array   : $group->members,
             ),
         ];
     }
 
     private function bulk(HttpEndpointInput $input) : JsonHttpResponse
     {
-        $request  = new ScimBulkRequest(
+        $request = new ScimBulkRequest(
             directoryId   : $this->directoryId(input: $input),
             directoryToken: $this->directoryToken(input: $input),
-            operations    : $this->bulkOperations(body: $input->body)
+            operations    : $this->bulkOperations(body: $input->body),
         );
         $response = $this->auth->runScimBulk(data: $request);
 
@@ -544,7 +547,7 @@ final readonly class ServeScimHttpSurface
                                                  'bulkId'   => $result->bulkId,
                                                  'response' => $result->response,
                                              ],
-                                             array   : $response->operations
+                                             array   : $response->operations,
                                          ),
                                      ]);
     }
@@ -580,7 +583,7 @@ final readonly class ServeScimHttpSurface
                 method: $method,
                 path  : $path,
                 body  : is_array(value: $operation['data'] ?? null) ? $operation['data'] : [],
-                bulkId: is_scalar(value: $operation['bulkId'] ?? null) ? trim(string: (string) $operation['bulkId']) : null
+                bulkId: is_scalar(value: $operation['bulkId'] ?? null) ? trim(string: (string) $operation['bulkId']) : null,
             );
         }
 
@@ -609,7 +612,7 @@ final readonly class ServeScimHttpSurface
                             'detail'   => $detail,
                             'status'   => (string) $statusCode,
                         ],
-            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE]
+            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE],
         );
     }
 
@@ -637,7 +640,7 @@ final readonly class ServeScimHttpSurface
             query          : $input->query,
             routeParameters: $input->routeParameters,
             body           : $patchedBody,
-            server         : $input->server
+            server         : $input->server,
         );
 
         return $this->replaceUser(input: $patchedInput, externalId: $externalId);
@@ -654,7 +657,7 @@ final readonly class ServeScimHttpSurface
             'externalId' => $current->externalId,
             'userName'   => $current->username,
             'emails'     => [['value' => $current->email, 'primary' => true]],
-            'groups'     => array_map(callback: static fn (string $group) : array => ['value' => $group, 'display' => $group], array: $current->groups),
+            'groups' => array_map(callback: static fn (string $group) : array => ['value' => $group, 'display' => $group], array: $current->groups),
             'state'      => $current->state->value,
             'active'     => $current->state === ScimAccountState::ACTIVE,
         ];
@@ -678,6 +681,7 @@ final readonly class ServeScimHttpSurface
 
             if ($op === 'REMOVE' && $path === 'groups') {
                 $patched['groups'] = [];
+
                 continue;
             }
 
@@ -687,8 +691,8 @@ final readonly class ServeScimHttpSurface
 
             match ($path) {
                 'userName'                                      => $patched['userName'] = is_scalar(value: $value) ? (string) $value : $patched['userName'],
-                'emails'                                        => $patched['emails'] = is_array(value: $value) ? $value : $patched['emails'],
-                'groups'                                        => $patched['groups'] = is_array(value: $value) ? $value : $patched['groups'],
+                'emails' => $patched['emails'] = is_array(value: $value) ? $value : $patched['emails'],
+                'groups' => $patched['groups'] = is_array(value: $value) ? $value : $patched['groups'],
                 'active'                                        => $this->applyActiveStatePatch(patched: $patched, value: $value),
                 'state', self::USER_EXTENSION_SCHEMA . ':state' => $patched['state'] = is_scalar(value: $value) ? (string) $value : $patched['state'],
                 default                                         => null,
@@ -716,13 +720,13 @@ final readonly class ServeScimHttpSurface
         $this->auth->deleteScimUser(data: new DeleteScimUserData(
                                               directoryId   : $this->directoryId(input: $input),
                                               directoryToken: $this->directoryToken(input: $input),
-                                              externalId    : $externalId
+                                              externalId    : $externalId,
                                           ));
 
         return new JsonHttpResponse(
             statusCode: 204,
             body      : [],
-            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE]
+            headers   : ['Content-Type' => self::SCIM_CONTENT_TYPE],
         );
     }
 

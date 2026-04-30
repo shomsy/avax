@@ -57,7 +57,7 @@ final class SliceContext
     public static function defaultVisibility(string $slice) : string
     {
         return match (self::category(slice: $slice)) {
-            RegistrationCategory::FLOW       => RegistrationVisibility::PRIVATE,
+            RegistrationCategory::FLOW => RegistrationVisibility::PRIVATE,
             RegistrationCategory::CAPABILITY,
             RegistrationCategory::CONFIGURATION,
             RegistrationCategory::FOUNDATION => RegistrationVisibility::INTERNAL,

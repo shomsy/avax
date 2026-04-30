@@ -9,7 +9,7 @@ readonly class CacheCapacity
     public function __construct(
         public int $maxEntries = 10000,
         public int $maxSizeBytes = 104857600,
-        public int $maxValueSizeBytes = 1048576
+        public int $maxValueSizeBytes = 1048576,
     ) {}
 
     public static function unlimited() : self
@@ -17,7 +17,7 @@ readonly class CacheCapacity
         return new self(
             maxEntries       : PHP_INT_MAX,
             maxSizeBytes     : PHP_INT_MAX,
-            maxValueSizeBytes: PHP_INT_MAX
+            maxValueSizeBytes: PHP_INT_MAX,
         );
     }
 
@@ -26,7 +26,7 @@ readonly class CacheCapacity
         return new self(
             maxEntries       : PHP_INT_MAX,
             maxSizeBytes     : $megabytes * 1048576,
-            maxValueSizeBytes: $megabytes * 1048576
+            maxValueSizeBytes: $megabytes * 1048576,
         );
     }
 

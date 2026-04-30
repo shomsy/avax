@@ -1,3 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Avax\Components\Operations\Notifications\System\Configuration;
-final class RegisterNotificationServices { public static function register(NotificationChannel $channel): void { \Avax\Components\Operations\Notifications\System\PublicSurface\Notifier::setChannel($channel); } }
+
+use Avax\Components\Operations\Notifications\System\PublicSurface\Notifier;
+
+final class RegisterNotificationServices
+{
+    public static function register(NotificationChannel $channel) : void
+    {
+        Notifier::setChannel($channel);
+    }
+}

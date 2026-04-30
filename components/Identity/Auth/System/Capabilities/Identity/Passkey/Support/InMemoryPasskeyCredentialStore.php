@@ -36,7 +36,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
             label       : $credential->label,
             registeredAt: $credential->registeredAt,
             lastUsedAt  : $usedAt,
-            revokedAt   : $credential->revokedAt
+            revokedAt   : $credential->revokedAt,
         );
     }
 
@@ -54,7 +54,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
             label       : $label,
             registeredAt: $credential->registeredAt,
             lastUsedAt  : $credential->lastUsedAt,
-            revokedAt   : $credential->revokedAt
+            revokedAt   : $credential->revokedAt,
         );
     }
 
@@ -72,7 +72,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
             label       : $credential->label,
             registeredAt: $credential->registeredAt,
             lastUsedAt  : $credential->lastUsedAt,
-            revokedAt   : $revokedAt
+            revokedAt   : $revokedAt,
         );
     }
 
@@ -80,7 +80,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     {
         return array_any(
             array   : $this->forUser(userId: $userId),
-            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord) : bool => ! $passkeyRecord->isRevoked()
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord) : bool => ! $passkeyRecord->isRevoked(),
         );
     }
 
@@ -88,7 +88,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     {
         return array_values(array: array_filter(
                                        array   : $this->credentials,
-                                       callback: static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
+                                       callback: static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId,
                                    ));
     }
 }

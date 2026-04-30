@@ -6,9 +6,9 @@ namespace Avax\Components\Application\Filesystem\Files;
 
 use Avax\Components\Application\Filesystem\Disks\Disk;
 
-final class CopyFile
+final readonly class CopyFile
 {
-    public function __construct(private readonly Disk $disk) {}
+    public function __construct(private Disk $disk) {}
 
     public function execute(string $source, string $destination) : bool
     {

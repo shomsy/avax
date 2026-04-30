@@ -14,9 +14,7 @@ final class GeneratedFixtureDependency
 
 final class GeneratedFixtureEntry
 {
-    public GeneratedFixtureDependency $dependency;
-
-    public function __construct(GeneratedFixtureDependency $dependency) { $this->dependency = $dependency; }
+    public function __construct(public GeneratedFixtureDependency $generatedFixtureDependency) {}
 }
 
 return static function () {
@@ -25,7 +23,7 @@ return static function () {
         cacheDir     : $cacheDir,
         cacheVersion : 'generated-fixture',
         executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
-        pruneMode    : CreateContainerConfig::PRUNE_MODE_STRICT
+        pruneMode    : CreateContainerConfig::PRUNE_MODE_STRICT,
     ));
 
     $container->singleton(abstract: GeneratedFixtureDependency::class, concrete: GeneratedFixtureDependency::class)

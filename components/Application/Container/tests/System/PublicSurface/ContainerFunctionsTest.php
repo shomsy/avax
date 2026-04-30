@@ -6,6 +6,9 @@ namespace Avax\Components\Application\Container\Tests\System;
 
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
 use Avax\Tests\TestCase;
+use DateTime;
+use DateTimeImmutable;
+use stdClass;
 
 final class ContainerFunctionsTest extends TestCase
 {
@@ -38,7 +41,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_app_resolves_service(): void
     {
-        $this->container->bind('test', fn () => 'value');
+        $this->container->bind('test', static fn () => 'value');
 
         $result = app('test');
 
@@ -53,8 +56,8 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_make_creates_instance(): void
     {
-        $result = make(\DateTime::class);
-        $this->assertInstanceOf(\DateTime::class, $result);
+        $result = make(DateTime::class);
+        $this->assertInstanceOf(DateTime::class, $result);
     }
 
     public function test_make_with_parameters(): void
@@ -70,14 +73,14 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_bind_registers(): void
     {
-        bind('test', fn () => 'value');
+        bind('test', static fn () => 'value');
 
         $this->assertTrue($this->container->has('test'));
     }
 
     public function test_singleton_same_instance(): void
     {
-        singleton('single', fn () => new \stdClass());
+        singleton('single', static fn () => new stdClass());
 
         $i1 = $this->container->make('single');
         $i2 = $this->container->make('single');
@@ -87,14 +90,14 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_resolve_alias_for_make(): void
     {
-        $result = resolve(\DateTimeImmutable::class);
-        $this->assertInstanceOf(\DateTimeImmutable::class, $result);
+        $result = resolve(DateTimeImmutable::class);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result);
     }
 
     public function test_register_alias_for_bind(): void
     {
-        register('test', fn () => 'value');
-        
+        register('test', static fn () => 'value');
+
         $this->assertTrue($this->container->has('test'));
     }
 }

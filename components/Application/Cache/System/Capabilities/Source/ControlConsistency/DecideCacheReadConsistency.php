@@ -10,28 +10,27 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class DecideCacheReadConsistency
 {
     public function __construct(
-        private CacheConsistencyLevel  $level,
-        private ConsistencyWindow|null $window = null
+        private CacheConsistencyLevel $cacheConsistencyLevel,
     ) {}
 
-    public function shouldReadFromPrimary(CacheKey $key, CachedValueLifecycle $lifecycle) : bool
+    public function shouldReadFromPrimary() : bool
     {
-        return match ($this->level) {
+        return match ($this->cacheConsistencyLevel) {
             CacheConsistencyLevel::STRONG           => true,
             CacheConsistencyLevel::LOCAL            => true,
             CacheConsistencyLevel::EVENTUAL         => false,
-            CacheConsistencyLevel::READ_YOUR_WRITES => $this->shouldCheckWriteTimestamp(key: $key),
+            CacheConsistencyLevel::READ_YOUR_WRITES => $this->shouldCheckWriteTimestamp(),
         };
     }
 
-    private function shouldCheckWriteTimestamp(CacheKey $key) : bool
+    private function shouldCheckWriteTimestamp() : bool
     {
         return true;
     }
 
-    public function allowStaleRead(CacheKey $key, CachedValueLifecycle $lifecycle) : bool
+    public function allowStaleRead() : bool
     {
-        return match ($this->level) {
+        return match ($this->cacheConsistencyLevel) {
             CacheConsistencyLevel::STRONG           => false,
             CacheConsistencyLevel::LOCAL            => false,
             CacheConsistencyLevel::EVENTUAL         => true,

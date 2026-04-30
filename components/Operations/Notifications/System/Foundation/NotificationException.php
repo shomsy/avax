@@ -1,3 +1,9 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Avax\Components\Operations\Notifications\System\Foundation;
-final class NotificationException extends \Exception {}
+
+use Exception;
+
+final class NotificationException extends Exception {}

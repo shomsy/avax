@@ -11,6 +11,8 @@ use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\Compile
 use Closure;
 use Throwable;
 
+
+
 final class CompiledCacheArtifactDefinition
 {
     public function __construct(
@@ -18,56 +20,4 @@ final class CompiledCacheArtifactDefinition
         public Closure              $builder,
         public CompiledCacheSources $compiledCacheSources,
     ) {}
-}
-
-final class WarmCompiledCacheFlow
-{
-    /** @var array<string, CompiledCacheArtifactDefinition> */
-    private array $definitions = [];
-
-    public function __construct(
-        private readonly CompiledCacheDirectory $compiledCacheDirectory,
-        private readonly CompiledCacheManifest  $compiledCacheManifest,
-    ) {}
-
-    public static function create(
-        CompiledCacheDirectory $compiledCacheDirectory,
-        CompiledCacheManifest  $compiledCacheManifest,
-    ) : self
-    {
-        return new self(directory: $compiledCacheDirectory, manifest: $compiledCacheManifest);
-    }
-
-    public function add(CompiledCacheArtifactDefinition $compiledCacheArtifactDefinition) : self
-    {
-        $this->definitions[$compiledCacheArtifactDefinition->name] = $compiledCacheArtifactDefinition;
-
-        return $this;
-    }
-
-    public function warm() : array
-    {
-        $results = [];
-
-        foreach ($this->definitions as $definition) {
-            try {
-                $compileFlow = new CompileCache(
-                    directory: $this->compiledCacheDirectory,
-                    manifest : $this->compiledCacheManifest,
-                );
-
-                $artifact = $compileFlow->compile(
-                    name   : $definition->name,
-                    build  : $definition->builder,
-                    sources: $definition->sources,
-                );
-
-                $results[$definition->name] = ['success' => true, 'artifact' => $artifact];
-            } catch (Throwable $e) {
-                $results[$definition->name] = ['success' => false, 'error' => $e];
-            }
-        }
-
-        return $results;
-    }
 }

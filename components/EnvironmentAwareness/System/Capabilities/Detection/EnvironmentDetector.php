@@ -71,7 +71,7 @@ final class EnvironmentDetector
         return $debug === 'true' || $debug === '1';
     }
 
-    public function is CI() : bool
+    public function isCI() : bool
     {
         return getenv('CI') === 'true' 
             || getenv('GITHUB_ACTIONS') === 'true'

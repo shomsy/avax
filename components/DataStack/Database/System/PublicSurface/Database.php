@@ -7,7 +7,7 @@ namespace Avax\Components\DataStack\Database\System\PublicSurface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager as EntitiesCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Entities as EntitiesCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;

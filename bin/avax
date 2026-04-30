@@ -3,13 +3,26 @@
 
 declare(strict_types=1);
 
+use Avax\Components\Server\System\Capabilities\PhpBuiltInServer;
 use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 
 require_once dirname(path: __DIR__) . '/vendor/autoload.php';
 
 try {
+    $command = $argv[1] ?? null;
+
+    if ($command === 'serve') {
+        $options = array_slice($argv, 2);
+        $config  = parseServeOptions($options);
+
+        $result = runServeCommand($config);
+
+        exit($result->exitCode());
+    }
+
     $application = Avax::boot(
         builder: BuildApplication::fromProjectPath(
                    projectPath: dirname(path: __DIR__),
@@ -31,4 +44,84 @@ try {
     }
 
     exit(1);
+}
+
+function parseServeOptions(array $options) : array
+{
+    $config = [
+        'host'   => '0.0.0.0',
+        'port'   => 8000,
+        'router' => 'auto',
+        'public' => null,
+    ];
+
+    foreach ($options as $option) {
+        if ($option === '--help' || $option === '-h') {
+            showServeHelp();
+            exit(0);
+        }
+
+        if (str_starts_with($option, '--host=')) {
+            $config['host'] = substr($option, 7);
+        } elseif (str_starts_with($option, '--port=')) {
+            $config['port'] = (int) substr($option, 7);
+        } elseif (str_starts_with($option, '--router=')) {
+            $config['router'] = substr($option, 9);
+        } elseif (str_starts_with($option, '--public=')) {
+            $config['public'] = substr($option, 9);
+        } elseif ($option === '-d') {
+            $config['daemon'] = true;
+        }
+    }
+
+    return $config;
+}
+
+function runServeCommand(array $config) : RuntimeResult
+{
+    $host = $config['host'];
+    $port = $config['port'];
+
+    if (PhpBuiltInServer::isPortInUse($port)) {
+        echo "❌ Port {$port} is already in use!\n";
+
+        return RuntimeResult::fromConsoleOutput("Port {$port} is already in use!", 1);
+    }
+
+    echo "🚀 Starting Avax development server...\n\n";
+    echo "   URL:      http://{$host}:{$port}\n";
+    echo "   Public:   public/\n";
+    echo "   Router:   routes/web.php\n\n";
+    echo "Press Ctrl+C to stop the server.\n";
+
+    try {
+        PhpBuiltInServer::startWithOptions($config);
+    } catch (Throwable $e) {
+        echo "❌ Error: " . $e->getMessage() . "\n";
+
+        return RuntimeResult::fromConsoleOutput($e->getMessage(), 1);
+    }
+
+    return RuntimeResult::fromConsoleOutput("Server stopped", 0);
+}
+
+function showServeHelp() : void
+{
+    echo <<<'HELP'
+        Usage: php avax serve [options]
+        
+        Options:
+          --host=<address>    Host address (default: 0.0.0.0)
+          --port=<number>     Port number (default: 8000)
+          --router=<file>     Router file (default: auto-detect)
+          --public=<dir>      Public directory (default: public/)
+          -d, --daemon       Run in background
+          -h, --help        Show this help
+        
+        Examples:
+          php avax serve                    # Start on default port 8000
+          php avax serve --port=9000        # Start on port 9000
+          php avax serve --host=127.0.0.1    # Only localhost
+          php avax serve -d                 # Run in background
+        HELP;
 }

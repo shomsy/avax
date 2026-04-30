@@ -9,14 +9,14 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
  */
 final class NativeSessionStore implements SessionStoreInterface
 {
-    public function read(string $id): array
+    public function read(string $id) : array
     {
         $this->ensureStarted();
 
         return $_SESSION ?? [];
     }
 
-    public function write(string $id, array $data): bool
+    public function write(string $id, array $data) : bool
     {
         $this->ensureStarted();
 
@@ -25,7 +25,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return true;
     }
 
-    public function destroy(string $id): bool
+    public function destroy(string $id) : bool
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION = [];
@@ -48,7 +48,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return false;
     }
 
-    private function ensureStarted(): void
+    private function ensureStarted() : void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

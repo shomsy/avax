@@ -48,7 +48,7 @@ final class JobId
         public readonly string|null $queue = null,
     ) {}
 
-    public static function generate(string $queue = null) : self
+    public static function generate(string|null $queue = null) : self
     {
         return new self(
             value: uniqid('job-', true),

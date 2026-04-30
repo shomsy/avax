@@ -6,4 +6,4 @@ namespace Avax\Components\DataStack\Data\System\Foundation\Failure;
 
 use RuntimeException;
 
-class DataFailure extends RuntimeException {}
+final class DataFailure extends RuntimeException {}

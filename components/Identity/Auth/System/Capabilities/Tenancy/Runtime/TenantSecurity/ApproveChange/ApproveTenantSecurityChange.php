@@ -21,7 +21,7 @@ final readonly class ApproveTenantSecurityChange
     /**
      * @throws TenantSecurityFailed
      */
-    public function execute(string $changeId, string $approvedBy): TenantSecurityChangeRequest
+    public function execute(string $changeId, string $approvedBy) : TenantSecurityChangeRequest
     {
         $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 

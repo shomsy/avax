@@ -22,12 +22,12 @@ final readonly class Arrhae
         return $this->items;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $this->items[$key] ?? $default;
     }
 
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return array_key_exists($key, $this->items);
     }

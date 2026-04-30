@@ -12,7 +12,7 @@ final class Response implements ResponseInterface
 {
     private ResponseData $data;
 
-    public function __construct(int $statusCode = 200, array $headers = [], StreamInterface $body = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
+    public function __construct(int $statusCode = 200, array $headers = [], StreamInterface|null $body = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
     {
         if ($body === null) {
             $body = Utils::streamFor('');
@@ -31,12 +31,12 @@ final class Response implements ResponseInterface
         return $this->data->protocolVersion;
     }
 
-    public function withProtocolVersion($v) : self
+    public function withProtocolVersion($version) : self
     {
-        $c       = clone $this;
-        $c->data = $this->data->withProtocolVersion($v);
+        $clone       = clone $this;
+        $clone->data = $this->data->withProtocolVersion($version);
 
-        return $c;
+        return $clone;
     }
 
     public function getHeaders() : array
@@ -44,40 +44,40 @@ final class Response implements ResponseInterface
         return $this->data->headers;
     }
 
-    public function hasHeader($n) : bool
+    public function hasHeader($name) : bool
     {
-        return isset($this->data->headers[strtolower($n)]);
+        return isset($this->data->headers[strtolower($name)]);
     }
 
-    public function getHeader($n) : array
+    public function getHeader($name) : array
     {
-        return $this->data->headers[strtolower($n)] ?? [];
+        return $this->data->headers[strtolower($name)] ?? [];
     }
 
-    public function getHeaderLine($n) : string
+    public function getHeaderLine($name) : string
     {
-        return implode(', ', $this->getHeader($n));
+        return implode(', ', $this->getHeader($name));
     }
 
-    public function withHeader($n, $v) : self
+    public function withHeader($name, $value) : self
     {
-        $c       = clone $this;
-        $c->data = $this->data->withHeader($n, is_array($v) ? $v : [$v]);
+        $clone       = clone $this;
+        $clone->data = $this->data->withHeader($name, is_array($value) ? $value : [$value]);
 
-        return $c;
+        return $clone;
     }
 
-    public function withAddedHeader($n, $v) : self
+    public function withAddedHeader($name, $value) : self
     {
-        return $this->withHeader($n, $v);
+        return $this->withHeader($name, $value);
     }
 
-    public function withoutHeader($n) : self
+    public function withoutHeader($name) : self
     {
-        $c       = clone $this;
-        $c->data = $this->data->withoutHeader($n);
+        $clone       = clone $this;
+        $clone->data = $this->data->withoutHeader($name);
 
-        return $c;
+        return $clone;
     }
 
     public function getBody() : StreamInterface
@@ -85,12 +85,12 @@ final class Response implements ResponseInterface
         return $this->data->body;
     }
 
-    public function withBody(StreamInterface $b) : self
+    public function withBody(StreamInterface $body) : self
     {
-        $c       = clone $this;
-        $c->data = $this->data->withBody($b);
+        $clone       = clone $this;
+        $clone->data = $this->data->withBody($body);
 
-        return $c;
+        return $clone;
     }
 
     public function getStatusCode() : int
@@ -98,12 +98,12 @@ final class Response implements ResponseInterface
         return $this->data->statusCode;
     }
 
-    public function withStatus($c, $rp = '') : self
+    public function withStatus($code, $reasonPhrase = '') : self
     {
-        $cl       = clone $this;
-        $cl->data = $this->data->withStatus($c, $rp);
+        $clone       = clone $this;
+        $clone->data = $this->data->withStatus($code, $reasonPhrase);
 
-        return $cl;
+        return $clone;
     }
 
     public function getReasonPhrase() : string

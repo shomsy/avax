@@ -14,7 +14,7 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
     private FrequencyTracker $frequencyTracker;
 
     public function __construct(
-        ?Clock $clock = null,
+        Clock|null $clock = null,
         float  $decayFactor = 0.5,
     )
     {

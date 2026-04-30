@@ -9,5 +9,5 @@ interface AuditExporterInterface
     /**
      * @param list<AuditEvent> $events
      */
-    public function export(array $events): void;
+    public function export(array $events) : void;
 }

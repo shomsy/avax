@@ -12,7 +12,7 @@ use RuntimeException;
  */
 final class None extends Option
 {
-    private static ?self $instance = null;
+    private static self|null $instance = null;
 
     private function __construct()
     {

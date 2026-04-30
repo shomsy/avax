@@ -21,17 +21,17 @@ final class Events implements EventsInterface
         $this->dispatcher = new EventDispatcher($this->registry);
     }
 
-    public function dispatch(string|object $event, mixed $data = null): void
+    public function dispatch(string|object $event, mixed $data = null) : void
     {
         $this->dispatcher->dispatch($event, $data);
     }
 
-    public function listen(string $event, callable $listener, int $priority = 0): void
+    public function listen(string $event, callable $listener, int $priority = 0) : void
     {
         $this->registry->subscribe($event, $listener, $priority);
     }
 
-    public function flush(): void
+    public function flush() : void
     {
         $this->registry->clear();
     }

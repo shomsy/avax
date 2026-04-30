@@ -22,19 +22,19 @@ interface AccessInterface
     /**
      * @throws Unauthenticated
      */
-    public function requireAuthentication(): void;
+    public function requireAuthentication() : void;
 
     /**
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requireRole(UserRole $requiredRole): void;
+    public function requireRole(UserRole $requiredRole) : void;
 
     /**
      * @throws PermissionDenied
      * @throws Unauthenticated
      */
-    public function requirePermission(UserPermission $permission): void;
+    public function requirePermission(UserPermission $permission) : void;
 
     /**
      * @throws AdminElevationFailed
@@ -44,5 +44,5 @@ interface AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requirePolicy(AccessPolicy $policy): void;
+    public function requirePolicy(AccessPolicy $policy) : void;
 }

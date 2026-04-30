@@ -13,7 +13,7 @@ final readonly class WorkermanRuntime implements WorkerRuntimeInterface
 {
     /**
      * @param Closure(): (WorkerRequest|null) $receiver
-     * @param Closure(WorkerResponse): void $sender
+     * @param Closure(WorkerResponse) : void $sender
      */
     public function __construct(
         private Closure $receiver,
@@ -21,17 +21,17 @@ final readonly class WorkermanRuntime implements WorkerRuntimeInterface
     ) {
     }
 
-    public function name(): string
+    public function name() : string
     {
         return 'workerman';
     }
 
-    public function receive(): WorkerRequest|null
+    public function receive() : WorkerRequest|null
     {
         return ($this->receiver)();
     }
 
-    public function send(WorkerResponse $response): void
+    public function send(WorkerResponse $response) : void
     {
         ($this->sender)($response);
     }

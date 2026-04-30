@@ -51,23 +51,24 @@ final readonly class Encryption
     {
         $plaintext = $this->decryptFlow->execute($serialized);
 
-        // Try to unserialize; if it fails, throw explicit exception
+        // Try JSON decode first (primary format)
         try {
-            $unserialized = @unserialize($plaintext);
-            if ($unserialized !== false) {
-                return $unserialized;
-            }
-
-            // If unserialize failed, try JSON decode for backward compatibility
             $decoded = json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
-            if ($decoded !== null || json_last_error() === JSON_ERROR_NONE) {
-                return $decoded;
+
+            return $decoded;
+        } catch (Throwable $e) {
+            // If JSON fails, try unserialize for backward compatibility
+            try {
+                $unserialized = unserialize($plaintext, ['allowed_classes' => false]);
+                if ($unserialized !== false) {
+                    return $unserialized;
+                }
+            } catch (Throwable) {
+                // Ignore unserialize errors, fall through to last resort
             }
 
             // Last resort: return as plain string
             return $plaintext;
-        } catch (Throwable $e) {
-            throw new DecryptionFailed('Failed to deserialize decrypted payload: ' . $e->getMessage(), 0, $e);
         }
     }
 

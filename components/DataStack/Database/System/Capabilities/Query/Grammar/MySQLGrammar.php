@@ -25,7 +25,7 @@ use Override;
  * 1. Dialect Handling: Every database (MySQL, Postgres, SQLite) has slightly
  *    different rules for quotes and special features. This class isolates all
  *    the MySQL-specific quirks.
- * 2. Security (Quoting): It handles "Backticks" (`). Wrapping column names
+ * 2. Security (Quoting) : It handles "Backticks" (`). Wrapping column names
  *    in backticks prevents errors if you accidentally use a "Reserved Word"
  *    (like calling a column `order` or `select`).
  * 3. Atomic Features: It implements MySQL's powerful "Upsert" (Insert or Update)
@@ -33,7 +33,7 @@ use Override;
  *
  * -- mental models:
  * - "Grammar": The set of rules for building valid sentences (SQL).
- * - "Backticks" (`): The special quotes used by MySQL to identify table
+ * - "Backticks" (`) : The special quotes used by MySQL to identify table
  *    and column names correctly.
  */
 final class MySQLGrammar extends BaseGrammar

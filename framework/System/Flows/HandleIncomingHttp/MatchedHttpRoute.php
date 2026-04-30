@@ -15,12 +15,12 @@ final readonly class MatchedHttpRoute
     ) {
     }
 
-    public function route(): RouteDefinition
+    public function route() : RouteDefinition
     {
         return $this->route;
     }
 
-    public function request(): ServerRequest
+    public function request() : ServerRequest
     {
         return $this->request;
     }

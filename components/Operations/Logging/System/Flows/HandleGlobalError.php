@@ -12,7 +12,7 @@ final readonly class HandleGlobalError
 {
     public function __construct(private Logging $logger) {}
 
-    public function execute(Throwable $throwable): void
+    public function execute(Throwable $throwable) : void
     {
         $this->logger->error($throwable->getMessage(), [
             'file'  => $throwable->getFile(),
@@ -32,7 +32,7 @@ final readonly class HandleGlobalError
         ]);
     }
 
-    public function convertErrorToException(int $severity, string $message, string $file, int $line): never
+    public function convertErrorToException(int $severity, string $message, string $file, int $line) : never
     {
         throw new ErrorException($message, 0, $severity, $file, $line);
     }

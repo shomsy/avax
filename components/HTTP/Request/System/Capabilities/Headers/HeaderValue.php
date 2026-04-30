@@ -13,17 +13,17 @@ final class HeaderValue
         $this->values = is_array($values) ? array_values($values) : [$values];
     }
 
-    public function all(): array
+    public function all() : array
     {
         return $this->values;
     }
 
-    public function line(): string
+    public function line() : string
     {
         return implode(', ', $this->values);
     }
 
-    public function first(): string
+    public function first() : string
     {
         return $this->values[0] ?? '';
     }

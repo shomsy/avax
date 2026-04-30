@@ -25,7 +25,7 @@ final readonly class HandleIncomingHttp
     /**
      * @throws RandomException
      */
-    public function handle(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
+    public function handle(RuntimeInterface $runtime, RuntimeRequest $request) : RuntimeResponse
     {
         $openRequestScope = new OpenHttpRequestScope(
             requestScopes : $runtime->requestScopes(),
@@ -42,7 +42,7 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
+    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $request) : RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 
@@ -76,7 +76,7 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    private function normalizeResponse(mixed $value): RuntimeResponse
+    private function normalizeResponse(mixed $value) : RuntimeResponse
     {
         if ($value instanceof RuntimeResponse) {
             return $value;

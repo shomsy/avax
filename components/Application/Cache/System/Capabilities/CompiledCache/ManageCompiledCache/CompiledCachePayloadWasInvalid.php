@@ -11,7 +11,7 @@ final class CompiledCachePayloadWasInvalid extends RuntimeException
 {
     public function __construct(
         string     $reason,
-        ?Throwable $throwable = null,
+        Throwable|null $throwable = null,
     )
     {
         parent::__construct(

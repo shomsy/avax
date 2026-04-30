@@ -10,7 +10,7 @@ use Throwable;
 
 final class DeleteFile
 {
-    public static function execute(string $path): bool
+    public static function execute(string $path) : bool
     {
         try {
             return Storage::delete($path);

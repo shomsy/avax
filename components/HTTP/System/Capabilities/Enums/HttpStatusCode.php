@@ -25,7 +25,7 @@ enum HttpStatusCode: int
     case SERVICE_UNAVAILABLE  = 503;
     case GATEWAY_TIMEOUT      = 504;
 
-    public function getReasonPhrase(): string
+    public function getReasonPhrase() : string
     {
         return match ($this) {
             self::OK                   => 'OK',

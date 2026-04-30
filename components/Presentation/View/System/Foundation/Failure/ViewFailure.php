@@ -6,4 +6,4 @@ namespace Avax\Components\Presentation\View\System\Foundation\Failure;
 
 use RuntimeException;
 
-class ViewFailure extends RuntimeException {}
+final class ViewFailure extends RuntimeException {}

@@ -13,7 +13,7 @@ final readonly class AverageValues
     {
     }
 
-    public function execute(iterable $items, string|callable|null $key = null): float
+    public function execute(iterable $items, string|callable|null $key = null) : float
     {
         $count = count(is_array($items) ? $items : iterator_to_array($items));
         if ($count === 0) {

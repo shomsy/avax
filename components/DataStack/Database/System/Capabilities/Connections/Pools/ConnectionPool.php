@@ -41,7 +41,7 @@ final class ConnectionPool implements ConnectionPoolInterface
      */
     public function __construct(
         array    $config,
-        EventBus $eventBus = null,
+        EventBus|null $eventBus = null,
     )
     {
         $this->config   = $config;
@@ -146,7 +146,7 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Ask a connection "Are you alive?" (Ping).
      */
-    public function validateConnection(DatabaseConnection $connection = null) : bool
+    public function validateConnection(DatabaseConnection|null $connection = null) : bool
     {
         if ($connection === null) {
             return false;

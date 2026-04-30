@@ -8,7 +8,7 @@ if (! function_exists('session')) {
     /**
      * Get the session instance or a specific value.
      */
-    function session(string $key = null, mixed $default = null) : mixed
+    function session(string|null $key = null, mixed $default = null) : mixed
     {
         $session = app(Session::class);
 

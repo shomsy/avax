@@ -10,7 +10,7 @@ final class RequestTarget
         private string $target,
     ) {}
 
-    public function toString(): string
+    public function toString() : string
     {
         return $this->target;
     }

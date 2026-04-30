@@ -15,12 +15,12 @@ final readonly class RuntimeKernel implements RuntimeKernelInterface
     {
     }
 
-    public function state(): RuntimeState
+    public function state() : RuntimeState
     {
         return $this->runtime->state();
     }
 
-    public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
+    public function runWorker(WorkerRuntimeInterface $workerRuntime) : WorkerLifecycle
     {
         return $this->runtime->runWorker(workerRuntime: $workerRuntime);
     }

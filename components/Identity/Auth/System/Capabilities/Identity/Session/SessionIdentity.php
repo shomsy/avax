@@ -70,7 +70,7 @@ final class SessionIdentity implements SessionIdentityInterface
      */
     public function issue(
         int               $userId,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool              $phishingResistant = false,
     ) : string|null
     {
@@ -100,7 +100,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function captureCurrentSession(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : void
+    public function captureCurrentSession(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
     {
         $sessionId = $this->currentSessionId();
 

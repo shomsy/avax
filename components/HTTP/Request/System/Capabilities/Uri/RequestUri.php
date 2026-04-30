@@ -8,106 +8,114 @@ use Psr\Http\Message\UriInterface;
 
 final class RequestUri implements UriInterface
 {
-    public function __construct(private string $s = '', private string $u = '', private string $h = '', private ?int $p = null, private string $pa = '', private string $q = '', private string $f = '') {}
+    public function __construct(
+        private string   $scheme = '',
+        private string   $userInfo = '',
+        private string   $host = '',
+        private int|null $port = null,
+        private string   $path = '',
+        private string   $query = '',
+        private string   $fragment = '',
+    ) {}
 
     public function getScheme() : string
     {
-        return $this->s;
+        return $this->scheme;
     }
 
     public function getAuthority() : string
     {
-        return $this->h;
+        return $this->host;
     }
 
     public function getUserInfo() : string
     {
-        return $this->u;
+        return $this->userInfo;
     }
 
     public function getHost() : string
     {
-        return $this->h;
+        return $this->host;
     }
 
-    public function getPort() : ?int
+    public function getPort() : int|null
     {
-        return $this->p;
+        return $this->port;
     }
 
     public function getPath() : string
     {
-        return $this->pa;
+        return $this->path;
     }
 
     public function getQuery() : string
     {
-        return $this->q;
+        return $this->query;
     }
 
     public function getFragment() : string
     {
-        return $this->f;
+        return $this->fragment;
     }
 
-    public function withScheme($s) : self
+    public function withScheme($scheme) : self
     {
-        $c    = clone $this;
-        $c->s = $s;
+        $clone         = clone $this;
+        $clone->scheme = $scheme;
 
-        return $c;
+        return $clone;
     }
 
-    public function withUserInfo($u, $p = null) : self
+    public function withUserInfo($userInfo, $password = null) : self
     {
-        $c    = clone $this;
-        $c->u = $u;
+        $clone           = clone $this;
+        $clone->userInfo = $userInfo;
 
-        return $c;
+        return $clone;
     }
 
-    public function withHost($h) : self
+    public function withHost($host) : self
     {
-        $c    = clone $this;
-        $c->h = $h;
+        $clone       = clone $this;
+        $clone->host = $host;
 
-        return $c;
+        return $clone;
     }
 
-    public function withPort($p) : self
+    public function withPort($port) : self
     {
-        $c    = clone $this;
-        $c->p = $p;
+        $clone       = clone $this;
+        $clone->port = $port;
 
-        return $c;
+        return $clone;
     }
 
-    public function withPath($pa) : self
+    public function withPath($path) : self
     {
-        $c     = clone $this;
-        $c->pa = $pa;
+        $clone       = clone $this;
+        $clone->path = $path;
 
-        return $c;
+        return $clone;
     }
 
-    public function withQuery($q) : self
+    public function withQuery($query) : self
     {
-        $c    = clone $this;
-        $c->q = $q;
+        $clone        = clone $this;
+        $clone->query = $query;
 
-        return $c;
+        return $clone;
     }
 
-    public function withFragment($f) : self
+    public function withFragment($fragment) : self
     {
-        $c    = clone $this;
-        $c->f = $f;
+        $clone           = clone $this;
+        $clone->fragment = $fragment;
 
-        return $c;
+        return $clone;
     }
 
     public function __toString() : string
     {
-        return ($this->s ? $this->s . '://' : '') . $this->h . $this->pa . ($this->q ? '?' . $this->q : '');
+        return ($this->scheme ? $this->scheme . '://' : '') . $this->host . $this->path . ($this->query ? '?' . $this->query : '');
     }
 }

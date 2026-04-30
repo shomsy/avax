@@ -107,7 +107,7 @@ final readonly class CompensationStepResult
         array             $output = null,
         string            $error = null,
         float             $durationMs = null,
-        DateTimeImmutable $completedAt = null,
+        DateTimeImmutable|null $completedAt = null,
     )
     {
         $output     ??= [];

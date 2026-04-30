@@ -580,7 +580,7 @@ final readonly class DefaultAuth implements Auth
     /**
      * @return list<ScimDirectory>
      */
-    public function readScimDirectories(string $tenantSlug = null) : array
+    public function readScimDirectories(string|null $tenantSlug = null) : array
     {
         return $this->identitySync->scim()->readDirectories(tenantSlug: $tenantSlug);
     }
@@ -775,7 +775,7 @@ final readonly class DefaultAuth implements Auth
         $this->access->requireAdminElevation();
     }
 
-    public function assessCurrentRisk(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : RiskDecision|null
+    public function assessCurrentRisk(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         return $this->access->assessCurrentRisk(ipAddress: $ipAddress, userAgent: $userAgent);
     }
@@ -783,12 +783,12 @@ final readonly class DefaultAuth implements Auth
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(int $userId = null) : array
+    public function readRiskSignals(int|null $userId = null) : array
     {
         return $this->access->readRiskSignals(userId: $userId);
     }
 
-    public function explainAccessDenied(string $resource, string $requiredPermission = null, string $tenant = null, string $resourceTenant = null) : AuthIssueExplanation
+    public function explainAccessDenied(string $resource, string|null $requiredPermission = null, string|null $tenant = null, string|null $resourceTenant = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainAccessDenied(
             resource          : $resource,
@@ -798,7 +798,7 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainStepUpRequired(string $action, bool $phishingResistantRequired = null, int $freshAfterSeconds = null) : AuthIssueExplanation
+    public function explainStepUpRequired(string $action, bool|null $phishingResistantRequired = null, int|null $freshAfterSeconds = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainStepUpRequired(
             action                   : $action,
@@ -807,7 +807,7 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainSenderConstraintFailure(string $reason, string $requiredConstraint = null) : AuthIssueExplanation
+    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainSenderConstraintFailure(
             reason            : $reason,
@@ -815,12 +815,12 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
 
-    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainTrustedDeviceDecision(deviceId: $deviceId);
     }

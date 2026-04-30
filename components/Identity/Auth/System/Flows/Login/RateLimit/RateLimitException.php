@@ -9,7 +9,7 @@ use Exception;
 /**
  * Exception thrown when login rate limit is exceeded.
  */
-class RateLimitException extends Exception
+final class RateLimitException extends Exception
 {
     public function __construct(
         string               $message,

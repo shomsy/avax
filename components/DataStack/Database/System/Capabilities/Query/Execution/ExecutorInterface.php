@@ -29,7 +29,7 @@ interface ExecutorInterface
     public function query(
         string         $sql,
         array          $bindings = [],
-        ExecutionScope $scope = null,
+        ExecutionScope|null $scope = null,
     ) : array;
 
     /**
@@ -44,7 +44,7 @@ interface ExecutorInterface
     public function execute(
         string         $sql,
         array          $bindings = [],
-        ExecutionScope $scope = null,
+        ExecutionScope|null $scope = null,
     ) : ExecutionResult;
 
     /**

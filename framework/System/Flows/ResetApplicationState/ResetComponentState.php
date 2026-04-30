@@ -13,7 +13,7 @@ final class ResetComponentState
     ) {
     }
 
-    public function reset(): void
+    public function reset() : void
     {
         $this->registry->resetAll();
     }

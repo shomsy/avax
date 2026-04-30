@@ -78,6 +78,6 @@ class ControllerGenerator extends CodeGenerator
     {
         $methodName = Str::camel($method);
 
-        return "    public function {$methodName}(): void\n    {\n        // TODO: Implement {$methodName}\n    }\n";
+        return "    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n";
     }
 }

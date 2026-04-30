@@ -73,7 +73,7 @@ final class DateTimeFormatter
         return 'just now';
     }
 
-    private function formatPast(int $seconds): string
+    private function formatPast(int $seconds) : string
     {
         if ($seconds < 60) {
             return $seconds . ' seconds ago';
@@ -90,7 +90,7 @@ final class DateTimeFormatter
         return floor($seconds / 86400) . ' days ago';
     }
 
-    private function formatFuture(int $seconds): string
+    private function formatFuture(int $seconds) : string
     {
         if ($seconds < 60) {
             return 'in ' . $seconds . ' seconds';

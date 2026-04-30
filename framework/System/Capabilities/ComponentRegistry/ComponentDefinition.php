@@ -12,12 +12,12 @@ final readonly class ComponentDefinition
     ) {
     }
 
-    public function name(): string
+    public function name() : string
     {
         return $this->name;
     }
 
-    public function providerClass(): string|null
+    public function providerClass() : string|null
     {
         return $this->providerClass;
     }

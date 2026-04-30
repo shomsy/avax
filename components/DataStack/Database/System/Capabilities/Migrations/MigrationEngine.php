@@ -11,7 +11,7 @@ final readonly class MigrationEngine
         private string              $migrationsPath,
     ) {}
 
-    public function migrate(): void
+    public function migrate() : void
     {
         $this->migrationRepository->ensureTableExists();
         $ran   = $this->migrationRepository->getRan();

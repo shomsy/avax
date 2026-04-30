@@ -8,7 +8,7 @@ use Avax\Components\Operations\Mail\System\PublicSurface\Mailer;
 
 final class QueueMail
 {
-    public static function execute(MailMessage $message): void
+    public static function execute(MailMessage $message) : void
     {
         Mailer::send($message);
     }

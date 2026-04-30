@@ -134,7 +134,7 @@ final class Blueprint
      * @param int|null $precision Total number of digits
      * @param int    $scale Number of decimal places
      */
-    public function decimal(string $name, ?int $precision = null, int $scale = 2) : ColumnDefinition
+    public function decimal(string $name, int|null $precision = null, int $scale = 2) : ColumnDefinition
     {
         $precision ??= 8;
 

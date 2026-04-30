@@ -13,7 +13,7 @@ final class CloseWorkerRequestScope
     ) {
     }
 
-    public function close(): void
+    public function close() : void
     {
         $this->requestScope->close();
     }

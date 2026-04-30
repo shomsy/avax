@@ -22,8 +22,8 @@ abstract class CodeGenerator
     protected string $defaultNamespace;
 
     public function __construct(
-        ?string $baseDirectory = null,
-        ?string $defaultNamespace = null,
+        string|null $baseDirectory = null,
+        string|null $defaultNamespace = null,
     )
     {
         $this->baseDirectory = $baseDirectory ?? $this->detectBaseDirectory();

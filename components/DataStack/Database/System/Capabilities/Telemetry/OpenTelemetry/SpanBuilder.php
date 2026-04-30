@@ -9,9 +9,9 @@ final class SpanBuilder
     public function build(
         string $query,
         array  $bindings = null,
-        string $connection = null,
+        string|null $connection = null,
         int    $rows = null,
-        string $error = null,
+        string|null $error = null,
         float  $startTime = null,
         float  $endTime = null,
     ) : QuerySpan

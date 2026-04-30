@@ -25,7 +25,7 @@ final readonly class RunConformanceHarness
      *     }>
      * }
      */
-    public function execute(string $repositoryRoot, array $checks = null) : array
+    public function execute(string $repositoryRoot, array|null $checks = null) : array
     {
         $resolvedChecks = $checks ?? $this->defaultChecks(repositoryRoot: $repositoryRoot);
         $results        = [

@@ -15,22 +15,22 @@ final readonly class Migrations
         private MigrationsCapability $migrations,
     ) {}
 
-    public function status(string $connectionName = null) : array
+    public function status(string|null $connectionName = null) : array
     {
         return $this->migrations->status($connectionName);
     }
 
-    public function migrate(string $connectionName = null) : void
+    public function migrate(string|null $connectionName = null) : void
     {
         $this->migrations->migrate($connectionName);
     }
 
-    public function rollback(string $connectionName = null, int $steps = 1) : void
+    public function rollback(string|null $connectionName = null, int $steps = 1) : void
     {
         $this->migrations->rollback($connectionName, $steps);
     }
 
-    public function seed(string $class, string $connectionName = null) : void
+    public function seed(string $class, string|null $connectionName = null) : void
     {
         $this->migrations->seed($class, $connectionName);
     }

@@ -14,15 +14,15 @@ use Psr\Log\LoggerInterface;
 
 final class Session implements SessionInterface
 {
-    private ?SessionRecord $record = null;
+    private SessionRecord|null $record = null;
     private SessionTransaction $transaction;
 
     public function __construct(
         private readonly SessionScope     $scope,
-        private readonly ?SessionMetadata $metadata = null,
+        private readonly SessionMetadata|null $metadata = null,
         private readonly ?SessionAudit    $audit = null,
-        private readonly ?SessionEventBus $events = null,
-        private readonly ?LoggerInterface $logger = null,
+        private readonly SessionEventBus|null $events = null,
+        private readonly LoggerInterface|null $logger = null,
     )
     {
         $this->transaction = new SessionTransaction($this->scope);
@@ -114,7 +114,7 @@ final class Session implements SessionInterface
         return $this->scope->has($key);
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         $value = $this->scope->get($key, $default);
         $this->events?->dispatch('session.retrieved', ['key' => $key]);
@@ -139,7 +139,7 @@ final class Session implements SessionInterface
         $this->events?->dispatch('session.put', ['key' => $key]);
     }
 
-    public function forget(string $key): void
+    public function forget(string $key) : void
     {
         $this->scope->forget($key);
         $this->audit?->record('session.forget', ['key' => $key]);

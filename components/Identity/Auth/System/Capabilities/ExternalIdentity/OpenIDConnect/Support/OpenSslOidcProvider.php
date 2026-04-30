@@ -30,7 +30,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         private string            $tokenEndpoint,
         private string            $userInfoEndpoint,
         private string            $jsonWebKeySetUri,
-        SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
+        SubjectIdentifierStrategy|null $subjectIdentifierStrategy = null,
         #[SensitiveParameter]
         private string|null       $pairwiseSalt = null,
         int                       $idTokenLifetime = null,
@@ -83,7 +83,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         string            $clientId,
         array             $scopes,
         string            $nonce = null,
-        DateTimeImmutable $authenticatedAt = null,
+        DateTimeImmutable|null $authenticatedAt = null,
         #[SensitiveParameter]
         string            $sessionId = null,
         bool              $phishingResistant = false,

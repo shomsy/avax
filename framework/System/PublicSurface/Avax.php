@@ -34,7 +34,7 @@ final readonly class Avax implements AvaxInterface
     ) {
     }
 
-    public static function boot(ApplicationBuilder $builder): self
+    public static function boot(ApplicationBuilder $builder) : self
     {
         $runtime = (new BootApplication(
             buildApplicationState: new BuildApplicationState(),
@@ -49,42 +49,42 @@ final readonly class Avax implements AvaxInterface
         );
     }
 
-    public function state(): RuntimeState
+    public function state() : RuntimeState
     {
         return $this->runtime->state();
     }
 
-    public function context(): RuntimeContext
+    public function context() : RuntimeContext
     {
         return $this->runtime->context();
     }
 
-    public function requestScopes(): RequestScopeStore
+    public function requestScopes() : RequestScopeStore
     {
         return $this->runtime->requestScopes();
     }
 
-    public function components(): ComponentRegistry
+    public function components() : ComponentRegistry
     {
         return $this->runtime->components();
     }
 
-    public function http(): HttpKernelInterface
+    public function http() : HttpKernelInterface
     {
         return $this->httpKernel;
     }
 
-    public function console(): ConsoleKernelInterface
+    public function console() : ConsoleKernelInterface
     {
         return $this->consoleKernel;
     }
 
-    public function runtime(): RuntimeKernelInterface
+    public function runtime() : RuntimeKernelInterface
     {
         return $this->runtimeKernel;
     }
 
-    public function resetState(): StateResetReport
+    public function resetState() : StateResetReport
     {
         return $this->resetApplicationState->reset();
     }

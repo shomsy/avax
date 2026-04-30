@@ -12,7 +12,7 @@ final readonly class ClientResponse
         public string $body,
     ) {}
 
-    public function json(): array
+    public function json() : array
     {
         return json_decode($this->body, true) ?: [];
     }

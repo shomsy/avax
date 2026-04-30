@@ -29,10 +29,10 @@ final readonly class ResolutionPolicy
     public bool $strict;
 
     public function __construct(
-        ?bool        $strict = null,
-        ?bool        $debug = null,
-        ?string      $profile = null,
-        ?string      $failMode = null,
+        bool|null   $strict = null,
+        bool|null   $debug = null,
+        string|null $profile = null,
+        string|null $failMode = null,
         public array $profiles = [],
     )
     {

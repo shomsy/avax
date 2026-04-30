@@ -30,7 +30,7 @@ final class CreateRequestFromGlobals
         private ParseFormBody $formParser,
     ) {}
 
-    public function execute(): Request
+    public function execute() : Request
     {
         try {
             $server     = $this->serverReader->read();

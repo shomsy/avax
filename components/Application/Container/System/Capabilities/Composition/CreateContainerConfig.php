@@ -84,20 +84,20 @@ final readonly class CreateContainerConfig
      * @param array<string, mixed> $settings
      */
     public function __construct(
-        ?string       $cacheDir = null,
-        ?string       $cacheVersion = null,
-        ?bool         $debug = null,
-        ?array        $settings = null,
-        ?bool         $strict = null,
-        ?string       $compileMode = null,
-        ?string       $diagnosticsMode = null,
-        ?string       $executionMode = null,
-        ?string       $pruneMode = null,
-        ?string       $policyProfile = null,
-        ?string       $policyFailMode = null,
+        string|null $cacheDir = null,
+        string|null $cacheVersion = null,
+        bool|null   $debug = null,
+        array|null  $settings = null,
+        bool|null   $strict = null,
+        string|null $compileMode = null,
+        string|null $diagnosticsMode = null,
+        string|null $executionMode = null,
+        string|null $pruneMode = null,
+        string|null $policyProfile = null,
+        string|null $policyFailMode = null,
         /** @var array<string, string> */
-        ?array        $policyProfiles = null,
-        ?string       $sliceBoundaryMode = null,
+        array|null  $policyProfiles = null,
+        string|null $sliceBoundaryMode = null,
         public string $asyncTarget = self::ASYNC_TARGET_FPM,
     )
     {
@@ -133,19 +133,19 @@ final readonly class CreateContainerConfig
      * @param array<string, mixed> $settings
      */
     public static function create(
-        ?string $cacheDir = null,
-        ?string $cacheVersion = null,
-        ?bool   $debug = null,
-        ?array  $settings = null,
-        ?bool   $strict = null,
-        ?string $compileMode = null,
-        ?string $diagnosticsMode = null,
-        ?string $executionMode = null,
-        ?string $pruneMode = null,
-        ?string $policyProfile = null,
-        ?string $policyFailMode = null,
-        ?array  $policyProfiles = null,
-        ?string $sliceBoundaryMode = null,
+        string|null $cacheDir = null,
+        string|null $cacheVersion = null,
+        bool|null   $debug = null,
+        array|null  $settings = null,
+        bool|null   $strict = null,
+        string|null $compileMode = null,
+        string|null $diagnosticsMode = null,
+        string|null $executionMode = null,
+        string|null $pruneMode = null,
+        string|null $policyProfile = null,
+        string|null $policyFailMode = null,
+        array|null  $policyProfiles = null,
+        string|null $sliceBoundaryMode = null,
         string  $asyncTarget = self::ASYNC_TARGET_FPM,
     ) : self
     {

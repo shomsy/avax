@@ -16,7 +16,7 @@ final readonly class RequestCoalescing
     public function execute(
         CacheKey  $cacheKey,
         callable  $loader,
-        ?callable $onStale = null,
+        callable|null $onStale = null,
     ) : mixed
     {
         $cacheLock = new CacheLock(store: $this->cacheLockStore, timeout: $this->cacheLockTimeout);

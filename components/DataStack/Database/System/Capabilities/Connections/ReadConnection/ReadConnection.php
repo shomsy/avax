@@ -39,7 +39,7 @@ final class ReadConnection
         private readonly array   $config,
         private readonly EventBus|null $eventBus = null,
         ExecutionScope           $scope = null,
-        ResolveDefaultConnection $resolveDefaultConnection = null,
+        ResolveDefaultConnection|null $resolveDefaultConnection = null,
         RememberConnection       $rememberConnection = null,
     )
     {
@@ -51,7 +51,7 @@ final class ReadConnection
     /**
      * @throws Throwable
      */
-    public function connection(string $name = null) : DatabaseConnection
+    public function connection(string|null $name = null) : DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
         $cached       = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);

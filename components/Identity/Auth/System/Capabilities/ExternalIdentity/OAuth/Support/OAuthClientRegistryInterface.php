@@ -28,7 +28,7 @@ interface OAuthClientRegistryInterface
         array                        $allowedAudiences = [],
         array                        $allowedGrantTypes = [],
         array                        $audienceScopeBoundaries = [],
-        OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType    $requiredSenderConstraint = null,
         bool                         $workloadIdentity = false,
         bool                         $phishingResistantRequired = false,

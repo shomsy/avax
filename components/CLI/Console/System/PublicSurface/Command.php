@@ -169,7 +169,7 @@ abstract class Command
     /**
      * Ask a question.
      */
-    protected function ask(string $question, ?string $default = null) : string
+    protected function ask(string $question, string|null $default = null) : string
     {
         return $this->output->ask($question, $default);
     }

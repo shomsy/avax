@@ -34,7 +34,7 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 1.0,
-        ?Timestamp $timestamp = null,
+        Timestamp|null $timestamp = null,
         int        $memoryLimit = 0,
         int        $keyCount = 0,
         int        $connectionCount = 0,
@@ -63,7 +63,7 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 0.0,
-        ?Timestamp $timestamp = null,
+        Timestamp|null $timestamp = null,
     ) : self
     {
         return new self(
@@ -84,7 +84,7 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 0.5,
-        ?Timestamp $timestamp = null,
+        Timestamp|null $timestamp = null,
     ) : self
     {
         return new self(

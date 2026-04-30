@@ -8,14 +8,14 @@ final class RegisterComponents
 {
     private array $registrations = [];
 
-    public function register(string $name, callable $provider): self
+    public function register(string $name, callable $provider) : self
     {
         $this->registrations[$name] = $provider;
 
         return $this;
     }
 
-    public function getRegistrations(): array
+    public function getRegistrations() : array
     {
         return $this->registrations;
     }

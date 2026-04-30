@@ -10,7 +10,7 @@ final class StatusCode
         private int $code,
     ) {}
 
-    public function value(): int
+    public function value() : int
     {
         return $this->code;
     }

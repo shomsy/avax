@@ -29,10 +29,11 @@ final readonly class AuthenticationResult
     public static function success(
         AuthenticationContext $context,
         #[SensitiveParameter]
-        string $accessToken = null,
+        string|null $accessToken = null,
         #[SensitiveParameter]
-        string $refreshToken = null,
-    ): self {
+        string|null $refreshToken = null,
+    ) : self
+    {
         return new self(
             state       : AuthenticationState::AUTHENTICATED,
             context     : $context,
@@ -42,7 +43,7 @@ final readonly class AuthenticationResult
         );
     }
 
-    public function user(): AuthenticatedUser|null
+    public function user() : AuthenticatedUser|null
     {
         return $this->user;
     }
@@ -50,7 +51,8 @@ final readonly class AuthenticationResult
     public static function mfaRequired(
         AuthenticatedUser $user,
         MfaChallenge $challenge,
-    ): self {
+    ) : self
+    {
         return new self(
             state       : AuthenticationState::MFA_REQUIRED,
             context     : AuthenticationContext::guest(reason: 'mfa_required'),
@@ -59,42 +61,42 @@ final readonly class AuthenticationResult
         );
     }
 
-    public function state(): AuthenticationState
+    public function state() : AuthenticationState
     {
         return $this->state;
     }
 
-    public function context(): AuthenticationContext
+    public function context() : AuthenticationContext
     {
         return $this->context;
     }
 
-    public function accessToken(): string|null
+    public function accessToken() : string|null
     {
         return $this->accessToken;
     }
 
-    public function refreshToken(): string|null
+    public function refreshToken() : string|null
     {
         return $this->refreshToken;
     }
 
-    public function mfaChallenge(): MfaChallenge|null
+    public function mfaChallenge() : MfaChallenge|null
     {
         return $this->mfaChallenge;
     }
 
-    public function mfaChallengeId(): string|null
+    public function mfaChallengeId() : string|null
     {
         return $this->mfaChallenge?->challengeId;
     }
 
-    public function isAuthenticated(): bool
+    public function isAuthenticated() : bool
     {
         return $this->context->isAuthenticated();
     }
 
-    public function requiresMfa(): bool
+    public function requiresMfa() : bool
     {
         return $this->state === AuthenticationState::MFA_REQUIRED;
     }

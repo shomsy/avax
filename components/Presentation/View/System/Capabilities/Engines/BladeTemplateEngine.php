@@ -14,13 +14,13 @@ class BladeTemplateEngine extends Blade implements TemplateEngineInterface
         $this->configureCustomDirectives();
     }
 
-    private function configureCustomDirectives(): void
+    private function configureCustomDirectives() : void
     {
         $this->compiler()->directive('csrf', static fn () => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
         $this->compiler()->directive('method', static fn ($expression) => "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . $expression . '\">'; ?>");
     }
 
-    public function render(string $view, array $data = []): string
+    public function render(string $view, array $data = []) : string
     {
         return parent::render($view, $data);
     }

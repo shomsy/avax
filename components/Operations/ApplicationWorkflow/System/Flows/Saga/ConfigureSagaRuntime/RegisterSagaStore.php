@@ -186,7 +186,7 @@ final readonly class ValidateSagaRuntimeConfig
 
 final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0, Throwable $previous = null)
+    public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, code: $code, previous: $previous);
     }

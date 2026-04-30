@@ -13,7 +13,7 @@ final readonly class DispatchEvent
     ) {
     }
 
-    public function execute(string|object $event, mixed $data = null): void
+    public function execute(string|object $event, mixed $data = null) : void
     {
         $this->events->dispatch($event, $data);
     }

@@ -25,7 +25,7 @@ final readonly class ArrayReader
         return array_diff_key($data, array_flip($keys));
     }
 
-    public function getString(array $data, string $key, ?string $default = null) : string|null
+    public function getString(array $data, string $key, string|null $default = null) : string|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -54,7 +54,7 @@ final readonly class ArrayReader
         return $value;
     }
 
-    public function getInt(array $data, string $key, ?int $default = null) : int|null
+    public function getInt(array $data, string $key, int|null $default = null) : int|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -82,7 +82,7 @@ final readonly class ArrayReader
         return (int) $value;
     }
 
-    public function getFloat(array $data, string $key, ?float $default = null) : float|null
+    public function getFloat(array $data, string $key, float|null $default = null) : float|null
     {
         $value = $this->get($data, $key, $default);
 
@@ -93,7 +93,7 @@ final readonly class ArrayReader
         return (float) $value;
     }
 
-    public function getBool(array $data, string $key, ?bool $default = null) : bool|null
+    public function getBool(array $data, string $key, bool|null $default = null) : bool|null
     {
         $value = $this->get($data, $key);
 

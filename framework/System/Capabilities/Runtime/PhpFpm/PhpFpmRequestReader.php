@@ -17,8 +17,9 @@ final readonly class PhpFpmRequestReader
         array $server,
         array $query = [],
         array $parsedBody = [],
-        string $body = null,
-    ): RuntimeRequest {
+        string|null $body = null,
+    ) : RuntimeRequest
+    {
         $method     = $server['REQUEST_METHOD'] ?? 'GET';
         $uri        = $server['REQUEST_URI']    ?? '/';
         $attributes = ['query' => $query, 'parsedBody' => $parsedBody];

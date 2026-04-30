@@ -9,7 +9,7 @@ use Avax\Components\HTTP\System\Capabilities\Uri;
 
 final class CreateRequestFromGlobals
 {
-    public static function execute(): Request
+    public static function execute() : Request
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri    = self::getUri();
@@ -25,7 +25,7 @@ final class CreateRequestFromGlobals
         );
     }
 
-    private static function getUri(): Uri
+    private static function getUri() : Uri
     {
         $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host   = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
@@ -36,7 +36,7 @@ final class CreateRequestFromGlobals
         return new Uri($scheme, $host, $port, $path, $query);
     }
 
-    private static function getHeaders(): array
+    private static function getHeaders() : array
     {
         $headers = [];
         foreach ($_SERVER as $key => $value) {
@@ -49,7 +49,7 @@ final class CreateRequestFromGlobals
         return $headers;
     }
 
-    private static function getBody(): string
+    private static function getBody() : string
     {
         return file_get_contents('php://input') ?: '';
     }

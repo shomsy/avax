@@ -24,7 +24,7 @@ final readonly class Connections
     public function __construct(
         private ReadConnection $readConnection,
         ?ReadPdo           $readPdo = null,
-        ?RunWithConnection $runWithConnection = null,
+        RunWithConnection|null $runWithConnection = null,
     )
     {
         $this->readPdo = $readPdo ?? new ReadPdo(readConnection: $this->readConnection);
@@ -34,7 +34,7 @@ final readonly class Connections
     /**
      * @throws Throwable
      */
-    public function connection(?string $name = null) : DatabaseConnection
+    public function connection(string|null $name = null) : DatabaseConnection
     {
         return $this->readConnection->connection(name: $name);
     }
@@ -42,7 +42,7 @@ final readonly class Connections
     /**
      * @throws Throwable
      */
-    public function pdo(?string $name = null) : PDO
+    public function pdo(string|null $name = null) : PDO
     {
         return $this->readPdo->for(connectionName: $name);
     }
@@ -50,7 +50,7 @@ final readonly class Connections
     /**
      * @throws Throwable
      */
-    public function pool(callable $callback, ?string $name = null) : mixed
+    public function pool(callable $callback, string|null $name = null) : mixed
     {
         return $this->runWithConnection->pool(callback: $callback, connectionName: $name);
     }

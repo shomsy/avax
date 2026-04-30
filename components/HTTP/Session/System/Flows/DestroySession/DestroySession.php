@@ -13,7 +13,7 @@ final readonly class DestroySession
     ) {
     }
 
-    public function execute(): void
+    public function execute() : void
     {
         $this->scope->destroy();
     }

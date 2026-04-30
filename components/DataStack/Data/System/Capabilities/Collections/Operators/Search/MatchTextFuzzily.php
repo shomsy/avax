@@ -11,7 +11,7 @@ final readonly class MatchTextFuzzily
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(string $query, int $threshold = 70, ?string $key = null) : array
+    public function __invoke(string $query, int $threshold = 70, string|null $key = null) : array
     {
         return array_values(array_filter(
                                 $this->items,

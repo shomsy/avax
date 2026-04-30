@@ -37,7 +37,7 @@ final class TransactionException extends DatabaseException
     public function __construct(
         string    $message,
         int       $nestingLevel,
-        Throwable $previous = null,
+        Throwable|null $previous = null,
     )
     {
         $this->nestingLevel = $nestingLevel;

@@ -10,7 +10,7 @@ final class FrozenClock implements Clock
 {
     private Timestamp $timestamp;
 
-    public function __construct(?Timestamp $timestamp = null)
+    public function __construct(Timestamp|null $timestamp = null)
     {
         $this->timestamp = $timestamp ?? Timestamp::now();
     }
@@ -26,7 +26,7 @@ final class FrozenClock implements Clock
         $this->timestamp = $this->timestamp->add(duration: $duration);
     }
 
-    public function reset(?Timestamp $timestamp = null) : void
+    public function reset(Timestamp|null $timestamp = null) : void
     {
         $this->timestamp = $timestamp ?? Timestamp::now();
     }

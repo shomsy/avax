@@ -51,7 +51,7 @@ final readonly class SagaDefinition implements IteratorAggregate
         array              $steps = null,
         array              $stepOrder = null,
         TenantBoundary     $tenantBoundary = null,
-        SagaStartCondition $startCondition = null,
+        SagaStartCondition|null $startCondition = null,
         string             $startTrigger = null,
         int                $timeoutSeconds = null,
         int                $maxDurationSeconds = null,
@@ -95,7 +95,7 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     public static function create(
         string $name,
-        string $type = null,
+        string|null $type = null,
         array  $options = [],
     ) : self
     {

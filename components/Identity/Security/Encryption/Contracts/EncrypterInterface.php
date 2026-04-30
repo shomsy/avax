@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Security\Encryption\Contracts;
 
 /**
- * Interface EncrypterInterface
+ * Interface StringEncrypterInterface
  *
- * Defines the contract for encryption services.
+ * Defines the contract for string-based encryption services.
+ * Used for simple string encryption where the payload is always a string.
  */
-interface EncrypterInterface
+interface StringEncrypterInterface
 {
     /**
      * Encrypt the given value.

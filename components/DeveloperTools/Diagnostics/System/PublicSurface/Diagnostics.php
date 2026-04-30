@@ -6,7 +6,7 @@ namespace Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface;
 
 final class Diagnostics
 {
-    public static function health(): array
+    public static function health() : array
     {
         return [
             'php'    => PHP_VERSION,
@@ -15,12 +15,12 @@ final class Diagnostics
         ];
     }
 
-    public static function dump(mixed $data): void
+    public static function dump(mixed $data) : void
     {
         var_dump($data);
     }
 
-    public static function dd(mixed ...$data): void
+    public static function dd(mixed ...$data) : void
     {
         foreach ($data as $item) {
             var_dump($item);

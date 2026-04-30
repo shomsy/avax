@@ -13,7 +13,7 @@ final class OpenWorkerRequestScope
     ) {
     }
 
-    public function open(): void
+    public function open() : void
     {
         $this->requestScope->open();
     }

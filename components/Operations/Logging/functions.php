@@ -14,7 +14,7 @@ if (! function_exists(function: 'logger')) {
      *
      * @return LoggerInterface|null
      */
-    function logger(string $message = null, array $context = null, string $level = 'info') : ?LoggerInterface
+    function logger(string|null $message = null, array|null $context = null, string $level = 'info') : LoggerInterface|null
     {
         $context ??= [];
         $logger = app(abstract: LoggerInterface::class);

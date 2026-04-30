@@ -218,12 +218,12 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function input(string $key, mixed $default = null): mixed
+    public function input(string $key, mixed $default = null) : mixed
     {
         return $this->data->attributes[$key] ?? $this->data->queryParams[$key] ?? ($this->getParsedBody()[$key] ?? $default);
     }
 
-    public function all(): array
+    public function all() : array
     {
         return array_merge($this->data->queryParams, (array) $this->getParsedBody(), $this->data->attributes);
     }

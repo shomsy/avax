@@ -9,7 +9,7 @@ use Exception;
 /**
  * Safe registration failure contract.
  */
-class RegistrationFailed extends Exception
+final class RegistrationFailed extends Exception
 {
     public static function emailTaken() : self
     {

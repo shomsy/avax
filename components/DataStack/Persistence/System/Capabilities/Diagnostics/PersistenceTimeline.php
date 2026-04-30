@@ -36,7 +36,7 @@ final class PersistenceTimeline
      * @param float  $duration Duration in milliseconds
      * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, float $timestamp = null) : void
+    public function record(string $query, float $duration, float|null $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);

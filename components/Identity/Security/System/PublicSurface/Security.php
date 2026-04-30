@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\Security\System\PublicSurface;
 use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\ApproveSecurityChange;
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\BeginSecurityChange;
+use Avax\Framework\Foundation\Exception\NotImplementedException;
 
 /**
  * Security - Main entry point for Identity/Security component.
@@ -36,6 +37,6 @@ final readonly class Security implements SecurityInterface
 
     public function applyChange(string $requestId) : void
     {
-        // Implementation
+        throw new NotImplementedException('Security change application workflow not yet implemented');
     }
 }

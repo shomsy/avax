@@ -9,9 +9,9 @@ use DateTimeZone;
 
 final class SystemClock
 {
-    private static ?DateTimeImmutable $dateTimeImmutable = null;
+    private static DateTimeImmutable|null $dateTimeImmutable = null;
 
-    public static function create(?string $timezone = null) : DateTimeImmutable
+    public static function create(string|null $timezone = null) : DateTimeImmutable
     {
         if (self::$dateTimeImmutable !== null) {
             $tz = $timezone ?? date_default_timezone_get();

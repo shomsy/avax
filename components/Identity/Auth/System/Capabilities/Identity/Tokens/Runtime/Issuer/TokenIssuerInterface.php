@@ -25,7 +25,7 @@ interface TokenIssuerInterface
      */
     public function issue(
         User              $user,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool              $phishingResistant = false,
         string            $clientId = null,
         array             $scopes = [],

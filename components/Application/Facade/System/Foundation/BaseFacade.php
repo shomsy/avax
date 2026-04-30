@@ -18,9 +18,9 @@ abstract class BaseFacade implements FacadeInterface
     /** @var array<string, mixed> Cached resolved instances */
     protected static array $resolvedInstances = [];
 
-    protected static ?ContainerInterface $container = null;
+    protected static ContainerInterface|null $container = null;
 
-    public static function __callStatic(string $method, array $args): mixed
+    public static function __callStatic(string $method, array $args) : mixed
     {
         $instance = static::resolveInstance();
 
@@ -70,7 +70,7 @@ abstract class BaseFacade implements FacadeInterface
         return $instance;
     }
 
-    protected static function resolveInstance(): mixed
+    protected static function resolveInstance() : mixed
     {
         $accessor = static::getFacadeAccessor();
 

@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Auth\System\Foundation\Exceptions;
 use SensitiveParameter;
 use Throwable;
 
-class ConfigurationException extends AuthException
+final class ConfigurationException extends AuthException
 {
     /**
      * @param array<string, scalar|list<string>|null> $context
@@ -49,7 +49,7 @@ class ConfigurationException extends AuthException
     }
 
     public static function missingIdentityBackend(
-        string $buildPath = null,
+        string|null $buildPath = null,
         string $hint = 'Provide at least one session or JWT backend.',
     ) : self
     {

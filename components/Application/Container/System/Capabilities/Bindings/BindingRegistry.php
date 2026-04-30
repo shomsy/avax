@@ -86,7 +86,7 @@ final class BindingRegistry
         return isset($this->bindings[$abstract]) || isset($this->instances[$abstract]);
     }
 
-    public function getBinding(string $abstract) : ?array
+    public function getBinding(string $abstract) : array|null
     {
         $abstract = $this->resolveAlias($abstract);
 

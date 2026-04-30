@@ -163,7 +163,7 @@ final readonly class SagaCorrelationId
     public string|null $prefix;
     public string|null $suffix;
 
-    private function __construct(string $value, string $prefix = null, string $suffix = null)
+    private function __construct(string $value, string|null $prefix = null, string|null $suffix = null)
     {
         $this->value  = $value;
         $this->prefix = $prefix;

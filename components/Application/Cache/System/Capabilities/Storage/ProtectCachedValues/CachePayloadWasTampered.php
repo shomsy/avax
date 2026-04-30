@@ -11,7 +11,7 @@ final class CachePayloadWasTampered extends RuntimeException
 {
     public function __construct(
         string     $message,
-        ?Throwable $throwable = null,
+        Throwable|null $throwable = null,
     )
     {
         parent::__construct(message: $message, code: 0, previous: $throwable);

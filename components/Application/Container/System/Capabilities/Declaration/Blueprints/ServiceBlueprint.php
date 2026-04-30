@@ -21,11 +21,11 @@ final readonly class ServiceBlueprint
      */
     public function __construct(
         public string           $class,
-        ?bool                   $instantiable = null,
+        bool|null  $instantiable = null,
         public ResolvePlan|null $resolvePlan = null,
-        ?array                  $injectableProperties = null,
-        ?array                  $injectableMethods = null,
-        ?bool                   $shared = null,
+        array|null $injectableProperties = null,
+        array|null $injectableMethods = null,
+        bool|null  $shared = null,
         public string           $fingerprint = '',
     )
     {

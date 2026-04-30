@@ -24,13 +24,13 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private array         $cookieParams    = [];
     private array         $queryParams     = [];
     private array         $uploadedFiles   = [];
-    private ?array        $parsedBody      = null;
+    private array|null  $parsedBody    = null;
     private array         $attributes      = [];
     private string        $protocolVersion = '1.1';
     private array         $headers         = [];
     private StreamInterface $body;
     private ?UriInterface $uri             = null;
-    private ?string       $requestTarget   = null;
+    private string|null $requestTarget = null;
     private string        $method          = 'GET';
 
     public function __construct(
@@ -40,7 +40,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         array               $uploadedFiles = [],
         array               $parsedBody = null,
         string              $method = 'GET',
-        UriInterface|string $uri = null,
+        UriInterface|string|null $uri = null,
         string              $protocolVersion = '1.1',
         array               $headers = [],
         StreamInterface     $body = null,
@@ -87,7 +87,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             public function __construct(
                 private string $scheme,
                 private string $host,
-                private ?int   $port,
+                private int|null $port,
                 private string $path,
                 private string $query,
                 private string $fragment,
@@ -119,7 +119,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 return $this->host;
             }
 
-            public function getPort() : ?int
+            public function getPort() : int|null
             {
                 return $this->port;
             }
@@ -238,7 +238,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                     throw new RuntimeException('Not implemented');
                 }
 
-                public function getSize() : ?int
+                public function getSize() : int|null
                 {
                     return $this->size > 0 ? $this->size : null;
                 }
@@ -248,12 +248,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                     return $this->error;
                 }
 
-                public function getClientFilename() : ?string
+                public function getClientFilename() : string|null
                 {
                     return $this->clientFilename !== '' ? $this->clientFilename : null;
                 }
 
-                public function getClientMediaType() : ?string
+                public function getClientMediaType() : string|null
                 {
                     return $this->clientMediaType !== '' ? $this->clientMediaType : null;
                 }
@@ -279,7 +279,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 move_uploaded_file($this->tmpName, $targetPath);
             }
 
-            public function getSize() : ?int
+            public function getSize() : int|null
             {
                 return $this->size > 0 ? $this->size : null;
             }
@@ -289,12 +289,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 return $this->error;
             }
 
-            public function getClientFilename() : ?string
+            public function getClientFilename() : string|null
             {
                 return $this->clientFilename !== '' ? $this->clientFilename : null;
             }
 
-            public function getClientMediaType() : ?string
+            public function getClientMediaType() : string|null
             {
                 return $this->clientMediaType !== '' ? $this->clientMediaType : null;
             }
@@ -423,7 +423,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getParsedBody() : ?array
+    public function getParsedBody() : array|null
     {
         return $this->parsedBody;
     }

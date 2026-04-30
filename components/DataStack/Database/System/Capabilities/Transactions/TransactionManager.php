@@ -36,12 +36,12 @@ final class TransactionManager
     private bool $active = false;
 
     /**
-     * @var list<Closure(): void> Callbacks to execute on successful commit
+     * @var list<Closure() : void> Callbacks to execute on successful commit
      */
     private array $commitCallbacks = [];
 
     /**
-     * @var list<Closure(): void> Callbacks to execute on rollback
+     * @var list<Closure() : void> Callbacks to execute on rollback
      */
     private array $rollbackCallbacks = [];
 
@@ -54,14 +54,14 @@ final class TransactionManager
      * Executes a closure within a transaction with retry logic for deadlocks.
      *
      * @template T
-     * @param Closure(self): T $callback
+     * @param Closure(self) : T $callback
      *
      * @return T
      * @throws Throwable
      */
     public function transactionWithRetry(
         Closure        $callback,
-        IsolationLevel $isolationLevel = null,
+        IsolationLevel|null $isolationLevel = null,
         RetryPolicy    $retryPolicy = null,
     ) : mixed
     {
@@ -94,12 +94,12 @@ final class TransactionManager
      * Automatically handles begin/commit/rollback and supports nesting.
      *
      * @template T
-     * @param Closure(self): T $callback
+     * @param Closure(self) : T $callback
      *
      * @return T
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, IsolationLevel $isolationLevel = null) : mixed
+    public function transaction(Closure $callback, IsolationLevel|null $isolationLevel = null) : mixed
     {
         $this->begin($isolationLevel);
 
@@ -126,7 +126,7 @@ final class TransactionManager
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(IsolationLevel $isolationLevel = null) : void
+    public function begin(IsolationLevel|null $isolationLevel = null) : void
     {
         if ($this->depth === 0) {
             $this->connection->beginTransaction();

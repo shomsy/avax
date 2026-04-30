@@ -16,7 +16,7 @@ use Closure;
  */
 final class InjectMethods
 {
-    /** @var array<string, Closure(object, array): mixed> */
+    /** @var array<string, Closure(object, array) : mixed> */
     private array $invokers = [];
 
     public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
@@ -51,7 +51,7 @@ final class InjectMethods
     /**
      * Returns or creates the bound method invoker.
      *
-     * @return Closure(object, array): mixed
+     * @return Closure(object, array) : mixed
      */
     private function invokerFor(string $class, string $method) : Closure
     {

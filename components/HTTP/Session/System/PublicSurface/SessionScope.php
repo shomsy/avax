@@ -20,7 +20,7 @@ final class SessionScope
         private readonly SessionStoreInterface $store,
     ) {}
 
-    public function start(): bool
+    public function start() : bool
     {
         if ($this->started) {
             return true;
@@ -39,50 +39,50 @@ final class SessionScope
         return true;
     }
 
-    public function isStarted(): bool
+    public function isStarted() : bool
     {
         return $this->started;
     }
 
-    public function id(): string
+    public function id() : string
     {
         return $this->id;
     }
 
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return array_key_exists($key, $this->data);
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $this->data[$key] ?? $default;
     }
 
-    public function all(): array
+    public function all() : array
     {
         return $this->data;
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         $this->data[$key] = $value;
         $this->sync();
     }
 
-    public function forget(string $key): void
+    public function forget(string $key) : void
     {
         unset($this->data[$key]);
         $this->sync();
     }
 
-    public function clear(): void
+    public function clear() : void
     {
         $this->data = [];
         $this->sync();
     }
 
-    public function destroy(): void
+    public function destroy() : void
     {
         $this->data = [];
         $this->store->destroy($this->id);
@@ -90,7 +90,7 @@ final class SessionScope
         $this->id = '';
     }
 
-    public function regenerate(bool $destroy = false): bool
+    public function regenerate(bool $destroy = false) : bool
     {
         if (! $this->started) {
             return false;
@@ -106,14 +106,14 @@ final class SessionScope
         return $result;
     }
 
-    public function save(): void
+    public function save() : void
     {
         if ($this->started && $this->id !== '') {
             $this->store->write($this->id, $this->data);
         }
     }
 
-    private function sync(): void
+    private function sync() : void
     {
         if ($this->started) {
             $_SESSION = $this->data;

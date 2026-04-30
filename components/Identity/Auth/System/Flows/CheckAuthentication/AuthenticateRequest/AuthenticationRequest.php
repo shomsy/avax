@@ -16,7 +16,7 @@ final readonly class AuthenticationRequest
     public function __construct(
         #[SensitiveParameter]
         public string|null $bearerToken = null,
-        bool $allowSession = null,
+        bool|null $allowSession = null,
         #[SensitiveParameter]
         public string|null $ipAddress = null,
         public string|null $userAgent = null,
@@ -29,9 +29,10 @@ final readonly class AuthenticationRequest
         #[SensitiveParameter]
         string $bearerToken,
         #[SensitiveParameter]
-        string $ipAddress = null,
-        string $userAgent = null,
-    ): self {
+        string|null $ipAddress = null,
+        string|null $userAgent = null,
+    ) : self
+    {
         return new self(
             bearerToken: $bearerToken,
             ipAddress  : $ipAddress,

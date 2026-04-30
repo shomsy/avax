@@ -13,7 +13,7 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
 
     public function __construct(
         CacheVersion  $initialVersion,
-        ?CacheVersion $currentVersion = null,
+        CacheVersion|null $currentVersion = null,
     )
     {
         $this->cacheVersion = $currentVersion ?? $initialVersion;

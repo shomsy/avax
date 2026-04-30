@@ -41,7 +41,7 @@ final class PoolingService implements PoolingContract
 
 final class PoolingDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
     {
         assertInstanceOf(expectedClass: PoolingService::class, value: $instance, message: 'Pooling decorators should receive the resolved singleton instance.');
         $instance->decorated = true;

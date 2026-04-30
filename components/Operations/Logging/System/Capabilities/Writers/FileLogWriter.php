@@ -14,7 +14,7 @@ final readonly class FileLogWriter
     ) {
     }
 
-    public function write(string $message): void
+    public function write(string $message) : void
     {
         $dir = dirname($this->path);
         if (! is_dir($dir)) {

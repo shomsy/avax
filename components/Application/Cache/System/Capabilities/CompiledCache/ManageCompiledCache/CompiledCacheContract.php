@@ -13,7 +13,7 @@ interface CompiledCacheContract
      *
      * @template T
      *
-     * @param callable(): T $build
+     * @param callable() : T $build
      *
      * @return T
      */

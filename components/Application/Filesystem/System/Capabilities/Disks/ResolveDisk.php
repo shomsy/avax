@@ -13,7 +13,7 @@ final readonly class ResolveDisk
         private FilesystemConfig $filesystemConfig = new FilesystemConfig(default: 'local', disks: ['local' => ['driver' => 'local']]),
     ) {}
 
-    public function execute(?string $name = null) : Disk
+    public function execute(string|null $name = null) : Disk
     {
         $name       ??= $this->filesystemConfig->default;
         $diskConfig = $this->filesystemConfig->disk(name: $name)

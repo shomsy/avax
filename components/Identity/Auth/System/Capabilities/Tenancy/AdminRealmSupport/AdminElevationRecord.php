@@ -12,7 +12,7 @@ final readonly class AdminElevationRecord
     {
     }
 
-    public function isExpiredAt(DateTimeImmutable $moment): bool
+    public function isExpiredAt(DateTimeImmutable $moment) : bool
     {
         return $this->expiresAt <= $moment;
     }

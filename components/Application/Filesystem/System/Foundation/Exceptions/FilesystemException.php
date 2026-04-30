@@ -10,9 +10,9 @@ use Throwable;
 /**
  * Exception thrown by filesystem operations.
  */
-class FilesystemException extends Exception
+final class FilesystemException extends Exception
 {
-    public function __construct(string $message, string $path = '', int $code = 0, ?Throwable $throwable = null)
+    public function __construct(string $message, string $path = '', int $code = 0, Throwable|null $throwable = null)
     {
         $fullMessage = $message;
         if ($path !== '' && $path !== '0') {

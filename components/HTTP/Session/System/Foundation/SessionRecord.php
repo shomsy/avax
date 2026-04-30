@@ -14,11 +14,11 @@ final readonly class SessionRecord
         public DateTimeImmutable $lastSeenAt,
         public DateTimeImmutable $idleExpiresAt,
         public DateTimeImmutable $absoluteExpiresAt,
-        public ?string           $userId = null,
-        public ?string           $ipCreated = null,
-        public ?string           $userAgentCreated = null,
-        public ?DateTimeImmutable $revokedAt = null,
-        public ?string           $revokeReason = null,
+        public string|null            $userId = null,
+        public string|null            $ipCreated = null,
+        public string|null            $userAgentCreated = null,
+        public DateTimeImmutable|null $revokedAt = null,
+        public string|null            $revokeReason = null,
     ) {}
 
     public function isExpired() : bool

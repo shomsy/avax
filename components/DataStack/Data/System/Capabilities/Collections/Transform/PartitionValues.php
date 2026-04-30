@@ -14,7 +14,7 @@ final readonly class PartitionValues
     ) {}
 
     /**
-     * @param callable $callback fn(mixed $item): bool
+     * @param callable $callback fn(mixed $item) : bool
      *
      * @return array{0: array, 1: array}
      */
@@ -24,7 +24,7 @@ final readonly class PartitionValues
     }
 
     /**
-     * @param callable $callback fn(mixed $item): bool
+     * @param callable $callback fn(mixed $item) : bool
      *
      * @return array{0: array, 1: array}
      */

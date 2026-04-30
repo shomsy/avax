@@ -13,12 +13,12 @@ final class ComponentRegistration
     ) {
     }
 
-    public function register(string $name, callable $provider): void
+    public function register(string $name, callable $provider) : void
     {
         $this->registry->register($name, $provider);
     }
 
-    public function getRegistered(): array
+    public function getRegistered() : array
     {
         return $this->registry->all();
     }

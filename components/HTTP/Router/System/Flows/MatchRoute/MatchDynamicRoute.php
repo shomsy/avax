@@ -22,7 +22,7 @@ final class MatchDynamicRoute
      *
      * @return array<string, string>|null Matched parameters or null if no match
      */
-    public function match(string $pattern, string $path): ?array
+    public function match(string $pattern, string $path) : array|null
     {
         $regex = $this->compilePattern($pattern);
         if ($regex === null) {
@@ -49,7 +49,7 @@ final class MatchDynamicRoute
      *
      * @return string|null Regex pattern or null if invalid
      */
-    private function compilePattern(string $pattern) : ?string
+    private function compilePattern(string $pattern) : string|null
     {
         // Replace named parameters with named capture groups
         $regex = preg_replace_callback(

@@ -13,7 +13,7 @@ final readonly class RuntimeResult
     ) {
     }
 
-    public static function fromResponse(RuntimeResponse $response): self
+    public static function fromResponse(RuntimeResponse $response) : self
     {
         return new self(
             response: $response,
@@ -22,7 +22,7 @@ final readonly class RuntimeResult
         );
     }
 
-    public static function fromConsoleOutput(string $output, int $exitCode = 0): self
+    public static function fromConsoleOutput(string $output, int $exitCode = 0) : self
     {
         return new self(
             response: null,
@@ -31,17 +31,17 @@ final readonly class RuntimeResult
         );
     }
 
-    public function response(): RuntimeResponse|null
+    public function response() : RuntimeResponse|null
     {
         return $this->response;
     }
 
-    public function exitCode(): int
+    public function exitCode() : int
     {
         return $this->exitCode;
     }
 
-    public function output(): string
+    public function output() : string
     {
         return $this->output;
     }

@@ -19,14 +19,14 @@ assertInstanceOf(
 );
 assertThrows(
     expectedClass: InvalidArgumentException::class,
-    callback     : static function (): void {
+    callback     : static function () : void {
         makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_COROUTINE));
     },
     message      : 'Coroutine async targets should fail with an explicit boundary error.',
 );
 assertThrows(
     expectedClass: InvalidArgumentException::class,
-    callback     : static function (): void {
+    callback     : static function () : void {
         makeTestContainer(config: CreateContainerConfig::create(asyncTarget: CreateContainerConfig::ASYNC_TARGET_FIBER));
     },
     message      : 'Fiber async targets should fail with an explicit boundary error.',

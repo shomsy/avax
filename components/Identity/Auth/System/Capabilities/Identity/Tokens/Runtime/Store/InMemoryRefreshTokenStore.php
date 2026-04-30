@@ -28,7 +28,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         bool                  $phishingResistant = false,
         string                $clientId = null,
         array                 $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken
     {
         $tokenId = bin2hex(string: random_bytes(length: 32));

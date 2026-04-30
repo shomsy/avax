@@ -14,7 +14,7 @@ final readonly class WorkerResponse
     ) {
     }
 
-    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $response): self
+    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $response) : self
     {
         return new self(
             requestId: $requestId,
@@ -22,12 +22,12 @@ final readonly class WorkerResponse
         );
     }
 
-    public function requestId(): string
+    public function requestId() : string
     {
         return $this->requestId;
     }
 
-    public function response(): RuntimeResponse
+    public function response() : RuntimeResponse
     {
         return $this->response;
     }

@@ -16,7 +16,7 @@ final readonly class Pipe
         private string|null $name = null,
     ) {}
 
-    public static function from(callable $callback, ?string $name = null) : self
+    public static function from(callable $callback, string|null $name = null) : self
     {
         return new self(callback: $callback(...), name: $name);
     }

@@ -38,7 +38,7 @@ final readonly class Authorization implements AccessInterface
     /**
      * @throws Unauthenticated
      */
-    public function requireAuthentication(): void
+    public function requireAuthentication() : void
     {
         $this->requireAuthentication->execute();
     }
@@ -47,7 +47,7 @@ final readonly class Authorization implements AccessInterface
      * @throws Unauthenticated
      * @throws RoleDenied
      */
-    public function requireRole(UserRole $requiredRole): void
+    public function requireRole(UserRole $requiredRole) : void
     {
         $this->requireRole->execute(requiredRole: $requiredRole);
     }
@@ -56,7 +56,7 @@ final readonly class Authorization implements AccessInterface
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function requirePermission(UserPermission $permission): void
+    public function requirePermission(UserPermission $permission) : void
     {
         $this->requirePermission->execute(permission: $permission);
     }
@@ -69,7 +69,7 @@ final readonly class Authorization implements AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requirePolicy(AccessPolicy $policy): void
+    public function requirePolicy(AccessPolicy $policy) : void
     {
         $this->requireAccessPolicy->execute(policy: $policy);
     }

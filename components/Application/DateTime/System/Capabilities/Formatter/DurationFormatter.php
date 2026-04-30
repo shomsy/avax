@@ -70,7 +70,7 @@ final class DurationFormatter
         return implode(' ', $parts);
     }
 
-    public function formatSeconds(int $seconds): string
+    public function formatSeconds(int $seconds) : string
     {
         if ($seconds < 60) {
             return $seconds . 's';

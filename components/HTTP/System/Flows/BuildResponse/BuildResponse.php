@@ -12,8 +12,9 @@ final class BuildResponse
     public static function execute(
         int $status = 200,
         array $headers = [],
-        string $body = null,
-    ): Response {
+        string|null $body = null,
+    ) : Response
+    {
         $response = new Response(
             new StreamBody($body ?? ''),
             $status,

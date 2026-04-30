@@ -15,7 +15,7 @@ final readonly class MakeControllerCommand
         private LoggerInterface              $logger,
     ) {}
 
-    public function execute(array $arguments): void
+    public function execute(array $arguments) : void
     {
         $name = $arguments['name'] ?? null;
         if (empty($name)) {

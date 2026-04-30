@@ -34,7 +34,7 @@ final readonly class BackChannelLogout
     ) {
     }
 
-    public function execute(BackChannelLogoutData $data): LogoutResult
+    public function execute(BackChannelLogoutData $data) : LogoutResult
     {
         $context          = $this->currentAuthentication->read();
         $now              = $this->clock->now();
@@ -88,7 +88,7 @@ final readonly class BackChannelLogout
     /**
      * @param array<string, mixed>|null $claims
      */
-    private function resolveClientFromClaims(array|null $claims): OAuthClient|null
+    private function resolveClientFromClaims(array|null $claims) : OAuthClient|null
     {
         if ($claims === null || $this->clientRegistry === null) {
             return null;

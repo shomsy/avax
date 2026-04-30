@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
 
 final class SessionProvider implements ComponentProviderInterface
 {
-    public function register(ComponentRegistry $registry): void
+    public function register(ComponentRegistry $registry) : void
     {
         $registry->singleton(SessionStoreInterface::class, NativeSessionStore::class);
         $registry->singleton(SessionScope::class, static fn ($container) => new SessionScope($container->get(SessionStoreInterface::class)));

@@ -16,12 +16,12 @@ final class StateResetReport
     ) {
     }
 
-    public function hasFailures(): bool
+    public function hasFailures() : bool
     {
         return in_array(false, $this->results, true);
     }
 
-    public function failedComponents(): array
+    public function failedComponents() : array
     {
         return array_keys($this->results, false);
     }

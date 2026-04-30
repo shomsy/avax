@@ -24,7 +24,7 @@ final readonly class Config
      *
      * @throws RuntimeException if key does not exist and no default is provided.
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         if (! $this->configurationRepository->has($key) && $default === null) {
             throw new RuntimeException(sprintf('Configuration key [%s] does not exist.', $key));
@@ -36,7 +36,7 @@ final readonly class Config
     /**
      * Check if a configuration key exists.
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return $this->configurationRepository->has($key);
     }

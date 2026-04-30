@@ -9,7 +9,7 @@ use RuntimeException;
 /**
  * Raised when an immutable collection or value is mutated.
  */
-class MutationException extends RuntimeException
+final class MutationException extends RuntimeException
 {
     public static function valueIsLocked() : self
     {

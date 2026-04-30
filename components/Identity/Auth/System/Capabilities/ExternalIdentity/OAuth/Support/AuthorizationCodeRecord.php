@@ -35,12 +35,12 @@ final readonly class AuthorizationCodeRecord
     ) {
     }
 
-    public function isExpiredAt(DateTimeImmutable $moment): bool
+    public function isExpiredAt(DateTimeImmutable $moment) : bool
     {
         return $this->expiresAt <= $moment;
     }
 
-    public function wasUsed(): bool
+    public function wasUsed() : bool
     {
         return $this->usedAt !== null;
     }

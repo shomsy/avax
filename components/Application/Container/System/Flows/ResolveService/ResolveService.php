@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\System\PublicSurface\Container;
 
 final class ResolveService
 {
-    public function resolve(Container $container, string $id): mixed
+    public function resolve(Container $container, string $id) : mixed
     {
         return $container->make($id);
     }

@@ -10,10 +10,11 @@ final readonly class AuthIssueExplainer
 {
     public function explainAccessDenied(
         string $resource,
-        string $requiredPermission = null,
-        string $tenant = null,
-        string $resourceTenant = null,
-    ): AuthIssueExplanation {
+        string|null $requiredPermission = null,
+        string|null $tenant = null,
+        string|null $resourceTenant = null,
+    ) : AuthIssueExplanation
+    {
         $resourceName = trim(string: $resource) !== '' ? trim(string: $resource) : 'resource';
 
         return new AuthIssueExplanation(
@@ -36,9 +37,10 @@ final readonly class AuthIssueExplainer
 
     public function explainStepUpRequired(
         string $action,
-        bool $phishingResistantRequired = null,
-        int $freshAfterSeconds = null,
-    ): AuthIssueExplanation {
+        bool|null $phishingResistantRequired = null,
+        int|null  $freshAfterSeconds = null,
+    ) : AuthIssueExplanation
+    {
         $phishingResistantRequired ??= false;
         $actionName = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
 
@@ -65,8 +67,9 @@ final readonly class AuthIssueExplainer
 
     public function explainSenderConstraintFailure(
         string $reason,
-        string $requiredConstraint = null,
-    ): AuthIssueExplanation {
+        string|null $requiredConstraint = null,
+    ) : AuthIssueExplanation
+    {
         $normalizedReason = trim(string: $reason) !== '' ? trim(string: $reason) : 'unknown_reason';
 
         return new AuthIssueExplanation(
@@ -85,7 +88,7 @@ final readonly class AuthIssueExplainer
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null): AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
     {
         $normalizedStatus = strtoupper(string: trim(string: $status));
         $meaning          = match ($normalizedStatus) {
@@ -111,7 +114,7 @@ final readonly class AuthIssueExplainer
         );
     }
 
-    public function explainTrustedDeviceDecision(string $deviceId = null): AuthIssueExplanation
+    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
     {
         return new AuthIssueExplanation(
             code      : 'trusted_device_not_supported',

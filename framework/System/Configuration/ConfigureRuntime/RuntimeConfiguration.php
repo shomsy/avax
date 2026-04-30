@@ -18,31 +18,31 @@ final class RuntimeConfiguration
     private string $adapter = 'php-fpm';
     private array $options = [];
 
-    public function setAdapter(string $adapter): self
+    public function setAdapter(string $adapter) : self
     {
         $this->adapter = $adapter;
 
         return $this;
     }
 
-    public function getAdapter(): string
+    public function getAdapter() : string
     {
         return $this->adapter;
     }
 
-    public function setOptions(array $options): self
+    public function setOptions(array $options) : self
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function getOptions(): array
+    public function getOptions() : array
     {
         return $this->options;
     }
 
-    public function createRuntime(): RuntimeInterface
+    public function createRuntime() : RuntimeInterface
     {
         return match ($this->adapter) {
             'php-fpm'   => new PhpFpmRuntime(),

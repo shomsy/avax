@@ -13,12 +13,12 @@ final class StateResetRegistry
      */
     private array $states = [];
 
-    public function register(string $name, ResettableState $state): void
+    public function register(string $name, ResettableState $state) : void
     {
         $this->states[$name] = $state;
     }
 
-    public function resetAll(): StateResetReport
+    public function resetAll() : StateResetReport
     {
         $resetComponents = [];
         $failures        = [];

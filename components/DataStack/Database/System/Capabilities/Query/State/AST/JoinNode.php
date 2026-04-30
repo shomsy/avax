@@ -34,7 +34,7 @@ final readonly class JoinNode
         string     $first = null,
         string     $operator = null,
         string     $second = null,
-        JoinClause $clause = null,
+        JoinClause|null $clause = null,
     )
     {
         $type ??= 'inner';

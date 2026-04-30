@@ -12,7 +12,7 @@ final readonly class RenderView
         private TemplateEngineInterface $engine,
     ) {}
 
-    public function handle(string $view, array $data = []): string
+    public function handle(string $view, array $data = []) : string
     {
         return $this->engine->render($view, $data);
     }

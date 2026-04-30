@@ -11,14 +11,14 @@ final readonly class PrimaryReplicaCache
         private array $replicas,
     ) {}
 
-    public function get(string $key): mixed
+    public function get(string $key) : mixed
     {
         $replica = $this->replicas[array_rand($this->replicas)];
 
         return $replica->get($key);
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         $this->primary->set($key, $value);
     }

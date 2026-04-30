@@ -9,7 +9,7 @@ use Avax\Components\HTTP\System\Flows\BuildResponse\BuildResponse;
 
 final class CreateResponse
 {
-    public static function json(mixed $data, int $status = 200): Response
+    public static function json(mixed $data, int $status = 200) : Response
     {
         return BuildResponse::execute(
             $status,
@@ -18,7 +18,7 @@ final class CreateResponse
         );
     }
 
-    public static function html(string $html, int $status = 200): Response
+    public static function html(string $html, int $status = 200) : Response
     {
         return BuildResponse::execute(
             $status,
@@ -27,7 +27,7 @@ final class CreateResponse
         );
     }
 
-    public static function redirect(string $url, int $status = 302): Response
+    public static function redirect(string $url, int $status = 302) : Response
     {
         return BuildResponse::execute(
             $status,
@@ -35,7 +35,7 @@ final class CreateResponse
         );
     }
 
-    public static function plain(string $text, int $status = 200): Response
+    public static function plain(string $text, int $status = 200) : Response
     {
         return BuildResponse::execute(
             $status,

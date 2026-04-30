@@ -62,7 +62,7 @@ final readonly class Database
         return new Telemetry($this->telemetry);
     }
 
-    public function table(string $table, string $connectionName = null) : QueryBuilder
+    public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->query->from($table, $connectionName);
     }

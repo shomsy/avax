@@ -37,7 +37,7 @@ final readonly class ClientResponse
         public float  $connectTimeMs = 0.0,
         public float  $totalTimeMs = 0.0,
         public int    $redirectCount = 0,
-        public ?string $effectiveUrl = null,
+        public string|null $effectiveUrl = null,
         public array  $context = [],
     ) {}
 
@@ -139,7 +139,7 @@ final readonly class ClientResponse
     /**
      * Get the response content type.
      */
-    public function getContentType() : ?string
+    public function getContentType() : string|null
     {
         $contentType = $this->getHeaderLine('Content-Type');
         if ($contentType === '') {
@@ -195,7 +195,7 @@ final readonly class ClientResponse
      *
      * @param string|null $format Force a specific format ('json', 'xml', 'text')
      */
-    public function decoded(string $format = null) : mixed
+    public function decoded(string|null $format = null) : mixed
     {
         $decoder = new ResponseDecoder();
 

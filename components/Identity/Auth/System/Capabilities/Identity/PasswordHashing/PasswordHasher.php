@@ -23,7 +23,7 @@ final readonly class PasswordHasher
      * @param array<string, int|string|bool>|null $options
      */
     public function __construct(
-        string $algo = null,
+        string|null $algo = null,
         array  $options = null,
     )
     {

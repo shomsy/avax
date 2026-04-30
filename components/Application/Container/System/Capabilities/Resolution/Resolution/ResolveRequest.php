@@ -19,10 +19,10 @@ final readonly class ResolveRequest
      */
     public function __construct(
         public string      $serviceId,
-        ?array             $overrides = null,
-        ?array             $context = null,
+        array|null $overrides = null,
+        array|null $context = null,
         public self|null   $parent = null,
-        ?bool              $manualInjection = null,
+        bool|null  $manualInjection = null,
         public string|null $consumer = null,
     )
     {

@@ -12,7 +12,7 @@ final class LazyReference
     private bool $loaded = false;
 
     /**
-     * @param callable(): object|null $loader
+     * @param callable() : object|null $loader
      */
     public function __construct(private readonly Closure $loader) {}
 

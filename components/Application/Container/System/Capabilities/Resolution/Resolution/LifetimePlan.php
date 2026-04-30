@@ -34,7 +34,7 @@ final readonly class LifetimePlan
         string $serviceId,
         string $name,
         string $storage,
-        string $scopeKind = null,
+        string|null $scopeKind = null,
         bool   $warm = null,
         bool   $lazy = null,
         bool   $disposable = null,

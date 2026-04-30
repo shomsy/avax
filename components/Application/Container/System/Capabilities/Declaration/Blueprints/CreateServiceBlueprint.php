@@ -24,7 +24,7 @@ final readonly class CreateServiceBlueprint
 
     public function __construct(
         BlueprintCache      $cache = null,
-        ResolveDependencies $dependencies = null,
+        ResolveDependencies|null $dependencies = null,
     )
     {
         $this->dependencies = $dependencies;

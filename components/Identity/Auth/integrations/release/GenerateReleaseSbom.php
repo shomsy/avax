@@ -17,7 +17,7 @@ final readonly class GenerateReleaseSbom
      *     components:list<array<string, mixed>>
      * }
      */
-    public function execute(string $composerJsonPath, string $composerLockPath = null) : array
+    public function execute(string $composerJsonPath, string|null $composerLockPath = null) : array
     {
         $composerJson = $this->readJsonFile(path: $composerJsonPath);
         $lockPath     = $composerLockPath ?? dirname(path: $composerJsonPath) . '/composer.lock';

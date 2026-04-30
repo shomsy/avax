@@ -28,7 +28,7 @@ final readonly class AsyncReadFile
     public function __construct(
         public string                 $path,
         public array                  $options = [],
-        public ?AsyncOperationPromise $asyncOperationPromise = null,
+        public AsyncOperationPromise|null $asyncOperationPromise = null,
     ) {}
 
     /**

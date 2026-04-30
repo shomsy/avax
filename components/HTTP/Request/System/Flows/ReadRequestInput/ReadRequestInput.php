@@ -15,7 +15,7 @@ final class ReadRequestInput
         private ReadFileInput $fileReader,
     ) {}
 
-    public function read(RequestInterface $request, string $key, mixed $default = null): mixed
+    public function read(RequestInterface $request, string $key, mixed $default = null) : mixed
     {
         return $this->routeReader->read($request, $key)
             ?? $this->queryReader->read($request, $key)

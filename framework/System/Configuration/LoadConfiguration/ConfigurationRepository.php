@@ -8,7 +8,7 @@ final class ConfigurationRepository
 {
     private array $config = [];
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         $keys = explode('.', $key);
         $current = $this->config;
@@ -23,7 +23,7 @@ final class ConfigurationRepository
         return $current;
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         $keys = explode('.', $key);
         $current = &$this->config;
@@ -38,17 +38,17 @@ final class ConfigurationRepository
         $current = $value;
     }
 
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return $this->get($key) !== null;
     }
 
-    public function all(): array
+    public function all() : array
     {
         return $this->config;
     }
 
-    public function load(array $config): void
+    public function load(array $config) : void
     {
         $this->config = array_merge($this->config, $config);
     }

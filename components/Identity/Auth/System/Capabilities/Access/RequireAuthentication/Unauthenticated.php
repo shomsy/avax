@@ -9,7 +9,7 @@ use Exception;
 /**
  * Exception for missing authentication within the Auth System.
  */
-class Unauthenticated extends Exception
+final class Unauthenticated extends Exception
 {
     public function __construct(string $message = 'Authentication required.', int $code = 401)
     {

@@ -157,7 +157,7 @@ final class CacheReplication
     /**
      * Write a value to the primary store.
      */
-    public function write(string $key, mixed $value, ?int $ttl = null) : void
+    public function write(string $key, mixed $value, int|null $ttl = null) : void
     {
         $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
         $this->cacheStore->write(
@@ -178,7 +178,7 @@ final class CacheReplication
     public static function create(
         CacheStore            $cacheStore,
         array                 $replicas,
-        ?PrimaryReplicaPolicy $primaryReplicaPolicy = null,
+        PrimaryReplicaPolicy|null $primaryReplicaPolicy = null,
     ) : self
     {
         return new self(
@@ -199,7 +199,7 @@ final class CacheReplication
      *
      * @return ReplicationResult Result of the replication operation
      */
-    public function replicate(string $key, mixed $value, ?int $ttl = null) : ReplicationResult
+    public function replicate(string $key, mixed $value, int|null $ttl = null) : ReplicationResult
     {
         // Always write to primary first
         $primarySuccess = $this->writeToPrimary($key, $value, $ttl);

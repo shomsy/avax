@@ -8,7 +8,7 @@ use Throwable;
 
 final class TwoPhaseCommit
 {
-    public function coordinate(array $participants, callable $action): void
+    public function coordinate(array $participants, callable $action) : void
     {
         try {
             foreach ($participants as $p) {

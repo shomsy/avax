@@ -8,22 +8,22 @@ final class WorkerLoop
 {
     private bool $running = false;
 
-    public function start(): void
+    public function start() : void
     {
         $this->running = true;
     }
 
-    public function isRunning(): bool
+    public function isRunning() : bool
     {
         return $this->running;
     }
 
-    public function stop(): void
+    public function stop() : void
     {
         $this->running = false;
     }
 
-    public function tick(): void
+    public function tick() : void
     {
     }
 }

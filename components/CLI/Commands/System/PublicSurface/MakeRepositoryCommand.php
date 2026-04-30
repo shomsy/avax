@@ -15,7 +15,7 @@ final readonly class MakeRepositoryCommand
         private LoggerInterface              $logger,
     ) {}
 
-    public function execute(array $arguments): void
+    public function execute(array $arguments) : void
     {
         $name = $arguments['name'] ?? null;
         $entity = $arguments['entity'] ?? null;

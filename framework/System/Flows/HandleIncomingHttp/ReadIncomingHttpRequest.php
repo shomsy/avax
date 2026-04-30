@@ -52,7 +52,7 @@ final class ReadIncomingHttpRequest
         );
     }
 
-    public function read(RuntimeRequest $request): ServerRequest
+    public function read(RuntimeRequest $request) : ServerRequest
     {
         $uri          = new Uri(uri: $this->normalizeUri(uri: $request->uri()));
         $body         = $request->body() ?? '';
@@ -88,7 +88,7 @@ final class ReadIncomingHttpRequest
         );
     }
 
-    private function normalizeUri(string $uri): string
+    private function normalizeUri(string $uri) : string
     {
         if (str_contains(haystack: $uri, needle: '://')) {
             return $uri;
@@ -104,7 +104,7 @@ final class ReadIncomingHttpRequest
     /**
      * @param array<string, list<string>> $headers
      */
-    private function parseBody(array $headers, string $body): array|object|null
+    private function parseBody(array $headers, string $body) : array|object|null
     {
         $contentType = $this->headerLine(headers: $headers, name: 'Content-Type');
 
@@ -117,7 +117,7 @@ final class ReadIncomingHttpRequest
         );
     }
 
-    private function parseQueryParams(UriInterface $uri): array
+    private function parseQueryParams(UriInterface $uri) : array
     {
         $queryParams = [];
         parse_str(string: $uri->getQuery(), result: $queryParams);
@@ -129,7 +129,7 @@ final class ReadIncomingHttpRequest
      * @param array<string, list<string>> $headers
      * @return array<string, mixed>
      */
-    private function buildServerParams(UriInterface $uri, RuntimeRequest $request): array
+    private function buildServerParams(UriInterface $uri, RuntimeRequest $request) : array
     {
         $serverParams = [
             'REQUEST_METHOD' => $request->method(),
@@ -159,7 +159,7 @@ final class ReadIncomingHttpRequest
     /**
      * @param array<string, list<string>> $headers
      */
-    private function headerLine(array $headers, string $name): string
+    private function headerLine(array $headers, string $name) : string
     {
         foreach ($headers as $headerName => $values) {
             if (strcasecmp(string1: $headerName, string2: $name) !== 0) {

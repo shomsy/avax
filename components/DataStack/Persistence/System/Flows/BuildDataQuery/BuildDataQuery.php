@@ -46,7 +46,7 @@ final class BuildDataQuery
      * @throws InvalidArgumentException
      */
     public function build(
-        string $entityType = null,
+        string|null $entityType = null,
         array  $conditions = [],
         array  $orderBy = [],
         int    $limit = null,

@@ -112,7 +112,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findAll(int $limit = null, int $offset = 0) : array
+    public function findAll(int|null $limit = null, int $offset = 0) : array
     {
         $limit ??= 100;
 
@@ -135,8 +135,8 @@ abstract class Repository
      */
     public function findBy(
         array  $conditions,
-        string $orderBy = null,
-        string $direction = null,
+        string|null $orderBy = null,
+        string|null $direction = null,
         int    $limit = null,
         int    $offset = null,
     ) : array

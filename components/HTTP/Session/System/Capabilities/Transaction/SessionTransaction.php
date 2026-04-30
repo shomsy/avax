@@ -9,7 +9,7 @@ use RuntimeException;
 
 final class SessionTransaction
 {
-    private ?array $backup = null;
+    private array|null $backup = null;
     private bool $active = false;
 
     public function __construct(

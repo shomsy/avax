@@ -32,7 +32,7 @@ final readonly class RuntimeRequest
         string $method,
         string $uri,
         array $headers = [],
-        string $body = null,
+        string|null $body = null,
         array $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));
@@ -53,12 +53,12 @@ final readonly class RuntimeRequest
         $this->attributes = $attributes;
     }
 
-    public function method(): string
+    public function method() : string
     {
         return $this->method;
     }
 
-    public function uri(): string
+    public function uri() : string
     {
         return $this->uri;
     }
@@ -66,12 +66,12 @@ final readonly class RuntimeRequest
     /**
      * @return array<string, list<string>>
      */
-    public function headers(): array
+    public function headers() : array
     {
         return $this->headers;
     }
 
-    public function body(): string|null
+    public function body() : string|null
     {
         return $this->body;
     }
@@ -79,7 +79,7 @@ final readonly class RuntimeRequest
     /**
      * @return array<string, mixed>
      */
-    public function attributes(): array
+    public function attributes() : array
     {
         return $this->attributes;
     }

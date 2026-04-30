@@ -29,7 +29,7 @@ final readonly class FileCacheStore implements CacheStore
     public function __construct(
         private string       $basePath,
         private Clock        $clock = new SystemClock(),
-        ?JsonCacheSerializer $jsonCacheSerializer = null,
+        JsonCacheSerializer|null $jsonCacheSerializer = null,
     )
     {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);

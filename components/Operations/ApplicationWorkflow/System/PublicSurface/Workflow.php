@@ -20,7 +20,7 @@ final class Workflow
 {
     private SagaStoreInterface $store;
 
-    public function __construct(SagaStoreInterface $store = null)
+    public function __construct(SagaStoreInterface|null $store = null)
     {
         $this->store = $store ?? new InMemorySagaStore();
     }
@@ -28,7 +28,7 @@ final class Workflow
     /**
      * Run a saga definition (legacy compatibility method).
      */
-    public function runSaga(SagaDefinition $definition): void
+    public function runSaga(SagaDefinition $definition) : void
     {
         $completed = [];
 

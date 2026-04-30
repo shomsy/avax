@@ -32,7 +32,7 @@ final readonly class VerifyCsrfToken
         return $next($request);
     }
 
-    private function extractToken(ServerRequest $request) : ?string
+    private function extractToken(ServerRequest $request) : string|null
     {
         $token = $request->headers()->get('X-CSRF-TOKEN')
             ?? $request->headers()->get('X-XSRF-TOKEN');

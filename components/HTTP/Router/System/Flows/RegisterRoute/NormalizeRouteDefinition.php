@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Router\System\Flows\RegisterRoute;
 
 final class NormalizeRouteDefinition
 {
-    public function normalize(string $uri): string
+    public function normalize(string $uri) : string
     {
         return '/' . trim($uri, '/');
     }

@@ -11,7 +11,7 @@ final readonly class ExportCommand
 {
     public function __construct(private DatabaseExporter $databaseExporter) {}
 
-    public function handle(string $path, ?string $table = null) : int
+    public function handle(string $path, string|null $table = null) : int
     {
         try {
             $file = $this->databaseExporter->exportToSql(path: $path, table: $table);

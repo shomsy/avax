@@ -26,7 +26,7 @@ class HttpTimeout extends HttpRequestFailed
         public readonly float $timeoutMs = 0.0,
         string    $url = null,
         string    $method = null,
-        Throwable $previous = null,
+        Throwable|null $previous = null,
     )
     {
         parent::__construct(

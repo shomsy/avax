@@ -17,9 +17,9 @@ use function Sentry\captureException;
 final readonly class ReportRuntimeFailure
 {
     public function __construct(
-        private ?Logging $logger = null,
-        private ?string $correlationId = null,
-        private ?string $traceId = null,
+        private Logging|null $logger = null,
+        private string|null  $correlationId = null,
+        private string|null  $traceId = null,
     ) {}
 
     /**

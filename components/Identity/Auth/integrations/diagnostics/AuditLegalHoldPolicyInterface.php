@@ -11,5 +11,5 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
  */
 interface AuditLegalHoldPolicyInterface
 {
-    public function preserveSensitiveContext(AuditEvent $event): bool;
+    public function preserveSensitiveContext(AuditEvent $event) : bool;
 }

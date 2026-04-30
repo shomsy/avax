@@ -104,7 +104,7 @@ final class MaterializedView implements MaterializedViewInterface
     private readonly string $name;
 
     /**
-     * @var Closure(): T The query that produces the view data
+     * @var Closure() : T The query that produces the view data
      */
     private readonly Closure $query;
 
@@ -129,7 +129,7 @@ final class MaterializedView implements MaterializedViewInterface
     private int $rowCount = 0;
 
     /**
-     * @param Closure(): T $query              Closure that produces the view data
+     * @param Closure() : T $query Closure that produces the view data
      * @param float        $stalenessThreshold Seconds before view is considered stale
      */
     public function __construct(

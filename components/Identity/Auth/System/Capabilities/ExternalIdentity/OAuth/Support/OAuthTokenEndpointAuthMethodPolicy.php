@@ -13,8 +13,8 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
         OAuthClientType              $type,
-        OAuthTokenEndpointAuthMethod $requested = null,
-        OAuthTokenEndpointAuthMethod $current = null,
+        OAuthTokenEndpointAuthMethod|null $requested = null,
+        OAuthTokenEndpointAuthMethod|null $current = null,
         bool                         $workloadIdentity = false,
     ) : OAuthTokenEndpointAuthMethod
     {

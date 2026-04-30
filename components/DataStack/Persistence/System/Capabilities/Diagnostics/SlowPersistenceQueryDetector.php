@@ -288,7 +288,7 @@ final class SlowPersistenceQueryDetector
      * @template T
      * @param string               $operation Operation name
      * @param string               $type      Operation type
-     * @param callable(): T        $callback  The operation to time
+     * @param callable() : T $callback The operation to time
      * @param array<string, mixed> $context   Additional context
      *
      * @return T

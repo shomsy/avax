@@ -9,7 +9,7 @@ if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(DIContainerInterface $instance = null) : DIContainerInterface|null
+    function appInstance(DIContainerInterface|null $instance = null) : DIContainerInterface|null
     {
         static $container = null;
 
@@ -30,7 +30,7 @@ if (! function_exists('app')) {
      *   app()                    -> returns container
      *   app(Service::class)      -> resolves service
      */
-    function app(string $abstract = null) : mixed
+    function app(string|null $abstract = null) : mixed
     {
         $container = appInstance();
 
@@ -46,7 +46,7 @@ if (! function_exists('make')) {
     /**
      * Build a service from the container.
      */
-    function make(string $abstract, array $parameters = []): object
+    function make(string $abstract, array $parameters = []) : object
     {
         return appInstance()->make($abstract, $parameters);
     }
@@ -56,7 +56,7 @@ if (! function_exists('bind')) {
     /**
      * Bind a service to the container.
      */
-    function bind(string $abstract, mixed $concrete = null, bool $shared = false): void
+    function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
     {
         appInstance()->bind($abstract, $concrete, $shared);
     }
@@ -66,7 +66,7 @@ if (! function_exists('singleton')) {
     /**
      * Register a singleton in the container.
      */
-    function singleton(string $abstract, mixed $concrete = null): void
+    function singleton(string $abstract, mixed $concrete = null) : void
     {
         appInstance()->singleton($abstract, $concrete);
     }
@@ -76,7 +76,7 @@ if (! function_exists('resolve')) {
     /**
      * Resolve a service from the container.
      */
-    function resolve(string $abstract, array $parameters = []): object
+    function resolve(string $abstract, array $parameters = []) : object
     {
         return appInstance()->make($abstract, $parameters);
     }
@@ -86,7 +86,7 @@ if (! function_exists('register')) {
     /**
      * Register a service in the container.
      */
-    function register(string $abstract, mixed $concrete = null): void
+    function register(string $abstract, mixed $concrete = null) : void
     {
         appInstance()->bind($abstract, $concrete);
     }

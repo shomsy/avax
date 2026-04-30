@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\Request;
 
 final class CreateRequestFromRuntime
 {
-    public function execute(array $headers, string $body): Request
+    public function execute(array $headers, string $body) : Request
     {
         // Implementation for runtime-driven requests (e.g. from Swoole or RoadRunner)
         return new Request(...); // Simplified

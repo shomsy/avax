@@ -18,7 +18,7 @@ final class QueueWorker
         private int $maxTries = 3,
     ) {}
 
-    public function daemon(string $queue = 'default'): void
+    public function daemon(string $queue = 'default') : void
     {
         while ( ! $this->shouldStop ) {
             $job = $this->driver->pop($queue);
@@ -31,7 +31,7 @@ final class QueueWorker
         }
     }
 
-    public function process(Job $job): void
+    public function process(Job $job) : void
     {
         try {
             $payload = $job->getPayload();
@@ -52,7 +52,7 @@ final class QueueWorker
         }
     }
 
-    public function stop(): void
+    public function stop() : void
     {
         $this->shouldStop = true;
     }

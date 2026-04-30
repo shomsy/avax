@@ -21,9 +21,9 @@ final class BlueprintCache
     private readonly string $cacheDir;
 
     public function __construct(
-        ?string                                 $cacheDir = null,
-        ?string                                 $cacheVersion = null,
-        ?bool                                   $debug = null,
+        string|null $cacheDir = null,
+        string|null $cacheVersion = null,
+        bool|null   $debug = null,
         private readonly ResolutionMetrics|null $resolutionMetrics = null,
     )
     {

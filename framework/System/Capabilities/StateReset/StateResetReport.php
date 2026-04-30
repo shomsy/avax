@@ -21,7 +21,7 @@ final readonly class StateResetReport
     /**
      * @return list<string>
      */
-    public function resetComponents(): array
+    public function resetComponents() : array
     {
         return $this->resetComponents;
     }
@@ -29,12 +29,12 @@ final readonly class StateResetReport
     /**
      * @return array<string, Throwable>
      */
-    public function failures(): array
+    public function failures() : array
     {
         return $this->failures;
     }
 
-    public function wasSuccessful(): bool
+    public function wasSuccessful() : bool
     {
         return $this->failures === [];
     }

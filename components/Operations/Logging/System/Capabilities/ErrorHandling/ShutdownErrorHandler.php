@@ -17,7 +17,7 @@ use Throwable;
  */
 final class ShutdownErrorHandler
 {
-    private static ?self $instance = null;
+    private static self|null $instance = null;
 
     private bool $registered = false;
 

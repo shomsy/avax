@@ -24,7 +24,7 @@ final readonly class RuntimeResponse
         }
     }
 
-    public static function fromPsrResponse(ResponseInterface $response): self
+    public static function fromPsrResponse(ResponseInterface $response) : self
     {
         return new self(
             statusCode: $response->getStatusCode(),
@@ -33,7 +33,7 @@ final readonly class RuntimeResponse
         );
     }
 
-    public function statusCode(): int
+    public function statusCode() : int
     {
         return $this->statusCode;
     }
@@ -41,12 +41,12 @@ final readonly class RuntimeResponse
     /**
      * @return array<string, list<string>>
      */
-    public function headers(): array
+    public function headers() : array
     {
         return $this->headers;
     }
 
-    public function body(): string
+    public function body() : string
     {
         return $this->body;
     }

@@ -20,7 +20,7 @@ final readonly class AcceptTenantInvite
     {
     }
 
-    public function execute(AcceptTenantInviteData $data): TenantMember
+    public function execute(AcceptTenantInviteData $data) : TenantMember
     {
         $invite = $this->tenantStore->findInviteByToken(plainToken: $data->inviteToken);
 

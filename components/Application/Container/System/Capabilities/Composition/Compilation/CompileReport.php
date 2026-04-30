@@ -88,7 +88,7 @@ final readonly class CompileReport implements JsonSerializable
         array            $invalidationReasons,
         array            $statistics,
         array            $pruning,
-        ArtifactMetadata $metadata = null,
+        ArtifactMetadata|null $metadata = null,
     )
     {
         $this->available                = $available;

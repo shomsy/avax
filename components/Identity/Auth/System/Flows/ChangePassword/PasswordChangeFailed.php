@@ -9,7 +9,7 @@ use Exception;
 /**
  * Safe password change failure contract.
  */
-class PasswordChangeFailed extends Exception
+final class PasswordChangeFailed extends Exception
 {
     public static function currentPasswordMismatch() : self
     {

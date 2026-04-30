@@ -39,7 +39,7 @@ final readonly class ScimDirectory
         return $this->health !== ScimDirectoryHealth::UNAVAILABLE;
     }
 
-    public function markOutage(DateTimeImmutable $startedAt, string $reason = null) : self
+    public function markOutage(DateTimeImmutable $startedAt, string|null $reason = null) : self
     {
         return new self(
             directoryId      : $this->directoryId,

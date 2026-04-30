@@ -270,7 +270,7 @@ final class AuthBuilder
      * In enterprise mode, session registry becomes a required first-class runtime dependency.
      * The builder will fail-fast at build time if no durable session registry is configured.
      */
-    public function enterprise(): self
+    public function enterprise() : self
     {
         $this->enterpriseMode = true;
 
@@ -280,7 +280,7 @@ final class AuthBuilder
     /**
      * Define the data source for users.
      */
-    public function forUser(UserSourceInterface $userSource): self
+    public function forUser(UserSourceInterface $userSource) : self
     {
         $this->userSource = $userSource;
 
@@ -290,7 +290,7 @@ final class AuthBuilder
     /**
      * Define the composed identity façade for authentication state.
      */
-    public function withIdentity(IdentityInterface $identity): self
+    public function withIdentity(IdentityInterface $identity) : self
     {
         $this->identity = $identity;
 
@@ -299,10 +299,11 @@ final class AuthBuilder
 
     public function withIdentityBackends(
         #[SensitiveParameter]
-        SessionIdentityInterface $sessionIdentity = null,
+        SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface $jwtIdentity = null,
-    ): self {
+        JwtIdentityInterface|null     $jwtIdentity = null,
+    ) : self
+    {
         $this->identity = Identity::fromBackends(
             sessionIdentity: $sessionIdentity,
             jwtIdentity    : $jwtIdentity,
@@ -314,7 +315,7 @@ final class AuthBuilder
     /**
      * Enable rate limiting for login.
      */
-    public function protectFromBruteForce(LoginRateLimit $rateLimit): self
+    public function protectFromBruteForce(LoginRateLimit $rateLimit) : self
     {
         $this->rateLimit = $rateLimit;
 
@@ -324,7 +325,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher): self
+    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher) : self
     {
         $this->passwordHasher = $passwordHasher;
 
@@ -334,175 +335,175 @@ final class AuthBuilder
     /**
      * Configure a custom identifier generator for registrations.
      */
-    public function usingIdGenerator(IdGeneratorInterface $idGenerator): self
+    public function usingIdGenerator(IdGeneratorInterface $idGenerator) : self
     {
         $this->idGenerator = $idGenerator;
 
         return $this;
     }
 
-    public function withAuditLog(AuditLogInterface $auditLog): self
+    public function withAuditLog(AuditLogInterface $auditLog) : self
     {
         $this->auditLog = $auditLog;
 
         return $this;
     }
 
-    public function withAuditCorrelationId(string $correlationId): self
+    public function withAuditCorrelationId(string $correlationId) : self
     {
         $this->auditCorrelationId = trim(string: $correlationId) !== '' ? trim(string: $correlationId) : null;
 
         return $this;
     }
 
-    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState): self
+    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState) : self
     {
         $this->emailVerificationState = $emailVerificationState;
 
         return $this;
     }
 
-    public function withMfaStore(MfaStoreInterface $mfaStore): self
+    public function withMfaStore(MfaStoreInterface $mfaStore) : self
     {
         $this->mfaStore = $mfaStore;
 
         return $this;
     }
 
-    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore): self
+    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
     {
         $this->refreshTokenStore = $refreshTokenStore;
 
         return $this;
     }
 
-    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore): self
+    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
     {
         $this->passwordResetStore = $passwordResetStore;
 
         return $this;
     }
 
-    public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore): self
+    public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
 
         return $this;
     }
 
-    public function withEmailChangeStore(#[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore): self
+    public function withEmailChangeStore(#[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore) : self
     {
         $this->emailChangeStore = $emailChangeStore;
 
         return $this;
     }
 
-    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore): self
+    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore) : self
     {
         $this->mfaChallengeStore = $mfaChallengeStore;
 
         return $this;
     }
 
-    public function usingTotp(TotpInterface $totp): self
+    public function usingTotp(TotpInterface $totp) : self
     {
         $this->totp = $totp;
 
         return $this;
     }
 
-    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle): self
+    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle) : self
     {
         $this->passwordResetThrottle = $passwordResetThrottle;
 
         return $this;
     }
 
-    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle): self
+    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle) : self
     {
         $this->mfaRecoveryThrottle = $mfaRecoveryThrottle;
 
         return $this;
     }
 
-    public function withScimThrottle(AttemptThrottle $scimThrottle): self
+    public function withScimThrottle(AttemptThrottle $scimThrottle) : self
     {
         $this->scimThrottle = $scimThrottle;
 
         return $this;
     }
 
-    public function withClock(Clock $clock): self
+    public function withClock(Clock $clock) : self
     {
         $this->clock = $clock;
 
         return $this;
     }
 
-    public function withSessionRegistry(#[SensitiveParameter] SessionRegistryInterface $sessionRegistry): self
+    public function withSessionRegistry(#[SensitiveParameter] SessionRegistryInterface $sessionRegistry) : self
     {
         $this->sessionRegistry = $sessionRegistry;
 
         return $this;
     }
 
-    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry): self
+    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
     {
         $this->oauthClientRegistry = $oauthClientRegistry;
 
         return $this;
     }
 
-    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore): self
+    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
     {
         $this->authorizationCodeStore = $authorizationCodeStore;
 
         return $this;
     }
 
-    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore): self
+    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore) : self
     {
         $this->lifecycleStore = $lifecycleStore;
 
         return $this;
     }
 
-    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore): self
+    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self
     {
         $this->adminElevationStore = $adminElevationStore;
 
         return $this;
     }
 
-    public function withRiskEngine(DeterministicRiskEngine $riskEngine): self
+    public function withRiskEngine(DeterministicRiskEngine $riskEngine) : self
     {
         $this->riskEngine = $riskEngine;
 
         return $this;
     }
 
-    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime): self
+    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime) : self
     {
         $this->passkeyRuntime = $passkeyRuntime;
 
         return $this;
     }
 
-    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore): self
+    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
     {
         $this->passkeyCredentialStore = $passkeyCredentialStore;
 
         return $this;
     }
 
-    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore): self
+    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore) : self
     {
         $this->passkeyChallengeStore = $passkeyChallengeStore;
 
         return $this;
     }
 
-    public function withPasskeyRelyingParty(string $rpId, string $rpName): self
+    public function withPasskeyRelyingParty(string $rpId, string $rpName) : self
     {
         $this->passkeyRpId   = $rpId;
         $this->passkeyRpName = $rpName;
@@ -510,91 +511,91 @@ final class AuthBuilder
         return $this;
     }
 
-    public function requirePhishingResistantAdminElevation(bool $required = true): self
+    public function requirePhishingResistantAdminElevation(bool $required = true) : self
     {
         $this->adminPhishingResistantRequired = $required;
 
         return $this;
     }
 
-    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime): self
+    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
     {
         $this->federationRuntime = $federationRuntime;
 
         return $this;
     }
 
-    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore): self
+    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore) : self
     {
         $this->federationConnectionStore = $federationConnectionStore;
 
         return $this;
     }
 
-    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore): self
+    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore) : self
     {
         $this->federatedIdentityLinkStore = $federatedIdentityLinkStore;
 
         return $this;
     }
 
-    public function withOidcProvider(OidcProviderInterface $oidcProvider): self
+    public function withOidcProvider(OidcProviderInterface $oidcProvider) : self
     {
         $this->oidcProvider = $oidcProvider;
 
         return $this;
     }
 
-    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore): self
+    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore) : self
     {
         $this->oidcRequestObjectStore = $oidcRequestObjectStore;
 
         return $this;
     }
 
-    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore): self
+    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore) : self
     {
         $this->scimDirectoryStore = $scimDirectoryStore;
 
         return $this;
     }
 
-    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore): self
+    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore) : self
     {
         $this->scimProvisionedIdentityStore = $scimProvisionedIdentityStore;
 
         return $this;
     }
 
-    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore): self
+    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore) : self
     {
         $this->tenantStore = $tenantStore;
 
         return $this;
     }
 
-    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore): self
+    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
     {
         $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
 
         return $this;
     }
 
-    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore): self
+    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
     {
         $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
 
         return $this;
     }
 
-    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit): self
+    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
 
         return $this;
     }
 
-    public function withMfaIssuer(string $mfaIssuer): self
+    public function withMfaIssuer(string $mfaIssuer) : self
     {
         $this->mfaIssuer = $mfaIssuer;
 
@@ -604,7 +605,7 @@ final class AuthBuilder
     /**
      * Build the final Auth instance.
      */
-    public function ready(): Auth
+    public function ready() : Auth
     {
         AuthBootstrapValidator::validate(
             userSource       : $this->userSource,
@@ -1644,7 +1645,7 @@ final class AuthBuilder
         );
     }
 
-    private function capabilityRequests(): AuthCapabilityRequests
+    private function capabilityRequests() : AuthCapabilityRequests
     {
         return AuthCapabilityRequests::from(
             enterpriseMode                        : $this->enterpriseMode,

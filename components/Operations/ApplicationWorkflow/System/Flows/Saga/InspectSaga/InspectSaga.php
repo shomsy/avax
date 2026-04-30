@@ -123,7 +123,7 @@ final readonly class SagaRuntimeEvent
         string $sagaName,
         string $type,
         array  $payload = null,
-        string $stepName = null,
+        string|null $stepName = null,
     ) : self
     {
         $payload ??= [];

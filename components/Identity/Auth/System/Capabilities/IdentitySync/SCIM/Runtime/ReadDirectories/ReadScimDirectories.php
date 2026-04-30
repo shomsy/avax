@@ -14,7 +14,7 @@ final readonly class ReadScimDirectories
     /**
      * @return list<ScimDirectory>
      */
-    public function execute(string $tenantSlug = null) : array
+    public function execute(string|null $tenantSlug = null) : array
     {
         $directories = $this->directoryStore->all();
 

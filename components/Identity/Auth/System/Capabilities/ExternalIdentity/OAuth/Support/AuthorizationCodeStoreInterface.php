@@ -21,15 +21,15 @@ interface AuthorizationCodeStoreInterface
         string $redirectUri,
         array $scopes,
         DateTimeImmutable $expiresAt,
-        string $state = null,
-        string $nonce = null,
-        string $codeChallenge = null,
-        PkceMethod $codeChallengeMethod = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        string|null            $state = null,
+        string|null            $nonce = null,
+        string|null            $codeChallenge = null,
+        PkceMethod|null        $codeChallengeMethod = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
-    ): IssuedAuthorizationCode;
+    ) : IssuedAuthorizationCode;
 
-    public function find(string $plainCode): AuthorizationCodeRecord|null;
+    public function find(string $plainCode) : AuthorizationCodeRecord|null;
 
-    public function markUsed(string $codeId, DateTimeImmutable $usedAt): void;
+    public function markUsed(string $codeId, DateTimeImmutable $usedAt) : void;
 }

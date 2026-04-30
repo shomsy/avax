@@ -8,24 +8,24 @@ use DateTimeImmutable;
 
 final class Clock
 {
-    private static ?SystemClock $systemClock = null;
+    private static SystemClock|null $systemClock = null;
 
-    public static function tomorrow(?string $timezone = null) : DateTimeImmutable
+    public static function tomorrow(string|null $timezone = null) : DateTimeImmutable
     {
         return self::today(timezone: $timezone)->modify('+1 day');
     }
 
-    public static function today(?string $timezone = null) : DateTimeImmutable
+    public static function today(string|null $timezone = null) : DateTimeImmutable
     {
         return self::now(timezone: $timezone)->setTime(0, 0, 0, 0);
     }
 
-    public static function now(?string $timezone = null) : DateTimeImmutable
+    public static function now(string|null $timezone = null) : DateTimeImmutable
     {
         return SystemClock::create(timezone: $timezone);
     }
 
-    public static function yesterday(?string $timezone = null) : DateTimeImmutable
+    public static function yesterday(string|null $timezone = null) : DateTimeImmutable
     {
         return self::today(timezone: $timezone)->modify('-1 day');
     }

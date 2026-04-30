@@ -70,7 +70,7 @@ final readonly class SagaCommandKey
         string $aggregateType,
         string $aggregateId,
         string $action,
-        string $tenantId = null,
+        string|null $tenantId = null,
     ) : self
     {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
@@ -161,7 +161,7 @@ final class DuplicateSagaCommand extends Exception
     public function __construct(
         string            $message = 'Duplicate saga command detected.',
         string            $sagaId = null,
-        SagaCommandResult $previousResult = null,
+        SagaCommandResult|null $previousResult = null,
     )
     {
         parent::__construct(message: $message);

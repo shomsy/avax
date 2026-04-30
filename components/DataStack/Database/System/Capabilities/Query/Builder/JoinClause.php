@@ -51,7 +51,7 @@ final class JoinClause
      *
      * @return self The current builder instance for further fluent configuration.
      */
-    public function orOn(string $first, string $operator = null, string $second = null) : self
+    public function orOn(string $first, string|null $operator = null, string|null $second = null) : self
     {
         return $this->on(first: $first, operator: $operator, second: $second, boolean: 'OR');
     }
@@ -71,7 +71,7 @@ final class JoinClause
      *
      * @return self The current builder instance.
      */
-    public function on(string $first, string $operator = null, string $second = null, string $boolean = 'AND') : self
+    public function on(string $first, string|null $operator = null, string|null $second = null, string $boolean = 'AND') : self
     {
         // Technical shortcut: handle two-argument equality form.
         if ($operator !== null && $second === null) {

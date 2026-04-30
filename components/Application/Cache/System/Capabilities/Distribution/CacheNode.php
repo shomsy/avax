@@ -33,7 +33,7 @@ final readonly class CacheNode implements Stringable
         int             $port,
         int             $weight = 100,
         CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        ?int            $virtualNodeCount = null,
+        int|null $virtualNodeCount = null,
     ) : self
     {
         return new self(

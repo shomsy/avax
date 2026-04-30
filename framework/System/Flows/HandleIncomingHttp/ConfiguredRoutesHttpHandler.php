@@ -33,7 +33,7 @@ final readonly class ConfiguredRoutesHttpHandler
         $this->responseFactory         = new ResponseFactory();
     }
 
-    public static function fromRoutesFile(string $routesFile): self
+    public static function fromRoutesFile(string $routesFile) : self
     {
         if (! is_file(filename: $routesFile)) {
             throw new FrameworkMisconfigured(
@@ -66,7 +66,7 @@ final readonly class ConfiguredRoutesHttpHandler
         );
     }
 
-    public static function fromRouteDefinitions(callable $routeDefinitions): self
+    public static function fromRouteDefinitions(callable $routeDefinitions) : self
     {
         $routeRegistrar = new FrameworkRouteRegistrar();
         $routeDefinitions($routeRegistrar);
@@ -76,7 +76,7 @@ final readonly class ConfiguredRoutesHttpHandler
         );
     }
 
-    public function __invoke(RuntimeRequest $request): ResponseInterface
+    public function __invoke(RuntimeRequest $request) : ResponseInterface
     {
         $serverRequest = $this->readIncomingHttpRequest->read(request: $request);
 
@@ -90,7 +90,7 @@ final readonly class ConfiguredRoutesHttpHandler
         } catch (RouteNotFoundException) {
             if ($this->registeredHttpRoutes->hasFallback()) {
                 return $this->runHttpRoute->runFallback(
-                    fallback : $this->registeredHttpRoutes->fallback() ?? static fn (): string => '',
+                    fallback : $this->registeredHttpRoutes->fallback() ?? static fn () : string => '',
                     request  : $serverRequest,
                 );
             }

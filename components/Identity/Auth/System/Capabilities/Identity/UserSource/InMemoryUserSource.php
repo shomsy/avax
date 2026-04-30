@@ -82,7 +82,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     }
 
     /**
-     * @param callable(User): User $mutate
+     * @param callable(User) : User $mutate
      */
     private function replace(UserId $id, callable $mutate) : void
     {

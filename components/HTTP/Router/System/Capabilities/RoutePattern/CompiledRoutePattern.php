@@ -10,7 +10,7 @@ final class CompiledRoutePattern
         private string $regex,
     ) {}
 
-    public function regex(): string
+    public function regex() : string
     {
         return $this->regex;
     }

@@ -10,7 +10,7 @@ final readonly class MigrationRepository
 {
     public function __construct(private PDO $pdo) {}
 
-    public function ensureTableExists(): void
+    public function ensureTableExists() : void
     {
         $this->pdo->exec('CREATE TABLE IF NOT EXISTS migrations (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,18 +19,18 @@ final readonly class MigrationRepository
         )');
     }
 
-    public function getRan(): array
+    public function getRan() : array
     {
         return $this->pdo->query('SELECT migration FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function log(string $migration, int $batch): void
+    public function log(string $migration, int $batch) : void
     {
         $stmt = $this->pdo->prepare('INSERT INTO migrations (migration, batch) VALUES (?, ?)');
         $stmt->execute([$migration, $batch]);
     }
 
-    public function getLastBatchNumber(): int
+    public function getLastBatchNumber() : int
     {
         return (int) $this->pdo->query('SELECT MAX(batch) FROM migrations')->fetchColumn();
     }

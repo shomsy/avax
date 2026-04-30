@@ -9,11 +9,11 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime
  */
 interface AttemptLimitStorageInterface
 {
-    public function get(string $key): int;
+    public function get(string $key) : int;
 
-    public function increment(string $key, int $timestamp): void;
+    public function increment(string $key, int $timestamp) : void;
 
-    public function reset(string $key): void;
+    public function reset(string $key) : void;
 
-    public function getLastAttemptTime(string $key): int;
+    public function getLastAttemptTime(string $key) : int;
 }

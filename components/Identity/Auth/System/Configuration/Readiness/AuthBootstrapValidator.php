@@ -29,7 +29,8 @@ final readonly class AuthBootstrapValidator
         FederationRuntimeInterface|null $federationRuntime,
         OidcProviderInterface|null $oidcProvider,
         string $buildPath = 'AuthBuilder::ready()',
-    ): void {
+    ) : void
+    {
         if ($userSource === null) {
             throw ConfigurationException::missingUserSource(buildPath: $buildPath);
         }

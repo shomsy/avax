@@ -97,9 +97,9 @@ final class HttpKernel implements HttpInterface
     /**
      * Wrap a handler with middleware execution.
      *
-     * @param callable(RequestInterface): ResponseInterface $next
+     * @param callable(RequestInterface) : ResponseInterface $next
      *
-     * @return callable(RequestInterface): ResponseInterface
+     * @return callable(RequestInterface) : ResponseInterface
      */
     private function wrapMiddleware(MiddlewareInterface $middleware, callable $next) : callable
     {

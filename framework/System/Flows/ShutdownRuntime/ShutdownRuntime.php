@@ -13,18 +13,18 @@ final class ShutdownRuntime
     ) {
     }
 
-    public function shutdown(): void
+    public function shutdown() : void
     {
         $this->flushTerminableWork();
 
         $this->closeRuntimeResources();
     }
 
-    private function flushTerminableWork(): void
+    private function flushTerminableWork() : void
     {
     }
 
-    private function closeRuntimeResources(): void
+    private function closeRuntimeResources() : void
     {
     }
 }

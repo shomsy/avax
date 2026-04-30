@@ -8,7 +8,7 @@ use Throwable;
 
 class FrameworkBootFailed extends FrameworkFailure
 {
-    public static function fromThrowable(Throwable $throwable): self
+    public static function fromThrowable(Throwable $throwable) : self
     {
         return new self(
             message : sprintf('Framework boot failed: %s', $throwable->getMessage()),

@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestInterface extends ServerRequestInterface
 {
-    public function input(string $key, mixed $default = null): mixed;
-    public function all(): array;
+    public function input(string $key, mixed $default = null) : mixed;
+
+    public function all() : array;
 }

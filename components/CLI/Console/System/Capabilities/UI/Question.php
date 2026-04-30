@@ -12,7 +12,7 @@ class Question
     /**
      * Ask a question and return the user's answer.
      */
-    public static function ask(string $question, ?string $default = null) : string
+    public static function ask(string $question, string|null $default = null) : string
     {
         if ($default !== null) {
             echo sprintf('%s [%s]: ', $question, $default);
@@ -48,7 +48,7 @@ class Question
     /**
      * Ask a secret question (hidden input).
      */
-    public static function askSecret(string $question, ?string $default = null) : string
+    public static function askSecret(string $question, string|null $default = null) : string
     {
         if ($default !== null) {
             echo $question . ' [hidden]: ';

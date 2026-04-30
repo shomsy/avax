@@ -6,4 +6,4 @@ namespace Avax\Components\HTTP\Router\System\Foundation\Failure;
 
 use RuntimeException;
 
-class RouterFailure extends RuntimeException {}
+final class RouterFailure extends RuntimeException {}

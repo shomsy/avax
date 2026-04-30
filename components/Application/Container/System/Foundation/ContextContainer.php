@@ -288,7 +288,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(string $kind = null) : void
+    public function closeScope(string|null $kind = null) : void
     {
         $this->base->closeScope(kind: $kind);
     }

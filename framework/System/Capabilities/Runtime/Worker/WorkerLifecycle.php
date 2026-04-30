@@ -21,22 +21,22 @@ final class WorkerLifecycle
     ) {
     }
 
-    public function runtimeName(): string
+    public function runtimeName() : string
     {
         return $this->runtimeName;
     }
 
-    public function startedAt(): DateTimeImmutable
+    public function startedAt() : DateTimeImmutable
     {
         return $this->startedAt;
     }
 
-    public function stoppedAt(): DateTimeImmutable|null
+    public function stoppedAt() : DateTimeImmutable|null
     {
         return $this->stoppedAt;
     }
 
-    public function recordHandledRequest(string $requestId): void
+    public function recordHandledRequest(string $requestId) : void
     {
         $this->handledRequestIds[] = $requestId;
     }
@@ -44,17 +44,17 @@ final class WorkerLifecycle
     /**
      * @return list<string>
      */
-    public function handledRequestIds(): array
+    public function handledRequestIds() : array
     {
         return $this->handledRequestIds;
     }
 
-    public function handledRequestsCount(): int
+    public function handledRequestsCount() : int
     {
         return count($this->handledRequestIds);
     }
 
-    public function stop(DateTimeImmutable $stoppedAt): void
+    public function stop(DateTimeImmutable $stoppedAt) : void
     {
         $this->stoppedAt = $stoppedAt;
     }

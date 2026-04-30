@@ -15,7 +15,7 @@ final readonly class RunHttpRoute
     {
     }
 
-    public function run(MatchedHttpRoute $matchedRoute): ResponseInterface
+    public function run(MatchedHttpRoute $matchedRoute) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
             action  : $matchedRoute->route()->action,
@@ -23,7 +23,7 @@ final readonly class RunHttpRoute
         );
     }
 
-    public function runFallback(Closure|array|string $fallback, ServerRequest $request): ResponseInterface
+    public function runFallback(Closure|array|string $fallback, ServerRequest $request) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
             action  : $fallback,

@@ -14,7 +14,7 @@ use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 
 final readonly class BuildApplicationState
 {
-    public function build(ApplicationBuilder $builder): Runtime
+    public function build(ApplicationBuilder $builder) : Runtime
     {
         $components         = new ComponentRegistry();
         $requestScopes      = new RequestScopeStore();

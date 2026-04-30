@@ -17,7 +17,7 @@ final readonly class Query
         private string|null     $connectionName = null,
     ) {}
 
-    public function on(?string $connectionName = null) : self
+    public function on(string|null $connectionName = null) : self
     {
         return new self(query: $this->queryCapability, connectionName: $connectionName);
     }
@@ -26,7 +26,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(?string $connectionName = null) : QueryBuilder
+    public function builder(string|null $connectionName = null) : QueryBuilder
     {
         return $this->queryCapability->builder(connectionName: $connectionName ?? $this->connectionName);
     }
@@ -35,7 +35,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->from(table: $table, connectionName: $connectionName);
     }
@@ -44,7 +44,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+    public function from(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->queryCapability->from(table: $table, connectionName: $connectionName ?? $this->connectionName);
     }
@@ -53,7 +53,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, ?string $connectionName = null) : Expression
+    public function raw(string $value, string|null $connectionName = null) : Expression
     {
         return $this->queryCapability->raw(value: $value, connectionName: $connectionName ?? $this->connectionName);
     }

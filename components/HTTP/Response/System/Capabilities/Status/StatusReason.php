@@ -10,7 +10,7 @@ final class StatusReason
         private string $reason,
     ) {}
 
-    public function toString(): string
+    public function toString() : string
     {
         return $this->reason;
     }

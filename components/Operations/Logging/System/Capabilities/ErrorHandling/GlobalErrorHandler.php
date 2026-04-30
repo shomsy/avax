@@ -14,7 +14,7 @@ use Throwable;
  * Manages the full error handling lifecycle:
  * - set_exception_handler: Catches uncaught exceptions
  * - set_error_handler: Converts PHP errors to throwables
- * - Shutdown handler (via ShutdownErrorHandler): Catches fatal errors
+ * - Shutdown handler (via ShutdownErrorHandler) : Catches fatal errors
  *
  * This class is designed to be registered during framework boot.
  */

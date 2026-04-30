@@ -8,6 +8,6 @@ final readonly class SagaStep
     public function __construct(
         public string $name,
         public callable $action,
-        public ?callable $compensation = null
+        public callable|null $compensation = null
     ) {}
 }

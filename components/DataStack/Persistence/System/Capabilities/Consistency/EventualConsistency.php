@@ -25,7 +25,7 @@ final readonly class VersionedValue
     public static function create(
         mixed       $value,
         string      $nodeId,
-        VectorClock $clock = null,
+        VectorClock|null $clock = null,
         float       $timestamp = null,
     ) : self
     {
@@ -157,7 +157,7 @@ final class EventualConsistency implements ConsistencyPolicy
     private int $maxConflictHistory;
 
     public function __construct(
-        ConflictResolution $resolutionStrategy = null,
+        ConflictResolution|null $resolutionStrategy = null,
         Closure            $customResolver = null,
         int                $maxConflictHistory = 100,
     )

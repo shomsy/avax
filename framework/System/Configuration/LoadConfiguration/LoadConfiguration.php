@@ -11,7 +11,7 @@ final class LoadConfiguration
     ) {
     }
 
-    public function load(array $config): void
+    public function load(array $config) : void
     {
         $this->repository->load($config);
     }

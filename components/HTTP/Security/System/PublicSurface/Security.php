@@ -13,12 +13,12 @@ final readonly class Security
     ) {
     }
 
-    public function csrfToken(): string
+    public function csrfToken() : string
     {
         return $this->csrfTokens->getToken();
     }
 
-    public function validateCsrfToken(?string $token): bool
+    public function validateCsrfToken(string|null $token) : bool
     {
         return $this->csrfTokens->validateToken($token);
     }

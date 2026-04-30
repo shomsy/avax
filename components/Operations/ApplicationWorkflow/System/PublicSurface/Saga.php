@@ -51,7 +51,7 @@ final class Saga
      */
     private array $completedSteps;
 
-    private ?string $failureReason;
+    private string|null $failureReason;
 
     private SagaStoreInterface $store;
 
@@ -115,7 +115,7 @@ final class Saga
      * @param Closure $action The action to execute
      * @param Closure|null $compensation The compensation to run on failure
      */
-    public function step(string $name, Closure $action, Closure $compensation = null) : self
+    public function step(string $name, Closure $action, Closure|null $compensation = null) : self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -318,7 +318,7 @@ final class Saga
     /**
      * Get the failure reason if any.
      */
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }
@@ -357,7 +357,7 @@ final readonly class SagaResult
         public array  $data,
         public array  $completedSteps,
         public array  $stepResults,
-        public ?string $failureReason = null,
+        public string|null $failureReason = null,
     ) {}
 
     /**
@@ -371,7 +371,7 @@ final readonly class SagaResult
     /**
      * Get the failure reason if the saga failed.
      */
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }

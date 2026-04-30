@@ -25,7 +25,7 @@ final class ConflictResolution
     private readonly Closure $resolver;
 
     /**
-     * @param Closure $resolver Function(mixed $a, mixed $b, array $context): mixed
+     * @param Closure $resolver Function(mixed $a, mixed $b, array $context) : mixed
      * @param string $name Strategy name
      */
     private function __construct(Closure $resolver, string $name)
@@ -77,7 +77,7 @@ final class ConflictResolution
      *
      * Uses a provided closure to resolve conflicts.
      *
-     * @param Closure(mixed, mixed, array<string, mixed>): mixed $resolver
+     * @param Closure(mixed, mixed, array<string, mixed>) : mixed $resolver
      */
     public static function custom(Closure $resolver) : self
     {

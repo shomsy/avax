@@ -9,4 +9,4 @@ use RuntimeException;
 /**
  * Base exception for all Data component errors.
  */
-class DataException extends RuntimeException {}
+final class DataException extends RuntimeException {}

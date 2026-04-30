@@ -11,7 +11,7 @@ final class TraceId
     ) {
     }
 
-    public static function generate(): self
+    public static function generate() : self
     {
         return new self(value: bin2hex(random_bytes(8)));
     }

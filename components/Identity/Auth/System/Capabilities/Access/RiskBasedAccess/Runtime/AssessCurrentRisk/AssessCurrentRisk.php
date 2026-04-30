@@ -21,7 +21,7 @@ final readonly class AssessCurrentRisk
     ) {
     }
 
-    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null): RiskDecision|null
+    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         $user = $this->currentAuthentication->read()->user();
 

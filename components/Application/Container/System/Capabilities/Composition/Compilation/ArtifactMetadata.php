@@ -149,7 +149,7 @@ final readonly class ArtifactMetadata
     /**
      * @param list<string> $serviceIds
      */
-    public function includes(array $serviceIds): bool
+    public function includes(array $serviceIds) : bool
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             if (! $this->hasEntry(serviceId: $serviceId)) {
@@ -160,7 +160,7 @@ final readonly class ArtifactMetadata
         return true;
     }
 
-    public function hasEntry(string $serviceId): bool
+    public function hasEntry(string $serviceId) : bool
     {
         return isset($this->entries[$serviceId]);
     }
@@ -168,7 +168,7 @@ final readonly class ArtifactMetadata
     /**
      * @return list<string>
      */
-    public function entryIds(): array
+    public function entryIds() : array
     {
         return array_keys(array: $this->entries);
     }
@@ -176,7 +176,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, LifetimePlan>
      */
-    public function lifetimePlans(): array
+    public function lifetimePlans() : array
     {
         $plans = [];
 
@@ -192,7 +192,7 @@ final readonly class ArtifactMetadata
     /**
      * @param array<string, mixed> $state
      */
-    public static function fromArray(array $state): self
+    public static function fromArray(array $state) : self
     {
         return new self(
             format                 : (string) ($state['format'] ?? ''),
@@ -238,7 +238,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, string>
      */
-    private static function stringMap(mixed $state): array
+    private static function stringMap(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -264,7 +264,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array{method: string, signature: string}>
      */
-    private static function services(mixed $state): array
+    private static function services(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -293,7 +293,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, list<string>>
      */
-    private static function tags(mixed $state): array
+    private static function tags(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -307,7 +307,7 @@ final readonly class ArtifactMetadata
             }
 
             $values = array_map(
-                callback: static fn (mixed $value): string => (string) $value,
+                    callback: static fn (mixed $value) : string => (string) $value,
                 array   : $serviceIds,
             )
                     |> array_unique(...)
@@ -326,7 +326,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>
      */
-    private static function lifetimes(mixed $state): array
+    private static function lifetimes(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -353,7 +353,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return [
             'format'                  => $this->format,
@@ -399,7 +399,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, bool>
      */
-    private static function boolMap(mixed $state): array
+    private static function boolMap(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -425,7 +425,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, int>
      */
-    private static function intMap(mixed $state): array
+    private static function intMap(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -451,7 +451,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, array<string, mixed>>
      */
-    private static function mapOfMaps(mixed $state): array
+    private static function mapOfMaps(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -478,7 +478,7 @@ final readonly class ArtifactMetadata
      *
      * @return array<string, mixed>
      */
-    private static function map(mixed $state): array
+    private static function map(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -504,14 +504,14 @@ final readonly class ArtifactMetadata
      *
      * @return list<string>
      */
-    private static function stringList(mixed $state): array
+    private static function stringList(mixed $state) : array
     {
         if (! is_array(value: $state)) {
             return [];
         }
 
         $items = array_values(array: array_map(
-            callback: static fn (mixed $value): string => (string) $value,
+                                         callback: static fn (mixed $value) : string => (string) $value,
             array   : $state,
         ));
 

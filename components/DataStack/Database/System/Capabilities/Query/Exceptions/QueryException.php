@@ -13,7 +13,7 @@ use Throwable;
  *
  * -- intent: provide diagnostic context including the failing SQL and its parameter bindings.
  */
-class QueryException extends DatabaseException
+final class QueryException extends DatabaseException
 {
     /**
      * @var array Redacted bindings safe for diagnostics
@@ -36,7 +36,7 @@ class QueryException extends DatabaseException
         string    $sql,
         #[SensitiveParameter]
         array     $rawBindings = [],
-        Throwable $previous = null,
+        Throwable|null $previous = null,
     )
     {
         $this->sql              = $sql;

@@ -14,32 +14,32 @@ final class ContainerFunctionsTest extends TestCase
 {
     private DIContainer $container;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         parent::setUp();
         $this->container = new DIContainer();
         appInstance($this->container);
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         appInstance(null);
         parent::tearDown();
     }
 
-    public function test_app_instance_returns_container(): void
+    public function test_app_instance_returns_container() : void
     {
         $this->assertSame($this->container, appInstance());
     }
 
-    public function test_app_instance_sets_container(): void
+    public function test_app_instance_sets_container() : void
     {
         $new = new DIContainer();
         appInstance($new);
         $this->assertSame($new, appInstance());
     }
 
-    public function test_app_resolves_service(): void
+    public function test_app_resolves_service() : void
     {
         $this->container->bind('test', static fn () => 'value');
 
@@ -48,19 +48,19 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame('value', $result);
     }
 
-    public function test_app_returns_container_when_null(): void
+    public function test_app_returns_container_when_null() : void
     {
         $result = app();
         $this->assertSame($this->container, $result);
     }
 
-    public function test_make_creates_instance(): void
+    public function test_make_creates_instance() : void
     {
         $result = make(DateTime::class);
         $this->assertInstanceOf(DateTime::class, $result);
     }
 
-    public function test_make_with_parameters(): void
+    public function test_make_with_parameters() : void
     {
         $instance = new class ('test') {
             public function __construct(public string $v) {}
@@ -71,14 +71,14 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame('hello', $result->v);
     }
 
-    public function test_bind_registers(): void
+    public function test_bind_registers() : void
     {
         bind('test', static fn () => 'value');
 
         $this->assertTrue($this->container->has('test'));
     }
 
-    public function test_singleton_same_instance(): void
+    public function test_singleton_same_instance() : void
     {
         singleton('single', static fn () => new stdClass());
 
@@ -88,13 +88,13 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame($i1, $i2);
     }
 
-    public function test_resolve_alias_for_make(): void
+    public function test_resolve_alias_for_make() : void
     {
         $result = resolve(DateTimeImmutable::class);
         $this->assertInstanceOf(DateTimeImmutable::class, $result);
     }
 
-    public function test_register_alias_for_bind(): void
+    public function test_register_alias_for_bind() : void
     {
         register('test', static fn () => 'value');
 

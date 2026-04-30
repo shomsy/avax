@@ -29,7 +29,7 @@ final class StepRunner
     private array $failureLog = [];
 
     public function __construct(
-        IdempotencyStore $idempotencyStore = null,
+        IdempotencyStore|null $idempotencyStore = null,
         RetryPolicy      $retryPolicy = null,
         SagaTimeout      $timeout = null,
     )

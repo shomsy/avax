@@ -17,7 +17,7 @@ final class HotPathInliner
 {
     private CompiledContainer|null $compiledContainer = null;
 
-    /** @var array<string, Closure(ServiceResolver, ResolveRequest, array): mixed> */
+    /** @var array<string, Closure(ServiceResolver, ResolveRequest, array) : mixed> */
     private array $calls = [];
 
     /**
@@ -53,7 +53,7 @@ final class HotPathInliner
     /**
      * @return array<string, mixed>
      */
-    public function state(?string $serviceId = null) : array
+    public function state(string|null $serviceId = null) : array
     {
         $attached = $this->compiledContainer !== null;
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);

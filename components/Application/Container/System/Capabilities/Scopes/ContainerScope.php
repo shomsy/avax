@@ -13,17 +13,17 @@ final class ContainerScope
         return Container::make($abstract);
     }
 
-    public static function bind(string $abstract, callable $factory): void
+    public static function bind(string $abstract, callable $factory) : void
     {
         Container::bind($abstract, $factory);
     }
 
-    public static function singleton(string $abstract, callable $factory): void
+    public static function singleton(string $abstract, callable $factory) : void
     {
         Container::singleton($abstract, $factory);
     }
 
-    public static function instance(string $abstract, mixed $instance): void
+    public static function instance(string $abstract, mixed $instance) : void
     {
         Container::instance($abstract, $instance);
     }

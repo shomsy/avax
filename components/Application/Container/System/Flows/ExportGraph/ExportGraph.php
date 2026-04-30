@@ -21,7 +21,7 @@ final readonly class ExportGraph
      *
      * @throws ReflectionException
      */
-    public function debugGraph(?string $id = null, array $context = []) : array
+    public function debugGraph(string|null $id = null, array $context = []) : array
     {
         $id ??= '';
         if ($context === []) {
@@ -34,7 +34,7 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function export(?string $format = null, ?string $kind = null, ?string $id = null, array $context = []) : string
+    public function export(string|null $format = null, string|null $kind = null, string|null $id = null, array $context = []) : string
     {
         $format ??= 'json';
         $kind   ??= 'dependency';
@@ -54,7 +54,7 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function diff(?string $format = null, ?string $id = null, array $context = []) : string
+    public function diff(string|null $format = null, string|null $id = null, array $context = []) : string
     {
         $format ??= 'json';
         $id     ??= '';
@@ -130,7 +130,7 @@ final readonly class ExportGraph
      *
      * @return array<string, mixed>
      */
-    public function showSlice(?string $slice = null, array $context = []) : array
+    public function showSlice(string|null $slice = null, array $context = []) : array
     {
         $slice ??= '';
         if ($context === []) {

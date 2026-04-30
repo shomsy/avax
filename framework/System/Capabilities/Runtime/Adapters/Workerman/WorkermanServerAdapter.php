@@ -13,7 +13,7 @@ final readonly class WorkermanServerAdapter
     {
     }
 
-    public function run(): WorkerLifecycle
+    public function run() : WorkerLifecycle
     {
         return $this->workerLoop->run();
     }

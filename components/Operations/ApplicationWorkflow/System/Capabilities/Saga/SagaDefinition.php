@@ -8,7 +8,7 @@ final class SagaDefinition
 {
     private array $steps = [];
 
-    public function step(string $name, callable $action, callable $compensation = null) : self
+    public function step(string $name, callable $action, callable|null $compensation = null) : self
     {
         $this->steps[] = new SagaStep($name, $action, $compensation);
 

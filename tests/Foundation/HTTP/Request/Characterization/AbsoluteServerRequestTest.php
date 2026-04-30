@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Request\Characterization;
 
-use Avax\HTTP\Request\AbsoluteServerRequest;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\Components\HTTP\Request\AbsoluteServerRequest;
+use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;

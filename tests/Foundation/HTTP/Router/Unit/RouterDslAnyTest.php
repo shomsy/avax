@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+
+use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Fallback\RegisteredFallback;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI;
 
-use Avax\HTTP\URI\Uri;
+use Avax\Components\HTTP\URI\Uri;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;

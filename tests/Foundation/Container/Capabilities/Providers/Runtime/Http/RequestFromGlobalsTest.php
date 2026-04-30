@@ -2,11 +2,7 @@
 
 declare(strict_types=1);
 
-namespace {
-    if (! function_exists(function: 'appInstance')) {
-        function appInstance($instance = null)
-        {
-            static $container = null;
+namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
             if ($instance !== null) {
                 $container = $instance;
@@ -37,9 +33,9 @@ namespace {
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http {
 
-    use Avax\HTTP\Request\Request;
-    use Avax\HTTP\Session\NullSession;
-    use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+    use Avax\Components\HTTP\Request\Request;
+    use Avax\Components\HTTP\Session\NullSession;
+    use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
     use Avax\Tests\TestCase;
     use Override;
     use ReflectionProperty;

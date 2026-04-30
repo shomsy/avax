@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
+use Avax\Components\Application\Container\Core\AppFactory;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareBaseRegisterDependency;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterBaseRegisterDependency;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Response\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
-use Avax\Container\Core\AppFactory;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareBaseRegisterDependency;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterBaseRegisterDependency;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Tests\TestCase;
 use LogicException;

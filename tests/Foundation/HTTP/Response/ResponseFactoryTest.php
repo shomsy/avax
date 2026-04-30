@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Response;
 
-use Avax\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-final class ResponseFactoryTest extends TestCase
+final class ResponsesTest extends TestCase
 {
     public function test_creates_html_response_with_expected_content_type() : void
     {
@@ -20,9 +20,9 @@ final class ResponseFactoryTest extends TestCase
         self::assertSame('<h1>Hello</h1>', (string) $response->getBody());
     }
 
-    private function factory() : ResponseFactory
+    private function factory() : Responses
     {
-        return new ResponseFactory();
+        return new Responses();
     }
 
     public function test_creates_error_response_as_json() : void

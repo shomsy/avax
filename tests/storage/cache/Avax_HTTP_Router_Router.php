@@ -1,16 +1,16 @@
 <?php
 
-use Avax\Container\Features\Think\Model\MethodPrototype;
-use Avax\Container\Features\Think\Model\ParameterPrototype;
-use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Router\Kernel\RouterKernel;
-use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\Routing\ErrorResponseFactory;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Support\FallbackManager;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
-use Avax\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponseFactory;
-use Avax\HTTP\Router\System\Flows\RunRoute\RouterKernel;
+use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\HTTP\Router\Kernel\RouterKernel;
+use Avax\Components\HTTP\Router\Router;
+use Avax\Components\HTTP\Router\Routing\ErrorResponses;
+use Avax\Components\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\Components\HTTP\Router\Support\FallbackManager;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponses;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\RouterKernel;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => Router::class,
@@ -48,7 +48,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'errorFactory',
-                                                                                                                                               'type' => ErrorResponseFactory::class,
+                                                                                                                                               'type' => ErrorResponses::class,
                                                                                                                                                'hasDefault' => false,
                                                                                                                                                'default'    => null,
                                                                                                                                                'isVariadic' => false,

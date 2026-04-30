@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
 
 /**

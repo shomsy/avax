@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Request\System\Capability\Input;
 
-use Avax\HTTP\Request\ParameterBag;
-use Avax\HTTP\Request\System\Capability\Input\InputAccessor;
+use Avax\Components\HTTP\Request\ParameterBag;
+use Avax\Components\HTTP\Request\System\Capability\Input\InputAccessor;
 use Avax\Tests\TestCase;
 
 final class InputAccessorTest extends TestCase

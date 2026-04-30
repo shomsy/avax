@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataLayer\CommitDataChanges;
 
-use Avax\DataLayer\CommitDataChanges\CommitDataChanges;
-use Avax\DataLayer\CommitDataChanges\DataTransactionFailure;
-use Avax\DataLayer\CommitDataChanges\DataTransactionPolicy;
+use Avax\Components\DataStack\Database\CommitDataChanges\CommitDataChanges;
+use Avax\Components\DataStack\Database\CommitDataChanges\DataTransactionFailure;
+use Avax\Components\DataStack\Database\CommitDataChanges\DataTransactionPolicy;
 use Avax\Tests\TestCase;
 use RuntimeException;
 

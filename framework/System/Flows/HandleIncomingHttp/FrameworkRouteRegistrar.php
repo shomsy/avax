@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\HTTP\Router\HttpMethod;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Components\HTTP\Router\HttpMethod;
+use Avax\Components\HTTP\Router\RouterInterface;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
 use Closure;
 
 final class FrameworkRouteRegistrar implements RouterInterface

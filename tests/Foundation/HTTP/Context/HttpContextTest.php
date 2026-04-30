@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Context;
 
-use Avax\HTTP\Context\GlobalsProviderInterface;
-use Avax\HTTP\Context\HttpContext;
+use Avax\Components\HTTP\Context\GlobalsProviderInterface;
+use Avax\Components\HTTP\Context\HttpContext;
 use Avax\Tests\TestCase;
 use Nyholm\Psr7\ServerRequest;
 

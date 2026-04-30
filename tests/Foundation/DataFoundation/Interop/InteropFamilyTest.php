@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Interop;
 
-use Avax\DataFoundation\Interop\Arrays\FromArray;
-use Avax\DataFoundation\Interop\Arrays\ToArray;
-use Avax\DataFoundation\Interop\Generators\FromGenerator;
-use Avax\DataFoundation\Interop\Iterables\FromIterable;
-use Avax\DataFoundation\Interop\Iterables\ToIterable;
-use Avax\DataFoundation\Interop\Json\FromJson;
-use Avax\DataFoundation\Interop\Json\ToJson;
-use Avax\DataFoundation\Interop\Xml\FromXml;
-use Avax\DataFoundation\Interop\Xml\ToXml;
+use Avax\Components\DataStack\Database\Interop\Arrays\FromArray;
+use Avax\Components\DataStack\Database\Interop\Arrays\ToArray;
+use Avax\Components\DataStack\Database\Interop\Generators\FromGenerator;
+use Avax\Components\DataStack\Database\Interop\Iterables\FromIterable;
+use Avax\Components\DataStack\Database\Interop\Iterables\ToIterable;
+use Avax\Components\DataStack\Database\Interop\Json\FromJson;
+use Avax\Components\DataStack\Database\Interop\Json\ToJson;
+use Avax\Components\DataStack\Database\Interop\Xml\FromXml;
+use Avax\Components\DataStack\Database\Interop\Xml\ToXml;
 use Avax\Tests\TestCase;
 
 final class InteropFamilyTest extends TestCase

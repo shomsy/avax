@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Session\Security;
 
-use Avax\HTTP\Session\SessionSecurity\SessionPolicy\AbsoluteLifetimePolicy;
-use Avax\HTTP\Session\SessionSecurity\SessionPolicy\IdleTimeoutPolicy;
-use Avax\HTTP\Session\SessionSecurity\SessionPolicy\SecureTransportPolicy;
+use Avax\Components\HTTP\Session\SessionSecurity\SessionPolicy\AbsoluteLifetimePolicy;
+use Avax\Components\HTTP\Session\SessionSecurity\SessionPolicy\IdleTimeoutPolicy;
+use Avax\Components\HTTP\Session\SessionSecurity\SessionPolicy\SecureTransportPolicy;
 use Avax\Tests\TestCase;
 
 final class SessionPolicyTest extends TestCase

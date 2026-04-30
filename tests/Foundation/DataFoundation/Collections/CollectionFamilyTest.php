@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Collections;
 
-use Avax\DataFoundation\Collections\DataList\DataList;
-use Avax\DataFoundation\Collections\Map\Map;
-use Avax\DataFoundation\Collections\MultiMap\MultiMap;
-use Avax\DataFoundation\Collections\Sequence\Sequence;
-use Avax\DataFoundation\Collections\Set\Set;
+use Avax\Components\DataStack\Database\Collections\DataList\DataList;
+use Avax\Components\DataStack\Database\Collections\Map\Map;
+use Avax\Components\DataStack\Database\Collections\MultiMap\MultiMap;
+use Avax\Components\DataStack\Database\Collections\Sequence\Sequence;
+use Avax\Components\DataStack\Database\Collections\Set\Set;
 use Avax\Tests\TestCase;
 
 final class CollectionFamilyTest extends TestCase

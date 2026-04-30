@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
-use Avax\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
+use Avax\Components\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest;
 use Avax\Tests\TestCase;
 
 /**

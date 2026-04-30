@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Foundation\HTTP\Request;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestBody\RequestBody;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory;
+use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 
 /**

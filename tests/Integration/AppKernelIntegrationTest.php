@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Integration;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\HTTP\AppKernel;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\CsrfVerificationMiddleware;
-use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
 use Avax\HTTP\RouterBootstrapper;
@@ -29,7 +29,7 @@ class AppKernelIntegrationTest extends TestCase
 
     private ControllerDispatcher $dispatcher;
 
-    private ResponseFactory $responseFactory;
+    private Responses $responseFactory;
 
     private RouterBootstrapper $bootstrapper;
 
@@ -173,9 +173,9 @@ class AppKernelIntegrationTest extends TestCase
         $this->router     = $this->createMock(RouterInterface::class);
         $routeCollection  = new RouteCollection;
         $this->dispatcher = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
-        $this->responseFactory = new ResponseFactory(
+        $this->responseFactory = new Responses(
             streamFactory: $psr17Factory->createStreamFactory(),
-            response     : $psr17Factory->createResponseFactory()->createResponse()
+            response     : $psr17Factory->createResponses()->createResponse()
         );
 
         $this->bootstrapper = new RouterBootstrapper(router: $this->router, routeCollection: $routeCollection);

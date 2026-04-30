@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataLayer\AccessPersistentData;
 
-use Avax\DataLayer\AccessPersistentData\PersistentDataFailure;
-use Avax\DataLayer\AccessPersistentData\PersistentDataRequest;
-use Avax\DataLayer\AccessPersistentData\PersistentDataResult;
-use Avax\DataLayer\DataLayer;
+use Avax\Components\DataStack\Database\AccessPersistentData\PersistentDataFailure;
+use Avax\Components\DataStack\Database\AccessPersistentData\PersistentDataRequest;
+use Avax\Components\DataStack\Database\AccessPersistentData\PersistentDataResult;
+use Avax\Components\DataStack\Database\DataLayer;
 use Avax\Tests\TestCase;
 
 final class AccessPersistentDataTest extends TestCase

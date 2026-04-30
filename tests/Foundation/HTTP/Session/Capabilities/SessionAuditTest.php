@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
 
-use Avax\HTTP\Session\SessionAudit\SessionAudit;
+use Avax\Components\HTTP\Session\SessionAudit\SessionAudit;
 use Avax\Tests\TestCase;
 
 final class SessionAuditTest extends TestCase

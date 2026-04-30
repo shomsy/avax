@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use Avax\HTTP\URI\Parts\Port;
-use Avax\HTTP\URI\Parts\Scheme;
+use Avax\Components\HTTP\URI\Parts\Port;
+use Avax\Components\HTTP\URI\Parts\Scheme;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

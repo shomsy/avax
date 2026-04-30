@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Values;
 
-use Avax\DataFoundation\Values\Identity\Uuid;
-use Avax\DataFoundation\Values\Money\Currency;
-use Avax\DataFoundation\Values\Money\Money;
-use Avax\DataFoundation\Values\Numbers\PositiveInt;
-use Avax\DataFoundation\Values\Option\Option;
-use Avax\DataFoundation\Values\Result\Result;
-use Avax\DataFoundation\Values\Text\NonEmptyString;
+use Avax\Components\DataStack\Database\Values\Identity\Uuid;
+use Avax\Components\DataStack\Database\Values\Money\Currency;
+use Avax\Components\DataStack\Database\Values\Money\Money;
+use Avax\Components\DataStack\Database\Values\Numbers\PositiveInt;
+use Avax\Components\DataStack\Database\Values\Option\Option;
+use Avax\Components\DataStack\Database\Values\Result\Result;
+use Avax\Components\DataStack\Database\Values\Text\NonEmptyString;
 use Avax\Tests\TestCase;
 use RuntimeException;
 

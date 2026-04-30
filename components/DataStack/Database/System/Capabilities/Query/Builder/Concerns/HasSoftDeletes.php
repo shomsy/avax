@@ -69,8 +69,8 @@ trait HasSoftDeletes
     /**
      * Filter the results     *
      *
-     * @return HasSoftDeletes|QueryBuilder \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
-     *                                     \Avax\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
+     * @return HasSoftDeletes|QueryBuilder \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
+     *                                     \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
      *                                     A
      *                                     fresh,
      *                                     cloned

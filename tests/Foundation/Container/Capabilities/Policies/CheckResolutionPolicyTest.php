@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Policies;
 
-use Avax\Container\DependencyInjection\Capability\Policies\CheckResolutionPolicy;
-use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
-use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionAllowed;
-use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionBlocked;
-use Avax\Container\DependencyInjection\Capability\Policies\StrictResolutionPolicy;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Policies\CheckResolutionPolicy;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionAllowed;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionBlocked;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Policies\StrictResolutionPolicy;
 use Avax\Tests\TestCase;
 use stdClass;
 

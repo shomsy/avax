@@ -1,16 +1,16 @@
 <?php
 
-use Avax\Container\Features\Think\Model\MethodPrototype;
-use Avax\Container\Features\Think\Model\ParameterPrototype;
-use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Router\RouterDsl;
-use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouterRegistrar;
-use Avax\HTTP\Router\Support\FallbackManager;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Router\RouterDsl;
+use Avax\Components\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\Components\HTTP\Router\Routing\RouterRegistrar;
+use Avax\Components\HTTP\Router\Support\FallbackManager;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\RouterDsl;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RouterDsl::class,

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\HTTP\Response;
 
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\Responses;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for the ResponseFactory.
+ * Unit tests for the Responses.
  */
-final class ResponseFactoryTest extends TestCase
+final class ResponsesTest extends TestCase
 {
-    private ResponseFactory $factory;
+    private Responses $factory;
 
     #[Test]
     public function create_makes_basic_response() : void
@@ -202,6 +202,6 @@ final class ResponseFactoryTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->factory = new ResponseFactory();
+        $this->factory = new Responses();
     }
 }

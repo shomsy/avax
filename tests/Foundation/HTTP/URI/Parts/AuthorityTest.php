@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use Avax\HTTP\URI\Parts\Authority;
-use Avax\HTTP\URI\Parts\Host;
-use Avax\HTTP\URI\Parts\Port;
-use Avax\HTTP\URI\Parts\Scheme;
-use Avax\HTTP\URI\Parts\UserInfo;
+use Avax\Components\HTTP\URI\Parts\Authority;
+use Avax\Components\HTTP\URI\Parts\Host;
+use Avax\Components\HTTP\URI\Parts\Port;
+use Avax\Components\HTTP\URI\Parts\Scheme;
+use Avax\Components\HTTP\URI\Parts\UserInfo;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

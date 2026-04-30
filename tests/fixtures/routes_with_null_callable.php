@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Response\Response;
 use Avax\Facade\Facades\Route;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Response;
 use Psr\Http\Message\ResponseInterface;
 
 Route::get('/null-test', static function (Request $request) : ResponseInterface|null {

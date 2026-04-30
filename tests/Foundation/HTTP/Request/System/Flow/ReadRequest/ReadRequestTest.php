@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Request\System\Flow\ReadRequest;
 
-use Avax\HTTP\Request\ParameterBag;
-use Avax\HTTP\Request\System\Capability\Input\InputAccessor;
-use Avax\HTTP\Request\System\Capability\Input\JsonBodyParser;
-use Avax\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge;
-use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequest;
-use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequestData;
-use Avax\HTTP\Request\System\Flow\ReadRequest\ReadRequestResult;
-use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\Components\HTTP\Request\ParameterBag;
+use Avax\Components\HTTP\Request\System\Capability\Input\InputAccessor;
+use Avax\Components\HTTP\Request\System\Capability\Input\JsonBodyParser;
+use Avax\Components\HTTP\Request\System\Capability\SessionBridge\RequestSessionBridge;
+use Avax\Components\HTTP\Request\System\Flow\ReadRequest\ReadRequest;
+use Avax\Components\HTTP\Request\System\Flow\ReadRequest\ReadRequestData;
+use Avax\Components\HTTP\Request\System\Flow\ReadRequest\ReadRequestResult;
+use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
 use Avax\Tests\TestCase;
 
 final class ReadRequestTest extends TestCase

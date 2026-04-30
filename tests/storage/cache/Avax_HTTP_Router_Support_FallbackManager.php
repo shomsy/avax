@@ -1,10 +1,10 @@
 <?php
 
-use Avax\Container\Features\Think\Model\MethodPrototype;
-use Avax\Container\Features\Think\Model\ParameterPrototype;
-use Avax\Container\Features\Think\Model\ServicePrototype;
-use Avax\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\HTTP\Router\Support\FallbackManager;
+use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
+use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
+use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Router\Support\FallbackManager;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => FallbackManager::class,

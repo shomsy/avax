@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Integration;
-use Avax\Container\Core\AppFactory;
-use Avax\Container\Providers\Auth\AuthenticationBaseRegisterDependency;
-use Avax\Container\Providers\Auth\SecurityBaseRegisterDependency;
-use Avax\Container\Providers\Core\ConfigurationBaseRegisterDependency;
-use Avax\Container\Providers\Core\FilesystemBaseRegisterDependency;
-use Avax\Container\Providers\Core\LoggingBaseRegisterDependency;
-use Avax\Container\Providers\Database\RegisterDatabaseDependencies;
-use Avax\Container\Providers\HTTP\HTTPBaseRegisterDependency;
-use Avax\Container\Providers\HTTP\HttpClientBaseRegisterDependency;
-use Avax\Container\Providers\HTTP\MiddlewareBaseRegisterDependency;
-use Avax\Container\Providers\HTTP\RouterBaseRegisterDependency;
-use Avax\Container\Providers\HTTP\SessionBaseRegisterDependency;
-use Avax\Container\Providers\HTTP\ViewBaseRegisterDependency;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\URI\UriBuilder;
+
+use Avax\Components\Application\Container\Core\AppFactory;
+use Avax\Components\Application\Container\Providers\Auth\AuthenticationBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\Auth\SecurityBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\Core\ConfigurationBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\Core\FilesystemBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\Core\LoggingBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\Database\RegisterDatabaseDependencies;
+use Avax\Components\Application\Container\Providers\HTTP\HTTPBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\HTTP\HttpClientBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\HTTP\MiddlewareBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\HTTP\RouterBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\HTTP\SessionBaseRegisterDependency;
+use Avax\Components\Application\Container\Providers\HTTP\ViewBaseRegisterDependency;
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;
 

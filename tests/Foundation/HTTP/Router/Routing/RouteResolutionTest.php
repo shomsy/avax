@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Response;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
-use Avax\HTTP\URI\UriBuilder;
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Response\Response;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 use Override;
 use Psr\Log\NullLogger;

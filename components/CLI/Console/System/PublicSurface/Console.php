@@ -4,134 +4,163 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Console\System\PublicSurface;
 
-use Avax\Components\CLI\Console\System\Capabilities\Commands\Command;
+use Avax\Components\CLI\Console\System\Capabilities\Input\ConsoleInput;
+use Avax\Components\CLI\Console\System\Capabilities\Output\ConsoleOutput;
 
 /**
  * Console application that can register and run commands.
+ *
+ * Provides command registry, input parsing, output writing,
+ * and a run() method that resolves and executes commands.
  */
 class Console
 {
-    /** @var array<string, Command> */
-    private array  $commands   = [];
-    private string $appName    = 'Avax Console';
-    private string $appVersion = '1.0.0';
+    /** @var array<string, Command> Registered commands */
+    private array $commands = [];
 
-    public function __construct(?string $name = null, ?string $version = null)
+    private string        $appName;
+    private string        $appVersion;
+    private ConsoleOutput $output;
+
+    public function __construct(
+        ?string        $name = null,
+        ?string        $version = null,
+        ?ConsoleOutput $output = null
+    )
     {
-        if ($name !== null) {
-            $this->appName = $name;
-        }
-        if ($version !== null) {
-            $this->appVersion = $version;
-        }
+        $this->appName    = $name ?? 'Avax Console';
+        $this->appVersion = $version ?? '1.0.0';
+        $this->output     = $output ?? new ConsoleOutput();
     }
 
-    public function add(Command $command) : self
+    /**
+     * Register a command instance.
+     */
+    public function register(Command $command) : self
     {
         $this->commands[$command->getName()] = $command;
 
         return $this;
     }
 
+    /**
+     * Check if a command is registered.
+     */
     public function has(string $name) : bool
     {
         return isset($this->commands[$name]);
     }
 
-    public function get(string $name) : ?Command
+    /**
+     * Resolve a command by name.
+     */
+    public function resolve(string $name) : ?Command
     {
         return $this->commands[$name] ?? null;
     }
 
+    /**
+     * Get all registered commands.
+     */
+    public function getCommands() : array
+    {
+        return $this->commands;
+    }
+
+    /**
+     * Run the console application.
+     *
+     * Parses argv, resolves the command, and executes it.
+     */
     public function run(?array $argv = null) : int
     {
         $argv = $argv ?? $_SERVER['argv'] ?? [];
-        array_shift($argv); // Remove script name
+
+        // Remove script name
+        array_shift($argv);
 
         if (empty($argv)) {
-            $this->displayHelp();
+            $this->list();
 
-            return 0;
+            return Command::SUCCESS;
         }
 
         $commandName = $argv[0];
+        array_shift($argv);
 
+        // Handle built-in flags
         if ($commandName === '--help' || $commandName === '-h') {
-            $this->displayHelp();
+            $this->list();
 
-            return 0;
+            return Command::SUCCESS;
         }
 
         if ($commandName === '--version' || $commandName === '-V') {
-            echo "{$this->appName} version {$this->appVersion}" . PHP_EOL;
+            $this->output->line("{$this->appName} version {$this->appVersion}");
 
-            return 0;
+            return Command::SUCCESS;
         }
 
-        if (! isset($this->commands[$commandName])) {
-            echo "Command '{$commandName}' not found." . PHP_EOL;
-            $this->displayHelp();
+        // Resolve command
+        $command = $this->resolve($commandName);
 
-            return 1;
+        if ($command === null) {
+            $this->output->error("Command '{$commandName}' not found.");
+            $this->output->newLine();
+            $this->list();
+
+            return Command::FAILURE;
         }
 
-        $command = $this->commands[$commandName];
-        array_shift($argv); // Remove command name
+        // Parse remaining arguments
+        $input = ConsoleInput::fromArgv($argv);
 
-        // Parse arguments and options
-        $args = $this->parseArguments($argv);
-
-        return $command->handle($args);
+        return $command->run($input, $this->output);
     }
 
-    private function displayHelp() : void
+    /**
+     * List all registered commands.
+     */
+    public function list() : void
     {
-        echo "{$this->appName} version {$this->appVersion}" . PHP_EOL . PHP_EOL;
-        echo "Usage:" . PHP_EOL;
-        echo "  command [arguments] [options]" . PHP_EOL . PHP_EOL;
+        $this->output->line("{$this->appName} version {$this->appVersion}");
+        $this->output->newLine();
+        $this->output->line('Usage:');
+        $this->output->line('  <command> [arguments] [options]');
+        $this->output->newLine();
 
         if (empty($this->commands)) {
-            echo "No commands registered." . PHP_EOL;
+            $this->output->line('No commands registered.');
 
             return;
         }
 
-        echo "Available commands:" . PHP_EOL;
+        $this->output->bold('Available commands:');
+        $this->output->newLine();
 
-        $maxNameLength = max(array_map(fn ($cmd) => strlen($cmd->getName()), $this->commands));
+        // Calculate max command name length for alignment
+        $maxNameLength = 0;
 
-        foreach ($this->commands as $name => $command) {
-            $padded = str_pad($name, $maxNameLength);
-            $desc   = $command->getDescription();
-            echo "  {$padded}  {$desc}" . PHP_EOL;
-        }
-    }
+        foreach ($this->commands as $command) {
+            $nameLength = mb_strlen($command->getName());
 
-    private function parseArguments(array $argv) : array
-    {
-        $args    = [];
-        $options = [];
-
-        foreach ($argv as $arg) {
-            if (str_starts_with($arg, '--')) {
-                // Long option: --key=value or --key
-                $parts         = explode('=', substr($arg, 2), 2);
-                $key           = $parts[0];
-                $options[$key] = $parts[1] ?? true;
-            } elseif (str_starts_with($arg, '-')) {
-                // Short option: -k=value or -k
-                $parts         = explode('=', substr($arg, 1), 2);
-                $key           = $parts[0];
-                $options[$key] = $parts[1] ?? true;
-            } else {
-                // Positional argument
-                $args[] = $arg;
+            if ($nameLength > $maxNameLength) {
+                $maxNameLength = $nameLength;
             }
         }
 
-        return [
-            'arguments' => $args,
-            'options'   => $options,
-        ];
+        foreach ($this->commands as $command) {
+            $name = str_pad($command->getName(), $maxNameLength);
+            $desc = $command->getDescription();
+            $this->output->line("  {$name}  {$desc}");
+        }
+    }
+
+    /**
+     * Get the output instance.
+     */
+    public function getOutput() : ConsoleOutput
+    {
+        return $this->output;
     }
 }

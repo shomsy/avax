@@ -29,18 +29,19 @@ final readonly class StatelessGuard
     }
 }
 
-final readonly class StatefulServiceDetector
+final class StatefulDependencyDetector
 {
-    private static array $detectors = [];
+    /** @var array<string, Closure> */
+    private array $detectors = [];
 
-    public static function register(string $service, Closure $detector) : void
+    public function register(string $dependency, Closure $detector) : void
     {
-        self::$detectors[$service] = $detector;
+        $this->detectors[$dependency] = $detector;
     }
 
-    public static function isStateful(string $service) : bool
+    public function isStateful(string $dependency) : bool
     {
-        $detector = self::$detectors[$service] ?? null;
+        $detector = $this->detectors[$dependency] ?? null;
 
         return $detector ? $detector() : false;
     }

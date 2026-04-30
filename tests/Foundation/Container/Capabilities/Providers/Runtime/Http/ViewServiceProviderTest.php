@@ -7,11 +7,11 @@ namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 use Avax\Tests\TestCase;
 use components\Container\BindingBuilderInterface;
 use components\Container\ContainerInterface;
-use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
+use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewBaseRegisterDependency;
 use components\Container\DependencyInjection\Configuration\Settings;
 use components\View\BladeTemplateEngine;
 
-final class ViewServiceProviderTest extends TestCase
+final class ViewBaseRegisterDependencyTest extends TestCase
 {
     public function test_register_uses_defaults_without_base_path_helper() : void
     {
@@ -45,7 +45,7 @@ final class ViewServiceProviderTest extends TestCase
                 ->with('config')
                 ->willReturn(value: new Settings);
 
-            $provider = new ViewServiceProvider(app: $container);
+            $provider = new ViewBaseRegisterDependency(app: $container);
             $provider->register();
 
             $factory = $registrations[BladeTemplateEngine::class] ?? null;

@@ -5,37 +5,37 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Assembly;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileContainer;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Components\Application\Container\System\Capabilities\Runtime\ServicePool;
 
 /**
  * Built runtime collaborators for one container instance.
  */
 final readonly class RuntimeAssembly
 {
-    public ServiceResolver $resolver;
+    public ResolveDependency  $resolver;
     public CompileContainer $compiler;
     public ResolutionPolicy $policy;
     public FunctionCaller  $caller;
     public ManageScopes    $scopes;
-    public ServicePool     $servicePool;
+    public DependencyPool     $servicePool;
     public ScopeStore      $scopeStore;
-    public ServiceRegistry $registrations;
+    public DependencyRegistry $registrations;
 
     public function __construct(
-        ServiceRegistry $registrations,
+        DependencyRegistry $registrations,
         ScopeStore      $scopeStore,
-        ServicePool     $servicePool,
+        DependencyPool     $servicePool,
         ManageScopes    $scopes,
         FunctionCaller  $caller,
         ResolutionPolicy $policy,
         CompileContainer $compiler,
-        ServiceResolver $resolver,
+        ResolveDependency  $resolver,
     )
     {
         $this->registrations = $registrations;

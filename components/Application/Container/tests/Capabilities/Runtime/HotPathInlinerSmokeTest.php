@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
+use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\HotPathInliner;
 
 final class HotPathInlinerSmokeTest extends CompiledContainer
@@ -26,7 +26,7 @@ final class HotPathInlinerSmokeTest extends CompiledContainer
 
 $inliner  = new HotPathInliner();
 $compiled = new InlineSmokeCompiled();
-$resolver = makeTestContainer()->get(id: ServiceResolver::class);
+$resolver = makeTestContainer()->get(id: ResolveDependency::class);
 
 assertTrue(condition: ! $inliner->isAttached(), message: 'HotPathInliner should start detached.');
 assertSame(expected: 'no compiled runtime is attached', actual: $inliner->state()['reason'], message: 'Detached hot path should explain why no compiled path is available.');

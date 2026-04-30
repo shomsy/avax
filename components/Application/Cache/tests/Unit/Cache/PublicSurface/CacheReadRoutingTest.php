@@ -11,9 +11,9 @@ use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\InvalidTarget as CacheReadTargetWasNotSupported;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CompiledNotConfigured;
-use Avax\Components\Application\Cache\System\PublicSurface\Exception\UnsupportedTarget as CacheReadTargetWasNotSupported;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadKind;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
@@ -176,7 +176,7 @@ final class CacheReadRoutingTest extends TestCase
     public function test_store_with_name_throws_without_provider() : void
     {
         $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires CacheServiceProvider');
+        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
 
         Cache::store(name: 'api');
     }
@@ -196,7 +196,7 @@ final class CacheReadRoutingTest extends TestCase
     public function test_read_routes_to_named_store_without_provider() : void
     {
         $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires CacheServiceProvider');
+        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
 
         $runtimeCacheTarget = RuntimeCacheTarget::key('key', null, 'redis');
         Cache::read(target: $runtimeCacheTarget);

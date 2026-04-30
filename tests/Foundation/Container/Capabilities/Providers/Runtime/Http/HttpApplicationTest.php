@@ -9,8 +9,8 @@ use Avax\Components\HTTP\Response\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Container\Core\AppFactory;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
-use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareBaseRegisterDependency;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterBaseRegisterDependency;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Tests\TestCase;
 use LogicException;
@@ -47,7 +47,7 @@ final class HttpApplicationTest extends TestCase
             $_FILES                    = [];
 
             $app = AppFactory::http(
-                providers: [MiddlewareServiceProvider::class, RouterServiceProvider::class],
+                providers: [MiddlewareBaseRegisterDependency::class, RouterBaseRegisterDependency::class],
                 routes   : $this->createRoutesFile(),
                 cacheDir : sys_get_temp_dir(),
                 debug    : true

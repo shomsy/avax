@@ -10,6 +10,6 @@ final class CompiledNotConfigured extends RuntimeException
 {
     public function __construct()
     {
-        parent::__construct(message: 'Compiled cache is not configured. Use CompiledCache::use() or configure compiledCacheDirectory() on CacheServiceProvider.');
+        parent::__construct(message: 'Compiled cache is not configured. Use CompiledCache::use() or configure compiledCacheDirectory() on RegisterCacheDependencies.');
     }
 }

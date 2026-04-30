@@ -20,7 +20,7 @@ final class ResolveDependencies
     /**
      * @param array               $parameters
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver     $resolver
+     * @param ResolveDependency $resolver
      * @param ResolveRequest|null $request
      *
      * @return array<int, mixed>
@@ -29,7 +29,7 @@ final class ResolveDependencies
     public function resolveParameters(
         array           $parameters,
         array           $overrides,
-        ServiceResolver $resolver,
+        ResolveDependency $resolver,
         ResolveRequest  $request = null,
     ) : array
     {
@@ -51,7 +51,7 @@ final class ResolveDependencies
     public function resolvePlan(
         ResolvePlan         $plan,
         array               $overrides,
-        ServiceResolver     $resolver,
+        ResolveDependency $resolver,
         ResolveRequest|null $request,
     ) : array
     {
@@ -73,7 +73,7 @@ final class ResolveDependencies
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
      *                            string, allowsNull: bool} $parameter
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver      $resolver
+     * @param ResolveDependency $resolver
      * @param ResolveRequest|null  $request
      *
      * @return mixed
@@ -82,7 +82,7 @@ final class ResolveDependencies
     private function resolveCompiledParameter(
         array               $parameter,
         array               $overrides,
-        ServiceResolver     $resolver,
+        ResolveDependency $resolver,
         ResolveRequest|null $request,
     ) : mixed
     {

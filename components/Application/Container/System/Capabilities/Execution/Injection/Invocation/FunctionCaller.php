@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation;
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolvePlan;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use Closure;
 use ReflectionException;
 use ReflectionFunction;
@@ -20,7 +20,7 @@ use Throwable;
  */
 final class FunctionCaller
 {
-    private ServiceResolver|null $serviceResolver = null;
+    private ResolveDependency|null $serviceResolver = null;
 
     /** @var array<string, ResolvePlan> */
     private array $plans = [];
@@ -32,7 +32,7 @@ final class FunctionCaller
     /**
      * Attaches the runtime resolver used for argument resolution.
      */
-    public function setResolver(ServiceResolver $serviceResolver) : void
+    public function setResolver(ResolveDependency $serviceResolver) : void
     {
         $this->serviceResolver = $serviceResolver;
     }

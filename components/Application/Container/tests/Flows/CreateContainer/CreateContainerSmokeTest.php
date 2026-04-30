@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
+use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\DependencyNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -45,7 +45,7 @@ assertThrows(
  */ /**
  * @throws Throwable
  */
-    expectedClass: ServiceNotFoundException::class,
+    expectedClass: DependencyNotFoundException::class,
     callback     : static fn () => $container->get(id: 'Missing\\Service'),
     message      : 'Missing services must use the not-found contract.',
 );

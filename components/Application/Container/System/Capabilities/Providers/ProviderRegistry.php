@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
  */
 final class ProviderRegistry
 {
-    /** @var ServiceProvider[] */
+    /** @var BaseRegisterDependency[] */
     private array $providers = [];
 
     private bool $booted = false;

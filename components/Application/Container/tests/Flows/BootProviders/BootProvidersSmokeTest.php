@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDeferredDependency;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 use Avax\Components\Application\Container\DI\Flows\BootProviders\BootProviders;
 use Psr\Container\ContainerExceptionInterface;
@@ -28,7 +28,7 @@ final class ProviderState
     }
 }
 
-final class BaseProvider implements ServiceProviderInterface
+final class BaseProvider implements RegisterDependency
 {
     private ContainerInterface $app;
 
@@ -59,7 +59,7 @@ final class BaseProvider implements ServiceProviderInterface
     }
 }
 
-final class DemoProvider implements ServiceProviderInterface
+final class DemoProvider implements RegisterDependency
 {
     private ContainerInterface $app;
 
@@ -122,7 +122,7 @@ final class DeferredProviderConsumer
     }
 }
 
-final class DeferredDemoProvider implements DeferredProviderInterface
+final class DeferredDemoProvider implements RegisterDeferredDependency
 {
     private ContainerInterface $app;
 
@@ -158,7 +158,7 @@ final class DeferredDemoProvider implements DeferredProviderInterface
     }
 }
 
-final class CycleProviderA implements ServiceProviderInterface
+final class CycleProviderA implements RegisterDependency
 {
     private ContainerInterface $app;
 
@@ -180,7 +180,7 @@ final class CycleProviderA implements ServiceProviderInterface
     public function boot() : void {}
 }
 
-final class CycleProviderB implements ServiceProviderInterface
+final class CycleProviderB implements RegisterDependency
 {
     private ContainerInterface $app;
 

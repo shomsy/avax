@@ -12,7 +12,7 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
  */
 final class BlueprintCache
 {
-    /** @var array<string, ServiceBlueprint> */
+    /** @var array<string, DependencyBlueprint> */
     private array         $items = [];
     private readonly bool $debug;
 
@@ -46,10 +46,10 @@ final class BlueprintCache
     /**
      * Reads one blueprint from memory or disk cache.
      */
-    public function get(string $class, string $fingerprint = '') : ServiceBlueprint|null
+    public function get(string $class, string $fingerprint = '') : DependencyBlueprint|null
     {
         $cached = $this->items[$class] ?? null;
-        if ($cached instanceof ServiceBlueprint) {
+        if ($cached instanceof DependencyBlueprint) {
             if (! $this->debug || $fingerprint === '' || $cached->fingerprint === $fingerprint) {
                 $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_memory_hits_total');
 
@@ -73,7 +73,7 @@ final class BlueprintCache
         }
 
         $loaded = require $path;
-        if (! $loaded instanceof ServiceBlueprint) {
+        if (! $loaded instanceof DependencyBlueprint) {
             $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
@@ -125,7 +125,7 @@ final class BlueprintCache
      *
      * @throws ContainerException
      */
-    public function put(ServiceBlueprint $serviceBlueprint) : ServiceBlueprint
+    public function put(DependencyBlueprint $serviceBlueprint) : DependencyBlueprint
     {
         $this->items[$serviceBlueprint->class] = $serviceBlueprint;
         $this->resolutionMetrics?->increment(name: 'container_blueprint_compiles_total');

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation;
 
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolvePlan;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use ReflectionParameter;
 use Throwable;
 
@@ -30,7 +30,7 @@ final readonly class ResolveCallArguments
     public function resolve(
         array           $parameters,
         array           $overrides,
-        ServiceResolver $resolver,
+        ResolveDependency $resolver,
         ResolveRequest  $request = null,
     ) : array
     {
@@ -45,7 +45,7 @@ final readonly class ResolveCallArguments
     /**
      * @param ResolvePlan         $plan
      * @param array<string, mixed> $overrides
-     * @param ServiceResolver     $resolver
+     * @param ResolveDependency $resolver
      * @param ResolveRequest|null $request
      *
      * @return array<int, mixed>
@@ -54,7 +54,7 @@ final readonly class ResolveCallArguments
     public function resolvePlan(
         ResolvePlan     $plan,
         array           $overrides,
-        ServiceResolver $resolver,
+        ResolveDependency $resolver,
         ResolveRequest  $request = null,
     ) : array
     {

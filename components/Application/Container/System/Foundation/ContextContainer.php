@@ -7,18 +7,18 @@ namespace Avax\Components\Application\Container\System;
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\RegisterForTarget;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\ServiceRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\SliceContext;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\CapabilitySliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\ConfigurationSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\FlowSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\FoundationSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\RootCompositionView;
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
@@ -36,7 +36,7 @@ use Throwable;
 readonly class ContextContainer implements ContainerInterface
 {
     private array     $context;
-    private ServiceResolver $resolver;
+    private ResolveDependency $resolver;
     private Container $base;
 
     /**
@@ -44,7 +44,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function __construct(
         Container $base,
-        ServiceResolver $resolver,
+        ResolveDependency $resolver,
         array     $context,
     )
     {
@@ -145,7 +145,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @param array<int, string|ServiceProviderInterface> $providers
+     * @param array<int, string|RegisterDependency> $providers
      */
     public function bootProviders(array $providers) : void
     {
@@ -484,14 +484,14 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->alias(alias: $alias, abstract: $abstract);
     }
 
-    public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->applySliceMetadata(
             registration: $this->base->bind(abstract: $abstract, concrete: $concrete),
         );
     }
 
-    protected function applySliceMetadata(ServiceRegistration $registration) : ServiceRegistration
+    protected function applySliceMetadata(DependencyRegistration $registration) : DependencyRegistration
     {
         $slice = SliceContext::from(context: $this->context);
         if ($slice === '') {
@@ -529,21 +529,21 @@ readonly class ContextContainer implements ContainerInterface
         return $registration;
     }
 
-    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function defer(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->applySliceMetadata(
             registration: $this->base->defer(abstract: $abstract, concrete: $concrete),
         );
     }
 
-    public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function singleton(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->applySliceMetadata(
             registration: $this->base->singleton(abstract: $abstract, concrete: $concrete),
         );
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : ServiceRegistration
+    public function scoped(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         return $this->applySliceMetadata(
             registration: $this->base->scoped(abstract: $abstract, concrete: $concrete),
@@ -554,7 +554,7 @@ readonly class ContextContainer implements ContainerInterface
     {
         $this->base->instance(abstract: $abstract, instance: $instance);
         $registration = $this->resolver->registrations()->get(abstract: $abstract);
-        if ($registration instanceof ServiceRegistration) {
+        if ($registration instanceof DependencyRegistration) {
             $this->applySliceMetadata(registration: $registration);
         }
     }
@@ -583,7 +583,7 @@ readonly class ContextContainer implements ContainerInterface
         $registration = $this->resolver->registrations()->get(
             abstract: $this->resolver->registrations()->resolveAlias(abstract: $abstract),
         );
-        if (! $registration instanceof ServiceRegistration) {
+        if (! $registration instanceof DependencyRegistration) {
             throw new InvalidArgumentException(
                 message: "Strict slice view [{$slice}] cannot {$action} unknown service [{$abstract}].",
             );

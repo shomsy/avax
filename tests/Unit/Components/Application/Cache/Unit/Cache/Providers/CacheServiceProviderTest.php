@@ -12,7 +12,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use PHPUnit\Framework\TestCase;
 
-final class CacheServiceProviderTest extends TestCase
+final class RegisterCacheDependenciesTest extends TestCase
 {
     private FrozenClock        $clock;
     private InMemoryCacheStore $defaultStore;
@@ -25,7 +25,7 @@ final class CacheServiceProviderTest extends TestCase
         Cache::reset();
 
         $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires CacheServiceProvider');
+        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
 
         Cache::store(name: 'api');
     }

@@ -9,7 +9,7 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
 /**
  * Base class for service providers.
  */
-abstract class ServiceProvider
+abstract class BaseRegisterDependency
 {
     public function __construct(
         protected readonly ContainerInterface $container,

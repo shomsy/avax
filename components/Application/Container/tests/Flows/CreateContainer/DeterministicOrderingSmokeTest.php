@@ -5,13 +5,13 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\Container;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 
-final class OrderingProviderAlpha implements ServiceProviderInterface
+final class OrderingProviderAlpha implements RegisterDependency
 {
     public function dependsOn() : array
     {
@@ -19,7 +19,7 @@ final class OrderingProviderAlpha implements ServiceProviderInterface
     }
 }
 
-final class OrderingProviderBeta implements ServiceProviderInterface
+final class OrderingProviderBeta implements RegisterDependency
 {
     public function dependsOn() : array
     {
@@ -27,7 +27,7 @@ final class OrderingProviderBeta implements ServiceProviderInterface
     }
 }
 
-final class OrderingProviderGamma implements ServiceProviderInterface
+final class OrderingProviderGamma implements RegisterDependency
 {
     public function dependsOn() : array
     {
@@ -91,7 +91,7 @@ assertSame(
     message : 'Provider boot order must stay deterministic and dependency-aware.',
 );
 
-$registry = new ServiceRegistry();
+$registry = new DependencyRegistry();
 $registry->bind(abstract: OrderingTaggedC::class, concrete: OrderingTaggedC::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedA::class, concrete: OrderingTaggedA::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedB::class, concrete: OrderingTaggedB::class)->tag(tags: 'ordered');

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Execution;
 
-use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use Throwable;
 
 /**
@@ -17,10 +17,10 @@ use Throwable;
 final readonly class BuildService
 {
     private ResolveDependencies    $dependencies;
-    private CreateServiceBlueprint $blueprints;
+    private CreateDependencyBlueprint $blueprints;
 
     public function __construct(
-        CreateServiceBlueprint $blueprints,
+        CreateDependencyBlueprint $blueprints,
         ResolveDependencies    $dependencies,
     )
     {
@@ -35,7 +35,7 @@ final readonly class BuildService
      */
     public function build(
         string          $class,
-        ServiceResolver $resolver,
+        ResolveDependency $resolver,
         array           $overrides = null,
         ResolveRequest  $request = null,
     ) : object

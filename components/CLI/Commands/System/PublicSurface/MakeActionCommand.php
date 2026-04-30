@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Commands\System\PublicSurface;
 
-use Avax\Components\CLI\Commands\System\Capabilities\Generators\ServiceGeneratorInterface;
+use Avax\Components\CLI\Commands\System\Capabilities\Generators\CapabilityGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-final readonly class MakeServiceCommand
+final readonly class MakeActionCommand
 {
     public function __construct(
-        private ServiceGeneratorInterface $serviceGenerator,
-        private LoggerInterface           $logger,
+        private CapabilityGeneratorInterface $capabilityGenerator,
+        private LoggerInterface              $logger,
     ) {}
 
     public function execute(array $arguments) : void
     {
         $name = $arguments['name'] ?? null;
         if (empty($name)) {
-            $this->logger->error('Service name is required.');
+            $this->logger->error('Action name is required.');
 
             return;
         }
 
         try {
-            $this->serviceGenerator->create($name);
-            $this->logger->info(sprintf("Service '%s' created successfully.", $name));
+            $this->capabilityGenerator->create($name);
+            $this->logger->info(sprintf("Action '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating service: ' . $throwable->getMessage());
+            $this->logger->error('Error creating action: ' . $throwable->getMessage());
         }
     }
 }

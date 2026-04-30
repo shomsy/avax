@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Flows\OpenScope;
 
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
 
 /**
@@ -12,7 +12,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class OpenScope
 {
-    public function __construct(private ServiceResolver $serviceResolver)
+    public function __construct(private ResolveDependency $serviceResolver)
     {
     }
 

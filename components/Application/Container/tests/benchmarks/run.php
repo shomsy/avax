@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDeferredDependency;
 use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Components\Application\Container\DI\Container;
@@ -76,7 +76,7 @@ final class BenchDeferredProviderService implements BenchDeferredProviderContrac
     }
 }
 
-final readonly class BenchDeferredProvider implements DeferredProviderInterface
+final readonly class BenchDeferredProvider implements RegisterDeferredDependency
 {
     public function __construct(private ContainerInterface $container) {}
 

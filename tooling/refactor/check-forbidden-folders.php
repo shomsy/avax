@@ -24,7 +24,7 @@ final class CheckForbiddenFolders
     public function check() : array
     {
         $this->checkNoForbiddenFoldersAtRoot();
-        
+
         return [
             'status' => empty($this->errors) ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
@@ -34,7 +34,7 @@ final class CheckForbiddenFolders
     private function checkNoForbiddenFoldersAtRoot() : void
     {
         $basePath = dirname(__DIR__, 2);
-        
+
         foreach ($this->forbiddenFolders as $folder) {
             $path = $basePath . '/' . $folder;
             if (is_dir($path)) {
@@ -47,13 +47,13 @@ final class CheckForbiddenFolders
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckForbiddenFolders();
     $result = $checker->check();
-    
+
     echo $result['status'] . "\n";
-    
+
     if (! empty($result['errors'])) {
         echo implode("\n", $result['errors']) . "\n";
         exit(1);
     }
-    
+
     exit(0);
 }

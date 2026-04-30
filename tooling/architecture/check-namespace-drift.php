@@ -11,7 +11,7 @@ declare(strict_types=1);
 $componentsDir = __DIR__ . '/../../components';
 $errors        = [];
 
-if (!is_dir($componentsDir)) {
+if (! is_dir($componentsDir)) {
     exit(0);
 }
 
@@ -35,9 +35,7 @@ foreach ($iterator as $file) {
         $namespace = trim($matches[1]);
 
         // Whitelist legacy components for now (to be migrated)
-        if (str_starts_with($relativePath, 'DataFoundation/') ||
-            str_starts_with($relativePath, 'DataLayer/') ||
-            str_starts_with($relativePath, 'ApplicationWorkflow/Saga/')) {
+        if (str_starts_with($relativePath, 'DataFoundation/') || str_starts_with($relativePath, 'DataLayer/') || str_starts_with($relativePath, 'ApplicationWorkflow/Saga/')) {
             continue;
         }
 
@@ -47,9 +45,7 @@ foreach ($iterator as $file) {
         }
 
         // Check for missing 'Components' in Avax namespace for components
-        if (str_starts_with($namespace, 'Avax\\') &&
-            ! str_starts_with($namespace, 'Avax\\Components\\') &&
-            ! str_starts_with($namespace, 'Avax\\Database\\') && // Database is special
+        if (str_starts_with($namespace, 'Avax\\') && ! str_starts_with($namespace, 'Avax\\Components\\') && ! str_starts_with($namespace, 'Avax\\Database\\') && // Database is special
             ! str_starts_with($namespace, 'Avax\\Framework\\')) {
             $errors[] = "Missing 'Components' sub-namespace in {$relativePath}: {$namespace}";
         }

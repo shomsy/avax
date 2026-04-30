@@ -7,8 +7,8 @@ namespace Avax\Tooling\Refactor;
 final class CheckDuplicateOwners
 {
     private array $forbiddenOwners = [
-        'Session', 
-        'Middleware', 
+        'Session',
+        'Middleware',
         'Commands',
     ];
 
@@ -23,7 +23,7 @@ final class CheckDuplicateOwners
     {
         $this->checkNoForbiddenOwnersAtRoot();
         $this->checkDuplicateBehaviorMerged();
-        
+
         return [
             'status' => empty($this->errors) ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
@@ -33,14 +33,14 @@ final class CheckDuplicateOwners
     private function checkNoForbiddenOwnersAtRoot() : void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
-        
+
         foreach ($this->forbiddenOwners as $owner) {
             $path = $componentsPath . '/' . $owner;
             if (is_dir($path)) {
                 $this->errors[] = "Forbidden root owner at components/{$owner}";
             }
         }
-        
+
         // DataFoundation and DataLayer are allowed as bridges
         foreach ($this->allowedBridges as $bridge) {
             $path = $componentsPath . '/' . $bridge;
@@ -61,14 +61,12 @@ final class CheckDuplicateOwners
     private function checkDuplicateBehaviorMerged() : void
     {
         // Check Session is not duplicated
-        if (is_dir(dirname(__DIR__, 2) . '/components/Session') && 
-            !is_dir(dirname(__DIR__, 2) . '/components/HTTP/Session')) {
+        if (is_dir(dirname(__DIR__, 2) . '/components/Session') && ! is_dir(dirname(__DIR__, 2) . '/components/HTTP/Session')) {
             $this->errors[] = 'components/Session not moved to components/HTTP/Session';
         }
 
         // Check Middleware is not duplicated
-        if (is_dir(dirname(__DIR__, 2) . '/components/Middleware') && 
-            !is_dir(dirname(__DIR__, 2) . '/components/HTTP/Middleware')) {
+        if (is_dir(dirname(__DIR__, 2) . '/components/Middleware') && ! is_dir(dirname(__DIR__, 2) . '/components/HTTP/Middleware')) {
             $this->errors[] = 'components/Middleware not moved to components/HTTP/Middleware';
         }
     }
@@ -77,13 +75,13 @@ final class CheckDuplicateOwners
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckDuplicateOwners();
     $result = $checker->check();
-    
+
     echo $result['status'] . "\n";
-    
+
     if (! empty($result['errors'])) {
         echo implode("\n", $result['errors']) . "\n";
         exit(1);
     }
-    
+
     exit(0);
 }

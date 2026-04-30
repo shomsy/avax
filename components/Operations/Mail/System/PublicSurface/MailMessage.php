@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\Mail\System\PublicSurface;
 final class MailMessage
 {
     private array $data = [
-        'from' => [],
+        'from' => null,
         'to' => [],
         'cc' => [],
         'bcc' => [],
@@ -74,7 +74,7 @@ final class MailMessage
         $mailer->send($this);
     }
 
-    public function getFrom() : array { return $this->data['from']; }
+    public function getFrom() : string|null { return $this->data['from']; }
 
     public function getTo() : array { return $this->data['to']; }
 

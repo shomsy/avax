@@ -4,104 +4,79 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
-use Avax\Components\HTTP\Session\System\Foundation\SessionData;
-use Avax\Components\HTTP\Session\System\Foundation\SessionStoreInterface;
-
 final class FileSessionStore implements SessionStoreInterface
 {
     private string $path;
-    private int    $ttl;
 
-    public function __construct(
-        private array $config = [],
-    )
+    private int $ttl;
+
+    public function __construct(private array $config = [])
     {
         $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
-        $this->ttl  = $config['ttl'] ?? 1200;
+        $this->ttl = $config['ttl'] ?? 1200;
 
-        if (! is_dir($this->path)) {
-            mkdir($this->path, 0755, true);
+        if (! is_dir(filename: $this->path)) {
+            mkdir(directory: $this->path, permissions: 0755, recursive: true);
         }
     }
 
-    public function read(string $sessionId) : SessionData|null
+    public function read(string $id) : array
     {
-        $file = $this->getFilePath($sessionId);
+        $file = $this->filePath(sessionId: $id);
 
-        if (! file_exists($file)) {
-            return null;
+        if (! is_file(filename: $file)) {
+            return [];
         }
 
-        $content = file_get_contents($file);
-        $decoded = json_decode($content, true);
+        $payload = json_decode(json: (string) file_get_contents(filename: $file), associative: true);
 
-        if (! $decoded) {
-            return null;
-        }
-
-        return new SessionData(
-            id       : $sessionId,
-            data     : $decoded['data'] ?? [],
-            createdAt: $decoded['created_at'] ?? time(),
-            updatedAt: $decoded['updated_at'] ?? time(),
-        );
+        return is_array(value: $payload['data'] ?? null) ? $payload['data'] : [];
     }
 
-    private function getFilePath(string $sessionId) : string
+    public function write(string $id, array $data) : bool
     {
-        $prefix    = substr($sessionId, 0, 2);
-        $directory = $this->path . '/' . $prefix;
+        $file      = $this->filePath(sessionId: $id);
+        $directory = dirname(path: $file);
 
-        return $directory . '/' . $sessionId . '.json';
-    }
-
-    public function write(string $sessionId, SessionData $data) : bool
-    {
-        $file      = $this->getFilePath($sessionId);
-        $directory = dirname($file);
-
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        if (! is_dir(filename: $directory)) {
+            mkdir(directory: $directory, permissions: 0755, recursive: true);
         }
 
-        $payload = json_encode([
-                                   'data'       => $data->data,
-                                   'created_at' => $data->createdAt,
-                                   'updated_at' => time(),
-                               ]);
-
-        return file_put_contents($file, $payload) !== false;
+        return file_put_contents(
+                filename: $file,
+                data    : json_encode(value: ['data' => $data, 'updated_at' => time()], flags: JSON_THROW_ON_ERROR),
+            ) !== false;
     }
 
-    public function destroy(string $sessionId) : bool
+    public function destroy(string $id) : bool
     {
-        $file = $this->getFilePath($sessionId);
+        $file = $this->filePath(sessionId: $id);
 
-        if (file_exists($file)) {
-            return unlink($file);
-        }
-
-        return true;
+        return ! is_file(filename: $file) || unlink(filename: $file);
     }
 
     public function exists(string $sessionId) : bool
     {
-        return file_exists($this->getFilePath($sessionId));
+        return is_file(filename: $this->filePath(sessionId: $sessionId));
     }
 
     public function gc(int $maxLifetime) : int
     {
-        $count = 0;
-        $files = glob($this->path . '/*.json') ?: [];
+        $removed = 0;
 
-        foreach ($files as $file) {
-            if (filemtime($file) < time() - $maxLifetime) {
-                if (unlink($file)) {
-                    $count++;
-                }
+        foreach (glob(pattern: $this->path . '/*/*.json') ?: [] as $file) {
+            if ((filemtime(filename: $file) ?: 0) < time() - $maxLifetime && unlink(filename: $file)) {
+                $removed++;
             }
         }
 
-        return $count;
+        return $removed;
+    }
+
+    private function filePath(string $sessionId) : string
+    {
+        $prefix = substr(string: $sessionId, offset: 0, length: 2);
+
+        return $this->path . '/' . $prefix . '/' . $sessionId . '.json';
     }
 }

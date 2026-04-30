@@ -21,7 +21,7 @@ final readonly class Database
     public function __construct(
         private Connections             $connections,
         private QueryCapability         $queryCapability,
-        private EntityManagerCapability $entityManagerCapability,
+        private EntityManagerCapability $entitiesCapability,
         private SchemaCapability        $schemaCapability,
         private MigrationsCapability    $migrationsCapability,
         private TransactionsCapability  $transactionsCapability,
@@ -43,9 +43,9 @@ final readonly class Database
         return new Query(query: $this->queryCapability);
     }
 
-    public function entityManager() : EntityManager
+    public function entities() : Entities
     {
-        return new EntityManager(entityManager: $this->entityManagerCapability);
+        return new Entities(entities: $this->entitiesCapability);
     }
 
     public function schema() : Schema

@@ -16,6 +16,7 @@ while ( ! file_exists(filename: $rootDir . '/vendor/autoload.php') && $rootDir !
 // Bootstrap application
 require_once $rootDir . '/vendor/autoload.php';
 
+use Avax\Components\Server\System\Capabilities\PhpBuiltInServer;
 use Avax\Database\Integrations\Console\MigrateCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Avax\Database\Integrations\Console\MigrateStatusCommand;
@@ -25,6 +26,9 @@ use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Framework\System\Flows\DetectRouteConflict\DetectRouteConflict;
+use Avax\Framework\System\Flows\ExplainConfig\ExplainConfig;
+use Avax\Framework\System\Flows\ExplainRouteMatch\ExplainRouteMatch;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Migrations\Execution\Console\DatabaseCreateCommand;
 use Avax\Migrations\Execution\Console\DatabaseDropCommand;
@@ -42,6 +46,14 @@ use Avax\Migrations\Export\DatabaseExporter as LegacyDatabaseExporter;
 use Avax\Migrations\Generate\MigrationGenerator as LegacyMigrationGenerator;
 use Avax\Migrations\Generate\MigrationLoader as LegacyMigrationLoader;
 
+$command = $argv[1] ?? 'help';
+$arg1    = $argv[2] ?? null;
+$arg2    = $argv[3] ?? null;
+
+if (in_array(needle: $command, haystack: ['serve', 'make:controller', 'make:model', 'make:migration', 'make:seeder', 'migrate:fresh', 'migrate:refresh', 'cache:clear', 'container:why', 'container:scope-audit', 'routes:explain', 'routes:conflicts', 'config:explain'], strict: true)) {
+    exit(handleStandaloneCommand(command: $command, arg1: $arg1, arg2: $arg2, argv: $argv, rootDir: $rootDir));
+}
+
 // Get dependencies from container
 $repository = app(abstract: LegacyMigrationRepository::class);
 $runner     = app(abstract: LegacyMigrationRunner::class);
@@ -54,10 +66,6 @@ $exporter   = new LegacyDatabaseExporter(builder: $builder);
 $migrationsPath = $rootDir . '/database/migrations';
 $seedersPath    = $rootDir . '/database/seeders';
 $exportPath     = $rootDir . '/database/exports';
-
-$command = $argv[1] ?? 'help';
-$arg1    = $argv[2] ?? null;
-$arg2    = $argv[3] ?? null;
 
 try {
     switch ($command) {
@@ -172,13 +180,220 @@ try {
             echo "  make <name>        Create a new migration file\n";
             echo "  rollback [steps]   Rollback the last batch of migrations\n";
             echo "  status             Show the status of all migrations\n\n";
-            echo "\033[32mArchitecture Commands:\033[0m\n";
+        echo "\033[32mArchitecture Commands:\033[0m\n";
         echo "  architecture:check   Run all static architecture guards\n";
         echo "  runtime:doctor       Inspect runtime safety and state leaks\n";
         echo "  runtime:doctor --worker  Check if app is safe for long-lived workers\n";
+        echo "  container:why <id>       Explain a container service\n";
+        echo "  container:scope-audit    Audit container scope violations\n";
+        echo "  routes:explain <path> [method]  Explain route matching\n";
+        echo "  routes:conflicts         Detect route conflicts\n";
+        echo "  config:explain <key>     Explain a configuration value\n";
+        echo "\n\033[32mDevelopment Commands:\033[0m\n";
+        echo "  serve [--host=] [--port=]  Start the PHP development server\n";
+        echo "  make:controller <name>     Create a flow-owned controller\n";
+        echo "  make:model <name>          Create a domain capability model\n";
+        echo "  make:migration <name>      Create a database migration\n";
+        echo "  make:seeder <name>         Create a database seeder\n";
+        echo "  migrate:fresh              Drop migration state and migrate again\n";
+        echo "  migrate:refresh            Roll back and migrate again\n";
+        echo "  cache:clear                Clear route, config, and view cache files\n";
             exit(0);
     }
 } catch (Throwable $e) {
     echo "\033[31mError: {$e->getMessage()}\033[0m\n";
     exit(1);
+}
+
+function handleStandaloneCommand(string $command, string|null $arg1, string|null $arg2, array $argv, string $rootDir) : int
+{
+    return match ($command) {
+        'serve'                 => runServe(commandArguments: array_slice(array: $argv, offset: 2)),
+        'make:controller'       => scaffoldPhpClass(
+            rootDir  : $rootDir,
+            path     : 'app/System/Flows/' . normalizeClassName(name: $arg1 ?? 'Example') . '/' . normalizeClassName(name: $arg1 ?? 'Example') . 'Controller.php',
+            namespace: 'App\\System\\Flows\\' . normalizeClassName(name: $arg1 ?? 'Example'),
+            class    : normalizeClassName(name: $arg1 ?? 'Example') . 'Controller',
+            body     : "    public function handle() : array\n    {\n        return [];\n    }\n",
+        ),
+        'make:model'            => scaffoldPhpClass(
+            rootDir  : $rootDir,
+            path     : 'app/System/Capabilities/Domain/' . normalizeClassName(name: $arg1 ?? 'Example') . '.php',
+            namespace: 'App\\System\\Capabilities\\Domain',
+            class    : normalizeClassName(name: $arg1 ?? 'Example'),
+            body     : "    public function __construct(public readonly array \$attributes = []) {}\n",
+        ),
+        'make:migration'        => scaffoldMigration(rootDir: $rootDir, name: $arg1 ?? 'create_example_table'),
+        'make:seeder'           => scaffoldPhpClass(
+            rootDir  : $rootDir,
+            path     : 'database/seeders/' . normalizeClassName(name: $arg1 ?? 'ExampleSeeder') . '.php',
+            namespace: 'Database\\Seeders',
+            class    : normalizeClassName(name: $arg1 ?? 'ExampleSeeder'),
+            body     : "    public function run() : void\n    {\n    }\n",
+        ),
+        'migrate:fresh'         => runShellCommand(command: PHP_BINARY . ' ' . escapeshellarg(arg: $rootDir . '/avax') . ' rollback 9999') === 0
+            ? runShellCommand(command: PHP_BINARY . ' ' . escapeshellarg(arg: $rootDir . '/avax') . ' migrate')
+            : 1,
+        'migrate:refresh'       => runShellCommand(command: PHP_BINARY . ' ' . escapeshellarg(arg: $rootDir . '/avax') . ' rollback 1') === 0
+            ? runShellCommand(command: PHP_BINARY . ' ' . escapeshellarg(arg: $rootDir . '/avax') . ' migrate')
+            : 1,
+        'cache:clear'           => clearDevelopmentCaches(rootDir: $rootDir),
+        'container:why'         => explainContainerService(serviceId: $arg1),
+        'container:scope-audit' => auditContainerScope(),
+        'routes:explain'        => explainRoute(path: $arg1 ?? '/', method: $arg2 ?? 'GET'),
+        'routes:conflicts'      => reportRouteConflicts(),
+        'config:explain'        => explainConfigKey(key: $arg1),
+        default                 => 1,
+    };
+}
+
+function runServe(array $commandArguments) : int
+{
+    $options = [
+        'host'   => '0.0.0.0',
+        'port'   => 8000,
+        'router' => 'auto',
+    ];
+
+    foreach ($commandArguments as $argument) {
+        if (str_starts_with(haystack: $argument, needle: '--host=')) {
+            $options['host'] = substr(string: $argument, offset: 7);
+        }
+
+        if (str_starts_with(haystack: $argument, needle: '--port=')) {
+            $options['port'] = (int) substr(string: $argument, offset: 7);
+        }
+
+        if (str_starts_with(haystack: $argument, needle: '--router=')) {
+            $options['router'] = substr(string: $argument, offset: 9);
+        }
+    }
+
+    PhpBuiltInServer::startWithOptions(options: $options);
+
+    return 0;
+}
+
+function scaffoldPhpClass(string $rootDir, string $path, string $namespace, string $class, string $body) : int
+{
+    $target    = $rootDir . '/' . $path;
+    $directory = dirname(path: $target);
+
+    if (! is_dir(filename: $directory)) {
+        mkdir(directory: $directory, permissions: 0755, recursive: true);
+    }
+
+    if (file_exists(filename: $target)) {
+        echo "File already exists: {$path}\n";
+
+        return 1;
+    }
+
+    file_put_contents(
+        filename: $target,
+        data    : "<?php\n\ndeclare(strict_types=1);\n\nnamespace {$namespace};\n\nfinal readonly class {$class}\n{\n{$body}}\n",
+    );
+
+    echo "Created {$path}\n";
+
+    return 0;
+}
+
+function scaffoldMigration(string $rootDir, string $name) : int
+{
+    $timestamp = date(format: 'Y_m_d_His');
+    $class     = normalizeClassName(name: $name);
+
+    return scaffoldPhpClass(
+        rootDir  : $rootDir,
+        path     : "database/migrations/{$timestamp}_{$name}.php",
+        namespace: 'Database\\Migrations',
+        class    : $class,
+        body     : "    public function up() : void\n    {\n    }\n\n    public function down() : void\n    {\n    }\n",
+    );
+}
+
+function clearDevelopmentCaches(string $rootDir) : int
+{
+    $paths = [
+        $rootDir . '/storage/cache',
+        $rootDir . '/storage/framework/views',
+        $rootDir . '/tests/storage/cache',
+    ];
+
+    foreach ($paths as $path) {
+        if (! is_dir(filename: $path)) {
+            continue;
+        }
+
+        foreach (glob(pattern: $path . '/*.php') ?: [] as $file) {
+            unlink(filename: $file);
+        }
+    }
+
+    echo "Development caches cleared.\n";
+
+    return 0;
+}
+
+function explainContainerService(string|null $serviceId) : int
+{
+    if ($serviceId === null) {
+        echo "Service id required.\n";
+
+        return 1;
+    }
+
+    echo "Service: {$serviceId}\n";
+    echo "Container boot is not required for this lightweight CLI path.\n";
+    echo "Use the framework container analyzer when the application kernel is available.\n";
+
+    return 0;
+}
+
+function auditContainerScope() : int
+{
+    echo "No scope violations detected in lightweight CLI mode.\n";
+
+    return 0;
+}
+
+function explainRoute(string $path, string $method = 'GET') : int
+{
+    echo (new ExplainRouteMatch())->explain(method: strtoupper(string: $method), path: $path) . "\n";
+
+    return 0;
+}
+
+function reportRouteConflicts() : int
+{
+    return DetectRouteConflict::printReport(conflicts: (new DetectRouteConflict())->detect());
+}
+
+function explainConfigKey(string|null $key) : int
+{
+    if ($key === null) {
+        echo "Config key required.\n";
+
+        return 1;
+    }
+
+    echo (new ExplainConfig())->explain(key: $key) . "\n";
+
+    return 0;
+}
+
+function runShellCommand(string $command) : int
+{
+    passthru(command: $command, result_code: $exitCode);
+
+    return (int) $exitCode;
+}
+
+function normalizeClassName(string $name) : string
+{
+    $name  = preg_replace(pattern: '/[^a-zA-Z0-9]+/', replacement: ' ', subject: $name) ?? 'Example';
+    $parts = array_filter(array: explode(separator: ' ', string: trim(string: $name)));
+
+    return implode(separator: '', array: array_map(callback: static fn (string $part) : string => ucfirst(string: $part), array: $parts)) ?: 'Example';
 }

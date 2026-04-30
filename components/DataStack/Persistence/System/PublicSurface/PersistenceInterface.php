@@ -24,7 +24,7 @@ interface PersistenceInterface
 
     public function identityMap() : IdentityMap;
 
-    public function manager() : EntityManager;
+    public function entities() : Entities;
 
     public function find(string $entityClass, mixed $id) : ?object;
 

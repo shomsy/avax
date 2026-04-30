@@ -16,7 +16,7 @@ final readonly class TaskRunner
      */
     public function runAll(array $tasks) : array
     {
-        if (! extension_loaded(' fibers')) {
+        if (! class_exists(Fiber::class)) {
             return $this->runAllSync($tasks);
         }
 
@@ -47,7 +47,7 @@ final readonly class TaskRunner
     private function runAllFibers(array $tasks) : array
     {
         $fibers = array_map(
-            fn (Closure $task) => new Fiber($task),
+            static fn (callable $task) => new Fiber($task),
             $tasks,
         );
 
@@ -57,6 +57,10 @@ final readonly class TaskRunner
             foreach ($fibers as $index => $fiber) {
                 if (! $fiber->isStarted()) {
                     $fiber->start();
+
+                    if ($fiber->isTerminated()) {
+                        $results[$index] = $fiber->getReturn();
+                    }
                 } elseif (! $fiber->isTerminated()) {
                     $fiber->resume();
 
@@ -89,7 +93,7 @@ final readonly class TaskRunner
      */
     public function race(array $tasks) : mixed
     {
-        if (! extension_loaded(' fibers')) {
+        if (! class_exists(Fiber::class)) {
             return $this->raceSync($tasks);
         }
 

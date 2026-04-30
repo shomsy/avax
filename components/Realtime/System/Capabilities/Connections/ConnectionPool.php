@@ -4,26 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Components\Realtime\System\Capabilities\Connections;
 
-use Closure;
-
 final class ConnectionPool
 {
-    /** @var list<Connection> */
+    /** @var array<string, Connection> */
     private array $connections = [];
 
     public function add(Connection $connection) : void
     {
-        $this->connections[] = $connection;
+        $this->connections[$connection->id] = $connection;
     }
 
-    public function remove(Connection $connection) : void
+    public function remove(Connection|string $connection) : void
     {
-        $index = array_search($connection, $this->connections, true);
+        unset($this->connections[$this->idFor(connection: $connection)]);
+    }
 
-        if ($index !== false) {
-            unset($this->connections[$index]);
-            $this->connections = array_values($this->connections);
-        }
+    public function get(string $connectionId) : Connection|null
+    {
+        return $this->connections[$connectionId] ?? null;
     }
 
     /**
@@ -31,7 +29,7 @@ final class ConnectionPool
      */
     public function all() : array
     {
-        return $this->connections;
+        return array_values(array: $this->connections);
     }
 
     public function count() : int
@@ -39,32 +37,17 @@ final class ConnectionPool
         return count($this->connections);
     }
 
-    public function broadcast(mixed $message) : void
+    public function broadcast(mixed $message) : int
     {
         foreach ($this->connections as $connection) {
-            $connection->send($message);
+            $connection->send(message: $message);
         }
-    }
-}
 
-final class Connection
-{
-    private string $id;
-    private mixed  $handler;
-
-    public function __construct(Closure $handler)
-    {
-        $this->id      = bin2hex(random_bytes(16));
-        $this->handler = $handler;
+        return count($this->connections);
     }
 
-    public function id() : string
+    private function idFor(Connection|string $connection) : string
     {
-        return $this->id;
-    }
-
-    public function send(mixed $message) : void
-    {
-        ($this->handler)($message);
+        return $connection instanceof Connection ? $connection->id : $connection;
     }
 }

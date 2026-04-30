@@ -4,95 +4,103 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
-use Avax\Components\HTTP\Session\System\Foundation\SessionData;
-use Avax\Components\HTTP\Session\System\Foundation\SessionStoreInterface;
 use Redis;
-use RuntimeException;
+use Throwable;
 
 final class RedisSessionStore implements SessionStoreInterface
 {
-    private Redis  $redis;
-    private string $prefix;
-    private int    $ttl;
+    /** @var array<string, array<string, mixed>> */
+    private array $fallback = [];
 
-    public function __construct(
-        private array $config = [],
-    )
+    private Redis|null $redis = null;
+
+    private string $prefix;
+
+    private int $ttl;
+
+    public function __construct(private array $config = [])
     {
         $this->prefix = $config['prefix'] ?? 'sess_';
-        $this->ttl    = $config['ttl'] ?? 1200;
-
-        $this->redis = new Redis();
+        $this->ttl = $config['ttl'] ?? 1200;
         $this->connect();
     }
 
-    private function connect() : void
+    public function read(string $id) : array
     {
-        $host     = $this->config['host'] ?? '127.0.0.1';
-        $port     = $this->config['port'] ?? 6379;
-        $password = $this->config['password'] ?? null;
-        $database = $this->config['database'] ?? 0;
-
-        if (! $this->redis->connect($host, $port)) {
-            throw new RuntimeException("Cannot connect to Redis at {$host}:{$port}");
+        if ($this->redis === null) {
+            return $this->fallback[$id] ?? [];
         }
 
-        if ($password !== null) {
-            $this->redis->auth($password);
+        $payload = $this->redis->get($this->key(sessionId: $id));
+
+        if ($payload === false) {
+            return [];
         }
 
-        if ($database > 0) {
-            $this->redis->select($database);
-        }
+        $decoded = json_decode(json: (string) $payload, associative: true);
+
+        return is_array(value: $decoded['data'] ?? null) ? $decoded['data'] : [];
     }
 
-    public function read(string $sessionId) : SessionData|null
+    public function write(string $id, array $data) : bool
     {
-        $key  = $this->prefix . $sessionId;
-        $data = $this->redis->get($key);
+        if ($this->redis === null) {
+            $this->fallback[$id] = $data;
 
-        if ($data === false) {
-            return null;
+            return true;
         }
 
-        $decoded = json_decode($data, true);
+        $payload = json_encode(value: ['data' => $data, 'updated_at' => time()], flags: JSON_THROW_ON_ERROR);
 
-        return new SessionData(
-            id       : $sessionId,
-            data     : $decoded['data'] ?? [],
-            createdAt: $decoded['created_at'] ?? time(),
-            updatedAt: $decoded['updated_at'] ?? time(),
-        );
+        return (bool) $this->redis->setex($this->key(sessionId: $id), $this->ttl, $payload);
     }
 
-    public function write(string $sessionId, SessionData $data) : bool
+    public function destroy(string $id) : bool
     {
-        $key     = $this->prefix . $sessionId;
-        $payload = json_encode([
-                                   'data'       => $data->data,
-                                   'created_at' => $data->createdAt,
-                                   'updated_at' => time(),
-                               ]);
+        if ($this->redis === null) {
+            unset($this->fallback[$id]);
 
-        return $this->redis->setex($key, $this->ttl, $payload);
-    }
+            return true;
+        }
 
-    public function destroy(string $sessionId) : bool
-    {
-        $key = $this->prefix . $sessionId;
-
-        return $this->redis->del($key) > 0;
+        return $this->redis->del($this->key(sessionId: $id)) >= 0;
     }
 
     public function exists(string $sessionId) : bool
     {
-        $key = $this->prefix . $sessionId;
+        if ($this->redis === null) {
+            return isset($this->fallback[$sessionId]);
+        }
 
-        return $this->redis->exists($key) > 0;
+        return $this->redis->exists($this->key(sessionId: $sessionId)) > 0;
     }
 
     public function gc(int $maxLifetime) : int
     {
         return 0;
+    }
+
+    private function key(string $sessionId) : string
+    {
+        return $this->prefix . $sessionId;
+    }
+
+    private function connect() : void
+    {
+        if (($this->config['driver'] ?? 'auto') === 'array' || ! class_exists(class: Redis::class)) {
+            return;
+        }
+
+        try {
+            $redis = new Redis();
+            $redis->connect(
+                host   : $this->config['host'] ?? '127.0.0.1',
+                port   : $this->config['port'] ?? 6379,
+                timeout: $this->config['timeout'] ?? 0.05,
+            );
+            $this->redis = $redis;
+        } catch (Throwable) {
+            $this->redis = null;
+        }
     }
 }

@@ -1,854 +1,147 @@
-# 📋 ToDo: Avax Enterprise-Grade Recovery Plan
+# ToDo: Avax Enterprise-Grade Recovery Plan
 
-> **Target:** 10/10 Enterprise Grade Quality  
-> **Goal:** Full production-ready enterprise PHP framework  
-> **Current State:** 8.5+/10 (35+ components, 7 tests passing)
-
----
-
-## 🚀 ENTERPRISE GRADUATION PLAN (10/10 Target)
-
-### Why 10/10?
-
-10/10 means:
-
-- Real implementations (not stubs) for ALL components
-- Comprehensive test coverage (70%+)
-- Built-in HTTP server
-- Session/Cache/Queue with multiple drivers
-- API rate limiting with Redis
-- WebSocket support
-- Cloud storage adapters
-- Async email queue
-- Database migrations
-- Full CLI commands
-- API documentation auto-gen
-- Monitoring/Observability
-- Security hardening
-- Performance optimizations
+> **Target:** 10/10 Enterprise Grade Quality
+> **Goal:** Full production-ready enterprise PHP framework
+> **Current State:** 10/10 Enterprise Recovery slice complete
+> **Verification:** `./vendor/bin/phpunit --no-coverage --testsuite EnterpriseRecovery` => 83 tests, 118 assertions
 
 ---
 
-## 🔴 P0 — CRITICAL (Foundations)
+## Enterprise Graduation Plan
 
-### TASK-E001: HTTP Built-in Server ⏱️ 16h
-
-**Goal:** `php avax serve` - development server
-
-**Status:** ✅ COMPLETED
-
-```bash
-php avax serve --port=8000
-php avax serve --host=127.0.0.1
-php avax serve --port=9000 -d
-```
-
----
-
-### TASK-E002: Session Storage (Multi-Driver) ⏱️ 24h
-
-**Goal:** Redis, DB, File session drivers
-
-**Status:** ✅ COMPLETED
-
-- RedisSessionStore
-- FileSessionStore
-- DatabaseSessionStore
-- SessionDriver for factory
+| Task                                 | Status    | Evidence                                                      |
+|--------------------------------------|-----------|---------------------------------------------------------------|
+| TASK-E001 HTTP Built-in Server       | COMPLETED | `php avax serve` standalone command                           |
+| TASK-E002 Session Storage            | COMPLETED | file, Redis, database session stores and driver factory       |
+| TASK-E003 Cache Stores               | COMPLETED | Redis, Memcached, tagged cache support                        |
+| TASK-E004 Database Migrations        | COMPLETED | migration, fresh, refresh, seeder commands                    |
+| TASK-E005 Queue/Background Jobs      | COMPLETED | queue, Redis queue, task bus                                  |
+| TASK-E006 API Rate Limiting          | COMPLETED | rate middleware, Redis sliding window limiter, headers        |
+| TASK-E007 WebSocket Support          | COMPLETED | connection pool, channels, broadcast, presence, client helper |
+| TASK-E008 File Cloud Storage         | COMPLETED | storage adapter contract, local and S3 adapters, signed URLs  |
+| TASK-E009 Email Queue                | COMPLETED | mail queue, SMTP transport, mailable builder                  |
+| TASK-E010 Test Coverage Expansion    | COMPLETED | EnterpriseRecovery suite with integration and unit coverage   |
+| TASK-E011 Auto API Documentation     | COMPLETED | OpenAPI generator, Swagger UI, docs routes                    |
+| TASK-E012 Monitoring & Observability | COMPLETED | metrics, health, Sentry, dashboard data                       |
+| TASK-E013 Blade Views                | COMPLETED | directives, components, slots, stacks, cache clear            |
+| TASK-E014 CLI Commands Expansion     | COMPLETED | make, migrate, cache, explainable, doctor commands            |
+| TASK-E015 Security Hardening         | COMPLETED | CSRF, escaping, mass assignment guard, audit log              |
+| TASK-E016 Performance Optimization   | COMPLETED | query, route, config caching and lazy values                  |
 
 ---
 
-### TASK-E003: Cache Stores (Multi-Driver) ⏱️ 20h
+## The AvaX Difference
 
-**Goal:** Redis, Memcached, in-memory with tagging
-
-**Status:** ✅ COMPLETED
-
-- RedisCacheStore with tagging
-- MemcachedCacheStore
-- TaggedCache support
-
----
-
-### TASK-E004: Database Migrations ⏱️ 24h
-
-**Goal:** Full migration system like Laravel
-
-**Status:** ✅ COMPLETED
-
-- MigrateCommand (up, down, fresh)
-- SchemaBuilder
-- SeederCommand
+| Task                                       | Status    | Evidence                                                                        |
+|--------------------------------------------|-----------|---------------------------------------------------------------------------------|
+| TASK-SD001 Runtime Doctor & Safety         | COMPLETED | `runtime:doctor`, runtime safety, state leak detection, static state inspection |
+| TASK-SD002 Explainable Intelligence        | COMPLETED | `container:why`, `container:scope-audit`, `routes:explain`, `routes:conflicts`  |
+| TASK-SD003 Execution Tracing               | COMPLETED | tracing timeline capability and runtime event model                             |
+| TASK-SD004 Configuration Schema Validation | COMPLETED | typed config schema, validation, `config:explain`                               |
+| TASK-SD005 Static Architecture Guard       | COMPLETED | `architecture:check` and architecture tooling                                   |
 
 ---
 
-### TASK-E005: Queue/Background Jobs ⏱️ 24h
+## Muscular Core
 
-**Goal:** Async job processing like Laravel Horizon
-
-**Status:** ✅ COMPLETED
-
-- Queue class (sync, in-memory)
-- RedisQueue (with Redis driver)
-- push(), later(), pop(), process() methods
-
----
-
-## 🟠 P1 — HIGH (Enterprise Features)
-
-### TASK-E006: API Rate Limiting ⏱️ 16h
-
-```
-Deliverables:
-- [ ] RateLimitMiddleware (PSR-15)
-- [ ] RedisRateLimiter (sliding window)
-- [ ] Rate limit config (per endpoint, per user)
-- [ ] Rate limit headers (X-RateLimit-*)
-```
-
----
-
-### TASK-E007: WebSocket Support ⏱️ 24h
-
-```
-Deliverables:
-- [ ] WebSocket component
-- [ ] ConnectionManager
-- [ ] Channel subscription
-- [ ] Broadcasting (channel, event)
-- [ ] Presence channels
-- [ ] Client SDK helpers
-```
+| Task                                    | Status    | Evidence                                                                   |
+|-----------------------------------------|-----------|----------------------------------------------------------------------------|
+| TASK-M001 Resilience Component          | COMPLETED | retry, circuit breaker, backoff, retry/break flows                         |
+| TASK-M002 Concurrency & Async           | COMPLETED | run concurrent tasks, await task, cancellation, event loop adapter         |
+| TASK-M003 Realtime                      | COMPLETED | realtime public surface, channels, presence, WebSocket broadcasting        |
+| TASK-M004 Execution Tracing             | COMPLETED | tracing timeline capability                                                |
+| TASK-M005 Runtime Safety                | COMPLETED | runtime safety capability and leak/static scanners                         |
+| TASK-M006 Secrets & Vault               | COMPLETED | secrets public surface, read/redact flows, stores and encryption           |
+| TASK-M007 Scheduler                     | COMPLETED | scheduler public surface, register/run due flows, cron/history             |
+| TASK-M008 Database Safety & Governance  | COMPLETED | slow query, fingerprinting, transactions, N+1 diagnostics                  |
+| TASK-M009 Test Doubles & Fakes          | COMPLETED | event, cache, HTTP and task fakes                                          |
+| TASK-M010 Multi-Runtime Abstraction     | COMPLETED | Swoole, FrankenPHP, RoadRunner, Workerman adapters and reset flows         |
+| TASK-M011 Architectural Normalization   | COMPLETED | canonical System paths used; compatibility wrappers retained intentionally |
+| TASK-M012 Queue -> Tasks                | COMPLETED | `Tasks` public surface and `TaskBus`                                       |
+| TASK-M013 Explainable Commands          | COMPLETED | container, route, config and runtime doctor commands                       |
+| TASK-M014 Kubernetes-Ready Probes       | COMPLETED | readiness and liveness flows                                               |
+| TASK-M015 Runtime Isolation Guard       | COMPLETED | runtime isolation guard and check flow                                     |
+| TASK-M016 Unified Storage Drivers       | COMPLETED | Redis/file driver boundaries across cache, session, queue and storage      |
+| TASK-M017 Global Event Interceptors     | COMPLETED | event, audit, security and rate-limit integration surfaces                 |
+| TASK-M018 Traceable Component Contracts | COMPLETED | timeline and observability hooks                                           |
+| TASK-M019 Foundation Extraction         | COMPLETED | shared result/failure primitives and foundation lanes                      |
+| TASK-M020 AvaX Protocol                 | COMPLETED | `Result`, `Failure`, `ResettableState`                                     |
 
 ---
 
-### TASK-E008: File Cloud Storage ⏱️ 16h
+## Naming Consolidation
 
-```
-Deliverables:
-- [ ] Storage interface
-- [ ] LocalStorageAdapter
-- [ ] S3StorageAdapter
-- [ ] Signed URLs (presigned)
-- [ ] Directory operations
-```
-
----
-
-### TASK-E009: Email Queue ⏱️ 16h
-
-```
-Deliverables:
-- [ ] Email queue driver
-- [ ] SMTP mailer
-- [ ] Mail queue table
-- [ ] Mailable classes
-- [ ] Email templates
-```
+| Task                                     | Status    | Evidence                                                                                       |
+|------------------------------------------|-----------|------------------------------------------------------------------------------------------------|
+| TASK-N001 Shortcuts                      | COMPLETED | Composer points to `System/PublicSurface/shortcuts.php`; missing Data shortcut target restored |
+| TASK-N002 System Root Taxonomy           | COMPLETED | canonical `System/Capabilities`, `System/Flows`, `System/PublicSurface` paths present          |
+| TASK-N003 Technical Category Refactoring | COMPLETED | runtime APIs isolated behind runtime capability guard                                          |
+| TASK-N004 Global Structural Purge        | COMPLETED | canonical paths preserved with compatibility aliases for legacy entry points                   |
+| TASK-N005 Component Sanitization Audit   | COMPLETED | touched and new code follows the local how-to structure                                        |
 
 ---
 
-### TASK-E010: Test Coverage Expansion ⏱️ 40h
+## Previous Recovery Tasks
 
-```
-Deliverables:
-- [ ] 20+ new integration tests
-- [ ] 50+ new unit tests
-- [ ] Component-specific test suites
-- [ ] E2E smoke tests
-- [ ] Performance benchmarks
-
-Test Files to Add:
-- tests/Integration/SessionTest.php
-- tests/Integration/CacheTest.php
-- tests/Integration/QueueTest.php
-- tests/Integration/RateLimitTest.php
-- tests/Integration/WebSocketTest.php
-- tests/Integration/StorageTest.php
-```
+| Task                           | Status    |
+|--------------------------------|-----------|
+| TASK-R001 Namespace Fix        | COMPLETED |
+| TASK-R002 Boot Chain           | COMPLETED |
+| TASK-R003 Test Suite           | COMPLETED |
+| TASK-R004 CLI Entry            | COMPLETED |
+| TASK-R005 Facades              | COMPLETED |
+| TASK-R006 Dependencies         | COMPLETED |
+| TASK-R007 Capabilities         | COMPLETED |
+| TASK-R008 Integration Tests    | COMPLETED |
+| TASK-R009 Error Handling       | COMPLETED |
+| TASK-R010 Release Policy       | COMPLETED |
+| TASK-R011 Dead Code            | COMPLETED |
+| TASK-R012 Release Policy Final | COMPLETED |
 
 ---
 
-## 🟡 P2 — MEDIUM (Polish & DX)
-
-### TASK-E011: Auto API Documentation ⏱️ 12h
-
-```
-Deliverables:
-- [ ] OpenAPI generator from routes
-- [ ] Swagger UI embedded
-- [ ] /api/docs endpoint
-```
-
----
-
-### TASK-E012: Monitoring & Observability ⏱️ 16h
-
-```
-Deliverables:
-- [ ] Metrics component
-- [ ] HealthCheck endpoint (/health)
-- [ ] Sentry integration
-- [ ] Custom metrics
-- [ ] Dashboard data
-```
-
----
-
-### TASK-E013: Blade Views (Complete) ⏱️ 16h
-
-```
-Deliverables:
-- [ ] Complete Blade engine
-- [ ] Components (@component, @slot)
-- [ ] Directives (@auth, @can, @push)
-- [ ] View caching
-```
-
----
-
-### TASK-E014: CLI Commands Expansion ⏱️ 20h
-
-```
-Deliverables:
-- [ ] make:controller, make:model
-- [ ] make:migration, make:seeder
-- [ ] migrate:fresh, migrate:refresh
-- [ ] db:seed, cache:clear
-```
-
----
-
-### TASK-E015: Security Hardening ⏱️ 12h
-
-```
-Deliverables:
-- [ ] CSRF enhanced
-- [ ] XSS output escaping
-- [ ] Mass assignment protection
-- [ ] Audit logging
-```
-
----
-
-### TASK-E016: Performance Optimization ⏱️ 12h
-
-```
-Deliverables:
-- [ ] Query caching
-- [ ] Route caching
-- [ ] Config caching
-- [ ] Lazy loading
-```
-
----
-
-## 📊 Complete Estimation
-
-| Priority  | Tasks  | Hours    | Target     |
-|-----------|--------|----------|------------|
-| P0        | 5      | 108h     | Foundation |
-| P1        | 5      | 132h     | Enterprise |
-| P2        | 6      | 88h      | Polish     |
-| **TOTAL** | **16** | **328h** | **10/10**  |
-
----
-
-## 🎯 Execution Timeline
-
-| Week   | Phase      | Tasks      |
-|--------|------------|------------|
-| Week 1 | Core       | E001, E002 |
-| Week 2 | Core       | E003, E004 |
-| Week 3 | Enterprise | E005, E006 |
-| Week 4 | Enterprise | E007, E008 |
-| Week 5 | Polish     | E009, E010 |
-| Week 6 | Polish     | E011, E012 |
-| Week 7 | Finalize   | E013, E014 |
-| Week 8 | Finalize   | E015, E016 |
-
----
-
-## ✅ Pre-Existing Tasks (From Previous Work)
-
-### Completed Tasks:
-
-| Task                             | Status      |
-|----------------------------------|-------------|
-| TASK-R001 (Namespace Fix)        | ✅ COMPLETED |
-| TASK-R002 (Boot Chain)           | ✅ COMPLETED |
-| TASK-R003 (Test Suite)           | ✅ COMPLETED |
-| TASK-R004 (CLI Entry)            | ✅ COMPLETED |
-| TASK-R005 (Facades)              | ✅ COMPLETED |
-| TASK-R006 (Dependencies)         | ✅ COMPLETED |
-| TASK-R007 (Capabilities)         | ✅ COMPLETED |
-| TASK-R008 (Integration Tests)    | ✅ COMPLETED |
-| TASK-R009 (Error Handling)       | ✅ COMPLETED |
-| TASK-R010 (RELEASE-POLICY)       | ✅ COMPLETED |
-| TASK-R011 (Dead Code)            | ✅ COMPLETED |
-| TASK-R012 (RELEASE-POLICY Final) | ✅ COMPLETED |
-
-**Quality Score: 8.5+/10 → Target: 10/10**
-
----
-
-## 🚀 STARTING NOW
-
-**First Task:** TASK-E001 - HTTP Built-in Server  
-**Next:** Exit Plan Mode → Begin E001 Implementation
-  **Rezultat:** Session komponenta ume da čita, piše, briše i regeneriše.
-
-### [ ] TASK-002: CSRF zaštita
-
-**Komponenta:** `HTTP/Security` (novi folder)
-**Izvor:** `avax-backup.txt` linija ~493724–494094
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Security/functions.php` postoji. CSRF funkcije su dostupne.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost CsrfTokens i VerifyCsrfToken implementacije
-  **Rezultat:** Forme imaju CSRF zaštitu.
-
----
-
-## 🟠 P1 — Visok prioritet (core funkcionalnost)
-
-### [ ] TASK-003: Validation Engine
-
-**Komponenta:** `Application/Validation`
-**Izvor:** `avax.txt` linija ~1062627–1063126
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Validacioni atributi i rule klase postoje u DataFoundation.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost ValidateDto engine i ValidationResult DTO
-  **Rezultat:** Input validacija radi automatski preko atributa na DTO klasama.
-
-### [ ] TASK-004: Event System (Pub/Sub)
-
-**Komponenta:** `Operations/Events`
-**Izvor:** `avax.txt` linija ~988131–988300
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — EventDispatcher i ListenerRegistry struktura postoji.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost Events PublicSurface i DispatchEvent flow
-  **Rezultat:** Komponente mogu da emituju i slušaju evente.
-
-### [ ] TASK-005: Logging Writers + Global Error Handler
-
-**Komponenta:** `Operations/Logging`
-**Izvor:** `avax.txt` linija ~1053000–1053576
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/Operations/Logging/functions.php` postoji.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost FileLogWriter, RotatingFileWriter i HandleGlobalError flow
-  **Rezultat:** Greške se loguju u rotirajuće fajlove. Fatal errors se hvataju.
-
----
-
-## 🟡 P2 — Srednji prioritet (kompletiranje feature seta)
-
-### [ ] TASK-006: Filesystem Diskovi i Operacije
-
-**Komponenta:** `Application/Filesystem`
-**Izvor:** `avax-backup.txt` linija ~438538+ i `avax.txt` ~450322–451872
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Filesystem komponenta postoji sa testovima za file, path i directory operacije.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost Disk driver pattern-a
-  **Rezultat:** Filesystem ume da radi sa fajlovima, folderima i diskovima.
-
-### [x] TASK-007: HTTP Enums + URI Parser
-
-**Komponenta:** `HTTP/Enums` (novi) + `HTTP/URI` (novi)
-**Izvor:** `avax-backup.txt` linija ~441346–441598 (Enums) i ~501091–502943 (URI)
-**Status:** ✅ COMPLETED — `HttpMethod`, `HttpStatusCode`, `HttpReasonPhrase`, `RequestOption` enum-ovi kreirani. `Uri`
-klasa sa parser-om i builder-om implementirana.
-**Rezultat:** HTTP sloj koristi tipizirane enum-ove. URL-ovi se parsiraju i grade programatski.
-
-### [ ] TASK-008: HTTP Context
-
-**Komponenta:** `HTTP/Context` (novi)
-**Izvor:** `avax-backup.txt` linija ~440799–441112
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/HTTP/Context/functions.php` i HttpContext struktura postoje.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost mock-ovanja HTTP globala
-  **Rezultat:** Testovi mogu da mockuju HTTP globale bez `$_SERVER` hakova.
-
-### [ ] TASK-009: View / Blade Normalizacija
-
-**Komponenta:** `Presentation/View`
-**Izvor:** `avax.txt` linija ~1063297–1063416
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — `components/Presentation/View/functions.php` postoji. BladeOne integration je u
-vendor-u.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost View PublicSurface i RenderView flow
-- [ ] Normalizacija arhitekture prema Screaming Architecture
-  **Rezultat:** View rendering radi po Screaming Architecture pravilima.
-
-### [x] TASK-010: CLI Console & Code Generators
-
-**Komponenta:** `CLI/Console`
-**Izvor:** `avax-backup.txt` linija ~257987–258242 i ~800553–801008
-**Status:** ✅ COMPLETED — CLI Console komponenta implementirana u `components/CLI/Console/`.
-**Šta je urađeno:**
-
-- [x] `Console` PublicSurface — register(), run(), call()
-- [x] `Command` capability — definicija komandi sa argumentima i opcijama
-- [x] `CommandRegistry` capability — registar svih komandi
-- [x] `CommandInvoker` capability — izvršavanje komandi
-- [x] `Input/Output` capabilities — CLI I/O interfejsi
-- [x] `ProgressBar`, `Table` UI komponente
-- [x] `MakeController`, `MakeEntity`, `MakeRepository`, `MakeService` generator komande
-- [x] Generator interfejsi i default stubovi
-  **Rezultat:** Developer može da koristi `php avax make:controller UserController`.
-
----
-
-## 🔵 P3 — Nizak prioritet (skalabilnost i convenience)
-
-### [ ] TASK-011: Database Connection Pooling & Migrations
-
-**Komponenta:** `DataStack/Database`
-**Izvor:** `avax.txt` linija ~427504–430000+ i `avax-backup.txt`
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Database komponenta postoji sa Connections, Query, EntityManager, Schema,
-Migrations, Transactions, Telemetry capability-ima.
-**Šta treba:**
-
-- [ ] ConnectionPool sa MySQLPool implementacijom
-- [ ] LazyConnectionPool, MultiTenantPool
-- [ ] Migration komande: Migrate, Rollback, Seed, Fresh, Status
-  **Rezultat:** Database podržava pooling, multi-tenancy i migracije.
-
-### [ ] TASK-012: Cache Distribution & Compiled Cache
-
-**Komponenta:** `Application/Cache`
-**Izvor:** `avax.txt` linija ~248526–249400+ i ~247413–248500+
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Cache komponenta postoji sa ConsistentHashRing, CacheCluster,
-DistributedCacheStore, TieredCache.
-**Šta treba:**
-
-- [ ] Proveriti kompletnost CompiledCache sa manifestom i atomičnim pisanjem
-- [ ] Proveriti PrimaryReplica read-from-replica
-  **Rezultat:** Cache radi distribuirano sa replikacijom i kompajliranim PHP fajlovima.
-
-### [x] TASK-013: Facade System
-
-**Komponenta:** `Application/Facade` ili `components/Facade`
-**Izvor:** `avax-backup.txt` linija ~438321–438538
-**Status:** ✅ COMPLETED — `BaseFacade` sa `__callStatic` proxy ka Container-u implementiran. Fasade za `Auth`,
-`Request`, `Route`, `Session`, `Storage` kreirane.
-**Rezultat:** Statički pristup servisima: `Auth::user()`, `Route::get()`.
-
-### [x] TASK-014: Security Encryption
-
-**Komponenta:** `Identity/Security`
-**Status:** ✅ COMPLETED — AES-256-GCM encryption implementirana u `components/Identity/Security/`.
-**Šta je urađeno:**
-
-- [x] `Encrypter` PublicSurface — encrypt(), decrypt(), makeKey()
-- [x] `Encryption` capability — AES-256-GCM sa authenticated encryption
-- [x] `KeyGenerator` capability — sigurno generisanje ključeva
-- [x] `MacGenerator` capability — HMAC verifikacija
-- [x] `PayloadSerializer/Deserializer` — base64 + JSON payload format
-- [x] Testovi: 41 test, 69 assertions (EncryptionTest.php)
-  **Rezultat:** Framework može da šifruje osetljive podatke sa AES-256-GCM.
-
-### [ ] TASK-015: HTTP Client (Outbound)
-
-**Komponenta:** `HTTP/Client` (novi)
-**Status:** ⚠️ PARTIALLY IMPLEMENTED — Guzzle HTTP client je u vendor dependencies.
-**Šta treba:**
-
-- [ ] Kreirati Avax wrapper komponentu za Guzzle
-  **Rezultat:** Framework može da komunicira sa eksternim API-jima.
-
----
-
-## ⚪ P4 — Enterprise (odloženo)
-
-### [x] TASK-016: Saga / ApplicationWorkflow
-
-**Komponenta:** `Operations/ApplicationWorkflow`
-**Izvor:** `avax.txt` linija ~36087–40000+
-**Status:** ✅ COMPLETED — Saga/Workflow implementirana u `components/Operations/ApplicationWorkflow/`.
-**Šta je urađeno:**
-
-- [x] `Saga` PublicSurface — static DSL: define(), step(), execute(), compensate()
-- [x] `SagaStep` — koraci sa akcijama i kompenzacijama
-- [x] `CompensationExecutor` — automatski rollback u reverse order
-- [x] `StepRunner` — izvršavanje koraka sa idempotency
-- [x] `IdempotencyKey` — zaštita od duplih izvršavanja
-- [x] `SagaState` enum — Running, Completed, Failed, Compensating, Compensated
-- [x] `SagaStore` / `InMemorySagaStore` — perzistencija saga stanja
-- [x] `SagaResult` — rezultat izvršavanja sa step results
-- [x] Testovi: 35 testova, 90 assertiona (SagaTest.php)
-  **Rezultat:** Orkestacija višekoračnih poslovnih procesa sa automatskim rollback-om.
-
-### [x] TASK-017: DataLayer Advanced (QueryIntent, N+1 Detection)
-
-**Komponenta:** Pod `DataStack`
-**Izvor:** `avax.txt` linija ~391885–396000+
-**Status:** ✅ COMPLETED — QueryIntent i N+1 detection implementirani u `components/DataStack/`.
-**Šta je urađeno:**
-
-- [x] `QueryIntent` — intent-based query building sa fluent interfejsom
-- [x] N+1 query detection — `NPlusOneDetector` sa threshold alarmiranjem
-- [x] `QueryPattern` — prepoznavanje pattern-a u upitima
-- [x] `SelectIntent`, `InsertIntent`, `UpdateIntent`, `DeleteIntent` — tipizirani intent-i
-- [x] `QueryBuilder` — fluent query builder
-- [x] `WhereClause`, `OrderBy`, `JoinClause` — query komponente
-- [x] Testovi: 70 testova, 136 assertiona (QueryIntentTest.php)
-  **Napomena:** Bloom Filter, 2PC, i Deadlock detection nisu implementirani — zahtevaju database-level podršku.
-  **Rezultat:** Enterprise-grade query building sa N+1 detekcijom.
-
----
-
-## 🔧 ADDENDUM — Cover Old Audit Gaps (Definitive Feature-Level Audit)
-
-> Addendum koji pokriva 6 oblasti koje su ispale kroz pukotine u originalnom audit-u od 15 tačaka.
-> Svaka stavka ima novog canonical owner-a u Screaming Architecture.
-
-### [x] TASK-A01: HTTP Client (Outbound)
-
-**Komponenta:** `HTTP/Client`
-**Status:** ✅ COMPLETED — Full outbound HTTP client implementiran.
-**Šta je urađeno:**
-
-- [x] `HttpClient` PublicSurface — get(), post(), put(), patch(), delete(), head(), options(), send()
-- [x] `HttpClientInterface` — contract za outbound klijent
-- [x] `OutboundRequest` — immutable value object sa fluent builder-om
-- [x] `ClientResponse` — response sa timing informacijama
-- [x] `CurlTransport` — cURL-based transport implementation
-- [x] `HttpTransportInterface` — transport backend contract
-- [x] `ClientMiddlewarePipeline` — middleware chaining
-- [x] `RetryPolicy` — exponential/fixed/linear backoff sa jitter
-- [x] `TimeoutPolicy` — configurable timeout
-- [x] `FakeHttpClient` — testable fake sa recorded responses
-- [x] `ResponseDecoder` — auto-detect JSON/XML/text
-- [x] `BuildOutboundRequest`, `DecodeHttpResponse`, `HandleHttpFailure`, `SendHttpRequest` flows
-- [x] Testovi: 158 testova, 517 assertiona (HttpClientTest.php)
-  **Rezultat:** Framework zove eksterne API-je bez raw curl/file_get_contents. Testabilan. Ne meša se sa inbound HTTP
-  lifecycle.
-
-### [x] TASK-A02: HTTP Enums / Value Objects
-
-**Komponenta:** `HTTP/System/Foundation/Values`
-**Status:** ✅ COMPLETED — Svi HTTP enum-ovi i value objecti implementirani.
-**Šta je urađeno:**
-
-- [x] `HttpMethod` — 9 HTTP metoda, isSafe(), isIdempotent(), allowsBody()
-- [x] `HttpStatusCode` — 42 status koda, isOk(), isSuccess(), isRedirect(), isClientError(), isServerError()
-- [x] `HttpReasonPhrase` — 60+ reason phrase mapping-a
-- [x] `ContentType` — 31 content type, mimeType(), charset(), isJson(), isXml(), isForm()
-- [x] `HeaderName` — 80+ header imena, isSecurityHeader(), isCorsHeader(), isCachingHeader()
-- [x] `RequestOption` — 20 client opcija, defaultValue(), isValidValue()
-- [x] Testovi: 290 testova, 737 assertiona (HttpEnumsTest.php)
-  **Rezultat:** Router ne koristi loose string-ove interno. Response status kodovi su tipizirani. HTTP Client opcije
-  nisu random nizovi.
-
-### [x] TASK-A03: DataStack Advanced (Enterprise Features)
-
-**Komponenta:** `DataStack/Database` + `DataStack/Persistence`
-**Status:** ✅ COMPLETED — Napredne enterprise funkcionalnosti implementirane.
-**Šta je urađeno:**
-
-#### Database side (Transactions + Observability):
-
-- [x] `TransactionManager` — begin/commit/rollback, nested savepoints, closure API, retry
-- [x] `IsolationLevel` — enum sa MySQL/PostgreSQL/SQLite/SQLServer dijalektima
-- [x] `RetryPolicy` — deadlock/network/timeout retry sa exponential backoff
-- [x] `DeadlockDetector` — pattern analysis, SQLSTATE detection, affected tables
-- [x] `QueryTimeline` — query recording sa timestamps, duration, SQL, bindings
-- [x] `QueryFingerprinter` — SQL fingerprinting sa double hashing
-- [x] `SlowQueryDetector` — threshold detection, severity classification, fingerprint grouping
-
-#### Persistence side (Read Optimization + Consistency):
-
-- [x] `BloomFilter` — proper implementation sa CRC32 double hashing, optimal size, merge
-- [x] `ReadCache` — TTL cache sa tag/fingerprint/table invalidation
-- [x] `MaterializedViewReader` — interface + implementation sa staleness checking
-- [x] `ConsistencyPolicy` — interface sa VectorClock implementacijom
-- [x] `EventualConsistency` — mergeReplicas, conflict detection, versioned values
-- [x] `ConflictResolution` — 7 strategija (lastWriteWins, firstWriteWins, merge, custom)
-- [x] `CapTradeoffPolicy` — CP/AP/BALANCED sa quorum/staleness/config
-- [x] `SlowPersistenceQueryDetector` — cross-query-type slow detection
-- [x] Testovi: 378 testova, 680 assertiona (8 test fajlova)
-  **Rezultat:** DataLayer advanced features nisu izgubljene. Database owns transaction mechanics. Persistence owns read
-  model/consistency. DataLayer real owner se ne vraća.
-
-### [x] TASK-A04: Logging Global Error Handling
-
-**Komponenta:** `framework/System/Flows/HandleRuntimeFailure` + `Operations/Logging`
-**Status:** ✅ COMPLETED — Global error handling implementiran.
-**Šta je urađeno:**
-
-#### Framework Runtime Failure Flow:
-
-- [x] `HandleRuntimeFailure` — orchestrator: handle(), handleException(), handleFatalError()
-- [x] `ConvertPhpErrorToThrowable` — PHP errors -> Exception (E_ERROR, E_WARNING, E_NOTICE, E_DEPRECATED)
-- [x] `ReportRuntimeFailure` — reporting sa correlation ID, trace ID, request context
-- [x] `RenderRuntimeFailure` — dev (detailed HTML) vs production (generic 500) rendering
-
-#### Error Handling Capabilities:
-
-- [x] `GlobalErrorHandler` — set_exception_handler, set_error_handler, shutdown function
-- [x] `ShutdownErrorHandler` — fatal error capture via error_get_last()
-- [x] `ErrorLogger` — PSR-3 structured logging sa secret redaction
-- [x] `SecretRedactor` — passwords, Bearer/JWT tokens, API keys, AWS keys, credit cards, SSNs
-- [x] `WriteErrorLog` flow — structured error records
-- [x] Testovi: 224 testa (HandleRuntimeFailureTest, ErrorLoggerTest, SecretRedactorTest)
-  **Rezultat:** Uncaught exceptions se loguju. Fatal shutdown errors se hvataju. Error logovi uključuju context. Secrets
-  se redact-uju.
-
-### [x] TASK-A05: Cache Distributed Features Proof
-
-**Komponenta:** `Application/Cache`
-**Status:** ✅ COMPLETED — Distribuirane cache sposobnosti dokazane.
-**Šta je urađeno:**
-
-- [x] `ConsistentHashRing` — CRC32 hashing, virtual nodes (150/weight), deterministic, getNodes() za replication
-- [x] `CacheNode` — readonly value object sa weight, status, virtualNodeCount
-- [x] `CacheNodeHealth` — health tracking sa consecutiveFailures, Clock interface
-- [x] `CacheReplication` — primary-replica replication, sync/async, promoteReplica()
-- [x] `PrimaryReplicaPolicy` — readHeavy, writeHeavy, highAvailability, eventualConsistency factories
-- [x] `CacheHealthDetector` — detect(), checkConnection(), checkLatency(), checkMemory(), checkHitRate()
-- [x] `CacheHealthStatus` — healthy/unhealthy/degraded factory methods
-- [x] `CompiledCacheManifest` — JSON manifest sa SHA-256 fingerprints
-- [x] `CompiledCacheFreshness` — source vs compiled file staleness checking
-- [x] Testovi: 199 testova, 472 assertiona (5 test fajlova)
-  **Rezultat:** ConsistentHashRing postoji i radi. Cache replication postoji. Health detection postoji. Compiled cache
-  manifest postoji.
-
-### [x] TASK-A06: Filesystem Async IO Boundary
-
-**Komponenta:** `Application/Filesystem`
-**Status:** ✅ COMPLETED — Async IO capability boundary definisan.
-**Šta je urađeno:**
-
-- [x] `AsyncFilesystemInterface` — capability boundary: asyncRead(), asyncWrite(), asyncExists(), asyncDelete(),
-  asyncListDirectory()
-- [x] `AsyncReadFile` — readonly DTO za async read operacije
-- [x] `AsyncWriteFile` — readonly DTO za async write operacije
-- [x] `AsyncOperationPromise` — framework-level promise interface (then/catch/isResolved/isRejected)
-- [x] `SyncAsyncFilesystemAdapter` — stopgap adapter (eksplicitno označen kao sync-under-async)
-- [x] `AsyncIODecision.md` — decision record: Async IO je capability boundary, konkretni adapteri kasnije
-- [x] Testovi: 16 testova (AsyncIO kontract tests)
-  **Rezultat:** Async IO nije izgubljen. Implementation adapters će se dodati kasnije za ReactPHP/Amp/Swoole/Workerman.
-  Nema silenc sync faking-a.
-
----
-
-## Coverage Matrix — Old Audit (15 tačaka)
-
-|  # | Iz starog dokumenta         | Pokriveno | Status                                    |
-|---:|-----------------------------|:---------:|-------------------------------------------|
-|  1 | Session CRUD                |     ✅     | TASK-001                                  |
-|  2 | Validation Engine           |     ✅     | TASK-003                                  |
-|  3 | Event System                |     ✅     | TASK-004                                  |
-|  4 | Database pooling/migrations |     ✅     | TASK-011 + TASK-A03                       |
-|  5 | Distributed Cache           |     ✅     | TASK-012 + TASK-A05                       |
-|  6 | Filesystem + Async IO       |     ✅     | TASK-006 + TASK-A06                       |
-|  7 | HTTP Context/URI/CSRF/Enums |     ✅     | TASK-002 + TASK-007 + TASK-008 + TASK-A02 |
-|  8 | Logging + Global Error      |     ✅     | TASK-005 + TASK-A04                       |
-|  9 | View / Blade                |     ✅     | TASK-009                                  |
-| 10 | CLI Console                 |     ✅     | TASK-010                                  |
-| 11 | Saga / Workflow             |     ✅     | TASK-016                                  |
-| 12 | Facade System               |     ✅     | TASK-013                                  |
-| 13 | DataLayer Advanced          |     ✅     | TASK-017 + TASK-A03                       |
-| 14 | Security Encryption         |     ✅     | TASK-014                                  |
-| 15 | HTTP Client Outbound        |     ✅     | TASK-A01                                  |
-
-**Rezultat: 15/15 (100% pokrivenost)**
-
----
-
-## 🚨 STRICT REVIEW FINDINGS — April 2026
-
-> Po how-to-strict-review pravilima - Decision: REDESIGN  
-> Quality Score: 3.5/10
-
----
-
-### 🔴 P0 — Critical (Blokira bilo kakvu upotrebu)
-
-#### [x] TASK-R001: Fix Namespace Collision — Avax\HTTP vs Avax\Components\HTTP
-
-**Severity:** critical  
-**Symptom:** Class "Avax\HTTP\Response\ResponseFactory" not found  
-**Root Cause:** Framework koristi `Avax\HTTP\*`, komponenta je u `Avax\Components\HTTP\*`  
-**Impact:** CLI ne radi, testovi padaju
-
-- [x] Sjediniti namespace: Avax\HTTP → Avax\Components\HTTP
-- [x] Ažurirati autoload u composer.json
-- [x] Ažurirati use statements u framework/
-- [x] Pokrenuti ./bin/avax --help
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R002: Fix Boot Chain — RuntimeContext Dependency
-
-**Severity:** critical  
-**Symptom:** Too few arguments to RunConsoleCommand::__construct()  
-**Root Cause:** RunConsoleCommand requires RuntimeContext, Avax::boot() ne prosleđuje  
-**Impact:** Avax::boot() fails
-
-- [x] Popraviti RunConsoleCommand konstruktor injection
-- [x] Popraviti Avax::boot() chain
-- [x] Pokrenuti test: phpunit tests/Unit/Framework/System/PublicSurface/AvaxTest.php
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R003: Fix Test Suite — Class Not Found Errors
-
-**Severity:** critical  
-**Symptom:** PHPUnit error: Class "Avax\Database\..." not found  
-**Root Cause:** Namespace mismatch u test fajlovima  
-**Impact:** Nema validacije
-
-- [x] Popraviti namespace u test fajlovima
-- [x] Pokrenuti ./vendor/bin/phpunit
-- [x] Cilj: Test suite green
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R004: Fix CLI Entry Point
-
-**Severity:** critical  
-**Symptom:** Fatal error: Call to a member function get() on null  
-**Root Cause:** Container ne inicijalizovan  
-**Impact:** php avax ne radi
-
-- [x] Popraviti bootstrap u ./bin/avax
-- [x] Pokrenuti php avax serve
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-### 🟠 P1 — High (Framework ne radi kompletno)
-
-#### [x] TASK-R005: Consolidate PublicSurface Facades
-
-**Severity:** high  
-**Symptom:** 50% facade klasa bez implementacije  
-**Root Cause:** Kreirane bez pratećih capabilities
-
-- [x] Audit svih 35 PublicSurface fajlova
-- [x] Implementovati ili dokumentovati kao "stub"
-- [x] Očistiti mrtve façade klase
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R006: Fix Broken Dependency Chains
-
-**Severity:** high  
-**Symptom:** FeatureFlags::enable() - FlagStoreInterface not found  
-**Root Cause:** Nedostaje interfejs u istom fajlu
-
-- [x] Definisati FlagStoreInterface u istom namespace
-- [x] Definisati TenantContext
-- [x] Definisati ostale missing interfejse
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R007: Implement Missing Capabilities
-
-**Severity:** high  
-**Symptom:** Radi samo Pipeline i Fallback  
-**Root Cause:** Ostale komponente nemaju implementaciju
-
-- [x] FeatureFlags: Popuniti InMemoryFlagStore
-- [x] Tenancy: Popuniti TenantContext
-- [x] Security: Dodati hash(), verify(), generateToken()
-- [x] Concurrency: Dodati run() alias
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-### 🟡 P2 — Medium (Tehnički dug)
-
-#### [x] TASK-R008: Add Integration Tests for Working Components
-
-- [x] Testirati HealthCheck::check()
-- [x] Testirati Security::hash()
-- [x] Testirati Concurrency::run()
-- [x] Testirati MessageBus
-- [x] Testirati FeatureFlags, Tenancy, Pipeline, Fallback
-
-**Status:** ✅ COMPLETED (7 tests, 15 assertions) | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [ ] TASK-R009: Document Working API Surface
-
-- [x] Testirati HealthCheck::check()
-- [x] Testirati Security::hash()
-- [x] Testirati Concurrency::run()
-- [x] Testirati MessageBus
-- [x] Testirati FeatureFlags, Tenancy, Pipeline, Fallback
-- [x] Kreirati Public API dokument (README.md)
-- [ ] Ažurirati README.md
-
-**Status:** IN PROGRESS | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R010: Add Error Boundaries
-
-- [x] Dodati try-catch u ./bin/avax CLI
-- [x] Dodati fallback poruke
-- [ ] Dodati observability
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-### 🔵 P3 — Low (Cleanup)
-
-#### [x] TASK-R011: Remove Dead Code
-
-- [x] Pregled svih malih fajlova
-- [x] Pregled TODO komentara
-- [x] Identifikovani placeholder generatori (CLI) - ostavljeni za buduću implementaciju
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-#### [x] TASK-R012: Update RELEASE-POLICY for Production
-
-- [x] Definisati verziju (1.0.0)
-- [x] Definisati LTS
-- [x] Definisati upgrade path
-- [x] Dodati current status (8.5+, 35+ komponenti)
-
-**Status:** ✅ COMPLETED | **Owner:** TODO | **Updated:** 2026-04-30
-
----
-
-## 📊 FINAL SUMMARY
-
-| Priority | Broj | Status      |
-|----------|------|-------------|
-| 🔴 P0    | 4    | ✅ COMPLETED |
-| 🟠 P1    | 3    | ✅ COMPLETED |
-| 🟡 P2    | 2    | ✅ COMPLETED |
-| 🔵 P3    | 2    | ✅ COMPLETED |
-
-**Ukupno: 12/12 COMPLETED** | **Quality Score: 8.5+/10**
-
----
-
-## ✅ SVE ZATVORENO!
+## 🚧 Active Structural & Naming Audits (The Final Purge)
+
+Iako su glavni taskovi "COMPLETED", sledeći propusti su detektovani tokom "Zero Tolerance" skeniranja arhitekture:
+
+### 1. Root Directory Anarchy (Component Sanitization)
+
+- [ ] **Identity/Auth**:
+    - Obristati/premestiti skripte: `check.php`, `fix_test_imports.php`, `legacy-class-aliases.php`, `merge-files.sh`.
+      Skripta merge-files.sh mora da ostane u root-u avax-a.
+    - Očistiti artefakte: `Auth.txt` (3.3MB), `composer.phar`, `build/`.
+    - Dokumentaciju (`REFAKTOR.md`, `complete-this.md`, `CHANGES_SUMMARY.txt`) preseliti negde u .agents folder.
+    - Srediti `integrations/` folder (u `System/Configuration` ili `System/Capabilities`).
+- [ ] **DataStack/Database**:
+    - Pomeriti/obrisati ilegalne foldere: `Code-Review-And-ToDo/`, `Integrations/`.
+    - Očistiti artefakte: `Database.txt`, `merge-files.sh`. Ostaviti merge-files.sh da postoji samo u root-u avax-a.
+    - Obrisati duplikate PublicSurface fajlova iz root-a (`Database.php`, `EntityManager.php`, `Migrations.php`,
+      `Query.php`, `Schema.php`, `Telemetry.php`, `Transactions.php`).
+- [ ] **Application/Config**:
+    - Preseliti `AuthConfig.php` i `Configurator/` u `System/Configuration` ili `System/Capabilities`.
+
+### 2. The "Zero Tolerance" Naming Purge (Managers, Services, Support)
+
+- [ ] **Manager Prekršaji**:
+    - `WorkerManager` ➔ `Workers` ili `WorkerPool` (`WorkerManager/System/PublicSurface/WorkerManager.php`).
+    - `ChannelManager` ➔ `Channels` ili `ChannelRegistry` (`Realtime/System/Capabilities/Channels/ChannelManager.php`).
+    - `TransactionManager` ➔ `Transactions` (`Database/System/Capabilities/Transactions/TransactionManager.php`).
+- [ ] **Service Prekršaji**:
+    - `BuildService` ➔ `Builder`, `ResolveService` ➔ `Resolver`, `ExplainService` ➔ `Explanation` (u
+      `Application/Container/`).
+    - `ExplainContainerService` ➔ `ExplainContainerResolution` (u `framework/System/Flows/ExplainContainerService/`).
+- [ ] **Zabranjeni `Support` folderi** (Preimenovati u imenice koje viču - "Screaming"):
+    - `OAuth/Support/` ➔ `OAuth/Elements/`
+    - `OpenIDConnect/Support/` ➔ `OpenIDConnect/Protocol/`
+    - `SingleSignOn/FederationSupport/` ➔ `SingleSignOn/Federation/`
+    - `Tenancy/AdminRealmSupport/` ➔ `Tenancy/AdminRealm/`
+    - `IdentitySync/SCIM/Support/` ➔ `IdentitySync/SCIM/Directories/`
+    - `Access/RiskBasedAccess/Support/` ➔ `Access/RiskBasedAccess/Signals/` ili `Metrics/`
+    - `Database/.../Telemetry/Support/` ➔ `.../Telemetry/Trackers/` ili `Metrics/`
+    - `Data/.../Internal/Support/` ➔ `.../Internal/Outcomes/` ili `Mechanics/`
+- [ ] **Systemski "Service" Prekršaji**:
+    - `ServiceProvider` klase (Cache, Database, Auth) ➔ **`Registrar`** (npr. `CacheRegistrar`, `DatabaseRegistrar` -
+      jedinstveno pravilo za ceo AvaX).
+    - `ServiceMap` komponenta ➔ `DependencyMap` ili `DependencyGraph`.
+    - `MakeServiceCommand` i `ServiceGenerator` ➔ `MakeActionCommand` / `CapabilityGenerator`.
+    - `StatefulServiceDetector` ➔ `StatefulDependencyDetector`.

@@ -6,133 +6,105 @@ namespace Avax\Components\Realtime\System\Capabilities\WebSocket;
 
 final class WebSocketServer
 {
+    /** @var array<string, array{id:string, channel:string, joined_at:int, messages:list<string>}> */
     private static array $connections = [];
-    private static array $channels    = [];
+
+    /** @var array<string, array<string, true>> */
+    private static array $channels = [];
 
     public static function connect(string $connectionId, string $channel = 'default') : void
     {
         self::$connections[$connectionId] = [
-            'id'        => $connectionId,
-            'channel'   => $channel,
+            'id'       => $connectionId,
+            'channel'  => $channel,
             'joined_at' => time(),
+            'messages' => [],
         ];
-
-        if (! isset(self::$channels[$channel])) {
-            self::$channels[$channel] = [];
-        }
-
         self::$channels[$channel][$connectionId] = true;
     }
 
     public static function disconnect(string $connectionId) : void
     {
-        $channel = self::$connections[$connectionId]['channel'] ?? 'default';
+        $channel = self::$connections[$connectionId]['channel'] ?? null;
 
-        unset(self::$connections[$connectionId]);
-        unset(self::$channels[$channel][$connectionId]);
-    }
-
-    public static function broadcast(string $channel, string $message) : int
-    {
-        $count = 0;
-
-        foreach (self::$channels[$channel] ?? [] as $connectionId => $_) {
-            if (self::send($connectionId, $message)) {
-                $count++;
-            }
+        if ($channel !== null) {
+            unset(self::$channels[$channel][$connectionId]);
         }
 
-        return $count;
+        unset(self::$connections[$connectionId]);
     }
 
-    public static function send(string $connectionId, string $message) : bool
+    public static function subscribe(string $connectionId, string $channel) : void
+    {
+        if (! isset(self::$connections[$connectionId])) {
+            self::connect(connectionId: $connectionId, channel: $channel);
+
+            return;
+        }
+
+        $oldChannel = self::$connections[$connectionId]['channel'];
+        unset(self::$channels[$oldChannel][$connectionId]);
+        self::$connections[$connectionId]['channel'] = $channel;
+        self::$channels[$channel][$connectionId]     = true;
+    }
+
+    public static function send(string $connectionId, string|BroadcastMessage $message) : bool
     {
         if (! isset(self::$connections[$connectionId])) {
             return false;
         }
 
+        self::$connections[$connectionId]['messages'][] = $message instanceof BroadcastMessage ? $message->toJson() : $message;
+
         return true;
+    }
+
+    public static function broadcast(string $channel, string|BroadcastMessage $message) : int
+    {
+        $sent = 0;
+
+        foreach (array_keys(array: self::$channels[$channel] ?? []) as $connectionId) {
+            if (self::send(connectionId: $connectionId, message: $message)) {
+                $sent++;
+            }
+        }
+
+        return $sent;
     }
 
     public static function toChannel(string $channel) : ChannelBroadcaster
     {
-        return new ChannelBroadcaster($channel);
+        return new ChannelBroadcaster(channel: $channel);
     }
 
-    public static function toUser(int $userId) : UserBroadcaster
+    public static function toUser(int|string $userId) : UserBroadcaster
     {
-        return new UserBroadcaster($userId);
+        return new UserBroadcaster(userId: $userId);
+    }
+
+    public static function clientScript(string $endpoint = '/ws') : string
+    {
+        return WebSocketClientScript::forEndpoint(endpoint: $endpoint);
     }
 
     public static function connections(string|null $channel = null) : array
     {
         if ($channel === null) {
-            return self::$connections;
+            return array_keys(array: self::$connections);
         }
 
-        return array_keys(self::$channels[$channel] ?? []);
-    }
-}
-
-final class ChannelBroadcaster
-{
-    private string $channel;
-
-    public function __construct(string $channel)
-    {
-        $this->channel = $channel;
+        return array_keys(array: self::$channels[$channel] ?? []);
     }
 
-    public function send(string $event, mixed $data) : int
+    public static function messages(string $connectionId) : array
     {
-        $message = json_encode([
-                                   'event'   => $event,
-                                   'data'    => $data,
-                                   'channel' => $this->channel,
-                               ]);
-
-        return WebSocketServer::broadcast($this->channel, $message);
-    }
-}
-
-final class UserBroadcaster
-{
-    private int $userId;
-
-    public function __construct(int $userId)
-    {
-        $this->userId = $userId;
+        return self::$connections[$connectionId]['messages'] ?? [];
     }
 
-    public function send(string $event, mixed $data) : int
+    public static function reset() : void
     {
-        return 0;
-    }
-}
-
-final class PresenceChannel
-{
-    public static function join(string $channel, string $userId, array $userInfo = []) : void
-    {
-        $key = "presence:{$channel}";
-
-        if (! isset($_SESSION[$key])) {
-            $_SESSION[$key] = [];
-        }
-
-        $_SESSION[$key][$userId] = $userInfo + ['joined_at' => time()];
-    }
-
-    public static function leave(string $channel, string $userId) : void
-    {
-        $key = "presence:{$channel}";
-        unset($_SESSION[$key][$userId]);
-    }
-
-    public static function members(string $channel) : array
-    {
-        $key = "presence:{$channel}";
-
-        return $_SESSION[$key] ?? [];
+        self::$connections = [];
+        self::$channels    = [];
+        PresenceChannel::reset();
     }
 }

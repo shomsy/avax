@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Secrets\System\PublicSurface;
 
+use Avax\Components\Secrets\System\Capabilities\Stores\InMemorySecretStore;
 use Avax\Components\Secrets\System\Capabilities\Stores\SecretStore;
 
 final class Secrets

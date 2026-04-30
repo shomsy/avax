@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
-use Avax\Components\HTTP\Session\System\Foundation\SessionData;
-use Avax\Components\HTTP\Session\System\Foundation\SessionStoreInterface;
-
 final class SessionDriver
 {
     private static SessionStoreInterface|null $store = null;
@@ -16,9 +13,28 @@ final class SessionDriver
         self::$store = $store;
     }
 
-    public static function read(string $sessionId) : SessionData|null
+    public static function read(string $sessionId) : array
     {
-        return self::get()->read($sessionId);
+        return self::get()->read(id: $sessionId);
+    }
+
+    public static function write(string $sessionId, array $data) : bool
+    {
+        return self::get()->write(id: $sessionId, data: $data);
+    }
+
+    public static function destroy(string $sessionId) : bool
+    {
+        return self::get()->destroy(id: $sessionId);
+    }
+
+    public static function exists(string $sessionId) : bool
+    {
+        $store = self::get();
+
+        return method_exists(object_or_class: $store, method: 'exists')
+            ? $store->exists(sessionId: $sessionId)
+            : $store->read(id: $sessionId) !== [];
     }
 
     public static function get() : SessionStoreInterface
@@ -35,56 +51,12 @@ final class SessionDriver
         $driver = $config['driver'] ?? 'file';
 
         return match ($driver) {
-            'redis'    => new RedisSessionStore($config['redis'] ?? []),
-            'database' => new DatabaseSessionStore($config['database'] ?? []),
-            default    => new FileSessionStore($config['file'] ?? []),
+            'redis'    => new RedisSessionStore(config: $config['redis'] ?? []),
+            'database' => isset($config['database']['pdo'])
+                ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
+                : new ArraySessionStore(),
+            'array'    => new ArraySessionStore(),
+            default    => new FileSessionStore(config: $config['file'] ?? []),
         };
-    }
-
-    public static function write(string $sessionId, SessionData $data) : bool
-    {
-        return self::get()->write($sessionId, $data);
-    }
-
-    public static function destroy(string $sessionId) : bool
-    {
-        return self::get()->destroy($sessionId);
-    }
-
-    public static function exists(string $sessionId) : bool
-    {
-        return self::get()->exists($sessionId);
-    }
-}
-
-final class DatabaseSessionStore implements SessionStoreInterface
-{
-    public function __construct(
-        private array $config = [],
-    ) {}
-
-    public function read(string $sessionId) : SessionData|null
-    {
-        return null;
-    }
-
-    public function write(string $sessionId, SessionData $data) : bool
-    {
-        return true;
-    }
-
-    public function destroy(string $sessionId) : bool
-    {
-        return true;
-    }
-
-    public function exists(string $sessionId) : bool
-    {
-        return false;
-    }
-
-    public function gc(int $maxLifetime) : int
-    {
-        return 0;
     }
 }

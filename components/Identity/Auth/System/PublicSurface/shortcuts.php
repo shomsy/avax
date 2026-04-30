@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Authentication shortcuts for global access.
+ */
+
+use Avax\Components\Identity\Auth\System\Auth;
+
+if (! function_exists('auth')) {
+    /**
+     * Resolve the authentication instance.
+     *
+     * @return Auth
+     */
+    function auth() : Auth
+    {
+        return app(Auth::class);
+    }
+}

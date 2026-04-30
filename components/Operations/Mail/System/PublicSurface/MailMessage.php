@@ -19,25 +19,29 @@ final class MailMessage
 
     public function from(string $address, string|null $name = null) : self
     {
-        $this->data['from'] = $name ? ["$name <$address>" : $address]
+        $formatted          = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->data['from'] = $formatted;
         return $this;
     }
 
     public function to(string $address, string|null $name = null) : self
     {
-        $this->data['to'][] = $name ? ["$name <$address>" : $address]
+        $formatted          = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->data['to'][] = $formatted;
         return $this;
     }
 
     public function cc(string $address, string|null $name = null) : self
     {
-        $this->data['cc'][] = $name ? ["$name <$address>" : $address]
+        $formatted          = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->data['cc'][] = $formatted;
         return $this;
     }
 
     public function bcc(string $address, string|null $name = null) : self
     {
-        $this->data['bcc'][] = $name ? ["$name <$address>" : $address]
+        $formatted           = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->data['bcc'][] = $formatted;
         return $this;
     }
 

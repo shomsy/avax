@@ -9,46 +9,46 @@ declare(strict_types=1);
 
 // Determine the root directory
 $rootDir = __DIR__;
-while ( ! file_exists(filename: $rootDir . '/bootstrap.php') && $rootDir !== dirname(path: $rootDir) ) {
+while ( ! file_exists(filename: $rootDir . '/vendor/autoload.php') && $rootDir !== dirname(path: $rootDir) ) {
     $rootDir = dirname(path: $rootDir);
 }
 
 // Bootstrap application
-require_once $rootDir . '/bootstrap.php';
+require_once $rootDir . '/vendor/autoload.php';
 
 use Avax\Database\Integrations\Console\MigrateCommand;
 use Avax\Database\Integrations\Console\MigrateRollbackCommand;
 use Avax\Database\Integrations\Console\MigrateStatusCommand;
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
 use Avax\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
 use Avax\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Migrations\Execution\Console\DatabaseCreateCommand;
 use Avax\Migrations\Execution\Console\DatabaseDropCommand;
 use Avax\Migrations\Execution\Console\DatabaseExportCommand;
 use Avax\Migrations\Execution\Console\DatabaseSeedCommand;
-use Avax\Migrations\Execution\Console\MigrateCommand;
+use Avax\Migrations\Execution\Console\MigrateCommand as LegacyMigrateCommand;
 use Avax\Migrations\Execution\Console\MigrateMakeCommand;
-use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
-use Avax\Migrations\Execution\Console\MigrateStatusCommand;
+use Avax\Migrations\Execution\Console\MigrateRollbackCommand as LegacyMigrateRollbackCommand;
+use Avax\Migrations\Execution\Console\MigrateStatusCommand as LegacyMigrateStatusCommand;
 use Avax\Migrations\Execution\Console\Operations\TableDropCommand;
 use Avax\Migrations\Execution\Console\Operations\TableTruncateCommand;
-use Avax\Migrations\Execution\Repository\MigrationRepository;
-use Avax\Migrations\Execution\Runner\MigrationRunner;
-use Avax\Migrations\Export\DatabaseExporter;
-use Avax\Migrations\Generate\MigrationGenerator;
-use Avax\Migrations\Generate\MigrationLoader;
+use Avax\Migrations\Execution\Repository\MigrationRepository as LegacyMigrationRepository;
+use Avax\Migrations\Execution\Runner\MigrationRunner as LegacyMigrationRunner;
+use Avax\Migrations\Export\DatabaseExporter as LegacyDatabaseExporter;
+use Avax\Migrations\Generate\MigrationGenerator as LegacyMigrationGenerator;
+use Avax\Migrations\Generate\MigrationLoader as LegacyMigrationLoader;
 
 // Get dependencies from container
-$repository = app(abstract: MigrationRepository::class);
-$runner     = app(abstract: MigrationRunner::class);
+$repository = app(abstract: LegacyMigrationRepository::class);
+$runner     = app(abstract: LegacyMigrationRunner::class);
 $builder    = app(abstract: QueryBuilder::class);
-$loader     = new MigrationLoader();
-$generator  = new MigrationGenerator();
-$exporter   = new DatabaseExporter(builder: $builder);
+$loader     = new LegacyMigrationLoader();
+$generator  = new LegacyMigrationGenerator();
+$exporter   = new LegacyDatabaseExporter(builder: $builder);
 
 // Migrations directory
 $migrationsPath = $rootDir . '/database/migrations';
@@ -106,7 +106,7 @@ try {
         case 'migrate':
         case 'run':
             $dryRun = ($arg1 === '--dry' || $arg2 === '--dry');
-        exit(new MigrateCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, dryRun: $dryRun));
+        exit(new LegacyMigrateCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, dryRun: $dryRun));
 
         case 'make':
             $options = [];
@@ -119,10 +119,14 @@ try {
             exit(new MigrateMakeCommand(generator: $generator)->handle(name: $arg1, path: $migrationsPath, options: $options));
 
         case 'rollback':
-            exit(new MigrateRollbackCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, steps: (int) ($arg1 ?? 1)));
+            exit(new LegacyMigrateRollbackCommand(repository: $repository, runner: $runner, loader: $loader)->handle(path: $migrationsPath, steps: (int) ($arg1 ?? 1)));
 
         case 'status':
-            exit(new MigrateStatusCommand(repository: $repository, loader: $loader)->handle(path: $migrationsPath));
+            exit(new LegacyMigrateStatusCommand(repository: $repository, loader: $loader)->handle(path: $migrationsPath));
+
+        case 'runtime:doctor':
+            $workerMode = ($arg1 === '--worker' || $arg2 === '--worker');
+            exit((new RunDoctor())->handle(workerMode: $workerMode));
 
         case 'architecture:check':
             $archDir = $rootDir . '/tooling/architecture';
@@ -169,7 +173,9 @@ try {
             echo "  rollback [steps]   Rollback the last batch of migrations\n";
             echo "  status             Show the status of all migrations\n\n";
             echo "\033[32mArchitecture Commands:\033[0m\n";
-            echo "  architecture:check Run all static architecture guards\n";
+        echo "  architecture:check   Run all static architecture guards\n";
+        echo "  runtime:doctor       Inspect runtime safety and state leaks\n";
+        echo "  runtime:doctor --worker  Check if app is safe for long-lived workers\n";
             exit(0);
     }
 } catch (Throwable $e) {

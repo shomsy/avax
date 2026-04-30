@@ -1,0 +1,142 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Framework\System\Capabilities\TracingTimeline;
+
+/**
+ * Tracks the execution timeline of a request.
+ */
+final class RuntimeTimeline
+{
+    private float $startMS;
+
+    /**
+     * @var list<RuntimeEvent>
+     */
+    private array $events = [];
+
+    private bool       $isFinished = false;
+    private float|null $endMS      = null;
+
+    public function __construct()
+    {
+        $this->startMS = microtime(true) * 1000;
+    }
+
+    /**
+     * Start timing a named operation.
+     */
+    public function begin(string $name, string|null $category = null) : TraceSpan
+    {
+        return new TraceSpan(
+            name    : $name,
+            category: $category,
+            onFinish: function (float $durationMS) use ($name, $category) : void {
+                $this->record(
+                    name      : $name,
+                    durationMS: $durationMS,
+                    category  : $category,
+                );
+            },
+        );
+    }
+
+    public function record(
+        string      $name,
+        float|null  $durationMS = null,
+        string|null $category = null,
+        array       $metadata = [],
+    ) : void
+    {
+        $timestamp = microtime(true) * 1000;
+
+        $this->events[] = new RuntimeEvent(
+            name       : $name,
+            timestampMS: $timestamp - $this->startMS,
+            durationMS : $durationMS,
+            category   : $category,
+            metadata   : $metadata,
+        );
+    }
+
+    public function finish() : void
+    {
+        $this->endMS      = microtime(true) * 1000;
+        $this->isFinished = true;
+
+        $this->record(
+            name      : 'request.completed',
+            durationMS: $this->durationMS(),
+        );
+    }
+
+    public function durationMS() : float
+    {
+        $end = $this->endMS ?? (microtime(true) * 1000);
+
+        return $end - $this->startMS;
+    }
+
+    /**
+     * @return list<RuntimeEvent>
+     */
+    public function events() : array
+    {
+        return $this->events;
+    }
+
+    public function isFinished() : bool
+    {
+        return $this->isFinished;
+    }
+
+    /**
+     * Export timeline as formatted string.
+     */
+    public function exportText() : string
+    {
+        $lines = ['Execution Timeline:'];
+
+        foreach ($this->events as $event) {
+            $line = sprintf(
+                '  %-30s %8.2fms',
+                $event->name,
+                $event->timestampMS,
+            );
+
+            if ($event->durationMS !== null) {
+                $line .= sprintf(' (+%.2fms)', $event->durationMS);
+            }
+
+            $lines[] = $line;
+        }
+
+        $lines[] = sprintf(
+            "\nTotal: %.2fms",
+            $this->durationMS(),
+        );
+
+        return implode("\n", $lines);
+    }
+
+    /**
+     * Export timeline as structured array.
+     */
+    public function exportArray() : array
+    {
+        return [
+            'duration_ms' => $this->durationMS(),
+            'events'      => array_map(
+                fn (RuntimeEvent $e) : array => [
+                    'name'         => $e->name,
+                    'timestamp_ms' => round($e->timestampMS, 2),
+                    'duration_ms'  => $e->durationMS !== null ? round($e->durationMS, 2) : null,
+                    'category'     => $e->category,
+                    'metadata'     => $e->metadata,
+                ],
+                $this->events,
+            ),
+        ];
+    }
+}

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+
 final class CheckRuntimeLeaks
 {
     private array $forbiddenRuntimeImports = [
@@ -15,7 +19,7 @@ final class CheckRuntimeLeaks
     public function check() : array
     {
         $this->checkNoRuntimeLeaksOutsideFramework();
-        
+
         return [
             'status' => empty($this->errors) ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
@@ -25,17 +29,17 @@ final class CheckRuntimeLeaks
     private function checkNoRuntimeLeaksOutsideFramework() : void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
-        
+
         if (! is_dir($componentsPath)) {
             return;
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($componentsPath),
-            \RecursiveIteratorIterator::SELF_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($componentsPath),
+            RecursiveIteratorIterator::SELF_FIRST,
         );
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
@@ -54,13 +58,13 @@ final class CheckRuntimeLeaks
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckRuntimeLeaks();
     $result = $checker->check();
-    
+
     echo $result['status'] . "\n";
-    
+
     if (! empty($result['errors'])) {
         echo implode("\n", $result['errors']) . "\n";
         exit(1);
     }
-    
+
     exit(0);
 }

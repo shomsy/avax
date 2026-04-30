@@ -1,11 +1,14 @@
 #!/usr/bin/env php
 <?php
+
 declare(strict_types=1);
 $base = __DIR__ . '/../../components/ApplicationWorkflow/System';
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
 foreach ($it as $file) {
-    if ($file->getExtension() !== 'php') continue;
-    $path = $file->getPathname();
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+    $path     = $file->getPathname();
     $content = file_get_contents($path);
     $changed = false;
 

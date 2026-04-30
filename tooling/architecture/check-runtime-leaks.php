@@ -12,7 +12,7 @@ $forbiddenTokens = ['FrankenPhp', 'RoadRunner', 'Swoole', 'Workerman', 'ReactPHP
 $allowedPaths    = [
     '/framework/System/Capabilities/Runtime/Adapters/',
     '/components/Runtime/',
-    '/components/RuntimeSafety/'
+    '/components/RuntimeSafety/',
 ];
 $scanRoots = [
     $root . '/framework/System',
@@ -22,8 +22,10 @@ $scanRoots = [
 $violations = [];
 
 foreach ($scanRoots as $scanRoot) {
-    if (!is_dir($scanRoot)) continue;
-    
+    if (! is_dir($scanRoot)) {
+        continue;
+    }
+
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($scanRoot, FilesystemIterator::SKIP_DOTS),
     );
@@ -40,6 +42,7 @@ foreach ($scanRoots as $scanRoot) {
         foreach ($allowedPaths as $allowedPath) {
             if (str_contains($path, $allowedPath)) {
                 $isAllowed = true;
+
                 break;
             }
         }
@@ -56,7 +59,7 @@ foreach ($scanRoots as $scanRoot) {
 
         foreach ($forbiddenTokens as $token) {
             // Check for use statements or instantiation to avoid matching string literals in unrelated code
-            // But for safety, simple str_contains is a good start. 
+            // But for safety, simple str_contains is a good start.
             // We can add space before token to avoid matching parts of other words.
             if (str_contains($contents, ' ' . $token) || str_contains($contents, '\\' . $token)) {
                 $violations[] = sprintf('%s leaks runtime-specific token "%s"', ltrim($path, '/'), $token);

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+
 final class CheckNamespaceDrift
 {
     private array $forbiddenNamespaces = [
@@ -25,7 +29,7 @@ final class CheckNamespaceDrift
     public function check() : array
     {
         $this->scanForNamespaceDrift();
-        
+
         return [
             'status' => empty($this->checkedFiles) ? 'PASS' : 'FAIL',
             'files' => $this->checkedFiles,
@@ -45,22 +49,21 @@ final class CheckNamespaceDrift
             return;
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($path),
-            \RecursiveIteratorIterator::SELF_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path),
+            RecursiveIteratorIterator::SELF_FIRST,
         );
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
 
             $filePath = $file->getPathname();
-            
+
             // Skip allowed bridge files
-            if (str_contains($filePath, '/DataFoundation/') || 
-                str_contains($filePath, '/DataLayer/')) {
+            if (str_contains($filePath, '/DataFoundation/') || str_contains($filePath, '/DataLayer/')) {
                 continue;
             }
 
@@ -77,13 +80,13 @@ final class CheckNamespaceDrift
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckNamespaceDrift();
     $result = $checker->check();
-    
+
     echo $result['status'] . "\n";
-    
+
     if (! empty($result['files'])) {
         echo implode("\n", $result['files']) . "\n";
         exit(1);
     }
-    
+
     exit(0);
 }

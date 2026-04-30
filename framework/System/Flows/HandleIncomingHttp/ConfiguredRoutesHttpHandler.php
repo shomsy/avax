@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
+use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Router\RouterInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
-use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouterInterface;
 use components\HTTP\Dispatcher\ControllerDispatcher;
 use components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;

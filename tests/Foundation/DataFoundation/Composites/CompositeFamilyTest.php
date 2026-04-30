@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Composites;
 
-use Avax\DataFoundation\Composites\MapEntry\MapEntry;
-use Avax\DataFoundation\Composites\Pair\Pair;
-use Avax\DataFoundation\Composites\Record\Record;
-use Avax\DataFoundation\Composites\Record\RecordField;
-use Avax\DataFoundation\Composites\Tuple\Tuple2;
-use Avax\DataFoundation\Composites\Tuple\Tuple3;
-use Avax\DataFoundation\Composites\Tuple\Tuple4;
+use Avax\Components\DataStack\Database\Composites\MapEntry\MapEntry;
+use Avax\Components\DataStack\Database\Composites\Pair\Pair;
+use Avax\Components\DataStack\Database\Composites\Record\Record;
+use Avax\Components\DataStack\Database\Composites\Record\RecordField;
+use Avax\Components\DataStack\Database\Composites\Tuple\Tuple2;
+use Avax\Components\DataStack\Database\Composites\Tuple\Tuple3;
+use Avax\Components\DataStack\Database\Composites\Tuple\Tuple4;
 use Avax\Tests\TestCase;
 
 final class CompositeFamilyTest extends TestCase

@@ -87,7 +87,7 @@ final class CacheReadRoutingTest extends TestCase
         $types     = $type->getTypes();
         $typeNames = array_map(static fn ($t) => $t->getName(), $types);
 
-        $this->assertContains(needle: 'Avax\Cache\System\PublicSurface\CacheReadTarget', haystack: $typeNames);
+        $this->assertContains(needle: 'Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget', haystack: $typeNames);
         $this->assertContains(needle: 'string', haystack: $typeNames);
     }
 

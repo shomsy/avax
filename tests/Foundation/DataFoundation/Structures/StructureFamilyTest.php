@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Structures;
 
-use Avax\DataFoundation\Structures\Deque\Deque;
-use Avax\DataFoundation\Structures\PriorityQueue\PriorityQueue;
-use Avax\DataFoundation\Structures\Queue\Queue;
-use Avax\DataFoundation\Structures\RingBuffer\RingBuffer;
-use Avax\DataFoundation\Structures\Stack\Stack;
-use Avax\DataFoundation\Structures\Tree\Tree;
+use Avax\Components\DataStack\Database\Structures\Deque\Deque;
+use Avax\Components\DataStack\Database\Structures\PriorityQueue\PriorityQueue;
+use Avax\Components\DataStack\Database\Structures\Queue\Queue;
+use Avax\Components\DataStack\Database\Structures\RingBuffer\RingBuffer;
+use Avax\Components\DataStack\Database\Structures\Stack\Stack;
+use Avax\Components\DataStack\Database\Structures\Tree\Tree;
 use Avax\Tests\TestCase;
 
 final class StructureFamilyTest extends TestCase

@@ -1,11 +1,11 @@
 <?php
 
 use components\Container\Features\Think\Model\ServicePrototype;
-use components\HTTP\Router\Routing\ErrorResponseFactory;
-use components\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponseFactory;
+use components\HTTP\Router\Routing\ErrorResponses;
+use components\HTTP\Router\System\Flows\RunRoute\Responses\ErrorResponses;
 
 return ServicePrototype::__set_state(array: [
-                                                'class' => ErrorResponseFactory::class,
+                                                'class' => ErrorResponses::class,
                                                 'constructor'        => null,
                                                 'injectedProperties' =>
                                                     [

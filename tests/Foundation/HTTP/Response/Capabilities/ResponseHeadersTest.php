@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Response\Capabilities;
 
-use Avax\HTTP\Response\Capabilities\Cookies\ResponseCookie;
-use Avax\HTTP\Response\Capabilities\Cookies\SetCookieHeader;
-use Avax\HTTP\Response\Capabilities\Headers\ResponseHeaders;
-use Avax\HTTP\Response\Response;
+use Avax\Components\HTTP\Response\Capabilities\Cookies\ResponseCookie;
+use Avax\Components\HTTP\Response\Capabilities\Cookies\SetCookieHeader;
+use Avax\Components\HTTP\Response\Capabilities\Headers\ResponseHeaders;
+use Avax\Components\HTTP\Response\Response;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

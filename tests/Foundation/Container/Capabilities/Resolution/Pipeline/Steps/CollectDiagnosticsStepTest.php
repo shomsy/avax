@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline\Steps;
 
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepStarted;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepSucceeded;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\CollectDiagnosticsStep;
-use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Telemetry\StepTelemetryRecorder;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepStarted;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepSucceeded;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\CollectDiagnosticsStep;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Telemetry\StepTelemetryRecorder;
 use Avax\Tests\TestCase;
 
 final class CollectDiagnosticsStepTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 

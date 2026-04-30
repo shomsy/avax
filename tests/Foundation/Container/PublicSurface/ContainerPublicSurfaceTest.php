@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\PublicSurface;
 
-use Avax\Container\BindingBuilderInterface;
-use Avax\Container\Container;
-use Avax\Container\ContainerInterface;
-use Avax\Container\ContextBuilderInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
-use Avax\Container\ScopeManagerInterface;
+use Avax\Components\Application\Container\BindingBuilderInterface;
+use Avax\Components\Application\Container\Container;
+use Avax\Components\Application\Container\ContainerInterface;
+use Avax\Components\Application\Container\ContextBuilderInterface;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
+use Avax\Components\Application\Container\ScopeManagerInterface;
 use Avax\Tests\TestCase;
 use ReflectionMethod;
 

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Engine;
 
-use Avax\Container\Container;
-use Avax\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;
-use Avax\Container\DependencyInjection\Capability\Observability\Trace\TraceObserverInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\ContainerKernel;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Configuration\ContainerBuilder;
+use Avax\Components\Application\Container\Container;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Observability\Trace\TraceObserverInterface;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\ContainerKernel;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Components\Application\Container\DependencyInjection\Configuration\ContainerBuilder;
 use Avax\Tests\TestCase;
 use ReflectionProperty;
 use stdClass;

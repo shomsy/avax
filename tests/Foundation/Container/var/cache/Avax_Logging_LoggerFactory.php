@@ -1,6 +1,6 @@
 <?php
 
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 use Avax\Logging\LoggerFactory;
 
 return ServicePrototype::__set_state(array: [

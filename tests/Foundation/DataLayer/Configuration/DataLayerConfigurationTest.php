@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataLayer\Configuration;
 
-use Avax\DataLayer\ConfigureDataLayer\DataLayerConfig;
-use Avax\DataLayer\ConfigureDataLayer\DataLayerConfigurationFailure;
-use Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime;
-use Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime;
-use Avax\DataLayer\DataLayer;
+use Avax\Components\DataStack\Database\ConfigureDataLayer\DataLayerConfig;
+use Avax\Components\DataStack\Database\ConfigureDataLayer\DataLayerConfigurationFailure;
+use Avax\Components\DataStack\Database\ConfigureDataLayer\RegisterDataLayerRuntime;
+use Avax\Components\DataStack\Database\ConfigureDataLayer\ResolveDataLayerRuntime;
+use Avax\Components\DataStack\Database\DataLayer;
 use Avax\Tests\TestCase;
 use stdClass;
 

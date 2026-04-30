@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\Unit;
 
-use Avax\Database\System\Capabilities\ORM\Attributes\Entity;
-use Avax\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
-use Avax\Database\System\Capabilities\ORM\Attributes\Id;
-use Avax\Database\System\Capabilities\ORM\Attributes\Table;
-use Avax\Database\System\Capabilities\ORM\Repositories\EntityRepository;
-use Avax\Database\System\Capabilities\Query\Exceptions\QueryException;
-use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Id;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Table;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
 use Avax\Tests\TestCase;
 use Exception;
 use PDO;
@@ -53,7 +53,7 @@ final class CriticalPathTest extends TestCase
     }
 
     /**
-     * Test: EntityManager persists and rehydrates one mapped entity.
+     * Test: Persistence persists and rehydrates one mapped entity.
      *
      * @throws Throwable
      */

@@ -20,7 +20,7 @@ final class PublicCacheClassesAutoloadTest extends TestCase
 {
     public function test_public_cache_classes_are_autoloadable() : void
     {
-        self::assertTrue(condition: class_exists(\Avax\Cache\Cache::class), message: 'Cache facade not autoloadable');
+        self::assertTrue(condition: class_exists(\Avax\Components\Application\Cache\Cache::class), message: 'Cache facade not autoloadable');
         self::assertTrue(condition: class_exists(CompiledCache::class), message: 'CompiledCache facade not autoloadable');
         self::assertTrue(condition: interface_exists(CacheContract::class), message: 'CacheContract not autoloadable');
         self::assertTrue(condition: class_exists(AvaxCache::class), message: 'AvaxCache not autoloadable');

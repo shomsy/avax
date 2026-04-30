@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\Core;
 
-use Avax\Database\Database;
-use Avax\Database\EntityManager;
-use Avax\Database\Migrations;
-use Avax\Database\Query;
-use Avax\Database\Schema;
-use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\Telemetry;
-use Avax\Database\Transactions;
+use Avax\Components\DataStack\Database\Database;
+use Avax\Components\DataStack\Database\Migrations;
+use Avax\Components\DataStack\Database\Persistence;
+use Avax\Components\DataStack\Database\Query;
+use Avax\Components\DataStack\Database\Schema;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\Telemetry;
+use Avax\Components\DataStack\Database\Transactions;
 use Avax\Tests\TestCase;
 use Random\RandomException;
 use ReflectionException;
@@ -39,7 +39,7 @@ class KernelTest extends TestCase
         $this->assertInstanceOf(expected: Database::class, actual: $database);
         $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());
         $this->assertInstanceOf(expected: Query::class, actual: $database->query());
-        $this->assertInstanceOf(expected: EntityManager::class, actual: $database->entityManager());
+        $this->assertInstanceOf(expected: Persistence::class, actual: $database->entityManager());
         $this->assertInstanceOf(expected: Schema::class, actual: $database->schema());
         $this->assertInstanceOf(expected: Migrations::class, actual: $database->migrations());
         $this->assertInstanceOf(expected: Transactions::class, actual: $database->transactions());

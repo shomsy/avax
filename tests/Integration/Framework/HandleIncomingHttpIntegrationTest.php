@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\Framework;
 
+use Avax\Components\HTTP\Router\RouterInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
-use Avax\HTTP\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 

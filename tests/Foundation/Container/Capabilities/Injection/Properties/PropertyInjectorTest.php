@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Injection\Properties;
 
-use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
-use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Components\Application\Container\ContainerInterface;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Tests\TestCase;
 use stdClass;
 

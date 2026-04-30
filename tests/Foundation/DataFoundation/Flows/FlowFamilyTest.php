@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataFoundation\Flows;
 
-use Avax\DataFoundation\Flows\Batch\Batch;
-use Avax\DataFoundation\Flows\LazySequence\LazySequence;
-use Avax\DataFoundation\Flows\Pipeline\Pipeline;
-use Avax\DataFoundation\Flows\Window\Window;
+use Avax\Components\DataStack\Database\Flows\Batch\Batch;
+use Avax\Components\DataStack\Database\Flows\LazySequence\LazySequence;
+use Avax\Components\DataStack\Database\Flows\Pipeline\Pipeline;
+use Avax\Components\DataStack\Database\Flows\Window\Window;
 use Avax\Tests\TestCase;
 
 final class FlowFamilyTest extends TestCase

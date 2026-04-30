@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainAwareMatcher;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use Avax\Tests\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Response;
 
-use Avax\HTTP\Response\Capabilities\Caching\CacheControl;
-use Avax\HTTP\Response\Capabilities\Caching\Etag;
-use Avax\HTTP\Response\Capabilities\Caching\LastModified;
-use Avax\HTTP\Response\Response;
+use Avax\Components\HTTP\Response\Capabilities\Caching\CacheControl;
+use Avax\Components\HTTP\Response\Capabilities\Caching\Etag;
+use Avax\Components\HTTP\Response\Capabilities\Caching\LastModified;
+use Avax\Components\HTTP\Response\Response;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

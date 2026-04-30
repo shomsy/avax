@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Response\Flows;
 
-use Avax\HTTP\Response\Flows\EmitResponse\EmitResponse;
-use Avax\HTTP\Response\Response;
+use Avax\Components\HTTP\Response\Flows\EmitResponse\EmitResponse;
+use Avax\Components\HTTP\Response\Response;
 use PHPUnit\Framework\TestCase;
 
 final class EmitResponseTest extends TestCase

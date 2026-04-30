@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
-use Avax\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\HTTP\Router\System\Flows\RunRoute\Pipeline\RouteStage;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Router\System\Flows\RunRoute\Pipeline\RouteStage;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 

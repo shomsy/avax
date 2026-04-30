@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainPatternCompiler;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainPatternCompiler;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 use components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Flows\ResolveRequest\Request\RouteRequestInjector;

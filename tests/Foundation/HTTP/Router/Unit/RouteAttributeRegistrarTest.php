@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
-use Avax\HTTP\Router\HttpMethod;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Attributes\AttributeRouteRegistrar;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Attributes\Route;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
-use Avax\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Components\HTTP\Router\HttpMethod;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Attributes\AttributeRouteRegistrar;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Attributes\Route;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\DuplicateRouteException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
 use Psr\Log\NullLogger;
 use ReflectionException;

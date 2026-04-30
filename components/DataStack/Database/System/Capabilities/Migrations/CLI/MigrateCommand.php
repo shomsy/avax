@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CLI;
 
+use Avax\Components\DataStack\Database\Connection;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\MigrationRunner;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
-use Avax\Database\Connection;
 use Closure;
 use PDO;
 

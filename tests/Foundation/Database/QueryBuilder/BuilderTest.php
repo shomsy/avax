@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Database\QueryBuilder;
 
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Tests\TestCase;
 use Override;
 use ReflectionException;

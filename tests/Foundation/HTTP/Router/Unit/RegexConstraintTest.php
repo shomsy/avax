@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
-use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
-use Avax\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
-use Avax\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Avax\Tests\TestCase;
 
 /**

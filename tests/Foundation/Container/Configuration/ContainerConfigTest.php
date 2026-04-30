@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Configuration;
 
-use Avax\Container\DependencyInjection\Configuration\ContainerConfig;
+use Avax\Components\Application\Container\DependencyInjection\Configuration\ContainerConfig;
 use Avax\Tests\TestCase;
 
 final class ContainerConfigTest extends TestCase

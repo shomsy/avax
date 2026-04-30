@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Invocation\CallableInvocation;
 
-use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationContext;
-use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationExecutor;
-use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationContext;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationExecutor;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Tests\TestCase;
 use ReflectionException;
 use stdClass;

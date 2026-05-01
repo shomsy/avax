@@ -19,7 +19,7 @@ final class ComponentRegistry
      */
     private array $providers = [];
 
-    public function register(ComponentDefinition $definition) : void
+    public function register(ComponentDefinition $definition): void
     {
         if ($this->has(name: $definition->name())) {
             throw new FrameworkMisconfigured(
@@ -30,13 +30,13 @@ final class ComponentRegistry
         $this->definitions[$definition->name()] = $definition;
     }
 
-    public function registerProvider(ComponentProviderInterface $provider) : void
+    public function registerProvider(ComponentProviderInterface $provider): void
     {
         $name = $provider::name();
 
         $this->register(
             definition: new ComponentDefinition(
-                            name: $name,
+                name: $name,
                 providerClass: $provider::class,
             ),
         );
@@ -44,7 +44,7 @@ final class ComponentRegistry
         $this->providers[$name] = $provider;
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return array_key_exists($name, $this->definitions);
     }
@@ -52,7 +52,7 @@ final class ComponentRegistry
     /**
      * @return list<ComponentDefinition>
      */
-    public function all() : array
+    public function all(): array
     {
         return array_values($this->definitions);
     }
@@ -60,12 +60,12 @@ final class ComponentRegistry
     /**
      * @return list<string>
      */
-    public function names() : array
+    public function names(): array
     {
         return array_keys($this->definitions);
     }
 
-    public function boot(RuntimeInterface $runtime) : void
+    public function boot(RuntimeInterface $runtime): void
     {
         foreach ($this->providers as $provider) {
             $provider->boot(runtime: $runtime);

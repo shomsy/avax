@@ -19,13 +19,13 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_resets_all_registered_states(): void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         $resetCalled = false;
 
         $registry->register(
             name: 'state1',
-            state: new class($resetCalled) implements ResettableState {
+            state: new class ($resetCalled) implements ResettableState {
                       public function __construct(private bool &$resetCalled) {}
 
                 public function resetState(): void
@@ -46,14 +46,14 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_resets_multiple_registered_states(): void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         $called1 = false;
         $called2 = false;
 
         $registry->register(
             name: 'state1',
-            state: new class($called1) implements ResettableState {
+            state: new class ($called1) implements ResettableState {
                       public function __construct(private bool &$called) {}
 
                 public function resetState(): void
@@ -65,7 +65,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'state2',
-            state: new class($called2) implements ResettableState {
+            state: new class ($called2) implements ResettableState {
                       public function __construct(private bool &$called) {}
 
                 public function resetState(): void
@@ -86,11 +86,11 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_reports_failures_when_state_reset_throws(): void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         $registry->register(
             name: 'failing',
-            state: new class implements ResettableState {
+            state: new class () implements ResettableState {
                 public function resetState(): void
                 {
                     throw new RuntimeException(message: 'Cannot reset state');
@@ -110,13 +110,13 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_continues_reset_after_one_state_fails(): void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         $afterCalled = false;
 
         $registry->register(
             name: 'failing',
-            state: new class implements ResettableState {
+            state: new class () implements ResettableState {
                 public function resetState(): void
                 {
                     throw new RuntimeException(message: 'Failed');
@@ -126,7 +126,7 @@ final class StateResetRegistryTest extends TestCase
 
         $registry->register(
             name: 'success',
-            state: new class($afterCalled) implements ResettableState {
+            state: new class ($afterCalled) implements ResettableState {
                       public function __construct(private bool &$afterCalled) {}
 
                 public function resetState(): void
@@ -147,7 +147,7 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_returns_empty_report_when_nothing_registered(): void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         $report = $registry->resetAll();
 

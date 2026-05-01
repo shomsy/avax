@@ -62,7 +62,7 @@ final class Validator
 
     public static function make(array $data, array $rules, array $messages = []) : ValidationFailure
     {
-        return (new self)
+        return (new self())
             ->setData($data)
             ->setRules($rules)
             ->setMessages($messages)

@@ -19,7 +19,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class ReadCompiledCache
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock) {}
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock()) {}
 
     public function read(
         string $name,
@@ -67,7 +67,7 @@ final readonly class ReadCompiledCache
 
         $payload = require $compiledCachePath->toString();
 
-        $validator = new ValidateCompiledCachePayload;
+        $validator = new ValidateCompiledCachePayload();
         $validator->validate(name: $compiledCacheName->toString(), payload: $payload);
 
         return $payload;

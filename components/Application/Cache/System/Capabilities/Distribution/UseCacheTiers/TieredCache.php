@@ -32,7 +32,7 @@ final class TieredCache implements CacheStore
     )
     {
         foreach ($cacheTier as $tier) {
-            $key = $tier->cacheTierName->value;
+            $key               = $tier->cacheTierName->value;
             $this->tierDefinitions[$key] = $tier;
             $this->tiers[$key] = null;
             $this->tierOrder[] = $key;

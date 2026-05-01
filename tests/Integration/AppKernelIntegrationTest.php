@@ -40,7 +40,7 @@ class AppKernelIntegrationTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReservedRouteNameException
      */
-    public function router_bootstrapper_registers_routes() : void
+    public function router_bootstrapper_registers_routes(): void
     {
         // Given: Routes registered via bootstrapper
         $this->bootstrapper
@@ -61,7 +61,7 @@ class AppKernelIntegrationTest extends TestCase
      * @throws ReflectionException
      * @throws ReservedRouteNameException
      */
-    public function app_kernel_handles_complete_request_flow() : void
+    public function app_kernel_handles_complete_request_flow(): void
     {
         // Given: Complete application with routes and middleware
         $app = $this->bootstrapper
@@ -93,7 +93,7 @@ class AppKernelIntegrationTest extends TestCase
      *
      * @throws ReservedRouteNameException
      */
-    public function middleware_groups_work_in_bootstrapper() : void
+    public function middleware_groups_work_in_bootstrapper(): void
     {
         // Given: Middleware group defined
         $csrfMiddleware = new CsrfVerificationMiddleware(responseFactory: $this->responseFactory);
@@ -115,17 +115,17 @@ class AppKernelIntegrationTest extends TestCase
      *
      * @throws ReflectionException
      */
-    public function route_grouping_preserves_middleware_stack() : void
+    public function route_grouping_preserves_middleware_stack(): void
     {
         // Given: Nested route groups
         $csrfMiddleware = new CsrfVerificationMiddleware(responseFactory: $this->responseFactory);
 
         $this->bootstrapper
-            ->group(routes: static function ($router) use ($csrfMiddleware) : void {
+            ->group(routes: static function ($router) use ($csrfMiddleware): void {
                 $router->middlewareGroup('secure', [$csrfMiddleware]);
                 $router->useGroup('secure');
 
-                $router->group(static function ($router) : void {
+                $router->group(static function ($router): void {
                     $router->get('/admin/users', [AdminController::class, 'users']);
                     $router->post('/admin/users', [AdminController::class, 'createUser']);
                 });
@@ -141,7 +141,7 @@ class AppKernelIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function app_kernel_provides_middleware_priority_hints() : void
+    public function app_kernel_provides_middleware_priority_hints(): void
     {
         // When: Getting priority hints
         $priorities = AppKernel::getMiddlewarePriorityHints();
@@ -156,7 +156,7 @@ class AppKernelIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function router_bootstrapper_validates_middleware_groups() : void
+    public function router_bootstrapper_validates_middleware_groups(): void
     {
         // Expect exception for undefined group
         $this->expectException(exception: InvalidArgumentException::class);
@@ -166,13 +166,13 @@ class AppKernelIntegrationTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $psr17Factory = new Psr17Factory;
+        $psr17Factory = new Psr17Factory();
 
-        $this->router     = $this->createMock(RouterInterface::class);
-        $routeCollection  = new RouteCollection;
-        $this->dispatcher = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
+        $this->router          = $this->createMock(RouterInterface::class);
+        $routeCollection       = new RouteCollection();
+        $this->dispatcher      = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
         $this->responseFactory = new Responses(
             streamFactory: $psr17Factory->createStreamFactory(),
             response     : $psr17Factory->createResponses()->createResponse(),
@@ -185,17 +185,17 @@ class AppKernelIntegrationTest extends TestCase
 // Mock controllers for testing
 class UserController
 {
-    public function index() : array
+    public function index(): array
     {
         return ['users' => []];
     }
 
-    public function store() : array
+    public function store(): array
     {
         return ['user' => ['id' => 1]];
     }
 
-    public function show(int $id) : array
+    public function show(int $id): array
     {
         return ['user' => ['id' => $id]];
     }
@@ -203,12 +203,12 @@ class UserController
 
 class AdminController
 {
-    public function users() : array
+    public function users(): array
     {
         return ['admin_users' => []];
     }
 
-    public function createUser() : array
+    public function createUser(): array
     {
         return ['admin_user' => ['id' => 1]];
     }

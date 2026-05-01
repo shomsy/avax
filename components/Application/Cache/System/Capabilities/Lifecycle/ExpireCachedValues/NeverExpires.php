@@ -22,7 +22,7 @@ final readonly class NeverExpires implements CacheExpiration
 
     #[Override]
     public function isExpired(
-        ?Timestamp $expiresAt,
+        ?Timestamp $timestamp,
         Clock $clock,
     ) : bool
     {

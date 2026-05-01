@@ -12,7 +12,7 @@ if ($argc < 3) {
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
 $fixturePath = (string) ($argv[1] ?? '');
-$outputDir = rtrim(string: (string) ($argv[2] ?? ''), characters: '/');
+$outputDir   = rtrim(string: (string) ($argv[2] ?? ''), characters: '/');
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -34,21 +34,21 @@ if (! $loaded instanceof ContainerInterface) {
     exit(1);
 }
 
-$container    = $loaded;
-$graph        = $container->debugGraph();
+$container  = $loaded;
+$graph      = $container->debugGraph();
 $serviceIds = array_keys(array: $graph['graph'] ?? []);
 sort(array: $serviceIds);
 
 $runtimeInputs = [];
-$conditionals = [];
+$conditionals  = [];
 foreach ($serviceIds as $serviceId) {
     $plan                      = $container->debugPlan(id: $serviceId);
     $runtimeInputs[$serviceId] = array_filter(
-            array   : $plan['constructor'] ?? [],
-            callback: static fn (array $parameter) : bool => ($parameter['source'] ?? '') === 'runtime',
-        )
+        array   : $plan['constructor'] ?? [],
+        callback: static fn (array $parameter): bool => ($parameter['source'] ?? '') === 'runtime',
+    )
             |> array_values(...)
-            |> (static fn ($x) => array_map(callback: static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
+            |> (static fn ($x) => array_map(callback: static fn (array $parameter): string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
             |> array_values(...);
 
     foreach ($plan['methods'] ?? [] as $method) {
@@ -62,21 +62,21 @@ foreach ($serviceIds as $serviceId) {
     }
 
     $runtimeInputs[$serviceId] = array_filter(
-            array   : $runtimeInputs[$serviceId],
-            callback: static fn (string $name) : bool => $name !== '',
-        )
+        array   : $runtimeInputs[$serviceId],
+        callback: static fn (string $name): bool => $name !== '',
+    )
             |> array_unique(...)
             |> array_values(...);
 
     $description = $container->describeService(id: $serviceId);
-    $conditions                = $description['ownership'] ?? [];
+    $conditions  = $description['ownership'] ?? [];
     if (($description['conditions']['active'] ?? true) === false || ($conditions['profiles'] ?? []) !== [] || ($conditions['flags'] ?? []) !== [] || ($conditions['tenants'] ?? []) !== [] || ($conditions['regions'] ?? []) !== [] || ($conditions['modes'] ?? []) !== []) {
         $conditionals[$serviceId] = [
             'profiles' => $conditions['profiles'] ?? [],
-            'flags' => $conditions['flags'] ?? [],
-            'tenants' => $conditions['tenants'] ?? [],
-            'regions' => $conditions['regions'] ?? [],
-            'modes' => $conditions['modes'] ?? [],
+            'flags'    => $conditions['flags']       ?? [],
+            'tenants'  => $conditions['tenants']   ?? [],
+            'regions'  => $conditions['regions']   ?? [],
+            'modes'    => $conditions['modes']       ?? [],
             'fallback' => (bool) ($conditions['fallback'] ?? false),
         ];
     }
@@ -84,24 +84,24 @@ foreach ($serviceIds as $serviceId) {
 
 $payload = [
     'schemaVersion' => 1,
-    'serviceIds'   => $serviceIds,
-    'sliceExports' => array_map(
-        callback: static fn (array $slice) : array => $slice['exports'] ?? [],
+    'serviceIds'    => $serviceIds,
+    'sliceExports'  => array_map(
+        callback: static fn (array $slice): array => $slice['exports'] ?? [],
         array   : $graph['slices'] ?? [],
     ),
     'sliceImports' => array_map(
-        callback: static fn (array $slice) : array => $slice['imports'] ?? [],
+        callback: static fn (array $slice): array => $slice['imports'] ?? [],
         array   : $graph['slices'] ?? [],
     ),
-    'groups'       => array_map(
-        callback: static fn (array $items) : array => array_map(
-            callback: static fn (array $item) : string => (string) ($item['serviceId'] ?? ''),
+    'groups' => array_map(
+        callback: static fn (array $items): array => array_map(
+            callback: static fn (array $item): string => (string) ($item['serviceId'] ?? ''),
             array   : $items,
         ),
         array   : $graph['groups'] ?? [],
     ),
     'runtimeInputs' => $runtimeInputs,
-    'conditionals' => $conditionals,
+    'conditionals'  => $conditionals,
 ];
 
 if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $outputDir)) {
@@ -113,16 +113,16 @@ $jsonPath = $outputDir . '/container-static-hints.json';
 $stubPath = $outputDir . '/container-static-hints.stub.php';
 
 $serviceIdUnion = implode(separator: '|', array: array_map(
-    callback: static fn (string $serviceId) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $serviceId) . "'",
+    callback: static fn (string $serviceId): string => "'" . str_replace(search: "'", replace: "\\'", subject: $serviceId) . "'",
     array   : $serviceIds,
 ));
-$groupUnion     = $payload['groups']
+$groupUnion = $payload['groups']
         |> array_keys(...)
-        |> (static fn ($x) => array_map(callback: static fn (string $group) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $group) . "'", array: $x))
+        |> (static fn ($x) => array_map(callback: static fn (string $group): string => "'" . str_replace(search: "'", replace: "\\'", subject: $group) . "'", array: $x))
         |> (static fn ($x) => implode(separator: '|', array: $x));
-$sliceUnion     = $payload['sliceExports']
+$sliceUnion = $payload['sliceExports']
         |> array_keys(...)
-        |> (static fn ($x) => array_map(callback: static fn (string $slice) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $slice) . "'", array: $x))
+        |> (static fn ($x) => array_map(callback: static fn (string $slice): string => "'" . str_replace(search: "'", replace: "\\'", subject: $slice) . "'", array: $x))
         |> (static fn ($x) => implode(separator: '|', array: $x));
 
 $stub = <<<PHP

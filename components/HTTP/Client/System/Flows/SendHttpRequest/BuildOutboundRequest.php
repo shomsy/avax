@@ -23,9 +23,9 @@ final class BuildOutboundRequest
      *
      * @return Request The PSR-7 request
      */
-    public function build(OutboundRequest $request) : Request
+    public function build(OutboundRequest $request): Request
     {
-        $body = $this->normalizeBody($request->body);
+        $body    = $this->normalizeBody($request->body);
         $headers = $this->prepareHeaders($request);
 
         return new Request(
@@ -39,7 +39,7 @@ final class BuildOutboundRequest
     /**
      * Normalize the request body to a string.
      */
-    private function normalizeBody(mixed $body) : string
+    private function normalizeBody(mixed $body): string
     {
         if ($body === null) {
             return '';

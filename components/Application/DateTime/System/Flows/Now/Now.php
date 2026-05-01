@@ -11,7 +11,7 @@ final class Now
 {
     public static function now() : DateTimeImmutable
     {
-        return new DateTimeImmutable;
+        return new DateTimeImmutable();
     }
 
     public static function today() : DateTimeImmutable

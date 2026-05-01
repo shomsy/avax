@@ -202,6 +202,6 @@ final class ResponsesTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->factory = new Responses;
+        $this->factory = new Responses();
     }
 }

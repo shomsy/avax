@@ -11,22 +11,23 @@ final class InMemoryFlagStore implements FlagStoreInterface
 {
     public function __construct(
         private array $flags = [],
-    ) {}
+    ) {
+    }
 
     #[Override]
-    public function get(string $flag) : mixed
+    public function get(string $flag): mixed
     {
         return $this->flags[$flag] ?? false;
     }
 
     #[Override]
-    public function set(string $flag, mixed $value) : void
+    public function set(string $flag, mixed $value): void
     {
         $this->flags[$flag] = $value;
     }
 
     #[Override]
-    public function all() : array
+    public function all(): array
     {
         return $this->flags;
     }

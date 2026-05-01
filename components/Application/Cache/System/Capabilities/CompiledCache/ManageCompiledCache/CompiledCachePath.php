@@ -11,19 +11,18 @@ final readonly class CompiledCachePath
 {
     public function __construct(
         public string $path,
-    )
-    {
+    ) {
         $this->validate();
     }
 
-    private function validate() : void
+    private function validate(): void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Compiled cache path cannot be empty');
         }
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->path;
     }
@@ -31,17 +30,17 @@ final readonly class CompiledCachePath
     /**
      * @throws RandomException
      */
-    public function toTemporaryPath() : string
+    public function toTemporaryPath(): string
     {
         return $this->path . '.' . bin2hex(random_bytes(8)) . '.tmp';
     }
 
-    public function directory() : string
+    public function directory(): string
     {
         return dirname($this->path);
     }
 
-    public function filename() : string
+    public function filename(): string
     {
         return basename($this->path);
     }

@@ -16,7 +16,7 @@ final class MetricsBackendTest extends TestCase
 {
     public function test_prometheus_backend_counts() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
 
         $backend->increment(metric: 'cache.hit', value: 5);
         $backend->increment(metric: 'cache.miss', value: 3);
@@ -27,7 +27,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_prometheus_backend_gauges() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
 
         $backend->gauge(metric: 'cache.hit_rate', value: 0.85);
 
@@ -36,7 +36,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_prometheus_backend_histogram() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
 
         $backend->histogram(metric: 'cache.latency', value: 150.5);
         $backend->histogram(metric: 'cache.latency', value: 200.0);
@@ -47,7 +47,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_prometheus_render() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
 
         $backend->increment(metric: 'cache.hit', value: 10);
         $backend->gauge(metric: 'cache.hit_rate', value: 0.75);
@@ -62,7 +62,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_statsd_backend_messages() : void
     {
-        $backend = new StatsDBackend;
+        $backend = new StatsDBackend();
 
         $backend->increment(metric: 'cache.hit', value: 5);
         $backend->gauge(metric: 'cache.hit_rate', value: 0.85);
@@ -77,7 +77,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_statsd_percentile() : void
     {
-        $backend = new StatsDBackend;
+        $backend = new StatsDBackend();
 
         $backend->timing(metric: 'cache.latency', milliseconds: 100);
         $backend->timing(metric: 'cache.latency', milliseconds: 200);
@@ -93,7 +93,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_metrics_sink_records_hits() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
         $sink    = new MetricsSink(backend: $backend, prefix: 'cache');
 
         $sink->recordHit();
@@ -103,7 +103,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_metrics_sink_records_latency() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
         $sink    = new MetricsSink(backend: $backend, prefix: 'cache');
 
         $sink->recordLatency(microseconds: 5000);
@@ -113,7 +113,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_metrics_sink_records_all_metrics() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
         $sink    = new MetricsSink(backend: $backend, prefix: 'cache');
 
         $sink->recordHit();
@@ -135,11 +135,11 @@ final class MetricsBackendTest extends TestCase
 
     public function test_metrics_sink_records_cache_metrics() : void
     {
-        $backend = new PrometheusBackend;
+        $backend = new PrometheusBackend();
         $sink    = new MetricsSink(backend: $backend, prefix: 'cache');
 
         $clock   = new FrozenClock(timestamp: Timestamp::now());
-        $metrics = new CacheMetrics;
+        $metrics = new CacheMetrics();
         $metrics->recordHit();
         $metrics->recordHit();
         $metrics->recordHit();
@@ -152,7 +152,7 @@ final class MetricsBackendTest extends TestCase
 
     public function test_metrics_sink_flush() : void
     {
-        $backend = new StatsDBackend;
+        $backend = new StatsDBackend();
         $sink    = new MetricsSink(backend: $backend, prefix: 'cache');
 
         $sink->recordHit();

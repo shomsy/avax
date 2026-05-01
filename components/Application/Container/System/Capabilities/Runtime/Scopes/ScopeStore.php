@@ -94,9 +94,9 @@ final class ScopeStore
      */
     public function setFor(
         string $abstract,
-        mixed   $instance,
+        mixed  $instance,
         ?string $kind = null,
-        bool    $disposable = false,
+        bool   $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
@@ -186,9 +186,9 @@ final class ScopeStore
         string $abstract,
         mixed $instance,
         string $kind,
-        int   $maxSize,
+        int  $maxSize,
         ?bool $resetBeforeReuse = null,
-        bool  $disposable = false,
+        bool $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;

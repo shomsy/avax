@@ -18,23 +18,22 @@ final class CacheCluster
     public function __construct(
         int $virtualNodes = 150,
         int $failureThreshold = 3,
-    )
-    {
-        $this->consistentHashRing = new ConsistentHashRing(virtualNodes: $virtualNodes);
+    ) {
+        $this->consistentHashRing       = new ConsistentHashRing(virtualNodes: $virtualNodes);
         $this->detectUnhealthyCacheNode = new DetectUnhealthyCacheNode(failureThreshold: $failureThreshold);
     }
 
-    public function getNode(CacheNodeId $cacheNodeId) : ?CacheNode
+    public function getNode(CacheNodeId $cacheNodeId): ?CacheNode
     {
         return $this->nodes[$cacheNodeId->toString()] ?? null;
     }
 
-    public function getHealthyNodes() : array
+    public function getHealthyNodes(): array
     {
-        return array_filter($this->nodes, static fn (CacheNode $cacheNode) : bool => $cacheNode->isHealthy());
+        return array_filter($this->nodes, static fn (CacheNode $cacheNode): bool => $cacheNode->isHealthy());
     }
 
-    public function recordSuccess(CacheNodeId $cacheNodeId) : void
+    public function recordSuccess(CacheNodeId $cacheNodeId): void
     {
         $cacheNodeStatus = $this->detectUnhealthyCacheNode->recordSuccess(nodeId: $cacheNodeId);
 
@@ -44,7 +43,7 @@ final class CacheCluster
         }
     }
 
-    public function addNode(CacheNode $cacheNode) : self
+    public function addNode(CacheNode $cacheNode): self
     {
         $this->nodes[$cacheNode->id->toString()] = $cacheNode;
         $this->consistentHashRing->addNode(node: $cacheNode);
@@ -52,7 +51,7 @@ final class CacheCluster
         return $this;
     }
 
-    public function recordFailure(CacheNodeId $cacheNodeId) : void
+    public function recordFailure(CacheNodeId $cacheNodeId): void
     {
         $cacheNodeStatus = $this->detectUnhealthyCacheNode->recordFailure(nodeId: $cacheNodeId);
 
@@ -62,7 +61,7 @@ final class CacheCluster
         }
     }
 
-    public function removeNode(CacheNodeId $cacheNodeId) : self
+    public function removeNode(CacheNodeId $cacheNodeId): self
     {
         $nodeIdStr = $cacheNodeId->toString();
 
@@ -74,12 +73,12 @@ final class CacheCluster
         return $this;
     }
 
-    public function getNodeForKey(CacheKey $cacheKey) : ?CacheNode
+    public function getNodeForKey(CacheKey $cacheKey): ?CacheNode
     {
         return $this->consistentHashRing->getNodeForKey(key: $cacheKey);
     }
 
-    public function nodeCount() : int
+    public function nodeCount(): int
     {
         return count($this->nodes);
     }

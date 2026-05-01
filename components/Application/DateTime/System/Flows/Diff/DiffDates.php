@@ -8,42 +8,42 @@ use DateTimeImmutable;
 
 final class DiffDates
 {
-    public function inDays(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inDays(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return (int) ($to->getTimestamp() - $from->getTimestamp()) / (60 * 60 * 24);
     }
 
-    public function inHours(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inHours(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return (int) ($to->getTimestamp() - $from->getTimestamp()) / (60 * 60);
     }
 
-    public function inMinutes(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inMinutes(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return (int) ($to->getTimestamp() - $from->getTimestamp()) / 60;
     }
 
-    public function inSeconds(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inSeconds(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return $to->getTimestamp() - $from->getTimestamp();
     }
 
-    public function inWeeks(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inWeeks(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return (int) (($to->getTimestamp() - $from->getTimestamp()) / (60 * 60 * 24 * 7));
     }
 
-    public function inMonths(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inMonths(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return ($to->format('Y') - $from->format('Y')) * 12 + (int) $to->format('m') - (int) $from->format('m');
     }
 
-    public function inYears(DateTimeImmutable $from, DateTimeImmutable $to) : int
+    public function inYears(DateTimeImmutable $from, DateTimeImmutable $to): int
     {
         return (int) $to->format('Y') - (int) $from->format('Y');
     }
 
-    public function forHumans(DateTimeImmutable $from, DateTimeImmutable $to) : string
+    public function forHumans(DateTimeImmutable $from, DateTimeImmutable $to): string
     {
         $diff = $to->getTimestamp() - $from->getTimestamp();
 
@@ -86,28 +86,28 @@ final class DiffDates
         return $years === 1 ? '1 year ago' : ($years === -1 ? '1 year from now' : ($diff > 0 ? $years . ' years ago' : abs($years) . ' years from now'));
     }
 
-    public function isPast(DateTimeImmutable $date) : bool
+    public function isPast(DateTimeImmutable $date): bool
     {
-        return $date < new DateTimeImmutable;
+        return $date < new DateTimeImmutable();
     }
 
-    public function isFuture(DateTimeImmutable $date) : bool
+    public function isFuture(DateTimeImmutable $date): bool
     {
-        return $date > new DateTimeImmutable;
+        return $date > new DateTimeImmutable();
     }
 
-    public function isToday(DateTimeImmutable $date) : bool
+    public function isToday(DateTimeImmutable $date): bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable)->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable())->format('Y-m-d');
     }
 
-    public function isTomorrow(DateTimeImmutable $date) : bool
+    public function isTomorrow(DateTimeImmutable $date): bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable)->modify('+1 day')->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable())->modify('+1 day')->format('Y-m-d');
     }
 
-    public function isYesterday(DateTimeImmutable $date) : bool
+    public function isYesterday(DateTimeImmutable $date): bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable)->modify('-1 day')->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable())->modify('-1 day')->format('Y-m-d');
     }
 }

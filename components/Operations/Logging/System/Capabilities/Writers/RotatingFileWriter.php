@@ -20,7 +20,7 @@ final class RotatingFileWriter
 
     public function write(string $message, string $level = 'info', array $context = []) : void
     {
-        $date = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
+        $date     = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
         $directory = dirname($this->baseLogPath);
         $filename = basename($this->baseLogPath);
 

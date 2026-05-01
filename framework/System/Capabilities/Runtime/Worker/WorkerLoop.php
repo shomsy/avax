@@ -13,7 +13,7 @@ final class WorkerLoop
     private bool $running = false;
 
     public function __construct(
-        private ?RuntimeInterface       $runtime = null,
+        private ?RuntimeInterface $runtime = null,
         private ?WorkerRuntimeInterface $workerRuntime = null,
     ) {}
 
@@ -75,7 +75,7 @@ final class WorkerLoop
         WorkerLifecycle $lifecycle,
     ) : void
     {
-        $handleIncomingHttp = new HandleIncomingHttp;
+        $handleIncomingHttp = new HandleIncomingHttp();
 
         while ( ($request = $workerRuntime->receive()) !== null ) {
             $response = $handleIncomingHttp->handle(

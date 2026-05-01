@@ -8,7 +8,7 @@ foreach ($it as $file) {
     if ($file->getExtension() !== 'php') {
         continue;
     }
-    $path = $file->getPathname();
+    $path     = $file->getPathname();
     $content = file_get_contents($path);
     $changed = false;
 

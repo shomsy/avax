@@ -12,9 +12,10 @@ final class BuildResponse
     public function __construct(
         private NormalizeResponseBody $bodyNormalizer,
         private NormalizeResponseHeaders $headerNormalizer,
-    ) {}
+    ) {
+    }
 
-    public function execute(mixed $content, int $status = 200, array $headers = []) : ResponseInterface
+    public function execute(mixed $content, int $status = 200, array $headers = []): ResponseInterface
     {
         return new Response(
             statusCode: $status,

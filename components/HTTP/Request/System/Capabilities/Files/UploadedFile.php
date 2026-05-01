@@ -12,7 +12,7 @@ final class UploadedFile implements UploadedFileInterface
 {
     public function __construct(
         private string $file,
-        private ?int    $size,
+        private ?int $size,
         private int $error,
         private ?string $clientFilename = null,
         private ?string $clientMediaType = null,

@@ -9,5 +9,5 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
  */
 interface DisposableInterface
 {
-    public function dispose() : void;
+    public function dispose(): void;
 }

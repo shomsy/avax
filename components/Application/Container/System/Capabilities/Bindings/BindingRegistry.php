@@ -23,40 +23,40 @@ final class BindingRegistry
     /** @var array<string, object> */
     private array $instances = [];
 
-    public function singleton(string $abstract, mixed $concrete = null) : void
+    public function singleton(string $abstract, mixed $concrete = null): void
     {
         $this->bind($abstract, $concrete, shared: true);
     }
 
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = false, bool $scoped = false) : void
+    public function bind(string $abstract, mixed $concrete = null, bool $shared = false, bool $scoped = false): void
     {
         $abstract                  = $this->resolveAlias($abstract);
         $this->bindings[$abstract] = [
             'concrete' => $concrete ?? $abstract,
-            'shared' => $shared,
-            'scoped' => $scoped,
+            'shared'   => $shared,
+            'scoped'   => $scoped,
         ];
     }
 
-    public function resolveAlias(string $abstract) : string
+    public function resolveAlias(string $abstract): string
     {
         return isset($this->aliases[$abstract])
             ? $this->resolveAlias($this->aliases[$abstract])
             : $abstract;
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : void
+    public function scoped(string $abstract, mixed $concrete = null): void
     {
         $this->bind($abstract, $concrete, shared: true, scoped: true);
     }
 
-    public function instance(string $abstract, object $instance) : void
+    public function instance(string $abstract, object $instance): void
     {
-        $abstract = $this->resolveAlias($abstract);
+        $abstract                   = $this->resolveAlias($abstract);
         $this->instances[$abstract] = $instance;
     }
 
-    public function alias(string $alias, string $abstract) : void
+    public function alias(string $alias, string $abstract): void
     {
         if ($alias === $abstract) {
             throw new LogicException('Cannot alias a service to itself: ' . $alias);
@@ -65,7 +65,7 @@ final class BindingRegistry
         $this->aliases[$alias] = $abstract;
     }
 
-    public function tag(string|array $abstracts, string|array $tags) : void
+    public function tag(string|array $abstracts, string|array $tags): void
     {
         foreach ((array) $abstracts as $abstract) {
             foreach ((array) $tags as $tag) {
@@ -74,41 +74,41 @@ final class BindingRegistry
         }
     }
 
-    public function tagged(string $tag) : array
+    public function tagged(string $tag): array
     {
         return $this->tags[$tag] ?? [];
     }
 
-    public function has(string $abstract) : bool
+    public function has(string $abstract): bool
     {
         $abstract = $this->resolveAlias($abstract);
 
         return isset($this->bindings[$abstract]) || isset($this->instances[$abstract]);
     }
 
-    public function getBinding(string $abstract) : ?array
+    public function getBinding(string $abstract): ?array
     {
         $abstract = $this->resolveAlias($abstract);
 
         return $this->bindings[$abstract] ?? null;
     }
 
-    public function getInstance(string $abstract) : ?object
+    public function getInstance(string $abstract): ?object
     {
         $abstract = $this->resolveAlias($abstract);
 
         return $this->instances[$abstract] ?? null;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->bindings = [];
-        $this->aliases  = [];
-        $this->tags     = [];
+        $this->bindings  = [];
+        $this->aliases   = [];
+        $this->tags      = [];
         $this->instances = [];
     }
 
-    public function clearScoped() : void
+    public function clearScoped(): void
     {
         foreach ($this->bindings as $abstract => $binding) {
             if ($binding['scoped']) {

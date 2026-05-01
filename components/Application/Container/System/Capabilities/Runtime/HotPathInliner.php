@@ -23,29 +23,29 @@ final class HotPathInliner
     /**
      * Attaches one compiled runtime artifact.
      */
-    public function attach(CompiledContainer $compiledContainer) : void
+    public function attach(CompiledContainer $compiledContainer): void
     {
         if ($this->compiledContainer === $compiledContainer) {
             return;
         }
 
         $this->compiledContainer = $compiledContainer;
-        $this->calls = [];
+        $this->calls             = [];
     }
 
     /**
      * Detaches the compiled runtime artifact.
      */
-    public function detach() : void
+    public function detach(): void
     {
         $this->compiledContainer = null;
-        $this->calls = [];
+        $this->calls             = [];
     }
 
     /**
      * Reports whether a compiled runtime is attached.
      */
-    public function isAttached() : bool
+    public function isAttached(): bool
     {
         return $this->compiledContainer instanceof CompiledContainer;
     }
@@ -53,21 +53,21 @@ final class HotPathInliner
     /**
      * @return array<string, mixed>
      */
-    public function state(?string $serviceId = null) : array
+    public function state(?string $serviceId = null): array
     {
         $attached = $this->compiledContainer instanceof CompiledContainer;
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
 
         return [
-            'attached' => $attached,
+            'attached'   => $attached,
             'entryCount' => $this->compiledContainer?->entryCount() ?? 0,
-            'entryIds' => $this->compiledContainer?->entryIds() ?? [],
-            'hasEntry' => $hasEntry,
-            'reason'   => match (true) {
-                ! $attached => 'no compiled runtime is attached',
+            'entryIds'   => $this->compiledContainer?->entryIds()   ?? [],
+            'hasEntry'   => $hasEntry,
+            'reason'     => match (true) {
+                ! $attached                              => 'no compiled runtime is attached',
                 $serviceId === null || $serviceId === '' => 'compiled runtime is attached',
-                $hasEntry   => 'compiled entry is attached',
-                default     => 'compiled runtime is attached but the requested entry is missing',
+                $hasEntry                                => 'compiled entry is attached',
+                default                                  => 'compiled runtime is attached but the requested entry is missing',
             },
         ];
     }
@@ -75,7 +75,7 @@ final class HotPathInliner
     /**
      * Reports whether one compiled entry exists.
      */
-    public function has(string $serviceId) : bool
+    public function has(string $serviceId): bool
     {
         return $this->compiledContainer?->has(serviceId: $serviceId) ?? false;
     }
@@ -85,7 +85,7 @@ final class HotPathInliner
      *
      * @throws ContainerException
      */
-    public function resolve(string $serviceId, ResolveDependency $resolveDependency, ResolveRequest $resolveRequest) : mixed
+    public function resolve(string $serviceId, ResolveDependency $resolveDependency, ResolveRequest $resolveRequest): mixed
     {
         if (! $this->compiledContainer instanceof CompiledContainer) {
             throw new ContainerException(message: 'HotPathInliner has no compiled runtime attached.');

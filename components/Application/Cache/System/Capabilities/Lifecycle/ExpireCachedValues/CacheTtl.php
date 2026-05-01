@@ -14,10 +14,11 @@ use Override;
 final readonly class CacheTtl implements CacheExpiration
 {
     public function __construct(
-        private Clock $clock = new SystemClock,
-    ) {}
+        private Clock $clock = new SystemClock(),
+    ) {
+    }
 
-    public static function toSeconds(int|DateInterval|null $ttl) : ?int
+    public static function toSeconds(int|DateInterval|null $ttl): ?int
     {
         if ($ttl === null) {
             return null;
@@ -34,8 +35,7 @@ final readonly class CacheTtl implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         ?Clock $clock = null,
-    ) : ?Timestamp
-    {
+    ): ?Timestamp {
         $clock ??= $this->clock;
 
         if ($ttl === null) {
@@ -59,16 +59,15 @@ final readonly class CacheTtl implements CacheExpiration
 
     #[Override]
     public function isExpired(
-        ?Timestamp $expiresAt,
-        ?Clock     $clock = null,
-    ) : bool
-    {
+        ?Timestamp $timestamp,
+        ?Clock $clock = null,
+    ): bool {
         $clock ??= $this->clock;
 
-        if (! $expiresAt instanceof Timestamp) {
+        if (! $timestamp instanceof Timestamp) {
             return false;
         }
 
-        return $clock->now()->isAfter(other: $expiresAt);
+        return $clock->now()->isAfter(other: $timestamp);
     }
 }

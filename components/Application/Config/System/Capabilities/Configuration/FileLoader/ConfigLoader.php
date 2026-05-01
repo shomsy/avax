@@ -23,5 +23,5 @@ interface ConfigLoader
      * - Parse the file content appropriately (e.g., JSON, YAML).
      * - Return an empty array if the file is empty or parsing fails gracefully.
      */
-    public function loadConfigFile(string $filePath) : array;
+    public function loadConfigFile(string $filePath): array;
 }

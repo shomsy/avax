@@ -11,10 +11,10 @@ interface InvalidateByKeys
     /**
      * @param iterable<CacheKey> $keys
      */
-    public function invalidateMany(iterable $keys) : int;
+    public function invalidateMany(iterable $keys): int;
 
     /**
      * @param iterable<CacheKey> $keys
      */
-    public function areAllInvalidated(iterable $keys) : bool;
+    public function areAllInvalidated(iterable $keys): bool;
 }

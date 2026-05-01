@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 final class CacheClusterTest extends TestCase
 {
-    public function test_add_node_registers_healthy_node() : void
+    public function test_add_node_registers_healthy_node(): void
     {
-        $cacheCluster = new CacheCluster;
+        $cacheCluster = new CacheCluster();
 
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
 
@@ -27,7 +27,7 @@ final class CacheClusterTest extends TestCase
         $this->assertTrue(condition: $node->isHealthy());
     }
 
-    public function test_get_healthy_nodes_returns_only_healthy() : void
+    public function test_get_healthy_nodes_returns_only_healthy(): void
     {
         $cacheCluster = new CacheCluster(virtualNodes: 3);
 
@@ -43,7 +43,7 @@ final class CacheClusterTest extends TestCase
         $this->assertCount(expectedCount: 1, haystack: $healthyNodes);
     }
 
-    public function test_record_failure_marks_node_unhealthy() : void
+    public function test_record_failure_marks_node_unhealthy(): void
     {
         $cacheCluster = new CacheCluster(virtualNodes: 3);
 
@@ -59,7 +59,7 @@ final class CacheClusterTest extends TestCase
         $this->assertEquals(expected: CacheNodeStatus::UNHEALTHY, actual: $node->status);
     }
 
-    public function test_record_success_recovers_node() : void
+    public function test_record_success_recovers_node(): void
     {
         $cacheCluster = new CacheCluster(virtualNodes: 3);
 
@@ -79,9 +79,9 @@ final class CacheClusterTest extends TestCase
         $this->assertEquals(expected: CacheNodeStatus::HEALTHY, actual: $node->status);
     }
 
-    public function test_unhealthy_node_not_selected_for_reads() : void
+    public function test_unhealthy_node_not_selected_for_reads(): void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -99,9 +99,9 @@ final class CacheClusterTest extends TestCase
         $this->assertEquals(expected: 'node_b', actual: $node->id->toString());
     }
 
-    public function test_remove_node_reduces_count() : void
+    public function test_remove_node_reduces_count(): void
     {
-        $cacheCluster = new CacheCluster;
+        $cacheCluster = new CacheCluster();
 
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_b'));
@@ -113,12 +113,12 @@ final class CacheClusterTest extends TestCase
         $this->assertEquals(expected: 1, actual: $cacheCluster->nodeCount());
     }
 
-    public function test_node_addition_affects_routing() : void
+    public function test_node_addition_affects_routing(): void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $cacheCluster = new CacheCluster;
+        $cacheCluster = new CacheCluster();
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
 
         $nodeBefore = $cacheCluster->getNodeForKey(key: CacheKey::create(key: 'test_key'));

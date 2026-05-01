@@ -25,13 +25,12 @@ final class InjectProperties
      * @throws Throwable
      */
     public function inject(
-        object         $target,
+        object $target,
         DependencyBlueprint $dependencyBlueprint,
-        array          $overrides,
+        array $overrides,
         ResolveDependency $resolveDependency,
         ResolveRequest $resolveRequest,
-    ) : void
-    {
+    ): void {
         foreach ($dependencyBlueprint->injectableProperties as $property) {
             $name = $property['name'];
 
@@ -60,12 +59,12 @@ final class InjectProperties
     /**
      * @return Closure(object, mixed) : void
      */
-    private function writerFor(string $class, string $property) : Closure
+    private function writerFor(string $class, string $property): Closure
     {
         $key = $class . '::$' . $property;
 
         return $this->writers[$key] ?? ($this->writers[$key] = Closure::bind(
-            closure : static function (object $target, mixed $value) use ($property) : void {
+            closure : static function (object $target, mixed $value) use ($property): void {
                 $target->{$property} = $value;
             },
             newThis : null,

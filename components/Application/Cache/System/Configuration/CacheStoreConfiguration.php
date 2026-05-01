@@ -14,19 +14,20 @@ final readonly class CacheStoreConfiguration
     public function __construct(
         public string $type,
         public array $options = [],
-    ) {}
+    ) {
+    }
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
         return new self(type: 'memory');
     }
 
-    public static function file(string $basePath) : self
+    public static function file(string $basePath): self
     {
         return new self(type: 'file', options: ['base_path' => $basePath]);
     }
 
-    public static function redis(string $host = '127.0.0.1', int $port = 6379) : self
+    public static function redis(string $host = '127.0.0.1', int $port = 6379): self
     {
         return new self(type: 'redis', options: [
             'host' => $host,
@@ -34,14 +35,14 @@ final readonly class CacheStoreConfiguration
         ]);
     }
 
-    public function build() : CacheStore
+    public function build(): CacheStore
     {
         return match ($this->type) {
-            'memory' => new InMemoryCacheStore,
+            'memory' => new InMemoryCacheStore(),
             'file'   => new FileCacheStore(
                 basePath: $this->options['base_path'] ?? sys_get_temp_dir() . '/avax_cache',
             ),
-            default  => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
+            default => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
         };
     }
 }

@@ -6,9 +6,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Observability\Ob
 
 interface CacheTrace
 {
-    public function trace(CacheOperation $cacheOperation) : void;
+    public function trace(CacheOperation $cacheOperation): void;
 
-    public function getOperations(?string $key = null) : array;
+    public function getOperations(?string $key = null): array;
 
-    public function clear() : void;
+    public function clear(): void;
 }

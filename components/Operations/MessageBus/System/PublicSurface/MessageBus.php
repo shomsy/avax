@@ -35,7 +35,7 @@ final class MessageBus
     private static function commandBus() : CommandBus
     {
         if (! isset(self::$commandBus)) {
-            self::$commandBus = new CommandBus;
+            self::$commandBus = new CommandBus();
         }
 
         return self::$commandBus;
@@ -44,7 +44,7 @@ final class MessageBus
     private static function queryBus() : QueryBus
     {
         if (! isset(self::$queryBus)) {
-            self::$queryBus = new QueryBus;
+            self::$queryBus = new QueryBus();
         }
 
         return self::$queryBus;
@@ -58,7 +58,7 @@ final class MessageBus
     private static function eventBus() : EventBus
     {
         if (! isset(self::$eventBus)) {
-            self::$eventBus = new EventBus;
+            self::$eventBus = new EventBus();
         }
 
         return self::$eventBus;

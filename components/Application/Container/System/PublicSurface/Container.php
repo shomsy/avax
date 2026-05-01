@@ -23,7 +23,7 @@ class Container
 {
     private static ?DIContainerInterface $container = null;
 
-    public static function setContainer(DIContainerInterface $container) : void
+    public static function setContainer(DIContainerInterface $container): void
     {
         self::$container = $container;
     }
@@ -31,72 +31,72 @@ class Container
     /**
      * Set a container instance (alias).
      */
-    public static function initialize(DIContainerInterface $container) : void
+    public static function initialize(DIContainerInterface $container): void
     {
         self::$container = $container;
     }
 
-    public static function make(string $abstract, array $parameters = []) : object
+    public static function make(string $abstract, array $parameters = []): object
     {
         return self::getContainer()->make($abstract, $parameters);
     }
 
-    public static function has(string $id) : bool
+    public static function has(string $id): bool
     {
         return self::getContainer()->has($id);
     }
 
-    public static function get(string $id) : mixed
+    public static function get(string $id): mixed
     {
         return self::getContainer()->get($id);
     }
 
-    public static function call(callable|string $callable, array $parameters = []) : mixed
+    public static function call(callable|string $callable, array $parameters = []): mixed
     {
         return self::getContainer()->call($callable, $parameters);
     }
 
-    public static function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
+    public static function bind(string $abstract, mixed $concrete = null, bool $shared = false): void
     {
         self::getContainer()->bind($abstract, $concrete, $shared);
     }
 
-    public static function singleton(string $abstract, mixed $concrete = null) : void
+    public static function singleton(string $abstract, mixed $concrete = null): void
     {
         self::getContainer()->singleton($abstract, $concrete);
     }
 
-    public static function scoped(string $abstract, mixed $concrete = null) : void
+    public static function scoped(string $abstract, mixed $concrete = null): void
     {
         self::getContainer()->scoped($abstract, $concrete);
     }
 
-    public static function instance(string $abstract, object $instance) : void
+    public static function instance(string $abstract, object $instance): void
     {
         self::getContainer()->instance($abstract, $instance);
     }
 
-    public static function alias(string $alias, string $abstract) : void
+    public static function alias(string $alias, string $abstract): void
     {
         self::getContainer()->alias($alias, $abstract);
     }
 
-    public static function tag(string|array $abstracts, string|array $tags) : void
+    public static function tag(string|array $abstracts, string|array $tags): void
     {
         self::getContainer()->tag($abstracts, $tags);
     }
 
-    public static function tagged(string $tag) : array
+    public static function tagged(string $tag): array
     {
         return self::getContainer()->tagged($tag);
     }
 
-    public static function flush() : void
+    public static function flush(): void
     {
         self::getContainer()->flush();
     }
 
-    private static function getContainer() : DIContainerInterface
+    private static function getContainer(): DIContainerInterface
     {
         if (self::$container === null) {
             throw new RuntimeException('Container not set. Call Container::setContainer() first.');

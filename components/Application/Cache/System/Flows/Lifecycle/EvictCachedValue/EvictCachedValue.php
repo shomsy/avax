@@ -14,12 +14,13 @@ use Throwable;
 final readonly class EvictCachedValue
 {
     public function __construct(
-        private CacheStore                      $cacheStore,
-        private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement,
-        private ?CacheMetrics                   $cacheMetrics = null,
-    ) {}
+        private CacheStore $cacheStore,
+        private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
+        private ?CacheMetrics $cacheMetrics = null,
+    ) {
+    }
 
-    public function evict(CacheKey $cacheKey) : bool
+    public function evict(CacheKey $cacheKey): bool
     {
         try {
             $this->cacheStore->forget(key: $cacheKey);
@@ -34,11 +35,10 @@ final readonly class EvictCachedValue
     public function evictUntilCapacityIsSafe(
         array $entries,
         int $maxCapacity,
-    ) : int
-    {
+    ): int {
         $evicted = 0;
 
-        while ( count($entries) > $maxCapacity ) {
+        while (count($entries) > $maxCapacity) {
             $keyToEvict = $this->chooseCachedValueForReplacement->choose(entries: $entries);
 
             if ($keyToEvict === null) {

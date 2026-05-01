@@ -16,9 +16,10 @@ final readonly class ConfigSchema
         public string $name,
         public array $fields = [],
         public ?string $description = null,
-    ) {}
+    ) {
+    }
 
-    public static function make(string $name) : self
+    public static function make(string $name): self
     {
         return new self(name: $name);
     }
@@ -29,13 +30,12 @@ final readonly class ConfigSchema
     public function field(
         string $name,
         string $type = ConfigSchemaField::TYPE_STRING,
-        bool    $required = true,
-        mixed   $default = null,
-        array   $allowed = [],
-        ?string $description = null,
-    ) : self
-    {
-        $fields = $this->fields;
+        bool $required = true,
+        mixed $default = null,
+        array $allowed = [],
+        string $description = null,
+    ): self {
+        $fields        = $this->fields;
         $fields[$name] = new ConfigSchemaField(
             name       : $name,
             type       : $type,

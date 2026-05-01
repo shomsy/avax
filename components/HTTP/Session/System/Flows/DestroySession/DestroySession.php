@@ -10,9 +10,10 @@ final readonly class DestroySession
 {
     public function __construct(
         private SessionScope $scope,
-    ) {}
+    ) {
+    }
 
-    public function execute() : void
+    public function execute(): void
     {
         $this->scope->destroy();
     }

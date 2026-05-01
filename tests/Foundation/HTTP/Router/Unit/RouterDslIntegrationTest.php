@@ -40,7 +40,7 @@ class RouterDslIntegrationTest extends TestCase
      */
     public function route_group_stack_has_apply_to_method() : void
     {
-        $stack  = new RouteGroupFrames;
+        $stack  = new RouteGroupFrames();
 
         $builder = RouteBuilder::make(method: 'GET', path: '/test');
         $result = $stack->applyTo(builder: $builder);
@@ -54,12 +54,12 @@ class RouterDslIntegrationTest extends TestCase
      */
     public function route_group_stack_snapshot_restore_works() : void
     {
-        $stack = new RouteGroupFrames;
+        $stack = new RouteGroupFrames();
 
         $initialState = $stack->snapshot();
 
         // Add a context
-        $context = new RouteGroupContext;
+        $context = new RouteGroupContext();
         $stack->push(group: $context);
 
         $this->assertEquals(expected: 1, actual: $stack->depth());

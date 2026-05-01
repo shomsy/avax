@@ -16,7 +16,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_stores_and_retrieves_values() : void
+    public function test_stores_and_retrieves_values(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -31,7 +31,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_returns_default_for_missing_key() : void
+    public function test_returns_default_for_missing_key(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -44,7 +44,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_stores_null_without_confusion() : void
+    public function test_stores_null_without_confusion(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -60,7 +60,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_deletes_value() : void
+    public function test_deletes_value(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -77,7 +77,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_clears_all_values() : void
+    public function test_clears_all_values(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -96,7 +96,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_remembers_missing_value() : void
+    public function test_remembers_missing_value(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -112,7 +112,7 @@ final class InMemoryCacheStoreTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_does_not_reload_existing_value() : void
+    public function test_does_not_reload_existing_value(): void
     {
         $clock = new FrozenClock(timestamp: Timestamp::now());
         $store = new InMemoryCacheStore(clock: $clock);
@@ -121,7 +121,7 @@ final class InMemoryCacheStoreTest extends TestCase
         $cache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result    = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';

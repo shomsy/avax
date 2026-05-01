@@ -16,22 +16,22 @@ final class CompiledCache
 {
     private static ?CompiledCacheContract $compiledCacheContract = null;
 
-    public static function use(CompiledCacheContract $compiledCacheContract) : void
+    public static function use(CompiledCacheContract $compiledCacheContract): void
     {
         self::$compiledCacheContract = $compiledCacheContract;
     }
 
-    public static function reset() : void
+    public static function reset(): void
     {
         self::$compiledCacheContract = null;
     }
 
-    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
+    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources): mixed
     {
         return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
-    private static function instance() : CompiledCacheContract
+    private static function instance(): CompiledCacheContract
     {
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
             throw new NotConfigured(message: 'No compiled cache configured');
@@ -40,7 +40,7 @@ final class CompiledCache
         return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources): CompiledCacheArtifact
     {
         return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
     }

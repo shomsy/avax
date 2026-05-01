@@ -31,14 +31,15 @@ final readonly class ClientMiddlewarePipeline
      */
     public function __construct(
         public array $middlewares = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Add middleware to the pipeline.
      *
      * Returns a new pipeline instance (immutable).
      */
-    public function with(ClientMiddlewareInterface $middleware) : self
+    public function with(ClientMiddlewareInterface $middleware): self
     {
         return new self([...$this->middlewares, $middleware]);
     }
@@ -48,10 +49,10 @@ final readonly class ClientMiddlewarePipeline
      *
      * Convenience method that resolves and executes in one call.
      *
-     * @param OutboundRequest                           $request      The outbound request
+     * @param OutboundRequest $request The outbound request
      * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
      */
-    public function execute(OutboundRequest $request, Closure $finalHandler) : ClientResponse
+    public function execute(OutboundRequest $request, Closure $finalHandler): ClientResponse
     {
         $handler = $this->resolve($finalHandler);
 
@@ -68,7 +69,7 @@ final readonly class ClientMiddlewarePipeline
      *
      * @return Closure(OutboundRequest) : ClientResponse The composed handler
      */
-    public function resolve(Closure $finalHandler) : Closure
+    public function resolve(Closure $finalHandler): Closure
     {
         // Start with the final handler
         $handler = $finalHandler;

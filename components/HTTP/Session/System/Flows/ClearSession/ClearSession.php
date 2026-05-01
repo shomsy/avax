@@ -10,9 +10,10 @@ final readonly class ClearSession
 {
     public function __construct(
         private Session $session,
-    ) {}
+    ) {
+    }
 
-    public function handle() : void
+    public function handle(): void
     {
         $this->session->flush();
     }

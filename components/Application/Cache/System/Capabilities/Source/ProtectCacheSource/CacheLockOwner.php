@@ -15,11 +15,12 @@ final readonly class CacheLockOwner implements Stringable
         public string $ownerId,
         public int $acquiredAt,
         public int $ttlSeconds,
-    ) {}
+    ) {
+    }
 
-    public static function current(string $ownerId, int $ttlSeconds = 30, ?Clock $clock = null) : self
+    public static function current(string $ownerId, int $ttlSeconds = 30, ?Clock $clock = null): self
     {
-        $clock ??= new SystemClock;
+        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return new self(
@@ -29,16 +30,16 @@ final readonly class CacheLockOwner implements Stringable
         );
     }
 
-    public function isExpired(?Clock $clock = null) : bool
+    public function isExpired(?Clock $clock = null): bool
     {
-        $clock ??= new SystemClock;
+        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return ($now->seconds - $this->acquiredAt) > $this->ttlSeconds;
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->ownerId;
     }

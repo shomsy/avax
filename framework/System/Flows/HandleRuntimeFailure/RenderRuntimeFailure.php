@@ -154,10 +154,10 @@ final readonly class RenderRuntimeFailure
             $index = 1;
 
             foreach ($throwable->getTrace() as $frame) {
-                $file = $frame['file'] ?? '[internal]';
-                $line = $frame['line'] ?? 0;
+                $file  = $frame['file'] ?? '[internal]';
+                $line  = $frame['line'] ?? 0;
                 $class = $frame['class'] ?? '';
-                $type = $frame['type'] ?? '';
+                $type  = $frame['type'] ?? '';
                 $function = $frame['function'];
 
                 $traceOutput .= sprintf(

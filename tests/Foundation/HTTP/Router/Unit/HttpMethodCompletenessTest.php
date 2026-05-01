@@ -17,7 +17,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function supports_all_standard_http_methods() : void
+    public function supports_all_standard_http_methods(): void
     {
         $expectedMethods = [
             'GET', 'POST', 'PUT', 'DELETE', 'HEAD',
@@ -32,7 +32,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function trace_method_is_supported() : void
+    public function trace_method_is_supported(): void
     {
         $this->assertTrue(condition: HttpMethod::isSupported(method: 'TRACE'));
         $this->assertContains(needle: 'TRACE', haystack: HttpMethod::getSupportedMethods());
@@ -41,7 +41,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function connect_method_is_supported() : void
+    public function connect_method_is_supported(): void
     {
         $this->assertTrue(condition: HttpMethod::isSupported(method: 'CONNECT'));
         $this->assertContains(needle: 'CONNECT', haystack: HttpMethod::getSupportedMethods());
@@ -50,7 +50,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function all_enum_cases_are_supported() : void
+    public function all_enum_cases_are_supported(): void
     {
         foreach (HttpMethod::cases() as $method) {
             $this->assertTrue(
@@ -63,7 +63,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function unsupported_methods_are_rejected() : void
+    public function unsupported_methods_are_rejected(): void
     {
         $unsupportedMethods = [
             'CUSTOM',
@@ -84,7 +84,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function enum_cases_match_supported_methods() : void
+    public function enum_cases_match_supported_methods(): void
     {
         $enumValues = array_map(
             callback: static fn ($case) => $case->value,
@@ -99,7 +99,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function method_case_sensitivity() : void
+    public function method_case_sensitivity(): void
     {
         // Methods should be case-sensitive (RFC 9110)
         $this->assertTrue(condition: HttpMethod::isSupported(method: 'GET'));
@@ -110,7 +110,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function rfc9110_method_coverage() : void
+    public function rfc9110_method_coverage(): void
     {
         // Core HTTP methods from RFC 9110
         $rfc9110Methods = [
@@ -129,7 +129,7 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function patch_method_support() : void
+    public function patch_method_support(): void
     {
         // PATCH is widely supported even though not in core RFC 9110
         $this->assertTrue(condition: HttpMethod::isSupported(method: 'PATCH'));
@@ -139,18 +139,18 @@ class HttpMethodCompletenessTest extends TestCase
     /**
      * @test
      */
-    public function enum_case_values_are_correct() : void
+    public function enum_case_values_are_correct(): void
     {
         $expectedCases = [
-            'GET'    => HttpMethod::GET,
-            'POST'   => HttpMethod::POST,
-            'PUT'    => HttpMethod::PUT,
-            'DELETE' => HttpMethod::DELETE,
-            'HEAD'   => HttpMethod::HEAD,
+            'GET'     => HttpMethod::GET,
+            'POST'    => HttpMethod::POST,
+            'PUT'     => HttpMethod::PUT,
+            'DELETE'  => HttpMethod::DELETE,
+            'HEAD'    => HttpMethod::HEAD,
             'CONNECT' => HttpMethod::CONNECT,
             'OPTIONS' => HttpMethod::OPTIONS,
-            'TRACE'  => HttpMethod::TRACE,
-            'PATCH'  => HttpMethod::PATCH,
+            'TRACE'   => HttpMethod::TRACE,
+            'PATCH'   => HttpMethod::PATCH,
         ];
 
         foreach ($expectedCases as $value => $case) {

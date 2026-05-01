@@ -210,7 +210,6 @@ enum RequestOption: string
      * Validate that a value is appropriate for this option type.
      *
      * @param mixed $value The value to validate
-     *
      * @return bool Whether the value is valid for this option
      */
     public function isValidValue(mixed $value): bool

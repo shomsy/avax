@@ -43,7 +43,7 @@ final class MethodEmitter
         string $class,
         ?ResolvePlan $plan,
         array $registrationArguments,
-        bool         $needsFinish,
+        bool $needsFinish,
     ) : string
     {
         $className = '\\' . ltrim(string: $class, characters: '\\');
@@ -65,7 +65,7 @@ final class MethodEmitter
         if ($arguments === []) {
             $body .= PHP_EOL . "        \$instance = new {$className}();" . PHP_EOL;
         } else {
-            $body     .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
+            $body .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
 
             foreach ($arguments as $index => $argument) {
                 $suffix = $index === array_key_last(array: $arguments) ? '' : ',';

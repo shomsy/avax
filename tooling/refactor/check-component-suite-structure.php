@@ -42,7 +42,7 @@ final class CheckComponentSuiteStructure
 
     private array $errors = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->checkComponentsRootContainsOnlySuites();
         $this->checkEachSuiteHasSystemRoot();
@@ -53,7 +53,7 @@ final class CheckComponentSuiteStructure
         ];
     }
 
-    private function checkComponentsRootContainsOnlySuites() : void
+    private function checkComponentsRootContainsOnlySuites(): void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
@@ -89,19 +89,19 @@ final class CheckComponentSuiteStructure
         }
     }
 
-    private function checkEachSuiteHasSystemRoot() : void
+    private function checkEachSuiteHasSystemRoot(): void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
         // Only check actual component directories, not all folders
         $componentDirs = [
-            'Application' => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
-            'HTTP'        => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
-            'CLI'         => ['Console'],
-            'DataStack'   => ['Data', 'Database', 'Persistence'],
-            'Identity'    => ['Auth', 'Access', 'Security', 'Tokens'],
-            'Operations'  => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
-            'Presentation' => ['View'],
+            'Application'    => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
+            'HTTP'           => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
+            'CLI'            => ['Console'],
+            'DataStack'      => ['Data', 'Database', 'Persistence'],
+            'Identity'       => ['Auth', 'Access', 'Security', 'Tokens'],
+            'Operations'     => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
+            'Presentation'   => ['View'],
             'DeveloperTools' => ['Diagnostics', 'DumpDebugger'],
         ];
 
@@ -127,8 +127,8 @@ final class CheckComponentSuiteStructure
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckComponentSuiteStructure;
-    $result = $checker->check();
+    $checker = new CheckComponentSuiteStructure();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

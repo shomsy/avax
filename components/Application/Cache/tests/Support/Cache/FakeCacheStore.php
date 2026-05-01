@@ -18,10 +18,12 @@ final class FakeCacheStore implements CacheStore
     /** @var array<string, StoredCacheRecord> */
     private array $records = [];
 
-    public function __construct(private readonly Clock $clock = new SystemClock) {}
+    public function __construct(private readonly Clock $clock = new SystemClock())
+    {
+    }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -41,25 +43,25 @@ final class FakeCacheStore implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         $this->records[$cacheKey->fullKey()] = $storedCacheRecord;
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         unset($this->records[$cacheKey->fullKey()]);
     }
 
     #[Override]
-    public function clear() : void
+    public function clear(): void
     {
         $this->records = [];
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $cacheKey): bool
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -70,22 +72,22 @@ final class FakeCacheStore implements CacheStore
         return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
-    public function getRecords() : array
+    public function getRecords(): array
     {
         return $this->records;
     }
 
-    public function setRecords(array $records) : void
+    public function setRecords(array $records): void
     {
         $this->records = $records;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->records);
     }
 
-    public function containsValue(mixed $value) : bool
+    public function containsValue(mixed $value): bool
     {
         foreach ($this->records as $record) {
             if ($record->value === $value) {

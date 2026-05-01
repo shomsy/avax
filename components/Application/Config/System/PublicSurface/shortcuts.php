@@ -24,7 +24,6 @@ if (! function_exists('base_path')) {
      * Resolves the base path of the application.
      *
      * @param string $path The relative path to append to the base path.
-     *
      * @return string The resolved base path.
      */
     function base_path(string $path = '') : string

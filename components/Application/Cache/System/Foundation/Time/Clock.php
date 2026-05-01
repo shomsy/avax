@@ -6,5 +6,5 @@ namespace Avax\Components\Application\Cache\System\Foundation\Time;
 
 interface Clock
 {
-    public function now() : Timestamp;
+    public function now(): Timestamp;
 }

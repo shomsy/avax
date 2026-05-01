@@ -165,7 +165,7 @@ class RouteExportValidatorTest extends TestCase
             method    : 'GET',
             path      : '/test',
             action    : 'Controller@action',
-            attributes: ['object' => new stdClass], // Object in attributes
+            attributes: ['object' => new stdClass()], // Object in attributes
         );
 
         $this->logger->expects(invocationRule: $this->once())

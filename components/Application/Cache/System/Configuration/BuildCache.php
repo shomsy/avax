@@ -16,67 +16,67 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class BuildCache
 {
-    public function __construct(private Clock $clock = new SystemClock) {}
+    public function __construct(private Clock $clock = new SystemClock())
+    {
+    }
 
-    public function inMemory(?CacheConfiguration $config = null) : AvaxCache
+    public function inMemory(?CacheConfiguration $cacheConfiguration = null): AvaxCache
     {
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->clock);
 
-        return $this->fromStore(store: $inMemoryCacheStore, config: $config);
+        return $this->fromStore(store: $inMemoryCacheStore, config: $cacheConfiguration);
     }
 
-    public function fromStore(CacheStore $cacheStore, ?CacheConfiguration $config = null) : AvaxCache
+    public function fromStore(CacheStore $cacheStore, ?CacheConfiguration $cacheConfiguration = null): AvaxCache
     {
-        $config ??= new CacheConfiguration;
+        $cacheConfiguration ??= new CacheConfiguration();
 
-        $metrics = $config->enableMetrics ? new CacheMetrics : null;
+        $metrics = $cacheConfiguration->enableMetrics ? new CacheMetrics() : null;
 
         return new AvaxCache(
             store      : $cacheStore,
             clock      : $this->clock,
             metrics    : $metrics,
-            stalePolicy: $config->staleValuePolicy,
+            stalePolicy: $cacheConfiguration->staleValuePolicy,
         );
     }
 
-    public function inDirectory(string $directory, ?CacheConfiguration $config = null) : AvaxCache
+    public function inDirectory(string $directory, ?CacheConfiguration $cacheConfiguration = null): AvaxCache
     {
-        return $this->file(basePath: $directory, config: $config);
+        return $this->file(basePath: $directory, config: $cacheConfiguration);
     }
 
-    public function file(string $basePath, ?CacheConfiguration $config = null) : AvaxCache
+    public function file(string $basePath, ?CacheConfiguration $cacheConfiguration = null): AvaxCache
     {
         $fileCacheStore = new FileCacheStore(
             basePath: $basePath,
             clock   : $this->clock,
         );
 
-        return $this->fromStore(store: $fileCacheStore, config: $config);
+        return $this->fromStore(store: $fileCacheStore, config: $cacheConfiguration);
     }
 
     public function redis(
-        string              $host = '127.0.0.1',
-        int                 $port = 6379,
-        ?CacheConfiguration $config = null,
-    ) : AvaxCache
-    {
+        string $host = '127.0.0.1',
+        int $port = 6379,
+        ?CacheConfiguration $cacheConfiguration = null,
+    ): AvaxCache {
         $redisCacheStore = new RedisCacheStore(
             host : $host,
             port : $port,
             clock: $this->clock,
         );
 
-        return $this->fromStore(store: $redisCacheStore, config: $config);
+        return $this->fromStore(store: $redisCacheStore, config: $cacheConfiguration);
     }
 
     public function tiered(
-        CacheStore          $l1,
-        CacheStore          $l2,
-        ?CacheConfiguration $config = null,
-    ) : AvaxCache
-    {
+        CacheStore $l1,
+        CacheStore $l2,
+        ?CacheConfiguration $cacheConfiguration = null,
+    ): AvaxCache {
         $chainCacheStore = new ChainCacheStore($l1, $l2);
 
-        return $this->fromStore(store: $chainCacheStore, config: $config);
+        return $this->fromStore(store: $chainCacheStore, config: $cacheConfiguration);
     }
 }

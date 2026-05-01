@@ -9,21 +9,21 @@ use function strtoupper;
 
 enum HttpMethod: string
 {
-    case GET    = 'GET';
-    case POST   = 'POST';
-    case PUT    = 'PUT';
-    case PATCH  = 'PATCH';
-    case DELETE = 'DELETE';
-    case HEAD   = 'HEAD';
+    case GET     = 'GET';
+    case POST    = 'POST';
+    case PUT     = 'PUT';
+    case PATCH   = 'PATCH';
+    case DELETE  = 'DELETE';
+    case HEAD    = 'HEAD';
     case OPTIONS = 'OPTIONS';
     case CONNECT = 'CONNECT';
-    case TRACE  = 'TRACE';
+    case TRACE   = 'TRACE';
 
     /**
      * Try to create an HttpMethod from a string.
      * Returns null if the method is not recognized.
      */
-    public static function tryFromName(string $name) : ?self
+    public static function tryFromName(string $name): ?self
     {
         return self::tryFrom(strtoupper($name));
     }
@@ -33,7 +33,7 @@ enum HttpMethod: string
      *
      * @throws ValueError if the method is not recognized
      */
-    public static function fromName(string $name) : self
+    public static function fromName(string $name): self
     {
         return self::from(strtoupper($name));
     }
@@ -41,7 +41,7 @@ enum HttpMethod: string
     /**
      * Check if a string represents a valid HTTP method.
      */
-    public static function isValid(string $name) : bool
+    public static function isValid(string $name): bool
     {
         return self::tryFrom(strtoupper($name)) !== null;
     }
@@ -51,14 +51,14 @@ enum HttpMethod: string
      *
      * Safe methods: GET, HEAD, OPTIONS, TRACE
      */
-    public function isSafe() : bool
+    public function isSafe(): bool
     {
         return match ($this) {
             self::GET,
             self::HEAD,
             self::OPTIONS,
             self::TRACE => true,
-            default => false,
+            default     => false,
         };
     }
 
@@ -68,7 +68,7 @@ enum HttpMethod: string
      *
      * Idempotent methods: GET, HEAD, PUT, DELETE, OPTIONS, TRACE
      */
-    public function isIdempotent() : bool
+    public function isIdempotent(): bool
     {
         return match ($this) {
             self::GET,
@@ -77,7 +77,7 @@ enum HttpMethod: string
             self::DELETE,
             self::OPTIONS,
             self::TRACE => true,
-            default => false,
+            default     => false,
         };
     }
 
@@ -86,14 +86,14 @@ enum HttpMethod: string
      *
      * Methods that conventionally support a body: POST, PUT, PATCH, DELETE
      */
-    public function allowsBody() : bool
+    public function allowsBody(): bool
     {
         return match ($this) {
             self::POST,
             self::PUT,
             self::PATCH,
             self::DELETE => true,
-            default => false,
+            default      => false,
         };
     }
 }

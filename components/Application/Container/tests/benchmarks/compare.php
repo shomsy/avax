@@ -9,7 +9,7 @@ require_once dirname(path: __DIR__) . '/bootstrap.php';
  *
  * @throws JsonException
  */
-function readBenchmarkArtifact(string $path) : array
+function readBenchmarkArtifact(string $path): array
 {
     if (! is_file(filename: $path)) {
         throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not exist.', $path));
@@ -36,7 +36,7 @@ function readBenchmarkArtifact(string $path) : array
     }
 
     return [
-        'meta' => $meta,
+        'meta'    => $meta,
         'results' => $results,
     ];
 }
@@ -46,7 +46,7 @@ function readBenchmarkArtifact(string $path) : array
  *
  * @return array<string, string>
  */
-function benchmarkTargets(array $arguments) : array
+function benchmarkTargets(array $arguments): array
 {
     $targets = [];
 
@@ -77,10 +77,10 @@ function benchmarkTargets(array $arguments) : array
  *
  * @return list<string>
  */
-function commonScenarios(array $reports) : array
+function commonScenarios(array $reports): array
 {
     $scenarioSets = array_map(
-        callback: static fn (array $results) : array => array_keys(array: $results),
+        callback: static fn (array $results): array => array_keys(array: $results),
         array   : $reports,
     );
 
@@ -98,13 +98,13 @@ function commonScenarios(array $reports) : array
  * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
  * @return array<string, mixed>
  */
-function comparisonPayload(array $artifacts, string $baselineName) : array
+function comparisonPayload(array $artifacts, string $baselineName): array
 {
     $reports = array_map(
-        callback: static fn (array $artifact) : array => $artifact['results'],
+        callback: static fn (array $artifact): array => $artifact['results'],
         array   : $artifacts,
     );
-    $common  = commonScenarios(reports: $reports);
+    $common   = commonScenarios(reports: $reports);
     $baseline = $reports[$baselineName] ?? null;
     if (! is_array(value: $baseline)) {
         throw new RuntimeException(message: sprintf('Baseline report [%s] is missing.', $baselineName));
@@ -114,7 +114,7 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     foreach ($common as $scenario) {
         $baselineTime = (float) ($baseline[$scenario]['time_ms'] ?? 0.0);
         $baselineOps  = (float) ($baseline[$scenario]['ops_per_s'] ?? 0.0);
-        $rows = [];
+        $rows         = [];
 
         foreach ($reports as $name => $results) {
             $time = (float) ($results[$scenario]['time_ms'] ?? 0.0);
@@ -122,20 +122,20 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
             $peak = (float) ($results[$scenario]['peak_mb'] ?? 0.0);
 
             $rows[$name] = [
-                'time_ms'   => $time,
-                'ops_per_s' => $ops,
-                'peak_mb'   => $peak,
+                'time_ms'                => $time,
+                'ops_per_s'              => $ops,
+                'peak_mb'                => $peak,
                 'time_ratio_vs_baseline' => $baselineTime > 0 ? $time / $baselineTime : 0.0,
-                'ops_ratio_vs_baseline' => $baselineOps > 0 ? $ops / $baselineOps : 0.0,
+                'ops_ratio_vs_baseline'  => $baselineOps  > 0 ? $ops  / $baselineOps : 0.0,
             ];
         }
 
         uasort(
             array   : $rows,
-            callback: static fn (array $left, array $right) : int => $left['time_ms'] <=> $right['time_ms'],
+            callback: static fn (array $left, array $right): int => $left['time_ms'] <=> $right['time_ms'],
         );
 
-        $fastest = array_key_first(array: $rows);
+        $fastest              = array_key_first(array: $rows);
         $scenarios[$scenario] = [
             'fastest' => $fastest,
             'results' => $rows,
@@ -143,10 +143,10 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     }
 
     return [
-        'baseline'        => $baselineName,
-        'targets'         => array_keys(array: $reports),
+        'baseline'   => $baselineName,
+        'targets'    => array_keys(array: $reports),
         'targetMeta' => array_map(
-            callback: static fn (array $artifact) : array => $artifact['meta'],
+            callback: static fn (array $artifact): array => $artifact['meta'],
             array   : $artifacts,
         ),
         'commonScenarios' => $common,
@@ -155,7 +155,7 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     ];
 }
 
-$jsonOutput = in_array(needle: '--json', haystack: $argv, strict: true);
+$jsonOutput   = in_array(needle: '--json', haystack: $argv, strict: true);
 $baselineName = 'current';
 
 foreach ($argv as $argument) {
@@ -164,7 +164,7 @@ foreach ($argv as $argument) {
     }
 }
 
-$targets = benchmarkTargets(arguments: array_slice(array: $argv, offset: 1));
+$targets   = benchmarkTargets(arguments: array_slice(array: $argv, offset: 1));
 $artifacts = [];
 
 foreach ($targets as $name => $path) {

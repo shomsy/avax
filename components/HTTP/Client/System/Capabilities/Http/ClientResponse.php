@@ -10,9 +10,10 @@ final readonly class ClientResponse
         public int $statusCode,
         public array $headers,
         public string $body,
-    ) {}
+    ) {
+    }
 
-    public function json() : array
+    public function json(): array
     {
         return json_decode($this->body, true) ?: [];
     }

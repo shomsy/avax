@@ -19,12 +19,12 @@ final class FakeCacheStore implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(?Clock $clock = null)
+    public function __construct(Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock;
+        $this->clock = $clock ?? new SystemClock();
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $key, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $fullKey = $key->fullKey();
 
@@ -43,22 +43,22 @@ final class FakeCacheStore implements CacheStore
         return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $key, StoredCacheRecord $record): void
     {
         $this->records[$key->fullKey()] = $record;
     }
 
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $key): void
     {
         unset($this->records[$key->fullKey()]);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->records = [];
     }
 
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $key): bool
     {
         $fullKey = $key->fullKey();
 
@@ -69,22 +69,22 @@ final class FakeCacheStore implements CacheStore
         return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
-    public function getRecords() : array
+    public function getRecords(): array
     {
         return $this->records;
     }
 
-    public function setRecords(array $records) : void
+    public function setRecords(array $records): void
     {
         $this->records = $records;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->records);
     }
 
-    public function containsValue(mixed $value) : bool
+    public function containsValue(mixed $value): bool
     {
         foreach ($this->records as $record) {
             if ($record->value === $value) {

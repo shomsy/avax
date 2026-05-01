@@ -20,12 +20,12 @@ final class EventDispatcherTest extends TestCase
     private EventDispatcher $dispatcher;
 
     #[Test]
-    public function dispatch_calls_registered_listener() : void
+    public function dispatch_calls_registered_listener(): void
     {
         $called = false;
         $this->registry->subscribe(
             event   : 'user.created',
-            listener: static function () use (&$called) : void {
+            listener: static function () use (&$called): void {
                 $called = true;
             },
         );
@@ -35,16 +35,16 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_passes_data_to_listener() : void
+    public function dispatch_passes_data_to_listener(): void
     {
-        $receivedData         = null;
+        $receivedData  = null;
         $receivedEvent = null;
 
         $this->registry->subscribe(
             event   : 'user.created',
-            listener: static function ($event, $data) use (&$receivedEvent, &$receivedData) : void {
+            listener: static function ($event, $data) use (&$receivedEvent, &$receivedData): void {
                 $receivedEvent = $event;
-                $receivedData = $data;
+                $receivedData  = $data;
             },
         );
 
@@ -55,20 +55,20 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_calls_multiple_listeners() : void
+    public function dispatch_calls_multiple_listeners(): void
     {
         $callCount = 0;
 
         $this->registry->subscribe(
             event   : 'order.placed',
-            listener: static function () use (&$callCount) : void {
+            listener: static function () use (&$callCount): void {
                 $callCount++;
             },
         );
 
         $this->registry->subscribe(
             event   : 'order.placed',
-            listener: static function () use (&$callCount) : void {
+            listener: static function () use (&$callCount): void {
                 $callCount++;
             },
         );
@@ -78,16 +78,16 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_with_object_event() : void
+    public function dispatch_with_object_event(): void
     {
-        $event = new stdClass;
+        $event       = new stdClass();
         $event->name = 'TestEvent';
 
         $receivedEvent = null;
 
         $this->registry->subscribe(
             event   : stdClass::class,
-            listener: static function ($e) use (&$receivedEvent) : void {
+            listener: static function ($e) use (&$receivedEvent): void {
                 $receivedEvent = $e;
             },
         );
@@ -97,19 +97,19 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_respects_propagation_stop() : void
+    public function dispatch_respects_propagation_stop(): void
     {
         $callCount = 0;
 
-        $event = new class {
+        $event = new class () {
             public bool $propagationStopped = false;
 
-            public function isPropagationStopped() : bool
+            public function isPropagationStopped(): bool
             {
                 return $this->propagationStopped;
             }
 
-            public function stopPropagation() : void
+            public function stopPropagation(): void
             {
                 $this->propagationStopped = true;
             }
@@ -117,7 +117,7 @@ final class EventDispatcherTest extends TestCase
 
         $this->registry->subscribe(
             event   : $event::class,
-            listener: static function ($e) use (&$callCount) : void {
+            listener: static function ($e) use (&$callCount): void {
                 $callCount++;
                 $e->stopPropagation();
             },
@@ -126,7 +126,7 @@ final class EventDispatcherTest extends TestCase
 
         $this->registry->subscribe(
             event   : $event::class,
-            listener: static function () use (&$callCount) : void {
+            listener: static function () use (&$callCount): void {
                 $callCount++;
             },
             priority: 5,
@@ -137,13 +137,13 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_listeners_execute_by_priority() : void
+    public function dispatch_listeners_execute_by_priority(): void
     {
         $executionOrder = [];
 
         $this->registry->subscribe(
             event   : 'test.event',
-            listener: static function () use (&$executionOrder) : void {
+            listener: static function () use (&$executionOrder): void {
                 $executionOrder[] = 'low';
             },
             priority: 1,
@@ -151,7 +151,7 @@ final class EventDispatcherTest extends TestCase
 
         $this->registry->subscribe(
             event   : 'test.event',
-            listener: static function () use (&$executionOrder) : void {
+            listener: static function () use (&$executionOrder): void {
                 $executionOrder[] = 'high';
             },
             priority: 10,
@@ -159,7 +159,7 @@ final class EventDispatcherTest extends TestCase
 
         $this->registry->subscribe(
             event   : 'test.event',
-            listener: static function () use (&$executionOrder) : void {
+            listener: static function () use (&$executionOrder): void {
                 $executionOrder[] = 'medium';
             },
             priority: 5,
@@ -172,49 +172,55 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function dispatch_returns_the_event() : void
+    public function dispatch_returns_the_event(): void
     {
         $eventName = 'user.created';
-        $result = $this->dispatcher->dispatch(event: $eventName);
+        $result    = $this->dispatcher->dispatch(event: $eventName);
 
         $this->assertEquals($eventName, $result);
     }
 
     #[Test]
-    public function dispatch_with_no_listeners_returns_event() : void
+    public function dispatch_with_no_listeners_returns_event(): void
     {
         $result = $this->dispatcher->dispatch(event: 'no.listeners');
         $this->assertEquals('no.listeners', $result);
     }
 
     #[Test]
-    public function registry_has_listeners_returns_true_when_listeners_exist() : void
+    public function registry_has_listeners_returns_true_when_listeners_exist(): void
     {
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {});
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        });
         $this->assertTrue($this->registry->hasListeners('test.event'));
     }
 
     #[Test]
-    public function registry_has_listeners_returns_false_when_no_listeners() : void
+    public function registry_has_listeners_returns_false_when_no_listeners(): void
     {
         $this->assertFalse($this->registry->hasListeners('nonexistent'));
     }
 
     #[Test]
-    public function registry_listener_count_returns_correct_count() : void
+    public function registry_listener_count_returns_correct_count(): void
     {
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {});
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {});
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {}, priority: 5);
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        });
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        });
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        }, priority: 5);
 
         $this->assertEquals(3, $this->registry->listenerCount('test.event'));
     }
 
     #[Test]
-    public function registry_remove_clears_all_listeners_for_event() : void
+    public function registry_remove_clears_all_listeners_for_event(): void
     {
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {});
-        $this->registry->subscribe(event: 'test.event', listener: static function () : void {});
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        });
+        $this->registry->subscribe(event: 'test.event', listener: static function (): void {
+        });
 
         $this->registry->remove('test.event');
         $this->assertEquals(0, $this->registry->listenerCount('test.event'));
@@ -222,10 +228,12 @@ final class EventDispatcherTest extends TestCase
     }
 
     #[Test]
-    public function registry_clear_removes_all_listeners() : void
+    public function registry_clear_removes_all_listeners(): void
     {
-        $this->registry->subscribe(event: 'event1', listener: static function () : void {});
-        $this->registry->subscribe(event: 'event2', listener: static function () : void {});
+        $this->registry->subscribe(event: 'event1', listener: static function (): void {
+        });
+        $this->registry->subscribe(event: 'event2', listener: static function (): void {
+        });
 
         $this->registry->clear();
 
@@ -233,9 +241,9 @@ final class EventDispatcherTest extends TestCase
         $this->assertEquals(0, $this->registry->listenerCount('event2'));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $this->registry = new ListenerRegistry;
+        $this->registry   = new ListenerRegistry();
         $this->dispatcher = new EventDispatcher(registry: $this->registry);
     }
 }

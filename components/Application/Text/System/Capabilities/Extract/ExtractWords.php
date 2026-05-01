@@ -8,7 +8,7 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class ExtractWords
 {
-    public function __invoke(Text $text) : array
+    public function __invoke(Text $text): array
     {
         preg_match_all('/\b\w+\b/', $text->toString(), $matches);
 

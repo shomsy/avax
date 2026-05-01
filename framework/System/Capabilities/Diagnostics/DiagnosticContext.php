@@ -11,17 +11,17 @@ final class DiagnosticContext
      */
     private array $data = [];
 
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
 
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         return $this->data[$key] ?? null;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return isset($this->data[$key]);
     }
@@ -29,12 +29,12 @@ final class DiagnosticContext
     /**
      * @return array<string, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->data;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->data = [];
     }

@@ -17,9 +17,10 @@ final readonly class ArgumentResolver
 {
     public function __construct(
         private ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
-    public function resolve(ReflectionMethod $reflection, ServerRequestInterface $request) : array
+    public function resolve(ReflectionMethod $reflection, ServerRequestInterface $request): array
     {
         $arguments = [];
 

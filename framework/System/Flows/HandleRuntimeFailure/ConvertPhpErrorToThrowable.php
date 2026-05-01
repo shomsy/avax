@@ -20,21 +20,21 @@ final readonly class ConvertPhpErrorToThrowable
      */
     private const ERROR_NAMES
         = [
-            E_ERROR           => 'E_ERROR',
-            E_WARNING         => 'E_WARNING',
-            E_PARSE           => 'E_PARSE',
-            E_NOTICE          => 'E_NOTICE',
-            E_CORE_ERROR      => 'E_CORE_ERROR',
-            E_CORE_WARNING    => 'E_CORE_WARNING',
-            E_COMPILE_ERROR   => 'E_COMPILE_ERROR',
-            E_COMPILE_WARNING => 'E_COMPILE_WARNING',
-            E_USER_ERROR      => 'E_USER_ERROR',
-            E_USER_WARNING    => 'E_USER_WARNING',
-            E_USER_NOTICE     => 'E_USER_NOTICE',
-            E_STRICT          => 'E_STRICT',
+            E_ERROR             => 'E_ERROR',
+            E_WARNING           => 'E_WARNING',
+            E_PARSE             => 'E_PARSE',
+            E_NOTICE            => 'E_NOTICE',
+            E_CORE_ERROR        => 'E_CORE_ERROR',
+            E_CORE_WARNING      => 'E_CORE_WARNING',
+            E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
+            E_COMPILE_WARNING   => 'E_COMPILE_WARNING',
+            E_USER_ERROR        => 'E_USER_ERROR',
+            E_USER_WARNING      => 'E_USER_WARNING',
+            E_USER_NOTICE       => 'E_USER_NOTICE',
+            E_STRICT            => 'E_STRICT',
             E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
-            E_DEPRECATED      => 'E_DEPRECATED',
-            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
+            E_DEPRECATED        => 'E_DEPRECATED',
+            E_USER_DEPRECATED   => 'E_USER_DEPRECATED',
         ];
 
     /**
@@ -55,7 +55,7 @@ final readonly class ConvertPhpErrorToThrowable
      *
      * @param array{type: int, message: string, file: string, line: int} $error
      */
-    public function convertFromErrorArray(array $error) : Throwable
+    public function convertFromErrorArray(array $error): Throwable
     {
         return $this->convert(
             severity: $error['type'],
@@ -71,7 +71,7 @@ final readonly class ConvertPhpErrorToThrowable
      * @throws ErrorException
      * @throws PhpErrorException
      */
-    public function convert(int $severity, string $message, string $file, int $line) : Throwable
+    public function convert(int $severity, string $message, string $file, int $line): Throwable
     {
         $errorName = self::ERROR_NAMES[$severity] ?? "E_UNKNOWN({$severity})";
 

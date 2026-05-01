@@ -23,18 +23,18 @@ class KernelTest extends TestCase
     /**
      * @throws RandomException
      */
-    public function test_database_configuration_builds_public_surface() : void
+    public function test_database_configuration_builds_public_surface(): void
     {
         $database = Database::configuration()->usingConfig(config: [
-                                                                       'default'     => 'sqlite',
-                                                                       'connections' => [
-                                                                           'sqlite' => [
-                                                                               'driver'   => 'sqlite',
-                                                                               'database' => ':memory:',
-                                                                               'prefix'   => '',
-                                                                           ],
-                                                                       ],
-                                                                   ])->ready();
+            'default'     => 'sqlite',
+            'connections' => [
+                'sqlite' => [
+                    'driver'   => 'sqlite',
+                    'database' => ':memory:',
+                    'prefix'   => '',
+                ],
+            ],
+        ])->ready();
 
         $this->assertInstanceOf(expected: Database::class, actual: $database);
         $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());
@@ -50,7 +50,7 @@ class KernelTest extends TestCase
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function test_database_table_entrypoint_returns_query_builder() : void
+    public function test_database_table_entrypoint_returns_query_builder(): void
     {
         $builder = $this->database->table(table: 'users');
 

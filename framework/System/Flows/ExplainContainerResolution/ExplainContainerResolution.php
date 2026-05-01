@@ -12,9 +12,10 @@ final readonly class ExplainContainerService
 {
     public function __construct(
         private ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
-    public static function printExplanation(ContainerDependencyExplanation $explanation) : void
+    public static function printExplanation(ContainerDependencyExplanation $explanation): void
     {
         echo "\033[33mService: {$explanation->serviceId}\033[0m\n";
         echo sprintf("  Scope: %s\n", $explanation->scope);
@@ -33,7 +34,7 @@ final readonly class ExplainContainerService
         echo "\n";
     }
 
-    public function explain(string $id) : ContainerDependencyExplanation
+    public function explain(string $id): ContainerDependencyExplanation
     {
         $analyzer = new ContainerAnalyzer($this->container);
 
@@ -43,7 +44,7 @@ final readonly class ExplainContainerService
     /**
      * @return list<string>
      */
-    public function whoUses(string $id) : array
+    public function whoUses(string $id): array
     {
         $analyzer = new ContainerAnalyzer($this->container);
 
@@ -53,7 +54,7 @@ final readonly class ExplainContainerService
     /**
      * @return list<string>
      */
-    public function whatBreaksIf(string $id) : array
+    public function whatBreaksIf(string $id): array
     {
         $analyzer = new ContainerAnalyzer($this->container);
 

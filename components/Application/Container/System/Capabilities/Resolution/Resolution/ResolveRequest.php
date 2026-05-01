@@ -19,10 +19,10 @@ final readonly class ResolveRequest
      * @param array<string, mixed> $overrides
      */
     public function __construct(
-        public string  $serviceId,
+        public string $serviceId,
         ?array         $overrides = null,
         ?array         $context = null,
-        public ?self   $parent = null,
+        public ?self  $parent = null,
         ?bool          $manualInjection = null,
         public ?string $consumer = null,
     )
@@ -31,7 +31,7 @@ final readonly class ResolveRequest
         $context         ??= [];
         $manualInjection ??= false;
         $this->overrides = $overrides;
-        $this->context   = $context;
+        $this->context = $context;
         $this->manualInjection = $manualInjection;
     }
 

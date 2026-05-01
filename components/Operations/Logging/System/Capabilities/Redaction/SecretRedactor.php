@@ -100,8 +100,8 @@ final readonly class SecretRedactor
         ];
 
     /**
-     * @param string       $redactionMask           The replacement string for redacted values
-     * @param bool         $redactEmails            Whether to redact email addresses
+     * @param string $redactionMask The replacement string for redacted values
+     * @param bool   $redactEmails  Whether to redact email addresses
      * @param list<string> $additionalSensitiveKeys Additional sensitive keys to redact
      */
     public function __construct(
@@ -116,7 +116,6 @@ final readonly class SecretRedactor
      * Redacts values for sensitive keys and scans string values for patterns.
      *
      * @param array<string, mixed> $data
-     *
      * @return array<string, mixed>
      */
     public function redactArray(array $data): array
@@ -128,7 +127,6 @@ final readonly class SecretRedactor
      * Recursively process and redact an array.
      *
      * @param array<string, mixed> $data
-     *
      * @return array<string, mixed>
      */
     private function redactRecursive(array $data): array

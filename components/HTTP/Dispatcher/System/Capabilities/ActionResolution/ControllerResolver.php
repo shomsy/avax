@@ -14,9 +14,10 @@ final readonly class ControllerResolver
 {
     public function __construct(
         private ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
-    public function resolve(string $className) : object
+    public function resolve(string $className): object
     {
         if (! class_exists($className)) {
             throw new RuntimeException("Controller class '{$className}' does not exist.");
@@ -26,6 +27,6 @@ final readonly class ControllerResolver
             return $this->container->get($className);
         }
 
-        return new $className;
+        return new $className();
     }
 }

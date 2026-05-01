@@ -10,7 +10,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 $containerException = new ContainerException(message: 'boom');
-$notFoundException = new DependencyNotFoundException(message: 'missing');
+$notFoundException  = new DependencyNotFoundException(message: 'missing');
 
 assertInstanceOf(expectedClass: ContainerExceptionInterface::class, value: $containerException, message: 'ContainerException should satisfy PSR.');
 assertInstanceOf(expectedClass: NotFoundExceptionInterface::class, value: $notFoundException, message: 'DependencyNotFoundException should satisfy PSR.');

@@ -14,15 +14,14 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
     public function __construct(
         private PDO $pdo,
         private string $table = 'sessions',
-    )
-    {
+    ) {
         // Validate table name to prevent SQL injection
         if (! preg_match(self::ALLOWED_TABLE_PATTERN, $this->table)) {
             throw new InvalidArgumentException("Invalid session table name: {$this->table}");
         }
     }
 
-    public function read(string $id) : array
+    public function read(string $id): array
     {
         $stmt = $this->pdo->prepare("SELECT payload FROM {$this->table} WHERE id = ?");
         $stmt->execute([$id]);
@@ -37,16 +36,16 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
         return [];
     }
 
-    public function write(string $id, array $data) : bool
+    public function write(string $id, array $data): bool
     {
         $payload = json_encode($data, JSON_THROW_ON_ERROR);
-        $stmt = $this->pdo->prepare("REPLACE INTO {$this->table} (id, payload, last_activity) VALUES (?, ?, ?)");
+        $stmt    = $this->pdo->prepare("REPLACE INTO {$this->table} (id, payload, last_activity) VALUES (?, ?, ?)");
         $stmt->execute([$id, $payload, time()]);
 
         return true;
     }
 
-    public function destroy(string $id) : bool
+    public function destroy(string $id): bool
     {
         $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
         $stmt->execute([$id]);

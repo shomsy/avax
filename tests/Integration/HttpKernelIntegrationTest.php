@@ -21,16 +21,16 @@ final class HttpKernelIntegrationTest extends TestCase
 
     private HttpKernel $kernel;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->kernel = new HttpKernel(router: $this->router);
     }
 
     #[Test]
-    public function kernel_dispatches_request_to_router() : void
+    public function kernel_dispatches_request_to_router(): void
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
 
         $this->router->expects($this->once())
@@ -44,7 +44,7 @@ final class HttpKernelIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function kernel_executes_middleware_in_order() : void
+    public function kernel_executes_middleware_in_order(): void
     {
         $executionOrder = [];
 
@@ -52,7 +52,7 @@ final class HttpKernelIntegrationTest extends TestCase
         $middleware1->method('handle')
             ->willReturnCallback(static function ($request, $next) use (&$executionOrder) {
                 $executionOrder[] = 'before-1';
-                $response = $next($request);
+                $response         = $next($request);
                 $executionOrder[] = 'after-1';
 
                 return $response;
@@ -62,7 +62,7 @@ final class HttpKernelIntegrationTest extends TestCase
         $middleware2->method('handle')
             ->willReturnCallback(static function ($request, $next) use (&$executionOrder) {
                 $executionOrder[] = 'before-2';
-                $response = $next($request);
+                $response         = $next($request);
                 $executionOrder[] = 'after-2';
 
                 return $response;
@@ -71,7 +71,7 @@ final class HttpKernelIntegrationTest extends TestCase
         $this->kernel->use($middleware1);
         $this->kernel->use($middleware2);
 
-        $request = $this->createMock(RequestInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
 
         $this->router->method('dispatch')->willReturn($response);
@@ -82,7 +82,7 @@ final class HttpKernelIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function middleware_can_short_circuit_request() : void
+    public function middleware_can_short_circuit_request(): void
     {
         $blockedResponse = $this->createMock(ResponseInterface::class);
 
@@ -104,7 +104,7 @@ final class HttpKernelIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function kernel_tracks_registered_middleware() : void
+    public function kernel_tracks_registered_middleware(): void
     {
         $middleware1 = $this->createMock(MiddlewareInterface::class);
         $middleware2 = $this->createMock(MiddlewareInterface::class);
@@ -120,17 +120,17 @@ final class HttpKernelIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function kernel_exposes_router() : void
+    public function kernel_exposes_router(): void
     {
         $this->assertSame($this->router, $this->kernel->router());
     }
 
     #[Test]
-    public function kernel_tracks_boot_state() : void
+    public function kernel_tracks_boot_state(): void
     {
         $this->assertFalse($this->kernel->isBooted());
 
-        $request = $this->createMock(RequestInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
         $this->router->method('dispatch')->willReturn($response);
 

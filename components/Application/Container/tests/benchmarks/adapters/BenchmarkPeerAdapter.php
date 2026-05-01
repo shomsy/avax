@@ -7,10 +7,10 @@ declare(strict_types=1);
  */
 interface BenchmarkPeerAdapter
 {
-    public function name() : string;
+    public function name(): string;
 
     /**
      * @return array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}
      */
-    public function load() : array;
+    public function load(): array;
 }

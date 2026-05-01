@@ -23,7 +23,7 @@ final class HandleIncomingHttpIntegrationTest extends TestCase
                             path   : '/users/{id}',
                             action : static function (ServerRequestInterface $request): string {
                                 $parsedBody = $request->getParsedBody();
-                                $name = is_array($parsedBody) ? ($parsedBody['name'] ?? '') : '';
+                                $name       = is_array($parsedBody) ? ($parsedBody['name'] ?? '') : '';
 
                                 return (string) $request->getAttribute(name: 'id') . ':' . $name;
                             },

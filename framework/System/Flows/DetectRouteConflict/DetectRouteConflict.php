@@ -10,13 +10,14 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteConflict;
 final readonly class DetectRouteConflict
 {
     public function __construct(
-        private RouteAnalyzer $analyzer = new RouteAnalyzer,
-    ) {}
+        private RouteAnalyzer $analyzer = new RouteAnalyzer(),
+    ) {
+    }
 
     /**
      * @param list<RouteConflict> $conflicts
      */
-    public static function printReport(array $conflicts) : int
+    public static function printReport(array $conflicts): int
     {
         if (empty($conflicts)) {
             echo "\033[32mNo route conflicts detected.\033[0m\n";
@@ -43,7 +44,7 @@ final readonly class DetectRouteConflict
         return count(array_filter($conflicts, static fn ($c) => $c->isExact())) > 0 ? 1 : 0;
     }
 
-    public function loadRoutes(array $routes) : self
+    public function loadRoutes(array $routes): self
     {
         $this->analyzer->setRoutes($routes);
 
@@ -53,7 +54,7 @@ final readonly class DetectRouteConflict
     /**
      * @return list<RouteConflict>
      */
-    public function detect() : array
+    public function detect(): array
     {
         return [...$this->analyzer->detectConflicts(), ...$this->analyzer->findUnreachableRoutes()];
     }

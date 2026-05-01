@@ -26,17 +26,16 @@ final readonly class FileCacheStore implements CacheStore
     private JsonCacheSerializer $jsonCacheSerializer;
 
     public function __construct(
-        private string       $basePath,
-        private Clock        $clock = new SystemClock,
+        private string $basePath,
+        private Clock $clock = new SystemClock(),
         ?JsonCacheSerializer $jsonCacheSerializer = null,
-    )
-    {
+    ) {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
 
         $this->ensureDirectoryExists();
     }
 
-    private function ensureDirectoryExists() : void
+    private function ensureDirectoryExists(): void
     {
         if (! is_dir($this->basePath)) {
             mkdir($this->basePath, 0o755, recursive: true);
@@ -47,7 +46,7 @@ final readonly class FileCacheStore implements CacheStore
      * @throws JsonException
      */
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         $filePath = $this->getFilePath(key: $cacheKey);
         $this->ensureDirectoryExistsForKey(filePath: $filePath);
@@ -55,9 +54,9 @@ final readonly class FileCacheStore implements CacheStore
         $serializedCachePayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = [
-            'value'     => $serializedCachePayload->data,
-            'format'    => $serializedCachePayload->format,
-            'lifecycle' => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
+            'value'          => $serializedCachePayload->data,
+            'format'         => $serializedCachePayload->format,
+            'lifecycle'      => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
             'serializedData' => $storedCacheRecord->serializedData,
         ];
 
@@ -94,15 +93,15 @@ final readonly class FileCacheStore implements CacheStore
         chmod($filePath, self::WRITE_MODE);
     }
 
-    private function getFilePath(CacheKey $cacheKey) : string
+    private function getFilePath(CacheKey $cacheKey): string
     {
         $keyHash = hash('xxh128', $cacheKey->fullKey());
-        $subDir = substr($keyHash, 0, 2);
+        $subDir  = substr($keyHash, 0, 2);
 
         return $this->basePath . '/' . $subDir . '/' . $keyHash . self::FILE_EXTENSION;
     }
 
-    private function ensureDirectoryExistsForKey(string $filePath) : void
+    private function ensureDirectoryExistsForKey(string $filePath): void
     {
         $dir = dirname($filePath);
 
@@ -111,26 +110,26 @@ final readonly class FileCacheStore implements CacheStore
         }
     }
 
-    private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle) : array
+    private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle): array
     {
         return [
-            'createdAt'    => $cachedValueLifecycle->createdAt->toUnixTime(),
+            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
             'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'    => $cachedValueLifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'  => $cachedValueLifecycle->refreshedAt->toUnixTime(),
-            'hitCount'     => $cachedValueLifecycle->hitCount,
-            'refreshCount' => $cachedValueLifecycle->refreshCount,
+            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
+            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
+            'hitCount'       => $cachedValueLifecycle->hitCount,
+            'refreshCount'   => $cachedValueLifecycle->refreshCount,
         ];
     }
 
     #[Override]
-    public function clear() : void
+    public function clear(): void
     {
         $this->recursiveDelete(directory: $this->basePath);
         $this->ensureDirectoryExists();
     }
 
-    private function recursiveDelete(string $directory) : void
+    private function recursiveDelete(string $directory): void
     {
         if (! is_dir($directory)) {
             return;
@@ -151,7 +150,7 @@ final readonly class FileCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $cacheKey): bool
     {
         $filePath = $this->getFilePath(key: $cacheKey);
 
@@ -165,7 +164,7 @@ final readonly class FileCacheStore implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $filePath = $this->getFilePath(key: $cacheKey);
 
@@ -199,7 +198,7 @@ final readonly class FileCacheStore implements CacheStore
             }
 
             $valuePayload = SerializedCachePayload::create(
-                data  : $data['value'] ?? '',
+                data  : $data['value']  ?? '',
                 format: $data['format'] ?? 'json',
                 clock : $clock,
             );
@@ -210,11 +209,11 @@ final readonly class FileCacheStore implements CacheStore
                 value         : $value,
                 lifecycle     : $lifecycle,
                 serializedData: $data['serializedData'] ?? null,
-                format        : $data['format'] ?? null,
+                format        : $data['format']         ?? null,
             );
 
             $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
-            $record = new StoredCacheRecord(
+            $record           = new StoredCacheRecord(
                 value         : $record->value,
                 lifecycle     : $updatedLifecycle,
                 serializedData: $record->serializedData,
@@ -230,7 +229,7 @@ final readonly class FileCacheStore implements CacheStore
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         $filePath = $this->getFilePath(key: $cacheKey);
 
@@ -239,7 +238,7 @@ final readonly class FileCacheStore implements CacheStore
         }
     }
 
-    private function deserializeLifecycle(array $data, Clock $clock) : CachedValueLifecycle
+    private function deserializeLifecycle(array $data, Clock $clock): CachedValueLifecycle
     {
         $now = $clock->now();
 
@@ -248,7 +247,7 @@ final readonly class FileCacheStore implements CacheStore
             lastAccessedAt: Timestamp::fromUnixTime(timestamp: $data['lastAccessedAt'] ?? $now->seconds),
             expiresAt     : Timestamp::fromUnixTime(timestamp: $data['expiresAt'] ?? $now->seconds),
             refreshedAt   : Timestamp::fromUnixTime(timestamp: $data['refreshedAt'] ?? $now->seconds),
-            hitCount      : $data['hitCount'] ?? 0,
+            hitCount      : $data['hitCount']     ?? 0,
             refreshCount  : $data['refreshCount'] ?? 0,
         );
     }

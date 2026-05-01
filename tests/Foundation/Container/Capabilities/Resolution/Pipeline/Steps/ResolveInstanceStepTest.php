@@ -15,7 +15,7 @@ final class ResolveInstanceStepTest extends TestCase
 {
     public function test_step_delegates_to_engine_and_sets_instance() : void
     {
-        $expectedInstance = new stdClass;
+        $expectedInstance = new stdClass();
         $expectedInstance->test = 'value';
 
         $engine = $this->createMock(EngineInterface::class);

@@ -8,7 +8,7 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class ExtractLetters
 {
-    public function __invoke(Text $text) : Text
+    public function __invoke(Text $text): Text
     {
         return new Text(preg_replace('/[^a-zA-Z]/', '', $text->toString()));
     }

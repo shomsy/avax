@@ -6,12 +6,12 @@ namespace Avax\Components\Application\Cache\System\Configuration\CompiledCacheCo
 
 final readonly class ConfigureCompiledCache
 {
-    public static function inDirectory(string $directory) : CompiledCacheConfiguration
+    public static function inDirectory(string $directory): CompiledCacheConfiguration
     {
         return CompiledCacheConfiguration::inDirectory(directory: $directory);
     }
 
-    public static function disabled() : CompiledCacheConfiguration
+    public static function disabled(): CompiledCacheConfiguration
     {
         return CompiledCacheConfiguration::disabled();
     }

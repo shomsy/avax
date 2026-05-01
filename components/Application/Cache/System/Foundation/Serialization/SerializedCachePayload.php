@@ -18,7 +18,7 @@ final readonly class SerializedCachePayload implements Stringable
 
     public static function create(string $data, string $format, ?Clock $clock = null) : self
     {
-        $clock ??= new SystemClock;
+        $clock ??= new SystemClock();
         $checksum = hash_hmac(algo: 'sha256', data: $data, key: self::class);
 
         return new self(

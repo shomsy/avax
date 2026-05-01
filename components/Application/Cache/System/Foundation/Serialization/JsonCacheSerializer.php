@@ -14,10 +14,12 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
     private const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRESERVE_ZERO_FRACTION;
 
-    public function __construct(private Clock $clock = new SystemClock) {}
+    public function __construct(private Clock $clock = new SystemClock())
+    {
+    }
 
     #[Override]
-    public function serialize(mixed $value) : SerializedCachePayload
+    public function serialize(mixed $value): SerializedCachePayload
     {
         $serialized = json_encode(value: $value, flags: self::ENCODING_OPTIONS);
 
@@ -29,7 +31,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
+    public function unserialize(SerializedCachePayload $serializedCachePayload): mixed
     {
         if (! $this->canUnserialize(payload: $serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(
@@ -54,13 +56,13 @@ final readonly class JsonCacheSerializer implements CacheSerializer
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
+    public function canUnserialize(SerializedCachePayload $serializedCachePayload): bool
     {
         return $serializedCachePayload->format === self::FORMAT;
     }
 
     #[Override]
-    public function supportedType() : string
+    public function supportedType(): string
     {
         return self::FORMAT;
     }

@@ -15,10 +15,10 @@ final readonly class DeflateCompressor implements CacheCompressor
     public const int LEVEL = -1;
 
     #[Override]
-    public function compress(string $data) : CompressedCachePayload
+    public function compress(string $data): CompressedCachePayload
     {
         $originalSize = strlen($data);
-        $compressed = zlib_encode($data, encoding: ZLIB_ENCODING_DEFLATE, level: self::LEVEL);
+        $compressed   = zlib_encode($data, encoding: ZLIB_ENCODING_DEFLATE, level: self::LEVEL);
 
         if ($compressed === false) {
             throw new RuntimeException(message: 'Failed to compress data using deflate');
@@ -33,7 +33,7 @@ final readonly class DeflateCompressor implements CacheCompressor
     }
 
     #[Override]
-    public function decompress(CompressedCachePayload $compressedCachePayload) : string
+    public function decompress(CompressedCachePayload $compressedCachePayload): string
     {
         if ($compressedCachePayload->algorithm !== self::ALGORITHM) {
             throw new InvalidArgumentException(
@@ -51,7 +51,7 @@ final readonly class DeflateCompressor implements CacheCompressor
     }
 
     #[Override]
-    public function algorithm() : string
+    public function algorithm(): string
     {
         return self::ALGORITHM;
     }

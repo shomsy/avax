@@ -152,7 +152,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_persists_data() : void
     {
-        $store = new ArraySessionStore;
+        $store = new ArraySessionStore();
         $sessionId = 'session-123';
 
         $store->write($sessionId, ['user' => 'John', 'role' => 'admin']);
@@ -165,7 +165,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_returns_empty_for_missing_session() : void
     {
-        $store = new ArraySessionStore;
+        $store = new ArraySessionStore();
         $data  = $store->read('nonexistent');
 
         $this->assertEmpty($data);
@@ -174,7 +174,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_destroy_removes_session() : void
     {
-        $store = new ArraySessionStore;
+        $store = new ArraySessionStore();
         $sessionId = 'session-123';
 
         $store->write($sessionId, ['key' => 'value']);
@@ -202,7 +202,7 @@ final class SessionTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->store = new ArraySessionStore;
+        $this->store = new ArraySessionStore();
         $this->scope = new SessionScope(store: $this->store);
     }
 }

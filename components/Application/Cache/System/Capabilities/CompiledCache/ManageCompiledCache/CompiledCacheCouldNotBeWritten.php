@@ -10,10 +10,9 @@ use Throwable;
 final class CompiledCacheCouldNotBeWritten extends RuntimeException
 {
     public function __construct(
-        string     $name,
+        string $name,
         ?Throwable $throwable = null,
-    )
-    {
+    ) {
         parent::__construct(
             message : sprintf('Compiled cache "%s" could not be written', $name),
             code    : 0,

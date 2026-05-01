@@ -16,17 +16,17 @@ final class FrozenClock implements Clock
     }
 
     #[Override]
-    public function now() : Timestamp
+    public function now(): Timestamp
     {
         return $this->timestamp;
     }
 
-    public function moveForward(Duration $duration) : void
+    public function moveForward(Duration $duration): void
     {
         $this->timestamp = $this->timestamp->add(duration: $duration);
     }
 
-    public function reset(?Timestamp $timestamp = null) : void
+    public function reset(?Timestamp $timestamp = null): void
     {
         $this->timestamp = $timestamp ?? Timestamp::now();
     }

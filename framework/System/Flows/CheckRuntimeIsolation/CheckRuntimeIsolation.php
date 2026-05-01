@@ -9,8 +9,9 @@ use Avax\Framework\System\Capabilities\RuntimeIsolation\RuntimeIsolationGuard;
 final readonly class CheckRuntimeIsolation
 {
     public function __construct(
-        private RuntimeIsolationGuard $guard = new RuntimeIsolationGuard,
-    ) {}
+        private RuntimeIsolationGuard $guard = new RuntimeIsolationGuard(),
+    ) {
+    }
 
     /**
      * @param array<string, string> $files

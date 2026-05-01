@@ -8,8 +8,8 @@ use components\Container\DependencyInjection\Capability\Prototypes\Model\Service
 use components\Logging\ErrorLogger;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => ErrorLogger::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'       => ErrorLogger::class,
+                                                'constructor' => MethodPrototype::__set_state(array: [
                                                                                                                 'name'       => '__construct',
                                                                                                                 'parameters' => [
                                                                                                                     ParameterPrototype::__set_state(array: [
@@ -25,7 +25,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                             ]),
                                                 'injectedProperties' => [
                                                 ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                 ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable' => true,
                                             ]);

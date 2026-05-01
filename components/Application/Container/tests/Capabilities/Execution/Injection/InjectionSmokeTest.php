@@ -8,13 +8,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\At
 
 interface InjectionGreeterContract
 {
-    public function message() : string;
+    public function message(): string;
 }
 
 final class InjectionGreeter implements InjectionGreeterContract
 {
     #[Override]
-    public function message() : string
+    public function message(): string
     {
         return 'injected';
     }
@@ -31,7 +31,7 @@ final class InjectionTarget
 $container = makeTestContainer();
 $container->bind(abstract: InjectionGreeterContract::class, concrete: InjectionGreeter::class);
 
-$target = $container->injectInto(target: new InjectionTarget);
+$target = $container->injectInto(target: new InjectionTarget());
 $report = $container->inspectInjection(target: $target);
 
 assertSame(expected: 'injected', actual: $target->greeter->message(), message: 'Property injection should resolve bound services.');

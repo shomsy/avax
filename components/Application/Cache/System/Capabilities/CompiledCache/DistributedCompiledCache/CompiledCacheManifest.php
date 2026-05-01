@@ -24,15 +24,16 @@ final class CompiledCacheManifest
     private ?string $manifestPath = null;
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock,
-    ) {}
+        private readonly Clock $clock = new SystemClock(),
+    ) {
+    }
 
     /**
      * Create a new empty manifest.
      */
-    public static function empty(?Clock $clock = null) : self
+    public static function empty(?Clock $clock = null): self
     {
-        return new self(clock: $clock ?? new SystemClock);
+        return new self(clock: $clock ?? new SystemClock());
     }
 
     /**
@@ -40,9 +41,9 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, ?Clock $clock = null) : self
+    public static function load(string $path, ?Clock $clock = null): self
     {
-        $manifest = new self(clock: $clock ?? new SystemClock);
+        $manifest               = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
 
         if (! file_exists($path)) {
@@ -66,7 +67,7 @@ final class CompiledCacheManifest
         }
 
         foreach ($data['entries'] ?? [] as $name => $entryData) {
-            $entry = CompiledCacheManifestEntry::fromArray($entryData);
+            $entry                    = CompiledCacheManifestEntry::fromArray($entryData);
             $manifest->entries[$name] = $entry;
         }
 
@@ -78,7 +79,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(?string $path = null) : void
+    public function save(?string $path = null): void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -95,10 +96,10 @@ final class CompiledCacheManifest
         }
 
         $data = [
-            'version' => '1.0',
+            'version'     => '1.0',
             'generatedAt' => $this->clock->now()->seconds,
-            'entries' => array_map(
-                static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry) : array => $compiledCacheManifestEntry->toArray(),
+            'entries'     => array_map(
+                static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry): array => $compiledCacheManifestEntry->toArray(),
                 $this->entries,
             ),
         ];
@@ -126,12 +127,11 @@ final class CompiledCacheManifest
     public function addEntry(
         string $name,
         string $compiledPath,
-        array   $sourceFiles,
+        array $sourceFiles,
         ?string $type = null,
         ?string $phpVersion = null,
         ?string $frameworkVersion = null,
-    ) : CompiledCacheManifestEntry
-    {
+    ): CompiledCacheManifestEntry {
         $now = $this->clock->now();
 
         // Calculate fingerprint from source files
@@ -159,7 +159,7 @@ final class CompiledCacheManifest
      *
      * @param list<string> $sourceFiles
      */
-    private function calculateFingerprint(array $sourceFiles) : string
+    private function calculateFingerprint(array $sourceFiles): string
     {
         $hashParts = [];
 
@@ -173,7 +173,7 @@ final class CompiledCacheManifest
     /**
      * Set an entry directly.
      */
-    public function setEntry(CompiledCacheManifestEntry $compiledCacheManifestEntry) : void
+    public function setEntry(CompiledCacheManifestEntry $compiledCacheManifestEntry): void
     {
         $this->entries[$compiledCacheManifestEntry->name] = $compiledCacheManifestEntry;
     }
@@ -181,7 +181,7 @@ final class CompiledCacheManifest
     /**
      * Remove an entry from the manifest.
      */
-    public function removeEntry(string $name) : bool
+    public function removeEntry(string $name): bool
     {
         if (! isset($this->entries[$name])) {
             return false;
@@ -195,7 +195,7 @@ final class CompiledCacheManifest
     /**
      * Get an entry by name.
      */
-    public function getEntry(string $name) : ?CompiledCacheManifestEntry
+    public function getEntry(string $name): ?CompiledCacheManifestEntry
     {
         return $this->entries[$name] ?? null;
     }
@@ -203,7 +203,7 @@ final class CompiledCacheManifest
     /**
      * Check if an entry exists.
      */
-    public function hasEntry(string $name) : bool
+    public function hasEntry(string $name): bool
     {
         return isset($this->entries[$name]);
     }
@@ -213,7 +213,7 @@ final class CompiledCacheManifest
      *
      * @return array<string, CompiledCacheManifestEntry>
      */
-    public function getAllEntries() : array
+    public function getAllEntries(): array
     {
         return $this->entries;
     }
@@ -223,7 +223,7 @@ final class CompiledCacheManifest
      *
      * @return list<CompiledCacheManifestEntry>
      */
-    public function getEntriesByType(string $type) : array
+    public function getEntriesByType(string $type): array
     {
         $filtered = [];
 
@@ -241,7 +241,7 @@ final class CompiledCacheManifest
      *
      * @return list<CompiledCacheManifestEntry>
      */
-    public function getStaleEntries() : array
+    public function getStaleEntries(): array
     {
         $stale = [];
 
@@ -257,7 +257,7 @@ final class CompiledCacheManifest
     /**
      * Check if an entry is fresh (source files haven't changed).
      */
-    public function isFresh(string $name) : bool
+    public function isFresh(string $name): bool
     {
         $entry = $this->entries[$name] ?? null;
 
@@ -273,7 +273,7 @@ final class CompiledCacheManifest
     /**
      * Get the count of entries.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->entries);
     }
@@ -281,7 +281,7 @@ final class CompiledCacheManifest
     /**
      * Clear all entries.
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->entries = [];
     }
@@ -289,13 +289,13 @@ final class CompiledCacheManifest
     /**
      * Update the timestamp of an entry.
      */
-    public function touchEntry(string $name) : bool
+    public function touchEntry(string $name): bool
     {
         if (! isset($this->entries[$name])) {
             return false;
         }
 
-        $entry = $this->entries[$name];
+        $entry                = $this->entries[$name];
         $this->entries[$name] = $entry->withUpdatedAt($this->clock->now());
 
         return true;
@@ -304,7 +304,7 @@ final class CompiledCacheManifest
     /**
      * Get the manifest path.
      */
-    public function getManifestPath() : ?string
+    public function getManifestPath(): ?string
     {
         return $this->manifestPath;
     }

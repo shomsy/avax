@@ -10,13 +10,12 @@ final readonly class CompiledCacheDirectory
 {
     public function __construct(
         public string $path,
-    )
-    {
+    ) {
         $this->validate();
         $this->ensureExists();
     }
 
-    private function validate() : void
+    private function validate(): void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Compiled cache directory cannot be empty');
@@ -24,35 +23,35 @@ final readonly class CompiledCacheDirectory
 
         if (is_file($this->path)) {
             throw new InvalidArgumentException(message: sprintf(
-                                                            'Expected directory but found file: %s',
-                                                            $this->path,
-                                                        ));
+                'Expected directory but found file: %s',
+                $this->path,
+            ));
         }
     }
 
-    private function ensureExists() : void
+    private function ensureExists(): void
     {
         if (! is_dir($this->path)) {
             mkdir($this->path, 0o755, true);
         }
     }
 
-    public static function fromString(string $path) : self
+    public static function fromString(string $path): self
     {
         return new self(path: $path);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->path;
     }
 
-    public function resolve(string $filename) : CompiledCachePath
+    public function resolve(string $filename): CompiledCachePath
     {
         return new CompiledCachePath(path: $this->path . DIRECTORY_SEPARATOR . $filename . '.php');
     }
 
-    public function resolveManifestPath() : CompiledCachePath
+    public function resolveManifestPath(): CompiledCachePath
     {
         return new CompiledCachePath(path: $this->path . DIRECTORY_SEPARATOR . 'manifest.php');
     }

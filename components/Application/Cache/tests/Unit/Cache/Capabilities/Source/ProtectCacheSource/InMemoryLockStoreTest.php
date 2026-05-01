@@ -15,23 +15,23 @@ final class InMemoryLockStoreTest extends TestCase
 {
     private FrozenClock $frozenClock;
 
-    public function test_acquire_returns_true_when_no_lock_exists() : void
+    public function test_acquire_returns_true_when_no_lock_exists(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $result            = $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
         $this->assertTrue(condition: $result);
     }
 
-    public function test_acquire_returns_false_when_lock_is_held() : void
+    public function test_acquire_returns_false_when_lock_is_held(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
 
         $result = $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
         $this->assertFalse(condition: $result);
     }
 
-    public function test_acquire_returns_true_after_lock_expires() : void
+    public function test_acquire_returns_true_after_lock_expires(): void
     {
         $inMemoryLockStore = new InMemoryLockStore(clock: $this->frozenClock);
         $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 1);
@@ -46,9 +46,9 @@ final class InMemoryLockStoreTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_release_removes_lock() : void
+    public function test_release_removes_lock(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
 
         $this->assertTrue(condition: $inMemoryLockStore->isAcquired(key: 'test_key'));
@@ -58,9 +58,9 @@ final class InMemoryLockStoreTest extends TestCase
         $this->assertFalse(condition: $inMemoryLockStore->isAcquired(key: 'test_key'));
     }
 
-    public function test_acquire_after_release_succeeds() : void
+    public function test_acquire_after_release_succeeds(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
         $inMemoryLockStore->release(key: 'test_key');
 
@@ -68,9 +68,9 @@ final class InMemoryLockStoreTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_get_owner_returns_lock_owner() : void
+    public function test_get_owner_returns_lock_owner(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
 
         $owner = $inMemoryLockStore->getOwner(key: 'test_key');
@@ -78,16 +78,16 @@ final class InMemoryLockStoreTest extends TestCase
         $this->assertNotEmpty(actual: $owner->ownerId);
     }
 
-    public function test_get_owner_returns_null_when_not_locked() : void
+    public function test_get_owner_returns_null_when_not_locked(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $owner             = $inMemoryLockStore->getOwner(key: 'test_key');
         $this->assertNull(actual: $owner);
     }
 
-    public function test_release_all_clears_all_locks() : void
+    public function test_release_all_clears_all_locks(): void
     {
-        $inMemoryLockStore = new InMemoryLockStore;
+        $inMemoryLockStore = new InMemoryLockStore();
         $inMemoryLockStore->acquire(key: 'key1', ttlSeconds: 30);
         $inMemoryLockStore->acquire(key: 'key2', ttlSeconds: 30);
 
@@ -101,7 +101,7 @@ final class InMemoryLockStoreTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
     }

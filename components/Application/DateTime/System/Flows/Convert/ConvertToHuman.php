@@ -8,7 +8,7 @@ use DateTimeInterface;
 
 final class ConvertToHuman
 {
-    public static function execute(DateTimeInterface $dt) : string
+    public static function execute(DateTimeInterface $dt): string
     {
         return $dt->format('Y-m-d H:i:s');
     }

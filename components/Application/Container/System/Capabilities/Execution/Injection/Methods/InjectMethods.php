@@ -19,7 +19,9 @@ final class InjectMethods
     /** @var array<string, Closure(object, array) : mixed> */
     private array $invokers = [];
 
-    public function __construct(private readonly ResolveCallArguments $resolveCallArguments) {}
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
+    {
+    }
 
     /**
      * @param array<string, mixed> $overrides
@@ -27,13 +29,12 @@ final class InjectMethods
      * @throws ContainerException
      */
     public function inject(
-        object         $target,
+        object $target,
         DependencyBlueprint $dependencyBlueprint,
-        array          $overrides,
+        array $overrides,
         ResolveDependency $resolveDependency,
         ResolveRequest $resolveRequest,
-    ) : void
-    {
+    ): void {
         foreach ($dependencyBlueprint->injectableMethods as $method) {
             $arguments = $this->resolveCallArguments->resolvePlan(
                 plan     : $method['plan'],
@@ -51,12 +52,12 @@ final class InjectMethods
      *
      * @return Closure(object, array) : mixed
      */
-    private function invokerFor(string $class, string $method) : Closure
+    private function invokerFor(string $class, string $method): Closure
     {
         $key = $class . '::' . $method;
 
         return $this->invokers[$key] ?? ($this->invokers[$key] = Closure::bind(
-            closure : static fn (object $target, array $arguments) : mixed => $target->{$method}(...$arguments),
+            closure : static fn (object $target, array $arguments): mixed => $target->{$method}(...$arguments),
             newThis : null,
             newScope: $class,
         ));

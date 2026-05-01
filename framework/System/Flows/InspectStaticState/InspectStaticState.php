@@ -10,13 +10,14 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 final readonly class InspectStaticState
 {
     public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety,
-    ) {}
+        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
+    ) {
+    }
 
     /**
      * @return list<RuntimeSafetyFinding>
      */
-    public function inspect() : array
+    public function inspect(): array
     {
         return $this->runtimeSafety->staticScanner()->scan();
     }

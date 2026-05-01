@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class ContainerIntegrationTest extends TestCase
 {
     #[Test]
-    public function container_integration_placeholder() : void
+    public function container_integration_placeholder(): void
     {
         // Container requires full framework bootstrap with ResolveDependency
         $this->markTestSkipped('Container requires full framework bootstrap');

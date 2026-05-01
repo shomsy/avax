@@ -26,12 +26,11 @@ final readonly class DependencyCompiler
     public function __construct(
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
-        MethodEmitter $emitter = new MethodEmitter,
-    )
-    {
+        MethodEmitter $emitter = new MethodEmitter(),
+    ) {
         $this->registrations = $registrations;
-        $this->blueprints = $blueprints;
-        $this->emitter = $emitter;
+        $this->blueprints    = $blueprints;
+        $this->emitter       = $emitter;
     }
 
     /**
@@ -39,7 +38,7 @@ final readonly class DependencyCompiler
      *
      * @throws ReflectionException
      */
-    public function compile(string $serviceId) : array
+    public function compile(string $serviceId): array
     {
         return $this->compileFromDescription(description: $this->describe(serviceId: $serviceId));
     }
@@ -57,7 +56,7 @@ final readonly class DependencyCompiler
      * } $description
      * @return array{serviceId: string, method: string, signature: string, source: string}
      */
-    public function compileFromDescription(array $description) : array
+    public function compileFromDescription(array $description): array
     {
         $source = $description['direct']
             ? $this->emitter->emitDirectMethod(
@@ -72,9 +71,9 @@ final readonly class DependencyCompiler
 
         return [
             'serviceId' => $description['serviceId'],
-            'method' => $description['method'],
+            'method'    => $description['method'],
             'signature' => $description['signature'],
-            'source' => $source,
+            'source'    => $source,
         ];
     }
 
@@ -92,22 +91,22 @@ final readonly class DependencyCompiler
      *
      * @throws ReflectionException
      */
-    public function describe(string $serviceId) : array
+    public function describe(string $serviceId): array
     {
-        $methodName   = $this->emitter->methodNameFor(serviceId: $serviceId);
-        $registration = $this->registrations->get(abstract: $serviceId);
-        $candidate    = $this->candidateFor(serviceId: $serviceId, registration: $registration);
+        $methodName            = $this->emitter->methodNameFor(serviceId: $serviceId);
+        $registration          = $this->registrations->get(abstract: $serviceId);
+        $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
         $registrationArguments = $registration?->arguments ?? [];
 
         if (is_string(value: $candidate) && class_exists(class: $candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
-            $blueprint = $this->blueprints->createFor(class: $candidate);
+            $blueprint   = $this->blueprints->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
-                || $blueprint->injectableMethods !== []
+                || $blueprint->injectableMethods            !== []
                 || $this->registrations->hasExtenders(abstract: $serviceId);
 
             return [
                 'serviceId' => $serviceId,
-                'method'      => $methodName,
+                'method'    => $methodName,
                 'signature' => sha1(string: serialize(value: [
                                                                  'serviceId' => $serviceId,
                                                                  'candidate' => $candidate,
@@ -117,17 +116,17 @@ final readonly class DependencyCompiler
                                                                  'blueprint' => $blueprint->fingerprint,
                                                                  'finish'    => $needsFinish,
                                                              ])),
-                'direct'      => true,
-                'class'       => $candidate,
-                'plan'        => $blueprint->constructor,
+                'direct'                => true,
+                'class'                 => $candidate,
+                'plan'                  => $blueprint->constructor,
                 'registrationArguments' => $registrationArguments,
-                'needsFinish' => $needsFinish,
+                'needsFinish'           => $needsFinish,
             ];
         }
 
         return [
             'serviceId' => $serviceId,
-            'method'      => $methodName,
+            'method'    => $methodName,
             'signature' => sha1(string: serialize(value: [
                                                              'serviceId' => $serviceId,
                                                              'candidate' => $this->dynamicSignature(candidate: $candidate),
@@ -135,15 +134,15 @@ final readonly class DependencyCompiler
                                                              'deferred'  => $registration?->deferred ?? false,
                                                              'arguments' => $registrationArguments,
                                                          ])),
-            'direct'      => false,
-            'class'       => null,
-            'plan'        => null,
+            'direct'                => false,
+            'class'                 => null,
+            'plan'                  => null,
             'registrationArguments' => $registrationArguments,
-            'needsFinish' => false,
+            'needsFinish'           => false,
         ];
     }
 
-    private function candidateFor(string $serviceId, ?DependencyRegistration $registration) : mixed
+    private function candidateFor(string $serviceId, ?DependencyRegistration $registration): mixed
     {
         if ($registration !== null) {
             return $registration->concrete;
@@ -155,7 +154,7 @@ final readonly class DependencyCompiler
     /**
      * @param array<string, mixed> $arguments
      */
-    private function supportsCompiledArguments(array $arguments) : bool
+    private function supportsCompiledArguments(array $arguments): bool
     {
         foreach ($arguments as $value) {
             if (! $this->supportsCompiledValue(value: $value)) {
@@ -166,7 +165,7 @@ final readonly class DependencyCompiler
         return true;
     }
 
-    private function supportsCompiledValue(mixed $value) : bool
+    private function supportsCompiledValue(mixed $value): bool
     {
         if ($value === null || is_scalar(value: $value)) {
             return true;
@@ -188,7 +187,7 @@ final readonly class DependencyCompiler
     /**
      * @throws ReflectionException
      */
-    private function dynamicSignature(mixed $candidate) : string
+    private function dynamicSignature(mixed $candidate): string
     {
         if ($candidate instanceof Closure) {
             $reflection = new ReflectionFunction(function: $candidate);

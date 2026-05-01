@@ -17,7 +17,7 @@ class ReadFileLastModifiedAtTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
+        $this->disk = new LocalDisk();
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/mtime_test.txt';
     }
 

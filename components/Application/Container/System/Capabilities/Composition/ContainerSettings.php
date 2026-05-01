@@ -12,16 +12,18 @@ final class ContainerSettings
     /**
      * @param array<string, mixed> $items
      */
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         if ($key === '') {
             return;
         }
 
         $segments = explode(separator: '.', string: $key);
-        $target = &$this->items;
+        $target   = &$this->items;
 
         foreach ($segments as $segment) {
             if (! isset($target[$segment]) || ! is_array(value: $target[$segment])) {
@@ -34,7 +36,7 @@ final class ContainerSettings
         $target = $value;
     }
 
-    public function env(string $key, mixed $default = null) : mixed
+    public function env(string $key, mixed $default = null): mixed
     {
         if ($key === '') {
             return $default;
@@ -52,14 +54,14 @@ final class ContainerSettings
         return $default;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         if ($key === '') {
             return false;
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value = $this->items;
+        $value    = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
@@ -72,14 +74,14 @@ final class ContainerSettings
         return true;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if ($key === '') {
             return $default;
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value = $this->items;
+        $value    = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
@@ -95,7 +97,7 @@ final class ContainerSettings
     /**
      * @return array<string, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }

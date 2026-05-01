@@ -12,25 +12,26 @@ final readonly class CacheSourceKey implements Stringable
     public function __construct(
         public string $key,
         public ?string $namespace = null,
-    ) {}
+    ) {
+    }
 
-    public static function create(string $key, ?string $namespace = null) : self
+    public static function create(string $key, ?string $namespace = null): self
     {
         return new self(key: $key, namespace: $namespace);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->toString();
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->fullKey();
     }
 
-    public function fullKey() : string
+    public function fullKey(): string
     {
         if ($this->namespace === null) {
             return $this->key;

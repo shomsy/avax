@@ -11,24 +11,25 @@ final readonly class CheckCachedValueIsExpired
 {
     public function __construct(
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
-    public function check(?Timestamp $expiresAt) : bool
+    public function check(?Timestamp $timestamp): bool
     {
-        if (! $expiresAt instanceof Timestamp) {
+        if (! $timestamp instanceof Timestamp) {
             return false;
         }
 
-        return $this->clock->now()->isAfter(other: $expiresAt);
+        return $this->clock->now()->isAfter(other: $timestamp);
     }
 
-    public function secondsUntilExpiry(?Timestamp $expiresAt) : int
+    public function secondsUntilExpiry(?Timestamp $timestamp): int
     {
-        if (! $expiresAt instanceof Timestamp) {
+        if (! $timestamp instanceof Timestamp) {
             return PHP_INT_MAX;
         }
 
-        $duration = $expiresAt->difference(other: $this->clock->now());
+        $duration = $timestamp->difference(other: $this->clock->now());
 
         return max(0, $duration->toSeconds());
     }

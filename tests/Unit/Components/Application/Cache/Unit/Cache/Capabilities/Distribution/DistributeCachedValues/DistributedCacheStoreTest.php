@@ -23,9 +23,9 @@ final class DistributedCacheStoreTest extends TestCase
 {
     private FrozenClock $clock;
 
-    public function test_write_then_read_uses_same_resolved_node() : void
+    public function test_write_then_read_uses_same_resolved_node(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
 
         $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
@@ -40,14 +40,14 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
     }
 
-    private function makeKey(string $key) : CacheKey
+    private function makeKey(string $key): CacheKey
     {
         return CacheKey::create(key: $key);
     }
 
-    private function makeRecord(string $value) : StoredCacheRecord
+    private function makeRecord(string $value): StoredCacheRecord
     {
-        $now = $this->clock->now();
+        $now       = $this->clock->now();
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
@@ -57,9 +57,9 @@ final class DistributedCacheStoreTest extends TestCase
         return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
     }
 
-    public function test_distributed_store_fails_when_node_store_is_missing() : void
+    public function test_distributed_store_fails_when_node_store_is_missing(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -73,9 +73,9 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
 
-    public function test_forget_removes_from_correct_node() : void
+    public function test_forget_removes_from_correct_node(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
 
         $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
@@ -92,9 +92,9 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertFalse(condition: $storeA->exists(key: $this->makeKey(key: 'key_1')));
     }
 
-    public function test_clear_removes_from_all_nodes() : void
+    public function test_clear_removes_from_all_nodes(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -114,9 +114,9 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertEquals(expected: 0, actual: $storeB->count());
     }
 
-    public function test_node_count_returns_ring_count() : void
+    public function test_node_count_returns_ring_count(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -125,9 +125,9 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertEquals(expected: 2, actual: $cache->nodeCount());
     }
 
-    public function test_has_node_store_returns_true_when_registered() : void
+    public function test_has_node_store_returns_true_when_registered(): void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
 
         $storeA = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
@@ -139,7 +139,7 @@ final class DistributedCacheStoreTest extends TestCase
         $this->assertFalse(condition: $cache->hasNodeStore(nodeId: CacheNodeId::from(id: 'node_b')));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->clock = new FrozenClock(timestamp: Timestamp::now());
     }

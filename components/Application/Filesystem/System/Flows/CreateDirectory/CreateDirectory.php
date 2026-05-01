@@ -10,7 +10,7 @@ use Throwable;
 
 final class CreateDirectory
 {
-    public static function execute(string $path, int $permissions = 0o755) : bool
+    public static function execute(string $path, int $permissions = 0o755): bool
     {
         try {
             return Storage::makeDirectory($path, $permissions);

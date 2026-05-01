@@ -13,8 +13,8 @@ final class SagaTest extends TestCase
 {
     public function test_saga_executes_all_steps_on_success() : void
     {
-        $workflow = new Workflow;
-        $def      = new SagaDefinition;
+        $workflow = new Workflow();
+        $def      = new SagaDefinition();
 
         $steps = 0;
         $def->step('step1', static function () use (&$steps) : void {
@@ -31,8 +31,8 @@ final class SagaTest extends TestCase
 
     public function test_saga_runs_compensations_on_failure() : void
     {
-        $workflow = new Workflow;
-        $def      = new SagaDefinition;
+        $workflow = new Workflow();
+        $def      = new SagaDefinition();
 
         $step1Done = false;
         $step1Compensated = false;

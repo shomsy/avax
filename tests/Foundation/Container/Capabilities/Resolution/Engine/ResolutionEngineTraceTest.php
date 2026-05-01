@@ -19,10 +19,10 @@ final class ResolutionEngineTraceTest extends TestCase
 {
     public function test_trace_includes_evaluate_and_instantiate_stages() : void
     {
-        $container = (new ContainerBuilder)->build(cacheDir: sys_get_temp_dir(), debug: false);
+        $container = (new ContainerBuilder())->build(cacheDir: sys_get_temp_dir(), debug: false);
         $engine    = $this->extractEngine(container: $container);
 
-        $observer = new class implements TraceObserverInterface {
+        $observer = new class () implements TraceObserverInterface {
             public ?ResolutionTrace $trace = null;
 
             public function record(ResolutionTrace $trace) : void

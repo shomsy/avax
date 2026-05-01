@@ -25,7 +25,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_default_values() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
 
         $this->assertNull($query->entityType);
         $this->assertEmpty($query->conditions);
@@ -38,7 +38,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_condition() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query->withCondition('status', 'active', '=');
 
         $this->assertNotSame($query, $newQuery);
@@ -50,7 +50,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_multiple_conditions() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query
             ->withCondition('status', 'active')
             ->withCondition('age', 18, '>=');
@@ -60,7 +60,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_order_by() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query->withOrderBy('created_at', 'DESC');
 
         $this->assertSame(['created_at' => 'DESC'], $newQuery->orderBy);
@@ -68,7 +68,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_limit() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query->withLimit(10);
 
         $this->assertSame(10, $newQuery->limit);
@@ -76,7 +76,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_offset() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query->withOffset(20);
 
         $this->assertSame(20, $newQuery->offset);
@@ -84,7 +84,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_joins() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $joins = [
             ['type' => 'LEFT', 'table' => 'users', 'on' => 'posts.user_id = users.id'],
         ];
@@ -96,7 +96,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_select() : void
     {
-        $query = new DataQuery;
+        $query = new DataQuery();
         $newQuery = $query->withSelect(['id', 'name', 'email']);
 
         $this->assertSame(['id', 'name', 'email'], $newQuery->select);
@@ -120,7 +120,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_builder_fluent_interface() : void
     {
-        $builder = new DataQueryBuilder;
+        $builder = new DataQueryBuilder();
         $query   = $builder
             ->from('User')
             ->select(['id', 'name'])
@@ -143,7 +143,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_builder_reset() : void
     {
-        $builder = new DataQueryBuilder;
+        $builder = new DataQueryBuilder();
         $builder
             ->from('User')
             ->where('status', 'active')
@@ -159,7 +159,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_builder_inner_join() : void
     {
-        $builder = new DataQueryBuilder;
+        $builder = new DataQueryBuilder();
         $query   = $builder
             ->from('Post')
             ->innerJoin('users', 'posts.user_id = users.id')
@@ -171,7 +171,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_builder_select_string() : void
     {
-        $builder = new DataQueryBuilder;
+        $builder = new DataQueryBuilder();
         $query   = $builder->select('id')->build();
 
         $this->assertSame(['id'], $query->select);
@@ -220,7 +220,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_plan_with_methods() : void
     {
-        $plan = new DataQueryPlan;
+        $plan = new DataQueryPlan();
 
         $newPlan = $plan
             ->withSql('SELECT * FROM users')
@@ -258,7 +258,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_result_is_empty() : void
     {
-        $emptyResult = new QueryResult;
+        $emptyResult = new QueryResult();
         $this->assertTrue($emptyResult->isEmpty());
 
         $nonEmptyResult = new QueryResult(rows: [['id' => 1]], count: 1);
@@ -278,7 +278,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_result_first_empty() : void
     {
-        $result = new QueryResult;
+        $result = new QueryResult();
         $this->assertNull($result->first());
     }
 
@@ -292,7 +292,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_build_data_query_basic() : void
     {
-        $flow = new BuildDataQuery;
+        $flow = new BuildDataQuery();
         $query = $flow->build(
             entityType: 'stdClass',
             conditions: ['status' => 'active'],
@@ -319,7 +319,7 @@ final class QueryIntentTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $flow = new BuildDataQuery;
+        $flow = new BuildDataQuery();
         $flow->build(entityType: 'NonExistentEntity');
     }
 
@@ -351,7 +351,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_compile_data_query_basic() : void
     {
-        $flow  = new CompileDataQuery;
+        $flow  = new CompileDataQuery();
         $query = new DataQuery(
             entityType: 'User',
             conditions: [
@@ -372,7 +372,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_compile_data_query_with_joins() : void
     {
-        $flow  = new CompileDataQuery;
+        $flow  = new CompileDataQuery();
         $query = new DataQuery(
             entityType: 'Post',
             joins     : [
@@ -388,7 +388,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_compile_data_query_with_order_by() : void
     {
-        $flow = new CompileDataQuery;
+        $flow = new CompileDataQuery();
         $query = new DataQuery(
             entityType: 'User',
             orderBy   : ['name' => 'ASC', 'created_at' => 'DESC'],
@@ -405,14 +405,14 @@ final class QueryIntentTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $flow  = new CompileDataQuery;
-        $query = new DataQuery;
+        $flow  = new CompileDataQuery();
+        $query = new DataQuery();
         $flow->compile($query);
     }
 
     public function test_compile_data_query_table_name_conversion() : void
     {
-        $flow = new CompileDataQuery;
+        $flow = new CompileDataQuery();
         $query = new DataQuery(entityType: 'UserProfile');
 
         $plan = $flow->compile($query);
@@ -443,7 +443,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_execute_data_query_default_executor() : void
     {
-        $flow = new ExecuteDataQuery;
+        $flow = new ExecuteDataQuery();
         $plan = new DataQueryPlan(sql: 'SELECT * FROM users');
 
         $result = $flow->execute($plan);
@@ -456,7 +456,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_explain_data_query_no_conditions_warning() : void
     {
-        $flow = new ExplainDataQuery;
+        $flow = new ExplainDataQuery();
         $query = new DataQuery(
             entityType: 'User',
             select    : ['*'],
@@ -471,7 +471,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_explain_data_query_optimized() : void
     {
-        $flow = new ExplainDataQuery;
+        $flow = new ExplainDataQuery();
         $query = new DataQuery(
             entityType: 'User',
             conditions: [['field' => 'id', 'value' => 1, 'operator' => '=']],
@@ -487,7 +487,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_explain_data_query_select_star_warning() : void
     {
-        $flow = new ExplainDataQuery;
+        $flow = new ExplainDataQuery();
         $query = new DataQuery(
             entityType: 'User',
             select    : ['*'],
@@ -728,7 +728,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_record() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.5);
 
         $this->assertSame(1, $timeline->getQueryCount());
@@ -736,7 +736,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_get_timeline() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.5);
         $timeline->record('SELECT * FROM posts', 20.3);
 
@@ -749,7 +749,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_total_time() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->record('SELECT * FROM posts', 20.0);
         $timeline->record('SELECT * FROM comments', 5.0);
@@ -759,7 +759,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_average_time() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->record('SELECT * FROM posts', 20.0);
 
@@ -768,13 +768,13 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_average_time_empty() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $this->assertSame(0.0, $timeline->getAverageTime());
     }
 
     public function test_persistence_timeline_slowest_query() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->record('SELECT * FROM posts', 50.0);
         $timeline->record('SELECT * FROM comments', 20.0);
@@ -787,13 +787,13 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_slowest_query_empty() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $this->assertNull($timeline->getSlowestQuery());
     }
 
     public function test_persistence_timeline_get_by_fingerprint() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users WHERE id = 1', 10.0);
         $timeline->record('SELECT * FROM users WHERE id = 2', 12.0);
         $timeline->record('SELECT * FROM posts', 5.0);
@@ -808,7 +808,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_slow_queries() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->record('SELECT * FROM posts', 100.0);
         $timeline->record('SELECT * FROM comments', 50.0);
@@ -820,7 +820,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_time_span() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0, timestamp: 1000.0);
         $timeline->record('SELECT * FROM posts', 20.0, timestamp: 2000.0);
 
@@ -829,13 +829,13 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_time_span_empty() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $this->assertSame(0.0, $timeline->getTimeSpan());
     }
 
     public function test_persistence_timeline_reset() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->reset();
 
@@ -845,7 +845,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_persistence_timeline_summary() : void
     {
-        $timeline = new PersistenceTimeline;
+        $timeline = new PersistenceTimeline();
         $timeline->record('SELECT * FROM users', 10.0);
         $timeline->record('SELECT * FROM posts', 20.0);
 

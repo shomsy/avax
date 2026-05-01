@@ -10,9 +10,10 @@ readonly class CacheCapacity
         public int $maxEntries = 10000,
         public int $maxSizeBytes = 104857600,
         public int $maxValueSizeBytes = 1048576,
-    ) {}
+    ) {
+    }
 
-    public static function unlimited() : self
+    public static function unlimited(): self
     {
         return new self(
             maxEntries       : PHP_INT_MAX,
@@ -21,7 +22,7 @@ readonly class CacheCapacity
         );
     }
 
-    public static function fromMegabytes(int $megabytes) : self
+    public static function fromMegabytes(int $megabytes): self
     {
         return new self(
             maxEntries       : PHP_INT_MAX,
@@ -30,13 +31,13 @@ readonly class CacheCapacity
         );
     }
 
-    public function canStore(int $currentCount, int $currentSizeBytes) : bool
+    public function canStore(int $currentCount, int $currentSizeBytes): bool
     {
-        return $currentCount < $this->maxEntries
+        return $currentCount     < $this->maxEntries
             && $currentSizeBytes < $this->maxSizeBytes;
     }
 
-    public function isValueTooLarge(int $valueSizeBytes) : bool
+    public function isValueTooLarge(int $valueSizeBytes): bool
     {
         return $valueSizeBytes > $this->maxValueSizeBytes;
     }

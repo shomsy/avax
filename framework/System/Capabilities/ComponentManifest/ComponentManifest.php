@@ -15,15 +15,16 @@ final readonly class ComponentManifest
         public string $name,
         public string $version,
         public ?string $path = null,
-        public array   $dependencies = [],
-    ) {}
+        public array $dependencies = [],
+    ) {
+    }
 
-    public function version() : Version
+    public function version(): Version
     {
         return Version::from($this->version);
     }
 
-    public function isCompatibleWith(self $other) : bool
+    public function isCompatibleWith(self $other): bool
     {
         return $this->version()->isCompatibleWith(other: $other->version());
     }

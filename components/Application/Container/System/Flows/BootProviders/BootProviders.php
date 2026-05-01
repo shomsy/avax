@@ -23,8 +23,7 @@ final readonly class BootProviders
 
     public function __construct(
         ContainerInterface $container,
-    )
-    {
+    ) {
         $this->container = $container;
     }
 
@@ -34,14 +33,14 @@ final readonly class BootProviders
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
-    public function boot(array $providers) : void
+    public function boot(array $providers): void
     {
-        $instances = $this->resolveProviders(providers: $providers);
-        $plan      = ProviderBootPlan::build(instances: $instances);
-        $ordered   = $plan->orderedInstances(instances: $instances);
+        $instances      = $this->resolveProviders(providers: $providers);
+        $plan           = ProviderBootPlan::build(instances: $instances);
+        $ordered        = $plan->orderedInstances(instances: $instances);
         $eagerProviders = $this->eagerProviderClasses(plan: $plan, instances: $instances);
-        $metrics   = $this->metrics();
-        $resolver  = $this->resolver();
+        $metrics        = $this->metrics();
+        $resolver       = $this->resolver();
 
         $metrics?->increment(name: 'container_provider_plan_total');
         $metrics?->increment(name: 'container_provider_plan_entries_total', by: count(value: $plan->order));
@@ -87,12 +86,12 @@ final readonly class BootProviders
         $instances = [];
 
         foreach ($providers as $provider) {
-            $instance = $this->instanceFor(provider: $provider);
+            $instance                    = $this->instanceFor(provider: $provider);
             $instances[$instance::class] = $instance;
         }
 
         $queue = array_values(array: $instances);
-        while ( $queue !== []) {
+        while ($queue !== []) {
             $provider = array_shift(array: $queue);
             foreach ($provider->dependsOn() as $dependencyClass) {
                 if (isset($instances[$dependencyClass])) {
@@ -114,7 +113,7 @@ final readonly class BootProviders
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
-    private function instanceFor(string|RegisterDependency $provider) : RegisterDependency
+    private function instanceFor(string|RegisterDependency $provider): RegisterDependency
     {
         if (is_string(value: $provider)) {
             if (! class_exists(class: $provider)) {
@@ -168,7 +167,7 @@ final readonly class BootProviders
 
     /**
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param array<class-string<RegisterDependency>, true>                                   $eager
+     * @param array<class-string<RegisterDependency>, true> $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager): void
     {
@@ -189,7 +188,7 @@ final readonly class BootProviders
     /**
      * Returns the metrics system service when available.
      */
-    private function metrics() : ?ResolutionMetrics
+    private function metrics(): ?ResolutionMetrics
     {
         try {
             $metrics = $this->container->get(id: ResolutionMetrics::class);
@@ -203,7 +202,7 @@ final readonly class BootProviders
     /**
      * Returns the resolver system service when available.
      */
-    private function resolver() : ?ResolveDependency
+    private function resolver(): ?ResolveDependency
     {
         try {
             $resolver = $this->container->get(id: ResolveDependency::class);

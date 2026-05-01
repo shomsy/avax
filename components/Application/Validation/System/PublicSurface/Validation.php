@@ -15,7 +15,7 @@ final readonly class Validation implements ValidationInterface
 
     public function __construct()
     {
-        $this->validateData = new ValidateData;
+        $this->validateData = new ValidateData();
     }
 
     #[Override]

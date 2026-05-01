@@ -94,7 +94,7 @@ final readonly class DeferredPoolingProvider implements RegisterDeferredDependen
 $container = makeTestContainer();
 $container->singleton(abstract: PoolingContract::class, concrete: PoolingService::class);
 $container->alias(alias: 'pooling.alias', abstract: PoolingContract::class);
-$container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator);
+$container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator());
 $container->bootProviders(providers: [DeferredPoolingProvider::class]);
 
 $first         = $container->get(id: PoolingContract::class);

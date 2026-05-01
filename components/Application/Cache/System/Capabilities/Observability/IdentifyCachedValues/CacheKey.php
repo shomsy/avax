@@ -18,16 +18,15 @@ final readonly class CacheKey implements Stringable
     private string $normalized;
 
     public function __construct(
-        public string        $original,
-        public ?string       $namespace = null,
+        public string $original,
+        public ?string $namespace = null,
         public ?CacheVersion $cacheVersion = null,
-    )
-    {
+    ) {
         $this->normalized = $this->normalize(key: $original);
         $this->validate(key: $this->normalized);
     }
 
-    private function normalize(string $key) : string
+    private function normalize(string $key): string
     {
         $normalized = trim($key);
 
@@ -38,7 +37,7 @@ final readonly class CacheKey implements Stringable
         return strtolower($normalized);
     }
 
-    private function validate(string $key) : void
+    private function validate(string $key): void
     {
         $length = strlen($key);
 
@@ -62,23 +61,22 @@ final readonly class CacheKey implements Stringable
     }
 
     public static function create(
-        string        $key,
-        ?string       $namespace = null,
+        string $key,
+        ?string $namespace = null,
         ?CacheVersion $version = null,
         ?CacheVersion $cacheVersion = null,
-    ) : self
-    {
+    ): self {
         return new self(original: $key, namespace: $namespace, cacheVersion: $version ?? $cacheVersion);
     }
 
-    public static function fromParts(string ...$parts) : self
+    public static function fromParts(string ...$parts): self
     {
         $key = implode(':', $parts);
 
         return new self(original: $key);
     }
 
-    public function withNamespace(string $namespace) : self
+    public function withNamespace(string $namespace): self
     {
         return new self(
             original    : $this->original,
@@ -87,7 +85,7 @@ final readonly class CacheKey implements Stringable
         );
     }
 
-    public function withVersion(CacheVersion $cacheVersion) : self
+    public function withVersion(CacheVersion $cacheVersion): self
     {
         return new self(
             original    : $this->original,
@@ -96,14 +94,14 @@ final readonly class CacheKey implements Stringable
         );
     }
 
-    public function matchesPattern(string $pattern) : bool
+    public function matchesPattern(string $pattern): bool
     {
         $regex = $this->patternToRegex(pattern: $pattern);
 
         return preg_match($regex, $this->fullKey()) === 1;
     }
 
-    private function patternToRegex(string $pattern) : string
+    private function patternToRegex(string $pattern): string
     {
         $escaped = preg_quote($pattern, delimiter: '/');
 
@@ -116,7 +114,7 @@ final readonly class CacheKey implements Stringable
         return '/^' . $escaped . '$/';
     }
 
-    public function fullKey() : string
+    public function fullKey(): string
     {
         $parts = [];
 
@@ -133,13 +131,13 @@ final readonly class CacheKey implements Stringable
         return implode(separator: ':', array: $parts);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->normalized;
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->fullKey();
     }

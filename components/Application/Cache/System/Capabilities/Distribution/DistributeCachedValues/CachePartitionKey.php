@@ -12,20 +12,21 @@ final readonly class CachePartitionKey implements Stringable
     public function __construct(
         public string $partition,
         public string $key,
-    ) {}
+    ) {
+    }
 
-    public static function create(string $partition, string $key) : self
+    public static function create(string $partition, string $key): self
     {
         return new self(partition: $partition, key: $key);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->toString();
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return sprintf('%s:%s', $this->partition, $this->key);
     }

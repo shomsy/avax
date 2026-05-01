@@ -14,14 +14,15 @@ final readonly class ExpiresAfter implements CacheExpiration
 {
     public function __construct(
         private Duration $duration,
-    ) {}
+    ) {
+    }
 
-    public static function seconds(int $seconds) : self
+    public static function seconds(int $seconds): self
     {
         return new self(duration: Duration::ofSeconds(seconds: $seconds));
     }
 
-    public static function milliseconds(int $milliseconds) : self
+    public static function milliseconds(int $milliseconds): self
     {
         return new self(duration: Duration::ofMilliseconds(milliseconds: $milliseconds));
     }
@@ -30,21 +31,19 @@ final readonly class ExpiresAfter implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : ?Timestamp
-    {
+    ): ?Timestamp {
         return $clock->now()->add(duration: $this->duration);
     }
 
     #[Override]
     public function isExpired(
-        ?Timestamp $expiresAt,
+        ?Timestamp $timestamp,
         Clock $clock,
-    ) : bool
-    {
-        if (! $expiresAt instanceof Timestamp) {
+    ): bool {
+        if (! $timestamp instanceof Timestamp) {
             return true;
         }
 
-        return $clock->now()->isAfter(other: $expiresAt);
+        return $clock->now()->isAfter(other: $timestamp);
     }
 }

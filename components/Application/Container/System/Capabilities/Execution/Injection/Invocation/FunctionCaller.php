@@ -25,12 +25,14 @@ final class FunctionCaller
     /** @var array<string, ResolvePlan> */
     private array $plans = [];
 
-    public function __construct(private readonly ResolveCallArguments $resolveCallArguments) {}
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
+    {
+    }
 
     /**
      * Attaches the runtime resolver used for argument resolution.
      */
-    public function setResolver(ResolveDependency $resolveDependency) : void
+    public function setResolver(ResolveDependency $resolveDependency): void
     {
         $this->resolveDependency = $resolveDependency;
     }
@@ -45,18 +47,17 @@ final class FunctionCaller
      */
     public function call(
         callable|string $target,
-        ?array          $parameters = null,
+        ?array $parameters = null,
         ?ResolveRequest $resolveRequest = null,
-    ) : mixed
-    {
+    ): mixed {
         $parameters ??= [];
         if (! $this->resolveDependency instanceof ResolveDependency) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
-        $normalized = $this->normalizeTarget(target: $target, request: $resolveRequest);
+        $normalized                 = $this->normalizeTarget(target: $target, request: $resolveRequest);
         $reflectionFunctionAbstract = $this->reflect(target: $normalized);
-        $arguments  = $this->resolveCallArguments->resolvePlan(
+        $arguments                  = $this->resolveCallArguments->resolvePlan(
             plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             overrides: $parameters,
             resolver : $this->resolveDependency,
@@ -85,7 +86,7 @@ final class FunctionCaller
      * @throws Throwable
      * @throws Throwable
      */
-    private function normalizeTarget(callable|string $target, ?ResolveRequest $resolveRequest = null) : callable|string|array
+    private function normalizeTarget(callable|string $target, ?ResolveRequest $resolveRequest = null): callable|string|array
     {
         $context = $resolveRequest?->context ?? [];
 
@@ -108,7 +109,7 @@ final class FunctionCaller
 
         if (is_string(value: $target) && str_contains(haystack: $target, needle: '::')) {
             [$class, $method] = explode(separator: '::', string: $target, limit: 2);
-            $reflection = new ReflectionMethod(objectOrMethod: $class, method: $method);
+            $reflection       = new ReflectionMethod(objectOrMethod: $class, method: $method);
 
             return $reflection->isStatic()
                 ? [$class, $method]
@@ -138,7 +139,7 @@ final class FunctionCaller
     /**
      * @throws ReflectionException
      */
-    private function reflect(callable|string|array $target) : ReflectionFunctionAbstract
+    private function reflect(callable|string|array $target): ReflectionFunctionAbstract
     {
         if (is_array(value: $target)) {
             return new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
@@ -155,14 +156,14 @@ final class FunctionCaller
         throw new ContainerException(message: 'Unsupported callable target.');
     }
 
-    private function planFor(ReflectionFunctionAbstract $reflectionFunctionAbstract) : ResolvePlan
+    private function planFor(ReflectionFunctionAbstract $reflectionFunctionAbstract): ResolvePlan
     {
         $key = $this->planKeyOf(reflection: $reflectionFunctionAbstract);
 
         return $this->plans[$key] ?? ($this->plans[$key] = $this->resolveCallArguments->createPlan(parameters: $reflectionFunctionAbstract->getParameters()));
     }
 
-    private function planKeyOf(ReflectionFunctionAbstract $reflectionFunctionAbstract) : string
+    private function planKeyOf(ReflectionFunctionAbstract $reflectionFunctionAbstract): string
     {
         if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
             return 'method:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
@@ -175,7 +176,7 @@ final class FunctionCaller
         return 'function:' . $reflectionFunctionAbstract->getName();
     }
 
-    private function nameOf(ReflectionFunctionAbstract $reflectionFunctionAbstract) : string
+    private function nameOf(ReflectionFunctionAbstract $reflectionFunctionAbstract): string
     {
         if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
             return 'call:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
@@ -187,7 +188,7 @@ final class FunctionCaller
     /**
      * Clears cached argument plans for previous callable reflections.
      */
-    public function clearCache() : void
+    public function clearCache(): void
     {
         $this->plans = [];
     }

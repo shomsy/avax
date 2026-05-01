@@ -20,24 +20,24 @@ final class FakeClock implements Clock
     }
 
     #[Override]
-    public function now() : Timestamp
+    public function now(): Timestamp
     {
         return $this->timestamp;
     }
 
-    public function setTime(Timestamp $timestamp) : void
+    public function setTime(Timestamp $timestamp): void
     {
         $this->timestamp = $timestamp;
     }
 
-    public function advance(int $seconds) : void
+    public function advance(int $seconds): void
     {
         $this->timestamp = $this->timestamp->add(
             duration: Duration::ofSeconds(seconds: $seconds),
         );
     }
 
-    public function freeze() : FrozenClock
+    public function freeze(): FrozenClock
     {
         return new FrozenClock(timestamp: $this->timestamp);
     }

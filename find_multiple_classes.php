@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $directories = ['components', 'framework'];
-$violations = [];
+$violations  = [];
 
 foreach ($directories as $dir) {
     if (! is_dir($dir)) {
@@ -16,18 +16,18 @@ foreach ($directories as $dir) {
             continue;
         }
 
-        $path = $file->getPathname();
-        $code = file_get_contents($path);
+        $path   = $file->getPathname();
+        $code   = file_get_contents($path);
         $tokens = token_get_all($code);
 
         $declarations = [];
-        $count = count($tokens);
+        $count        = count($tokens);
 
         for ($i = 0; $i < $count; $i++) {
             $token = $tokens[$i];
 
             if (is_array($token)) {
-                $type = $token[0];
+                $type  = $token[0];
                 $value = $token[1];
 
                 if (in_array($type, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM])) {

@@ -8,13 +8,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 interface FreshnessDependencyContract
 {
-    public function version() : string;
+    public function version(): string;
 }
 
 final class FreshnessDependencyV1 implements FreshnessDependencyContract
 {
     #[Override]
-    public function version() : string
+    public function version(): string
     {
         return 'v1';
     }
@@ -23,7 +23,7 @@ final class FreshnessDependencyV1 implements FreshnessDependencyContract
 final class FreshnessDependencyV2 implements FreshnessDependencyContract
 {
     #[Override]
-    public function version() : string
+    public function version(): string
     {
         return 'v2';
     }
@@ -31,7 +31,9 @@ final class FreshnessDependencyV2 implements FreshnessDependencyContract
 
 final class FreshnessConsumer
 {
-    public function __construct(public FreshnessDependencyContract $freshnessDependencyContract) {}
+    public function __construct(public FreshnessDependencyContract $freshnessDependencyContract)
+    {
+    }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-freshness-' . uniqid();
@@ -49,8 +51,8 @@ $compiled->compileContainer(serviceIds: [FreshnessConsumer::class, FreshnessDepe
 $reloaded = makeTestContainer(config: $config);
 $reloaded->singleton(abstract: FreshnessDependencyContract::class, concrete: FreshnessDependencyV2::class);
 
-$report = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
-$debug  = $reloaded->debugService(id: FreshnessDependencyContract::class);
+$report   = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$debug    = $reloaded->debugService(id: FreshnessDependencyContract::class);
 $resolved = $reloaded->get(id: FreshnessConsumer::class);
 
 assertTrue(condition: $report !== null, message: 'Freshness checks should still expose compile reports.');

@@ -26,7 +26,7 @@ use Avax\Components\Application\Filesystem\Filesystem as FilesystemInterface;
  */
 readonly class LocalFilesystem implements FilesystemInterface
 {
-    public function __construct(private ResolveDisk $resolveDisk = new ResolveDisk) {}
+    public function __construct(private ResolveDisk $resolveDisk = new ResolveDisk()) {}
 
     public function get(string $path) : string
     {

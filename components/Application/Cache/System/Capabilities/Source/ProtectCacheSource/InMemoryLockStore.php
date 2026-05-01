@@ -11,13 +11,14 @@ use Override;
 final class InMemoryLockStore implements CacheLockStore
 {
     public function __construct(
-        private readonly Clock $clock = new SystemClock,
+        private readonly Clock $clock = new SystemClock(),
         /** @var array<string, CacheLockOwner> */
         private array $locks = [],
-    ) {}
+    ) {
+    }
 
     #[Override]
-    public function acquire(string $key, int $ttlSeconds = 30, ?string $owner = null) : bool
+    public function acquire(string $key, int $ttlSeconds = 30, ?string $owner = null): bool
     {
         $lockOwner = $owner ?? uniqid(more_entropy: true);
 
@@ -39,7 +40,7 @@ final class InMemoryLockStore implements CacheLockStore
     }
 
     #[Override]
-    public function isAcquired(string $key) : bool
+    public function isAcquired(string $key): bool
     {
         if (! isset($this->locks[$key])) {
             return false;
@@ -57,7 +58,7 @@ final class InMemoryLockStore implements CacheLockStore
     }
 
     #[Override]
-    public function release(string $key, ?string $owner = null) : void
+    public function release(string $key, ?string $owner = null): void
     {
         $existingOwner = $this->locks[$key] ?? null;
 
@@ -67,7 +68,7 @@ final class InMemoryLockStore implements CacheLockStore
     }
 
     #[Override]
-    public function getOwner(string $key) : ?CacheLockOwner
+    public function getOwner(string $key): ?CacheLockOwner
     {
         if (! $this->isAcquired(key: $key)) {
             return null;
@@ -76,7 +77,7 @@ final class InMemoryLockStore implements CacheLockStore
         return $this->locks[$key];
     }
 
-    public function releaseAll() : void
+    public function releaseAll(): void
     {
         $this->locks = [];
     }

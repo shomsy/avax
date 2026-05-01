@@ -19,14 +19,14 @@ final class RuntimeSafety
     private ResetVerification\ResetVerifier $resetVerifier;
 
     public function __construct(
-        ?StateLeakDetection\StateLeakDetector $leakDetector = null,
-        ?StaticStateScanner                   $staticScanner = null,
-        ?ResetVerification\ResetVerifier      $resetVerifier = null,
+        StateLeakDetection\StateLeakDetector $leakDetector = null,
+        StaticStateScanner                   $staticScanner = null,
+        ResetVerification\ResetVerifier      $resetVerifier = null,
     )
     {
-        $this->leakDetector  = $leakDetector ?? new StateLeakDetection\StateLeakDetector;
-        $this->staticScanner = $staticScanner ?? new StaticStateScanner;
-        $this->resetVerifier = $resetVerifier ?? new ResetVerification\ResetVerifier;
+        $this->leakDetector  = $leakDetector ?? new StateLeakDetection\StateLeakDetector();
+        $this->staticScanner = $staticScanner ?? new StaticStateScanner();
+        $this->resetVerifier = $resetVerifier ?? new ResetVerification\ResetVerifier();
     }
 
     /**

@@ -9,7 +9,7 @@ final readonly class AcceptHeaderParser
     /**
      * @return list<string>
      */
-    public static function parse(string $header) : array
+    public static function parse(string $header): array
     {
         if ($header === '') {
             return ['application/json'];
@@ -26,7 +26,7 @@ final readonly class AcceptHeaderParser
             }
 
             $segments = explode(';', $part);
-            $mime = trim($segments[0]);
+            $mime     = trim($segments[0]);
 
             if ($mime !== '') {
                 $types[] = $mime;
@@ -36,13 +36,13 @@ final readonly class AcceptHeaderParser
         return $types ?: ['application/json'];
     }
 
-    public static function quality(string $header, string $mime) : float
+    public static function quality(string $header, string $mime): float
     {
         $parts = explode(',', $header);
 
         foreach ($parts as $part) {
-            $part     = trim($part);
-            $segments = explode(';', $part);
+            $part       = trim($part);
+            $segments   = explode(';', $part);
             $parsedMime = trim($segments[0]);
 
             if ($parsedMime === $mime || $parsedMime === '*/*') {

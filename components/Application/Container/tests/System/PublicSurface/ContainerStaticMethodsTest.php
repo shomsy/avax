@@ -15,40 +15,40 @@ final class ContainerStaticMethodsTest extends TestCase
 {
     private DIContainer $container;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->container = new DIContainer;
+        $this->container = new DIContainer();
     }
 
-    public function test_set_container_initializes() : void
+    public function test_set_container_initializes(): void
     {
         ContainerStatic::setContainer($this->container);
 
         $this->assertTrue(ContainerStatic::has(stdClass::class));
     }
 
-    public function test_make_resolves_service() : void
+    public function test_make_resolves_service(): void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::singleton(stdClass::class, new stdClass);
+        ContainerStatic::singleton(stdClass::class, new stdClass());
 
         $result = ContainerStatic::make(stdClass::class);
 
         $this->assertInstanceOf(stdClass::class, $result);
     }
 
-    public function test_get_resolves_bound() : void
+    public function test_get_resolves_bound(): void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::bind('test.service', static fn () => new class {});
+        ContainerStatic::bind('test.service', static fn () => new class () {});
 
         $result = ContainerStatic::get('test.service');
 
         $this->assertNotNull($result);
     }
 
-    public function test_has_checks_binding() : void
+    public function test_has_checks_binding(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::bind('exists', static fn () => null);
@@ -57,7 +57,7 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertFalse(ContainerStatic::has('not.exists'));
     }
 
-    public function test_singleton_same_instance() : void
+    public function test_singleton_same_instance(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::singleton(stdClass::class);
@@ -68,13 +68,13 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertSame($i1, $i2);
     }
 
-    public function test_throws_when_not_set() : void
+    public function test_throws_when_not_set(): void
     {
         $this->expectException(RuntimeException::class);
         ContainerStatic::get('undefined');
     }
 
-    public function test_bound_true_when_bound() : void
+    public function test_bound_true_when_bound(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::bind('registered', static fn () => null);
@@ -82,7 +82,7 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertTrue(ContainerStatic::has('registered'));
     }
 
-    public function test_make_creates_instance() : void
+    public function test_make_creates_instance(): void
     {
         ContainerStatic::setContainer($this->container);
 
@@ -91,7 +91,7 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertInstanceOf(DateTime::class, $result);
     }
 
-    public function test_call_invokes() : void
+    public function test_call_invokes(): void
     {
         ContainerStatic::setContainer($this->container);
 
@@ -100,16 +100,16 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertSame('bar', $result);
     }
 
-    public function test_instance_registers() : void
+    public function test_instance_registers(): void
     {
         ContainerStatic::setContainer($this->container);
-        $object = new stdClass;
+        $object = new stdClass();
         ContainerStatic::instance('obj', $object);
 
         $this->assertTrue(ContainerStatic::has('obj'));
     }
 
-    public function test_alias_creates_nickname() : void
+    public function test_alias_creates_nickname(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::bind('original', static fn () => 'v');
@@ -118,7 +118,7 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertTrue(ContainerStatic::has('alias'));
     }
 
-    public function test_tag_and_tagged() : void
+    public function test_tag_and_tagged(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::bind('a', static fn () => 'a');
@@ -128,7 +128,7 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertCount(2, ContainerStatic::tagged('group'));
     }
 
-    public function test_flush_clears() : void
+    public function test_flush_clears(): void
     {
         ContainerStatic::setContainer($this->container);
         ContainerStatic::bind('test', static fn () => null);
@@ -137,10 +137,10 @@ final class ContainerStaticMethodsTest extends TestCase
         $this->assertFalse(ContainerStatic::has('test'));
     }
 
-    public function test_scoped_registers() : void
+    public function test_scoped_registers(): void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::scoped('scoped', static fn () => new stdClass);
+        ContainerStatic::scoped('scoped', static fn () => new stdClass());
 
         $this->assertTrue(ContainerStatic::has('scoped'));
     }

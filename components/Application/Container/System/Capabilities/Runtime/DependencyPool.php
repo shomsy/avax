@@ -27,17 +27,17 @@ final class DependencyPool
     /** @var array{hits: int, misses: int, releases: int, overflows: int, unsafe: int} */
     private array $pooledStats
         = [
-            'hits'     => 0,
-            'misses'   => 0,
-            'releases' => 0,
+            'hits'      => 0,
+            'misses'    => 0,
+            'releases'  => 0,
             'overflows' => 0,
-            'unsafe'   => 0,
+            'unsafe'    => 0,
         ];
 
     /**
      * Reports whether one shared instance exists.
      */
-    public function has(string $abstract) : bool
+    public function has(string $abstract): bool
     {
         return array_key_exists(key: $abstract, array: $this->items);
     }
@@ -45,7 +45,7 @@ final class DependencyPool
     /**
      * Returns one shared instance when available.
      */
-    public function get(string $abstract) : mixed
+    public function get(string $abstract): mixed
     {
         return $this->items[$abstract] ?? null;
     }
@@ -53,16 +53,16 @@ final class DependencyPool
     /**
      * Stores one shared instance.
      */
-    public function set(string $abstract, mixed $instance, bool $disposable = false) : void
+    public function set(string $abstract, mixed $instance, bool $disposable = false): void
     {
-        $this->items[$abstract] = $instance;
+        $this->items[$abstract]      = $instance;
         $this->disposable[$abstract] = $disposable;
     }
 
     /**
      * Removes one shared instance.
      */
-    public function forget(string $abstract) : void
+    public function forget(string $abstract): void
     {
         unset($this->items[$abstract]);
         unset($this->disposable[$abstract]);
@@ -71,10 +71,10 @@ final class DependencyPool
     /**
      * @return array{items: array<string, mixed>, disposable: array<string, bool>}
      */
-    public function drain() : array
+    public function drain(): array
     {
         $drained = [
-            'items' => $this->items,
+            'items'      => $this->items,
             'disposable' => $this->disposable,
         ];
 
@@ -86,30 +86,30 @@ final class DependencyPool
     /**
      * Clears all shared instances.
      */
-    public function flush() : void
+    public function flush(): void
     {
-        $this->items       = [];
-        $this->disposable  = [];
-        $this->pooled      = [];
+        $this->items         = [];
+        $this->disposable    = [];
+        $this->pooled        = [];
         $this->pooledOptions = [];
-        $this->pooledStats = [
-            'hits'     => 0,
-            'misses'   => 0,
-            'releases' => 0,
+        $this->pooledStats   = [
+            'hits'      => 0,
+            'misses'    => 0,
+            'releases'  => 0,
             'overflows' => 0,
-            'unsafe'   => 0,
+            'unsafe'    => 0,
         ];
     }
 
     /**
      * Returns the number of shared runtime instances.
      */
-    public function count() : int
+    public function count(): int
     {
         return count(value: $this->items);
     }
 
-    public function hasPooled(string $abstract) : bool
+    public function hasPooled(string $abstract): bool
     {
         return ($this->pooled[$abstract] ?? []) !== [];
     }
@@ -117,19 +117,19 @@ final class DependencyPool
     /**
      * @return array{hit: bool, instance: mixed}
      */
-    public function checkoutPooled(string $abstract) : array
+    public function checkoutPooled(string $abstract): array
     {
         $bucket = $this->pooled[$abstract] ?? [];
         if ($bucket === []) {
             $this->pooledStats['misses']++;
 
             return [
-                'hit' => false,
+                'hit'      => false,
                 'instance' => null,
             ];
         }
 
-        $instance = array_pop(array: $bucket);
+        $instance                = array_pop(array: $bucket);
         $this->pooled[$abstract] = $bucket;
         if ($bucket === []) {
             unset($this->pooled[$abstract]);
@@ -138,7 +138,7 @@ final class DependencyPool
         $this->pooledStats['hits']++;
 
         return [
-            'hit' => true,
+            'hit'      => true,
             'instance' => $instance,
         ];
     }
@@ -149,16 +149,15 @@ final class DependencyPool
     public function releasePooled(
         string $abstract,
         mixed $instance,
-        int   $maxSize,
+        int $maxSize,
         ?bool $resetBeforeReuse = null,
-        bool  $disposable = false,
-    ) : array
-    {
+        bool $disposable = false,
+    ): array {
         $resetBeforeReuse ??= true;
         $this->pooledOptions[$abstract] = [
-            'maxSize'    => max(1, $maxSize),
+            'maxSize'          => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
-            'disposable' => $disposable,
+            'disposable'       => $disposable,
         ];
 
         if (! is_object(value: $instance)) {
@@ -167,8 +166,8 @@ final class DependencyPool
             return [
                 'returned' => false,
                 'overflow' => false,
-                'unsafe' => true,
-                'reason' => 'only objects can participate in pooled lifetime reuse',
+                'unsafe'   => true,
+                'reason'   => 'only objects can participate in pooled lifetime reuse',
             ];
         }
 
@@ -179,8 +178,8 @@ final class DependencyPool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe' => true,
-                    'reason' => 'pooled service does not implement ResettableInterface',
+                    'unsafe'   => true,
+                    'reason'   => 'pooled service does not implement ResettableInterface',
                 ];
             }
 
@@ -192,8 +191,8 @@ final class DependencyPool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe' => true,
-                    'reason' => 'pooled service failed during reset()',
+                    'unsafe'   => true,
+                    'reason'   => 'pooled service failed during reset()',
                 ];
             }
         }
@@ -205,39 +204,39 @@ final class DependencyPool
             return [
                 'returned' => false,
                 'overflow' => true,
-                'unsafe' => false,
-                'reason' => 'pooled bucket is already at max size',
+                'unsafe'   => false,
+                'reason'   => 'pooled bucket is already at max size',
             ];
         }
 
-        $bucket[] = $instance;
+        $bucket[]                = $instance;
         $this->pooled[$abstract] = $bucket;
         $this->pooledStats['releases']++;
 
         return [
             'returned' => true,
             'overflow' => false,
-            'unsafe' => false,
-            'reason' => 'pooled service returned to the available bucket',
+            'unsafe'   => false,
+            'reason'   => 'pooled service returned to the available bucket',
         ];
     }
 
-    public function pooledCount(string $abstract = '') : int
+    public function pooledCount(string $abstract = ''): int
     {
         if ($abstract !== '') {
             return count(value: $this->pooled[$abstract] ?? []);
         }
 
         return array_sum(array: array_map(
-                                    callback: static fn (array $bucket) : int => count(value: $bucket),
-                                    array   : $this->pooled,
-                                ));
+            callback: static fn (array $bucket): int => count(value: $bucket),
+            array   : $this->pooled,
+        ));
     }
 
     /**
      * @return list<string>
      */
-    public function ids() : array
+    public function ids(): array
     {
         $ids = array_keys(array: $this->items);
         sort(array: $ids);
@@ -248,7 +247,7 @@ final class DependencyPool
     /**
      * @return array<string, mixed>
      */
-    public function snapshot() : array
+    public function snapshot(): array
     {
         return $this->items;
     }
@@ -256,7 +255,7 @@ final class DependencyPool
     /**
      * @return array<string, bool>
      */
-    public function disposableMap() : array
+    public function disposableMap(): array
     {
         return $this->disposable;
     }
@@ -264,13 +263,13 @@ final class DependencyPool
     /**
      * @return array<string, list<string>>
      */
-    public function pooledSnapshot() : array
+    public function pooledSnapshot(): array
     {
         $snapshot = [];
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                callback: static fn (mixed $instance) : string => get_debug_type($instance),
+                callback: static fn (mixed $instance): string => get_debug_type($instance),
                 array   : $bucket,
             );
         }
@@ -283,7 +282,7 @@ final class DependencyPool
     /**
      * @return array{hits: int, misses: int, releases: int, overflows: int, unsafe: int}
      */
-    public function pooledStats() : array
+    public function pooledStats(): array
     {
         return $this->pooledStats;
     }
@@ -291,7 +290,7 @@ final class DependencyPool
     /**
      * @return array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      */
-    public function pooledOptions() : array
+    public function pooledOptions(): array
     {
         $options = $this->pooledOptions;
         ksort(array: $options);
@@ -305,14 +304,14 @@ final class DependencyPool
      *     options: array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      * }
      */
-    public function drainPooled() : array
+    public function drainPooled(): array
     {
         $drained = [
-            'items' => $this->pooled,
+            'items'   => $this->pooled,
             'options' => $this->pooledOptions,
         ];
 
-        $this->pooled = [];
+        $this->pooled        = [];
         $this->pooledOptions = [];
 
         return $drained;

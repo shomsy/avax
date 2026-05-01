@@ -22,14 +22,14 @@ final class FreezeRecoveredComponentsTaxonomy
 
     public function __construct(array $argv)
     {
-        $this->root = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
+        $this->root  = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
         $this->apply = in_array('--apply', $argv, true);
 
         $this->defineMoves();
         $this->defineNamespaceRewrites();
     }
 
-    private function defineMoves() : void
+    private function defineMoves(): void
     {
         $this->addMove('components/FeatureFlags', 'components/Application/FeatureFlags', 'feature flags belong to Application suite');
         $this->addMove('components/Pipeline', 'components/Application/Pipeline', 'pipeline belongs to Application suite');
@@ -72,46 +72,46 @@ final class FreezeRecoveredComponentsTaxonomy
         $this->addMove('components/ResourceGovernor', 'framework/System/Capabilities/ResourceGovernance', 'resource governance belongs to framework');
     }
 
-    private function addMove(string $from, string $to, string $reason) : void
+    private function addMove(string $from, string $to, string $reason): void
     {
         $this->moves[] = ['from' => $from, 'to' => $to, 'reason' => $reason];
     }
 
-    private function defineNamespaceRewrites() : void
+    private function defineNamespaceRewrites(): void
     {
         $this->namespaceRewrites = [
-            'Avax\\Components\\FeatureFlags'       => 'Avax\\Components\\Application\\FeatureFlags',
-            'Avax\\Components\\Pipeline'           => 'Avax\\Components\\Application\\Pipeline',
-            'Avax\\Components\\ApiVersioning'      => 'Avax\\Components\\HTTP\\ApiVersioning',
-            'Avax\\Components\\AfterResponse'      => 'Avax\\Components\\HTTP\\AfterResponse',
-            'Avax\\Components\\ContentNegotiation' => 'Avax\\Components\\HTTP\\ContentNegotiation',
-            'Avax\\Components\\Resilience'         => 'Avax\\Components\\Operations\\Resilience',
-            'Avax\\Components\\Concurrency'        => 'Avax\\Components\\Operations\\Concurrency',
-            'Avax\\Components\\Tasks'              => 'Avax\\Components\\Operations\\Tasks',
-            'Avax\\Components\\Scheduler'          => 'Avax\\Components\\Operations\\Scheduler',
-            'Avax\\Components\\Realtime'           => 'Avax\\Components\\Operations\\Realtime',
-            'Avax\\Components\\MessageBus'         => 'Avax\\Components\\Operations\\MessageBus',
-            'Avax\\Components\\Idempotency'        => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Idempotency',
-            'Avax\\Components\\Fallback'           => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Fallback',
-            'Avax\\Components\\TaskDispatch'       => 'Avax\\Components\\Operations\\Queue\\System\\Capabilities\\TaskDispatch',
-            'Avax\\Components\\Orchestration'      => 'Avax\\Components\\Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
-            'Avax\\Components\\Security'           => 'Avax\\Components\\Security\\System',
-            'Avax\\Components\\Secrets'            => 'Avax\\Components\\Security\\Secrets',
-            'Avax\\Components\\Policy'             => 'Avax\\Components\\Identity\\Access\\System\\Capabilities\\Policy',
-            'Avax\\Components\\Tenancy'            => 'Avax\\Components\\Identity\\Tenancy',
-            'Avax\\Components\\JwtAuth'            => 'Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\JwtAuth',
-            'Avax\\Components\\HealthCheck'        => 'Avax\\Components\\Operations\\Observability\\System\\Capabilities\\HealthCheck',
-            'Avax\\Components\\ScalingReadiness'   => 'Avax\\Components\\DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
-            'Avax\\Components\\ServiceMap'         => 'Avax\\Components\\Application\\Container\\System\\Capabilities\\ServiceMap',
-            'Avax\\Components\\QueryGovernance'    => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\QueryGovernance',
-            'Avax\\Components\\ContractTesting'    => 'Avax\\Components\\DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
+            'Avax\\Components\\FeatureFlags'         => 'Avax\\Components\\Application\\FeatureFlags',
+            'Avax\\Components\\Pipeline'             => 'Avax\\Components\\Application\\Pipeline',
+            'Avax\\Components\\ApiVersioning'        => 'Avax\\Components\\HTTP\\ApiVersioning',
+            'Avax\\Components\\AfterResponse'        => 'Avax\\Components\\HTTP\\AfterResponse',
+            'Avax\\Components\\ContentNegotiation'   => 'Avax\\Components\\HTTP\\ContentNegotiation',
+            'Avax\\Components\\Resilience'           => 'Avax\\Components\\Operations\\Resilience',
+            'Avax\\Components\\Concurrency'          => 'Avax\\Components\\Operations\\Concurrency',
+            'Avax\\Components\\Tasks'                => 'Avax\\Components\\Operations\\Tasks',
+            'Avax\\Components\\Scheduler'            => 'Avax\\Components\\Operations\\Scheduler',
+            'Avax\\Components\\Realtime'             => 'Avax\\Components\\Operations\\Realtime',
+            'Avax\\Components\\MessageBus'           => 'Avax\\Components\\Operations\\MessageBus',
+            'Avax\\Components\\Idempotency'          => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Idempotency',
+            'Avax\\Components\\Fallback'             => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Fallback',
+            'Avax\\Components\\TaskDispatch'         => 'Avax\\Components\\Operations\\Queue\\System\\Capabilities\\TaskDispatch',
+            'Avax\\Components\\Orchestration'        => 'Avax\\Components\\Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
+            'Avax\\Components\\Security'             => 'Avax\\Components\\Security\\System',
+            'Avax\\Components\\Secrets'              => 'Avax\\Components\\Security\\Secrets',
+            'Avax\\Components\\Policy'               => 'Avax\\Components\\Identity\\Access\\System\\Capabilities\\Policy',
+            'Avax\\Components\\Tenancy'              => 'Avax\\Components\\Identity\\Tenancy',
+            'Avax\\Components\\JwtAuth'              => 'Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\JwtAuth',
+            'Avax\\Components\\HealthCheck'          => 'Avax\\Components\\Operations\\Observability\\System\\Capabilities\\HealthCheck',
+            'Avax\\Components\\ScalingReadiness'     => 'Avax\\Components\\DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
+            'Avax\\Components\\ServiceMap'           => 'Avax\\Components\\Application\\Container\\System\\Capabilities\\ServiceMap',
+            'Avax\\Components\\QueryGovernance'      => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\QueryGovernance',
+            'Avax\\Components\\ContractTesting'      => 'Avax\\Components\\DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
             'Avax\\Components\\EnvironmentAwareness' => 'Avax\\Components\\Application\\Config\\System\\Capabilities\\EnvironmentAwareness',
         ];
 
-        uksort($this->namespaceRewrites, static fn (string $left, string $right) : int => strlen($right) <=> strlen($left));
+        uksort($this->namespaceRewrites, static fn (string $left, string $right): int => strlen($right) <=> strlen($left));
     }
 
-    public function run() : int
+    public function run(): int
     {
         $this->assertRepoRoot();
 
@@ -153,7 +153,7 @@ final class FreezeRecoveredComponentsTaxonomy
         return 0;
     }
 
-    private function assertRepoRoot() : void
+    private function assertRepoRoot(): void
     {
         foreach (['components', 'framework'] as $required) {
             if (! is_dir($this->path($required))) {
@@ -162,12 +162,12 @@ final class FreezeRecoveredComponentsTaxonomy
         }
     }
 
-    private function path(string $path) : string
+    private function path(string $path): string
     {
         return $this->root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
-    private function printHeader() : void
+    private function printHeader(): void
     {
         echo "AvaX Recovered Components Taxonomy Freeze\n";
         echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
@@ -175,11 +175,11 @@ final class FreezeRecoveredComponentsTaxonomy
         echo "Production namespace rewrite: yes\n\n";
     }
 
-    private function detectConflicts() : void
+    private function detectConflicts(): void
     {
         foreach ($this->moves as $move) {
             $from = $this->path($move['from']);
-            $to = $this->path($move['to']);
+            $to   = $this->path($move['to']);
 
             if (! is_dir($from) && ! is_file($from)) {
                 continue;
@@ -193,12 +193,12 @@ final class FreezeRecoveredComponentsTaxonomy
         }
     }
 
-    private function samePath(string $left, string $right) : bool
+    private function samePath(string $left, string $right): bool
     {
         return rtrim($left, DIRECTORY_SEPARATOR) === rtrim($right, DIRECTORY_SEPARATOR);
     }
 
-    private function detectMoveConflict(string $from, string $to) : void
+    private function detectMoveConflict(string $from, string $to): void
     {
         if (is_file($from)) {
             if (is_dir($to)) {
@@ -229,22 +229,22 @@ final class FreezeRecoveredComponentsTaxonomy
         }
     }
 
-    private function relative(string $path) : string
+    private function relative(string $path): string
     {
         return ltrim(str_replace($this->root, '', $path), DIRECTORY_SEPARATOR);
     }
 
-    private function sameFile(string $left, string $right) : bool
+    private function sameFile(string $left, string $right): bool
     {
         if (! is_file($left) || ! is_file($right)) {
             return false;
         }
 
-        return filesize($left) === filesize($right)
+        return filesize($left)            === filesize($right)
             && hash_file('sha256', $left) === hash_file('sha256', $right);
     }
 
-    private function children(string $directory) : array
+    private function children(string $directory): array
     {
         $items = scandir($directory);
 
@@ -252,12 +252,12 @@ final class FreezeRecoveredComponentsTaxonomy
             return [];
         }
 
-        return array_values(array_filter($items, static fn (string $item) : bool => $item !== '.' && $item !== '..'));
+        return array_values(array_filter($items, static fn (string $item): bool => $item !== '.' && $item !== '..'));
     }
 
-    private function writeReport(string $status) : void
+    private function writeReport(string $status): void
     {
-        $report = $this->path('Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md');
+        $report    = $this->path('Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md');
         $directory = dirname($report);
 
         if (! is_dir($directory)) {
@@ -307,7 +307,7 @@ final class FreezeRecoveredComponentsTaxonomy
         file_put_contents($report, implode(PHP_EOL, $lines) . PHP_EOL);
     }
 
-    private function printConflicts() : void
+    private function printConflicts(): void
     {
         echo PHP_EOL;
         echo '❌ Conflicts found. Nothing was moved.' . PHP_EOL;
@@ -320,7 +320,7 @@ final class FreezeRecoveredComponentsTaxonomy
         echo 'Fix conflicts manually or inspect the report before applying.' . PHP_EOL;
     }
 
-    private function moveDirectory(string $from, string $to, string $reason) : void
+    private function moveDirectory(string $from, string $to, string $reason): void
     {
         if (! is_dir($from) && ! is_file($from)) {
             return;
@@ -349,7 +349,7 @@ final class FreezeRecoveredComponentsTaxonomy
         $this->mergeMove($from, $to);
     }
 
-    private function mergeMove(string $from, string $to) : void
+    private function mergeMove(string $from, string $to): void
     {
         if (is_file($from)) {
             $this->moveFile($from, $to);
@@ -380,7 +380,7 @@ final class FreezeRecoveredComponentsTaxonomy
         $this->removeDirectoryIfEmpty($from);
     }
 
-    private function moveFile(string $from, string $to) : void
+    private function moveFile(string $from, string $to): void
     {
         $parent = dirname($to);
 
@@ -401,14 +401,14 @@ final class FreezeRecoveredComponentsTaxonomy
         rename($from, $to);
     }
 
-    private function removeDirectoryIfEmpty(string $directory) : void
+    private function removeDirectoryIfEmpty(string $directory): void
     {
         if (is_dir($directory) && $this->children($directory) === []) {
             rmdir($directory);
         }
     }
 
-    private function rewriteNamespaces() : void
+    private function rewriteNamespaces(): void
     {
         $paths = [
             $this->path('components'),
@@ -442,7 +442,7 @@ final class FreezeRecoveredComponentsTaxonomy
                     continue;
                 }
 
-                $operation = 'REWRITE `' . $this->relative($file) . '`';
+                $operation          = 'REWRITE `' . $this->relative($file) . '`';
                 $this->operations[] = $operation;
 
                 echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
@@ -458,7 +458,7 @@ final class FreezeRecoveredComponentsTaxonomy
         echo PHP_EOL . "Namespace rewrite candidates: {$changed}" . PHP_EOL;
     }
 
-    private function phpFiles(string $path) : Generator
+    private function phpFiles(string $path): Generator
     {
         if (is_file($path)) {
             if (str_ends_with($path, '.php')) {
@@ -479,7 +479,7 @@ final class FreezeRecoveredComponentsTaxonomy
         }
     }
 
-    private function updateCheckerConfig() : void
+    private function updateCheckerConfig(): void
     {
         if (! $this->apply) {
             return;
@@ -518,7 +518,7 @@ final class FreezeRecoveredComponentsTaxonomy
         }
 
         if ($updated !== $content) {
-            $operation = 'UPDATE checker config';
+            $operation          = 'UPDATE checker config';
             $this->operations[] = $operation;
             echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
             file_put_contents($checkerFile, $updated);

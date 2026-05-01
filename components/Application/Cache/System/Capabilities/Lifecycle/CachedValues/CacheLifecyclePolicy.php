@@ -12,16 +12,16 @@ final readonly class CacheLifecyclePolicy implements DecideCachedValueState
     public function __construct(
         private int $expiringSoonThresholdSeconds = 60,
         private int $staleGracePeriodSeconds = 300,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function decide(
-        ?CachedValueLifecycle $lifecycle,
+        ?CachedValueLifecycle $cachedValueLifecycle,
         Clock $clock,
         bool $wasExplicitlyInvalidated = false,
         bool $wasEvicted = false,
-    ) : CachedValueState
-    {
+    ): CachedValueState {
         if ($wasEvicted) {
             return CachedValueState::EVICTED;
         }
@@ -30,21 +30,21 @@ final readonly class CacheLifecyclePolicy implements DecideCachedValueState
             return CachedValueState::INVALIDATED;
         }
 
-        if (! $lifecycle instanceof CachedValueLifecycle) {
+        if (! $cachedValueLifecycle instanceof CachedValueLifecycle) {
             return CachedValueState::MISSING;
         }
 
-        if ($lifecycle->isExpired(clock: $clock)) {
+        if ($cachedValueLifecycle->isExpired(clock: $clock)) {
             return CachedValueState::EXPIRED;
         }
 
-        $ttl = $lifecycle->timeToLive(clock: $clock);
+        $ttl = $cachedValueLifecycle->timeToLive(clock: $clock);
 
         if ($ttl <= $this->expiringSoonThresholdSeconds) {
             return CachedValueState::EXPIRING_SOON;
         }
 
-        $idleSeconds = $lifecycle->idleTime(clock: $clock);
+        $idleSeconds = $cachedValueLifecycle->idleTime(clock: $clock);
 
         if ($idleSeconds > $this->staleGracePeriodSeconds) {
             return CachedValueState::STALE;

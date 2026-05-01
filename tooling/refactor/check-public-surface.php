@@ -12,7 +12,7 @@ final class CheckPublicSurface
 {
     private array $errors = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->checkPublicSurfaceClassesAreThin();
 
@@ -22,14 +22,14 @@ final class CheckPublicSurface
         ];
     }
 
-    private function checkPublicSurfaceClassesAreThin() : void
+    private function checkPublicSurfaceClassesAreThin(): void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
         $this->scanPublicSurface($componentsPath);
     }
 
-    private function scanPublicSurface(string $path) : void
+    private function scanPublicSurface(string $path): void
     {
         if (! is_dir($path)) {
             return;
@@ -62,8 +62,8 @@ final class CheckPublicSurface
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckPublicSurface;
-    $result = $checker->check();
+    $checker = new CheckPublicSurface();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

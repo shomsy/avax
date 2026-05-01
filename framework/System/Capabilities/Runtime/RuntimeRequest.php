@@ -26,13 +26,13 @@ final readonly class RuntimeRequest
 
     /**
      * @param array<string, list<string>> $headers
-     * @param array<string, mixed>        $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         string $method,
         string $uri,
         array $headers = [],
-        ?string $body = null,
+        string $body = null,
         array $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));

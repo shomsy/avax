@@ -10,7 +10,7 @@ use Throwable;
 
 final class CopyFile
 {
-    public static function execute(string $source, string $destination) : bool
+    public static function execute(string $source, string $destination): bool
     {
         try {
             return Storage::copy($source, $destination);

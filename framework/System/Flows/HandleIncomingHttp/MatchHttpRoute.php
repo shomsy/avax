@@ -17,9 +17,9 @@ final class MatchHttpRoute
 {
     private RouteMatcher $routeMatcher;
 
-    public function __construct(?RouteMatcher $routeMatcher = null)
+    public function __construct(RouteMatcher $routeMatcher = null)
     {
-        $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger);
+        $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger());
     }
 
     public function match(RegisteredHttpRoutes $routes, ServerRequest $request) : MatchedHttpRoute
@@ -128,7 +128,6 @@ final class MatchHttpRoute
 
     /**
      * @param array<int|string, mixed> $matches
-     *
      * @return array<string, string>
      */
     private function extractParameters(array $matches): array

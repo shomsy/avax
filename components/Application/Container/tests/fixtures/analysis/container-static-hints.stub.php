@@ -24,7 +24,7 @@ return [
         'HintPipelineStepB',
         'HintRuntimeInputConsumer',
     ],
-    'sliceExports'  => [
+    'sliceExports' => [
         'capability.identity' => [
             'HintConditionalService',
             'HintIdentityService',
@@ -32,14 +32,14 @@ return [
         'flow.hints' => [
         ],
     ],
-    'sliceImports'  => [
+    'sliceImports' => [
         'capability.identity' => [
         ],
         'flow.hints' => [
             'capability.identity',
         ],
     ],
-    'groups'        => [
+    'groups' => [
         'hint.pipeline' => [
             'HintPipelineStepA',
             'HintPipelineStepB',
@@ -48,29 +48,29 @@ return [
     'runtimeInputs' => [
         'HintConditionalService' => [
         ],
-        'HintIdentityService'    => [
+        'HintIdentityService' => [
         ],
-        'HintPipelineStepA'      => [
+        'HintPipelineStepA' => [
         ],
-        'HintPipelineStepB'      => [
+        'HintPipelineStepB' => [
         ],
         'HintRuntimeInputConsumer' => [
             'token',
         ],
     ],
-    'conditionals'  => [
+    'conditionals' => [
         'HintConditionalService' => [
             'profiles' => [
                 'prod',
             ],
-            'flags'    => [
+            'flags' => [
                 'beta',
             ],
             'tenants' => [
             ],
             'regions' => [
             ],
-            'modes'    => [
+            'modes' => [
             ],
             'fallback' => false,
         ],

@@ -8,19 +8,19 @@ use SimpleXMLElement;
 
 interface ContentFormatterInterface
 {
-    public function format(mixed $data) : string;
+    public function format(mixed $data): string;
 
-    public function mimeType() : string;
+    public function mimeType(): string;
 }
 
 final class JsonFormat implements ContentFormatterInterface
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         return json_encode($data, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS);
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'application/json';
     }
@@ -28,7 +28,7 @@ final class JsonFormat implements ContentFormatterInterface
 
 final class XmlFormat implements ContentFormatterInterface
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         if (is_array($data)) {
             $xml = new SimpleXMLElement('<root/>');
@@ -40,7 +40,7 @@ final class XmlFormat implements ContentFormatterInterface
         return (string) $data;
     }
 
-    private function toXmlRecursive(array $data, SimpleXMLElement $xml) : void
+    private function toXmlRecursive(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -52,7 +52,7 @@ final class XmlFormat implements ContentFormatterInterface
         }
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'application/xml';
     }
@@ -60,7 +60,7 @@ final class XmlFormat implements ContentFormatterInterface
 
 final class CsvFormat implements ContentFormatterInterface
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         if (! is_array($data)) {
             return (string) $data;
@@ -86,7 +86,7 @@ final class CsvFormat implements ContentFormatterInterface
         return $result;
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'text/csv';
     }

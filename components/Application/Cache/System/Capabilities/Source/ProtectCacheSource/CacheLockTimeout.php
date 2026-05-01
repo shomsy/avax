@@ -9,17 +9,19 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class CacheLockTimeout
 {
-    public function __construct(public int $seconds = 5) {}
-
-    public function isExpired(int $acquiredAt, ?Clock $clock = null) : bool
+    public function __construct(public int $seconds = 5)
     {
-        $clock ??= new SystemClock;
+    }
+
+    public function isExpired(int $acquiredAt, ?Clock $clock = null): bool
+    {
+        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return ($now->seconds - $acquiredAt) > $this->seconds;
     }
 
-    public function inMilliseconds() : int
+    public function inMilliseconds(): int
     {
         return $this->seconds * 1000;
     }

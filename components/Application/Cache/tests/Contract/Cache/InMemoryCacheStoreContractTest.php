@@ -13,7 +13,7 @@ use Override;
 final class InMemoryCacheStoreContractTest extends CacheStoreContractCase
 {
     #[Override]
-    protected function createStore(Clock $clock) : InMemoryCacheStore
+    protected function createStore(Clock $clock): InMemoryCacheStore
     {
         return new InMemoryCacheStore(clock: $clock);
     }

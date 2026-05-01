@@ -14,7 +14,7 @@ use Avax\Tests\TestCase;
 
 class ComponentIntegrationTest extends TestCase
 {
-    public function test_server_can_find_public_path() : void
+    public function test_server_can_find_public_path(): void
     {
         $path = PhpBuiltInServer::findDocumentRoot();
 
@@ -22,13 +22,13 @@ class ComponentIntegrationTest extends TestCase
         $this->assertDirectoryExists($path);
     }
 
-    public function test_server_can_check_port_availability() : void
+    public function test_server_can_check_port_availability(): void
     {
         $available = ! PhpBuiltInServer::isPortInUse(65432);
         $this->assertTrue($available);
     }
 
-    public function test_rate_limit_remaining() : void
+    public function test_rate_limit_remaining(): void
     {
         $key = 'test_rate_limit_' . uniqid();
 
@@ -39,7 +39,7 @@ class ComponentIntegrationTest extends TestCase
         $this->assertEquals(10, $remaining);
     }
 
-    public function test_websocket_connect_disconnect() : void
+    public function test_websocket_connect_disconnect(): void
     {
         $connectionId = 'test_conn_' . uniqid();
 
@@ -52,11 +52,11 @@ class ComponentIntegrationTest extends TestCase
         WebSocketServer::disconnect($connectionId);
     }
 
-    public function test_storage_put_and_get() : void
+    public function test_storage_put_and_get(): void
     {
-        $storage = new LocalStorageAdapter;
+        $storage = new LocalStorageAdapter();
 
-        $path = 'test/' . uniqid() . '.txt';
+        $path    = 'test/' . uniqid() . '.txt';
         $content = 'Hello, Avax!';
 
         $this->assertTrue($storage->put($path, $content));
@@ -68,16 +68,16 @@ class ComponentIntegrationTest extends TestCase
         $this->assertFalse($storage->exists($path));
     }
 
-    public function test_storage_url_generation() : void
+    public function test_storage_url_generation(): void
     {
-        $storage = new LocalStorageAdapter;
+        $storage = new LocalStorageAdapter();
 
         $url = $storage->url('test/file.txt');
 
         $this->assertStringContainsString('test/file.txt', $url);
     }
 
-    public function test_mailable_builder() : void
+    public function test_mailable_builder(): void
     {
         $mailable = Mail::to('test@example.com')
             ->subject('Test Subject')
@@ -88,9 +88,9 @@ class ComponentIntegrationTest extends TestCase
         $this->assertEquals('Test Body', $mailable->getBody());
     }
 
-    public function test_mailable_class() : void
+    public function test_mailable_class(): void
     {
-        $mailable = new Mailable;
+        $mailable = new Mailable();
         $mailable->to('user@example.com')
             ->subject('Welcome')
             ->body('<h1>Welcome!</h1>')

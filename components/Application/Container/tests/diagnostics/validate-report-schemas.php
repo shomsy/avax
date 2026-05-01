@@ -23,7 +23,7 @@ final class DiagnosticsSchemaConsumer
 
 /**
  * @param array<string, mixed> $payload
- * @param list<string>         $requiredKeys
+ * @param list<string> $requiredKeys
  */
 function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
 {

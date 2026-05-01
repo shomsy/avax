@@ -10,13 +10,13 @@ use Psr\Container\NotFoundExceptionInterface;
 
 interface CreateGreeterContract
 {
-    public function message() : string;
+    public function message(): string;
 }
 
 final class CreateGreeter implements CreateGreeterContract
 {
     #[Override]
-    public function message() : string
+    public function message(): string
     {
         return 'hi';
     }
@@ -24,7 +24,9 @@ final class CreateGreeter implements CreateGreeterContract
 
 final class NeedsCreateGreeter
 {
-    public function __construct(public CreateGreeterContract $createGreeterContract) {}
+    public function __construct(public CreateGreeterContract $createGreeterContract)
+    {
+    }
 }
 
 $container = makeTestContainer();
@@ -34,10 +36,10 @@ $resolved = $container->get(id: NeedsCreateGreeter::class);
 assertInstanceOf(expectedClass: NeedsCreateGreeter::class, value: $resolved, message: 'CreateContainer should support autowiring.');
 assertSame(expected: 'hi', actual: $resolved->greeter->message(), message: 'Bound dependency should be injected.');
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**

@@ -59,7 +59,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_ignores_invalid_session_binding() : void
     {
-        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass));
+        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass()));
 
         $request = Request::createFromGlobals();
 
@@ -77,7 +77,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_uses_session_interface() : void
     {
-        $session = new NullSession;
+        $session = new NullSession();
         appInstance(instance: new FakeContainer(hasSession: true, session: $session));
 
         $request = Request::createFromGlobals();

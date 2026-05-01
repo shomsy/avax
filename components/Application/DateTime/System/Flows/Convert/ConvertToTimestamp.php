@@ -8,7 +8,7 @@ use DateTimeInterface;
 
 final class ConvertToTimestamp
 {
-    public static function execute(DateTimeInterface $dt) : int
+    public static function execute(DateTimeInterface $dt): int
     {
         return $dt->getTimestamp();
     }

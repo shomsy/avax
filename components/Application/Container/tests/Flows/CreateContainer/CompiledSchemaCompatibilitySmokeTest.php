@@ -6,11 +6,15 @@ require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class SchemaCompatibilityDependency {}
+final class SchemaCompatibilityDependency
+{
+}
 
 final class SchemaCompatibilityService
 {
-    public function __construct(public SchemaCompatibilityDependency $schemaCompatibilityDependency) {}
+    public function __construct(public SchemaCompatibilityDependency $schemaCompatibilityDependency)
+    {
+    }
 }
 
 $cacheDir     = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();
@@ -25,7 +29,7 @@ $compiled = makeTestContainer(config: CreateContainerConfig::create(
 $compiled->singleton(abstract: SchemaCompatibilityDependency::class, concrete: SchemaCompatibilityDependency::class);
 $compiled->compileContainer(serviceIds: [SchemaCompatibilityService::class, SchemaCompatibilityDependency::class]);
 
-$metadata = json_decode(json: (string) file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+$metadata                  = json_decode(json: (string) file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 $metadata['schemaVersion'] = 999;
 file_put_contents(filename: $metadataPath, data: json_encode(value: $metadata, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
 
@@ -36,7 +40,7 @@ $reloaded = makeTestContainer(config: CreateContainerConfig::create(
 ));
 $reloaded->singleton(abstract: SchemaCompatibilityDependency::class, concrete: SchemaCompatibilityDependency::class);
 
-$report = $reloaded->compileReport(serviceIds: [SchemaCompatibilityService::class]);
+$report   = $reloaded->compileReport(serviceIds: [SchemaCompatibilityService::class]);
 $resolved = $reloaded->get(id: SchemaCompatibilityService::class);
 
 assertTrue(condition: $report !== null, message: 'Schema compatibility checks should still expose compile reports.');

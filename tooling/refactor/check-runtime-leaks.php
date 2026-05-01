@@ -16,7 +16,7 @@ final class CheckRuntimeLeaks
 
     private array $errors = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->checkNoRuntimeLeaksOutsideFramework();
 
@@ -26,7 +26,7 @@ final class CheckRuntimeLeaks
         ];
     }
 
-    private function checkNoRuntimeLeaksOutsideFramework() : void
+    private function checkNoRuntimeLeaksOutsideFramework(): void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
@@ -56,8 +56,8 @@ final class CheckRuntimeLeaks
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckRuntimeLeaks;
-    $result = $checker->check();
+    $checker = new CheckRuntimeLeaks();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

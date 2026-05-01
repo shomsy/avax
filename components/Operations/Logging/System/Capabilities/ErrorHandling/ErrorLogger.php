@@ -22,26 +22,27 @@ use Throwable;
 final readonly class ErrorLogger implements LoggerInterface
 {
     /**
-     * @param Logging        $logger        The underlying logging facade
-     * @param SecretRedactor $redactor      Redactor for sensitive data in context
-     * @param string|null    $correlationId Current correlation ID for request tracking
-     * @param string|null    $traceId       Current trace ID for distributed tracing
+     * @param Logging $logger The underlying logging facade
+     * @param SecretRedactor $redactor Redactor for sensitive data in context
+     * @param string|null $correlationId Current correlation ID for request tracking
+     * @param string|null $traceId Current trace ID for distributed tracing
      */
     public function __construct(
         private Logging $logger,
-        private SecretRedactor $redactor = new SecretRedactor,
-        private ?string        $correlationId = null,
-        private ?string        $traceId = null,
-    ) {}
+        private SecretRedactor $redactor = new SecretRedactor(),
+        private ?string $correlationId = null,
+        private ?string $traceId = null,
+    ) {
+    }
 
-    public function emergency(Stringable|string $message, array $context = []) : void
+    public function emergency(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
-    public function log($level, Stringable|string $message, array $context = []) : void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
-        $level = (string) $level;
+        $level   = (string) $level;
         $message = (string) $message;
 
         $context = $this->enrichContext($context);
@@ -187,12 +188,12 @@ final readonly class ErrorLogger implements LoggerInterface
             }
 
             $trace[] = [
-                'file' => $frame['file'] ?? '[internal]',
-                'line' => $frame['line'] ?? 0,
-                'class' => $frame['class'] ?? null,
-                'type' => $frame['type'] ?? null,
+                'file'     => $frame['file']   ?? '[internal]',
+                'line'     => $frame['line']   ?? 0,
+                'class'    => $frame['class'] ?? null,
+                'type'     => $frame['type']   ?? null,
                 'function' => $frame['function'],
-                'args' => $args,
+                'args'     => $args,
             ];
         }
 
@@ -217,7 +218,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_string($arg)) {
-            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100).'...' : $arg;
+            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100) . '...' : $arg;
 
             return $this->redactor->redactString($truncated);
         }
@@ -235,7 +236,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_resource($arg)) {
-            return get_resource_type($arg).' resource';
+            return get_resource_type($arg) . ' resource';
         }
 
         return gettype($arg);

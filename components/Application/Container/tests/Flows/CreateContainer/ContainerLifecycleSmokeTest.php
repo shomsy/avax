@@ -8,13 +8,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 interface LifecycleContract
 {
-    public function id() : string;
+    public function id(): string;
 }
 
 final class LifecycleService implements LifecycleContract
 {
     #[Override]
-    public function id() : string
+    public function id(): string
     {
         return 'lifecycle';
     }
@@ -22,7 +22,9 @@ final class LifecycleService implements LifecycleContract
 
 final class LifecycleScopedService
 {
-    public function __construct(public string $name = 'scoped') {}
+    public function __construct(public string $name = 'scoped')
+    {
+    }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-lifecycle-' . uniqid();

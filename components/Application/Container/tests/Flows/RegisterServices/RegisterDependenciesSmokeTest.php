@@ -90,7 +90,7 @@ $container->extend(
         return null;
     },
 );
-$container->decorate(abstract: ExtensibleMessage::class, decorator: new MessageDecorator);
+$container->decorate(abstract: ExtensibleMessage::class, decorator: new MessageDecorator());
 
 $default = $container->get(id: NeedsDefaultLogger::class);
 $special = $container->get(id: NeedsSpecialLogger::class);

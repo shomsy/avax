@@ -19,9 +19,9 @@ interface HttpClientInterface
     /**
      * Send a GET request.
      *
-     * @param string                $url     The URL to request
+     * @param string $url The URL to request
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -29,15 +29,15 @@ interface HttpClientInterface
         string $url,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a POST request.
      *
-     * @param string                $url     The URL to request
-     * @param mixed                 $body    The request body
+     * @param string $url The URL to request
+     * @param mixed $body The request body
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -46,15 +46,15 @@ interface HttpClientInterface
         mixed $body = null,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a PUT request.
      *
-     * @param string                $url     The URL to request
-     * @param mixed                 $body    The request body
+     * @param string $url The URL to request
+     * @param mixed $body The request body
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -63,15 +63,15 @@ interface HttpClientInterface
         mixed $body = null,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a PATCH request.
      *
-     * @param string                $url     The URL to request
-     * @param mixed                 $body    The request body
+     * @param string $url The URL to request
+     * @param mixed $body The request body
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -80,14 +80,14 @@ interface HttpClientInterface
         mixed $body = null,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a DELETE request.
      *
-     * @param string                $url     The URL to request
+     * @param string $url The URL to request
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -95,14 +95,14 @@ interface HttpClientInterface
         string $url,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a HEAD request.
      *
-     * @param string                $url     The URL to request
+     * @param string $url The URL to request
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -110,14 +110,14 @@ interface HttpClientInterface
         string $url,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send an OPTIONS request.
      *
-     * @param string                $url     The URL to request
+     * @param string $url The URL to request
      * @param array<string, string> $headers Additional headers
-     * @param array<string, mixed>  $options Request options
+     * @param array<string, mixed> $options Request options
      *
      * @throws HttpRequestFailed if the request fails
      */
@@ -125,7 +125,7 @@ interface HttpClientInterface
         string $url,
         array $headers = [],
         array $options = [],
-    ) : ClientResponse;
+    ): ClientResponse;
 
     /**
      * Send a fully customized outbound request.
@@ -134,15 +134,15 @@ interface HttpClientInterface
      *
      * @throws HttpRequestFailed if the request fails
      */
-    public function send(OutboundRequest $request) : ClientResponse;
+    public function send(OutboundRequest $request): ClientResponse;
 
     /**
      * Get the base URL configured for this client.
      */
-    public function getBaseUrl() : ?string;
+    public function getBaseUrl(): ?string;
 
     /**
      * Get the default timeout in milliseconds.
      */
-    public function getDefaultTimeout() : int;
+    public function getDefaultTimeout(): int;
 }

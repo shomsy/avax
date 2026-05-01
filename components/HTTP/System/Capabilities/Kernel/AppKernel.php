@@ -37,14 +37,13 @@ final readonly class AppKernel implements HttpInterface, Kernel
         private RouterRuntimeInterface $router,
         private ResponseFactory $responseFactory,
         private array $globalMiddleware = [],
-    )
-    {
+    ) {
         $this->middlewareStack = empty($this->globalMiddleware)
             ? $this->createDefaultMiddlewareStack()
             : $this->globalMiddleware;
     }
 
-    private function createDefaultMiddlewareStack() : array
+    private function createDefaultMiddlewareStack(): array
     {
         $middleware = [];
 
@@ -75,11 +74,11 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return $middleware;
     }
 
-    private function createOfficeIpRestriction() : MiddlewareInterface
+    private function createOfficeIpRestriction(): MiddlewareInterface
     {
-        return new class extends IpRestrictionMiddleware {
+        return new class () extends IpRestrictionMiddleware {
             #[Override]
-            protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
+            protected function isAllowedIp(#[SensitiveParameter] string $ipAddress): bool
             {
                 $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
                 foreach ($allowed as $allowedIp) {
@@ -97,56 +96,56 @@ final readonly class AppKernel implements HttpInterface, Kernel
         };
     }
 
-    private function createSessionMiddleware() : MiddlewareInterface
+    private function createSessionMiddleware(): MiddlewareInterface
     {
-        return new SessionLifecycleMiddleware(new NullSession);
+        return new SessionLifecycleMiddleware(new NullSession());
     }
 
-    private function createRequestLogger() : MiddlewareInterface
+    private function createRequestLogger(): MiddlewareInterface
     {
         return new RequestLoggerMiddleware(
-            new class implements LoggerInterface {
-                public function emergency(Stringable|string $message, array $context = []) : void
+            new class () implements LoggerInterface {
+                public function emergency(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function alert(Stringable|string $message, array $context = []) : void
+                public function alert(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function critical(Stringable|string $message, array $context = []) : void
+                public function critical(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function error(Stringable|string $message, array $context = []) : void
+                public function error(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function warning(Stringable|string $message, array $context = []) : void
+                public function warning(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function notice(Stringable|string $message, array $context = []) : void
+                public function notice(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function info(Stringable|string $message, array $context = []) : void
+                public function info(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function debug(Stringable|string $message, array $context = []) : void
+                public function debug(Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
 
-                public function log($level, Stringable|string $message, array $context = []) : void
+                public function log($level, Stringable|string $message, array $context = []): void
                 {
                     error_log((string) $message);
                 }
@@ -154,33 +153,37 @@ final readonly class AppKernel implements HttpInterface, Kernel
         );
     }
 
-    private function createRateLimiter() : MiddlewareInterface
+    private function createRateLimiter(): MiddlewareInterface
     {
         return new RateLimiterMiddleware(
-            new class implements RateLimiterInterface {
-                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
+            new class () implements RateLimiterInterface {
+                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds): bool
                 {
                     return true;
                 }
 
-                public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void {}
+                public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds): void
+                {
+                }
 
-                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int
+                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds): int
                 {
                     return 60;
                 }
 
-                public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int
+                public function availableIn(string $key, int $maxAttempts, int $decaySeconds): int
                 {
                     return 0;
                 }
 
-                public function clear(string $key) : void {}
-            },
-            (new class {
-                public function rateLimited(int $retryAfter) : ResponseInterface
+                public function clear(string $key): void
                 {
-                    return (new ResponseFactory)->rateLimited($retryAfter);
+                }
+            },
+            (new class () {
+                public function rateLimited(int $retryAfter): ResponseInterface
+                {
+                    return (new ResponseFactory())->rateLimited($retryAfter);
                 }
             }),
             'ip',
@@ -189,12 +192,12 @@ final readonly class AppKernel implements HttpInterface, Kernel
         );
     }
 
-    public static function getMiddlewarePriorityHints() : array
+    public static function getMiddlewarePriorityHints(): array
     {
         return MiddlewareRegistry::getPriorityHints();
     }
 
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! $request instanceof RequestInterface) {
             return $this->responseFactory->error('Invalid request type', 400);
@@ -203,32 +206,34 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return $this->runPipeline($request);
     }
 
-    private function runPipeline(RequestInterface $request) : ResponseInterface
+    private function runPipeline(RequestInterface $request): ResponseInterface
     {
-        $core = fn (RequestInterface $req) : ResponseInterface => $this->router->resolve($req);
+        $core = fn (RequestInterface $req): ResponseInterface => $this->router->resolve($req);
 
         $pipeline = $this->middlewareStack;
 
-        while ( $middleware = array_pop($pipeline) ) {
+        while ($middleware = array_pop($pipeline)) {
             $core = static fn (RequestInterface $req) => $middleware->handle($req, $core);
         }
 
         return $core($request);
     }
 
-    public function handleRequest(RequestInterface $request) : ResponseInterface
+    public function handleRequest(RequestInterface $request): ResponseInterface
     {
         return $this->handle($request);
     }
 
-    public function terminate(RequestInterface $r, ResponseInterface $res) : void {}
+    public function terminate(RequestInterface $r, ResponseInterface $res): void
+    {
+    }
 
-    public function getRouter() : RouterRuntimeInterface
+    public function getRouter(): RouterRuntimeInterface
     {
         return $this->router;
     }
 
-    public function withMiddleware(MiddlewareInterface $middleware) : self
+    public function withMiddleware(MiddlewareInterface $middleware): self
     {
         return new self(
             $this->router,

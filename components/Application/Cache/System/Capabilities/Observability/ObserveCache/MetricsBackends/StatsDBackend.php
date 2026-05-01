@@ -26,7 +26,7 @@ final class StatsDBackend implements MetricsBackend
     #[Override]
     public function increment(string $metric, int $value = 1) : void
     {
-        $key = sprintf('%s:%d|c', $metric, $value);
+        $key              = sprintf('%s:%d|c', $metric, $value);
         $this->messages[] = $key;
         $this->counters[$metric] = ($this->counters[$metric] ?? 0) + $value;
     }
@@ -34,7 +34,7 @@ final class StatsDBackend implements MetricsBackend
     #[Override]
     public function gauge(string $metric, float $value) : void
     {
-        $key = sprintf('%s:%s|g', $metric, $value);
+        $key              = sprintf('%s:%s|g', $metric, $value);
         $this->messages[] = $key;
         $this->gauges[$metric] = $value;
     }

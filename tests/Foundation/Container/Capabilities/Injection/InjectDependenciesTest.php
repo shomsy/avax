@@ -22,9 +22,9 @@ use ReflectionException;
 final class InjectDependenciesTest extends TestCase
 {
     /** @throws ReflectionException */
-    public function test_injecting_readonly_property_throws() : void
+    public function test_injecting_readonly_property_throws(): void
     {
-        $target   = new ReadonlyTarget;
+        $target = new ReadonlyTarget();
 
         $prototype = new ServicePrototype(
             class             : ReadonlyTarget::class,
@@ -36,12 +36,12 @@ final class InjectDependenciesTest extends TestCase
         $factory->method('createFor')->willReturn(value: $prototype);
 
         $container = $this->createMock(ContainerInterface::class);
-        $injector = new InjectDependencies(
+        $injector  = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver),
-                                     ),
+                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver()),
+            ),
             container              : $container,
         );
 
@@ -50,9 +50,9 @@ final class InjectDependenciesTest extends TestCase
     }
 
     /** @throws ReflectionException */
-    public function test_injects_method_arguments_from_overrides() : void
+    public function test_injects_method_arguments_from_overrides(): void
     {
-        $target    = new MethodTarget;
+        $target          = new MethodTarget();
         $methodPrototype = new MethodPrototype(
             name      : 'setValue',
             parameters: [new ParameterPrototype(name: 'value', type: null)],
@@ -71,8 +71,8 @@ final class InjectDependenciesTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver),
-                                     ),
+                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver()),
+            ),
             container              : $container,
         );
 

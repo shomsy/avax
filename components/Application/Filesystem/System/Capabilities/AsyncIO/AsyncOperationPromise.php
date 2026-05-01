@@ -29,7 +29,7 @@ interface AsyncOperationPromise
      *
      * @return AsyncOperationPromise A new promise for chaining
      */
-    public function then(callable $onResolved) : AsyncOperationPromise;
+    public function then(callable $onResolved): AsyncOperationPromise;
 
     /**
      * Attach a callback to be executed when the operation fails.
@@ -38,7 +38,7 @@ interface AsyncOperationPromise
      *
      * @return AsyncOperationPromise A new promise for chaining
      */
-    public function catch(callable $onRejected) : AsyncOperationPromise;
+    public function catch(callable $onRejected): AsyncOperationPromise;
 
     /**
      * Check if the promise has been resolved successfully.

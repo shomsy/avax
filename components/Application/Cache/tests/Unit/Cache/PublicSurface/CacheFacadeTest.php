@@ -12,14 +12,14 @@ use Override;
 
 final class CacheFacadeTest extends TestCase
 {
-    public function test_it_throws_when_no_cache_configured() : void
+    public function test_it_throws_when_no_cache_configured(): void
     {
         $this->expectException(exception: CacheNotConfigured::class);
 
         Cache::get(key: 'key');
     }
 
-    public function test_it_reads_value_through_static_facade() : void
+    public function test_it_reads_value_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->method('get')->with('key', 'default')->willReturn(value: 'value');
@@ -31,7 +31,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertSame(expected: 'value', actual: $result);
     }
 
-    public function test_it_writes_value_through_static_facade() : void
+    public function test_it_writes_value_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->expects($this->once())->method('set')->with('key', 'value', null)->willReturn(value: true);
@@ -43,7 +43,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_it_put_is_alias_for_set() : void
+    public function test_it_put_is_alias_for_set(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->expects($this->once())->method('set')->with('key', 'value', 3600)->willReturn(value: true);
@@ -55,19 +55,19 @@ final class CacheFacadeTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_it_remembers_value_through_static_facade() : void
+    public function test_it_remembers_value_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->expects($this->once())->method('remember')->with('key', 3600, $this->isType(type: 'callable'))->willReturn(value: 'loaded');
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn () : string => 'loaded');
+        $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn (): string => 'loaded');
 
         $this->assertSame(expected: 'loaded', actual: $result);
     }
 
-    public function test_it_forgets_value_through_static_facade() : void
+    public function test_it_forgets_value_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->expects($this->once())->method('delete')->with('key')->willReturn(value: true);
@@ -79,7 +79,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_it_clears_through_static_facade() : void
+    public function test_it_clears_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->expects($this->once())->method('clear')->willReturn(value: true);
@@ -91,7 +91,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertTrue(condition: $result);
     }
 
-    public function test_it_resolves_default_store() : void
+    public function test_it_resolves_default_store(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
 
@@ -102,7 +102,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertSame(expected: $mockCache, actual: $store);
     }
 
-    public function test_it_allows_cache_to_be_swapped_for_tests() : void
+    public function test_it_allows_cache_to_be_swapped_for_tests(): void
     {
         $cache1 = $this->createMock(CacheContract::class);
         $cache1->method('get')->with('key')->willReturn(value: 'value1');
@@ -117,7 +117,7 @@ final class CacheFacadeTest extends TestCase
         $this->assertSame(expected: 'value2', actual: Cache::get(key: 'key'));
     }
 
-    public function test_it_resets_static_facade_state_between_tests() : void
+    public function test_it_resets_static_facade_state_between_tests(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
         $mockCache->method('get')->with('key')->willReturn(value: 'value');
@@ -132,14 +132,14 @@ final class CacheFacadeTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::reset();
     }
 
     #[Override]
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::reset();

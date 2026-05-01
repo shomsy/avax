@@ -137,7 +137,7 @@ final readonly class ResourceReport
         return [
             'request_count'    => $this->requestCount,
             'worker_memory_mb' => $this->workerMemory / 1024 / 1024,
-            'worker_limit_mb' => $this->workerLimit / 1024 / 1024,
+            'worker_limit_mb'  => $this->workerLimit / 1024 / 1024,
             'near_limit'       => $this->nearLimit,
             'trend_mb_per_request' => $this->trend / 1024 / 1024,
         ];

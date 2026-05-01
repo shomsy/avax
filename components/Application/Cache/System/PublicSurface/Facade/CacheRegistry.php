@@ -15,7 +15,7 @@ class CacheRegistry
 
     private ?string $defaultName = null;
 
-    public function register(string $name, CacheContract $cacheContract) : void
+    public function register(string $name, CacheContract $cacheContract): void
     {
         $this->caches[$name] = $cacheContract;
 
@@ -24,7 +24,7 @@ class CacheRegistry
         }
     }
 
-    public function default() : CacheContract
+    public function default(): CacheContract
     {
         if ($this->defaultName === null) {
             throw new NotConfigured(
@@ -35,7 +35,7 @@ class CacheRegistry
         return $this->caches[$this->defaultName];
     }
 
-    public function get(string $name) : CacheContract
+    public function get(string $name): CacheContract
     {
         if (! isset($this->caches[$name])) {
             throw new NotFound(
@@ -47,12 +47,12 @@ class CacheRegistry
         return $this->caches[$name];
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->caches[$name]);
     }
 
-    public function forget(string $name) : void
+    public function forget(string $name): void
     {
         unset($this->caches[$name]);
 
@@ -61,9 +61,9 @@ class CacheRegistry
         }
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->caches = [];
+        $this->caches      = [];
         $this->defaultName = null;
     }
 }

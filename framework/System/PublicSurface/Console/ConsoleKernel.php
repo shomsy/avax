@@ -13,12 +13,13 @@ final class ConsoleKernel implements ConsoleKernelInterface
     public function __construct(
         private RuntimeInterface $runtime,
         private RunConsoleCommand $runConsoleCommand,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<int|string, mixed> $arguments
      */
-    public function run(string $commandName, array $arguments = []) : RuntimeResult
+    public function run(string $commandName, array $arguments = []): RuntimeResult
     {
         return $this->runConsoleCommand->run(
             arguments: [$commandName] + $arguments,

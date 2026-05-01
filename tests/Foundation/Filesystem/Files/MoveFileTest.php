@@ -20,7 +20,7 @@ class MoveFileTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
+        $this->disk     = new LocalDisk();
         $this->sourceFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/move_source.txt';
         $this->destFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/move_dest.txt';
     }

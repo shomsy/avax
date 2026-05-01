@@ -6,17 +6,19 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class CheckCompiledCacheIsFresh
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest) {}
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)
+    {
+    }
 
-    public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : bool
+    public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): bool
     {
         return $this->check(name: $compiledCacheName, sources: $compiledCacheSources) !== CompiledCacheFreshness::FRESH;
     }
 
-    public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : CompiledCacheFreshness
+    public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): CompiledCacheFreshness
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;

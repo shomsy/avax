@@ -18,9 +18,10 @@ final readonly class ConfigSchemaViolation
         public string $key,
         public string $message,
         public ?string $remediation = null,
-    ) {}
+    ) {
+    }
 
-    public function isError() : bool
+    public function isError(): bool
     {
         return $this->severity === self::SEVERITY_ERROR;
     }

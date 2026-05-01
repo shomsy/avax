@@ -16,14 +16,14 @@ final readonly class CachedValueLifecycle
         public Timestamp $refreshedAt,
         public int $hitCount = 0,
         public int $refreshCount = 0,
-    ) {}
+    ) {
+    }
 
     public static function create(
         Timestamp $createdAt,
         Timestamp $expiresAt,
         Clock $clock,
-    ) : self
-    {
+    ): self {
         return new self(
             createdAt     : $createdAt,
             lastAccessedAt: $clock->now(),
@@ -32,7 +32,7 @@ final readonly class CachedValueLifecycle
         );
     }
 
-    public function withAccessed(Clock $clock) : self
+    public function withAccessed(Clock $clock): self
     {
         return new self(
             createdAt     : $this->createdAt,
@@ -44,7 +44,7 @@ final readonly class CachedValueLifecycle
         );
     }
 
-    public function withRefreshed(Timestamp $refreshedAt, Timestamp $newExpiresAt) : self
+    public function withRefreshed(Timestamp $refreshedAt, Timestamp $newExpiresAt): self
     {
         return new self(
             createdAt     : $this->createdAt,
@@ -56,12 +56,12 @@ final readonly class CachedValueLifecycle
         );
     }
 
-    public function isExpired(Clock $clock) : bool
+    public function isExpired(Clock $clock): bool
     {
         return $clock->now()->isAfter(other: $this->expiresAt);
     }
 
-    public function timeToLive(Clock $clock) : int
+    public function timeToLive(Clock $clock): int
     {
         $now = $clock->now();
 
@@ -74,12 +74,12 @@ final readonly class CachedValueLifecycle
         return $duration->toSeconds();
     }
 
-    public function age(Clock $clock) : int
+    public function age(Clock $clock): int
     {
         return $clock->now()->difference(other: $this->createdAt)->toSeconds();
     }
 
-    public function idleTime(Clock $clock) : int
+    public function idleTime(Clock $clock): int
     {
         return $clock->now()->difference(other: $this->lastAccessedAt)->toSeconds();
     }

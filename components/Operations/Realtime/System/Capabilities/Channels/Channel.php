@@ -11,24 +11,25 @@ final readonly class Channel
     public function __construct(
         public string $name,
         private ChannelManager $manager,
-    ) {}
+    ) {
+    }
 
-    public function subscribe(Connection $connection) : void
+    public function subscribe(Connection $connection): void
     {
         $this->manager->subscribe(connection: $connection, channel: $this->name);
     }
 
-    public function unsubscribe(Connection $connection) : void
+    public function unsubscribe(Connection $connection): void
     {
         $this->manager->unsubscribe(connection: $connection, channel: $this->name);
     }
 
-    public function broadcast(mixed $message) : int
+    public function broadcast(mixed $message): int
     {
         return $this->manager->broadcast(channel: $this->name, message: $message);
     }
 
-    public function subscriberCount() : int
+    public function subscriberCount(): int
     {
         return $this->manager->subscriberCount(channel: $this->name);
     }

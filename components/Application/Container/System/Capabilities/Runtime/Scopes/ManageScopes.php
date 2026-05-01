@@ -13,7 +13,7 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances, private ?ResolutionMetrics $resolutionMetrics = null) {}
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ?ResolutionMetrics $resolutionMetrics = null) {}
 
     /**
      * Stores one shared instance.
@@ -208,9 +208,9 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function setScoped(
         string $abstract,
-        mixed   $instance,
+        mixed  $instance,
         ?string $kind = null,
-        bool    $disposable = false,
+        bool   $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
@@ -233,7 +233,7 @@ final readonly class ManageScopes implements ScopeInterface
     public function checkoutPooled(
         string $abstract,
         string $kind,
-        int   $maxSize,
+        int  $maxSize,
         ?bool $resetBeforeReuse = null,
         bool $disposable = false,
     ) : array
@@ -277,9 +277,9 @@ final readonly class ManageScopes implements ScopeInterface
         string $abstract,
         mixed $instance,
         string $kind,
-        int   $maxSize,
+        int  $maxSize,
         ?bool $resetBeforeReuse = null,
-        bool  $disposable = false,
+        bool $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;

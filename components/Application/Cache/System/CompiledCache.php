@@ -16,18 +16,18 @@ final class CompiledCache
 
     private static ?string $defaultDirectory = null;
 
-    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
+    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources): mixed
     {
         return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
-    private static function instance() : CompiledCacheContract
+    private static function instance(): CompiledCacheContract
     {
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
-            $directory          = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
+            $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
 
-            $config = CompiledCacheConfiguration::inDirectory($directory);
-            $buildCompiledCache = new BuildCompiledCache;
+            $config             = CompiledCacheConfiguration::inDirectory($directory);
+            $buildCompiledCache = new BuildCompiledCache();
 
             self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);
         }
@@ -35,35 +35,35 @@ final class CompiledCache
         return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources): CompiledCacheArtifact
     {
         return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
-    public static function clear(string $name) : void
+    public static function clear(string $name): void
     {
         self::instance()->clear(name: $name);
     }
 
-    public static function clearAll() : void
+    public static function clearAll(): void
     {
         self::instance()->clearAll();
     }
 
-    public static function use(CompiledCacheContract $compiledCacheContract) : void
+    public static function use(CompiledCacheContract $compiledCacheContract): void
     {
         self::$compiledCacheContract = $compiledCacheContract;
     }
 
-    public static function configure(string $directory) : void
+    public static function configure(string $directory): void
     {
-        self::$defaultDirectory = $directory;
+        self::$defaultDirectory      = $directory;
         self::$compiledCacheContract = null;
     }
 
-    public static function reset() : void
+    public static function reset(): void
     {
         self::$compiledCacheContract = null;
-        self::$defaultDirectory = null;
+        self::$defaultDirectory      = null;
     }
 }

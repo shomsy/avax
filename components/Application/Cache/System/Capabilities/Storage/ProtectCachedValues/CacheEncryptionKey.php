@@ -13,8 +13,7 @@ final readonly class CacheEncryptionKey
 
     public function __construct(
         public string $key,
-    )
-    {
+    ) {
         if (strlen($key) < self::MIN_KEY_LENGTH) {
             throw new InvalidArgumentException(
                 message: sprintf('Encryption key must be at least %d bytes', self::MIN_KEY_LENGTH),
@@ -22,7 +21,7 @@ final readonly class CacheEncryptionKey
         }
     }
 
-    public static function fromConfig(string $configKey = 'cache.encryption_key') : self
+    public static function fromConfig(string $configKey = 'cache.encryption_key'): self
     {
         $key = config(key: $configKey);
 
@@ -38,12 +37,12 @@ final readonly class CacheEncryptionKey
     /**
      * @throws RandomException
      */
-    public static function generate() : self
+    public static function generate(): self
     {
         return new self(key: random_bytes(32));
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->key;
     }

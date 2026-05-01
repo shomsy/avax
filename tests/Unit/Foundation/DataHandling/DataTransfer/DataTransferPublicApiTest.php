@@ -16,13 +16,13 @@ use SensitiveParameter;
 
 final class DataTransferPublicApiTest extends TestCase
 {
-    public function test_it_creates_constructor_data_object_when_input_matches_declared_shape() : void
+    public function test_it_creates_constructor_data_object_when_input_matches_declared_shape(): void
     {
         // Arrange
         $input = [
             'user_name' => 'Mila',
-            'role'    => 'admin',
-            'address' => ['city' => 'Belgrade'],
+            'role'      => 'admin',
+            'address'   => ['city' => 'Belgrade'],
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
@@ -40,7 +40,7 @@ final class DataTransferPublicApiTest extends TestCase
         self::assertSame(expected: 'Novi Sad', actual: $data->addresses[0]->city);
     }
 
-    public function test_it_serializes_without_hidden_field_when_field_is_marked_hidden() : void
+    public function test_it_serializes_without_hidden_field_when_field_is_marked_hidden(): void
     {
         // Arrange
         $data = new UnitProfileData(
@@ -60,11 +60,11 @@ final class DataTransferPublicApiTest extends TestCase
         self::assertArrayNotHasKey(key: 'secret', array: $array);
     }
 
-    public function test_it_returns_failure_result_when_unknown_field_is_rejected() : void
+    public function test_it_returns_failure_result_when_unknown_field_is_rejected(): void
     {
         // Arrange
         $input = [
-            'city' => 'Belgrade',
+            'city'    => 'Belgrade',
             'unknown' => 'value',
         ];
 
@@ -79,7 +79,7 @@ final class DataTransferPublicApiTest extends TestCase
         );
     }
 
-    public function test_it_ignores_unknown_field_when_config_policy_allows_ignore() : void
+    public function test_it_ignores_unknown_field_when_config_policy_allows_ignore(): void
     {
         // Arrange
         $config = DataTransferConfig::default()->withUnknownFieldPolicy(policy: UnknownFieldPolicy::Ignore);
@@ -95,11 +95,11 @@ final class DataTransferPublicApiTest extends TestCase
         self::assertSame(expected: 'Belgrade', actual: $data->city);
     }
 
-    public function test_it_preserves_zero_and_false_when_scalar_values_are_boundary_values() : void
+    public function test_it_preserves_zero_and_false_when_scalar_values_are_boundary_values(): void
     {
         // Arrange
         $input = [
-            'count' => '0',
+            'count'  => '0',
             'active' => 'false',
         ];
 
@@ -111,7 +111,7 @@ final class DataTransferPublicApiTest extends TestCase
         self::assertFalse(condition: $data->active);
     }
 
-    public function test_it_throws_data_transfer_failure_when_enum_value_is_not_supported() : void
+    public function test_it_throws_data_transfer_failure_when_enum_value_is_not_supported(): void
     {
         // Arrange
         $input = [
@@ -125,7 +125,7 @@ final class DataTransferPublicApiTest extends TestCase
         DataTransfer::create(class: UnitRoleData::class, input: $input);
     }
 
-    public function test_it_builds_data_object_when_fluent_for_api_is_used() : void
+    public function test_it_builds_data_object_when_fluent_for_api_is_used(): void
     {
         // Arrange
         $builder = DataTransfer::for(class: UnitAddressData::class);
@@ -142,17 +142,21 @@ final class DataTransferPublicApiTest extends TestCase
 enum UnitRole: string
 {
     case Admin = 'admin';
-    case User = 'user';
+    case User  = 'user';
 }
 
 final readonly class UnitAddressData
 {
-    public function __construct(public string $city) {}
+    public function __construct(public string $city)
+    {
+    }
 }
 
 final readonly class UnitRoleData
 {
-    public function __construct(public UnitRole $role) {}
+    public function __construct(public UnitRole $role)
+    {
+    }
 }
 
 final readonly class UnitScalarBoundaryData
@@ -160,7 +164,8 @@ final readonly class UnitScalarBoundaryData
     public function __construct(
         public int $count,
         public bool $active,
-    ) {}
+    ) {
+    }
 }
 
 final readonly class UnitProfileData
@@ -170,15 +175,16 @@ final readonly class UnitProfileData
      */
     public function __construct(
         #[MapFrom(name: 'user_name')]
-        public string   $name,
+        public string $name,
         public UnitRole $role,
         #[SensitiveParameter]
         public UnitAddressData $address,
         #[SensitiveParameter]
         #[ListOf(class: UnitAddressData::class)]
-        public array    $addresses,
+        public array $addresses,
         #[SensitiveParameter]
         #[Hidden]
-        public string   $secret,
-    ) {}
+        public string $secret,
+    ) {
+    }
 }

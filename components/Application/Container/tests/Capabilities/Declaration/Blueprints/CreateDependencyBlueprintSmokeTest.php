@@ -25,20 +25,22 @@ final class CreateDependencyBlueprintSmokeTest
     }
 
     #[Inject]
-    protected function wire(DateTimeImmutable $clock) : void {}
+    protected function wire(DateTimeImmutable $clock): void
+    {
+    }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-blueprint-' . uniqid();
 $version  = 'blueprint-smoke';
 $factory  = new CreateDependencyBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
-    dependencies: new ResolveDependencies,
+    dependencies: new ResolveDependencies(),
 );
 $first    = $factory->createFor(class: BlueprintTarget::class);
 $second   = $factory->createFor(class: BlueprintTarget::class);
 $reloaded = new CreateDependencyBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
-    dependencies: new ResolveDependencies,
+    dependencies: new ResolveDependencies(),
 )->createFor(class: BlueprintTarget::class);
 
 assertTrue(condition: $first->shared, message: 'Singleton attribute should mark a blueprint as shared.');

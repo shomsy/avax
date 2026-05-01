@@ -206,7 +206,6 @@ function benchContainer(
 
 /**
  * @param array{name: string, iterations: int, callback: callable() : void} $scenario
- *
  * @return array<string, mixed>
  */
 function measureScenario(array $scenario) : array
@@ -215,7 +214,7 @@ function measureScenario(array $scenario) : array
         callback  : $scenario['callback'],
         iterations: $scenario['iterations'],
     );
-    $timeMs = $result['time_ms'];
+    $timeMs                  = $result['time_ms'];
     $iterations = max(1, $scenario['iterations']);
 
     return [
@@ -229,7 +228,6 @@ function measureScenario(array $scenario) : array
 
 /**
  * @param array{name: string, iterations: int, callback: callable() : void} $scenario
- *
  * @return array<string, mixed>
  */
 function measureScenarioForGuard(array $scenario, int $runs = 3) : array
@@ -273,7 +271,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'cold_boot',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
@@ -282,7 +280,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'warm_boot',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->warmCompiled(serviceIds: [BenchSharedService::class]);
@@ -291,7 +289,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'cached_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
@@ -301,7 +299,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'worker_cached_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -315,7 +313,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'uncached_resolve',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchTransientService::class, concrete: BenchTransientService::class);
                 $container->make(abstract: BenchTransientService::class);
@@ -324,7 +322,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'request_lifecycle',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -340,7 +338,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deep_graph',
             'iterations' => 1000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->get(id: BenchDeep5::class);
             },
@@ -348,7 +346,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'wide_graph',
             'iterations' => 1000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->get(id: BenchWideRoot::class);
             },
@@ -356,7 +354,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'scoped_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->scoped(abstract: BenchScopedService::class, concrete: BenchScopedService::class);
                 $container->openScope();
@@ -367,7 +365,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'pooled_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchPooledService::class, concrete: BenchPooledService::class)->pooled(maxSize: 8);
                 $container->openScope();
@@ -378,7 +376,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'lazy_service',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchLazyService::class, concrete: BenchLazyService::class);
 
@@ -389,7 +387,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deferred_service',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->defer(abstract: BenchDeferredService::class, concrete: BenchDeferredService::class);
                 $container->get(id: BenchDeferredService::class);
@@ -398,7 +396,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'deferred_provider',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->bootProviders(providers: [BenchDeferredProvider::class]);
                 $container->get(id: BenchDeferredProviderContract::class);
@@ -407,7 +405,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'function_call_injection',
             'iterations' => 5000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->call(callable: static fn (BenchSharedService $benchSharedService) : string => $benchSharedService->value());
@@ -416,20 +414,20 @@ function benchmarkScenarios() : array
         [
             'name'       => 'property_injection',
             'iterations' => 2000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
-                $container->injectInto(target: new BenchInjectionTarget);
+                $container->injectInto(target: new BenchInjectionTarget());
             },
         ],
         [
             'name'       => 'method_injection',
             'iterations' => 2000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
 
-                $target = new BenchInjectionTarget;
+                $target = new BenchInjectionTarget();
                 $container->injectInto(target: $target);
                 $target->methodDependency?->value();
             },
@@ -437,7 +435,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'compile_time',
             'iterations' => 1,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchDeep5::class);
@@ -455,7 +453,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'prod_compiled_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -472,7 +470,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'generated_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -490,7 +488,7 @@ function benchmarkScenarios() : array
         [
             'name'       => 'dev_compiled_get',
             'iterations' => 10000,
-            'callback'   => static function () : void {
+            'callback' => static function () : void {
                 static $container = null;
 
                 if ($container === null) {
@@ -523,7 +521,7 @@ function benchmarkPhpSettings() : array
 
 /**
  * @param array<string, array{max_time_ms: float, max_peak_mb: float}> $thresholds
- * @param array<string, array<string, mixed>>                          $results
+ * @param array<string, array<string, mixed>> $results
  */
 function assertThresholds(array $thresholds, array $results): void
 {
@@ -575,19 +573,19 @@ if ($guard) {
 
 if ($jsonOutput || is_string(value: $outputPath)) {
     $payload = json_encode(value: [
-                                      'meta' => [
-                                          'php' => PHP_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'sapi' => PHP_SAPI,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              'timestamp' => gmdate(format: 'c'),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'dockerImage' => BENCHMARK_DOCKER_IMAGE,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              'phpSettings' => benchmarkPhpSettings(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'suiteVersion' => BENCHMARK_SUITE_VERSION,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'buildMarker' => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'guard' => $guard,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'scenarioCount' => count(value: $results),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'scenarios' => array_keys(array: $results),
+                                      'meta'    => [
+                                          'php'           => PHP_VERSION,
+                                          'sapi'          => PHP_SAPI,
+                                          'timestamp'     => gmdate(format: 'c'),
+                                          'dockerImage'   => BENCHMARK_DOCKER_IMAGE,
+                                          'phpSettings'   => benchmarkPhpSettings(),
+                                          'suiteVersion'  => BENCHMARK_SUITE_VERSION,
+                                          'buildMarker'   => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
+                                          'guard'         => $guard,
+                                          'scenarioCount' => count(value: $results),
+                                          'scenarios'     => array_keys(array: $results),
                                       ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'results' => $results,
+                                      'results' => $results,
                                   ], flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 
     if (is_string(value: $outputPath) && $outputPath !== '') {

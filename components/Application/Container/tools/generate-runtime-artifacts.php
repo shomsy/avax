@@ -12,7 +12,7 @@ if ($argc < 3) {
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
 $fixturePath = $argv[1] ?? '';
-$outputDir = $argv[2] ?? '';
+$outputDir   = $argv[2] ?? '';
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -45,7 +45,7 @@ $container->warmCompiled();
 /**
  * @throws JsonException
  */
-$writeJson = static function (string $path, array $payload) : void {
+$writeJson = static function (string $path, array $payload): void {
     file_put_contents(
         filename: $path,
         data    : json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
@@ -62,15 +62,15 @@ $writeJson(path: $outputDir . '/architecture.json', payload: $container->debugAr
 file_put_contents(filename: $outputDir . '/dependency-graph.html', data: $container->exportGraph(format: 'html', kind: 'dependency'));
 
 echo json_encode(
-        value: [
-                   'outputDir' => $outputDir,
-                   'files'     => [
-                       'compile-report.json',
-                       'runtime-report.json',
-                       'governance.json',
-                       'architecture.json',
-                       'dependency-graph.html',
-                   ],
-               ],
-        flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
-    ) . PHP_EOL;
+    value: [
+        'outputDir' => $outputDir,
+        'files'     => [
+            'compile-report.json',
+            'runtime-report.json',
+            'governance.json',
+            'architecture.json',
+            'dependency-graph.html',
+        ],
+    ],
+    flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+) . PHP_EOL;

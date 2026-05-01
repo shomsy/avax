@@ -18,25 +18,25 @@ final class Dispatcher
     public function __construct(DispatchJob $dispatcher, QueueBroker $broker)
     {
         $this->dispatcher = $dispatcher;
-        $this->broker = $broker;
+        $this->broker     = $broker;
     }
 
-    public function dispatch(JobDefinition $job) : JobId
+    public function dispatch(JobDefinition $job): JobId
     {
         return $this->dispatcher->dispatch($job, $this->broker);
     }
 
-    public function dispatchSync(JobDefinition $job) : mixed
+    public function dispatchSync(JobDefinition $job): mixed
     {
         return $this->dispatcher->dispatchSync($job);
     }
 
-    public function later(JobDefinition $job, DateTimeInterface $delay) : JobId
+    public function later(JobDefinition $job, DateTimeInterface $delay): JobId
     {
         return $this->dispatcher->later($job, $delay, $this->broker);
     }
 
-    public function bulk(array $jobs) : array
+    public function bulk(array $jobs): array
     {
         return $this->dispatcher->bulk($jobs, $this->broker);
     }
@@ -47,9 +47,10 @@ final class JobId
     public function __construct(
         public readonly string $value,
         public readonly ?string $queue = null,
-    ) {}
+    ) {
+    }
 
-    public static function generate(?string $queue = null) : self
+    public static function generate(string $queue = null): self
     {
         return new self(
             value: uniqid('job-', true),
@@ -61,18 +62,19 @@ final class JobId
 final class JobResult
 {
     public function __construct(
-        public readonly bool    $success,
+        public readonly bool $success,
         public readonly mixed $result = null,
         public readonly ?string $error = null,
-        public readonly ?int    $attempts = null,
-    ) {}
+        public readonly ?int $attempts = null,
+    ) {
+    }
 
-    public static function success(mixed $result = null, int $attempts = 1) : self
+    public static function success(mixed $result = null, int $attempts = 1): self
     {
         return new self(success: true, result: $result, attempts: $attempts);
     }
 
-    public static function failure(string $error, int $attempts = 1) : self
+    public static function failure(string $error, int $attempts = 1): self
     {
         return new self(success: false, error: $error, attempts: $attempts);
     }

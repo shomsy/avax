@@ -10,9 +10,10 @@ final readonly class ForgetSessionValue
 {
     public function __construct(
         private Session $session,
-    ) {}
+    ) {
+    }
 
-    public function handle(string $key) : void
+    public function handle(string $key): void
     {
         $this->session->forget($key);
     }

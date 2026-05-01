@@ -19,7 +19,7 @@ final class ClockTest extends TestCase
     #[Test]
     public function it_implements_clock_interface(): void
     {
-        $clock = new SystemClock;
+        $clock = new SystemClock();
 
         self::assertInstanceOf(Clock::class, $clock);
     }
@@ -27,12 +27,12 @@ final class ClockTest extends TestCase
     #[Test]
     public function it_returns_current_time(): void
     {
-        $clock  = new SystemClock;
-        $before = new DateTimeImmutable;
+        $clock  = new SystemClock();
+        $before = new DateTimeImmutable();
 
         $now = $clock->now();
 
-        $after = new DateTimeImmutable;
+        $after = new DateTimeImmutable();
 
         self::assertInstanceOf(DateTimeImmutable::class, $now);
         self::assertGreaterThanOrEqual($before, $now);
@@ -43,7 +43,7 @@ final class ClockTest extends TestCase
     public function it_returns_frozen_time(): void
     {
         $frozen = new DateTimeImmutable('2026-01-01 12:00:00');
-        $clock = new FrozenClock(frozenTime: $frozen);
+        $clock  = new FrozenClock(frozenTime: $frozen);
 
         self::assertSame($frozen, $clock->now());
     }
@@ -52,9 +52,9 @@ final class ClockTest extends TestCase
     public function it_creates_new_frozen_clock_with_different_time(): void
     {
         $original = new DateTimeImmutable('2026-01-01 12:00:00');
-        $new = new DateTimeImmutable('2026-06-15 18:30:00');
+        $new      = new DateTimeImmutable('2026-06-15 18:30:00');
 
-        $clock = new FrozenClock(frozenTime: $original);
+        $clock    = new FrozenClock(frozenTime: $original);
         $newClock = $clock->withFrozenTime(newTime: $new);
 
         self::assertSame($original, $clock->now());

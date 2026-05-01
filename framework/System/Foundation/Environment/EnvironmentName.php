@@ -21,7 +21,7 @@ final readonly class EnvironmentName
         $this->value = $normalizedName;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }

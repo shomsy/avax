@@ -18,7 +18,7 @@ final class Pipeline
     private static function registry() : HookRegistry
     {
         if (! self::$hookRegistry instanceof HookRegistry) {
-            self::$hookRegistry = new HookRegistry;
+            self::$hookRegistry = new HookRegistry();
         }
 
         return self::$hookRegistry;

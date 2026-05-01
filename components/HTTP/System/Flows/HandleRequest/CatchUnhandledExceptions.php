@@ -14,9 +14,10 @@ final class CatchUnhandledExceptions
     public function __construct(
         private ReportExceptionToLogger $logger,
         private CreateJsonResponse $responseFactory,
-    ) {}
+    ) {
+    }
 
-    public function handle(Exception $e, RequestInterface $request) : ResponseInterface
+    public function handle(Exception $e, RequestInterface $request): ResponseInterface
     {
         $this->logger->report($e, $request);
 

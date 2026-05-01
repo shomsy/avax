@@ -9,41 +9,45 @@ use RuntimeException;
 
 final class FakeContainer implements PsrContainerInterface
 {
-    public function get(string $id) : mixed
+    public function get(string $id): mixed
     {
-        return new $id;
+        return new $id();
     }
 
-    public function has(string $id) : bool
+    public function has(string $id): bool
     {
         return class_exists($id);
     }
 
-    public function make(string $abstract, array $parameters = []) : object
+    public function make(string $abstract, array $parameters = []): object
     {
         throw new RuntimeException('Not implemented.');
     }
 
-    public function call(callable|string $callable, array $parameters = []) : mixed
+    public function call(callable|string $callable, array $parameters = []): mixed
     {
         throw new RuntimeException('Not implemented.');
     }
 
-    public function injectInto(object $target) : object
+    public function injectInto(object $target): object
     {
         throw new RuntimeException('Not implemented.');
     }
 
-    public function canInject(object $target) : bool
+    public function canInject(object $target): bool
     {
         return false;
     }
 
-    public function beginScope() : void {}
+    public function beginScope(): void
+    {
+    }
 
-    public function endScope() : void {}
+    public function endScope(): void
+    {
+    }
 
-    public function instance(string $abstract, object $instance) : void
+    public function instance(string $abstract, object $instance): void
     {
         throw new RuntimeException('Not implemented.');
     }

@@ -8,14 +8,18 @@ namespace Psr\Container {
 
     interface ContainerInterface
     {
-        public function get(string $id) : mixed;
+        public function get(string $id): mixed;
 
-        public function has(string $id) : bool;
+        public function has(string $id): bool;
     }
 
-    interface ContainerExceptionInterface extends Throwable {}
+    interface ContainerExceptionInterface extends Throwable
+    {
+    }
 
-    interface NotFoundExceptionInterface extends ContainerExceptionInterface {}
+    interface NotFoundExceptionInterface extends ContainerExceptionInterface
+    {
+    }
 }
 
 namespace {
@@ -31,7 +35,7 @@ namespace {
     }
 
     spl_autoload_register(
-        callback: static function (string $class) use ($root) : void {
+        callback: static function (string $class) use ($root): void {
             $prefix = 'Avax\\Container\\DI\\';
             if (! str_starts_with(haystack: $class, needle: $prefix)) {
                 return;
@@ -46,14 +50,14 @@ namespace {
         },
     );
 
-    function assertTrue(bool $condition, string $message) : void
+    function assertTrue(bool $condition, string $message): void
     {
         if (! $condition) {
             throw new RuntimeException(message: $message);
         }
     }
 
-    function assertSame(mixed $expected, mixed $actual, string $message) : void
+    function assertSame(mixed $expected, mixed $actual, string $message): void
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
@@ -62,21 +66,21 @@ namespace {
         }
     }
 
-    function assertNotSame(mixed $expected, mixed $actual, string $message) : void
+    function assertNotSame(mixed $expected, mixed $actual, string $message): void
     {
         if ($expected === $actual) {
             throw new RuntimeException(message: $message);
         }
     }
 
-    function assertInstanceOf(string $expectedClass, mixed $value, string $message) : void
+    function assertInstanceOf(string $expectedClass, mixed $value, string $message): void
     {
         if (! $value instanceof $expectedClass) {
             throw new RuntimeException(message: $message . ' Expected instance of ' . $expectedClass . '.');
         }
     }
 
-    function assertThrows(string $expectedClass, callable $callback, string $message) : void
+    function assertThrows(string $expectedClass, callable $callback, string $message): void
     {
         try {
             $callback();
@@ -96,9 +100,8 @@ namespace {
     }
 
     function makeTestContainer(
-        ?CreateContainerConfig $config = null,
-    ) : Container
-    {
+        CreateContainerConfig $config = null,
+    ): Container {
         return new CreateContainer()->create(config: $config);
     }
 }

@@ -6,7 +6,7 @@ require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 final class DeferredRegularService
 {
-    public function id() : string
+    public function id(): string
     {
         return 'regular';
     }
@@ -14,7 +14,7 @@ final class DeferredRegularService
 
 final class DeferredWorkerService
 {
-    public function id() : string
+    public function id(): string
     {
         return 'deferred';
     }
@@ -26,9 +26,9 @@ $container->singleton(abstract: DeferredRegularService::class, concrete: Deferre
 $container->defer(abstract: DeferredWorkerService::class, concrete: DeferredWorkerService::class);
 $container->warmCompiled();
 
-$regular            = $container->get(id: DeferredRegularService::class);
-$deferred           = $container->get(id: DeferredWorkerService::class);
-$regularDescription = $container->describeService(id: DeferredRegularService::class);
+$regular             = $container->get(id: DeferredRegularService::class);
+$deferred            = $container->get(id: DeferredWorkerService::class);
+$regularDescription  = $container->describeService(id: DeferredRegularService::class);
 $deferredDescription = $container->describeService(id: DeferredWorkerService::class);
 
 assertSame(expected: 'regular', actual: $regular->id(), message: 'Regular services should still resolve after warmup.');

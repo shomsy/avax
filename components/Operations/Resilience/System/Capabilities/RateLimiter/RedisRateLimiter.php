@@ -32,7 +32,7 @@ final class RedisRateLimiter
         }
 
         try {
-            $redis = new Redis;
+            $redis = new Redis();
             $redis->connect(
                 host   : $this->config['host'] ?? '127.0.0.1',
                 port   : $this->config['port'] ?? 6379,

@@ -14,8 +14,7 @@ final readonly class CacheKeyPrefix implements Stringable
     public function __construct(
         string $prefix,
         public string $separator = ':',
-    )
-    {
+    ) {
         $normalizedPrefix = trim($prefix);
 
         if ($normalizedPrefix !== '' && ! str_ends_with($normalizedPrefix, $this->separator)) {
@@ -25,17 +24,17 @@ final readonly class CacheKeyPrefix implements Stringable
         $this->prefix = $normalizedPrefix;
     }
 
-    public static function fromNamespace(CacheNamespace $cacheNamespace, string $separator = ':') : self
+    public static function fromNamespace(CacheNamespace $cacheNamespace, string $separator = ':'): self
     {
         return new self(prefix: $cacheNamespace->toString(), separator: $separator);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->prefix;
     }
 
-    public function prepend(string $key) : CacheKey
+    public function prepend(string $key): CacheKey
     {
         return CacheKey::create(
             key         : $this->prefix . $key,
@@ -44,12 +43,12 @@ final readonly class CacheKeyPrefix implements Stringable
         );
     }
 
-    public static function create(string $prefix, string $separator = ':') : self
+    public static function create(string $prefix, string $separator = ':'): self
     {
         return new self(prefix: $prefix, separator: $separator);
     }
 
-    public function strip(string $fullKey) : string
+    public function strip(string $fullKey): string
     {
         if (! $this->matches(fullKey: $fullKey)) {
             return $fullKey;
@@ -58,13 +57,13 @@ final readonly class CacheKeyPrefix implements Stringable
         return substr($fullKey, strlen($this->prefix));
     }
 
-    public function matches(string $fullKey) : bool
+    public function matches(string $fullKey): bool
     {
         return str_starts_with($fullKey, $this->prefix);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->prefix;
     }

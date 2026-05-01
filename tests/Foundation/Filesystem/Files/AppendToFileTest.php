@@ -14,20 +14,20 @@ class AppendToFileTest extends TestCase
 
     private string $testFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
+        $this->disk     = new LocalDisk();
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_test.txt';
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         @unlink(filename: $this->testFile);
         parent::tearDown();
     }
 
-    public function test_execute_appends_content() : void
+    public function test_execute_appends_content(): void
     {
         file_put_contents(filename: $this->testFile, data: "line1\n");
 
@@ -38,7 +38,7 @@ class AppendToFileTest extends TestCase
         self::assertStringContainsString('line2', $content);
     }
 
-    public function test_execute_creates_parent_directory() : void
+    public function test_execute_creates_parent_directory(): void
     {
         $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_dir/test.txt';
 

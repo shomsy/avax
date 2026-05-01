@@ -12,7 +12,7 @@ final class SessionImportSecurityTest extends TestCase
 {
     public function test_import_rejects_non_array_payloads_and_handles_malformed() : void
     {
-        $store = new class implements StoreInterface {
+        $store = new class () implements StoreInterface {
             private array $data = [];
 
             public function get(string $key, mixed $default = null) : mixed
@@ -20,7 +20,7 @@ final class SessionImportSecurityTest extends TestCase
                 return $this->data[$key] ?? $default;
             }
 
-            public function put(string $key, mixed $value, ?int $ttl = null) : void
+            public function put(string $key, mixed $value, int $ttl = null) : void
             {
                 $this->data[$key] = $value;
             }

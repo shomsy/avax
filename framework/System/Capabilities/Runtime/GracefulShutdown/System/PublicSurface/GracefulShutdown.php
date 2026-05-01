@@ -9,7 +9,7 @@ use Closure;
 
 final readonly class GracefulShutdown
 {
-    public static function install(int $timeoutSeconds = 30) : void
+    public static function install(int $timeoutSeconds = 30): void
     {
         if (! extension_loaded('pcntl')) {
             return;
@@ -19,12 +19,12 @@ final readonly class GracefulShutdown
         pcntl_signal(SIGINT, static fn () => ShutdownSequence::execute($timeoutSeconds));
     }
 
-    public static function sequence() : ShutdownSequence
+    public static function sequence(): ShutdownSequence
     {
-        return new ShutdownSequence;
+        return new ShutdownSequence();
     }
 
-    public static function onShutdown(Closure $callback) : void
+    public static function onShutdown(Closure $callback): void
     {
         ShutdownSequence::register($callback);
     }

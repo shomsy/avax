@@ -16,12 +16,11 @@ final readonly class CacheTag implements Stringable
 
     public function __construct(
         public string $name,
-    )
-    {
+    ) {
         $this->validate(name: $name);
     }
 
-    private function validate(string $name) : void
+    private function validate(string $name): void
     {
         $normalized = trim($name);
 
@@ -42,18 +41,18 @@ final readonly class CacheTag implements Stringable
         }
     }
 
-    public static function create(string $name) : self
+    public static function create(string $name): self
     {
         return new self(name: $name);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->name;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->name;
     }

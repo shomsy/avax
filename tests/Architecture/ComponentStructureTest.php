@@ -16,7 +16,7 @@ final class ComponentStructureTest extends TestCase
     private string $componentsPath;
 
     #[Test]
-    public function application_text_has_required_structure() : void
+    public function application_text_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Application/Text';
 
@@ -25,7 +25,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function application_validation_has_required_structure() : void
+    public function application_validation_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Application/Validation';
 
@@ -37,7 +37,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function application_container_has_required_structure() : void
+    public function application_container_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Application/Container';
 
@@ -47,7 +47,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function application_datetime_has_required_structure() : void
+    public function application_datetime_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Application/DateTime';
 
@@ -59,7 +59,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function http_session_has_required_structure() : void
+    public function http_session_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/HTTP/Session';
 
@@ -70,7 +70,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function http_middleware_has_required_structure() : void
+    public function http_middleware_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/HTTP/Middleware';
 
@@ -82,7 +82,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function http_response_has_required_structure() : void
+    public function http_response_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/HTTP/Response';
 
@@ -94,7 +94,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function http_router_has_required_structure() : void
+    public function http_router_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/HTTP/Router';
 
@@ -102,7 +102,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function operations_events_has_required_structure() : void
+    public function operations_events_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Operations/Events';
 
@@ -114,7 +114,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function operations_logging_has_required_structure() : void
+    public function operations_logging_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Operations/Logging';
 
@@ -122,7 +122,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function identity_auth_has_required_structure() : void
+    public function identity_auth_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Identity/Auth';
 
@@ -130,7 +130,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function presentation_view_has_required_structure() : void
+    public function presentation_view_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/Presentation/View';
 
@@ -138,7 +138,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function datastack_database_has_required_structure() : void
+    public function datastack_database_has_required_structure(): void
     {
         $componentPath = $this->componentsPath . '/DataStack/Database';
 
@@ -146,7 +146,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function framework_system_has_required_structure() : void
+    public function framework_system_has_required_structure(): void
     {
         $frameworkPath = dirname(__DIR__, 2) . '/framework/System';
 
@@ -158,7 +158,7 @@ final class ComponentStructureTest extends TestCase
     }
 
     #[Test]
-    public function component_system_directories_contain_php_files() : void
+    public function component_system_directories_contain_php_files(): void
     {
         $components = [
             'Application/Text',
@@ -186,7 +186,7 @@ final class ComponentStructureTest extends TestCase
         }
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->componentsPath = dirname(__DIR__, 2) . '/components';
     }

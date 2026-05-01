@@ -68,57 +68,56 @@ final class CompileContainer
     public function __construct(
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
-        ?string             $cacheDir = null,
-        ?string             $cacheVersion = null,
+        string $cacheDir = null,
+        string $cacheVersion = null,
         #[SensitiveParameter]
-        ?string             $configHash = null,
-        ?string             $diagnosticsMode = null,
-        ?string             $environment = null,
-        ?string             $compileMode = null,
-        ?bool               $strict = null,
-        ?string             $settingsFingerprint = null,
-        ?string             $benchmarkBuildMarker = null,
-        ?string             $executionMode = null,
-        ?string             $pruneMode = null,
-        ?bool               $validateOnLoad = null,
-        ?bool               $failClosedOnCorruption = null,
-        ?bool               $validateBeforeCompile = null,
-        ?ResolutionMetrics  $metrics = null,
-        ?DependencyCompiler $services = null,
-    )
-    {
-        $cacheDir                    ??= '';
-        $cacheVersion                ??= 'container-v1';
-        $configHash                  ??= '';
-        $diagnosticsMode             ??= 'minimal';
-        $environment                 ??= '';
-        $compileMode                 ??= 'production';
-        $strict                      ??= false;
-        $settingsFingerprint         ??= '';
-        $benchmarkBuildMarker        ??= '';
-        $executionMode               ??= CreateContainerConfig::EXECUTION_MODE_COMPILED;
-        $pruneMode                   ??= CreateContainerConfig::PRUNE_MODE_NONE;
-        $validateOnLoad              ??= false;
+        string $configHash = null,
+        string $diagnosticsMode = null,
+        string $environment = null,
+        string $compileMode = null,
+        bool $strict = null,
+        string $settingsFingerprint = null,
+        string $benchmarkBuildMarker = null,
+        string $executionMode = null,
+        string $pruneMode = null,
+        bool $validateOnLoad = null,
+        bool $failClosedOnCorruption = null,
+        bool $validateBeforeCompile = null,
+        ResolutionMetrics $metrics = null,
+        DependencyCompiler $services = null,
+    ) {
+        $cacheDir               ??= '';
+        $cacheVersion           ??= 'container-v1';
+        $configHash             ??= '';
+        $diagnosticsMode        ??= 'minimal';
+        $environment            ??= '';
+        $compileMode            ??= 'production';
+        $strict                 ??= false;
+        $settingsFingerprint    ??= '';
+        $benchmarkBuildMarker   ??= '';
+        $executionMode          ??= CreateContainerConfig::EXECUTION_MODE_COMPILED;
+        $pruneMode              ??= CreateContainerConfig::PRUNE_MODE_NONE;
+        $validateOnLoad         ??= false;
         $failClosedOnCorruption ??= true;
-        $validateBeforeCompile       ??= false;
-        $this->registrations         = $registrations;
-        $this->blueprints            = $blueprints;
-        $this->cacheDir              = $cacheDir;
-        $this->cacheVersion          = $cacheVersion;
-        $this->configHash            = $configHash;
-        $this->diagnosticsMode       = $diagnosticsMode;
-        $this->environment           = $environment;
-        $this->compileMode           = $compileMode;
-        $this->strict                = $strict;
-        $this->settingsFingerprint   = $settingsFingerprint;
-        $this->benchmarkBuildMarker  = $benchmarkBuildMarker;
-        $this->executionMode         = $executionMode;
-        $this->pruneMode             = $pruneMode;
-        $this->validateOnLoad        = $validateOnLoad;
+        $validateBeforeCompile  ??= false;
+        $this->registrations          = $registrations;
+        $this->blueprints             = $blueprints;
+        $this->cacheDir               = $cacheDir;
+        $this->cacheVersion           = $cacheVersion;
+        $this->configHash             = $configHash;
+        $this->diagnosticsMode        = $diagnosticsMode;
+        $this->environment            = $environment;
+        $this->compileMode            = $compileMode;
+        $this->strict                 = $strict;
+        $this->settingsFingerprint    = $settingsFingerprint;
+        $this->benchmarkBuildMarker   = $benchmarkBuildMarker;
+        $this->executionMode          = $executionMode;
+        $this->pruneMode              = $pruneMode;
+        $this->validateOnLoad         = $validateOnLoad;
         $this->failClosedOnCorruption = $failClosedOnCorruption;
-        $this->validateBeforeCompile = $validateBeforeCompile;
-        $this->metrics               = $metrics;
-        $this->services              = $services ?? new DependencyCompiler(
+        $this->validateBeforeCompile  = $validateBeforeCompile;
+        $this->metrics                = $metrics;
+        $this->services               = $services ?? new DependencyCompiler(
             registrations: $this->registrations,
             blueprints   : $this->blueprints,
         );
@@ -127,7 +126,7 @@ final class CompileContainer
     /**
      * Returns whether this compiler must validate before writing artifacts.
      */
-    public function shouldValidateBeforeCompile() : bool
+    public function shouldValidateBeforeCompile(): bool
     {
         return $this->validateBeforeCompile;
     }
@@ -141,9 +140,9 @@ final class CompileContainer
      * @throws JsonException
      * @throws ReflectionException
      */
-    public function compile(?array $serviceIds = null, ?array $validationIssues = null, bool $warmed = false) : CompiledContainer
+    public function compile(array $serviceIds = null, array $validationIssues = null, bool $warmed = false): CompiledContainer
     {
-        $serviceIds ??= [];
+        $serviceIds       ??= [];
         $validationIssues ??= [];
         $snapshot = $this->snapshot(serviceIds: $serviceIds);
         $metadata = $this->metadataFor(
@@ -165,8 +164,8 @@ final class CompileContainer
             }
         }
 
-        $source   = $this->sourceFor(snapshot: $snapshot);
-        $compiled = $this->loadSource(source: $source);
+        $source             = $this->sourceFor(snapshot: $snapshot);
+        $compiled           = $this->loadSource(source: $source);
         $this->lastMetadata = $metadata;
 
         if ($this->cacheDir !== '') {
@@ -199,23 +198,23 @@ final class CompileContainer
      */
     private function snapshot(array $serviceIds): array
     {
-        $previous           = $this->loadMetadata(quarantineOnFailure: false);
-        $selectedServiceIds = $this->collectServiceIds(serviceIds: $serviceIds);
-        $services           = [];
-        $sources            = [];
-        $dependencies       = [];
-        $reusedServices = 0;
+        $previous            = $this->loadMetadata(quarantineOnFailure: false);
+        $selectedServiceIds  = $this->collectServiceIds(serviceIds: $serviceIds);
+        $services            = [];
+        $sources             = [];
+        $dependencies        = [];
+        $reusedServices      = 0;
         $invalidationReasons = [];
 
         foreach ($selectedServiceIds as $serviceId) {
-            $description = $this->services->describe(serviceId: $serviceId);
-            $compiled    = $this->services->compileFromDescription(description: $description);
-            $services[]  = $compiled;
+            $description              = $this->services->describe(serviceId: $serviceId);
+            $compiled                 = $this->services->compileFromDescription(description: $description);
+            $services[]               = $compiled;
             $dependencies[$serviceId] = $this->dependenciesForService(serviceId: $serviceId);
 
             $canReuse = $previous !== null
                 && ($previous->services[$serviceId]['signature'] ?? null) === $compiled['signature']
-                && ($previous->dependencies[$serviceId] ?? []) === $dependencies[$serviceId]
+                && ($previous->dependencies[$serviceId] ?? [])            === $dependencies[$serviceId]
                 && isset($previous->sources[$serviceId]);
 
             if ($canReuse) {
@@ -240,13 +239,13 @@ final class CompileContainer
 
         usort(
             array   : $services,
-            callback: static fn (array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId'],
+            callback: static fn (array $left, array $right): int => $left['serviceId'] <=> $right['serviceId'],
         );
 
         $compiledServices = [];
         foreach ($services as $service) {
             $compiledServices[$service['serviceId']] = [
-                'method' => $service['method'],
+                'method'    => $service['method'],
                 'signature' => $service['signature'],
             ];
         }
@@ -273,24 +272,24 @@ final class CompileContainer
         ksort(array: $dependencies);
 
         $fingerprint = sha1(string: serialize(value: [
-                                                         'cacheVersion'   => $this->cacheVersion,
-                                                         'configHash'     => $this->configHash,
-                                                         'environment'    => $this->environment,
-                                                         'compileMode'    => $this->compileMode,
-                                                         'executionMode'  => $this->executionMode,
-                                                         'pruneMode'      => $this->pruneMode,
-                                                         'strict'         => $this->strict,
-                                                         'services'       => $compiledServices,
-                                                         'sources'        => $sources,
-                                                         'dependencies'   => $dependencies,
-                                                         'aliases'        => $aliases,
-                                                         'tags'           => $this->registrations->tagIndex(),
-                                                         'lifetimes'      => $lifetimePlans,
-                                                         'deferred'       => $this->registrations->deferredMap(),
-                                                         'decorations'    => $this->registrations->decorationChains(),
-                                                         'ownership'      => $this->registrations->ownershipMap(),
-                                                         'slices'         => $this->registrations->sliceManifests(),
-                                                         'pruning'        => [
+                                                         'cacheVersion'  => $this->cacheVersion,
+                                                         'configHash'    => $this->configHash,
+                                                         'environment'   => $this->environment,
+                                                         'compileMode'   => $this->compileMode,
+                                                         'executionMode' => $this->executionMode,
+                                                         'pruneMode'     => $this->pruneMode,
+                                                         'strict'        => $this->strict,
+                                                         'services'      => $compiledServices,
+                                                         'sources'       => $sources,
+                                                         'dependencies'  => $dependencies,
+                                                         'aliases'       => $aliases,
+                                                         'tags'          => $this->registrations->tagIndex(),
+                                                         'lifetimes'     => $lifetimePlans,
+                                                         'deferred'      => $this->registrations->deferredMap(),
+                                                         'decorations'   => $this->registrations->decorationChains(),
+                                                         'ownership'     => $this->registrations->ownershipMap(),
+                                                         'slices'        => $this->registrations->sliceManifests(),
+                                                         'pruning'       => [
                                                              'mode'           => $this->pruneMode,
                                                              'rootServices'   => $this->pruneRoots(serviceIds: $serviceIds),
                                                              'prunedServices' => $this->registrations->all()
@@ -316,8 +315,8 @@ final class CompileContainer
             'ownership'    => $this->registrations->ownershipMap(),
             'slices'       => $this->registrations->sliceManifests(),
             'pruning'      => [
-                'mode'         => $this->pruneMode,
-                'rootServices' => $this->pruneRoots(serviceIds: $serviceIds),
+                'mode'           => $this->pruneMode,
+                'rootServices'   => $this->pruneRoots(serviceIds: $serviceIds),
                 'prunedServices' => $this->registrations->all()
                         |> array_keys(...)
                         |> (static fn ($x) => array_diff($x, $selectedServiceIds))
@@ -336,7 +335,7 @@ final class CompileContainer
         ];
     }
 
-    private function loadMetadata(bool $quarantineOnFailure = true) : ?ArtifactMetadata
+    private function loadMetadata(bool $quarantineOnFailure = true): ?ArtifactMetadata
     {
         if ($this->cacheDir === '') {
             return null;
@@ -377,17 +376,17 @@ final class CompileContainer
         return ArtifactMetadata::fromArray(state: $decoded);
     }
 
-    private function metadataPath() : string
+    private function metadataPath(): string
     {
         return $this->compiledDirectory() . '/container.json';
     }
 
-    private function compiledDirectory() : string
+    private function compiledDirectory(): string
     {
         return $this->directory() . '/compiled';
     }
 
-    private function directory() : string
+    private function directory(): string
     {
         return rtrim(string: $this->cacheDir, characters: '/\\') . '/container/' . rawurlencode(string: $this->cacheVersion);
     }
@@ -404,8 +403,8 @@ final class CompileContainer
 
     private function quarantineArtifacts(): void
     {
-        $compiledPath = $this->path();
-        $metadataPath = $this->metadataPath();
+        $compiledPath        = $this->path();
+        $metadataPath        = $this->metadataPath();
         $quarantineDirectory = $this->quarantineDirectory();
         if (! is_dir(filename: $quarantineDirectory) && ! mkdir(directory: $quarantineDirectory, permissions: 0o775, recursive: true) && ! is_dir(filename: $quarantineDirectory)) {
             return;
@@ -426,19 +425,18 @@ final class CompileContainer
         $this->metrics?->increment(name: 'container_compiled_container_quarantines_total');
     }
 
-    private function path() : string
+    private function path(): string
     {
         return $this->compiledDirectory() . '/container.php';
     }
 
-    private function quarantineDirectory() : string
+    private function quarantineDirectory(): string
     {
         return $this->compiledDirectory() . '/quarantine';
     }
 
     /**
      * @param list<string> $serviceIds
-     *
      * @return list<string>
      *
      * @throws ReflectionException
@@ -449,7 +447,7 @@ final class CompileContainer
 
         $compiled = [];
 
-        while ( $queue !== []) {
+        while ($queue !== []) {
             $serviceId = $this->registrations->resolveAlias(abstract: array_shift(array: $queue));
             if (isset($compiled[$serviceId])) {
                 continue;
@@ -482,15 +480,15 @@ final class CompileContainer
     }
 
     /**
-     * @param list<string>  $serviceIds
+     * @param list<string> $serviceIds
      * @return list<string>
      */
     private function pruneRoots(array $serviceIds): array
     {
         if ($serviceIds !== []) {
             $roots = array_map(
-                    callback: fn (string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                    array   : $serviceIds,
+                callback: fn (string $serviceId): string => $this->registrations->resolveAlias(abstract: $serviceId),
+                array   : $serviceIds,
             )
                     |> array_unique(...)
                     |> array_values(...);
@@ -527,7 +525,7 @@ final class CompileContainer
                 || $registration->metadata->hasConditions()
                 || $registration->metadata->fallback
                 || $registration->group !== null
-                || $registration->tags !== []
+                || $registration->tags  !== []
             ) {
                 $roots[] = $serviceId;
             }
@@ -554,8 +552,8 @@ final class CompileContainer
         }
 
         $roots = array_filter(
-                array   : $roots,
-                callback: static fn (string $serviceId) : bool => $serviceId !== '',
+            array   : $roots,
+            callback: static fn (string $serviceId): bool => $serviceId !== '',
         )
                 |> array_unique(...)
                 |> array_values(...);
@@ -635,7 +633,7 @@ final class CompileContainer
 
     /**
      * @param array{method: string, signature: string, source: string} $current
-     * @param list<string>                                             $dependencies
+     * @param list<string> $dependencies
      * @return list<string>
      */
     private function invalidationReasonsFor(
@@ -674,17 +672,17 @@ final class CompileContainer
      *     poolSize: int, poolResetBeforeReuse: bool}>, deferred: array<string, bool>, decorations: array<string, int>,
      *     ownership: array<string, array<string, mixed>>, slices: array<string, array<string, mixed>>, pruning:
      *     array<string, mixed>, statistics: array<string, int>, invalidationReasons: list<string> } $snapshot
-     * @param list<string>                                                                           $validationIssues
+     * @param list<string> $validationIssues
      */
     private function metadataFor(
         array $snapshot,
         array $validationIssues,
         ?ArtifactMetadata $previous,
         bool $warmed,
-    ) : ArtifactMetadata {
+    ): ArtifactMetadata {
         $previousServices = $previous?->services ?? [];
         $changedServices  = [];
-        $removedServices = [];
+        $removedServices  = [];
 
         foreach ($snapshot['services'] as $serviceId => $service) {
             if (($previousServices[$serviceId]['signature'] ?? null) !== $service['signature']) {
@@ -744,36 +742,36 @@ final class CompileContainer
             validationIssues       : array_values(array: array_unique(array: $validationIssues)),
             invalidationReasons    : array_values(array: array_unique(array: $snapshot['invalidationReasons'])),
             statistics             : [
-                                         'compiledServices'     => count(value: $snapshot['services']),
-                                         'changedServices'      => count(value: $changedServices),
-                                         'invalidatedServices'  => count(value: $invalidatedServices),
-                                         'aliases'              => count(value: $snapshot['aliases']),
-                                         'tags'                 => count(value: $snapshot['tags']),
-                                         'deferredServices'     => count(value: array_filter(array: $snapshot['deferred'])),
-                                         'lazyServices'         => 0,
-                                         'decoratedServices'    => count(value: array_filter(
-                                                                                    array   : $snapshot['decorations'],
-                                                                                    callback: static fn (int $count) : bool => $count > 0,
-                                                                                )),
+                                         'compiledServices'    => count(value: $snapshot['services']),
+                                         'changedServices'     => count(value: $changedServices),
+                                         'invalidatedServices' => count(value: $invalidatedServices),
+                                         'aliases'             => count(value: $snapshot['aliases']),
+                                         'tags'                => count(value: $snapshot['tags']),
+                                         'deferredServices'    => count(value: array_filter(array: $snapshot['deferred'])),
+                                         'lazyServices'        => 0,
+                                         'decoratedServices'   => count(value: array_filter(
+                                             array   : $snapshot['decorations'],
+                                             callback: static fn (int $count): bool => $count > 0,
+                                         )),
                                          'ownershipUnits'       => count(value: $snapshot['ownership']),
                                          'sliceCount'           => count(value: $snapshot['slices']),
                                          'providerBootPlanSize' => 0,
                                          'lifetimePlans'        => count(value: $snapshot['lifetimes']),
                                          'pooledServices'       => count(value: array_filter(
-                                                                                    array   : $snapshot['lifetimes'],
-                                                                                    callback: static fn (array $plan) : bool => (bool) ($plan['pooled'] ?? false),
-                                                                                )),
+                                             array   : $snapshot['lifetimes'],
+                                             callback: static fn (array $plan): bool => (bool) ($plan['pooled'] ?? false),
+                                         )),
                                          'dependencyGraphEdges' => array_sum(array: array_map(
-                                                                                        callback: static fn (array $dependencies) : int => count(value: $dependencies),
-                                                                                        array   : $snapshot['dependencies'],
-                                                                                    )),
-                                         'reusedServices'       => (int) ($snapshot['statistics']['reusedServices'] ?? 0),
-                                         'validationIssues'     => $validationIssues
+                                             callback: static fn (array $dependencies): int => count(value: $dependencies),
+                                             array   : $snapshot['dependencies'],
+                                         )),
+                                         'reusedServices'   => (int) ($snapshot['statistics']['reusedServices'] ?? 0),
+                                         'validationIssues' => $validationIssues
                                                  |> array_unique(...)
                                                  |> array_values(...)
                                                  |> count(...),
                                      ],
-            checksum               : sha1(string: '<?php' . PHP_EOL . PHP_EOL . $this->sourceFor(snapshot: $snapshot).PHP_EOL),
+            checksum               : sha1(string: '<?php' . PHP_EOL . PHP_EOL . $this->sourceFor(snapshot: $snapshot) . PHP_EOL),
         );
     }
 
@@ -809,16 +807,16 @@ final class CompileContainer
         $current = $this->loadMetadata(quarantineOnFailure: false);
 
         return $current instanceof ArtifactMetadata
-            && $current->schemaVersion === $metadata->schemaVersion
+            && $current->schemaVersion                           === $metadata->schemaVersion
             && $this->compatibilityIssuesFor(metadata: $current) === []
-            && $current->diagnosticsMode === $metadata->diagnosticsMode
-            && $current->executionMode === $metadata->executionMode
-            && $current->pruneMode === $metadata->pruneMode
-            && $current->settingsFingerprint === $metadata->settingsFingerprint
-            && $current->dependencyGraphRevision === $metadata->dependencyGraphRevision
-            && $current->warmed === $metadata->warmed
-            && $current->benchmarkBuildMarker === $metadata->benchmarkBuildMarker
-            && $current->fingerprint === $metadata->fingerprint
+            && $current->diagnosticsMode                         === $metadata->diagnosticsMode
+            && $current->executionMode                           === $metadata->executionMode
+            && $current->pruneMode                               === $metadata->pruneMode
+            && $current->settingsFingerprint                     === $metadata->settingsFingerprint
+            && $current->dependencyGraphRevision                 === $metadata->dependencyGraphRevision
+            && $current->warmed                                  === $metadata->warmed
+            && $current->benchmarkBuildMarker                    === $metadata->benchmarkBuildMarker
+            && $current->fingerprint                             === $metadata->fingerprint
             && $this->sourceMatchesChecksum(path: $this->path(), checksum: $current->checksum);
     }
 
@@ -871,7 +869,7 @@ final class CompileContainer
         return is_string(value: $body) && sha1(string: $body) === $checksum;
     }
 
-    private function loadCompiledFromPath(string $path) : CompiledContainer
+    private function loadCompiledFromPath(string $path): CompiledContainer
     {
         try {
             $loaded = require $path;
@@ -889,7 +887,7 @@ final class CompileContainer
         return $loaded;
     }
 
-    private function loadSource(string $source) : CompiledContainer
+    private function loadSource(string $source): CompiledContainer
     {
         $directory = $this->cacheDir !== ''
             ? $this->compiledDirectory()
@@ -900,7 +898,7 @@ final class CompileContainer
         }
 
         $path = $directory . '/runtime-' . uniqid(prefix: '', more_entropy: true) . '.php';
-        $body = '<?php' . PHP_EOL . PHP_EOL . $source.PHP_EOL;
+        $body = '<?php' . PHP_EOL . PHP_EOL . $source . PHP_EOL;
 
         if (file_put_contents(filename: $path, data: $body, flags: LOCK_EX) === false) {
             throw new RuntimeException(message: "Cannot materialize compiled container source [{$path}].");
@@ -926,7 +924,7 @@ final class CompileContainer
         }
 
         $body = '<?php' . PHP_EOL . PHP_EOL . $source . PHP_EOL;
-        $json = json_encode(value: $metadata->toArray(), flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL;
+        $json = json_encode(value: $metadata->toArray(), flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
 
         $this->writeAtomically(path: $this->path(), body: $body);
         $this->writeAtomically(path: $this->metadataPath(), body: $json);
@@ -936,7 +934,7 @@ final class CompileContainer
         }
     }
 
-    private function writeAtomically(string $path, string $body) : void
+    private function writeAtomically(string $path, string $body): void
     {
         $temp = $path . '.' . uniqid(prefix: 'tmp', more_entropy: true);
 
@@ -954,11 +952,11 @@ final class CompileContainer
     /**
      * Loads one compiled container artifact when it is available and fresh.
      *
-     * @param list<string>  $serviceIds
+     * @param list<string> $serviceIds
      *
      * @throws ReflectionException
      */
-    public function load(array $serviceIds = []) : ?CompiledContainer
+    public function load(array $serviceIds = []): ?CompiledContainer
     {
         if ($this->cacheDir === '') {
             return null;
@@ -1041,7 +1039,7 @@ final class CompileContainer
     }
 
     /**
-     * @param list<string>  $serviceIds
+     * @param list<string> $serviceIds
      * @return list<string>
      */
     private function requestedServiceClosure(ArtifactMetadata $metadata, array $serviceIds): array
@@ -1051,7 +1049,7 @@ final class CompileContainer
             : array_keys(array: $metadata->services);
         $seen = [];
 
-        while ( $queue !== []) {
+        while ($queue !== []) {
             $serviceId = (string) array_shift(array: $queue);
             if (isset($seen[$serviceId])) {
                 continue;
@@ -1098,7 +1096,7 @@ final class CompileContainer
                 continue;
             }
 
-            $path = $directory.'/'.$file;
+            $path = $directory . '/' . $file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
 
@@ -1124,17 +1122,17 @@ final class CompileContainer
     /**
      * Returns the current compile status for the requested service set.
      *
-     * @param list<string>  $serviceIds
+     * @param list<string> $serviceIds
      */
-    public function report(array $serviceIds = []) : CompileReport
+    public function report(array $serviceIds = []): CompileReport
     {
-        $metadata = $this->reportMetadata();
+        $metadata            = $this->reportMetadata();
         $compatibilityIssues = $metadata !== null
             ? $this->compatibilityIssuesFor(metadata: $metadata)
             : ['compiled metadata is missing'];
-        $compatible = $metadata !== null && $compatibilityIssues === [];
+        $compatible     = $metadata !== null && $compatibilityIssues === [];
         $freshnessState = $this->freshnessStateFor(metadata: $metadata, serviceIds: $serviceIds);
-        $checksumValid = $metadata !== null
+        $checksumValid  = $metadata !== null
             && ($this->cacheDir === '' || $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum));
         $available = $compatible
             && $freshnessState === 'fresh'
@@ -1158,7 +1156,7 @@ final class CompileContainer
             cacheVersion            : $this->cacheVersion,
             compileMode             : $this->compileMode,
             executionMode           : $metadata?->executionMode ?? $this->executionMode,
-            pruneMode               : $metadata?->pruneMode ?? $this->pruneMode,
+            pruneMode               : $metadata?->pruneMode     ?? $this->pruneMode,
             environment             : $this->environment,
             fingerprint             : $metadata?->fingerprint ?? '',
             checksumValid           : $checksumValid,
@@ -1171,19 +1169,19 @@ final class CompileContainer
             tagIndexSize            : count(value: $metadata?->tags ?? []),
             aliasMapSize            : count(value: $metadata?->aliases ?? []),
             decorationMapSize       : count(value: array_filter(
-                                                       array   : $metadata?->decorations ?? [],
-                                                       callback: static fn (int $count) : bool => $count > 0,
-                                                   )),
+                array   : $metadata?->decorations ?? [],
+                callback: static fn (int $count): bool => $count > 0,
+            )),
             providerBootPlanSize    : (int) ($metadata?->statistics['providerBootPlanSize'] ?? 0),
             lifetimePlanSummary     : $this->lifetimePlanSummaryFor(metadata: $metadata),
-            entries                 : $metadata?->entryIds() ?? [],
-            changedServices         : $metadata?->changedServices ?? [],
+            entries                 : $metadata?->entryIds()          ?? [],
+            changedServices         : $metadata?->changedServices     ?? [],
             invalidatedServices     : $metadata?->invalidatedServices ?? [],
-            validationIssues        : $metadata?->validationIssues ?? [],
+            validationIssues        : $metadata?->validationIssues    ?? [],
             compatibilityIssues     : $compatible ? [] : $compatibilityIssues,
             invalidationReasons     : $metadata?->invalidationReasons ?? [],
-            statistics              : $metadata?->statistics ?? [],
-            pruning                 : $metadata?->pruning ?? [
+            statistics              : $metadata?->statistics          ?? [],
+            pruning                 : $metadata?->pruning             ?? [
             'mode'           => $this->pruneMode,
             'rootServices'   => [],
             'prunedServices' => [],
@@ -1193,13 +1191,13 @@ final class CompileContainer
         );
     }
 
-    private function reportMetadata() : ?ArtifactMetadata
+    private function reportMetadata(): ?ArtifactMetadata
     {
         return $this->loadMetadata(quarantineOnFailure: false) ?? $this->lastMetadata;
     }
 
     /**
-     * @param list<string>  $serviceIds
+     * @param list<string> $serviceIds
      *
      * @throws ReflectionException
      */
@@ -1240,8 +1238,8 @@ final class CompileContainer
         ?ArtifactMetadata $metadata,
         string $freshnessState,
         array $compatibilityIssues,
-        bool              $checksumValid,
-        bool              $available,
+        bool $checksumValid,
+        bool $available,
     ): array {
         $warnings = [];
 

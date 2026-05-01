@@ -13,7 +13,7 @@ final class Tracing
 
     public function start() : RuntimeTimeline
     {
-        $this->currentTimeline = new RuntimeTimeline;
+        $this->currentTimeline = new RuntimeTimeline();
 
         $this->currentTimeline->record(name: 'request.received');
 
@@ -25,9 +25,9 @@ final class Tracing
      */
     public function record(
         string $name,
-        ?float  $durationMS = null,
-        ?string $category = null,
-        array   $metadata = [],
+        float  $durationMS = null,
+        string $category = null,
+        array  $metadata = [],
     ) : void
     {
         $this->currentTimeline?->record(
@@ -43,7 +43,7 @@ final class Tracing
         return $this->currentTimeline;
     }
 
-    public function begin(string $name, ?string $category = null) : TraceSpan
+    public function begin(string $name, string $category = null) : TraceSpan
     {
         return $this->currentTimeline?->begin(
             name    : $name,

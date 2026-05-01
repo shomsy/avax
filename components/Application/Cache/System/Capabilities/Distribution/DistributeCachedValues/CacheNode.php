@@ -17,13 +17,12 @@ final readonly class CacheNode implements Stringable
         public CacheNodeId $cacheNodeId,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         public float $weight = 1.0,
-    )
-    {
-        $this->id = $cacheNodeId;
+    ) {
+        $this->id     = $cacheNodeId;
         $this->status = $cacheNodeStatus;
     }
 
-    public static function create(string $id, CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY) : self
+    public static function create(string $id, CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY): self
     {
         return new self(
             cacheNodeId    : CacheNodeId::from(id: $id),
@@ -31,23 +30,23 @@ final readonly class CacheNode implements Stringable
         );
     }
 
-    public function isHealthy() : bool
+    public function isHealthy(): bool
     {
         return $this->cacheNodeStatus === CacheNodeStatus::HEALTHY;
     }
 
-    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
+    public function withStatus(CacheNodeStatus $cacheNodeStatus): self
     {
         return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $cacheNodeStatus, weight: $this->weight);
     }
 
-    public function withWeight(float $weight) : self
+    public function withWeight(float $weight): self
     {
         return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $this->cacheNodeStatus, weight: $weight);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->cacheNodeId->toString();
     }

@@ -17,15 +17,15 @@ class DeleteFileTest extends TestCase
 
     private string $testDirectory;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
-        $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test.txt';
+        $this->disk          = new LocalDisk();
+        $this->testFile      = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test.txt';
         $this->testDirectory = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test_dir';
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         @unlink(filename: $this->testFile);
         if (is_dir(filename: $this->testDirectory)) {
@@ -35,14 +35,14 @@ class DeleteFileTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_execute_returns_true_for_non_existent_file() : void
+    public function test_execute_returns_true_for_non_existent_file(): void
     {
         $result = new DeleteFile(disk: $this->disk)->execute(path: '/ne postoji fajl.txt');
 
         self::assertTrue(condition: $result);
     }
 
-    public function test_execute_deletes_existing_file() : void
+    public function test_execute_deletes_existing_file(): void
     {
         file_put_contents(filename: $this->testFile, data: "sadržaj\n");
 
@@ -52,7 +52,7 @@ class DeleteFileTest extends TestCase
         self::assertFileDoesNotExist(filename: $this->testFile);
     }
 
-    public function test_execute_throws_exception_on_failure() : void
+    public function test_execute_throws_exception_on_failure(): void
     {
         mkdir(directory: $this->testDirectory, permissions: 0o755, recursive: true);
 

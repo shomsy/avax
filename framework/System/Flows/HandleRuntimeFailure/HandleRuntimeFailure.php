@@ -14,15 +14,16 @@ use Throwable;
 final readonly class HandleRuntimeFailure
 {
     public function __construct(
-        private ConvertPhpErrorToThrowable $convertPhpErrorToThrowable = new ConvertPhpErrorToThrowable,
-        private ReportRuntimeFailure       $reportRuntimeFailure = new ReportRuntimeFailure,
-        private RenderRuntimeFailure       $renderRuntimeFailure = new RenderRuntimeFailure,
-    ) {}
+        private ConvertPhpErrorToThrowable $convertPhpErrorToThrowable = new ConvertPhpErrorToThrowable(),
+        private ReportRuntimeFailure $reportRuntimeFailure = new ReportRuntimeFailure(),
+        private RenderRuntimeFailure $renderRuntimeFailure = new RenderRuntimeFailure(),
+    ) {
+    }
 
     /**
      * Handle a PHP error by converting it to a throwable, reporting it, and rendering a response.
      */
-    public function handle(int $severity, string $message, string $file, int $line) : never
+    public function handle(int $severity, string $message, string $file, int $line): never
     {
         $throwable = $this->convertPhpErrorToThrowable->convert($severity, $message, $file, $line);
 
@@ -36,7 +37,7 @@ final readonly class HandleRuntimeFailure
     /**
      * Handle an uncaught exception by reporting and rendering it.
      */
-    public function handleException(Throwable $throwable) : never
+    public function handleException(Throwable $throwable): never
     {
         $this->reportRuntimeFailure->report($throwable);
 
@@ -48,7 +49,7 @@ final readonly class HandleRuntimeFailure
     /**
      * Handle a fatal error captured during shutdown.
      */
-    public function handleFatalError(array $error) : void
+    public function handleFatalError(array $error): void
     {
         $throwable = $this->convertPhpErrorToThrowable->convertFromErrorArray($error);
 

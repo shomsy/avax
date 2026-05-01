@@ -45,16 +45,16 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private string $method = 'GET';
 
     public function __construct(
-        array                    $serverParams = [],
-        array                    $cookieParams = [],
-        array                    $queryParams = [],
-        array                    $uploadedFiles = [],
-        ?array                   $parsedBody = null,
-        string                   $method = 'GET',
-        UriInterface|string|null $uri = null,
-        string                   $protocolVersion = '1.1',
-        array                    $headers = [],
-        ?StreamInterface         $body = null,
+        array               $serverParams = [],
+        array               $cookieParams = [],
+        array               $queryParams = [],
+        array               $uploadedFiles = [],
+        array               $parsedBody = null,
+        string              $method = 'GET',
+        UriInterface|string $uri = null,
+        string              $protocolVersion = '1.1',
+        array               $headers = [],
+        StreamInterface     $body = null,
     )
     {
         $this->serverParams  = $serverParams;
@@ -86,7 +86,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $parts = parse_url($uri);
 
-        return new class($parts['scheme'] ?? '', $parts['host'] ?? '', $parts['port'] ?? null, $parts['path'] ?? '', $parts['query'] ?? '', $parts['fragment'] ?? '', $parts['user'] ?? '') implements UriInterface {
+        return new class ($parts['scheme'] ?? '', $parts['host'] ?? '', $parts['port'] ?? null, $parts['path'] ?? '', $parts['query'] ?? '', $parts['fragment'] ?? '', $parts['user'] ?? '') implements UriInterface {
             public function __construct(
                 private string $scheme,
                 private string $host,
@@ -222,7 +222,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private static function createUploadedFile(array $file) : UploadedFileInterface
     {
         if (! isset($file['tmp_name'])) {
-            return new class($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+            return new class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
                 public function __construct(
                     private string $tmpName,
                     private int $size,
@@ -263,7 +263,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             };
         }
 
-        return new class($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+        return new class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
             public function __construct(
                 private string $tmpName,
                 private int $size,

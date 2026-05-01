@@ -10,9 +10,10 @@ final readonly class DispatchEvent
 {
     public function __construct(
         private EventsInterface $events,
-    ) {}
+    ) {
+    }
 
-    public function execute(string|object $event, mixed $data = null) : void
+    public function execute(string|object $event, mixed $data = null): void
     {
         $this->events->dispatch($event, $data);
     }

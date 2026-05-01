@@ -31,21 +31,22 @@ use Throwable;
 final class FakeHttpClient implements HttpClientInterface
 {
     /**
-     * @param array<string, RecordedHttpResponse> $responses        URL pattern => response mappings
-     * @param list<OutboundRequest>               $recordedRequests All requests made through this client
+     * @param array<string, RecordedHttpResponse> $responses URL pattern => response mappings
+     * @param list<OutboundRequest> $recordedRequests All requests made through this client
      */
     public function __construct(
         private array $responses = [],
         private array $recordedRequests = [],
         private ?string $baseUrl = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new FakeHttpClient builder.
      */
-    public static function create() : FakeHttpClientBuilder
+    public static function create(): FakeHttpClientBuilder
     {
-        return new FakeHttpClientBuilder;
+        return new FakeHttpClientBuilder();
     }
 
     /**
@@ -53,7 +54,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public static function fromResponses(array $responses, ?string $baseUrl = null) : self
+    public static function fromResponses(array $responses, string $baseUrl = null): self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }
@@ -61,7 +62,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the base URL configured for this client.
      */
-    public function getBaseUrl() : ?string
+    public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
     }
@@ -69,7 +70,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the default timeout in milliseconds.
      */
-    public function getDefaultTimeout() : int
+    public function getDefaultTimeout(): int
     {
         return 30000;
     }
@@ -77,13 +78,13 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Send a GET request.
      */
-    public function get(string $url, array $headers = [], array $options = []) : ClientResponse
+    public function get(string $url, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'GET',
-                               url    : $this->resolveUrl($url),
-                               headers: $headers,
-                           ));
+            method : 'GET',
+            url    : $this->resolveUrl($url),
+            headers: $headers,
+        ));
     }
 
     /**
@@ -94,7 +95,7 @@ final class FakeHttpClient implements HttpClientInterface
      * @throws HttpRequestFailed if no matching response is found
      * @throws Throwable if the recorded response has an exception
      */
-    public function send(OutboundRequest $request) : ClientResponse
+    public function send(OutboundRequest $request): ClientResponse
     {
         // Record this request
         $this->recordedRequests[] = $request;
@@ -130,7 +131,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Find a matching recorded response for the given request.
      */
-    private function findMatchingResponse(OutboundRequest $request) : ?RecordedHttpResponse
+    private function findMatchingResponse(OutboundRequest $request): ?RecordedHttpResponse
     {
         foreach ($this->responses as $response) {
             if ($response->matches($request->url, $request->method)) {
@@ -144,7 +145,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Resolve a URL against the base URL.
      */
-    private function resolveUrl(string $url) : string
+    private function resolveUrl(string $url): string
     {
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
             return $url;
@@ -159,76 +160,76 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Send a POST request.
      */
-    public function post(string $url, mixed $body = null, array $headers = [], array $options = []) : ClientResponse
+    public function post(string $url, mixed $body = null, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'POST',
-                               url    : $this->resolveUrl($url),
-                               body   : $body,
-                               headers: $headers,
-                           ));
+            method : 'POST',
+            url    : $this->resolveUrl($url),
+            body   : $body,
+            headers: $headers,
+        ));
     }
 
     /**
      * Send a PUT request.
      */
-    public function put(string $url, mixed $body = null, array $headers = [], array $options = []) : ClientResponse
+    public function put(string $url, mixed $body = null, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'PUT',
-                               url    : $this->resolveUrl($url),
-                               body   : $body,
-                               headers: $headers,
-                           ));
+            method : 'PUT',
+            url    : $this->resolveUrl($url),
+            body   : $body,
+            headers: $headers,
+        ));
     }
 
     /**
      * Send a PATCH request.
      */
-    public function patch(string $url, mixed $body = null, array $headers = [], array $options = []) : ClientResponse
+    public function patch(string $url, mixed $body = null, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'PATCH',
-                               url    : $this->resolveUrl($url),
-                               body   : $body,
-                               headers: $headers,
-                           ));
+            method : 'PATCH',
+            url    : $this->resolveUrl($url),
+            body   : $body,
+            headers: $headers,
+        ));
     }
 
     /**
      * Send a DELETE request.
      */
-    public function delete(string $url, array $headers = [], array $options = []) : ClientResponse
+    public function delete(string $url, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'DELETE',
-                               url    : $this->resolveUrl($url),
-                               headers: $headers,
-                           ));
+            method : 'DELETE',
+            url    : $this->resolveUrl($url),
+            headers: $headers,
+        ));
     }
 
     /**
      * Send a HEAD request.
      */
-    public function head(string $url, array $headers = [], array $options = []) : ClientResponse
+    public function head(string $url, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'HEAD',
-                               url    : $this->resolveUrl($url),
-                               headers: $headers,
-                           ));
+            method : 'HEAD',
+            url    : $this->resolveUrl($url),
+            headers: $headers,
+        ));
     }
 
     /**
      * Send an OPTIONS request.
      */
-    public function options(string $url, array $headers = [], array $options = []) : ClientResponse
+    public function options(string $url, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new OutboundRequest(
-                               method : 'OPTIONS',
-                               url    : $this->resolveUrl($url),
-                               headers: $headers,
-                           ));
+            method : 'OPTIONS',
+            url    : $this->resolveUrl($url),
+            headers: $headers,
+        ));
     }
 
     /**
@@ -236,7 +237,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @return list<OutboundRequest>
      */
-    public function getRecordedRequests() : array
+    public function getRecordedRequests(): array
     {
         return $this->recordedRequests;
     }
@@ -244,7 +245,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the last recorded request.
      */
-    public function getLastRequest() : ?OutboundRequest
+    public function getLastRequest(): ?OutboundRequest
     {
         return end($this->recordedRequests) ?: null;
     }
@@ -252,7 +253,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the number of requests made.
      */
-    public function getRequestCount() : int
+    public function getRequestCount(): int
     {
         return count($this->recordedRequests);
     }
@@ -260,7 +261,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Clear all recorded requests.
      */
-    public function clearRequests() : void
+    public function clearRequests(): void
     {
         $this->recordedRequests = [];
     }
@@ -285,7 +286,7 @@ final class FakeHttpClientBuilder
     /**
      * Set the base URL for the client.
      */
-    public function withBaseUrl(string $baseUrl) : self
+    public function withBaseUrl(string $baseUrl): self
     {
         $this->baseUrl = $baseUrl;
 
@@ -295,10 +296,10 @@ final class FakeHttpClientBuilder
     /**
      * Start recording a response for a GET request.
      */
-    public function whenGet(string $url) : self
+    public function whenGet(string $url): self
     {
         $this->pendingMethod = 'GET';
-        $this->pendingUrl = $url;
+        $this->pendingUrl    = $url;
 
         return $this;
     }
@@ -306,10 +307,10 @@ final class FakeHttpClientBuilder
     /**
      * Start recording a response for a POST request.
      */
-    public function whenPost(string $url) : self
+    public function whenPost(string $url): self
     {
         $this->pendingMethod = 'POST';
-        $this->pendingUrl = $url;
+        $this->pendingUrl    = $url;
 
         return $this;
     }
@@ -317,10 +318,10 @@ final class FakeHttpClientBuilder
     /**
      * Start recording a response for a PUT request.
      */
-    public function whenPut(string $url) : self
+    public function whenPut(string $url): self
     {
         $this->pendingMethod = 'PUT';
-        $this->pendingUrl = $url;
+        $this->pendingUrl    = $url;
 
         return $this;
     }
@@ -328,10 +329,10 @@ final class FakeHttpClientBuilder
     /**
      * Start recording a response for a DELETE request.
      */
-    public function whenDelete(string $url) : self
+    public function whenDelete(string $url): self
     {
         $this->pendingMethod = 'DELETE';
-        $this->pendingUrl = $url;
+        $this->pendingUrl    = $url;
 
         return $this;
     }
@@ -339,10 +340,10 @@ final class FakeHttpClientBuilder
     /**
      * Start recording a response for any method.
      */
-    public function whenAny(string $url) : self
+    public function whenAny(string $url): self
     {
         $this->pendingMethod = '*';
-        $this->pendingUrl = $url;
+        $this->pendingUrl    = $url;
 
         return $this;
     }
@@ -350,12 +351,12 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a JSON response.
      *
-     * @param mixed $data   Data to JSON encode
-     * @param int   $status HTTP status code
+     * @param mixed $data Data to JSON encode
+     * @param int $status HTTP status code
      */
-    public function respondWithJson(mixed $data = [], int $status = 200) : self
+    public function respondWithJson(mixed $data = [], int $status = 200): self
     {
-        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = RecordedHttpResponse::json($this->pendingUrl, $data, $status);
 
         return $this;
@@ -364,9 +365,9 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a specific status code.
      */
-    public function respondWithStatus(int $status = 200, string $body = '') : self
+    public function respondWithStatus(int $status = 200, string $body = ''): self
     {
-        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = new RecordedHttpResponse(
             urlPattern: $this->pendingUrl,
             method    : $this->pendingMethod,
@@ -380,9 +381,9 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a custom recorded response.
      */
-    public function respondWith(RecordedHttpResponse $response) : self
+    public function respondWith(RecordedHttpResponse $response): self
     {
-        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = $response;
 
         return $this;
@@ -391,9 +392,9 @@ final class FakeHttpClientBuilder
     /**
      * Respond with an exception.
      */
-    public function respondWithException(Throwable $exception) : self
+    public function respondWithException(Throwable $exception): self
     {
-        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = RecordedHttpResponse::throws($this->pendingUrl, $exception);
 
         return $this;
@@ -404,7 +405,7 @@ final class FakeHttpClientBuilder
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public function withResponses(array $responses) : self
+    public function withResponses(array $responses): self
     {
         foreach ($responses as $key => $response) {
             $this->responses[$key] = $response;
@@ -416,7 +417,7 @@ final class FakeHttpClientBuilder
     /**
      * Build the FakeHttpClient instance.
      */
-    public function build() : FakeHttpClient
+    public function build(): FakeHttpClient
     {
         return new FakeHttpClient(
             responses: $this->responses,

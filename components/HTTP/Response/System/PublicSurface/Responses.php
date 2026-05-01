@@ -26,7 +26,7 @@ final class Responses implements ResponseFactoryInterface
 {
     public function __construct(
         private ?StreamFactoryInterface $streamFactory = null,
-        private ?ResponseInterface      $response = null,
+        private ?ResponseInterface $response = null,
     ) {}
 
     public function response(mixed $data, int $status = 200) : ResponseInterface

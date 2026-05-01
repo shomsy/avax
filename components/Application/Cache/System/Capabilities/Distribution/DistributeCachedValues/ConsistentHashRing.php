@@ -21,16 +21,17 @@ final class ConsistentHashRing
 
     public function __construct(
         private readonly int $virtualNodes = self::VIRTUAL_NODES,
-    ) {}
+    ) {
+    }
 
-    public function addNode(CacheNode $cacheNode) : self
+    public function addNode(CacheNode $cacheNode): self
     {
-        $this->nodes[$cacheNode->id->toString()] = $cacheNode;
+        $this->nodes[$cacheNode->id->toString()]         = $cacheNode;
         $this->nodePositions[$cacheNode->id->toString()] = [];
 
         for ($i = 0; $i < $this->virtualNodes; $i++) {
-            $position              = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
-            $this->ring[$position] = $cacheNode;
+            $position                                          = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
+            $this->ring[$position]                             = $cacheNode;
             $this->nodePositions[$cacheNode->id->toString()][] = $position;
         }
 
@@ -39,17 +40,17 @@ final class ConsistentHashRing
         return $this;
     }
 
-    private function hash(string $value) : int
+    private function hash(string $value): int
     {
         return abs(crc32($value));
     }
 
-    private function sortRing() : void
+    private function sortRing(): void
     {
         ksort($this->ring, SORT_NUMERIC);
     }
 
-    public function removeNode(CacheNodeId $cacheNodeId) : self
+    public function removeNode(CacheNodeId $cacheNodeId): self
     {
         $nodeIdStr = $cacheNodeId->toString();
 
@@ -68,7 +69,7 @@ final class ConsistentHashRing
         return $this;
     }
 
-    public function getNodeForPartition(int $partitionIndex) : ?CacheNode
+    public function getNodeForPartition(int $partitionIndex): ?CacheNode
     {
         $partitionHash = $this->hash(value: (string) $partitionIndex);
 
@@ -77,7 +78,7 @@ final class ConsistentHashRing
         );
     }
 
-    public function getNodeForKey(CacheKey $cacheKey) : ?CacheNode
+    public function getNodeForKey(CacheKey $cacheKey): ?CacheNode
     {
         if ($this->ring === []) {
             return null;
@@ -85,7 +86,7 @@ final class ConsistentHashRing
 
         $keyHash = $this->hash(value: $cacheKey->fullKey());
 
-        $closestNode = null;
+        $closestNode     = null;
         $closestPosition = null;
 
         foreach ($this->ring as $position => $node) {
@@ -97,12 +98,12 @@ final class ConsistentHashRing
                 continue;
             }
 
-            $closestNode = $node;
+            $closestNode     = $node;
             $closestPosition = $position;
         }
 
         if ($closestNode === null) {
-            $positions = array_keys($this->ring);
+            $positions     = array_keys($this->ring);
             $firstPosition = reset($positions);
 
             return $this->ring[$firstPosition] ?? null;
@@ -111,12 +112,12 @@ final class ConsistentHashRing
         return $closestNode;
     }
 
-    public function nodeCount() : int
+    public function nodeCount(): int
     {
         return count($this->nodes);
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->nodes === [];
     }

@@ -11,19 +11,20 @@ final readonly class CachePartition
         public CacheNodeId $cacheNodeId,
         /** @var array<CacheNodeId> */
         public array $replicaNodeIds = [],
-    ) {}
+    ) {
+    }
 
-    public function allNodeIds() : array
+    public function allNodeIds(): array
     {
         return [$this->cacheNodeId, ...$this->replicaNodeIds];
     }
 
-    public function hasNode(CacheNodeId $cacheNodeId) : bool
+    public function hasNode(CacheNodeId $cacheNodeId): bool
     {
         if ($cacheNodeId->toString() === $this->cacheNodeId->toString()) {
             return true;
         }
 
-        return in_array($cacheNodeId->toString(), array_map(static fn ($id) : string => $id->toString(), $this->replicaNodeIds), true);
+        return in_array($cacheNodeId->toString(), array_map(static fn ($id): string => $id->toString(), $this->replicaNodeIds), true);
     }
 }

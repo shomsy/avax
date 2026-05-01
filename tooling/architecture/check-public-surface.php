@@ -6,9 +6,9 @@ declare(strict_types=1);
  * Check for business logic in PublicSurface.
  * Ensures classes in System/PublicSurface are thin and delegate behavior.
  */
-$rootDir = dirname(__DIR__, 2);
+$rootDir       = dirname(__DIR__, 2);
 $componentsDir = $rootDir . '/components';
-$errors = [];
+$errors        = [];
 
 if (! is_dir($componentsDir)) {
     exit(0);
@@ -35,7 +35,7 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $content = file_get_contents($path);
+    $content      = file_get_contents($path);
     $relativePath = str_replace($rootDir . '/', '', $path);
 
     // We allow small exceptions like throwing exceptions if explicitly needed, but generally PublicSurface should delegate.

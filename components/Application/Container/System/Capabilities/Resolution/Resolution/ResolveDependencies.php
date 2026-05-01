@@ -19,17 +19,17 @@ final class ResolveDependencies
 {
     /**
      * @param array<string, mixed> $overrides
-     *
      * @return array<int, mixed>
      *
      * @throws Throwable
      */
     public function resolveParameters(
-        array             $parameters,
-        array             $overrides,
+        array          $parameters,
+        array          $overrides,
         ResolveDependency $resolver,
-        ?ResolveRequest   $request = null,
-    ) : array {
+        ResolveRequest $request = null,
+    ) : array
+    {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
@@ -40,17 +40,16 @@ final class ResolveDependencies
 
     /**
      * @param array<string, mixed> $overrides
-     *
      * @return array<int, mixed>
      *
      * @throws ContainerException
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan       $plan,
+        ResolvePlan     $plan,
         array $overrides,
         ResolveDependency $resolver,
-        ?ResolveRequest   $request,
+        ?ResolveRequest $request,
     ): array {
         $resolved = [];
 
@@ -69,7 +68,7 @@ final class ResolveDependencies
     /**
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
      *                            string, allowsNull: bool} $parameter
-     * @param array<string, mixed>  $overrides
+     * @param array<string, mixed> $overrides
      *
      * @throws Throwable
      */
@@ -77,7 +76,7 @@ final class ResolveDependencies
         array $parameter,
         array $overrides,
         ResolveDependency $resolver,
-        ?ResolveRequest   $request,
+        ?ResolveRequest $request,
     ): mixed {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
@@ -116,7 +115,7 @@ final class ResolveDependencies
     }
 
     /**
-     * @param list<ReflectionParameter>  $parameters
+     * @param list<ReflectionParameter> $parameters
      */
     public function createPlan(array $parameters): ResolvePlan
     {

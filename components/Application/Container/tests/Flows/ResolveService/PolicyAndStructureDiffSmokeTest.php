@@ -42,8 +42,8 @@ final class LocatorDriftService
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
-$config   = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir     = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
+$config       = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
 $container->bind(abstract: PolicyDependencyA::class, concrete: PolicyDependencyA::class);

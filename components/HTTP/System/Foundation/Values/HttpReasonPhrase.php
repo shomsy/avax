@@ -146,7 +146,7 @@ final readonly class HttpReasonPhrase
     /**
      * Check if a status code is known and has a standard reason phrase.
      */
-    public static function isKnown(int $code) : bool
+    public static function isKnown(int $code): bool
     {
         return self::fromStatusCode($code) !== null;
     }
@@ -154,14 +154,14 @@ final readonly class HttpReasonPhrase
     /**
      * Get the standard HTTP reason phrase for a given status code.
      */
-    public static function fromStatusCode(int $code) : ?string
+    public static function fromStatusCode(int $code): ?string
     {
         return match ($code) {
             // 1xx Informational
-            self::CONTINUE                      => 'Continue',
+            self::CONTINUE            => 'Continue',
             self::SWITCHING_PROTOCOLS => 'Switching Protocols',
-            self::PROCESSING                    => 'Processing',
-            self::EARLY_HINTS                   => 'Early Hints',
+            self::PROCESSING          => 'Processing',
+            self::EARLY_HINTS         => 'Early Hints',
 
             // 2xx Success
             self::OK                            => 'OK',
@@ -176,61 +176,61 @@ final readonly class HttpReasonPhrase
             self::IM_USED                       => 'IM Used',
 
             // 3xx Redirection
-            self::MULTIPLE_CHOICES              => 'Multiple Choices',
-            self::MOVED_PERMANENTLY             => 'Moved Permanently',
-            self::FOUND                         => 'Found',
-            self::SEE_OTHER                     => 'See Other',
-            self::NOT_MODIFIED                  => 'Not Modified',
-            self::USE_PROXY                     => 'Use Proxy',
-            self::SWITCH_PROXY                  => 'Switch Proxy',
-            self::TEMPORARY_REDIRECT            => 'Temporary Redirect',
-            self::PERMANENT_REDIRECT            => 'Permanent Redirect',
+            self::MULTIPLE_CHOICES   => 'Multiple Choices',
+            self::MOVED_PERMANENTLY  => 'Moved Permanently',
+            self::FOUND              => 'Found',
+            self::SEE_OTHER          => 'See Other',
+            self::NOT_MODIFIED       => 'Not Modified',
+            self::USE_PROXY          => 'Use Proxy',
+            self::SWITCH_PROXY       => 'Switch Proxy',
+            self::TEMPORARY_REDIRECT => 'Temporary Redirect',
+            self::PERMANENT_REDIRECT => 'Permanent Redirect',
 
             // 4xx Client Error
-            self::BAD_REQUEST                   => 'Bad Request',
-            self::UNAUTHORIZED                  => 'Unauthorized',
-            self::PAYMENT_REQUIRED              => 'Payment Required',
-            self::FORBIDDEN                     => 'Forbidden',
-            self::NOT_FOUND                     => 'Not Found',
-            self::METHOD_NOT_ALLOWED            => 'Method Not Allowed',
-            self::NOT_ACCEPTABLE                => 'Not Acceptable',
-            self::PROXY_AUTHENTICATION_REQUIRED => 'Proxy Authentication Required',
-            self::REQUEST_TIMEOUT               => 'Request Timeout',
-            self::CONFLICT                      => 'Conflict',
-            self::GONE                          => 'Gone',
-            self::LENGTH_REQUIRED               => 'Length Required',
-            self::PRECONDITION_FAILED           => 'Precondition Failed',
-            self::PAYLOAD_TOO_LARGE             => 'Payload Too Large',
-            self::URI_TOO_LONG                  => 'URI Too Long',
-            self::UNSUPPORTED_MEDIA_TYPE        => 'Unsupported Media Type',
-            self::RANGE_NOT_SATISFIABLE         => 'Range Not Satisfiable',
-            self::EXPECTATION_FAILED            => 'Expectation Failed',
-            self::IM_A_TEAPOT                   => "I'm a teapot",
-            self::MISDIRECTED_REQUEST           => 'Misdirected Request',
-            self::UNPROCESSABLE_ENTITY          => 'Unprocessable Entity',
-            self::LOCKED                        => 'Locked',
-            self::FAILED_DEPENDENCY             => 'Failed Dependency',
-            self::TOO_EARLY                     => 'Too Early',
-            self::UPGRADE_REQUIRED              => 'Upgrade Required',
-            self::PRECONDITION_REQUIRED         => 'Precondition Required',
-            self::TOO_MANY_REQUESTS             => 'Too Many Requests',
+            self::BAD_REQUEST                     => 'Bad Request',
+            self::UNAUTHORIZED                    => 'Unauthorized',
+            self::PAYMENT_REQUIRED                => 'Payment Required',
+            self::FORBIDDEN                       => 'Forbidden',
+            self::NOT_FOUND                       => 'Not Found',
+            self::METHOD_NOT_ALLOWED              => 'Method Not Allowed',
+            self::NOT_ACCEPTABLE                  => 'Not Acceptable',
+            self::PROXY_AUTHENTICATION_REQUIRED   => 'Proxy Authentication Required',
+            self::REQUEST_TIMEOUT                 => 'Request Timeout',
+            self::CONFLICT                        => 'Conflict',
+            self::GONE                            => 'Gone',
+            self::LENGTH_REQUIRED                 => 'Length Required',
+            self::PRECONDITION_FAILED             => 'Precondition Failed',
+            self::PAYLOAD_TOO_LARGE               => 'Payload Too Large',
+            self::URI_TOO_LONG                    => 'URI Too Long',
+            self::UNSUPPORTED_MEDIA_TYPE          => 'Unsupported Media Type',
+            self::RANGE_NOT_SATISFIABLE           => 'Range Not Satisfiable',
+            self::EXPECTATION_FAILED              => 'Expectation Failed',
+            self::IM_A_TEAPOT                     => "I'm a teapot",
+            self::MISDIRECTED_REQUEST             => 'Misdirected Request',
+            self::UNPROCESSABLE_ENTITY            => 'Unprocessable Entity',
+            self::LOCKED                          => 'Locked',
+            self::FAILED_DEPENDENCY               => 'Failed Dependency',
+            self::TOO_EARLY                       => 'Too Early',
+            self::UPGRADE_REQUIRED                => 'Upgrade Required',
+            self::PRECONDITION_REQUIRED           => 'Precondition Required',
+            self::TOO_MANY_REQUESTS               => 'Too Many Requests',
             self::REQUEST_HEADER_FIELDS_TOO_LARGE => 'Request Header Fields Too Large',
-            self::UNAVAILABLE_FOR_LEGAL_REASONS => 'Unavailable For Legal Reasons',
+            self::UNAVAILABLE_FOR_LEGAL_REASONS   => 'Unavailable For Legal Reasons',
 
             // 5xx Server Error
-            self::INTERNAL_SERVER_ERROR         => 'Internal Server Error',
-            self::NOT_IMPLEMENTED               => 'Not Implemented',
-            self::BAD_GATEWAY                   => 'Bad Gateway',
-            self::SERVICE_UNAVAILABLE           => 'Service Unavailable',
-            self::GATEWAY_TIMEOUT               => 'Gateway Timeout',
-            self::HTTP_VERSION_NOT_SUPPORTED    => 'HTTP Version Not Supported',
-            self::VARIANT_ALSO_NEGOTIATES       => 'Variant Also Negotiates',
-            self::INSUFFICIENT_STORAGE          => 'Insufficient Storage',
-            self::LOOP_DETECTED                 => 'Loop Detected',
-            self::NOT_EXTENDED                  => 'Not Extended',
+            self::INTERNAL_SERVER_ERROR           => 'Internal Server Error',
+            self::NOT_IMPLEMENTED                 => 'Not Implemented',
+            self::BAD_GATEWAY                     => 'Bad Gateway',
+            self::SERVICE_UNAVAILABLE             => 'Service Unavailable',
+            self::GATEWAY_TIMEOUT                 => 'Gateway Timeout',
+            self::HTTP_VERSION_NOT_SUPPORTED      => 'HTTP Version Not Supported',
+            self::VARIANT_ALSO_NEGOTIATES         => 'Variant Also Negotiates',
+            self::INSUFFICIENT_STORAGE            => 'Insufficient Storage',
+            self::LOOP_DETECTED                   => 'Loop Detected',
+            self::NOT_EXTENDED                    => 'Not Extended',
             self::NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required',
 
-            default                             => null,
+            default => null,
         };
     }
 
@@ -238,7 +238,7 @@ final readonly class HttpReasonPhrase
      * Get the reason phrase for a status code, falling back to a default
      * if the code is not recognized.
      */
-    public static function fromStatusCodeOrDefault(int $code, string $default = 'Unknown Status') : string
+    public static function fromStatusCodeOrDefault(int $code, string $default = 'Unknown Status'): string
     {
         return self::fromStatusCode($code) ?? $default;
     }
@@ -246,7 +246,7 @@ final readonly class HttpReasonPhrase
     /**
      * Convert an HttpStatusCode enum to its reason phrase string.
      */
-    public static function fromHttpStatusCode(HttpStatusCode $statusCode) : string
+    public static function fromHttpStatusCode(HttpStatusCode $statusCode): string
     {
         return $statusCode->getReasonPhrase();
     }

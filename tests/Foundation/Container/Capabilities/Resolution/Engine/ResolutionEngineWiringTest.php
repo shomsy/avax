@@ -35,7 +35,7 @@ final class ResolutionEngineWiringTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $resolver = new DependencyResolver;
+        $resolver = new DependencyResolver();
         $instantiator = new Instantiator(
             prototypes: $this->createMock(ServicePrototypeFactoryInterface::class),
             resolver  : $resolver,
@@ -44,9 +44,9 @@ final class ResolutionEngineWiringTest extends TestCase
         $this->engine = new ResolutionEngine(
             resolver    : $resolver,
             instantiator: $instantiator,
-            store       : new DefinitionStore,
-            registry    : new ScopeRegistry,
-            metrics     : new CollectMetrics,
+            store       : new DefinitionStore(),
+            registry    : new ScopeRegistry(),
+            metrics     : new CollectMetrics(),
         );
     }
 }

@@ -22,7 +22,7 @@ final class ResponsesTest extends TestCase
 
     private function factory() : Responses
     {
-        return new Responses;
+        return new Responses();
     }
 
     public function test_creates_error_response_as_json() : void

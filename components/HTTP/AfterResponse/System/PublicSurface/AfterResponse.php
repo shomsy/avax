@@ -11,31 +11,31 @@ final class AfterResponse
 {
     private static AfterResponseTask\AfterResponseQueue $queue;
 
-    public static function run(Closure $task) : void
+    public static function run(Closure $task): void
     {
         self::queue()->enqueue(new AfterResponseTask($task));
     }
 
-    private static function queue() : AfterResponseTask\AfterResponseQueue
+    private static function queue(): AfterResponseTask\AfterResponseQueue
     {
         if (! isset(self::$queue)) {
-            self::$queue = new AfterResponseTask\AfterResponseQueue;
+            self::$queue = new AfterResponseTask\AfterResponseQueue();
         }
 
         return self::$queue;
     }
 
-    public static function execute() : void
+    public static function execute(): void
     {
         self::queue()->execute();
     }
 
-    public static function isEmpty() : bool
+    public static function isEmpty(): bool
     {
         return self::queue()->isEmpty();
     }
 
-    public static function count() : int
+    public static function count(): int
     {
         return self::queue()->count();
     }

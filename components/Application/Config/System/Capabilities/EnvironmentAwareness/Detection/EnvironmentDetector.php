@@ -14,7 +14,7 @@ final class EnvironmentDetector
 
     private const string ENV_TESTING = 'testing';
 
-    public function detect() : string
+    public function detect(): string
     {
         $env = getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? 'local');
 
@@ -29,7 +29,7 @@ final class EnvironmentDetector
         return self::ENV_LOCAL;
     }
 
-    public function detectRuntime() : string
+    public function detectRuntime(): string
     {
         if (defined('FRANKENPHP')) {
             return 'frankenphp';
@@ -50,7 +50,7 @@ final class EnvironmentDetector
         return 'fpm';
     }
 
-    public function detectContainer() : ?string
+    public function detectContainer(): ?string
     {
         if (getenv('KUBERNETES_SERVICE_HOST')) {
             return 'kubernetes';
@@ -67,17 +67,17 @@ final class EnvironmentDetector
         return null;
     }
 
-    public function isDebugEnabled() : bool
+    public function isDebugEnabled(): bool
     {
         $debug = getenv('APP_DEBUG');
 
         return $debug === 'true' || $debug === '1';
     }
 
-    public function isCI() : bool
+    public function isCI(): bool
     {
-        return getenv('CI') === 'true'
+        return getenv('CI')             === 'true'
             || getenv('GITHUB_ACTIONS') === 'true'
-            || getenv('GITLAB_CI') === 'true';
+            || getenv('GITLAB_CI')      === 'true';
     }
 }

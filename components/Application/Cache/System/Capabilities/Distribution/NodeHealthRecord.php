@@ -15,11 +15,11 @@ final readonly class NodeHealthRecord
     public CacheNodeStatus $cacheNodeStatus;
 
     public function __construct(
-        public string     $nodeId,
+        public string    $nodeId,
         public CacheNodeStatus $cacheNodeStatus,
-        public Timestamp  $lastCheck,
-        public int        $consecutiveFailures,
-        public int        $consecutiveSuccesses,
+        public Timestamp $lastCheck,
+        public int       $consecutiveFailures,
+        public int       $consecutiveSuccesses,
         public ?Timestamp $lastFailure,
         public ?Timestamp $lastSuccess,
     )
@@ -71,7 +71,7 @@ final readonly class NodeHealthRecord
     {
         return [
             'nodeId'              => $this->nodeId,
-            'status' => $this->cacheNodeStatus->value,
+            'status'              => $this->cacheNodeStatus->value,
             'lastCheck'           => $this->lastCheck->seconds,
             'consecutiveFailures' => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,

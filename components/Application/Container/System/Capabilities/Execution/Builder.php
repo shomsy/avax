@@ -23,9 +23,8 @@ final readonly class BuildService
     public function __construct(
         CreateDependencyBlueprint $blueprints,
         ResolveDependencies $dependencies,
-    )
-    {
-        $this->blueprints = $blueprints;
+    ) {
+        $this->blueprints   = $blueprints;
         $this->dependencies = $dependencies;
     }
 
@@ -35,15 +34,14 @@ final readonly class BuildService
      * @throws ContainerException
      */
     public function build(
-        string          $class,
+        string $class,
         ResolveDependency $resolver,
-        ?array          $overrides = null,
-        ?ResolveRequest $request = null,
-    ) : object
-    {
+        array $overrides = null,
+        ResolveRequest $request = null,
+    ): object {
         $overrides ??= [];
         $serviceId = $request?->serviceId ?? $class;
-        $path = $request?->getPath() ?? $serviceId;
+        $path      = $request?->getPath() ?? $serviceId;
 
         try {
             $blueprint = $this->blueprints->createFor(class: $class);

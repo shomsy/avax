@@ -41,12 +41,12 @@ final class FakeCacheStoreForReplication implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(?Clock $clock = null)
+    public function __construct(Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock;
+        $this->clock = $clock ?? new SystemClock();
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $key, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $fullKey = $key->fullKey();
 
@@ -65,7 +65,7 @@ final class FakeCacheStoreForReplication implements CacheStore
         return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $key, StoredCacheRecord $record): void
     {
         if ($this->shouldFail) {
             throw new RuntimeException($this->failMessage);
@@ -74,17 +74,17 @@ final class FakeCacheStoreForReplication implements CacheStore
         $this->records[$key->fullKey()] = $record;
     }
 
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $key): void
     {
         unset($this->records[$key->fullKey()]);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->records = [];
     }
 
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $key): bool
     {
         $fullKey = $key->fullKey();
 
@@ -95,18 +95,18 @@ final class FakeCacheStoreForReplication implements CacheStore
         return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
-    public function setShouldFail(bool $fail, string $message = 'Simulated failure') : void
+    public function setShouldFail(bool $fail, string $message = 'Simulated failure'): void
     {
-        $this->shouldFail = $fail;
+        $this->shouldFail  = $fail;
         $this->failMessage = $message;
     }
 
-    public function getRecords() : array
+    public function getRecords(): array
     {
         return $this->records;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->records);
     }
@@ -114,7 +114,7 @@ final class FakeCacheStoreForReplication implements CacheStore
 
 final class CacheReplicationTest extends TestCase
 {
-    public function test_replicate_writes_to_primary_and_replicas() : void
+    public function test_replicate_writes_to_primary_and_replicas(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -129,14 +129,13 @@ final class CacheReplicationTest extends TestCase
     // --- replicate(key, value, ttl) ---
 
     private function createReplication(
-        bool               $sync = true,
-        bool               $readFromReplicaOnMiss = false,
-        ?ReplicationPolicy $policy = null,
-    ) : CacheReplication
-    {
+        bool $sync = true,
+        bool $readFromReplicaOnMiss = false,
+        ReplicationPolicy $policy = null,
+    ): CacheReplication {
         $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
 
-        $primary = new FakeCacheStoreForReplication($clock);
+        $primary  = new FakeCacheStoreForReplication($clock);
         $replica1 = new FakeCacheStoreForReplication($clock);
         $replica2 = new FakeCacheStoreForReplication($clock);
 
@@ -157,9 +156,9 @@ final class CacheReplicationTest extends TestCase
         );
     }
 
-    public function test_replicate_returns_failure_when_primary_write_fails() : void
+    public function test_replicate_returns_failure_when_primary_write_fails(): void
     {
-        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $clock   = new FrozenClock(Timestamp::fromUnixTime(1000000));
         $primary = new FakeCacheStoreForReplication($clock);
         $primary->setShouldFail(true);
 
@@ -177,12 +176,12 @@ final class CacheReplicationTest extends TestCase
         $this->assertCount(0, $result->replicaResults);
     }
 
-    public function test_replicate_handles_replica_failure_gracefully() : void
+    public function test_replicate_handles_replica_failure_gracefully(): void
     {
-        $clock      = new FrozenClock(Timestamp::fromUnixTime(1000000));
-        $primary    = new FakeCacheStoreForReplication($clock);
+        $clock       = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $primary     = new FakeCacheStoreForReplication($clock);
         $goodReplica = new FakeCacheStoreForReplication($clock);
-        $badReplica = new FakeCacheStoreForReplication($clock);
+        $badReplica  = new FakeCacheStoreForReplication($clock);
         $badReplica->setShouldFail(true, 'Replica connection lost');
 
         $replication = CacheReplication::create(
@@ -200,7 +199,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame('Replica connection lost', $result->replicaResults[1]->error);
     }
 
-    public function test_replicate_with_null_ttl() : void
+    public function test_replicate_with_null_ttl(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -209,7 +208,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->primarySuccess);
     }
 
-    public function test_replicate_key_is_stored_in_result() : void
+    public function test_replicate_key_is_stored_in_result(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -220,17 +219,17 @@ final class CacheReplicationTest extends TestCase
 
     // --- read(key) ---
 
-    public function test_read_from_primary_only() : void
+    public function test_read_from_primary_only(): void
     {
-        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $clock   = new FrozenClock(Timestamp::fromUnixTime(1000000));
         $primary = new FakeCacheStoreForReplication($clock);
 
         // Write directly to primary with very long TTL so it won't expire
         // when read back with SystemClock
-        $now    = $clock->now();
+        $now       = $clock->now();
         $expiresAt = Timestamp::fromUnixTime(PHP_INT_MAX);
         $lifecycle = CachedValueLifecycle::create($now, $expiresAt, $clock);
-        $record = new StoredCacheRecord(value: 'primary-value', lifecycle: $lifecycle);
+        $record    = new StoredCacheRecord(value: 'primary-value', lifecycle: $lifecycle);
 
         $primary->write(
             new CacheKey('read-key'),
@@ -238,7 +237,7 @@ final class CacheReplicationTest extends TestCase
         );
 
         $replica = new FakeCacheStoreForReplication($clock);
-        $policy = new PrimaryReplicaPolicy(
+        $policy  = new PrimaryReplicaPolicy(
             readFromReplicaOnMiss: false,
             syncReplication      : true,
             replicationPolicy    : ReplicationPolicy::SYNCHRONOUS,
@@ -255,7 +254,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
     }
 
-    public function test_read_fallback_to_primary_on_miss() : void
+    public function test_read_fallback_to_primary_on_miss(): void
     {
         $replication = $this->createReplication(
             sync                 : true,
@@ -268,18 +267,18 @@ final class CacheReplicationTest extends TestCase
         $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
-    public function test_read_from_replica_on_primary_miss() : void
+    public function test_read_from_replica_on_primary_miss(): void
     {
-        $clock   = new FrozenClock(Timestamp::fromUnixTime(1000000));
-        $primary = new FakeCacheStoreForReplication($clock);
+        $clock    = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $primary  = new FakeCacheStoreForReplication($clock);
         $replica1 = new FakeCacheStoreForReplication($clock);
         $replica2 = new FakeCacheStoreForReplication($clock);
 
         // Write only to replica with very long TTL
-        $now    = $clock->now();
+        $now       = $clock->now();
         $expiresAt = Timestamp::fromUnixTime(PHP_INT_MAX);
         $lifecycle = CachedValueLifecycle::create($now, $expiresAt, $clock);
-        $record = new StoredCacheRecord(value: 'replica-value', lifecycle: $lifecycle);
+        $record    = new StoredCacheRecord(value: 'replica-value', lifecycle: $lifecycle);
 
         $replica1->write(
             new CacheKey('replica-only-key'),
@@ -305,7 +304,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- sync(key) ---
 
-    public function test_sync_returns_found_on_primary_false_when_key_not_on_primary() : void
+    public function test_sync_returns_found_on_primary_false_when_key_not_on_primary(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -315,7 +314,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertCount(0, $result->replicaSyncResults);
     }
 
-    public function test_sync_returns_found_on_primary_true_when_key_exists() : void
+    public function test_sync_returns_found_on_primary_true_when_key_exists(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -328,7 +327,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertCount(2, $result->replicaSyncResults);
     }
 
-    public function test_sync_result_contains_replica_statuses() : void
+    public function test_sync_result_contains_replica_statuses(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -343,7 +342,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- promoteReplica() ---
 
-    public function test_promote_replica_returns_promotion_result() : void
+    public function test_promote_replica_returns_promotion_result(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -354,7 +353,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(0, $result->promotedReplicaIndex);
     }
 
-    public function test_promote_replica_with_specific_index() : void
+    public function test_promote_replica_with_specific_index(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -363,7 +362,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(1, $result->promotedReplicaIndex);
     }
 
-    public function test_promote_replica_with_invalid_index_throws() : void
+    public function test_promote_replica_with_invalid_index_throws(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -372,7 +371,7 @@ final class CacheReplicationTest extends TestCase
         $replication->promoteReplica(5);
     }
 
-    public function test_promote_replica_with_negative_index_throws() : void
+    public function test_promote_replica_with_negative_index_throws(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -381,7 +380,7 @@ final class CacheReplicationTest extends TestCase
         $replication->promoteReplica(-1);
     }
 
-    public function test_promote_replica_marks_as_promoted() : void
+    public function test_promote_replica_marks_as_promoted(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -394,7 +393,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- Sync vs async replication mode ---
 
-    public function test_synchronous_replication_writes_to_all_replicas() : void
+    public function test_synchronous_replication_writes_to_all_replicas(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -406,7 +405,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->replicaResults[1]->success);
     }
 
-    public function test_write_uses_replication_policy() : void
+    public function test_write_uses_replication_policy(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -419,7 +418,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- ReplicationResult properties ---
 
-    public function test_replication_result_is_fully_successful() : void
+    public function test_replication_result_is_fully_successful(): void
     {
         $result = new ReplicationResult(
             key           : 'test-key',
@@ -434,7 +433,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->isFullySuccessful());
     }
 
-    public function test_replication_result_is_fully_successful_when_replica_fails() : void
+    public function test_replication_result_is_fully_successful_when_replica_fails(): void
     {
         $result = new ReplicationResult(
             key           : 'test-key',
@@ -449,7 +448,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertFalse($result->isFullySuccessful());
     }
 
-    public function test_replication_result_is_fully_successful_when_primary_fails() : void
+    public function test_replication_result_is_fully_successful_when_primary_fails(): void
     {
         $result = new ReplicationResult(
             key           : 'test-key',
@@ -461,7 +460,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertFalse($result->isFullySuccessful());
     }
 
-    public function test_replication_result_meets_quorum() : void
+    public function test_replication_result_meets_quorum(): void
     {
         // 1 primary + 2 replicas = 3 total, quorum = 2
         $result = new ReplicationResult(
@@ -477,7 +476,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->meetsQuorum());
     }
 
-    public function test_replication_result_meets_quorum_when_not_met() : void
+    public function test_replication_result_meets_quorum_when_not_met(): void
     {
         // 1 primary + 4 replicas = 5 total, quorum = 3
         $result = new ReplicationResult(
@@ -495,7 +494,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertFalse($result->meetsQuorum());
     }
 
-    public function test_replication_result_get_successful_replica_count() : void
+    public function test_replication_result_get_successful_replica_count(): void
     {
         $result = new ReplicationResult(
             key           : 'test-key',
@@ -513,7 +512,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- SyncResult properties ---
 
-    public function test_sync_result_all_replicas_in_sync() : void
+    public function test_sync_result_all_replicas_in_sync(): void
     {
         $result = new SyncResult(
             key               : 'test-key',
@@ -527,7 +526,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->allReplicasInSync());
     }
 
-    public function test_sync_result_all_replicas_in_sync_when_not_all_in_sync() : void
+    public function test_sync_result_all_replicas_in_sync_when_not_all_in_sync(): void
     {
         $result = new SyncResult(
             key               : 'test-key',
@@ -541,7 +540,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertFalse($result->allReplicasInSync());
     }
 
-    public function test_sync_result_all_replicas_in_sync_with_empty_results() : void
+    public function test_sync_result_all_replicas_in_sync_with_empty_results(): void
     {
         $result = new SyncResult(
             key               : 'test-key',
@@ -554,9 +553,9 @@ final class CacheReplicationTest extends TestCase
 
     // --- PromotionResult properties ---
 
-    public function test_promotion_result_properties() : void
+    public function test_promotion_result_properties(): void
     {
-        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $clock      = new FrozenClock(Timestamp::fromUnixTime(1000000));
         $oldPrimary = new FakeCacheStoreForReplication($clock);
         $newPrimary = new FakeCacheStoreForReplication($clock);
 
@@ -575,7 +574,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- PrimaryReplicaPolicy factory methods ---
 
-    public function test_policy_read_heavy() : void
+    public function test_policy_read_heavy(): void
     {
         $policy = PrimaryReplicaPolicy::readHeavy();
 
@@ -586,7 +585,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(ReplicationPolicy::ASYNCHRONOUS, $policy->replicationPolicy);
     }
 
-    public function test_policy_write_heavy() : void
+    public function test_policy_write_heavy(): void
     {
         $policy = PrimaryReplicaPolicy::writeHeavy();
 
@@ -597,7 +596,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(ReplicationPolicy::SYNCHRONOUS, $policy->replicationPolicy);
     }
 
-    public function test_policy_high_availability() : void
+    public function test_policy_high_availability(): void
     {
         $policy = PrimaryReplicaPolicy::highAvailability();
 
@@ -610,7 +609,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(5, $policy->maxReplicationRetries);
     }
 
-    public function test_policy_eventual_consistency() : void
+    public function test_policy_eventual_consistency(): void
     {
         $policy = PrimaryReplicaPolicy::eventualConsistency();
 
@@ -621,7 +620,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(ReplicationPolicy::ASYNCHRONOUS, $policy->replicationPolicy);
     }
 
-    public function test_policy_strict_consistency() : void
+    public function test_policy_strict_consistency(): void
     {
         $policy = PrimaryReplicaPolicy::strictConsistency();
 
@@ -632,7 +631,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(ReplicationPolicy::SYNCHRONOUS, $policy->replicationPolicy);
     }
 
-    public function test_policy_default() : void
+    public function test_policy_default(): void
     {
         $policy = PrimaryReplicaPolicy::default();
 
@@ -645,7 +644,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(3, $policy->maxReplicationRetries);
     }
 
-    public function test_policy_to_array() : void
+    public function test_policy_to_array(): void
     {
         $policy = PrimaryReplicaPolicy::highAvailability();
 
@@ -664,7 +663,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- ReplicaWriteResult ---
 
-    public function test_replica_write_result_properties() : void
+    public function test_replica_write_result_properties(): void
     {
         $result = new ReplicaWriteResult(
             replicaIndex: 2,
@@ -679,7 +678,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame('Connection timeout', $result->error);
     }
 
-    public function test_replica_write_result_successful() : void
+    public function test_replica_write_result_successful(): void
     {
         $result = new ReplicaWriteResult(
             replicaIndex: 0,
@@ -694,7 +693,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- ReplicaSyncResult ---
 
-    public function test_replica_sync_result_properties() : void
+    public function test_replica_sync_result_properties(): void
     {
         $result = new ReplicaSyncResult(
             replicaIndex: 1,
@@ -711,7 +710,7 @@ final class CacheReplicationTest extends TestCase
 
     // --- ReplicaCount ---
 
-    public function test_replica_count_single() : void
+    public function test_replica_count_single(): void
     {
         $count = ReplicaCount::single();
 
@@ -721,7 +720,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(1, $count->quorumSize());
     }
 
-    public function test_replica_count_with_secondaries() : void
+    public function test_replica_count_with_secondaries(): void
     {
         $count = ReplicaCount::withSecondaries(3);
 
@@ -731,7 +730,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame(3, $count->quorumSize());
     }
 
-    public function test_replica_count_quorum() : void
+    public function test_replica_count_quorum(): void
     {
         $count = ReplicaCount::quorum();
 
@@ -743,14 +742,14 @@ final class CacheReplicationTest extends TestCase
 
     // --- Additional CacheReplication methods ---
 
-    public function test_get_primary_returns_primary_store() : void
+    public function test_get_primary_returns_primary_store(): void
     {
         $replication = $this->createReplication(sync: true);
 
         $this->assertInstanceOf(CacheStore::class, $replication->getPrimary());
     }
 
-    public function test_get_replicas_returns_replica_stores() : void
+    public function test_get_replicas_returns_replica_stores(): void
     {
         $replication = $this->createReplication(sync: true);
 
@@ -762,17 +761,17 @@ final class CacheReplicationTest extends TestCase
         }
     }
 
-    public function test_get_replica_count() : void
+    public function test_get_replica_count(): void
     {
         $replication = $this->createReplication(sync: true);
 
         $this->assertSame(2, $replication->getReplicaCount());
     }
 
-    public function test_get_policy() : void
+    public function test_get_policy(): void
     {
-        $policy = PrimaryReplicaPolicy::readHeavy();
-        $clock  = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $policy  = PrimaryReplicaPolicy::readHeavy();
+        $clock   = new FrozenClock(Timestamp::fromUnixTime(1000000));
         $primary = new FakeCacheStoreForReplication($clock);
 
         $replication = CacheReplication::create(
@@ -784,9 +783,9 @@ final class CacheReplicationTest extends TestCase
         $this->assertSame($policy, $replication->getPolicy());
     }
 
-    public function test_replicate_with_no_replicas() : void
+    public function test_replicate_with_no_replicas(): void
     {
-        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $clock   = new FrozenClock(Timestamp::fromUnixTime(1000000));
         $primary = new FakeCacheStoreForReplication($clock);
 
         $replication = CacheReplication::create(
@@ -802,7 +801,7 @@ final class CacheReplicationTest extends TestCase
         $this->assertTrue($result->isFullySuccessful());
     }
 
-    public function test_readonly_properties_of_result_classes() : void
+    public function test_readonly_properties_of_result_classes(): void
     {
         $result = new ReplicationResult(
             key           : 'test',

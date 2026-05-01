@@ -31,9 +31,10 @@ final readonly class ConfigSchemaField
     public function __construct(
         public string $name,
         public string $type = self::TYPE_STRING,
-        public bool    $required = true,
-        public mixed   $default = null,
-        public array   $allowed = [],
+        public bool $required = true,
+        public mixed $default = null,
+        public array $allowed = [],
         public ?string $description = null,
-    ) {}
+    ) {
+    }
 }

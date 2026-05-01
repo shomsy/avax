@@ -10,8 +10,7 @@ final class CompiledCacheWasMissing extends InvalidArgumentException
 {
     public function __construct(
         string $name,
-    )
-    {
+    ) {
         parent::__construct(
             message: sprintf('Compiled cache "%s" was missing', $name),
         );

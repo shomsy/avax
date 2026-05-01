@@ -70,10 +70,10 @@ final class WorkerProcess
             throw new RuntimeException('Unable to resolve current process id.');
         }
 
-        $this->pid = $pid;
+        $this->pid     = $pid;
         $this->running = true;
         $this->startTime = time();
-        $this->idle = true;
+        $this->idle    = true;
     }
 
     public function isRunning() : bool

@@ -12,30 +12,29 @@ final readonly class CacheNodeId implements Stringable
 {
     public function __construct(
         public string $id,
-    )
-    {
+    ) {
         if ($id === '') {
             throw new InvalidArgumentException(message: 'Node ID cannot be empty');
         }
     }
 
-    public static function from(string $id) : self
+    public static function from(string $id): self
     {
         return new self(id: $id);
     }
 
-    public static function random() : self
+    public static function random(): self
     {
         return new self(id: uniqid(more_entropy: true));
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->id;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->id;
     }

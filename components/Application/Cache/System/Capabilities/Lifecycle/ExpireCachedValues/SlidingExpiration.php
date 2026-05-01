@@ -40,9 +40,9 @@ final readonly class SlidingExpiration implements CacheExpiration
         return $clock->now()->add(duration: $duration);
     }
 
-    public function slide(?Timestamp $currentExpiresAt, Clock $clock) : ?Timestamp
+    public function slide(?Timestamp $timestamp, Clock $clock) : ?Timestamp
     {
-        if (! $currentExpiresAt instanceof Timestamp) {
+        if (! $timestamp instanceof Timestamp) {
             return null;
         }
 
@@ -53,14 +53,14 @@ final readonly class SlidingExpiration implements CacheExpiration
 
     #[Override]
     public function isExpired(
-        ?Timestamp $expiresAt,
+        ?Timestamp $timestamp,
         Clock $clock,
     ) : bool
     {
-        if (! $expiresAt instanceof Timestamp) {
+        if (! $timestamp instanceof Timestamp) {
             return true;
         }
 
-        return $clock->now()->isAfter(other: $expiresAt);
+        return $clock->now()->isAfter(other: $timestamp);
     }
 }

@@ -38,7 +38,7 @@ final readonly class PrimaryReplicaPolicy
      */
     public static function default() : self
     {
-        return new self;
+        return new self();
     }
 
     /**

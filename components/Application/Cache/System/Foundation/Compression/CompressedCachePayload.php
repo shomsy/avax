@@ -14,9 +14,10 @@ final readonly class CompressedCachePayload implements Stringable
         public string $algorithm,
         public int $originalSize,
         public int $compressedSize,
-    ) {}
+    ) {
+    }
 
-    public function spaceSavedPercentage() : float
+    public function spaceSavedPercentage(): float
     {
         if ($this->originalSize === 0) {
             return 0.0;
@@ -25,17 +26,17 @@ final readonly class CompressedCachePayload implements Stringable
         return ($this->spaceSaved() / $this->originalSize) * 100;
     }
 
-    public function spaceSaved() : int
+    public function spaceSaved(): int
     {
         return $this->originalSize - $this->compressedSize;
     }
 
-    public function isWorthCompressing(int $thresholdBytes = 1024) : bool
+    public function isWorthCompressing(int $thresholdBytes = 1024): bool
     {
         return $this->originalSize >= $thresholdBytes && $this->compressionRatio() < 0.9;
     }
 
-    public function compressionRatio() : float
+    public function compressionRatio(): float
     {
         if ($this->originalSize === 0) {
             return 1.0;
@@ -45,7 +46,7 @@ final readonly class CompressedCachePayload implements Stringable
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->data;
     }

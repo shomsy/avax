@@ -14,10 +14,10 @@ use Avax\Components\Application\Container\System\Foundation\Time\Clock;
  */
 final class AssembleObservability
 {
-    public function assemble(CreateContainerConfig $createContainerConfig) : ObservabilityAssembly
+    public function assemble(CreateContainerConfig $createContainerConfig): ObservabilityAssembly
     {
-        $clock             = new Clock;
-        $resolutionMetrics = new ResolutionMetrics;
+        $clock             = new Clock();
+        $resolutionMetrics = new ResolutionMetrics();
 
         return new ObservabilityAssembly(
             clock   : $clock,

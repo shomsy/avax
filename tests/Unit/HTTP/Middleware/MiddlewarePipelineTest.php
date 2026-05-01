@@ -16,7 +16,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function middleware_stack_pushes_and_retrieves_middleware() : void
     {
-        $stack = new MiddlewareStack;
+        $stack = new MiddlewareStack();
 
         $middleware1 = static fn ($request, $next) => $next($request);
 
@@ -34,7 +34,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function middleware_stack_returns_empty_array_initially() : void
     {
-        $stack = new MiddlewareStack;
+        $stack = new MiddlewareStack();
         $this->assertEmpty($stack->all());
     }
 
@@ -59,7 +59,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $response;
         };
 
-        $stack    = new MiddlewareStack;
+        $stack    = new MiddlewareStack();
         $stack->push($middleware1);
         $stack->push($middleware2);
 
@@ -105,7 +105,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $next($request);
         };
 
-        $stack    = new MiddlewareStack;
+        $stack    = new MiddlewareStack();
         $stack->push($blockingMiddleware);
         $stack->push($normalMiddleware);
 
@@ -140,7 +140,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $next($request);
         };
 
-        $stack    = new MiddlewareStack;
+        $stack    = new MiddlewareStack();
         $stack->push($modifierMiddleware);
 
         $coreHandler = static function ($request) use (&$modifiedRequest) {
@@ -172,7 +172,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $response;
         };
 
-        $stack = new MiddlewareStack;
+        $stack = new MiddlewareStack();
         $stack->push($headerMiddleware);
 
         $coreHandler = static fn ($request) => ['body' => 'Hello', 'headers' => []];
@@ -193,7 +193,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function empty_stack_executes_core_handler_directly() : void
     {
-        $stack = new MiddlewareStack;
+        $stack = new MiddlewareStack();
 
         $coreHandler = static fn ($request) => "handled: {$request}";
 
@@ -213,7 +213,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function multiple_middleware_layers_stack_correctly() : void
     {
-        $stack    = new MiddlewareStack;
+        $stack    = new MiddlewareStack();
 
         // Add 5 middleware
         for ($i = 1; $i <= 5; $i++) {

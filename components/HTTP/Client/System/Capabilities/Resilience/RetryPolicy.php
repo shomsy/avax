@@ -160,7 +160,6 @@ final readonly class RetryPolicy
      * Calculate the delay for a given retry attempt.
      *
      * @param int $attempt The current attempt number (1-based)
-     *
      * @return int Delay in milliseconds
      */
     public function delayForAttempt(int $attempt): int

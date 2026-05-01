@@ -17,7 +17,7 @@ if (! is_dir($componentsDir) || ! is_dir($docsDir)) {
 
 // Find all components
 $components = [];
-$iterator = new DirectoryIterator($componentsDir);
+$iterator   = new DirectoryIterator($componentsDir);
 foreach ($iterator as $fileinfo) {
     if ($fileinfo->isDir() && ! $fileinfo->isDot()) {
         $components[] = $fileinfo->getFilename();

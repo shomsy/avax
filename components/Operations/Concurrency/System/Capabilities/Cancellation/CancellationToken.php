@@ -8,12 +8,12 @@ final class CancellationToken
 {
     private bool $cancelled = false;
 
-    public function cancel() : void
+    public function cancel(): void
     {
         $this->cancelled = true;
     }
 
-    public function isCancelled() : bool
+    public function isCancelled(): bool
     {
         return $this->cancelled;
     }

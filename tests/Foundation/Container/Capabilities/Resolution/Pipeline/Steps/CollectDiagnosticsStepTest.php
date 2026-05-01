@@ -13,12 +13,12 @@ use Avax\Tests\TestCase;
 
 final class CollectDiagnosticsStepTest extends TestCase
 {
-    public function test_it_collects_diagnostics_and_stores_in_context() : void
+    public function test_it_collects_diagnostics_and_stores_in_context(): void
     {
         $serviceId = 'test.service';
-        $traceId = 'trace-123';
-        $telemetry = new StepTelemetryRecorder;
-        $step = new CollectDiagnosticsStep(telemetry: $telemetry);
+        $traceId   = 'trace-123';
+        $telemetry = new StepTelemetryRecorder();
+        $step      = new CollectDiagnosticsStep(telemetry: $telemetry);
 
         $context = new KernelContext(
             serviceId: $serviceId,
@@ -26,20 +26,20 @@ final class CollectDiagnosticsStepTest extends TestCase
         );
 
         $telemetry->onStepStarted(event: new StepStarted(
-                                             stepClass: 'SomeStep',
-                                             timestamp: 1000.0,
-                                             serviceId: $serviceId,
-                                             traceId  : $traceId,
-                                         ));
+            stepClass: 'SomeStep',
+            timestamp: 1000.0,
+            serviceId: $serviceId,
+            traceId  : $traceId,
+        ));
 
         $telemetry->onStepSucceeded(event: new StepSucceeded(
-                                               stepClass: 'SomeStep',
-                                               startedAt: 1000.0,
-                                               endedAt  : 1000.05,
-                                               duration : 0.05,
-                                               serviceId: $serviceId,
-                                               traceId  : $traceId,
-                                           ));
+            stepClass: 'SomeStep',
+            startedAt: 1000.0,
+            endedAt  : 1000.05,
+            duration : 0.05,
+            serviceId: $serviceId,
+            traceId  : $traceId,
+        ));
 
         $step(context: $context);
 

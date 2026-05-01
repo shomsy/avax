@@ -13,7 +13,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class StoredCacheRecord
 {
     public function __construct(
-        public mixed   $value,
+        public mixed $value,
         public CachedValueLifecycle $cachedValueLifecycle,
         public ?string $serializedData = null,
         public ?string $format = null,
@@ -27,7 +27,7 @@ final readonly class StoredCacheRecord
      */
     public static function create(mixed $value, ?int $ttl = null, ?Clock $clock = null) : self
     {
-        $clock ??= new SystemClock;
+        $clock ??= new SystemClock();
         $now   = $clock->now();
         $expiresAt = $ttl !== null ? $now->add(Duration::ofSeconds($ttl)) : Timestamp::fromUnixTime(PHP_INT_MAX);
 

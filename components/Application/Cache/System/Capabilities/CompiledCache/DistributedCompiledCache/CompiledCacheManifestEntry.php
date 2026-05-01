@@ -12,27 +12,28 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CompiledCacheManifestEntry
 {
     /**
-     * @param string       $name             Unique name/identifier for this entry
-     * @param string       $compiledPath     Path to the compiled file
-     * @param list<string> $sourceFiles      List of source file paths
-     * @param string       $fingerprint      Hash fingerprint of source files
-     * @param Timestamp    $createdAt        When this entry was created
-     * @param Timestamp    $updatedAt        When this entry was last updated
-     * @param string|null  $type             Type of compiled cache (config, routes, views, etc.)
-     * @param string|null  $phpVersion       PHP version used for compilation
-     * @param string|null  $frameworkVersion Framework version used for compilation
+     * @param string $name Unique name/identifier for this entry
+     * @param string $compiledPath Path to the compiled file
+     * @param list<string> $sourceFiles List of source file paths
+     * @param string $fingerprint Hash fingerprint of source files
+     * @param Timestamp $createdAt When this entry was created
+     * @param Timestamp $updatedAt When this entry was last updated
+     * @param string|null $type Type of compiled cache (config, routes, views, etc.)
+     * @param string|null $phpVersion PHP version used for compilation
+     * @param string|null $frameworkVersion Framework version used for compilation
      */
     public function __construct(
-        public string  $name,
-        public string  $compiledPath,
-        public array   $sourceFiles,
-        public string  $fingerprint,
+        public string $name,
+        public string $compiledPath,
+        public array $sourceFiles,
+        public string $fingerprint,
         public Timestamp $createdAt,
         public Timestamp $updatedAt,
         public ?string $type = null,
         public ?string $phpVersion = null,
         public ?string $frameworkVersion = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create from array representation.
@@ -49,7 +50,7 @@ final readonly class CompiledCacheManifestEntry
      *     frameworkVersion?: string|null
      * } $data
      */
-    public static function fromArray(array $data) : self
+    public static function fromArray(array $data): self
     {
         return new self(
             name            : $data['name'],
@@ -58,8 +59,8 @@ final readonly class CompiledCacheManifestEntry
             fingerprint     : $data['fingerprint'],
             createdAt       : Timestamp::fromUnixTime($data['createdAt']),
             updatedAt       : Timestamp::fromUnixTime($data['updatedAt']),
-            type            : $data['type'] ?? null,
-            phpVersion      : $data['phpVersion'] ?? null,
+            type            : $data['type']             ?? null,
+            phpVersion      : $data['phpVersion']       ?? null,
             frameworkVersion: $data['frameworkVersion'] ?? null,
         );
     }
@@ -79,17 +80,17 @@ final readonly class CompiledCacheManifestEntry
      *     frameworkVersion: string|null
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'name'         => $this->name,
-            'compiledPath' => $this->compiledPath,
-            'sourceFiles'  => $this->sourceFiles,
-            'fingerprint'  => $this->fingerprint,
-            'createdAt'    => $this->createdAt->seconds,
-            'updatedAt'    => $this->updatedAt->seconds,
-            'type'         => $this->type,
-            'phpVersion'   => $this->phpVersion,
+            'name'             => $this->name,
+            'compiledPath'     => $this->compiledPath,
+            'sourceFiles'      => $this->sourceFiles,
+            'fingerprint'      => $this->fingerprint,
+            'createdAt'        => $this->createdAt->seconds,
+            'updatedAt'        => $this->updatedAt->seconds,
+            'type'             => $this->type,
+            'phpVersion'       => $this->phpVersion,
             'frameworkVersion' => $this->frameworkVersion,
         ];
     }
@@ -97,7 +98,7 @@ final readonly class CompiledCacheManifestEntry
     /**
      * Create a copy with an updated timestamp.
      */
-    public function withUpdatedAt(Timestamp $timestamp) : self
+    public function withUpdatedAt(Timestamp $timestamp): self
     {
         return new self(
             name            : $this->name,
@@ -115,7 +116,7 @@ final readonly class CompiledCacheManifestEntry
     /**
      * Get the modification time of the compiled file.
      */
-    public function getCompiledFileMtime() : int|false
+    public function getCompiledFileMtime(): int|false
     {
         if (! $this->compiledFileExists()) {
             return false;
@@ -127,7 +128,7 @@ final readonly class CompiledCacheManifestEntry
     /**
      * Check if the compiled file exists.
      */
-    public function compiledFileExists() : bool
+    public function compiledFileExists(): bool
     {
         return file_exists($this->compiledPath);
     }

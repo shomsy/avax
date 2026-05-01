@@ -19,7 +19,7 @@ final class CheckDuplicateOwners
 
     private array $errors = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->checkNoForbiddenOwnersAtRoot();
         $this->checkDuplicateBehaviorMerged();
@@ -30,7 +30,7 @@ final class CheckDuplicateOwners
         ];
     }
 
-    private function checkNoForbiddenOwnersAtRoot() : void
+    private function checkNoForbiddenOwnersAtRoot(): void
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
@@ -58,7 +58,7 @@ final class CheckDuplicateOwners
         }
     }
 
-    private function checkDuplicateBehaviorMerged() : void
+    private function checkDuplicateBehaviorMerged(): void
     {
         // Check Session is not duplicated
         if (is_dir(dirname(__DIR__, 2) . '/components/Session') && ! is_dir(dirname(__DIR__, 2) . '/components/HTTP/Session')) {
@@ -73,8 +73,8 @@ final class CheckDuplicateOwners
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckDuplicateOwners;
-    $result = $checker->check();
+    $checker = new CheckDuplicateOwners();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

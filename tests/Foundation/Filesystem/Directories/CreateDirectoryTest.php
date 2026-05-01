@@ -17,15 +17,15 @@ class CreateDirectoryTest extends TestCase
 
     private string $conflictingFile;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
-        $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_test';
+        $this->disk            = new LocalDisk();
+        $this->testDir         = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_test';
         $this->conflictingFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_conflict.txt';
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if (is_dir(filename: $this->testDir)) {
             $this->disk->deleteDirectory(path: $this->testDir);
@@ -35,7 +35,7 @@ class CreateDirectoryTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_execute_creates_directory() : void
+    public function test_execute_creates_directory(): void
     {
         $result = new CreateDirectory(disk: $this->disk)->execute(path: $this->testDir);
 
@@ -43,7 +43,7 @@ class CreateDirectoryTest extends TestCase
         self::assertTrue(condition: is_dir(filename: $this->testDir));
     }
 
-    public function test_execute_returns_true_if_directory_exists() : void
+    public function test_execute_returns_true_if_directory_exists(): void
     {
         mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
 
@@ -52,7 +52,7 @@ class CreateDirectoryTest extends TestCase
         self::assertTrue(condition: $result);
     }
 
-    public function test_execute_throws_exception_on_failure() : void
+    public function test_execute_throws_exception_on_failure(): void
     {
         file_put_contents(filename: $this->conflictingFile, data: "conflict\n");
 

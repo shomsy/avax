@@ -54,8 +54,8 @@ final class SessionDriver
             'redis'    => new RedisSessionStore(config: $config['redis'] ?? []),
             'database' => isset($config['database']['pdo'])
                 ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
-                : new ArraySessionStore,
-            'array'    => new ArraySessionStore,
+                : new ArraySessionStore(),
+            'array'    => new ArraySessionStore(),
             default => new FileSessionStore(config: $config['file'] ?? []),
         };
     }

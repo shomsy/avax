@@ -8,14 +8,24 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 
 final readonly class CompiledCacheManifestEntry
 {
+    public CompiledCacheName $compiledCacheName;
+
+    public CompiledCachePath $compiledCachePath;
+
+    public Timestamp $timestamp;
+
     public function __construct(
-        public CompiledCacheName $compiledCacheName,
-        public CompiledCachePath $compiledCachePath,
-        public Timestamp         $timestamp,
+        public CompiledCacheName $name,
+        public CompiledCachePath $path,
+        public Timestamp         $createdAt,
         public string            $sourceFingerprint,
         public string|null       $phpVersion = null,
         public string|null       $frameworkVersion = null,
-    ) {}
+    ) {
+        $this->compiledCacheName = $name;
+        $this->compiledCachePath = $path;
+        $this->timestamp         = $createdAt;
+    }
 
     public static function fromArray(array $data) : self
     {
@@ -45,9 +55,9 @@ final readonly class CompiledCacheManifestEntry
     public function toArray() : array
     {
         return [
-            'name'      => $this->compiledCacheName->toString(),
-            'path'      => $this->compiledCachePath->toString(),
-            'createdAt' => $this->timestamp->seconds,
+            'name'      => $this->name->toString(),
+            'path'      => $this->path->toString(),
+            'createdAt' => $this->createdAt->seconds,
             'sourceFingerprint' => $this->sourceFingerprint,
             'phpVersion'        => $this->phpVersion,
             'frameworkVersion'  => $this->frameworkVersion,

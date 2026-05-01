@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\Flows\ReadSecret;
+namespace Avax\Components\Security\Secrets\System\Flows\ReadSecret;
 
-use Avax\Components\Secrets\System\Capabilities\Stores\SecretStore;
+use Avax\Components\Security\Secrets\System\Capabilities\Stores\SecretStore;
 
 final readonly class ReadSecret
 {

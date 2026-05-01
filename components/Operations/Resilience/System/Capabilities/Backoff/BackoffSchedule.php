@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\Capabilities\Backoff;
+namespace Avax\Components\Operations\Resilience\System\Capabilities\Backoff;
 
 final readonly class BackoffSchedule
 {

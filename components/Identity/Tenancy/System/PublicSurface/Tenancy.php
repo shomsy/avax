@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Tenancy\System\PublicSurface;
+namespace Avax\Components\Identity\Tenancy\System\PublicSurface;
 
-use Avax\Components\Tenancy\System\Capabilities\Context\TenantContext;
-use Avax\Components\Tenancy\System\Capabilities\Resolution\TenantResolver;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContext;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Resolution\TenantResolver;
 use Closure;
 use Psr\Http\Message\RequestInterface;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\Flows\RedactSecret;
+namespace Avax\Components\Security\Secrets\System\Flows\RedactSecret;
 
 final readonly class RedactSecret
 {

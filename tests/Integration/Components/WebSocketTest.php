@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\Components;
 
-use Avax\Components\Realtime\System\Capabilities\WebSocket\WebSocketServer;
+use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\WebSocketServer;
 use Avax\Tests\TestCase;
 
 final class WebSocketTest extends TestCase

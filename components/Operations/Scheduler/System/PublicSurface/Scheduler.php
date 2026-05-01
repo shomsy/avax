@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Scheduler\System\PublicSurface;
+namespace Avax\Components\Operations\Scheduler\System\PublicSurface;
 
-use Avax\Components\Scheduler\System\Capabilities\TaskHistory\SchedulerHistory;
+use Avax\Components\Operations\Scheduler\System\Capabilities\TaskHistory\SchedulerHistory;
 use Closure;
 
 final class Scheduler

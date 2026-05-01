@@ -5,7 +5,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Avax\Components\Identity\Auth\System\Auth;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
@@ -13,6 +12,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
 $passwordHasher = new PasswordHasher();
 $userSource     = new InMemoryUserSource();

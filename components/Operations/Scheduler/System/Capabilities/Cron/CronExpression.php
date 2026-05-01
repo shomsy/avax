@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Scheduler\System\Capabilities\Cron;
+namespace Avax\Components\Operations\Scheduler\System\Capabilities\Cron;
 
 use Cron\CronExpression as CronLib;
 use DateTimeImmutable;

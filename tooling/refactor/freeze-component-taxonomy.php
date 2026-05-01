@@ -2,21 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * AvaX Component Taxonomy Freeze.
- *
- * Run from repo root:
- *
- *   php tooling/refactor/freeze-component-taxonomy.php
- *   php tooling/refactor/freeze-component-taxonomy.php --apply
- *
- * Scope:
- * - sorts remaining component taxonomy after feature recovery
- * - does not touch tests
- * - refuses overwrite conflicts
- * - rewrites production namespaces only for moved production files
- */
-
 final class FreezeComponentTaxonomy
 {
     private string $root;
@@ -123,13 +108,7 @@ final class FreezeComponentTaxonomy
 
     private function defineMoves(): void
     {
-        /**
-         * Legacy top-level component moves.
-         * Most of these should already be absent in the current repo.
-         * They are kept here to make the command safe if a recovered folder still exists.
-         */
         $topLevel = [
-            // Application
             'components/Config' => 'components/Application/Config',
             'components/Container' => 'components/Application/Container',
             'components/Cache' => 'components/Application/Cache',
@@ -146,7 +125,6 @@ final class FreezeComponentTaxonomy
             'components/Time' => 'components/Application/DateTime',
             'components/Storage' => 'components/Application/Filesystem',
 
-            // HTTP
             'components/Request' => 'components/HTTP/Request',
             'components/Response' => 'components/HTTP/Response',
             'components/Router' => 'components/HTTP/Router',
@@ -168,12 +146,10 @@ final class FreezeComponentTaxonomy
             'components/TrustedHost' => 'components/HTTP/Security',
             'components/SecurityHeaders' => 'components/HTTP/Security',
 
-            // CLI
             'components/Console' => 'components/CLI/Console',
             'components/Commands' => 'components/CLI/Console',
             'components/Command' => 'components/CLI/Console',
 
-            // DataStack
             'components/Data' => 'components/DataStack/Data',
             'components/Collections' => 'components/DataStack/Data',
             'components/Collection' => 'components/DataStack/Data',
@@ -198,7 +174,6 @@ final class FreezeComponentTaxonomy
             'components/UnitOfWork' => 'components/DataStack/Persistence',
             'components/IdentityMap' => 'components/DataStack/Persistence',
 
-            // Identity
             'components/Auth' => 'components/Identity/Auth',
             'components/Authentication' => 'components/Identity/Auth',
             'components/Authorization' => 'components/Identity/Access',
@@ -237,7 +212,6 @@ final class FreezeComponentTaxonomy
             'components/Membership' => 'components/Identity/Tenancy',
             'components/Invitations' => 'components/Identity/Tenancy',
 
-            // Security
             'components/Encryption' => 'components/Security/Cryptography',
             'components/Cryptography' => 'components/Security/Cryptography',
             'components/Encryptor' => 'components/Security/Cryptography',
@@ -259,7 +233,6 @@ final class FreezeComponentTaxonomy
             'components/SecurityAudit' => 'components/Security/Audit',
             'components/Audit' => 'components/Security/Audit',
 
-            // Operations
             'components/Events' => 'components/Operations/Events',
             'components/Event' => 'components/Operations/Events',
             'components/EventDispatcher' => 'components/Operations/Events',
@@ -294,7 +267,6 @@ final class FreezeComponentTaxonomy
             'components/Saga' => 'components/Operations/ApplicationWorkflow',
             'components/Sagas' => 'components/Operations/ApplicationWorkflow',
 
-            // Presentation
             'components/View' => 'components/Presentation/View',
             'components/Views' => 'components/Presentation/View',
             'components/Template' => 'components/Presentation/View',
@@ -303,7 +275,6 @@ final class FreezeComponentTaxonomy
             'components/BladeOne' => 'components/Presentation/View',
             'components/Renderer' => 'components/Presentation/View',
 
-            // DeveloperTools
             'components/Diagnostics' => 'components/DeveloperTools/Diagnostics',
             'components/Doctor' => 'components/DeveloperTools/Diagnostics',
             'components/HealthCheck' => 'components/DeveloperTools/Diagnostics',
@@ -331,10 +302,6 @@ final class FreezeComponentTaxonomy
             $this->addMove($from, $to, 'legacy top-level component to final suite');
         }
 
-        /**
-         * Current-state targeted moves.
-         * These match the recovered layout visible in the latest dump.
-         */
         $this->addMove(
             'components/CLI/Console/System/Capabilities/Generators',
             'components/DeveloperTools/CodeGeneration/System/Capabilities/Generators',
@@ -465,11 +432,7 @@ final class FreezeComponentTaxonomy
 
     private function addMove(string $from, string $to, string $reason): void
     {
-        $this->moves[] = [
-            'from' => $from,
-            'to' => $to,
-            'reason' => $reason,
-        ];
+        $this->moves[] = ['from' => $from, 'to' => $to, 'reason' => $reason];
     }
 
     private function detectConflicts(): void
@@ -515,10 +478,7 @@ final class FreezeComponentTaxonomy
         }
 
         foreach ($this->children($from) as $child) {
-            $this->detectMoveConflict(
-                $from . DIRECTORY_SEPARATOR . $child,
-                $to . DIRECTORY_SEPARATOR . $child
-            );
+            $this->detectMoveConflict($from . DIRECTORY_SEPARATOR . $child, $to . DIRECTORY_SEPARATOR . $child);
         }
     }
 
@@ -574,10 +534,7 @@ final class FreezeComponentTaxonomy
         }
 
         foreach ($this->children($from) as $child) {
-            $this->mergeMove(
-                $from . DIRECTORY_SEPARATOR . $child,
-                $to . DIRECTORY_SEPARATOR . $child
-            );
+            $this->mergeMove($from . DIRECTORY_SEPARATOR . $child, $to . DIRECTORY_SEPARATOR . $child);
         }
 
         $this->removeDirectoryIfEmpty($from);
@@ -653,9 +610,6 @@ final class FreezeComponentTaxonomy
         echo PHP_EOL . "Namespace rewrite candidates: {$changed}" . PHP_EOL;
     }
 
-    /**
-     * @return Generator<string>
-     */
     private function phpFiles(string $path): Generator
     {
         if (is_file($path)) {
@@ -677,9 +631,6 @@ final class FreezeComponentTaxonomy
         }
     }
 
-    /**
-     * @return list<string>
-     */
     private function children(string $directory): array
     {
         $items = scandir($directory);
@@ -688,10 +639,7 @@ final class FreezeComponentTaxonomy
             return [];
         }
 
-        return array_values(array_filter(
-            $items,
-            static fn (string $item): bool => $item !== '.' && $item !== '..'
-        ));
+        return array_values(array_filter($items, static fn (string $item) : bool => $item !== '.' && $item !== '..'));
     }
 
     private function removeDirectoryIfEmpty(string $directory): void

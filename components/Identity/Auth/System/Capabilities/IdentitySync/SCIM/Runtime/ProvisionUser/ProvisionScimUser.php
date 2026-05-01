@@ -8,7 +8,6 @@ use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottleExceeded;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
@@ -25,6 +24,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use JsonException;
 use Random\RandomException;
 use SensitiveParameter;

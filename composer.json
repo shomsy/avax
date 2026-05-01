@@ -21,37 +21,7 @@
       "components/Application/Container/System/PublicSurface/shortcuts.php",
       "components/HTTP/Security/System/PublicSurface/shortcuts.php",
       "components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php",
-      "components/FeatureFlags/System/PublicSurface/FeatureFlags.php",
-      "components/Resilience/System/PublicSurface/Resilience.php",
-      "components/Concurrency/System/PublicSurface/Concurrency.php",
-      "components/Tasks/System/PublicSurface/Tasks.php",
-      "components/Security/System/PublicSurface/Security.php",
-      "components/HealthCheck/System/PublicSurface/HealthCheck.php",
-      "components/QueryGovernance/System/PublicSurface/QueryGovernance.php",
-      "components/Scheduler/System/PublicSurface/Scheduler.php",
-      "components/Realtime/System/PublicSurface/Realtime.php",
-      "components/Secrets/System/PublicSurface/Secrets.php",
-      "components/ApiVersioning/System/PublicSurface/ApiVersion.php",
-      "components/Policy/System/PublicSurface/Policy.php",
-      "components/Tenancy/System/PublicSurface/Tenancy.php",
-      "components/ServiceMap/System/PublicSurface/ServiceMap.php",
-      "components/Fallback/System/PublicSurface/Fallback.php",
-      "components/MessageBus/System/PublicSurface/MessageBus.php",
-      "components/JwtAuth/System/PublicSurface/JwtAuth.php",
-      "components/EnvironmentAwareness/System/PublicSurface/Environment.php",
-      "components/WorkerManager/System/PublicSurface/WorkerManager.php",
-      "components/ExternalState/System/PublicSurface/ExternalState.php",
-      "components/Orchestration/System/PublicSurface/Orchestration.php",
-      "components/AfterResponse/System/PublicSurface/AfterResponse.php",
-      "components/StatelessBoundary/System/PublicSurface/StatelessBoundary.php",
-      "components/TaskDispatch/System/PublicSurface/TaskDispatch.php",
-      "components/ScalingReadiness/System/PublicSurface/ScalingReadiness.php",
-      "components/GracefulShutdown/System/PublicSurface/GracefulShutdown.php",
-      "components/ResourceGovernor/System/PublicSurface/ResourceGovernor.php",
-      "components/Idempotency/System/PublicSurface/Idempotency.php",
-      "components/ContentNegotiation/System/PublicSurface/ContentNegotiation.php",
-      "components/ContractTesting/System/PublicSurface/ContractTesting.php",
-      "components/Pipeline/System/PublicSurface/Pipeline.php"
+      "components/Security/System/PublicSurface/Security.php"
     ]
   },
   "autoload-dev": {
@@ -130,6 +100,5 @@
     "docs:validate": "php tooling/docs/validate-docs.php",
     "docs:mirror": "php tooling/docs/validate-docs-mirror-source.php",
     "runtime:leaks": "php tooling/refactor/check-runtime-leaks.php"
-  },
-  "suggest": {}
+  }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing;
+namespace Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing;
 
 use SensitiveParameter;
 

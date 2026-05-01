@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Scheduler\System\Capabilities\TaskHistory;
+namespace Avax\Components\Operations\Scheduler\System\Capabilities\TaskHistory;
 
 final class SchedulerHistory
 {

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Enterprise;
 
-use Avax\Components\Realtime\System\Capabilities\Channels\ChannelManager;
-use Avax\Components\Realtime\System\Capabilities\Connections\Connection;
-use Avax\Components\Realtime\System\Capabilities\Connections\ConnectionPool;
-use Avax\Components\Realtime\System\Capabilities\WebSocket\PresenceChannel;
-use Avax\Components\Realtime\System\Capabilities\WebSocket\WebSocketServer;
-use Avax\Components\Realtime\System\PublicSurface\Realtime;
+use Avax\Components\Operations\Realtime\System\Capabilities\Channels\ChannelManager;
+use Avax\Components\Operations\Realtime\System\Capabilities\Connections\Connection;
+use Avax\Components\Operations\Realtime\System\Capabilities\Connections\ConnectionPool;
+use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\PresenceChannel;
+use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\WebSocketServer;
+use Avax\Components\Operations\Realtime\System\PublicSurface\Realtime;
 use Avax\Tests\TestCase;
 
 final class RealtimeUnitTest extends TestCase

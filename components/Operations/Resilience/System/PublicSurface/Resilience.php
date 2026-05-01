@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\PublicSurface;
+namespace Avax\Components\Operations\Resilience\System\PublicSurface;
 
-use Avax\Components\Resilience\System\Capabilities\CircuitBreaker\CircuitBreaker;
-use Avax\Components\Resilience\System\Capabilities\Retry\RetryBuilder;
+use Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreaker\CircuitBreaker;
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryBuilder;
 use Closure;
 
 final readonly class Resilience

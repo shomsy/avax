@@ -112,7 +112,6 @@
       <path value="$PROJECT_DIR$/vendor/clickfwd/yoyo" />
       <path value="$PROJECT_DIR$/vendor/clue/ndjson-react" />
       <path value="$PROJECT_DIR$/vendor/cmgmyr/phploc" />
-      <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/daverandom/libdns" />
       <path value="$PROJECT_DIR$/vendor/dealerdirect/phpcodesniffer-composer-installer" />
       <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
@@ -259,6 +258,7 @@
       <path value="$PROJECT_DIR$/vendor/wyndow/fuzzywuzzy" />
       <path value="$PROJECT_DIR$/vendor/ergebnis/agent-detector" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.5">

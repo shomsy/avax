@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\Flows\RetryOperation;
+namespace Avax\Components\Operations\Resilience\System\Flows\RetryOperation;
 
-use Avax\Components\Resilience\System\Capabilities\Retry\RetryExecutor;
-use Avax\Components\Resilience\System\Capabilities\Retry\RetryOptions;
-use Avax\Components\Resilience\System\Capabilities\Retry\RetryResult;
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryExecutor;
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryOptions;
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryResult;
 use Closure;
 
 final readonly class RetryOperation

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\Capabilities\Stores;
+namespace Avax\Components\Security\Secrets\System\Capabilities\Stores;
 
 interface SecretStore
 {

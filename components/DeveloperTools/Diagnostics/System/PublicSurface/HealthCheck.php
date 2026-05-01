@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\HealthCheck\System\PublicSurface;
+namespace Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\PublicSurface;
 
-use Avax\Components\HealthCheck\System\Capabilities\Checks\CacheCheck;
-use Avax\Components\HealthCheck\System\Capabilities\Checks\DatabaseCheck;
+use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Capabilities\Checks\CacheCheck;
+use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Capabilities\Checks\DatabaseCheck;
 use Exception;
 
 final readonly class HealthCheck

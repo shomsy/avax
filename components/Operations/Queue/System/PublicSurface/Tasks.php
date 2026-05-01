@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Tasks\System\PublicSurface;
+namespace Avax\Components\Operations\Tasks\System\PublicSurface;
 
-use Avax\Components\Tasks\System\Capabilities\TaskBus;
+use Avax\Components\Operations\Tasks\System\Capabilities\TaskBus;
 use DateInterval;
 
 final readonly class Tasks

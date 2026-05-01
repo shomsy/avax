@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\Capabilities\CircuitBreaker;
+namespace Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreaker;
 
 use RuntimeException;
 use Throwable;

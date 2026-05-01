@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\PublicSurface;
+namespace Avax\Components\Security\System\System\PublicSurface;
 
-use Avax\Components\Security\System\Capabilities\Audit\SecurityAuditLog;
-use Avax\Components\Security\System\Capabilities\Csrf\CsrfToken;
-use Avax\Components\Security\System\Capabilities\Csrf\CsrfVerifier;
-use Avax\Components\Security\System\Capabilities\Escape\OutputEscaper;
-use Avax\Components\Security\System\Capabilities\Headers\SecurityHeaders;
-use Avax\Components\Security\System\Capabilities\MassAssignment\MassAssignmentGuard;
-use Avax\Components\Security\System\Capabilities\SignedUrls\SignedUrlGenerator;
-use Avax\Components\Security\System\Capabilities\SignedUrls\SignedUrlVerifier;
+use Avax\Components\Security\System\System\Capabilities\Audit\SecurityAuditLog;
+use Avax\Components\Security\System\System\Capabilities\Csrf\CsrfToken;
+use Avax\Components\Security\System\System\Capabilities\Csrf\CsrfVerifier;
+use Avax\Components\Security\System\System\Capabilities\Escape\OutputEscaper;
+use Avax\Components\Security\System\System\Capabilities\Headers\SecurityHeaders;
+use Avax\Components\Security\System\System\Capabilities\MassAssignment\MassAssignmentGuard;
+use Avax\Components\Security\System\System\Capabilities\SignedUrls\SignedUrlGenerator;
+use Avax\Components\Security\System\System\Capabilities\SignedUrls\SignedUrlVerifier;
 use DateInterval;
 
 final class Security

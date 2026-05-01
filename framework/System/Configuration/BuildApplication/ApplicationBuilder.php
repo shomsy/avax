@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Flows\HandleIncomingHttp\ConfiguredRoutesHttpHandler;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -80,10 +83,15 @@ final class ApplicationBuilder
         return $clone;
     }
 
-    public function withHttpHandler(callable $httpHandler): self
+    /**
+     * @param callable(RuntimeRequest, RuntimeInterface):RuntimeResponse|ConfiguredRoutesHttpHandler $httpHandler
+     */
+    public function withHttpHandler(callable|ConfiguredRoutesHttpHandler $httpHandler) : self
     {
         $clone              = clone $this;
-        $clone->httpHandler = Closure::fromCallable($httpHandler);
+        $clone->httpHandler = $httpHandler instanceof ConfiguredRoutesHttpHandler
+            ? $httpHandler->__invoke(...)
+            : Closure::fromCallable($httpHandler);
 
         return $clone;
     }

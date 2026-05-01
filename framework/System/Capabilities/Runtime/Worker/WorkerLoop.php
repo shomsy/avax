@@ -54,7 +54,7 @@ final class WorkerLoop
             $this->runUntilEmpty(
                 runtime      : $runtime,
                 workerRuntime: $workerRuntime,
-                lifecycle    : $workerLifecycle,
+                workerLifecycle: $workerLifecycle,
             );
         } finally {
             $this->stop();
@@ -78,13 +78,13 @@ final class WorkerLoop
         while ( ($request = $workerRuntime->receive()) instanceof WorkerRequest ) {
             $response = $handleIncomingHttp->handle(
                 runtime: $runtime,
-                request: $request->request(),
+                runtimeRequest: $request->request(),
             );
 
             $workerRuntime->send(
-                response: WorkerResponse::fromRuntimeResponse(
+                workerResponse: WorkerResponse::fromRuntimeResponse(
                             requestId: $request->id(),
-                            response : $response,
+                            runtimeResponse: $response,
                         ),
             );
 

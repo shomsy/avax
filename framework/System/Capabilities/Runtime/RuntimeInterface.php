@@ -8,6 +8,7 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLifecycle;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
+use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;

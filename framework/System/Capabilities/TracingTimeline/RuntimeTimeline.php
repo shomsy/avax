@@ -39,7 +39,6 @@ final class RuntimeTimeline
                     category  : $category,
                 );
             },
-            category: $category,
         );
     }
 

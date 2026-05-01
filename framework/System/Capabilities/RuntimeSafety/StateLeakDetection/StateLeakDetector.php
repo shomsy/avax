@@ -68,7 +68,8 @@ final class StateLeakDetector
             }
         }
 
-        return $findings;
+        /** @var list<RuntimeSafetyFinding> */
+        return array_values($findings);
     }
 
     /**
@@ -107,7 +108,7 @@ final class StateLeakDetector
                                          'Make $%s readonly or add a reset hook for worker mode',
                                          $property->getName(),
                                      ),
-                        location   : $this->propertyLocation(property: $property),
+                        location   : $this->propertyLocation(reflectionProperty: $property),
                     );
                 }
             }

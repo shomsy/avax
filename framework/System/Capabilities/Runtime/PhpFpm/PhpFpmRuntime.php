@@ -18,7 +18,7 @@ final readonly class PhpFpmRuntime
 
     public function handle(RuntimeRequest $runtimeRequest) : RuntimeResponse
     {
-        return $this->httpKernel->handle(request: $runtimeRequest);
+        return $this->httpKernel->handle(runtimeRequest: $runtimeRequest);
     }
 
     /**
@@ -34,7 +34,7 @@ final readonly class PhpFpmRuntime
     ) : RuntimeResponse
     {
         return $this->handle(
-            request: $this->phpFpmRequestReader->read(
+            runtimeRequest: $this->phpFpmRequestReader->read(
                 server    : $server,
                 query     : $query,
                 parsedBody: $parsedBody,
@@ -45,6 +45,6 @@ final readonly class PhpFpmRuntime
 
     public function send(RuntimeResponse $runtimeResponse) : void
     {
-        $this->phpFpmResponseSender->send(response: $runtimeResponse);
+        $this->phpFpmResponseSender->send(runtimeResponse: $runtimeResponse);
     }
 }

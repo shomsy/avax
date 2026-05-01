@@ -17,7 +17,7 @@ final readonly class WorkerResponse
     {
         return new self(
             requestId: $requestId,
-            response : $runtimeResponse,
+            runtimeResponse: $runtimeResponse,
         );
     }
 

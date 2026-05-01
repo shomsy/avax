@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentDefinition;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
-use Avax\Framework\System\Capabilities\Runtime\RuntimeSafety;
+use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 
 /**
@@ -40,10 +40,6 @@ final class FrameworkProvider implements ComponentProviderInterface
 
     public function boot(RuntimeInterface $runtime) : void
     {
-        // Register StateResetRegistry
-        $stateResetRegistry = $runtime->stateResetRegistry();
-
-        // Register RuntimeSafety
-        new RuntimeSafety(stateResetRegistry: $stateResetRegistry);
+        // RuntimeSafety is handled via the Runtime's constructor
     }
 }

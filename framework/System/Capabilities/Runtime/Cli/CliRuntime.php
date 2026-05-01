@@ -31,6 +31,6 @@ final readonly class CliRuntime
 
     public function render(RuntimeResult $runtimeResult) : string
     {
-        return $this->cliOutputWriter->render(result: $runtimeResult);
+        return $this->cliOutputWriter->render(runtimeResult: $runtimeResult);
     }
 }

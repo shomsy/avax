@@ -26,9 +26,14 @@ final readonly class RuntimeResponse
 
     public static function fromPsrResponse(ResponseInterface $response) : self
     {
+        $headers = [];
+        foreach ($response->getHeaders() as $name => $values) {
+            $headers[$name] = array_values($values);
+        }
+
         return new self(
             statusCode: $response->getStatusCode(),
-            headers   : $response->getHeaders(),
+            headers   : $headers,
             body      : (string) $response->getBody(),
         );
     }

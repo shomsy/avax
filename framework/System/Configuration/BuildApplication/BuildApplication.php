@@ -15,7 +15,7 @@ final readonly class BuildApplication
     ): ApplicationBuilder {
         return new ApplicationBuilder(
             projectPath: new ProjectPath(value: $projectPath),
-            environment: new EnvironmentName(value: $environment),
+            environmentName: new EnvironmentName(value: $environment),
         );
     }
 }

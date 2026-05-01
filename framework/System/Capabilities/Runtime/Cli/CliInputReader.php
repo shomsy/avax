@@ -18,7 +18,7 @@ final readonly class CliInputReader
 
         return [
             'command'   => $command,
-            'arguments' => array_values($arguments),
+            'arguments' => $arguments,
         ];
     }
 }
